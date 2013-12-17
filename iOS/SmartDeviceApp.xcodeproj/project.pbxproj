@@ -17,6 +17,13 @@
 		2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4A185FDE8100810455 /* InfoPlist.strings */; };
 		2D0AEC51185FDE8100810455 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4D185FDE8100810455 /* Main_iPad.storyboard */; };
 		2D0AEC52185FDE8100810455 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main_iPhone.storyboard */; };
+		2D0AEC58185FE43200810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
+		2D0AEC59185FE43200810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
+		2D0AEC5A185FE43200810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
+		2D0AEC62185FE43200810455 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC61185FE43200810455 /* main.m */; };
+		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
+		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
+		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +43,13 @@
 		2D0AEC4B185FDE8100810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC4D185FDE8100810455 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = "<group>"; };
 		2D0AEC4E185FDE8100810455 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
+		2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceAppTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmartDeviceAppTests-Info.plist"; sourceTree = "<group>"; };
+		2D0AEC61185FE43200810455 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2D0AEC63185FE43200810455 /* SmartDeviceAppTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SmartDeviceAppTests-Prefix.pch"; sourceTree = "<group>"; };
+		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
+		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +63,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D0AEC54185FE43200810455 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */,
+				2D0AEC59185FE43200810455 /* CoreGraphics.framework in Frameworks */,
+				2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */,
+				2D0AEC5A185FE43200810455 /* UIKit.framework in Frameworks */,
+				2D0AEC58185FE43200810455 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -56,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEC08185FDD2100810455 /* SmartDeviceApp */,
+				2D0AEC5B185FE43200810455 /* SmartDeviceAppTests */,
 				2D0AEC01185FDD2100810455 /* Frameworks */,
 				2D0AEC46185FDE8100810455 /* Resources */,
 				2D0AEC00185FDD2100810455 /* Products */,
@@ -66,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */,
+				2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,6 +101,7 @@
 		2D0AEC01185FDD2100810455 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D0AEC8A185FE64A00810455 /* QuartzCore.framework */,
 				2D0AEC02185FDD2100810455 /* Foundation.framework */,
 				2D0AEC04185FDD2100810455 /* CoreGraphics.framework */,
 				2D0AEC06185FDD2100810455 /* UIKit.framework */,
@@ -171,6 +200,58 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
+		2D0AEC5B185FE43200810455 /* SmartDeviceAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				2D0AEC81185FE50000810455 /* Classes */,
+				2D0AEC82185FE50000810455 /* GHUnit */,
+				2D0AEC84185FE50000810455 /* Resources */,
+				2D0AEC5C185FE43200810455 /* Supporting Files */,
+			);
+			path = SmartDeviceAppTests;
+			sourceTree = "<group>";
+		};
+		2D0AEC5C185FE43200810455 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */,
+				2D0AEC61185FE43200810455 /* main.m */,
+				2D0AEC63185FE43200810455 /* SmartDeviceAppTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2D0AEC81185FE50000810455 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		2D0AEC82185FE50000810455 /* GHUnit */ = {
+			isa = PBXGroup;
+			children = (
+				2D0AEC83185FE50000810455 /* GHUnitIOS.framework */,
+			);
+			path = GHUnit;
+			sourceTree = "<group>";
+		};
+		2D0AEC84185FE50000810455 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2D0AEC85185FE50000810455 /* Locales */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		2D0AEC85185FE50000810455 /* Locales */ = {
+			isa = PBXGroup;
+			children = (
+				2D0AEC86185FE50000810455 /* InfoPlist.strings */,
+			);
+			path = Locales;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -189,6 +270,23 @@
 			name = SmartDeviceApp;
 			productName = SmartDeviceApp;
 			productReference = 2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2D0AEC56185FE43200810455 /* SmartDeviceAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D0AEC7F185FE43200810455 /* Build configuration list for PBXNativeTarget "SmartDeviceAppTests" */;
+			buildPhases = (
+				2D0AEC53185FE43200810455 /* Sources */,
+				2D0AEC54185FE43200810455 /* Frameworks */,
+				2D0AEC55185FE43200810455 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SmartDeviceAppTests;
+			productName = SmartDeviceAppTests;
+			productReference = 2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -214,6 +312,7 @@
 			projectRoot = "";
 			targets = (
 				2D0AEBFE185FDD2100810455 /* SmartDeviceApp */,
+				2D0AEC56185FE43200810455 /* SmartDeviceAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -230,6 +329,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D0AEC55185FE43200810455 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -243,6 +350,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D0AEC53185FE43200810455 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D0AEC62185FE43200810455 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -250,6 +365,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				2D0AEC4B185FDE8100810455 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2D0AEC86185FE50000810455 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D0AEC87185FE50000810455 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -357,6 +480,48 @@
 			};
 			name = Release;
 		};
+		2D0AEC7B185FE43200810455 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/seph/Projects/SmartDeviceApp/iOS/SmartDeviceAppTests/GHUnit,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "SmartDeviceAppTests/SmartDeviceAppTests-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2D0AEC7C185FE43200810455 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/seph/Projects/SmartDeviceApp/iOS/SmartDeviceAppTests/GHUnit,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
+				INFOPLIST_FILE = "SmartDeviceAppTests/SmartDeviceAppTests-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -377,6 +542,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2D0AEC7F185FE43200810455 /* Build configuration list for PBXNativeTarget "SmartDeviceAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D0AEC7B185FE43200810455 /* Debug */,
+				2D0AEC7C185FE43200810455 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
