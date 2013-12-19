@@ -25,3 +25,5 @@ proguard/
 # NDK
 obj/
 *.so
+
+.classpath
