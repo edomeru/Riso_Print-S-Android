@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SmartDeviceApp" default="-pre-build">
+    <property file="local.properties" />
+
+    <target name="-pre-build">
+        <exec executable="ndk-build" failonerror="true">
+            <arg line="" />
+        </exec>
+    </target>
+
+    <target name="-pre-clean">
+        <exec executable="ndk-build" failonerror="true">
+            <arg line="clean" />
+        </exec>
+    </target>
+</project>
