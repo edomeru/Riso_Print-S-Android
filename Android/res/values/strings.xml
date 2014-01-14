@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Android default values -->
+    <string name="default_textview">&#8230;</string>
+    <string name="default_content_description">Content Description</string>
 
-    <string name="app_name">SmartDeviceApp</string>
-    <string name="hello_world">Hello world!</string>
-
+    <string name="ids_app_name">SmartDeviceApp</string>
 </resources>
