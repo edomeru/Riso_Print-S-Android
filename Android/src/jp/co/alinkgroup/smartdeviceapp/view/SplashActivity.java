@@ -8,16 +8,22 @@
 
 package jp.co.alinkgroup.smartdeviceapp.view;
 
+import jp.co.alinkgroup.android.log.Logger;
 import jp.co.alinkgroup.android.os.pauseablehandler.PauseableHandler;
 import jp.co.alinkgroup.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.alinkgroup.android.util.AppUtils;
 import jp.co.alinkgroup.smartdeviceapp.AppConstants;
 import jp.co.alinkgroup.smartdeviceapp.R;
-import android.app.Activity;
+import jp.co.alinkgroup.smartdeviceapp.view.base.BaseActivity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.AndroidRuntimeException;
 
-public class SplashActivity extends Activity implements PauseableHandlerCallback {
+public class SplashActivity extends BaseActivity implements PauseableHandlerCallback {
+    // Messages
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
     
     public PauseableHandler mHandler;
@@ -28,7 +34,7 @@ public class SplashActivity extends Activity implements PauseableHandlerCallback
         
         mHandler = new PauseableHandler(this);
         
-        if (AppConstants.APP_SHOW_SPLASH || isTaskRoot()) {
+        if (AppConstants.APP_SHOW_SPLASH && isTaskRoot()) {
             setContentView(R.layout.activity_splash);
             
             mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
@@ -36,9 +42,7 @@ public class SplashActivity extends Activity implements PauseableHandlerCallback
             runMainActivity();
         }
         
-        // Disable orientation 
-        boolean isTablet = getResources().getBoolean(R.bool.isTablet);
-        if (!isTablet) {
+        if (!isTablet()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
@@ -64,34 +68,55 @@ public class SplashActivity extends Activity implements PauseableHandlerCallback
         mHandler.pause();
     }
     
-    // Public Methods
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        
+        // On a new intent, set the current intent so that URL Scheme works during Splash Screen display
+        setIntent(intent);
+    }
     
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
+    
+    // ================================================================================
     // Private Methods
+    // ================================================================================
     
     private void runMainActivity() {
-        /*
-        Intent newIntent = AppUtils.createActivityIntent(this, MainActivity.class);
+        Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
-        if (newIntent == null) {
-            throw new NullPointerException("Cannot create intent");
-        } else {
-            try {
-                if (getIntent() != null) {
-                    String action = getIntent().getAction();
-                    if (Intent.ACTION_VIEW.equals(action)) {
-                        newIntent.setData(getIntent().getData());
-                    }
-                }
-                
-                newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(newIntent);
-            } catch (ActivityNotFoundException e) {
-                throw e;
-            } catch (AndroidRuntimeException e) {
-                throw e;
-            }
+        if (launchIntent == null) {
+            String err = "Cannot create Intent";
+            Logger.logError(this, err);
+            throw new NullPointerException(err);
         }
-        */
+        
+        try {
+            Intent intent = getIntent();
+            
+            if (intent != null) {
+                String action = intent.getAction();
+                
+                if (Intent.ACTION_VIEW.equals(action)) {
+                    // Set the data from open-in.
+                    launchIntent.setData(intent.getData());
+                }
+            }
+            
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(launchIntent);
+            
+        } catch (ActivityNotFoundException e) {
+            String err = "Fatal Error: Intent MainActivity Not Found is not defined";
+            Logger.logError(this, err);
+            throw e;
+        } catch (AndroidRuntimeException e) {
+            String err = "Fatal Error: Android runtime";
+            Logger.logError(this, err);
+            throw e;
+        }
         
         finish();
     }

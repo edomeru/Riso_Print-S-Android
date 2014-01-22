@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg_color_main">#FFFFFF</color>
+    <color name="bg_color_main">#17111A</color>
     <color name="bg_color_splash">#FFFFFF</color>
     
     <color name="bg_color_navigation_bar">#000000</color>

@@ -68,17 +68,4 @@ public class InfoDialogFragment extends DialogFragment {
         
         return dialog;
     }
-    
-    @Override
-    public void onDestroyView() {
-        Dialog dialog = getDialog();
-        
-        // Work around bug:
-        // http://code.google.com/p/android/issues/detail?id=17423
-        if ((dialog != null) && getRetainInstance()) {
-            dialog.setDismissMessage(null);
-        }
-        
-        super.onDestroyView();
-    }
 }

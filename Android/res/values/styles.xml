@@ -1,5 +1,6 @@
 <resources>
     <style name="AppBaseTheme" parent="android:Theme.Light.NoTitleBar">
+        <item name="android:background">@color/bg_color_main</item>
     </style>
 
     <style name="CustomWindowTitleBackground">
