@@ -2,21 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.co.alinkgroup.smartdeviceapp"
     android:versionCode="1"
-    android:versionName="0.01.20140114" >
+    android:versionName="0.01" >
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
     <application
+        android:name="jp.co.alinkgroup.smartdeviceapp.SmartDeviceApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/ids_app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="jp.co.alinkgroup.smartdeviceapp.SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="portrait" >
+            android:name="jp.co.alinkgroup.smartdeviceapp.view.SplashActivity"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
