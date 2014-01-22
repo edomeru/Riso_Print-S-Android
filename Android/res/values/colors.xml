@@ -3,6 +3,6 @@
     <color name="bg_color_main">#17111A</color>
     <color name="bg_color_splash">#FFFFFF</color>
     
-    <color name="bg_color_navigation_bar">#000000</color>
+    <color name="bg_color_actionbar">#000000</color>
     
 </resources>

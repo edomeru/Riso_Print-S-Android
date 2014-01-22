@@ -1,16 +1,10 @@
 <resources>
     <style name="AppBaseTheme" parent="android:Theme.Light.NoTitleBar">
-        <item name="android:background">@color/bg_color_main</item>
     </style>
-
-    <style name="CustomWindowTitleBackground">
-        <item name="android:background">@color/bg_color_navigation_bar</item>
-    </style>
-
+    
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="android:windowTitleSize">@dimen/actionbar_height</item>
-        <item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
+        <item name="android:windowBackground">@color/bg_color_main</item>
     </style>
 
 </resources>
