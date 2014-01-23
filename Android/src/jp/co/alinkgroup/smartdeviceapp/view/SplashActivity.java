@@ -29,9 +29,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     public PauseableHandler mHandler;
     
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
+    protected void onCreateContent(Bundle savedInstanceState) {
         mHandler = new PauseableHandler(this);
         
         if (AppConstants.APP_SHOW_SPLASH && isTaskRoot()) {
@@ -77,11 +75,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     }
     
     // ================================================================================
-    // Public Methods
+    // Public Functions
     // ================================================================================
     
     // ================================================================================
-    // Private Methods
+    // Private Functions
     // ================================================================================
     
     private void runMainActivity() {

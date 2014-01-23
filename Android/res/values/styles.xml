@@ -2,6 +2,9 @@
     <style name="AppBaseTheme" parent="android:Theme.Light.NoTitleBar">
     </style>
     
+    <style name="SplashTheme" parent="AppBaseTheme">
+        <item name="android:windowBackground">@color/bg_color_splash</item>
+    </style>
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:windowBackground">@color/bg_color_main</item>

@@ -9,16 +9,13 @@
 package jp.co.alinkgroup.smartdeviceapp.view;
 
 import android.os.Bundle;
-import jp.co.alinkgroup.smartdeviceapp.R;
 import jp.co.alinkgroup.smartdeviceapp.view.base.BaseActivity;
 
 public class MainActivity extends BaseActivity {
-
+    
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreateContent(Bundle savedInstanceState) {
         
-        setContentView(R.layout.activity_main);
     }
     
     

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actionBarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/actionbar_height"
+    android:background="@color/bg_color_actionbar" >
+
+    <LinearLayout
+        android:id="@+id/leftActionLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/actionBarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/text_color_actionbar_title"
+        android:textSize="@dimen/actionbar_title_text_size"
+        android:textStyle="bold"
+        android:text="@string/default_textview" />
+    
+    <LinearLayout
+        android:id="@+id/rightActionLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:orientation="horizontal" >
+
+    </LinearLayout>
+
+</FrameLayout>
