@@ -1,5 +1,5 @@
 
-package jp.co.alinkgroup.smartdeviceapp;
+package jp.co.alinkgroup.smartdeviceapp.view;
 
 import android.test.ActivityInstrumentationTestCase2;
 

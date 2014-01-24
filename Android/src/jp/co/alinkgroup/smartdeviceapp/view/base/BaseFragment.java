@@ -16,11 +16,11 @@ public abstract class BaseFragment extends Fragment {
         View view = inflater.inflate(getViewLayout(), container, false);
         
         initializeView(view);
-        if (view.findViewById(R.layout.actionbar_main) != null) {
+        if (view.findViewById(R.id.actionBarLayout) != null) {
             initializeCustomActionBar(view);
         }
         
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
     
     // ================================================================================
@@ -38,4 +38,13 @@ public abstract class BaseFragment extends Fragment {
     public void initializeCustomActionBar(View view) {
         
     }
+    
+    public boolean isTablet() {
+        if (getActivity() == null) {
+            return false;
+        }
+        
+        return getResources().getBoolean(R.bool.isTablet);
+    }
+    
 }

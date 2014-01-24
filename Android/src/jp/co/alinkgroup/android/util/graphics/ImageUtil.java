@@ -42,14 +42,15 @@ public class ImageUtil {
         canvas.drawBitmap(bitmap, 0, 0, paint);
     }
     
-    public static void drawBorder(Bitmap bitmap, int color) {
+    public static void drawBorder(Bitmap bitmap, int color, int thickness) {
         Canvas canvas = new Canvas(bitmap);
         
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(1);
+        paint.setStrokeWidth(thickness);
         paint.setStyle(Paint.Style.STROKE);
         
-        canvas.drawRect(0, 0, bitmap.getWidth() - 1, bitmap.getHeight() - 2, paint);
+        int edgeAdjust = thickness / 2;
+        canvas.drawRect(edgeAdjust, edgeAdjust, bitmap.getWidth() - edgeAdjust, bitmap.getHeight() - edgeAdjust, paint);
     }
 }

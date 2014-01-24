@@ -5,4 +5,9 @@
     <string name="default_content_description">Content Description</string>
 
     <string name="ids_app_name">SmartDeviceApp2</string>
+    
+    <string name="ids_lbl_printers">Printers</string>
+    <string name="ids_lbl_printjobs">Jobs</string>
+    <string name="ids_lbl_settings">Settings</string>
+    
 </resources>

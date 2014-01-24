@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false" >
+
+    <include layout="@layout/actionbar_main" />
+
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/img_riso_logo"
+        android:contentDescription="@string/default_content_description" />
+
+    <LinearLayout
+        android:id="@+id/tempMenuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_temp_menu_top_margin"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/tempPrintersButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/home_temp_menu_spacing"
+            android:text="@string/ids_lbl_printers" />
+
+        <Button
+            android:id="@+id/tempPrintJobsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/home_temp_menu_spacing"
+            android:text="@string/ids_lbl_printjobs" />
+
+        <Button
+            android:id="@+id/tempSettingsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/home_temp_menu_spacing"
+            android:text="@string/ids_lbl_settings" />
+
+    </LinearLayout>
+
+</LinearLayout>

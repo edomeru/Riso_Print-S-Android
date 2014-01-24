@@ -36,10 +36,9 @@ public final class DialogUtils {
         newFragment.show(ft, tag);
     }
     
-    /*
+    /**
      * Dismisses a dialog fragment
      */
-    
     public static void dismissDialog(Activity activity, String tag) {
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
         removeDialogFragment(ft, activity, tag);

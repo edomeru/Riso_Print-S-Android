@@ -19,6 +19,8 @@ public abstract class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        onCreateContent(savedInstanceState);
+        
         // Override transition for consistency with Fragment Transition
         overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
     }
@@ -28,7 +30,7 @@ public abstract class BaseActivity extends Activity {
     // ================================================================================
 
     /*
-     * Called in on create just before the title is displayed
+     * Called in on create
      */
     protected abstract void onCreateContent(Bundle savedInstanceState);
     
