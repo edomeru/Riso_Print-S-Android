@@ -9,6 +9,10 @@
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="jp.co.alinkgroup.smartdeviceapp" />
+    
+    <instrumentation android:name="pl.polidea.instrumentation.PolideaInstrumentationTestRunner"
+        android:targetPackage="jp.co.alinkgroup.smartdeviceapp"
+        android:label="Tests for jp.co.alinkgroup.smartdeviceapp"/>
 
     <application
         android:icon="@drawable/ic_launcher"
