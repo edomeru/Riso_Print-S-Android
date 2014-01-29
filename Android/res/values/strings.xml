@@ -10,4 +10,6 @@
     <string name="ids_lbl_printjobs">Jobs</string>
     <string name="ids_lbl_settings">Settings</string>
     
+    <string name="ids_lbl_printer_search">Printer Search</string>
+    
 </resources>

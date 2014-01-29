@@ -17,7 +17,7 @@ import jp.co.alinkgroup.smartdeviceapp.R;
 import jp.co.alinkgroup.smartdeviceapp.view.base.BaseActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.AndroidRuntimeException;
@@ -32,16 +32,22 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     protected void onCreateContent(Bundle savedInstanceState) {
         mHandler = new PauseableHandler(this);
         
-        if (AppConstants.APP_SHOW_SPLASH && isTaskRoot()) {
+        if (isTaskRoot()) {
             setContentView(R.layout.activity_splash);
             
             mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
         } else {
-            runMainActivity();
-        }
-        
-        if (!isTablet()) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+            if (getIntent() != null) {
+                String action = getIntent().getAction();
+                
+                if (Intent.ACTION_VIEW.equals(action)) {
+                    runMainActivity();
+                    return;
+                }
+            }
+            
+            finish();
         }
     }
     
@@ -91,21 +97,29 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             throw new NullPointerException(err);
         }
         
-        try {
-            Intent intent = getIntent();
+        Uri data = null;
+        if (getIntent() != null) {
+            String action = getIntent().getAction();
             
-            if (intent != null) {
-                String action = intent.getAction();
-                
-                if (Intent.ACTION_VIEW.equals(action)) {
-                    // Set the data from open-in.
-                    launchIntent.setData(intent.getData());
-                }
+            if (Intent.ACTION_VIEW.equals(action)) {
+                data = getIntent().getData();
             }
-            
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+        
+        if (data != null) {
+            launchIntent.setData(data);
+        }
+
+        int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
+        
+        if (isTaskRoot()) {
+            flags |= Intent.FLAG_ACTIVITY_NO_ANIMATION;
+        }
+        
+        launchIntent.setFlags(flags);
+        
+        try {
             startActivity(launchIntent);
-            
         } catch (ActivityNotFoundException e) {
             String err = "Fatal Error: Intent MainActivity Not Found is not defined";
             Logger.logError(this, err);

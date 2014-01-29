@@ -1,7 +1,6 @@
 
 package jp.co.alinkgroup.smartdeviceapp.view.fragment;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
@@ -44,7 +43,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             // No states were saved
             
             // Load Printer Fragment as default
-            switchToPrintersFragment();
+            if (isTablet()) {
+                switchToPrintersFragment(false);
+            }
             
         } else {
             mState = savedInstanceState.getInt(KEY_STATE, STATE_PRINTERS);
@@ -73,47 +74,51 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // Public Methods
     // ================================================================================
 
-    private void switchToPrintersFragment() {
-        mState = STATE_PRINTERS;
-        
-        Fragment fragment = new PrintersFragment();
-        
-        switchToFragment(fragment, FRAGMENT_TAG_PRINTERS);
-    }
-
-    private void switchToPrintJobsFragment() {
-        mState = STATE_PRINTJOBS;
-        
-        Fragment fragment = new PrintJobsFragment();
-        
-        switchToFragment(fragment, FRAGMENT_TAG_PRINTJOBS);
-    }
-
-    private void switchToSettingsFragment() {
-        mState = STATE_SETTINGS;
-        
-        Fragment fragment = new SettingsFragment();
-        
-        switchToFragment(fragment, FRAGMENT_TAG_SETTINGS);
-    }
-
     // ================================================================================
     // Private Methods
     // ================================================================================
 
-    public void switchToFragment(Fragment fragment, String tag) {
+    private void switchToPrintersFragment(boolean animate) {
+        mState = STATE_PRINTERS;
+        
+        BaseFragment fragment = new PrintersFragment();
+        
+        switchToFragment(fragment, FRAGMENT_TAG_PRINTERS, animate);
+    }
+
+    private void switchToPrintJobsFragment(boolean animate) {
+        mState = STATE_PRINTJOBS;
+        
+        BaseFragment fragment = new PrintJobsFragment();
+        
+        switchToFragment(fragment, FRAGMENT_TAG_PRINTJOBS, animate);
+    }
+
+    private void switchToSettingsFragment(boolean animate) {
+        mState = STATE_SETTINGS;
+        
+        BaseFragment fragment = new SettingsFragment();
+        
+        switchToFragment(fragment, FRAGMENT_TAG_SETTINGS, animate);
+    }
+
+    private void switchToFragment(BaseFragment fragment, String tag, boolean animate) {
         FragmentManager fm = getFragmentManager();
         
         if (isTablet()) {
             if (fm.findFragmentByTag(tag) == null) {
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_right, R.animator.slide_in_right, R.animator.slide_out_right);
+                if (animate) {
+                    ft.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_right, R.animator.slide_in_right, R.animator.slide_out_right);
+                }
                 ft.replace(R.id.rightLayout, fragment, tag);
                 ft.commit();
             }
         } else {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.setCustomAnimations(R.animator.zoom_in, R.animator.zoom_out, R.animator.zoom_in, R.animator.zoom_out);
+            if (animate) {
+                ft.setCustomAnimations(R.animator.zoom_in, R.animator.zoom_out, R.animator.zoom_in, R.animator.zoom_out);
+            }
             ft.addToBackStack(null);
             ft.replace(R.id.homeLayout, fragment);
             ft.commit();
@@ -128,18 +133,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tempPrintersButton:
-                switchToPrintersFragment();
+                switchToPrintersFragment(true);
                 break;
             case R.id.tempPrintJobsButton:
-                switchToPrintJobsFragment();
+                switchToPrintJobsFragment(true);
                 break;
             case R.id.tempSettingsButton:
-                switchToSettingsFragment();
+                switchToSettingsFragment(true);
                 break;
             default:
                 break;
         }
-        
     }
-
 }
