@@ -37,7 +37,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
         } else {
-            runMainActivity();
+            runMainActivity(true);
         }
         
         if (!isTablet()) {
@@ -82,7 +82,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // Private Functions
     // ================================================================================
     
-    private void runMainActivity() {
+    private void runMainActivity(boolean animate) {
         Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
         if (launchIntent == null) {
@@ -103,7 +103,12 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 }
             }
             
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
+            if (!animate) {
+                flags |= Intent.FLAG_ACTIVITY_NO_ANIMATION;
+            }
+            
+            launchIntent.setFlags(flags);
             startActivity(launchIntent);
             
         } catch (ActivityNotFoundException e) {
@@ -131,7 +136,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     @Override
     public void processMessage(Message message) {
         if (message.what == MESSAGE_RUN_MAINACTIVITY) {
-            runMainActivity();
+            runMainActivity(false);
         }
     }
 }

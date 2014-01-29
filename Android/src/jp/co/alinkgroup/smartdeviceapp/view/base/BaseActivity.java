@@ -10,6 +10,7 @@ package jp.co.alinkgroup.smartdeviceapp.view.base;
 
 import jp.co.alinkgroup.smartdeviceapp.R;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 
@@ -18,9 +19,12 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Override transition for consistency with Fragment Transition
-        overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
+
+        overridePendingTransition(0, 0);
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_NO_ANIMATION) == 0) {
+            // Override transition for consistency with Fragment Transition
+            overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
+        }
         
         onCreateContent(savedInstanceState);
     }

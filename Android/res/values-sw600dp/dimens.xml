@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="dialog_width">480dp</dimen>
+    <dimen name="dialog_height">640dp</dimen>
+</resources>

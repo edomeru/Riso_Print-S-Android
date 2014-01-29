@@ -7,4 +7,9 @@
 
     <include layout="@layout/actionbar_main" />
 
+    <FrameLayout android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </FrameLayout>
+
 </LinearLayout>
