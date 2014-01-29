@@ -20,13 +20,16 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.AndroidRuntimeException;
 
 public final class AppUtils {
-    
+
+    /**
+     * @brief Constructor
+     */
     private AppUtils() {
-        // Avoid initialization
+        // Private to prevent class initialization
     }
     
     /**
-     * Creates an activity intent launcher
+     * @brief Creates an activity intent launcher
      * 
      * @param context
      *            Application Context
@@ -46,7 +49,7 @@ public final class AppUtils {
     }
     
     /**
-     * Starts an Activity
+     * @brief Starts an Activity
      * 
      * @param context
      *            Application Context
@@ -70,7 +73,7 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
+     * @brief Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
      * 
      * @return Locale Code String
      */
@@ -81,6 +84,14 @@ public final class AppUtils {
         return localeCode;
     }
     
+    /**
+     * @brief Gets the Application install date using the package manager
+     * 
+     * @param context
+     *            Application Context
+     * 
+     * @return Locale Code String
+     */
     public static long getApplicationLastInstallDate(Context context) {
         String packageName = context.getApplicationContext().getPackageName();
         

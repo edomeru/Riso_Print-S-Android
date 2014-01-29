@@ -15,9 +15,9 @@ public abstract class BaseFragment extends Fragment {
 
         View view = inflater.inflate(getViewLayout(), container, false);
         
-        initializeView(view);
+        initializeView(view, savedInstanceState);
         if (view.findViewById(R.id.actionBarLayout) != null) {
-            initializeCustomActionBar(view);
+            initializeCustomActionBar(view, savedInstanceState);
         }
         
         return view;
@@ -29,13 +29,13 @@ public abstract class BaseFragment extends Fragment {
     
     public abstract int getViewLayout();
     
-    public abstract void initializeView(View view);
+    public abstract void initializeView(View view, Bundle savedInstanceState);
 
     // ================================================================================
     // Public Functions
     // ================================================================================
     
-    public void initializeCustomActionBar(View view) {
+    public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         
     }
     

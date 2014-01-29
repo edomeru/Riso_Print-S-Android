@@ -134,5 +134,4 @@ public class Logger {
         
         return consumedMegs;
     }
-    
 }

@@ -14,6 +14,7 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 
 public class InfoDialogFragment extends DialogFragment {
+    
     public static final String KEY_TITLE = "title";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_BUTTON = "button";

@@ -9,43 +9,81 @@
 package jp.co.alinkgroup.android.dialog;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.DialogInterface.OnClickListener;
 
 public final class DialogUtils {
     
+    /**
+     * @brief Constructor
+     */
+    private DialogUtils() {
+        // Private to prevent class initialization
+    }
+    
+    /**
+     * @brief Removes a dialog fragment with the given tag in a activity using a transaction
+     * @param ft
+     *            FragmentTransaction to include the removal of fragment
+     * @param activity
+     *            Activity where the fragment resides
+     * @param tag
+     *            The tag of fragment for removal
+     */
     private static void removeDialogFragment(FragmentTransaction ft, Activity activity, String tag) {
+        
+        // Get the fragment
         Fragment prev = activity.getFragmentManager().findFragmentByTag(tag);
+        
+        // Remove the fragment if found
         if (prev != null) {
             ft.remove(prev);
         }
     }
     
     /**
-     * Displays a dialog fragment
+     * @brief Displays a dialog fragment specifying a tag in an activity
+     * @param activity
+     *              Activity to display the fragment on.
+     * @param tag
+     *              The assigned tag of the fragment to be added
+     * @param newFragment
+     *              DialogFragment object to be added
      */
     public static void displayDialog(Activity activity, String tag, DialogFragment newFragment) {
+        
+        // Create a fragment transaction
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        
+        // Remove any instances of fragment
         removeDialogFragment(ft, activity, tag);
         
+        // Show the fragment
         newFragment.show(ft, tag);
     }
     
     /**
-     * Dismisses a dialog fragment
+     * @brief Dismisses a dialog with the given tag in an activity
+     * @param activity
+     *            Activity where the fragment resides
+     * @param tag
+     *            The tag of fragment for removal
      */
     public static void dismissDialog(Activity activity, String tag) {
+
+        // Create a fragment transaction
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        removeDialogFragment(ft, activity, tag);
-        ft.commitAllowingStateLoss();
         
+        // Remove the fragment
+        removeDialogFragment(ft, activity, tag);
+        
+        // Alllow removal even on paused state
+        ft.commitAllowingStateLoss();
     }
     
+    // TODO: The following codes should be converted to use Dialog Fragment
+    /*
     public static void showAlertDialog(Context context, int titleId, String[] options, OnClickListener listener, int checkedItem) {
         if (context == null) {
             return;
@@ -97,4 +135,5 @@ public final class DialogUtils {
         
         builder.show();
     }
+    */
 }
