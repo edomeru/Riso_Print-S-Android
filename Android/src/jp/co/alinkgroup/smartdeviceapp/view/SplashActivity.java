@@ -8,10 +8,10 @@
 
 package jp.co.alinkgroup.smartdeviceapp.view;
 
-import jp.co.alinkgroup.android.log.Logger;
 import jp.co.alinkgroup.android.os.pauseablehandler.PauseableHandler;
 import jp.co.alinkgroup.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.alinkgroup.android.util.AppUtils;
+import jp.co.alinkgroup.android.util.Logger;
 import jp.co.alinkgroup.smartdeviceapp.AppConstants;
 import jp.co.alinkgroup.smartdeviceapp.R;
 import jp.co.alinkgroup.smartdeviceapp.view.base.BaseActivity;
@@ -37,7 +37,6 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
         } else {
-
             if (getIntent() != null) {
                 String action = getIntent().getAction();
                 
@@ -47,6 +46,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 }
             }
             
+            // Do nothing
             finish();
         }
     }

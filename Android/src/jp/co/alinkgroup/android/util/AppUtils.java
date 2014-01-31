@@ -5,7 +5,6 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
-
 package jp.co.alinkgroup.android.util;
 
 import java.io.File;
@@ -20,16 +19,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.AndroidRuntimeException;
 
 public final class AppUtils {
-
-    /**
-     * @brief Constructor
-     */
-    private AppUtils() {
-        // Private to prevent class initialization
-    }
     
     /**
-     * @brief Creates an activity intent launcher
+     * Creates an activity intent launcher
      * 
      * @param context
      *            Application Context
@@ -38,7 +30,7 @@ public final class AppUtils {
      * @return Intent generated
      */
     public static Intent createActivityIntent(Context context, Class<?> cls) {
-        // Should not be created if context o
+        // Should not be created if context or class is null
         if (context == null || cls == null) {
             return null;
         }
@@ -49,7 +41,7 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Starts an Activity
+     * Starts an Activity
      * 
      * @param context
      *            Application Context
@@ -73,7 +65,7 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
+     * Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
      * 
      * @return Locale Code String
      */
@@ -85,32 +77,45 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Gets the Application install date using the package manager
+     * Gets the Application package name
+     * 
+     * @param context
+     *            Application Context
+     * @return Package name of the application
+     */
+    public static String getApplicationPackageName(Context context) {
+        if (context == null) {
+            return null;
+        }
+        
+        return context.getPackageName();
+    }
+    
+    /**
+     * Gets the Application install date using the package manager
      * 
      * @param context
      *            Application Context
      * 
-     * @return Locale Code String
+     * @return Time in millis of the the last install date
      */
-    public static long getApplicationLastInstallDate(Context context) {
-        String packageName = context.getApplicationContext().getPackageName();
-        
-        long info = 0;
-        
-        try {
-            PackageManager pm = context.getPackageManager();
-            ApplicationInfo appInfo;
-            appInfo = pm.getApplicationInfo(packageName, 0);
-            
-            String appFilePath = appInfo.sourceDir;
-            
-            File appFile = new File(appFilePath);
-            
-            info = appFile.lastModified();
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
+    public static long getApplicationLastInstallDate(Context context, String packageName) throws NameNotFoundException {
+        if (context == null) {
+            return 0;
         }
         
-        return info;
+        PackageManager pm = context.getPackageManager();
+        ApplicationInfo appInfo = null;
+        
+        try {
+            appInfo = pm.getApplicationInfo(packageName, 0);
+        } catch (NameNotFoundException e) {
+            throw e;
+        }
+        
+        String appFilePath = appInfo.sourceDir;
+        File appFile = new File(appFilePath);
+        
+        return appFile.lastModified();
     }
 }

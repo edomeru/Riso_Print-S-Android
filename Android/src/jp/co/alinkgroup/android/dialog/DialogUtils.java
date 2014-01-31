@@ -5,7 +5,6 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
-
 package jp.co.alinkgroup.android.dialog;
 
 import android.app.Activity;
@@ -14,13 +13,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 
 public final class DialogUtils {
-    
-    /**
-     * @brief Constructor
-     */
-    private DialogUtils() {
-        // Private to prevent class initialization
-    }
     
     /**
      * @brief Removes a dialog fragment with the given tag in a activity using a transaction
@@ -45,11 +37,11 @@ public final class DialogUtils {
     /**
      * @brief Displays a dialog fragment specifying a tag in an activity
      * @param activity
-     *              Activity to display the fragment on.
+     *            Activity to display the fragment on.
      * @param tag
-     *              The assigned tag of the fragment to be added
+     *            The assigned tag of the fragment to be added
      * @param newFragment
-     *              DialogFragment object to be added
+     *            DialogFragment object to be added
      */
     public static void displayDialog(Activity activity, String tag, DialogFragment newFragment) {
         
@@ -71,7 +63,7 @@ public final class DialogUtils {
      *            The tag of fragment for removal
      */
     public static void dismissDialog(Activity activity, String tag) {
-
+        
         // Create a fragment transaction
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
         

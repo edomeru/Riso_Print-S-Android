@@ -5,7 +5,6 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
-
 package jp.co.alinkgroup.android.os.pauseablehandler;
 
 import android.os.Message;

@@ -5,7 +5,6 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
-
 package jp.co.alinkgroup.android.dialog;
 
 import android.app.AlertDialog;
@@ -40,8 +39,6 @@ public class InfoDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setRetainInstance(true);
     }
     
     @Override

@@ -33,7 +33,7 @@ public abstract class BaseFragment extends DialogFragment {
             initializeCustomActionBar(view, savedInstanceState);
         }
 
-        // set width and height if dialog
+        // set width and height of dialog
         if (getDialog() != null){
             
             /*set height of item after title bar*/

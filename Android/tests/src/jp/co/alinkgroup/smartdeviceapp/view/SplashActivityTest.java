@@ -1,4 +1,3 @@
-
 package jp.co.alinkgroup.smartdeviceapp.view;
 
 import android.app.Instrumentation;
@@ -6,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class SplashActivityTest extends ActivityInstrumentationTestCase2<SplashActivity> {
+    
     private Instrumentation mInstrumentation;
     private SplashActivity mActivity; // MyActivity is the class name of the app under test
     

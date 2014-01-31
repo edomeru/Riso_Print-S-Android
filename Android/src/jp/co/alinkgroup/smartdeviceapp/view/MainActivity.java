@@ -35,7 +35,4 @@ public class MainActivity extends BaseActivity {
             ft.commit();
         }
     }
-    
-    
-    
 }

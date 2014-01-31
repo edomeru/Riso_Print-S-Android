@@ -8,7 +8,7 @@
 
 package jp.co.alinkgroup.smartdeviceapp;
 
-import jp.co.alinkgroup.android.log.Logger;
+import jp.co.alinkgroup.android.util.Logger;
 import android.app.Application;
 
 public class SmartDeviceApp extends Application {

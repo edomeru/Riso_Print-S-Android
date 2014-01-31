@@ -5,8 +5,7 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
-
-package jp.co.alinkgroup.android.log;
+package jp.co.alinkgroup.android.util;
 
 import java.util.Date;
 import java.util.HashMap;
