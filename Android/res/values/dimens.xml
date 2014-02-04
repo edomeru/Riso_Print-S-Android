@@ -10,7 +10,8 @@
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
     
-    <dimen name="home_temp_menu_top_margin">24dp</dimen>
-    <dimen name="home_temp_menu_spacing">4dp</dimen>
+    <!--  Temporary values -->
+    <dimen name="temp_home_menu_top_margin">24dp</dimen>
+    <dimen name="temp_home_menu_spacing">4dp</dimen>
 
 </resources>

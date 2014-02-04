@@ -22,7 +22,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/ids_lbl_printer_search" />
+                android:text="@string/ids_lbl_search_printers" />
+
+            <Button
+                android:id="@+id/tempAddPrinterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/ids_lbl_add_printer" />
 
         </LinearLayout>
     </ScrollView>

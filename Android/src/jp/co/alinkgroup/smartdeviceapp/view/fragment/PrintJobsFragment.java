@@ -23,7 +23,7 @@ public class PrintJobsFragment extends BaseFragment {
         super.initializeCustomActionBar(view, savedInstanceState);
         
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
-        textView.setText(R.string.ids_lbl_printjobs);
+        textView.setText(R.string.ids_lbl_print_jobs);
     }
     
 }

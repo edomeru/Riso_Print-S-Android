@@ -14,7 +14,6 @@ public abstract class BaseFragment extends DialogFragment {
     /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
     }
 
@@ -29,8 +28,21 @@ public abstract class BaseFragment extends DialogFragment {
         View view = inflater.inflate(getViewLayout(), container, false);
         
         initializeView(view, savedInstanceState);
+        
         if (view.findViewById(R.id.actionBarLayout) != null) {
+            
             initializeCustomActionBar(view, savedInstanceState);
+
+            view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    int leftWidth = v.findViewById(R.id.leftActionLayout).getWidth();
+                    int rightWidth = v.findViewById(R.id.rightActionLayout).getWidth();
+                    
+                    v.findViewById(R.id.actionBarTitle).getLayoutParams().width = right - left - (Math.max(leftWidth, rightWidth) * 2);
+                }
+            });
         }
 
         // set width and height of dialog
@@ -73,7 +85,7 @@ public abstract class BaseFragment extends DialogFragment {
             return false;
         }
         
-        return getResources().getBoolean(R.bool.isTablet);
+        return getResources().getBoolean(R.bool.is_tablet);
     }
     
 }

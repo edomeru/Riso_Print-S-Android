@@ -43,7 +43,7 @@ public abstract class BaseActivity extends Activity {
     // ================================================================================
 
     public boolean isTablet() {
-        return getResources().getBoolean(R.bool.isTablet);
+        return getResources().getBoolean(R.bool.is_tablet);
     }
     
     public int getActionBarHeight() {

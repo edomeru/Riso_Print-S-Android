@@ -24,7 +24,7 @@ public class PrinterSearchFragment extends BaseFragment {
         super.initializeCustomActionBar(view, savedInstanceState);
         
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
-        textView.setText(R.string.ids_lbl_printer_search);
+        textView.setText(R.string.ids_lbl_search_printers);
         
     }
     

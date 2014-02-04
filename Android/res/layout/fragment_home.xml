@@ -25,28 +25,28 @@
 	        android:id="@+id/tempMenuLayout"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_marginTop="@dimen/home_temp_menu_top_margin"
+	        android:layout_marginTop="@dimen/temp_home_menu_top_margin"
 	        android:orientation="vertical" >
 	
 	        <Button
 	            android:id="@+id/tempPrintersButton"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/home_temp_menu_spacing"
+	            android:layout_marginBottom="@dimen/temp_home_menu_spacing"
 	            android:text="@string/ids_lbl_printers" />
 	
 	        <Button
 	            android:id="@+id/tempPrintJobsButton"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/home_temp_menu_spacing"
-	            android:text="@string/ids_lbl_printjobs" />
+	            android:layout_marginBottom="@dimen/temp_home_menu_spacing"
+	            android:text="@string/ids_lbl_print_jobs" />
 	
 	        <Button
 	            android:id="@+id/tempSettingsButton"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/home_temp_menu_spacing"
+	            android:layout_marginBottom="@dimen/temp_home_menu_spacing"
 	            android:text="@string/ids_lbl_settings" />
 	
 	    </LinearLayout>
