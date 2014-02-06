@@ -26,8 +26,6 @@ public class PrintersFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        super.initializeCustomActionBar(view, savedInstanceState);
-        
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
     }

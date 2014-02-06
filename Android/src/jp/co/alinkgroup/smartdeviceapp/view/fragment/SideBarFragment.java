@@ -51,11 +51,7 @@ public class SideBarFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        super.initializeCustomActionBar(view, savedInstanceState);
-        
         // No navigation bar
-        //view.findViewById(R.id.actionBarLayout).setBackgroundColor(Color.TRANSPARENT);
-        //view.findViewById(R.id.actionBarTitle).setVisibility(View.GONE);
         view.findViewById(R.id.actionBarLayout).setVisibility(View.INVISIBLE);
     }
 

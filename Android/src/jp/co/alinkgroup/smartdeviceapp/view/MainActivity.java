@@ -5,7 +5,6 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
-
 package jp.co.alinkgroup.smartdeviceapp.view;
 
 import android.app.Activity;
@@ -37,7 +36,7 @@ public class MainActivity extends BaseActivity {
     
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
-
+        
         setContentView(R.layout.activity_main);
         
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -47,8 +46,7 @@ public class MainActivity extends BaseActivity {
         
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         
-        mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, R.string.default_content_description,
+        mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.default_content_description,
                 R.string.default_content_description);
         
         // Set the drawer toggle as the DrawerListener
@@ -63,7 +61,7 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState == null) {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-
+            
             ft.add(R.id.mainLayout, new HomePreviewFragment());
             ft.add(R.id.leftLayout, new SideBarFragment());
             
@@ -80,7 +78,7 @@ public class MainActivity extends BaseActivity {
             mMainLayout.setTranslationX(savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f));
         }
     }
-
+    
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -94,7 +92,7 @@ public class MainActivity extends BaseActivity {
         
         outState.putFloat(KEY_TRANSLATION, mMainLayout.getTranslationX());
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
@@ -124,20 +122,19 @@ public class MainActivity extends BaseActivity {
     // ================================================================================
     
     private class SDAActionBarDrawerToggle extends ActionBarDrawerToggle {
-
+        
         public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
             super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
         }
-
+        
         @Override
-        public void onDrawerSlide(View drawerView, float slideOffset)
-        {
+        public void onDrawerSlide(View drawerView, float slideOffset) {
             float moveFactor = (mLeftLayout.getWidth() * slideOffset);
             if (drawerView.getId() == mRightLayout.getId()) {
                 moveFactor *= -1;
             }
-
+            
             mMainLayout.setTranslationX(moveFactor);
         }
         
@@ -157,7 +154,7 @@ public class MainActivity extends BaseActivity {
             }
             
         }
-
+        
         /**
          * Called when a drawer has settled in a completely closed state.
          */
@@ -165,7 +162,7 @@ public class MainActivity extends BaseActivity {
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
         }
-
+        
         /**
          * Called when a drawer has settled in a completely opened state.
          */
@@ -175,4 +172,3 @@ public class MainActivity extends BaseActivity {
         }
     }
 }
-

@@ -32,7 +32,8 @@ public abstract class BaseFragment extends DialogFragment {
         if (view.findViewById(R.id.actionBarLayout) != null) {
             
             initializeCustomActionBar(view, savedInstanceState);
-
+            
+            // Add size change listener to prevent overlaps
             view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 
                 @Override
@@ -71,14 +72,12 @@ public abstract class BaseFragment extends DialogFragment {
     public abstract int getViewLayout();
     
     public abstract void initializeView(View view, Bundle savedInstanceState);
+    
+    public abstract void initializeCustomActionBar(View view, Bundle savedInstanceState);
 
     // ================================================================================
     // Public Functions
     // ================================================================================
-    
-    public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        
-    }
     
     public boolean isTablet() {
         if (getActivity() == null) {

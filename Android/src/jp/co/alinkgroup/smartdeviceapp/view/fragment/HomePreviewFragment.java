@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * HomePreviewFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 package jp.co.alinkgroup.smartdeviceapp.view.fragment;
 
 import android.os.Bundle;
@@ -20,8 +26,6 @@ public class HomePreviewFragment extends BaseFragment {
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        super.initializeCustomActionBar(view, savedInstanceState);
-        
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_app_name);
     }
