@@ -5,42 +5,34 @@
     android:orientation="vertical"
     android:splitMotionEvents="false" >
 
-    <ImageView
-        android:id="@+id/logoImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/img_riso_logo"
-        android:contentDescription="@string/default_content_description" />
+    <include layout="@layout/actionbar_main" />
 
     <LinearLayout
-        android:id="@+id/tempMenuLayout"
+        android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/temp_home_menu_top_margin"
         android:orientation="vertical" >
 
         <Button
             android:id="@+id/tempPrintersButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/temp_home_menu_spacing"
+            android:layout_marginBottom="@dimen/temp_sidebar_spacing"
             android:text="@string/ids_lbl_printers" />
 
         <Button
             android:id="@+id/tempPrintJobsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/temp_home_menu_spacing"
+            android:layout_marginBottom="@dimen/temp_sidebar_spacing"
             android:text="@string/ids_lbl_print_jobs" />
 
         <Button
             android:id="@+id/tempSettingsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/temp_home_menu_spacing"
+            android:layout_marginBottom="@dimen/temp_sidebar_spacing"
             android:text="@string/ids_lbl_settings" />
-
     </LinearLayout>
 
 </LinearLayout>

@@ -3,13 +3,13 @@ package jp.co.alinkgroup.smartdeviceapp.view.fragment;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import jp.co.alinkgroup.smartdeviceapp.R;
+import jp.co.alinkgroup.smartdeviceapp.view.MainActivity;
 import jp.co.alinkgroup.smartdeviceapp.view.base.BaseFragment;
 
-public class HomeFragment extends BaseFragment implements View.OnClickListener {
+public class SideBarFragment extends BaseFragment implements View.OnClickListener {
     
     public static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String FRAGMENT_TAG_PRINTJOBS = "fragment_printjobs";
@@ -24,12 +24,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     public int mState = STATE_PRINTERS;
     
-    public HomeFragment() {
+    public SideBarFragment() {
     }
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_home;
+        return R.layout.fragment_sidebar;
     }
     
     @Override
@@ -41,11 +41,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         
         if (savedInstanceState == null) {
             // No states were saved
-            
-            // Load Printer Fragment as default
-            if (isTablet()) {
-                switchToPrintersFragment(false);
-            }
             
         } else {
             mState = savedInstanceState.getInt(KEY_STATE, STATE_PRINTERS);
@@ -59,8 +54,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         super.initializeCustomActionBar(view, savedInstanceState);
         
         // No navigation bar
-        view.findViewById(R.id.actionBarLayout).setBackgroundColor(Color.TRANSPARENT);
-        view.findViewById(R.id.actionBarTitle).setVisibility(View.GONE);
+        //view.findViewById(R.id.actionBarLayout).setBackgroundColor(Color.TRANSPARENT);
+        //view.findViewById(R.id.actionBarTitle).setVisibility(View.GONE);
+        view.findViewById(R.id.actionBarLayout).setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -105,6 +101,27 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private void switchToFragment(BaseFragment fragment, String tag, boolean animate) {
         FragmentManager fm = getFragmentManager();
         
+        if (fm.findFragmentByTag(tag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            
+            // Maintain a single back stack item
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+            }
+            
+            ft.setCustomAnimations(R.animator.fade_in, R.animator.fade_out, R.animator.fade_in, R.animator.fade_out);
+            
+            ft.addToBackStack(null);
+            ft.replace(R.id.mainLayout, fragment, tag);
+            ft.commit();
+        }
+        
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.closeDrawers();
+        }
+        
+        /*
         if (isTablet()) {
             if (fm.findFragmentByTag(tag) == null) {
                 FragmentTransaction ft = fm.beginTransaction();
@@ -120,9 +137,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 ft.setCustomAnimations(R.animator.zoom_in, R.animator.zoom_out, R.animator.zoom_in, R.animator.zoom_out);
             }
             ft.addToBackStack(null);
-            ft.replace(R.id.homeLayout, fragment);
+            ft.replace(R.id.mainLayout, fragment);
             ft.commit();
         }
+        */
     }
 
     // ================================================================================

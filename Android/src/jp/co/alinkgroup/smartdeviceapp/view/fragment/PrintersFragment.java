@@ -52,7 +52,7 @@ public class PrintersFragment extends BaseFragment implements View.OnClickListen
             FragmentTransaction ft = fm.beginTransaction();
             ft.setCustomAnimations(R.animator.zoom_in, R.animator.zoom_out, R.animator.zoom_in, R.animator.zoom_out);
             ft.addToBackStack(null);
-            ft.replace(R.id.homeLayout, fragment, tag);
+            ft.replace(R.id.mainLayout, fragment, tag);
             ft.commit();
         }
     }
