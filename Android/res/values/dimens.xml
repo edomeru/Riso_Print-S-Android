@@ -3,5 +3,21 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    
+    <dimen name="actionbar_title_text_size">18dp</dimen>
+    
+    <dimen name="dialog_width">320dp</dimen>
+    <dimen name="dialog_height">480dp</dimen>
+    
+    <item name="drawer_width_percentage" type="dimen">85%</item>
+    <dimen name="drawer_width_min">240dp</dimen>
+    <dimen name="drawer_width_max">320dp</dimen>
+    
+    <!--  Temporary values -->
+    
+    <dimen name="temp_splash_logo_width">240dp</dimen>
+    <dimen name="temp_splash_logo_height">80dp</dimen>
+    
+    <dimen name="temp_sidebar_spacing">4dp</dimen>
 
 </resources>

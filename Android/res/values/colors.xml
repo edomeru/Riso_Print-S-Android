@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg_color_main">#FFFFFF</color>
+    <color name="bg_color_splash">#FFFFFF</color>
     
+    <color name="theme_dark_1">#000000</color>
+    <color name="theme_dark_2">#242424</color>
+    
+    <color name="theme_light_1">#FFFFFF</color>
+    <color name="theme_light_2">#CDCDCD</color>
+    <color name="theme_light_3">#ADADAD</color>
+    <color name="theme_light_4">#919191</color>
+    
+    <color name="theme_color_1">#8541D8</color>
+    <color name="theme_color_2">#5207B6</color>
 </resources>
