@@ -7,8 +7,10 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.AndroidRuntimeException;
+import android.view.Display;
 
 public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
@@ -223,5 +225,26 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             fail(); // Should throw exception
         } catch (NameNotFoundException e) {
         }
+    }
+
+    //================================================================================
+    // Tests - getScreenDimensions
+    //================================================================================
+
+    public void testGetScreenDimensions_Valid() {
+        Point expected = new Point();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        display.getSize(expected);
+        
+        Point size = AppUtils.getScreenDimensions(getActivity());
+        
+        assertEquals(expected.x, size.x);
+        assertEquals(expected.y, size.y);
+    }
+    
+    public void testGetScreenDimensions_ContextNull() {
+        Point size = AppUtils.getScreenDimensions(null);
+        
+        assertNull(size);
     }
 }

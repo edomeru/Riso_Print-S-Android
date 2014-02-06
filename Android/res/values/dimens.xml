@@ -9,7 +9,9 @@
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
     
-    <dimen name="drawer_width">320dp</dimen>
+    <item name="drawer_width_percentage" type="dimen">85%</item>
+    <dimen name="drawer_width_min">240dp</dimen>
+    <dimen name="drawer_width_max">320dp</dimen>
     
     <!--  Temporary values -->
     

@@ -10,10 +10,10 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="jp.co.alinkgroup.smartdeviceapp" />
+        android:targetPackage="jp.co.riso.smartdeviceapp" />
     
     <instrumentation android:name="pl.polidea.instrumentation.PolideaInstrumentationTestRunner"
-        android:targetPackage="jp.co.alinkgroup.smartdeviceapp"/>
+        android:targetPackage="jp.co.riso.smartdeviceapp"/>
 
     <application
         android:allowBackup="true"

@@ -10,13 +10,16 @@ package jp.co.riso.android.util;
 import java.io.File;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
 import android.util.AndroidRuntimeException;
+import android.view.Display;
 
 public final class AppUtils {
     
@@ -117,5 +120,19 @@ public final class AppUtils {
         File appFile = new File(appFilePath);
         
         return appFile.lastModified();
+    }
+    
+    
+    public static Point getScreenDimensions(Activity activity) {
+        if (activity == null) {
+            return null;
+        }
+        
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+
+        display.getSize(size);
+        
+        return size;
     }
 }

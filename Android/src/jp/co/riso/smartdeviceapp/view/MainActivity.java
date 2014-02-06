@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.NavigationFragment;
@@ -39,11 +41,23 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+        
         mMainLayout = (ViewGroup) findViewById(R.id.mainLayout);
         mLeftLayout = (ViewGroup) findViewById(R.id.leftLayout);
         mRightLayout = (ViewGroup) findViewById(R.id.rightLayout);
         
-        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+        Point screenSize = AppUtils.getScreenDimensions(this);
+        float drawerWidthPercentage = getResources().getFraction(R.dimen.drawer_width_percentage, 1, 1);
+        float minDrawerWidth = getResources().getDimension(R.dimen.drawer_width_min);
+        float maxDrawerWidth = getResources().getDimension(R.dimen.drawer_width_max);
+        
+        float drawerWidth = screenSize.x * drawerWidthPercentage;
+        drawerWidth = Math.max(drawerWidth, minDrawerWidth);
+        drawerWidth = Math.min(drawerWidth, maxDrawerWidth);
+        
+        mLeftLayout.getLayoutParams().width = (int)drawerWidth;
+        mRightLayout.getLayoutParams().width = (int)drawerWidth;
         
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.default_content_description,
                 R.string.default_content_description);
