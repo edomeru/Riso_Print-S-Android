@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * SideBarFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 package jp.co.alinkgroup.smartdeviceapp.view.fragment;
 
 import android.app.FragmentManager;
@@ -23,9 +29,6 @@ public class SideBarFragment extends BaseFragment implements View.OnClickListene
     public static final int STATE_HELP = 3;
     
     public int mState = STATE_PRINTERS;
-    
-    public SideBarFragment() {
-    }
     
     @Override
     public int getViewLayout() {

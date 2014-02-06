@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintJobsFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 package jp.co.alinkgroup.smartdeviceapp.view.fragment;
 
 import android.os.Bundle;
