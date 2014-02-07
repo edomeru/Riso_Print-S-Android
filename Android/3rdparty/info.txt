@@ -1,0 +1,7 @@
+android_page_curl (2014-02-07)
+	https://github.com/harism/android_page_curl
+	https://github.com/harism/android_page_curl/blob/master/LICENSE
+		Apache License v2.0
+	
+	https://github.com/harism/android_page_curl.git
+		master: 7a2c8f152bb4f1b0de3b1aa72b3cb79e1fe8e3bd
