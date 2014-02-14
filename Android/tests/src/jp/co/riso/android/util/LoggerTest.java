@@ -1,8 +1,8 @@
 package jp.co.riso.android.util;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
-public class LoggerTest extends TestCase {
+public class LoggerTest extends AndroidTestCase {
     
     protected void setUp() throws Exception {
         super.setUp();

@@ -16,10 +16,13 @@
 
 package fi.harism.curl;
 
+import java.lang.ref.Reference;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.os.Handler;
 
 /**
  * Storage class for page textures, blend colors and possibly some other values
@@ -38,6 +41,8 @@ public class CurlPage {
 	private Bitmap mTextureBack;
 	private Bitmap mTextureFront;
 	private boolean mTexturesChanged;
+	
+	private Object mHandler;
 
 	/**
 	 * Default constructor.
@@ -177,7 +182,7 @@ public class CurlPage {
 	/**
 	 * Setter for textures.
 	 */
-	public void setTexture(Bitmap texture, int side) {
+	public synchronized void setTexture(Bitmap texture, int side) {
 		if (texture == null) {
 			texture = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 			if (side == SIDE_BACK) {
@@ -207,5 +212,9 @@ public class CurlPage {
 		}
 		mTexturesChanged = true;
 	}
-
+	
+	public Object createNewHandler() {
+	    mHandler = new Object();
+	    return mHandler;
+	}
 }

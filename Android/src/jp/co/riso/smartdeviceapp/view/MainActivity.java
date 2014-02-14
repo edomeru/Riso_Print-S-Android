@@ -7,6 +7,8 @@
  */
 package jp.co.riso.smartdeviceapp.view;
 
+import com.radaee.pdf.Global;
+
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -37,6 +39,7 @@ public class MainActivity extends BaseActivity {
     
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
+        Global.Init(this);
         
         setContentView(R.layout.activity_main);
         
@@ -64,6 +67,7 @@ public class MainActivity extends BaseActivity {
         
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -150,11 +154,13 @@ public class MainActivity extends BaseActivity {
             
             if (newState == DrawerLayout.STATE_IDLE) {
                 if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
                 } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
                 } else {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 }
             }
             
