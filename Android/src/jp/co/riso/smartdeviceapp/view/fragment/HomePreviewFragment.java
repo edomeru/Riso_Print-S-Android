@@ -13,9 +13,10 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import jp.co.riso.android.smartdeviceap.controller.pdf.PDFFileManager;
-import jp.co.riso.android.smartdeviceap.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
+import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 
@@ -24,6 +25,8 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     public static final String KEY_CURRENT_PAGE = "current_page";
     
     PDFFileManager mPdfManager = null;
+    PrintSettings mPrintSettings;
+    
     PrintPreviewView mPrintPreviewView = null;
     View mOpenInView = null;
     
@@ -37,18 +40,17 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     }
     
     @Override
-    public void initializeView(View view, Bundle savedInstanceState) {
-        
-        Uri data = null;
-
-        if (getActivity().getIntent().getData() != null) {
-            data = getActivity().getIntent().getData();
-        }
-        
-        data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
-        
+    public void initializeFragment(Bundle savedInstanceState) {
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
+            Uri data = null;
+    
+            if (getActivity().getIntent().getData() != null) {
+                data = getActivity().getIntent().getData();
+            }
+            
+            data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
+        
             mPdfManager = new PDFFileManager(this);
             
             if (data != null) {
@@ -59,13 +61,23 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
             }
         }
         
+        // Initialize Print Settings if it has not been previously initialized yet
+        if (mPrintSettings == null) {
+            mPrintSettings = new PrintSettings();
+        }
+    }
+    
+    @Override
+    public void initializeView(View view, Bundle savedInstanceState) {
+        
         mPrintPreviewView = (PrintPreviewView)view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
+        mPrintPreviewView.setPrintSettings(mPrintSettings);
         
         mOpenInView = view.findViewById(R.id.openInView);
 
         // Hide appropriate views
-        if (data == null) {
+        if (mPdfManager.getPath() == null) {
             mPrintPreviewView.setVisibility(View.GONE);
         } else {
             mOpenInView.setVisibility(View.GONE);

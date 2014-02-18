@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
 import android.content.res.AssetManager;

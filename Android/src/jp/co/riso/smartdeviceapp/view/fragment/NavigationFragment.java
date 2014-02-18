@@ -36,6 +36,11 @@ public class NavigationFragment extends BaseFragment implements View.OnClickList
     }
     
     @Override
+    public void initializeFragment(Bundle savedInstanceState) {
+        
+    }
+    
+    @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
         view.findViewById(R.id.tempPrintersButton).setOnClickListener(this);

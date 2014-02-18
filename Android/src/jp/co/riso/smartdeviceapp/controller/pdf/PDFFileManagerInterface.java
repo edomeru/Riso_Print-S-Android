@@ -1,5 +1,5 @@
 
-package jp.co.riso.android.smartdeviceap.controller.pdf;
+package jp.co.riso.smartdeviceapp.controller.pdf;
 
 public interface PDFFileManagerInterface {
 

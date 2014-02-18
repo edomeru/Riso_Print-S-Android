@@ -6,7 +6,7 @@
  * Created by: a-LINK Group
  */
 
-package jp.co.riso.android.smartdeviceap.controller.pdf;
+package jp.co.riso.smartdeviceapp.controller.pdf;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;

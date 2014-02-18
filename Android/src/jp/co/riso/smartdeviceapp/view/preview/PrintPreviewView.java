@@ -10,8 +10,9 @@ package jp.co.riso.smartdeviceapp.view.preview;
 
 import java.lang.ref.WeakReference;
 
-import jp.co.riso.android.smartdeviceap.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 import android.content.Context;
@@ -29,6 +30,7 @@ public class PrintPreviewView extends ViewGroup {
     
     CurlView mCurlView;
     PDFFileManager mPdfManager;
+    PrintSettings mPrintSettings;
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -64,6 +66,13 @@ public class PrintPreviewView extends ViewGroup {
     
     public void setPdfManager(PDFFileManager pdfManager) {
         mPdfManager = pdfManager;
+        
+        // refresh curl view
+        refreshCurlView();
+    }
+    
+    public void setPrintSettings(PrintSettings printSettings) {
+        mPrintSettings = printSettings;
         
         // refresh curl view
         refreshCurlView();
