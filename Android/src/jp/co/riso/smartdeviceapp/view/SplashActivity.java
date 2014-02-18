@@ -11,7 +11,6 @@ package jp.co.riso.smartdeviceapp.view;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -23,8 +22,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.AndroidRuntimeException;
+import android.util.Log;
 
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback {
+    public static final String TAG = "SplashActivity";
+    
     // Messages
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
     
@@ -123,9 +125,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
         if (launchIntent == null) {
-            String err = "Cannot create Intent";
-            Logger.logError(this, err);
-            throw new NullPointerException(err);
+            Log.e(TAG, "Cannot create Intent");
+            throw new NullPointerException("Cannot create Intent");
         }
         
         Uri data = null;
@@ -152,12 +153,10 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         try {
             startActivity(launchIntent);
         } catch (ActivityNotFoundException e) {
-            String err = "Fatal Error: Intent MainActivity Not Found is not defined";
-            Logger.logError(this, err);
+            Log.e(TAG, "Fatal Error: Intent MainActivity Not Found is not defined");
             throw e;
         } catch (AndroidRuntimeException e) {
-            String err = "Fatal Error: Android runtime";
-            Logger.logError(this, err);
+            Log.e(TAG, "Fatal Error: Android runtime");
             throw e;
         }
         

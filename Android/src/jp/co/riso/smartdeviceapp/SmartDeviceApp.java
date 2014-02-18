@@ -8,7 +8,6 @@
 
 package jp.co.riso.smartdeviceapp;
 
-import jp.co.riso.android.util.Logger;
 import android.app.Application;
 import android.content.Context;
 
@@ -18,9 +17,6 @@ public class SmartDeviceApp extends Application {
     
     @Override
     public void onCreate() {
-        Logger.init(getApplicationContext());
-        Logger.setLogLevel(Logger.LOGLEVEL_DEBUG);
-        
         SmartDeviceApp.context = getApplicationContext();
     }
 
