@@ -14,10 +14,12 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.AndroidRuntimeException;
@@ -26,17 +28,40 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // Messages
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
     
-    public PauseableHandler mHandler;
+    public static final String KEY_DB_INITIALIZED = "database_initialized";
+
+    private PauseableHandler mHandler = null;
+    private DBInitTask mInitTask = null;
+    private boolean mDatabaseInitialized;
     
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
-        mHandler = new PauseableHandler(this);
+
+        if (mHandler == null) {
+            mHandler = new PauseableHandler(this);
+        }
+        
+        mDatabaseInitialized = false;
+        if (savedInstanceState != null) {
+            mDatabaseInitialized = savedInstanceState.getBoolean(KEY_DB_INITIALIZED, mDatabaseInitialized);
+        }
         
         if (isTaskRoot()) {
+            if (!mDatabaseInitialized) {
+                if (mInitTask == null) {
+                    mInitTask = new DBInitTask();
+                    mInitTask.execute();
+                }
+            }
+            
             setContentView(R.layout.activity_splash);
             
-            mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
+            if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
+                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
+            }
         } else {
+            mDatabaseInitialized = true; //initialized if splash activity is not task root
+            
             if (getIntent() != null) {
                 String action = getIntent().getAction();
                 
@@ -46,7 +71,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 }
             }
             
-            // Do nothing
+            // Do nothing if no action
             finish();
         }
     }
@@ -54,8 +79,6 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        
-        mHandler.removeCallbacksAndMessages(null);
     }
     
     @Override
@@ -80,6 +103,14 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         setIntent(intent);
     }
     
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        outState.putBoolean(KEY_DB_INITIALIZED, mDatabaseInitialized);
+    }
+    
+    
     // ================================================================================
     // Public Functions
     // ================================================================================
@@ -87,7 +118,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // ================================================================================
     // Private Functions
     // ================================================================================
-    
+
     private void runMainActivity() {
         Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
@@ -145,7 +176,38 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     @Override
     public void processMessage(Message message) {
         if (message.what == MESSAGE_RUN_MAINACTIVITY) {
-            runMainActivity();
+            if (mDatabaseInitialized) {
+                runMainActivity();
+            }
+        }
+    }
+
+    
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    
+    private class DBInitTask extends AsyncTask<Void, Void, Void> {
+        
+        @Override
+        protected Void doInBackground(Void... params) {
+            DatabaseManager manager = new DatabaseManager(SplashActivity.this);
+            manager.getWritableDatabase();
+            manager.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            
+            if (!SplashActivity.this.isFinishing()) {
+                if (mHandler.hasStoredMessage(MESSAGE_RUN_MAINACTIVITY)) {
+                    mDatabaseInitialized = true;
+                } else {
+                    runMainActivity();
+                }
+            }
         }
     }
 }

@@ -49,7 +49,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
                 data = getActivity().getIntent().getData();
             }
             
-            data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
+            //data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
         
             mPdfManager = new PDFFileManager(this);
             
