@@ -86,6 +86,12 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 	// One page is the default.
 	private int mViewMode = SHOW_ONE_PAGE;
+	
+    public static final int BIND_LEFT = 0;
+    public static final int BIND_RIGHT = 1;
+    public static final int BIND_TOP = 2;
+	
+	private int mBindPosition = BIND_LEFT;
 
 	/**
 	 * Default constructor.
@@ -259,15 +265,6 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			if ((mDragStartPos.x > rightRect.right)
 					|| (mDragStartPos.x < leftRect.left)) {
 				return false;
-			}
-
-			// First we make sure it's not over or below page. Pages are
-			// supposed to be same height so it really doesn't matter do we use
-			// left or right one.
-			if (mDragStartPos.y > rightRect.top) {
-				mDragStartPos.y = rightRect.top;
-			} else if (mDragStartPos.y < rightRect.bottom) {
-				mDragStartPos.y = rightRect.bottom;
 			}
 
 			// Then we have to make decisions for the user whether curl is going
