@@ -142,8 +142,6 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageLeft.setFlipTexture(true);
 		mPageRight.setFlipTexture(false);
 	}
-	
-	boolean initialRenderHack = false;
 
 	@Override
 	public void onDrawFrame() {
