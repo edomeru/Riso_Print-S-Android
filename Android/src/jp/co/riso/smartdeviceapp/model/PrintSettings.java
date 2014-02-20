@@ -37,7 +37,7 @@ public class PrintSettings {
         mImageQuality = ImageQuality.STANDARD;
         
         mSort = Sort.BETWEEN_PAGES;
-        mBookletBinding = BookletBinding.FOLD_AND_STAPLE;
+        mBookletBinding = BookletBinding.OFF;
         mBind = Bind.LEFT;
         mStaple = Staple.OFF;
         mPunch = Punch.OFF;
@@ -184,13 +184,30 @@ public class PrintSettings {
         THIN,
         THICK
     }
-    
+
+    // sizes from http://en.wikipedia.org/wiki/Paper_size
     public enum PaperSize {
-        A3,
-        A4,
-        LETTER,
-        LEGAL,
-        ENVELOPE
+        A3 (297.0f, 420.0f),
+        A4 (210.0f, 297.0f),
+        LETTER (215.9f, 279.4f),
+        LEGAL (215.9f, 355.6f),
+        ENVELOPE (110.0f, 220.0f);
+        
+        private final float mWidth; 
+        private final float mHeight;
+        
+        PaperSize(float width, float height) {
+            mWidth = width;
+            mHeight = height;
+        }
+        
+        public float getWidth() {
+            return mWidth;
+        }
+        
+        public float getHeight() {
+            return mHeight;
+        }
     }
     
     public enum Pagination {
@@ -245,4 +262,9 @@ public class PrintSettings {
         TRAY_3,
         BYPASS_TRAY
     }
+    
+
+    /* Paper Size */
+    // unit: millimeter
+    // orientation: portrait
 }

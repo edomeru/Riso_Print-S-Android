@@ -29,14 +29,13 @@ public class PrintPreviewView extends ViewGroup {
     public static final String TAG = "PrintPreviewView"; 
     
     CurlView mCurlView;
-    PDFFileManager mPdfManager;
-    PrintSettings mPrintSettings;
+    PDFFileManager mPdfManager = null;
+    PrintSettings mPrintSettings = new PrintSettings(); // Should not be null
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         initializeCurlView();
-        setPdfManager(null);
     }
 
     public PrintPreviewView(Context context, AttributeSet attrs) {
@@ -47,7 +46,6 @@ public class PrintPreviewView extends ViewGroup {
         super(context);
 
         initializeCurlView();
-        setPdfManager(null);
     }
     
     @Override
@@ -64,23 +62,77 @@ public class PrintPreviewView extends ViewGroup {
         return mCurlView;
     }
     
+    public void refreshCurlView() {
+        invalidate();
+    }
+    
     public void setPdfManager(PDFFileManager pdfManager) {
         mPdfManager = pdfManager;
-        
-        // refresh curl view
-        refreshCurlView();
     }
     
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = printSettings;
+    }
+    
+    public int getCurrentPage() {
+        return mCurlView.getCurrentIndex();
+    }
+    
+    public void setCurrentPage(int page) {
+        mCurlView.setCurrentIndex(page);
+    }
+    
+    // ================================================================================
+    // Protected methods
+    // ================================================================================
+    
+    protected int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
+        float ratioSrc = srcWidth / srcHeight;
+        float ratioDest = (float)destWidth / destHeight;
+
+        int newWidth = 0;
+        int newHeight = 0;
         
-        // refresh curl view
-        refreshCurlView();
+        if (ratioDest > ratioSrc) {
+            newHeight = destHeight;
+            newWidth = (int)(destHeight * ratioSrc);
+            
+        } else {
+            newWidth = destWidth;
+            newHeight = (int)(destWidth / ratioSrc);
+        }
+        
+        return new int[]{newWidth, newHeight};
     }
     
     // ================================================================================
     // Private methods
     // ================================================================================
+    
+    private boolean shouldDisplayLandscape() {
+        // will depend on PDF and pagination, always false for now
+        return false;
+    }
+    
+    private float getPaperDisplayWidth() {
+        float width = mPrintSettings.getPaperSize().getWidth();
+        
+        if (shouldDisplayLandscape()) {
+            width = mPrintSettings.getPaperSize().getHeight();
+        }
+        
+        return width;
+    }
+    
+    private float getPaperDisplayHeight() {
+        float height = mPrintSettings.getPaperSize().getHeight();
+        
+        if (shouldDisplayLandscape()) {
+            height = mPrintSettings.getPaperSize().getWidth();
+        }
+        
+        return height;
+    }
     
     private void initializeCurlView() {
         mCurlView = new CurlView(getContext());
@@ -97,12 +149,24 @@ public class PrintPreviewView extends ViewGroup {
     private void fitCurlView(int l, int t, int r, int b) {
         mCurlView.layout(l, t, r, b);
         
+        int w = r - l;
+        int h = b - t;
+
         // Compute margins based on the paper size in preview settings.
-        mCurlView.setMargins(0.2f, 0.2f, 0.2f, 0.2f);
-    }
-    
-    private void refreshCurlView() {
-        invalidate();
+        float paperWidth = getPaperDisplayWidth();
+        float paperHeight = getPaperDisplayHeight();
+
+        if (mPrintSettings.getBookletBinding() == PrintSettings.BookletBinding.FOLD_AND_STAPLE
+                || mPrintSettings.isDuplex()) {
+            paperWidth *= 2.0f;
+        }
+        
+        int newDimensions[] = getFitToAspectRatioSize(paperWidth, paperHeight, w, h);
+        
+        float lrMargin  = ((w - newDimensions[0]) / (w * 2.0f));
+        float tbMargin  = ((h - newDimensions[1]) / (h * 2.0f));
+        
+        mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin);
     }
     
     // ================================================================================
@@ -172,7 +236,6 @@ public class PrintPreviewView extends ViewGroup {
                 Paint paint = new Paint();
                 paint.setColor(Color.RED);
                 canvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()), new Rect(0, 0, mFrontBmp.getWidth(), mFrontBmp.getHeight()), paint);
-                canvas.drawText("THE CURRENT PAGE: " + mIndex, mFrontBmp.getWidth() / 2, mFrontBmp.getHeight() / 2, paint);
             } else {
             }
             

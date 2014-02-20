@@ -31,7 +31,6 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     View mOpenInView = null;
     
     public HomePreviewFragment() {
-        setRetainInstance(true);
     }
     
     @Override
@@ -88,6 +87,8 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         
         if (savedInstanceState != null) {
             // Restore pages.. state etc.
+            int page = savedInstanceState.getInt(KEY_CURRENT_PAGE);
+            mPrintPreviewView.setCurrentPage(page);
         }
     }
     
@@ -108,6 +109,8 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        
+        outState.putInt(KEY_CURRENT_PAGE, mPrintPreviewView.getCurrentPage());
     }
     
     @Override
@@ -131,7 +134,10 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
 
     @Override
     public void onFileOpenedResult(int status) {
-        mPdfManager.preBuffer();
+        if (mPrintPreviewView != null) {
+            mPrintPreviewView.refreshCurlView();
+            mPrintPreviewView.setVisibility(View.VISIBLE);
+        }
         
         if (getActivity() != null) {
             Toast.makeText(getActivity(), "file open status: " + status + "\n page count: " + mPdfManager.getPageCount(), Toast.LENGTH_SHORT).show();
@@ -140,10 +146,6 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
 
     @Override
     public void onPreBufferFinished() {
-        if (mPrintPreviewView != null) {
-            mPrintPreviewView.setPdfManager(mPdfManager);
-            mPrintPreviewView.setVisibility(View.VISIBLE);
-        }
     }
     
     
