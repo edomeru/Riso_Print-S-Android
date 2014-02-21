@@ -7,12 +7,13 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
@@ -30,6 +31,10 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     PrintPreviewView mPrintPreviewView = null;
     View mOpenInView = null;
     
+    int mCurrentPage = 0;
+    
+    private LruCache<String, Bitmap> mBmpCache;
+    
     public HomePreviewFragment() {
     }
     
@@ -40,6 +45,9 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        
+        setRetainInstance(true);
+        
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
             Uri data = null;
@@ -64,14 +72,31 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         if (mPrintSettings == null) {
             mPrintSettings = new PrintSettings();
         }
+        
+        if (mBmpCache == null) {
+            int cacheSize = 16 * 1024 * 1024; // 16MB
+            mBmpCache = new LruCache<String, Bitmap>(cacheSize) {
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getByteCount();
+                }
+            };
+        }
+
+        if (savedInstanceState != null) {
+            mCurrentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0);
+        }
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        
+
         mPrintPreviewView = (PrintPreviewView)view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
         mPrintPreviewView.setPrintSettings(mPrintSettings);
+        mPrintPreviewView.setBmpCache(mBmpCache);
+        if (mCurrentPage != 0) {
+            mPrintPreviewView.setCurrentPage(mCurrentPage);
+        }
         
         mOpenInView = view.findViewById(R.id.openInView);
 
@@ -80,21 +105,17 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
             mPrintPreviewView.setVisibility(View.GONE);
         } else {
             mOpenInView.setVisibility(View.GONE);
-            if (!mPdfManager.isOpenable()) {
+            if (!mPdfManager.isInitialized()) {
                 mPrintPreviewView.setVisibility(View.GONE);
             }
-        }
-        
-        if (savedInstanceState != null) {
-            // Restore pages.. state etc.
-            int page = savedInstanceState.getInt(KEY_CURRENT_PAGE);
-            mPrintPreviewView.setCurrentPage(page);
         }
     }
     
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        mCurrentPage = mPrintPreviewView.getCurrentPage();
         mPrintPreviewView = null;
     }
 
@@ -109,8 +130,9 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        
-        outState.putInt(KEY_CURRENT_PAGE, mPrintPreviewView.getCurrentPage());
+
+        mCurrentPage = mPrintPreviewView.getCurrentPage();
+        outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
     }
     
     @Override
@@ -133,20 +155,29 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     // ================================================================================
 
     @Override
-    public void onFileOpenedResult(int status) {
-        if (mPrintPreviewView != null) {
-            mPrintPreviewView.refreshCurlView();
-            mPrintPreviewView.setVisibility(View.VISIBLE);
+    public void onFileInitialized(int status) {
+        switch (status) {
+            case PDFFileManager.PDF_OK:
+                if (mPrintPreviewView != null) {
+                    mPrintPreviewView.refreshCurlView();
+                    mPrintPreviewView.setVisibility(View.VISIBLE);
+                }
+                if (mOpenInView != null) {
+                    mOpenInView.setVisibility(View.GONE);
+                }
+                
+                break;
+            case PDFFileManager.PDF_ENCRYPTED:
+                break;
+            case PDFFileManager.PDF_UNKNOWN_ENCRYPTION:
+                break;
+            case PDFFileManager.PDF_DAMAGED:
+                break;
+            case PDFFileManager.PDF_INVALID_PATH:
+                break;
+            default:
+                break;
         }
         
-        if (getActivity() != null) {
-            Toast.makeText(getActivity(), "file open status: " + status + "\n page count: " + mPdfManager.getPageCount(), Toast.LENGTH_SHORT).show();
-        }
     }
-
-    @Override
-    public void onPreBufferFinished() {
-    }
-    
-    
 }

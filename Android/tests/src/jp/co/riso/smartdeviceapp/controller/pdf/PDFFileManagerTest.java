@@ -74,24 +74,24 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     //================================================================================
 
     public void testIsOpenable() {
-        assertFalse(mPdfManager.isOpenable());
+        assertFalse(mPdfManager.isInitialized());
         
         mPdfManager.setPath(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
-        assertTrue(mPdfManager.isOpenable());
+        assertTrue(mPdfManager.isInitialized());
         
         mPdfManager.closeDocument();
-        assertTrue(mPdfManager.isOpenable());
+        assertTrue(mPdfManager.isInitialized());
     }
 
     public void testIsOpen_invalidPath() {
-        assertFalse(mPdfManager.isOpenable());
+        assertFalse(mPdfManager.isInitialized());
         
         mPdfManager.setPath(null);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
-        assertFalse(mPdfManager.isOpenable());
+        assertFalse(mPdfManager.isInitialized());
     }
     
     //================================================================================
@@ -396,11 +396,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     }
 
     @Override
-    public void onFileOpenedResult(int status) {
+    public void onFileInitialized(int status) {
         mStatus = status;
-    }
-
-    @Override
-    public void onPreBufferFinished() {
     }
 }

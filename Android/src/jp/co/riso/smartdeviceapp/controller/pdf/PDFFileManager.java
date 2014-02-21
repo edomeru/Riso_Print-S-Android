@@ -9,12 +9,10 @@
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
 import java.lang.ref.WeakReference;
-import java.util.Locale;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.util.LruCache;
 
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Global;
@@ -30,14 +28,11 @@ public class PDFFileManager {
     private String mPath;
     private WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
-    PDFOpenTask mOpenTask = null;
-    PDFPreBufferTask mPreBufferTask = null;
+    PDFInitTask mInitTask = null;
     
-    private volatile boolean mIsOpenable;
+    private volatile boolean mIsInitialized;
     private volatile int mPageCount;
-    
-    private LruCache<String, Bitmap> bmpCache;
-    
+        
     public static final int PDF_OK = 0;
     public static final int PDF_ENCRYPTED = -1;
     public static final int PDF_UNKNOWN_ENCRYPTION = -2;
@@ -48,13 +43,6 @@ public class PDFFileManager {
         mDocument = new Document();
         mPath = null;
         mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
-        
-        int cacheSize = 16 * 1024 * 1024; // 4MiB
-        bmpCache = new LruCache<String, Bitmap>(cacheSize) {
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
-            }
-        };
     }
     
     public String getPath() {
@@ -62,33 +50,24 @@ public class PDFFileManager {
     }
     
     public void setPath(String path) {
-        mIsOpenable = false;
+        mIsInitialized = false;
         mPath = path;
     }
     
-    public void preBuffer() {
-        if (mPreBufferTask != null) {
-            mPreBufferTask.cancel(true);            
-        }
-
-        mPreBufferTask = new PDFPreBufferTask();
-        mPreBufferTask.execute();
-    }
-    
     public void openAsync() {
-        mIsOpenable = false;
+        mIsInitialized = false;
         mPageCount = 0;
         
-        if (mOpenTask != null) {
-            mOpenTask.cancel(true);            
+        if (mInitTask != null) {
+            mInitTask.cancel(true);            
         }
 
-        mOpenTask = new PDFOpenTask();
-        mOpenTask.execute();
+        mInitTask = new PDFInitTask();
+        mInitTask.execute();
     }
     
-    public boolean isOpenable() {
-        return mIsOpenable;
+    public boolean isInitialized() {
+        return mIsInitialized;
     }
     
     public int getPageCount() {
@@ -96,61 +75,42 @@ public class PDFFileManager {
     }
     
     public synchronized Bitmap getPageBitmap(int pageNo) {
-        if (!isOpenable()) {
+        if (!isInitialized()) {
             return null;
         }
         
         if (pageNo < 0 || pageNo >= getPageCount()) {
             return null;
         }
-        
-        String key = String.format(Locale.getDefault(), "%04d%s", pageNo, mPath);
-        
-        Bitmap bitmap = bmpCache.get(key);
-        
-        if (bitmap == null) {
-            if (CONST_KEEP_DOCUMENT_CLOSED) {
-                mDocument.Open(mPath, null);
-            } else {
-                // For temporary fix of bug
-            }
-            
-            Page page = mDocument.GetPage(pageNo);
-            
-            float pageWidth = mDocument.GetPageWidth(pageNo);
-            float pageHeight = mDocument.GetPageHeight(pageNo);
-            
-            Matrix mat = new Matrix(1, -1, 0, pageHeight);
-            
-            bitmap = Bitmap.createBitmap((int)pageWidth, (int)pageHeight, Bitmap.Config.ARGB_8888);
-            bitmap.eraseColor(Color.WHITE);
-            
-            if (page.RenderToBmp(bitmap, mat)) {
-                bmpCache.put(key, bitmap);
-            } else {
-                bitmap.recycle();
-                bitmap = null;
-            }
-            /*
-            int dib = Global.dibGet(0, (int)pageWidth, (int)pageHeight);
-            
-            page.Render_Normal(dib, mat);
-            
-            Global.dibFree(dib);
-            */
-            mat.Destroy();
-            
-            page.Close();
-            Global.RemoveTmp();
-            
-            if (CONST_KEEP_DOCUMENT_CLOSED) {
-                mDocument.Close();
-            }
-        } else {
-            //saveBitmapToCache(bitmap, pageNo);
-            bmpCache.put(key, bitmap);
-        }
 
+        if (CONST_KEEP_DOCUMENT_CLOSED) {
+            mDocument.Open(mPath, null);
+        } else {
+            // For temporary fix of bug
+        }
+        
+        Page page = mDocument.GetPage(pageNo);
+        
+        float pageWidth = mDocument.GetPageWidth(pageNo);
+        float pageHeight = mDocument.GetPageHeight(pageNo);
+        
+        Matrix mat = new Matrix(1, -1, 0, pageHeight);
+        
+        Bitmap bitmap = Bitmap.createBitmap((int)pageWidth, (int)pageHeight, Bitmap.Config.ARGB_8888);
+        bitmap.eraseColor(Color.WHITE);
+        
+        if (!page.RenderToBmp(bitmap, mat)) {
+            bitmap.recycle();
+            bitmap = null;
+        }
+        
+        mat.Destroy();
+        page.Close();
+        Global.RemoveTmp();
+        
+        if (CONST_KEEP_DOCUMENT_CLOSED) {
+            mDocument.Close();
+        }
         
         return bitmap;
     }
@@ -171,7 +131,7 @@ public class PDFFileManager {
         int status = mDocument.Open(mPath, null);
 
         if (status == PDF_OK) {
-            mIsOpenable = true;
+            mIsInitialized = true;
             mPageCount = mDocument.GetPageCount();
         }
         
@@ -188,7 +148,7 @@ public class PDFFileManager {
     // Internal classes
     //================================================================================
 
-    class PDFOpenTask extends AsyncTask<Void, Void, Integer> {
+    class PDFInitTask extends AsyncTask<Void, Void, Integer> {
 
         @Override
         protected Integer doInBackground(Void... params) {
@@ -206,29 +166,8 @@ public class PDFFileManager {
             super.onPostExecute(result);
             
             if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                mInterfaceRef.get().onFileOpenedResult(result);
+                mInterfaceRef.get().onFileInitialized(result);
             }
         }
     }
-
-    class PDFPreBufferTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            getPageBitmap(0);
-            getPageBitmap(1);
-            
-            return null;
-        }
-        
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            
-            if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                mInterfaceRef.get().onPreBufferFinished();
-            }
-        }
-    }
-    
 }

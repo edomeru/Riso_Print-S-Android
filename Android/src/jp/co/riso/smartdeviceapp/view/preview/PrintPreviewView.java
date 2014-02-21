@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.preview;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
@@ -23,6 +24,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.LruCache;
 import android.view.ViewGroup;
 
 public class PrintPreviewView extends ViewGroup {
@@ -31,6 +33,9 @@ public class PrintPreviewView extends ViewGroup {
     CurlView mCurlView;
     PDFFileManager mPdfManager = null;
     PrintSettings mPrintSettings = new PrintSettings(); // Should not be null
+    LruCache<String, Bitmap> mBmpCache = null;
+    
+    private static final String FORMAT_CACHE_KEY = "%s-%d-%d"; // path; page; side
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -74,6 +79,10 @@ public class PrintPreviewView extends ViewGroup {
         mPrintSettings = printSettings;
     }
     
+    public void setBmpCache(LruCache<String, Bitmap> bmpCache) {
+        mBmpCache = bmpCache;
+    }
+    
     public int getCurrentPage() {
         return mCurlView.getCurrentIndex();
     }
@@ -103,6 +112,35 @@ public class PrintPreviewView extends ViewGroup {
         }
         
         return new int[]{newWidth, newHeight};
+    }
+    
+    protected int[] getPageDimensions(int screenWidth, int screenHeight) {
+        // Compute margins based on the paper size in preview settings.
+        float paperWidth = getPaperDisplayWidth();
+        float paperHeight = getPaperDisplayHeight();
+
+        if (mPrintSettings.getBookletBinding() == PrintSettings.BookletBinding.FOLD_AND_STAPLE
+                || mPrintSettings.isDuplex()) {
+            paperWidth *= 2.0f;
+        }
+        
+        return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
+    }
+    
+    protected String getCacheKey(int index, int side) {
+        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side);
+    }
+    
+    protected Bitmap[] getBitmapsFromCacheForPage(int index) {
+        Bitmap front = null;
+        Bitmap back = null;
+        
+        if (mBmpCache != null) {
+            front = mBmpCache.get(getCacheKey(index, CurlPage.SIDE_FRONT));
+            back = mBmpCache.get(getCacheKey(index, CurlPage.SIDE_BACK));
+        }
+        
+        return new Bitmap[] {front, back};
     }
     
     // ================================================================================
@@ -151,23 +189,22 @@ public class PrintPreviewView extends ViewGroup {
         
         int w = r - l;
         int h = b - t;
-
-        // Compute margins based on the paper size in preview settings.
-        float paperWidth = getPaperDisplayWidth();
-        float paperHeight = getPaperDisplayHeight();
-
-        if (mPrintSettings.getBookletBinding() == PrintSettings.BookletBinding.FOLD_AND_STAPLE
-                || mPrintSettings.isDuplex()) {
-            paperWidth *= 2.0f;
-        }
         
-        int newDimensions[] = getFitToAspectRatioSize(paperWidth, paperHeight, w, h);
+        int newDimensions[] = getPageDimensions(w, h);
         
         float lrMargin  = ((w - newDimensions[0]) / (w * 2.0f));
         float tbMargin  = ((h - newDimensions[1]) / (h * 2.0f));
         
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin);
     }
+    
+    private static void drawBmpOnBmp(Bitmap target, Bitmap dest) {
+        Canvas canvas = new Canvas(dest);
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        canvas.drawBitmap(target, new Rect(0, 0, target.getWidth(), target.getHeight()), new Rect(0, 0, dest.getWidth(), dest.getHeight()), paint);
+    }
+    
     
     // ================================================================================
     // Internal Classes
@@ -186,16 +223,27 @@ public class PrintPreviewView extends ViewGroup {
         
         @Override
         public void updatePage(CurlPage page, int width, int height, int index) {
+            Bitmap cachedPage[] = getBitmapsFromCacheForPage(index);
+            
             Bitmap front = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             front.eraseColor(Color.WHITE);
             
             Bitmap back = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             back.eraseColor(Color.WHITE);
-
+            
+            if (cachedPage[0] != null) {
+                PrintPreviewView.drawBmpOnBmp(cachedPage[0], front);
+            }
+            if (cachedPage[1] != null) {
+                PrintPreviewView.drawBmpOnBmp(cachedPage[1], front);
+            }
+            
             page.setTexture(front, CurlPage.SIDE_FRONT);
             page.setTexture(back, CurlPage.SIDE_BACK);
             
-            new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
+            if (cachedPage[0] == null || cachedPage[1] == null) {
+                new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
+            }
         }
     }
 
@@ -225,19 +273,15 @@ public class PrintPreviewView extends ViewGroup {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Bitmap bmp = mPdfManager.getPageBitmap(mIndex);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            Bitmap front = mPdfManager.getPageBitmap(mIndex);
+            Bitmap back = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+            
+            if (mBmpCache != null) {
+                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_FRONT), front);
+                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_BACK), back);
             }
-            if (bmp != null) {
-                Canvas canvas = new Canvas(mFrontBmp);
-                Paint paint = new Paint();
-                paint.setColor(Color.RED);
-                canvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()), new Rect(0, 0, mFrontBmp.getWidth(), mFrontBmp.getHeight()), paint);
-            } else {
-            }
+
+            PrintPreviewView.drawBmpOnBmp(front, mFrontBmp);
             
             return null;
         }
