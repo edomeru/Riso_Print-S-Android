@@ -17,30 +17,44 @@ import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.LruCache;
-import android.view.ViewGroup;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
-public class PrintPreviewView extends ViewGroup {
+public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener {
     public static final String TAG = "PrintPreviewView"; 
     
     CurlView mCurlView;
     PDFFileManager mPdfManager = null;
+    PDFPageProvider mPdfPageProvider = new PDFPageProvider();
     PrintSettings mPrintSettings = new PrintSettings(); // Should not be null
     LruCache<String, Bitmap> mBmpCache = null;
     
+    LinearLayout mPageControlLayout;
+    SeekBar mSeekBar;
+    TextView mPageLabel;
+    
     private static final String FORMAT_CACHE_KEY = "%s-%d-%d"; // path; page; side
+    private static final String FORMAT_PAGE_STATUS = "PAGE %d / %d";
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         initializeCurlView();
+        initializePageControls();
     }
 
     public PrintPreviewView(Context context, AttributeSet attrs) {
@@ -51,11 +65,13 @@ public class PrintPreviewView extends ViewGroup {
         super(context);
 
         initializeCurlView();
+        initializePageControls();
     }
     
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        //compute of mCurlView here
+        super.onLayout(changed, l, t, r, b);
+        
         fitCurlView(l, t, r, b);
     }
     
@@ -67,12 +83,18 @@ public class PrintPreviewView extends ViewGroup {
         return mCurlView;
     }
     
-    public void refreshCurlView() {
+    public void refreshView() {
         invalidate();
+        
+        updateSeekBar();
+        updatePageLabel();
     }
     
     public void setPdfManager(PDFFileManager pdfManager) {
         mPdfManager = pdfManager;
+        
+        updateSeekBar();
+        updatePageLabel();
     }
     
     public void setPrintSettings(PrintSettings printSettings) {
@@ -175,27 +197,95 @@ public class PrintPreviewView extends ViewGroup {
     private void initializeCurlView() {
         mCurlView = new CurlView(getContext());
         mCurlView.setMargins(0, 0, 0, 0);
-        mCurlView.setPageProvider(new PDFPageProvider());
+        mCurlView.setPageProvider(mPdfPageProvider);
         mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
         mCurlView.setAllowLastPageCurl(false);
         mCurlView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         mCurlView.setRenderLeftPage(false);
         
-        addView(mCurlView);
+        addView(mCurlView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    }
+    
+    private void initializePageControls() {
+        mSeekBar = new SeekBar(getContext());
+        mSeekBar.setOnSeekBarChangeListener(this);
+        
+        mPageLabel = new TextView(getContext());
+        mPageLabel.setTextColor(getResources().getColor(R.color.theme_dark_1));
+        mPageLabel.setGravity(Gravity.CENTER);
+        
+        updateSeekBar();
+        updatePageLabel();
+        
+        mPageControlLayout = new LinearLayout(getContext());
+        
+        boolean isTablet = getResources().getBoolean(R.bool.is_tablet);
+        boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        
+        if (isLandscape && !isTablet) {
+            mPageControlLayout.setOrientation(LinearLayout.HORIZONTAL);
+            
+            int width = getResources().getDimensionPixelSize(R.dimen.preview_controls_text_width);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, LayoutParams.WRAP_CONTENT);
+            params.weight = 0.0f;
+            params.gravity = Gravity.CENTER_VERTICAL;
+            mPageControlLayout.addView(mPageLabel, params);
+            
+            params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER_VERTICAL;
+            params.weight = 1.0f;
+            mPageControlLayout.addView(mSeekBar, params);
+        } else {
+            
+            mPageControlLayout.setOrientation(LinearLayout.VERTICAL);
+            mPageControlLayout.addView(mSeekBar, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER_HORIZONTAL;
+            mPageControlLayout.addView(mPageLabel, params);
+        }
+
+        FrameLayout.LayoutParams curlViewParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        curlViewParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_side);
+        curlViewParams.rightMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_side);
+        curlViewParams.bottomMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_bottom);
+        curlViewParams.gravity = Gravity.BOTTOM;
+        addView(mPageControlLayout, curlViewParams);
+    }
+    
+    private void updateSeekBar() {
+        int currentPage = getCurrentPage();
+        int pageCount = mPdfPageProvider.getPageCount();
+        
+        mSeekBar.setMax(0);
+        mSeekBar.setMax(pageCount);
+        mSeekBar.setProgress(currentPage);
+    }
+    
+    private void updatePageLabel() {
+        int currentPage = getCurrentPage() + 1;
+        int pageCount = mPdfPageProvider.getPageCount();
+        mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_PAGE_STATUS, currentPage, pageCount));
     }
     
     private void fitCurlView(int l, int t, int r, int b) {
-        mCurlView.layout(l, t, r, b);
-        
         int w = r - l;
         int h = b - t;
         
-        int newDimensions[] = getPageDimensions(w, h);
+        int marginSize = getResources().getDimensionPixelSize(R.dimen.preview_view_margin);
         
-        float lrMargin  = ((w - newDimensions[0]) / (w * 2.0f));
-        float tbMargin  = ((h - newDimensions[1]) / (h * 2.0f));
+        MarginLayoutParams params = (MarginLayoutParams) mPageControlLayout.getLayoutParams();
+        int pageControlSize = mPageControlLayout.getHeight() + params.bottomMargin;
         
-        mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin);
+        int newDimensions[] = getPageDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
+        
+        float lrMargin = ((w - newDimensions[0]) / (w * 2.0f));
+        float tbMargin = (((h - pageControlSize) - newDimensions[1]) / (h * 2.0f));
+        
+        lrMargin += (marginSize / (float)w);
+        tbMargin += (marginSize / (float)h);
+        
+        mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float)h));
     }
     
     private static void drawBmpOnBmp(Bitmap target, Bitmap dest) {
@@ -204,6 +294,27 @@ public class PrintPreviewView extends ViewGroup {
         paint.setColor(Color.RED);
         canvas.drawBitmap(target, new Rect(0, 0, target.getWidth(), target.getHeight()), new Rect(0, 0, dest.getWidth(), dest.getHeight()), paint);
     }
+
+    // ================================================================================
+    // INTERFACE - OnSeekBarChangeListener
+    // ================================================================================
+    
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            mCurlView.setCurrentIndex(progress);
+            updatePageLabel();
+        }
+    }
+    
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+    
     
     
     // ================================================================================
@@ -244,6 +355,23 @@ public class PrintPreviewView extends ViewGroup {
             if (cachedPage[0] == null || cachedPage[1] == null) {
                 new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
             }
+        }
+
+        @Override
+        public void indexChanged(int index)
+        {
+            updateSeekBar();
+            
+            Handler mainHandler = new Handler(getContext().getMainLooper());
+
+            Runnable myRunnable = new Runnable() {
+                
+                @Override
+                public void run() {
+                    updatePageLabel();
+                }
+            };
+            mainHandler.post(myRunnable);
         }
     }
 

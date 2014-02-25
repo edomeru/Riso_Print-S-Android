@@ -93,12 +93,12 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
         0f, 0f, 0f, 0f,
     };
 
-    float mBorderSize = 0.02f;
-
     private FloatBuffer mColorBuffer;
     private ShortBuffer mShadowIndexBuffer;
-    
-	/**
+
+    private float mDropShadowSize = 0.02f;
+
+    /**
 	 * Basic constructor.
 	 */
 	public CurlRenderer(CurlRenderer.Observer observer) {
@@ -109,6 +109,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		
 		initializeShadowProperties();
 	}
+    
+    public void setDropShadowSize(float dropShadowSize) {
+        mDropShadowSize = dropShadowSize;
+    }
 
 	/**
 	 * Adds CurlMesh to this renderer.
@@ -167,10 +171,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
             rect.left, rect.bottom, 0.0f,
             rect.right, rect.bottom, 0.0f,
             rect.right, rect.top, 0.0f,
-            rect.left - mBorderSize, rect.top + mBorderSize, 0.0f,
-            rect.left - mBorderSize, rect.bottom - mBorderSize, 0.0f,
-            rect.right + mBorderSize, rect.bottom - mBorderSize, 0.0f,
-            rect.right + mBorderSize, rect.top + mBorderSize, 0.0f
+            rect.left - mDropShadowSize, rect.top + mDropShadowSize, 0.0f,
+            rect.left - mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
+            rect.right + mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
+            rect.right + mDropShadowSize, rect.top + mDropShadowSize, 0.0f
         };
         
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);

@@ -16,6 +16,7 @@
 
 package fi.harism.curl;
 
+import jp.co.riso.smartdeviceapp.R;
 import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -129,6 +130,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	 */
 	private void init(Context ctx) {
 		mRenderer = new CurlRenderer(this);
+		
+        float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
+		mRenderer.setDropShadowSize(percentage);
+		
 		setRenderer(mRenderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		setOnTouchListener(this);
@@ -166,6 +171,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				// If we were curling left page update current index.
 				if (mCurlState == CURL_LEFT) {
 					--mCurrentIndex;
+					
+                    mPageProvider.indexChanged(mCurrentIndex);
 				}
 			} else if (mAnimationTargetEvent == SET_CURL_TO_LEFT) {
 				// Switch curled page to left.
@@ -183,6 +190,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				// If we were curling right page update current index.
 				if (mCurlState == CURL_RIGHT) {
 					++mCurrentIndex;
+					
+                    mPageProvider.indexChanged(mCurrentIndex);
 				}
 			}
 			mCurlState = CURL_NONE;
@@ -797,6 +806,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		 * Index is a number between 0 and getBitmapCount() - 1.
 		 */
 		public void updatePage(CurlPage page, int width, int height, int index);
+		
+        public void indexChanged(int index);
 	}
 
 	/**

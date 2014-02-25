@@ -10,7 +10,6 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.TextView;
@@ -55,8 +54,6 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-            
-            data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
         
             mPdfManager = new PDFFileManager(this);
             
@@ -98,6 +95,10 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
             mPrintPreviewView.setCurrentPage(mCurrentPage);
         }
         
+        if (mPdfManager.isInitialized()) {
+            mPrintPreviewView.refreshView();
+        }
+        
         mOpenInView = view.findViewById(R.id.openInView);
 
         // Hide appropriate views
@@ -137,16 +138,17 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     
     @Override
     public void onResume() {
-        // The activity must call the GL surface view's onResume() on activity onResume().
         super.onResume();
+        
+        // The activity must call the GL surface view's onResume() on activity onResume().
         mPrintPreviewView.getCurlView().onResume();
     }
 
     @Override
-    public void onPause()
-    {
-        // The activity must call the GL surface view's onPause() on activity onPause().
+    public void onPause() {
         super.onPause();
+        
+        // The activity must call the GL surface view's onPause() on activity onPause().
         mPrintPreviewView.getCurlView().onPause();
     }
 
@@ -159,7 +161,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         switch (status) {
             case PDFFileManager.PDF_OK:
                 if (mPrintPreviewView != null) {
-                    mPrintPreviewView.refreshCurlView();
+                    mPrintPreviewView.refreshView();
                     mPrintPreviewView.setVisibility(View.VISIBLE);
                 }
                 if (mOpenInView != null) {
