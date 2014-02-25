@@ -72,6 +72,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         
+        // Re-adjust the margin of the CurlView
         fitCurlView(l, t, r, b);
     }
     
@@ -398,18 +399,24 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             mBackBmp = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             mBackBmp.eraseColor(Color.WHITE);
         }
-
-        @Override
-        protected Void doInBackground(Void... params) {
+        
+        private synchronized Bitmap[] getRenderBitmaps() {
             Bitmap front = mPdfManager.getPageBitmap(mIndex);
             Bitmap back = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             
+            return new Bitmap[] { front, back };
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Bitmap renderBmps[] = getRenderBitmaps();
+            
             if (mBmpCache != null) {
-                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_FRONT), front);
-                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_BACK), back);
+                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_FRONT), renderBmps[0]);
+                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_BACK), renderBmps[1]);
             }
 
-            PrintPreviewView.drawBmpOnBmp(front, mFrontBmp);
+            PrintPreviewView.drawBmpOnBmp(renderBmps[0], mFrontBmp);
             
             return null;
         }

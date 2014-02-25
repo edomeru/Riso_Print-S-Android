@@ -249,7 +249,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     
     public void testOpenAsync_Valid() {
         mPdfManager.setPath(mPdfPath);
-        mPdfManager.openAsync();
+        mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
         // assume AsyncTask will be finished in 2 seconds.
@@ -266,7 +266,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     
     public void testOpenAsync_NullPdfPath() {
         mPdfManager.setPath(null);
-        mPdfManager.openAsync();
+        mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
         // assume AsyncTask will be finished in 2 seconds.
@@ -283,7 +283,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     
     public void testOpenAsync_EmptyPdfPath() {
         mPdfManager.setPath("");
-        mPdfManager.openAsync();
+        mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
         // assume AsyncTask will be finished in 2 seconds.
@@ -300,7 +300,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     
     public void testOpenAsync_InvalidPdfPath() {
         mPdfManager.setPath("not_a_valid_path");
-        mPdfManager.openAsync();
+        mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
         // assume AsyncTask will be finished in 2 seconds.
@@ -318,8 +318,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     public void testOpenAsync_Consecutive() {
         mPdfManager.setPath(mLargePdfPath);
         
-        mPdfManager.openAsync();
-        mPdfManager.openAsync();
+        mPdfManager.initializeAsync();
+        mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
         // assume AsyncTask will be finished in 2 seconds.

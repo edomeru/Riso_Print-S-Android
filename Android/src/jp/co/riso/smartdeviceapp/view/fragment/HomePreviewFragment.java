@@ -61,7 +61,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
                 mPdfManager.setPath(data.getPath());
                 
                 // Automatically open asynchronously
-                mPdfManager.openAsync();
+                mPdfManager.initializeAsync();
             }
         }
         
@@ -91,16 +91,16 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         mPrintPreviewView.setPdfManager(mPdfManager);
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
+        
         if (mCurrentPage != 0) {
             mPrintPreviewView.setCurrentPage(mCurrentPage);
         }
-        
         if (mPdfManager.isInitialized()) {
             mPrintPreviewView.refreshView();
         }
         
         mOpenInView = view.findViewById(R.id.openInView);
-
+        
         // Hide appropriate views
         if (mPdfManager.getPath() == null) {
             mPrintPreviewView.setVisibility(View.GONE);
