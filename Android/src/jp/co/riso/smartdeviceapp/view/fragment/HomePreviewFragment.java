@@ -54,7 +54,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-        
+            
             mPdfManager = new PDFFileManager(this);
             
             if (data != null) {

@@ -141,10 +141,19 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         // Compute margins based on the paper size in preview settings.
         float paperWidth = getPaperDisplayWidth();
         float paperHeight = getPaperDisplayHeight();
-
+        
+        /*
         if (mPrintSettings.getBookletBinding() == PrintSettings.BookletBinding.FOLD_AND_STAPLE
                 || mPrintSettings.isDuplex()) {
             paperWidth *= 2.0f;
+        }
+        */
+        if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
+            if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
+                paperHeight *= 2.0f;
+            } else {
+                paperWidth *= 2.0f;                
+            }
         }
         
         return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
@@ -200,6 +209,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         mCurlView.setMargins(0, 0, 0, 0);
         mCurlView.setPageProvider(mPdfPageProvider);
         mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
+        mCurlView.setBindPosition(CurlView.BIND_LEFT);
         mCurlView.setAllowLastPageCurl(false);
         mCurlView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         mCurlView.setRenderLeftPage(false);

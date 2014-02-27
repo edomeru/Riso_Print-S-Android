@@ -62,6 +62,8 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	private int mViewportWidth, mViewportHeight;
 	// Rect for render area.
 	private RectF mViewRect = new RectF();
+    
+    private int mBindPosition = CurlView.BIND_LEFT;
 
     private static final boolean RENDER_DROP_SHADOW = true;
 	
@@ -272,6 +274,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	public void setBackgroundColor(int color) {
 		mBackgroundColor = color;
 	}
+	
+	public void setBindPosition(int bindPosition) {
+	    mBindPosition = bindPosition;
+	}
 
 	/**
 	 * Set margins or padding. Note: margins are proportional. Meaning a value
@@ -321,8 +327,14 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			mPageRectRight.top += mViewRect.height() * mMargins.top;
 			mPageRectRight.bottom -= mViewRect.height() * mMargins.bottom;
 
-			mPageRectLeft.set(mPageRectRight);
-			mPageRectLeft.offset(-mPageRectRight.width(), 0);
+            mPageRectLeft.set(mPageRectRight);
+            if (mBindPosition == CurlView.BIND_LEFT) {
+                mPageRectLeft.offset(-mPageRectRight.width(), 0);
+            } else if (mBindPosition == CurlView.BIND_RIGHT) {
+                mPageRectLeft.offset(mPageRectRight.width(), 0);
+            } else if (mBindPosition == CurlView.BIND_TOP) {
+                mPageRectLeft.offset(0, -mPageRectRight.height());
+            }
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
 					.width());
@@ -337,8 +349,16 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			mPageRectRight.bottom -= mViewRect.height() * mMargins.bottom;
 
 			mPageRectLeft.set(mPageRectRight);
-			mPageRectLeft.right = (mPageRectLeft.right + mPageRectLeft.left) / 2;
-			mPageRectRight.left = mPageRectLeft.right;
+            if (mBindPosition == CurlView.BIND_LEFT) {
+                mPageRectLeft.right = (mPageRectLeft.right + mPageRectLeft.left) / 2;
+                mPageRectRight.left = mPageRectLeft.right;
+            } else if (mBindPosition == CurlView.BIND_RIGHT) {
+                mPageRectLeft.left = (mPageRectLeft.right + mPageRectLeft.left) / 2;
+                mPageRectRight.right = mPageRectLeft.left;
+            } else if (mBindPosition == CurlView.BIND_TOP) {
+                mPageRectLeft.bottom = (mPageRectLeft.bottom + mPageRectLeft.top) / 2;
+                mPageRectRight.top = mPageRectLeft.bottom;
+            }
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
 					.width());
