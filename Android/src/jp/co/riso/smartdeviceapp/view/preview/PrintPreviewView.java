@@ -357,7 +357,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 PrintPreviewView.drawBmpOnBmp(cachedPage[0], front);
             }
             if (cachedPage[1] != null) {
-                PrintPreviewView.drawBmpOnBmp(cachedPage[1], front);
+                PrintPreviewView.drawBmpOnBmp(cachedPage[1], back);
             }
             
             page.setTexture(front, CurlPage.SIDE_FRONT);

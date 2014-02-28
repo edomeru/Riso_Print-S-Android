@@ -917,7 +917,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		// Default curl radius.
 		double radius = mRenderer.getPageRect(CURL_RIGHT).width() / 3;
         if (mBindPosition == BIND_TOP) {
-            radius = mRenderer.getPageRect(CURL_RIGHT).height() / 3;
+            radius = -mRenderer.getPageRect(CURL_RIGHT).height() / 3;
         }
 		// TODO: This is not an optimal solution. Based on feedback received so
 		// far; pressure is not very accurate, it may be better not to map
@@ -976,7 +976,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
             if (mBindPosition == BIND_TOP) {
                 // Adjust curl radius so that if page is dragged far enough on
                 // opposite side, radius gets closer to zero.
-                float pageHeight = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT)
+                float pageHeight = -mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT)
                         .height();
                 double curlLen = radius * Math.PI;
                 if (dist > (pageHeight * 2) - curlLen) {
@@ -989,14 +989,14 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
                     double translate = (dist - curlLen) / 2;
                     if (mViewMode == SHOW_TWO_PAGES) {
     
-                        mCurlPos.y -= mCurlDir.y * translate / dist;
+                        mCurlPos.x -= mCurlDir.x * translate / dist;
                     } else {
                         float pageTopY = mRenderer
                                 .getPageRect(CurlRenderer.PAGE_RIGHT).top;
-                        radius = Math.max(Math.min(mCurlPos.y - pageTopY, radius),
+                        radius = Math.max(Math.min(pageTopY - mCurlPos.y, radius),
                                 0f);
                     }
-                    mCurlPos.x -= mCurlDir.x * translate / dist;
+                    mCurlPos.y -= mCurlDir.y * translate / dist;
                 } else {
                     double angle = Math.PI * Math.sqrt(dist / curlLen);
                     double translate = radius * Math.sin(angle);
@@ -1024,10 +1024,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
             if (mBindPosition == BIND_TOP) {
                 // Adjust radius regarding how close to page edge we are.
                 float pageTopY = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).top;
-                radius = Math.max(Math.min(mCurlPos.y - pageTopY, radius), 0f);
+                radius = Math.max(Math.min(pageTopY - mCurlPos.y , radius), 0f);
     
                 float pageBottomY = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).bottom;
-                mCurlPos.y -= Math.min(pageBottomY - mCurlPos.y, radius);
+                mCurlPos.y -= Math.min(mCurlPos.y - pageBottomY, radius);
                 mCurlDir.y = mCurlPos.y + mDragStartPos.y;
                 mCurlDir.x = mCurlPos.x - mDragStartPos.x;
             }
