@@ -214,7 +214,7 @@ public class CurlPage {
 	}
 	
 	public Object createNewHandler() {
-	    mHandler = new Object();
-	    return mHandler;
+		mHandler = new Object();
+		return mHandler;
 	}
 }
