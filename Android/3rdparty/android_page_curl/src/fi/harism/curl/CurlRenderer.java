@@ -66,6 +66,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
     private int mBindPosition = CurlView.BIND_LEFT;
 
     private static final boolean RENDER_DROP_SHADOW = true;
+    
 	
 	/*
 	 * Associated rectangle:
@@ -153,45 +154,47 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	}
 	
 	protected void drawBackgroundShadow(GL10 gl) {
-
-        gl.glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
-        gl.glFrontFace(GL10.GL_CCW);
-        gl.glEnable(GL10.GL_CULL_FACE);
-        gl.glCullFace(GL10.GL_BACK);
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         
-        gl.glEnableClientState(GL10.GL_COLOR_ARRAY); // NEW LINE ADDED.
-        gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer); // NEW LINE ADDED.
-
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        RectF rect = mObserver.getDropShadowRect();//new RectF(mPageRectRight);
         
-        RectF rect = new RectF(mPageRectRight);
-        
-        float vertices[] = {
-            rect.left, rect.top, 0.0f,
-            rect.left, rect.bottom, 0.0f,
-            rect.right, rect.bottom, 0.0f,
-            rect.right, rect.top, 0.0f,
-            rect.left - mDropShadowSize, rect.top + mDropShadowSize, 0.0f,
-            rect.left - mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
-            rect.right + mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
-            rect.right + mDropShadowSize, rect.top + mDropShadowSize, 0.0f
-        };
-        
-        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
-        vbb.order(ByteOrder.nativeOrder());
-        FloatBuffer mShadowVertexBuffer = vbb.asFloatBuffer();
-        mShadowVertexBuffer.put(vertices);
-        mShadowVertexBuffer.position(0);
-        
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mShadowVertexBuffer);
-        gl.glDrawElements(GL10.GL_TRIANGLES, mShadowIndices.length, GL10.GL_UNSIGNED_SHORT, mShadowIndexBuffer);
-        
-        gl.glDisable(GL10.GL_BLEND);
-        gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
-        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glDisable(GL10.GL_CULL_FACE);
+        if (rect != null) {
+            gl.glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+            gl.glFrontFace(GL10.GL_CCW);
+            gl.glEnable(GL10.GL_CULL_FACE);
+            gl.glCullFace(GL10.GL_BACK);
+            gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+            
+            gl.glEnableClientState(GL10.GL_COLOR_ARRAY); // NEW LINE ADDED.
+            gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer); // NEW LINE ADDED.
+    
+            gl.glEnable(GL10.GL_BLEND);
+            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            
+            float vertices[] = {
+                rect.left, rect.top, 0.0f,
+                rect.left, rect.bottom, 0.0f,
+                rect.right, rect.bottom, 0.0f,
+                rect.right, rect.top, 0.0f,
+                rect.left - mDropShadowSize, rect.top + mDropShadowSize, 0.0f,
+                rect.left - mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
+                rect.right + mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
+                rect.right + mDropShadowSize, rect.top + mDropShadowSize, 0.0f
+            };
+            
+            ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+            vbb.order(ByteOrder.nativeOrder());
+            FloatBuffer mShadowVertexBuffer = vbb.asFloatBuffer();
+            mShadowVertexBuffer.put(vertices);
+            mShadowVertexBuffer.position(0);
+            
+            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mShadowVertexBuffer);
+            gl.glDrawElements(GL10.GL_TRIANGLES, mShadowIndices.length, GL10.GL_UNSIGNED_SHORT, mShadowIndexBuffer);
+            
+            gl.glDisable(GL10.GL_BLEND);
+            gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+            gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+            gl.glDisable(GL10.GL_CULL_FACE);
+        }
 	}
 
 	@Override
@@ -210,8 +213,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			gl.glTranslatef(0, 0, -6f);
 		}
         
-		// TODO: Fix bug to enable support for TWO PAGE view shadow
-		if (RENDER_DROP_SHADOW && mViewMode == SHOW_ONE_PAGE) {
+		if (RENDER_DROP_SHADOW) {
 		    drawBackgroundShadow(gl);
 		}
 
@@ -389,5 +391,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		 * what needs to be done when this happens.
 		 */
 		public void onSurfaceCreated();
+		
+		public RectF getDropShadowRect();
 	}
 }

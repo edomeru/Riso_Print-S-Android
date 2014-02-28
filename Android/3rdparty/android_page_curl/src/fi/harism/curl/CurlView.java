@@ -235,7 +235,40 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageRight.resetTexture();
 		mPageCurl.resetTexture();
 	}
-
+	
+    public RectF getDropShadowRect(){
+        RectF lRect =  mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+        RectF rect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
+        
+        // Check if left page is drawn
+        boolean leftPageIsDrawn = (mCurrentIndex > 1) || (mCurrentIndex == 1 && mCurlState != CURL_LEFT);
+        boolean rightPageIsDrawn = (mCurrentIndex < mPageProvider.getPageCount()-1)
+                                        || (mCurrentIndex ==  mPageProvider.getPageCount()-1 && mCurlState != CURL_RIGHT);
+        
+        if (mRenderLeftPage && leftPageIsDrawn) {
+            switch (mBindPosition) {
+                case BIND_LEFT:
+                    rect.left = lRect.left;
+                    break;
+                case BIND_RIGHT:
+                    rect.right = lRect.right;
+                    break;
+                case BIND_TOP:
+                    rect.top = lRect.top;
+                    break;
+            }
+        }
+        
+        if (mAllowLastPageCurl && !rightPageIsDrawn) {
+            if (mRenderLeftPage) {
+                rect.set(lRect);
+            } else {
+                return null;
+            }
+        }
+        
+        return rect;
+    }
     /**
      * Prevent touch out of margin
      * 
