@@ -1,8 +1,7 @@
-
 package jp.co.riso.smartdeviceapp.model;
 
 public class PrintSettings {
-
+    
     private int mCopies;
     private ColorMode mColorMode;
     private boolean mZoom;
@@ -23,7 +22,6 @@ public class PrintSettings {
     private Tray mCatchTray;
     
     public PrintSettings() {
-        
         mCopies = 1;
         mColorMode = ColorMode.AUTO;
         mZoom = false;
@@ -37,13 +35,13 @@ public class PrintSettings {
         mImageQuality = ImageQuality.STANDARD;
         
         mSort = Sort.BETWEEN_PAGES;
-        mBookletBinding = BookletBinding.FOLD_AND_STAPLE;
+        mBookletBinding = BookletBinding.OFF;
         mBind = Bind.LEFT;
         mStaple = Staple.OFF;
         mPunch = Punch.OFF;
         mCatchTray = Tray.AUTO;
     }
-
+    
     // ================================================================================
     // Getter/Setters
     // ================================================================================
@@ -51,198 +49,185 @@ public class PrintSettings {
     public int getCopies() {
         return mCopies;
     }
-
+    
     public void setCopies(int copies) {
         mCopies = copies;
     }
-
+    
     public ColorMode getColorMode() {
         return mColorMode;
     }
-
+    
     public void setColorMode(ColorMode colorMode) {
         mColorMode = colorMode;
     }
-
+    
     public boolean getZoom() {
         return mZoom;
     }
-
+    
     public void setZoom(boolean zoom) {
         mZoom = zoom;
     }
-
+    
     public int getZoomRate() {
         return mZoomRate;
     }
-
+    
     public void setZoomRate(int zoomRate) {
         mZoomRate = zoomRate;
     }
-
+    
     public PaperType getPaperType() {
         return mPaperType;
     }
-
+    
     public void setPaperType(PaperType paperType) {
         mPaperType = paperType;
     }
-
+    
     public PaperSize getPaperSize() {
         return mPaperSize;
     }
-
+    
     public void setPaperSize(PaperSize paperSize) {
         mPaperSize = paperSize;
     }
-
+    
     public boolean isDuplex() {
         return mDuplex;
     }
-
+    
     public void setDuplex(boolean duplex) {
         mDuplex = duplex;
     }
-
+    
     public Pagination getPagination() {
         return mPagination;
     }
-
+    
     public void setPagination(Pagination pagination) {
         mPagination = pagination;
     }
-
+    
     public ImageQuality getImageQuality() {
         return mImageQuality;
     }
-
+    
     public void setImageQuality(ImageQuality imageQuality) {
         mImageQuality = imageQuality;
     }
-
+    
     public Sort getSort() {
         return mSort;
     }
-
+    
     public void setSort(Sort sort) {
         mSort = sort;
     }
-
+    
     public BookletBinding getBookletBinding() {
         return mBookletBinding;
     }
-
+    
     public void setBookletBinding(BookletBinding bookletBinding) {
         mBookletBinding = bookletBinding;
     }
-
+    
     public Bind getBind() {
         return mBind;
     }
-
+    
     public void setBind(Bind bind) {
         mBind = bind;
     }
-
+    
     public Staple getStaple() {
         return mStaple;
     }
-
+    
     public void setStaple(Staple staple) {
         mStaple = staple;
     }
-
+    
     public Punch getPunch() {
         return mPunch;
     }
-
+    
     public void setPunch(Punch punch) {
         mPunch = punch;
     }
-
+    
     public Tray getCatchTray() {
         return mCatchTray;
     }
-
+    
     public void setCatchTray(Tray catchTray) {
         mCatchTray = catchTray;
     }
-    
     
     // ================================================================================
     // Internal Enumaration Types
     // ================================================================================
     
     public enum ColorMode {
-        AUTO,
-        COLOR,
-        MONOCHROME
-    }
-
-    public enum PaperType {
-        NORMAL,
-        THIN,
-        THICK
+        AUTO, COLOR, MONOCHROME
     }
     
+    public enum PaperType {
+        NORMAL, THIN, THICK
+    }
+    
+    // sizes from http://en.wikipedia.org/wiki/Paper_size
     public enum PaperSize {
-        A3,
-        A4,
-        LETTER,
-        LEGAL,
-        ENVELOPE
+        A3(297.0f, 420.0f), A4(210.0f, 297.0f), LETTER(215.9f, 279.4f), LEGAL(215.9f, 355.6f), ENVELOPE(110.0f, 220.0f);
+        
+        private final float mWidth;
+        private final float mHeight;
+        
+        PaperSize(float width, float height) {
+            mWidth = width;
+            mHeight = height;
+        }
+        
+        public float getWidth() {
+            return mWidth;
+        }
+        
+        public float getHeight() {
+            return mHeight;
+        }
     }
     
     public enum Pagination {
-        OFF,
-        TWO_IN_ONE,
-        FOUR_IN_ONE,
-        SIX_IN_ONE,
-        NINE_IN_ONE,
-        SIXTEEN_IN_ONE,
+        OFF, TWO_IN_ONE, FOUR_IN_ONE, SIX_IN_ONE, NINE_IN_ONE, SIXTEEN_IN_ONE,
     }
     
     public enum ImageQuality {
-        DRAFT,
-        STANDARD,
-        HIGH_DEFINITION
+        DRAFT, STANDARD, HIGH_DEFINITION
     }
     
     public enum Sort {
-        BETWEEN_PAGES,
-        BETWEEN_SECTIONS
+        BETWEEN_PAGES, BETWEEN_SECTIONS
     }
     
     public enum BookletBinding {
-        OFF,
-        FOLD_AND_STAPLE
+        OFF, FOLD_AND_STAPLE
     }
     
     public enum Bind {
-        LEFT,
-        RIGHT,
-        TOP
+        LEFT, RIGHT, TOP
     }
     
     public enum Staple {
-        OFF,
-        LEFT_2,
-        LEFT_TOP_1,
-        RIGHT_2,
-        RIGHT_TOP_1
+        OFF, LEFT_2, LEFT_TOP_1, RIGHT_2, RIGHT_TOP_1
     }
     
     public enum Punch {
-        OFF,
-        TWO_HOLES,
-        FOUR_HOLES
+        OFF, TWO_HOLES, FOUR_HOLES
     }
     
     public enum Tray {
-        AUTO,
-        TRAY_1,
-        TRAY_2,
-        TRAY_3,
-        BYPASS_TRAY
+        AUTO, TRAY_1, TRAY_2, TRAY_3, BYPASS_TRAY
     }
 }

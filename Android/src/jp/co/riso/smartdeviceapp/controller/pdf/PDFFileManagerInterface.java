@@ -3,6 +3,8 @@ package jp.co.riso.smartdeviceapp.controller.pdf;
 
 public interface PDFFileManagerInterface {
 
-    public void onFileOpenedResult(int status);
-    public void onPreBufferFinished();
+    /**
+     * Returns the status of the PDF initialization
+     */
+    public void onFileInitialized(int status);
 }

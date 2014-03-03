@@ -13,6 +13,14 @@
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>
     
+    <item name="preview_view_drop_shadow_percentage" type="dimen">2%</item>
+    <dimen name="preview_view_margin">4dp</dimen>
+    <dimen name="preview_controls_text_size">16dp</dimen>
+    <dimen name="preview_controls_text_width">100dp</dimen>
+    <dimen name="preview_controls_margin_side">32dp</dimen>
+    <dimen name="preview_controls_margin_bottom">8dp</dimen>
+    
+    
     <!--  Temporary values -->
     
     <dimen name="temp_splash_logo_width">240dp</dimen>

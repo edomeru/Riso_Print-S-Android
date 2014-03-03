@@ -16,6 +16,10 @@
 
 package fi.harism.curl;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -58,6 +62,44 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	private int mViewportWidth, mViewportHeight;
 	// Rect for render area.
 	private RectF mViewRect = new RectF();
+	
+	private int mBindPosition = CurlView.BIND_LEFT;
+
+	private static final boolean RENDER_DROP_SHADOW = true;
+
+
+	/*
+	 * Associated rectangle:
+	 *   4-------7
+	 *   |0-----3|
+	 *   ||     ||
+	 *   |1-----2|
+	 *   5-------6
+	 */
+	private short[] mShadowIndices = {
+		4,0,3,4,3,7,
+		7,3,2,7,2,6,
+		6,2,1,2,1,5,
+		5,1,0,5,0,4
+	};
+
+	float[] mShadowColors = {
+		// first four is for the main rect
+		0f, 0f, 0f, 0.5f,
+		0f, 0f, 0f, 0.5f,
+		0f, 0f, 0f, 0.5f,
+		0f, 0f, 0f, 0.5f,
+		// next four is for the outer rect
+		0f, 0f, 0f, 0f,
+		0f, 0f, 0f, 0f,
+		0f, 0f, 0f, 0f,
+		0f, 0f, 0f, 0f,
+	};
+
+	private FloatBuffer mColorBuffer;
+	private ShortBuffer mShadowIndexBuffer;
+
+	private float mDropShadowSize = 0.02f;
 
 	/**
 	 * Basic constructor.
@@ -67,6 +109,12 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		mCurlMeshes = new Vector<CurlMesh>();
 		mPageRectLeft = new RectF();
 		mPageRectRight = new RectF();
+		
+		initializeShadowProperties();
+	}
+
+	public void setDropShadowSize(float dropShadowSize) {
+		mDropShadowSize = dropShadowSize;
 	}
 
 	/**
@@ -89,6 +137,64 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		}
 		return null;
 	}
+	
+	protected void initializeShadowProperties() {
+		// float has 4 bytes, colors (RGBA) * 4 bytes
+		ByteBuffer cbb = ByteBuffer.allocateDirect(mShadowColors.length * 4);
+		cbb.order(ByteOrder.nativeOrder());
+		mColorBuffer = cbb.asFloatBuffer();
+		mColorBuffer.put(mShadowColors);
+		mColorBuffer.position(0);
+
+		ByteBuffer ibb = ByteBuffer.allocateDirect(mShadowIndices.length * 2);
+		ibb.order(ByteOrder.nativeOrder());
+		mShadowIndexBuffer = ibb.asShortBuffer();
+		mShadowIndexBuffer.put(mShadowIndices);
+		mShadowIndexBuffer.position(0);
+	}
+
+	protected void drawBackgroundShadow(GL10 gl) {
+		RectF rect = mObserver.getDropShadowRect();//new RectF(mPageRectRight);
+
+		if (rect != null) {
+			gl.glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+			gl.glFrontFace(GL10.GL_CCW);
+			gl.glEnable(GL10.GL_CULL_FACE);
+			gl.glCullFace(GL10.GL_BACK);
+			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
+			gl.glEnableClientState(GL10.GL_COLOR_ARRAY); // NEW LINE ADDED.
+			gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer); // NEW LINE ADDED.
+
+			gl.glEnable(GL10.GL_BLEND);
+			gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+			float vertices[] = {
+				rect.left, rect.top, 0.0f,
+				rect.left, rect.bottom, 0.0f,
+				rect.right, rect.bottom, 0.0f,
+				rect.right, rect.top, 0.0f,
+				rect.left - mDropShadowSize, rect.top + mDropShadowSize, 0.0f,
+				rect.left - mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
+				rect.right + mDropShadowSize, rect.bottom - mDropShadowSize, 0.0f,
+				rect.right + mDropShadowSize, rect.top + mDropShadowSize, 0.0f
+			};
+
+			ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+			vbb.order(ByteOrder.nativeOrder());
+			FloatBuffer mShadowVertexBuffer = vbb.asFloatBuffer();
+			mShadowVertexBuffer.put(vertices);
+			mShadowVertexBuffer.position(0);
+
+			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mShadowVertexBuffer);
+			gl.glDrawElements(GL10.GL_TRIANGLES, mShadowIndices.length, GL10.GL_UNSIGNED_SHORT, mShadowIndexBuffer);
+
+			gl.glDisable(GL10.GL_BLEND);
+			gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+			gl.glDisable(GL10.GL_CULL_FACE);
+		}
+	}
 
 	@Override
 	public synchronized void onDrawFrame(GL10 gl) {
@@ -104,6 +210,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 
 		if (USE_PERSPECTIVE_PROJECTION) {
 			gl.glTranslatef(0, 0, -6f);
+		}
+
+		if (RENDER_DROP_SHADOW) {
+			drawBackgroundShadow(gl);
 		}
 
 		for (int i = 0; i < mCurlMeshes.size(); ++i) {
@@ -165,6 +275,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	public void setBackgroundColor(int color) {
 		mBackgroundColor = color;
 	}
+	
+	public void setBindPosition(int bindPosition) {
+		mBindPosition = bindPosition;
+	}
 
 	/**
 	 * Set margins or padding. Note: margins are proportional. Meaning a value
@@ -215,7 +329,13 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			mPageRectRight.bottom -= mViewRect.height() * mMargins.bottom;
 
 			mPageRectLeft.set(mPageRectRight);
-			mPageRectLeft.offset(-mPageRectRight.width(), 0);
+			if (mBindPosition == CurlView.BIND_LEFT) {
+				mPageRectLeft.offset(-mPageRectRight.width(), 0);
+			} else if (mBindPosition == CurlView.BIND_RIGHT) {
+				mPageRectLeft.offset(mPageRectRight.width(), 0);
+			} else if (mBindPosition == CurlView.BIND_TOP) {
+				mPageRectLeft.offset(0, -mPageRectRight.height());
+			}
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
 					.width());
@@ -230,8 +350,16 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			mPageRectRight.bottom -= mViewRect.height() * mMargins.bottom;
 
 			mPageRectLeft.set(mPageRectRight);
-			mPageRectLeft.right = (mPageRectLeft.right + mPageRectLeft.left) / 2;
-			mPageRectRight.left = mPageRectLeft.right;
+			if (mBindPosition == CurlView.BIND_LEFT) {
+				mPageRectLeft.right = (mPageRectLeft.right + mPageRectLeft.left) / 2;
+				mPageRectRight.left = mPageRectLeft.right;
+			} else if (mBindPosition == CurlView.BIND_RIGHT) {
+				mPageRectLeft.left = (mPageRectLeft.right + mPageRectLeft.left) / 2;
+				mPageRectRight.right = mPageRectLeft.left;
+			} else if (mBindPosition == CurlView.BIND_TOP) {
+				mPageRectLeft.bottom = (mPageRectLeft.bottom + mPageRectLeft.top) / 2;
+				mPageRectRight.top = mPageRectLeft.bottom;
+			}
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
 					.width());
@@ -262,5 +390,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		 * what needs to be done when this happens.
 		 */
 		public void onSurfaceCreated();
+		
+		public RectF getDropShadowRect();
 	}
 }

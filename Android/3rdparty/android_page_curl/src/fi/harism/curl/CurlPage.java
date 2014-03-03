@@ -156,7 +156,7 @@ public class CurlPage {
 	/**
 	 * Resets this CurlPage into its initial state.
 	 */
-	public void reset() {
+	public synchronized void reset() {
 		mColorBack = Color.WHITE;
 		mColorFront = Color.WHITE;
 		recycle();
@@ -214,7 +214,7 @@ public class CurlPage {
 	}
 	
 	public Object createNewHandler() {
-	    mHandler = new Object();
-	    return mHandler;
+		mHandler = new Object();
+		return mHandler;
 	}
 }

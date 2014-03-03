@@ -24,8 +24,8 @@ import android.view.ViewGroup;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
-import jp.co.riso.smartdeviceapp.view.fragment.NavigationFragment;
-import jp.co.riso.smartdeviceapp.view.fragment.HomePreviewFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 
 public class MainActivity extends BaseActivity {
     
@@ -79,8 +79,8 @@ public class MainActivity extends BaseActivity {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             
-            ft.add(R.id.mainLayout, new HomePreviewFragment());
-            ft.add(R.id.leftLayout, new NavigationFragment());
+            ft.add(R.id.mainLayout, new PrintPreviewFragment());
+            ft.add(R.id.leftLayout, new HomeFragment());
             
             ft.commit();
         } else {
@@ -104,12 +104,9 @@ public class MainActivity extends BaseActivity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle your other action bar items...
         
         return super.onOptionsItemSelected(item);
     }

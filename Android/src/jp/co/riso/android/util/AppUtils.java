@@ -126,7 +126,15 @@ public final class AppUtils {
         return appFile.lastModified();
     }
     
-    
+
+    /**
+     * Gets the Screen Dimensions of the Device
+     * 
+     * @param activity
+     *            Valid activity
+     *            
+     * @return Screen size
+     */
     public static Point getScreenDimensions(Activity activity) {
         if (activity == null) {
             return null;

@@ -87,6 +87,12 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	// One page is the default.
 	private int mViewMode = SHOW_ONE_PAGE;
 
+    public static final int BIND_LEFT = 0;
+	public static final int BIND_RIGHT = 1;
+	public static final int BIND_TOP = 2;
+
+	private int mBindPosition = BIND_LEFT;
+
 	/**
 	 * Default constructor.
 	 */
@@ -123,6 +129,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	 */
 	private void init(Context ctx) {
 		mRenderer = new CurlRenderer(this);
+
 		setRenderer(mRenderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		setOnTouchListener(this);
@@ -136,8 +143,6 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageLeft.setFlipTexture(true);
 		mPageRight.setFlipTexture(false);
 	}
-	
-	boolean initialRenderHack = false;
 
 	@Override
 	public void onDrawFrame() {
@@ -162,6 +167,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				// If we were curling left page update current index.
 				if (mCurlState == CURL_LEFT) {
 					--mCurrentIndex;
+					
+					mPageProvider.indexChanged(mCurrentIndex);
 				}
 			} else if (mAnimationTargetEvent == SET_CURL_TO_LEFT) {
 				// Switch curled page to left.
@@ -179,6 +186,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				// If we were curling right page update current index.
 				if (mCurlState == CURL_RIGHT) {
 					++mCurrentIndex;
+					
+					mPageProvider.indexChanged(mCurrentIndex);
 				}
 			}
 			mCurlState = CURL_NONE;
@@ -221,6 +230,86 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageRight.resetTexture();
 		mPageCurl.resetTexture();
 	}
+	
+	public RectF getDropShadowRect(){
+		RectF lRect =  mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+		RectF rect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
+
+		// Check if left page is drawn
+		boolean leftPageIsDrawn = (mCurrentIndex > 1) || (mCurrentIndex == 1 && mCurlState != CURL_LEFT);
+		boolean rightPageIsDrawn = (mCurrentIndex < mPageProvider.getPageCount()-1)
+										|| (mCurrentIndex ==  mPageProvider.getPageCount()-1 && mCurlState != CURL_RIGHT);
+
+		if (mRenderLeftPage && leftPageIsDrawn) {
+			switch (mBindPosition) {
+				case BIND_LEFT:
+					rect.left = lRect.left;
+					break;
+				case BIND_RIGHT:
+					rect.right = lRect.right;
+					break;
+				case BIND_TOP:
+					rect.top = lRect.top;
+					break;
+			}
+		}
+
+		if (mAllowLastPageCurl && !rightPageIsDrawn) {
+			if (mRenderLeftPage) {
+				rect.set(lRect);
+			} else {
+				return null;
+			}
+		}
+
+		return rect;
+	}
+	
+	/**
+	 * Prevent touch out of margin
+	 * 
+	 * @param rightRect
+	 * @param leftRect
+	 * @return Will prevent touch
+	 */
+	private boolean preventTouch(RectF rightRect, RectF leftRect) {
+		if (mBindPosition == BIND_LEFT) {
+			if ((mDragStartPos.y > rightRect.top)
+					|| (mDragStartPos.y < rightRect.bottom)) {
+		    	return true;
+			}
+			if ((mDragStartPos.x > rightRect.right)
+					|| (mDragStartPos.x < leftRect.left)) {
+				return true;
+			}
+		}
+
+		if (mBindPosition == BIND_RIGHT) {
+			//Prevent touch out of margin
+			if ((mDragStartPos.y > rightRect.top)
+					|| (mDragStartPos.y < rightRect.bottom)) {
+				return true;
+			}
+			if ((mDragStartPos.x > leftRect.right)
+					|| (mDragStartPos.x < rightRect.left)) {
+				return true;
+			}
+		}
+
+		if (mBindPosition == BIND_TOP) {
+			//Prevent touch out of margin
+			if ((mDragStartPos.y > leftRect.top)
+					|| (mDragStartPos.y < rightRect.bottom)) {
+				return true;
+			}
+			if ((mDragStartPos.x > rightRect.right)
+					|| (mDragStartPos.x < rightRect.left)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	@Override
 	public boolean onTouch(View view, MotionEvent me) {
@@ -251,59 +340,114 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			// user is holding the paper to make curl happen.
 			mDragStartPos.set(mPointerPos.mPos);
 			
-			//Prevent touch out of margin
-			if ((mDragStartPos.y > rightRect.top)
-					|| (mDragStartPos.y < rightRect.bottom)) {
+			if (preventTouch(rightRect, leftRect)) {
 				return false;
-			}
-			if ((mDragStartPos.x > rightRect.right)
-					|| (mDragStartPos.x < leftRect.left)) {
-				return false;
-			}
-
-			// First we make sure it's not over or below page. Pages are
-			// supposed to be same height so it really doesn't matter do we use
-			// left or right one.
-			if (mDragStartPos.y > rightRect.top) {
-				mDragStartPos.y = rightRect.top;
-			} else if (mDragStartPos.y < rightRect.bottom) {
-				mDragStartPos.y = rightRect.bottom;
 			}
 
 			// Then we have to make decisions for the user whether curl is going
 			// to happen from left or right, and on which page.
 			if (mViewMode == SHOW_TWO_PAGES) {
-				// If we have an open book and pointer is on the left from right
-				// page we'll mark drag position to left edge of left page.
-				// Additionally checking mCurrentIndex is higher than zero tells
-				// us there is a visible page at all.
-				if (mDragStartPos.x < rightRect.left && mCurrentIndex > 0) {
-					mDragStartPos.x = leftRect.left;
-					startCurl(CURL_LEFT);
-				}
-				// Otherwise check pointer is on right page's side.
-				else if (mDragStartPos.x >= rightRect.left
-						&& mCurrentIndex < mPageProvider.getPageCount()) {
-					mDragStartPos.x = rightRect.right;
-					if (!mAllowLastPageCurl
-							&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-						return false;
+				if (mBindPosition == BIND_LEFT) {
+					// If we have an open book and pointer is on the left from right
+					// page we'll mark drag position to left edge of left page.
+					// Additionally checking mCurrentIndex is higher than zero tells
+					// us there is a visible page at all.
+					if (mDragStartPos.x < rightRect.left && mCurrentIndex > 0) {
+						mDragStartPos.x = leftRect.left;
+						startCurl(CURL_LEFT);
 					}
-					startCurl(CURL_RIGHT);
+					// Otherwise check pointer is on right page's side.
+					else if (mDragStartPos.x >= rightRect.left
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.x = rightRect.right;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return false;
+						}
+						startCurl(CURL_RIGHT);
+					}
 				}
+
+				if (mBindPosition == BIND_RIGHT) {
+					if (mDragStartPos.x > rightRect.right && mCurrentIndex > 0) {
+						mDragStartPos.x = leftRect.right;
+						startCurl(CURL_LEFT);
+					} else if (mDragStartPos.x <= rightRect.right
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.x = rightRect.left;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return false;
+						}
+						startCurl(CURL_RIGHT);
+					}
+				}
+
+				if (mBindPosition == BIND_TOP) {
+					if (mDragStartPos.y > rightRect.top && mCurrentIndex > 0) {
+						mDragStartPos.y = leftRect.top;
+						startCurl(CURL_LEFT);
+					}
+					// Otherwise check pointer is on right page's side.
+					else if (mDragStartPos.y <= rightRect.top
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.y = rightRect.bottom;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return false;
+						}
+						startCurl(CURL_RIGHT);
+					}
+					
+				}
+
 			} else if (mViewMode == SHOW_ONE_PAGE) {
-				float halfX = (rightRect.right + rightRect.left) / 2;
-				if (mDragStartPos.x < halfX && mCurrentIndex > 0) {
-					mDragStartPos.x = rightRect.left;
-					startCurl(CURL_LEFT);
-				} else if (mDragStartPos.x >= halfX
-						&& mCurrentIndex < mPageProvider.getPageCount()) {
-					mDragStartPos.x = rightRect.right;
-					if (!mAllowLastPageCurl
-							&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-						return false;
+				if (mBindPosition == BIND_LEFT) {
+					float halfX = (rightRect.right + rightRect.left) / 2;
+					if (mDragStartPos.x < halfX && mCurrentIndex > 0) {
+						mDragStartPos.x = rightRect.left;
+						startCurl(CURL_LEFT);
+					} else if (mDragStartPos.x >= halfX
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.x = rightRect.right;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return false;
+						}
+						startCurl(CURL_RIGHT);
 					}
-					startCurl(CURL_RIGHT);
+				}
+
+				if (mBindPosition == BIND_RIGHT) {
+					float halfX = (rightRect.right + rightRect.left) / 2;
+					if (mDragStartPos.x > halfX && mCurrentIndex > 0) {
+						mDragStartPos.x = rightRect.right;
+						startCurl(CURL_LEFT);
+					} else if (mDragStartPos.x <= halfX
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.x = rightRect.left;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return false;
+						}
+						startCurl(CURL_RIGHT);
+					}
+				}
+
+				if (mBindPosition == BIND_TOP) {
+					float halfY = (rightRect.top + rightRect.bottom) / 2;
+					if (mDragStartPos.y > halfY && mCurrentIndex > 0) {
+						mDragStartPos.y = rightRect.top;
+						startCurl(CURL_LEFT);
+					} else if (mDragStartPos.y <= halfY
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.y = rightRect.bottom;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return false;
+						}
+						startCurl(CURL_RIGHT);
+					}
 				}
 			}
 			// If we have are in curl state, let this case clause flow through
@@ -329,27 +473,74 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				// bit more readable and easier to maintain.
 				mAnimationSource.set(mPointerPos.mPos);
 				mAnimationStartTime = System.currentTimeMillis();
-
-				// Given the explanation, here we decide whether to simulate
-				// drag to left or right end.
-				if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
-						|| mViewMode == SHOW_TWO_PAGES
-						&& mPointerPos.mPos.x > rightRect.left) {
-					// On right side target is always right page's right border.
-					mAnimationTarget.set(mDragStartPos);
-					mAnimationTarget.x = mRenderer
-							.getPageRect(CurlRenderer.PAGE_RIGHT).right;
-					mAnimationTargetEvent = SET_CURL_TO_RIGHT;
-				} else {
-					// On left side target depends on visible pages.
-					mAnimationTarget.set(mDragStartPos);
-					if (mCurlState == CURL_RIGHT || mViewMode == SHOW_TWO_PAGES) {
-						mAnimationTarget.x = leftRect.left;
+				
+				if (mBindPosition == BIND_LEFT) {
+					// Given the explanation, here we decide whether to simulate
+					// drag to left or right end.
+					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
+							|| mViewMode == SHOW_TWO_PAGES
+							&& mPointerPos.mPos.x > rightRect.left) {
+						// On right side target is always right page's right border.
+						mAnimationTarget.set(mDragStartPos);
+						mAnimationTarget.x = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).right;
+						mAnimationTargetEvent = SET_CURL_TO_RIGHT;
 					} else {
-						mAnimationTarget.x = rightRect.left;
+						// On left side target depends on visible pages.
+						mAnimationTarget.set(mDragStartPos);
+						if (mCurlState == CURL_RIGHT || mViewMode == SHOW_TWO_PAGES) {
+							mAnimationTarget.x = leftRect.left;
+						} else {
+							mAnimationTarget.x = rightRect.left;
+						}
+						mAnimationTargetEvent = SET_CURL_TO_LEFT;
 					}
-					mAnimationTargetEvent = SET_CURL_TO_LEFT;
 				}
+
+				if (mBindPosition == BIND_RIGHT) {
+					// Given the explanation, here we decide whether to simulate
+					// drag to left or right end.
+					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
+							|| mViewMode == SHOW_TWO_PAGES
+							&& mPointerPos.mPos.x < rightRect.right) {
+						// On left side target is always right page's left border.
+						mAnimationTarget.set(mDragStartPos);
+						mAnimationTarget.x = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).left;
+						mAnimationTargetEvent = SET_CURL_TO_RIGHT;
+					} else {
+						// On right side target depends on visible pages.
+						mAnimationTarget.set(mDragStartPos);
+						if (mCurlState == CURL_RIGHT || mViewMode == SHOW_TWO_PAGES) {
+							mAnimationTarget.x = leftRect.right;
+						} else {
+							mAnimationTarget.x = rightRect.right;
+						}
+						mAnimationTargetEvent = SET_CURL_TO_LEFT;
+					}
+				}
+
+				if (mBindPosition == BIND_TOP) {
+					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
+							|| mViewMode == SHOW_TWO_PAGES
+							&& mPointerPos.mPos.y < rightRect.top) {
+						// On right side target is always right page's right border.
+						mAnimationTarget.set(mDragStartPos);
+						mAnimationTarget.y = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).bottom;
+						mAnimationTargetEvent = SET_CURL_TO_RIGHT;
+					} else {
+						// On left side target depends on visible pages.
+						mAnimationTarget.set(mDragStartPos);
+						if (mCurlState == CURL_RIGHT || mViewMode == SHOW_TWO_PAGES) {
+							mAnimationTarget.y = leftRect.top;
+						} else {
+							mAnimationTarget.y = rightRect.top;
+						}
+						mAnimationTargetEvent = SET_CURL_TO_LEFT;
+					}
+				}
+
 				mAnimate = true;
 				requestRender();
 			}
@@ -386,45 +577,142 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		// First reposition curl so that page doesn't 'rip off' from book.
 		if (mCurlState == CURL_RIGHT
 				|| (mCurlState == CURL_LEFT && mViewMode == SHOW_ONE_PAGE)) {
-			RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
-			if (curlPos.x >= pageRect.right) {
-				mPageCurl.reset();
-				requestRender();
-				return;
+
+			if (mBindPosition == BIND_LEFT) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
+				if (curlPos.x >= pageRect.right) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.x < pageRect.left) {
+					curlPos.x = pageRect.left;
+				}
+				if (curlDir.y != 0) {
+					float diffX = curlPos.x - pageRect.left;
+					float leftY = curlPos.y + (diffX * curlDir.x / curlDir.y);
+					if (curlDir.y < 0 && leftY < pageRect.top) {
+						curlDir.x = curlPos.y - pageRect.top;
+						curlDir.y = pageRect.left - curlPos.x;
+					} else if (curlDir.y > 0 && leftY > pageRect.bottom) {
+						curlDir.x = pageRect.bottom - curlPos.y;
+						curlDir.y = curlPos.x - pageRect.left;
+					}
+				}
 			}
-			if (curlPos.x < pageRect.left) {
-				curlPos.x = pageRect.left;
+
+			if (mBindPosition == BIND_RIGHT) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
+				if (curlPos.x <= pageRect.left) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.x > pageRect.right) {
+					curlPos.x = pageRect.right;
+				}
+				if (curlDir.y != 0) {
+					float diffX = curlPos.x - pageRect.right;
+					float leftY = curlPos.y + (diffX * curlDir.x / curlDir.y);
+					if (curlDir.y < 0 && leftY < pageRect.top) {
+						curlDir.x = pageRect.top - curlPos.y;
+						curlDir.y = curlPos.x - pageRect.right;
+					} else if (curlDir.y > 0 && leftY > pageRect.bottom) {
+						curlDir.x = curlPos.y - pageRect.bottom;
+						curlDir.y = pageRect.right - curlPos.x;
+					}
+				}
 			}
-			if (curlDir.y != 0) {
-				float diffX = curlPos.x - pageRect.left;
-				float leftY = curlPos.y + (diffX * curlDir.x / curlDir.y);
-				if (curlDir.y < 0 && leftY < pageRect.top) {
-					curlDir.x = curlPos.y - pageRect.top;
-					curlDir.y = pageRect.left - curlPos.x;
-				} else if (curlDir.y > 0 && leftY > pageRect.bottom) {
-					curlDir.x = pageRect.bottom - curlPos.y;
-					curlDir.y = curlPos.x - pageRect.left;
+
+			if (mBindPosition == BIND_TOP) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
+				if (curlPos.y <= pageRect.bottom) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.y > pageRect.top) {
+					curlPos.y = pageRect.top;
+				}
+				if (curlDir.x != 0) {
+					float diffY = curlPos.y - pageRect.top;
+					float topX = curlPos.x + (diffY * curlDir.y / curlDir.x);
+					if (curlDir.x > 0 && topX > pageRect.left) {
+						curlDir.y = curlPos.x - pageRect.left;
+						curlDir.x = pageRect.top - curlPos.y;
+					} else if (curlDir.x < 0 && topX < pageRect.right) {
+						curlDir.y = pageRect.right - curlPos.x;
+						curlDir.x = curlPos.y - pageRect.top;
+					}
 				}
 			}
 		} else if (mCurlState == CURL_LEFT) {
-			RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
-			if (curlPos.x <= pageRect.left) {
-				mPageCurl.reset();
-				requestRender();
-				return;
+			if (mBindPosition == BIND_LEFT) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+				if (curlPos.x <= pageRect.left) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.x > pageRect.right) {
+					curlPos.x = pageRect.right;
+				}
+				if (curlDir.y != 0) {
+					float diffX = curlPos.x - pageRect.right;
+					float rightY = curlPos.y + (diffX * curlDir.x / curlDir.y);
+					if (curlDir.y < 0 && rightY < pageRect.top) {
+						curlDir.x = pageRect.top - curlPos.y;
+						curlDir.y = curlPos.x - pageRect.right;
+					} else if (curlDir.y > 0 && rightY > pageRect.bottom) {
+						curlDir.x = curlPos.y - pageRect.bottom;
+						curlDir.y = pageRect.right - curlPos.x;
+					}
+				}
 			}
-			if (curlPos.x > pageRect.right) {
-				curlPos.x = pageRect.right;
+
+			if (mBindPosition == BIND_RIGHT) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+				if (curlPos.x >= pageRect.right) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.x < pageRect.left) {
+					curlPos.x = pageRect.left;
+				}
+				if (curlDir.y != 0) {
+					float diffX = curlPos.x - pageRect.left;
+					float rightY = curlPos.y + (diffX * curlDir.x / curlDir.y);
+					if (curlDir.y < 0 && rightY < pageRect.top) {
+						curlDir.x = curlPos.y - pageRect.top;
+						curlDir.y = pageRect.left - curlPos.x;
+					} else if (curlDir.y > 0 && rightY > pageRect.bottom) {
+						curlDir.x = pageRect.bottom - curlPos.y;
+						curlDir.y = curlPos.x - pageRect.left;
+					}
+				}
 			}
-			if (curlDir.y != 0) {
-				float diffX = curlPos.x - pageRect.right;
-				float rightY = curlPos.y + (diffX * curlDir.x / curlDir.y);
-				if (curlDir.y < 0 && rightY < pageRect.top) {
-					curlDir.x = pageRect.top - curlPos.y;
-					curlDir.y = curlPos.x - pageRect.right;
-				} else if (curlDir.y > 0 && rightY > pageRect.bottom) {
-					curlDir.x = curlPos.y - pageRect.bottom;
-					curlDir.y = pageRect.right - curlPos.x;
+
+			if (mBindPosition == BIND_TOP) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+				if (curlPos.y >= pageRect.top) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.y < pageRect.bottom) {
+					curlPos.y = pageRect.bottom;
+				}
+				if (curlDir.x != 0) {
+					float diffY = curlPos.y - pageRect.bottom;
+					float bottomX = curlPos.x + (diffY * curlDir.y / curlDir.x);
+					if (curlDir.x > 0 && bottomX > pageRect.left) {
+						curlDir.y = pageRect.left - curlPos.x;
+						curlDir.x = curlPos.y - pageRect.bottom;
+					} else if (curlDir.x < 0 && bottomX < pageRect.right) {
+						curlDir.y = curlPos.x - pageRect.right;
+						curlDir.x = pageRect.bottom - curlPos.y;
+					}
 				}
 			}
 		}
@@ -531,6 +819,23 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			break;
 		}
 	}
+	
+	public int getViewMode() {
+		return mViewMode;
+	}
+	
+	public void setBindPosition(int bindPosition) {
+		mBindPosition = bindPosition;
+		mRenderer.setBindPosition(bindPosition);
+	}
+	
+	public int getBindPosition() {
+		return mBindPosition;
+	}
+
+    public void setDropShadowSize(float dropShadowSize) {
+        mRenderer.setDropShadowSize(dropShadowSize);
+    }
 
 	/**
 	 * Switches meshes and loads new bitmaps if available. Updated to support 2
@@ -643,6 +948,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 		// Default curl radius.
 		double radius = mRenderer.getPageRect(CURL_RIGHT).width() / 3;
+		if (mBindPosition == BIND_TOP) {
+			radius = -mRenderer.getPageRect(CURL_RIGHT).height() / 3;
+		}
 		// TODO: This is not an optimal solution. Based on feedback received so
 		// far; pressure is not very accurate, it may be better not to map
 		// coefficient to range [0f, 1f] but something like [.2f, 1f] instead.
@@ -665,47 +973,97 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			mCurlDir.y = mCurlPos.y - mDragStartPos.y;
 			float dist = (float) Math.sqrt(mCurlDir.x * mCurlDir.x + mCurlDir.y
 					* mCurlDir.y);
-
-			// Adjust curl radius so that if page is dragged far enough on
-			// opposite side, radius gets closer to zero.
-			float pageWidth = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT)
-					.width();
-			double curlLen = radius * Math.PI;
-			if (dist > (pageWidth * 2) - curlLen) {
-				curlLen = Math.max((pageWidth * 2) - dist, 0f);
-				radius = curlLen / Math.PI;
-			}
-
-			// Actual curl position calculation.
-			if (dist >= curlLen) {
-				double translate = (dist - curlLen) / 2;
-				if (mViewMode == SHOW_TWO_PAGES) {
-					mCurlPos.x -= mCurlDir.x * translate / dist;
-				} else {
-					float pageLeftX = mRenderer
-							.getPageRect(CurlRenderer.PAGE_RIGHT).left;
-					radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius),
-							0f);
+			
+			if (mBindPosition == BIND_LEFT || mBindPosition == BIND_RIGHT) {
+				// Adjust curl radius so that if page is dragged far enough on
+				// opposite side, radius gets closer to zero.
+				float pageWidth = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT)
+						.width();
+				double curlLen = radius * Math.PI;
+				if (dist > (pageWidth * 2) - curlLen) {
+					curlLen = Math.max((pageWidth * 2) - dist, 0f);
+					radius = curlLen / Math.PI;
 				}
-				mCurlPos.y -= mCurlDir.y * translate / dist;
-			} else {
-				double angle = Math.PI * Math.sqrt(dist / curlLen);
-				double translate = radius * Math.sin(angle);
-				mCurlPos.x += mCurlDir.x * translate / dist;
-				mCurlPos.y += mCurlDir.y * translate / dist;
+	
+				// Actual curl position calculation.
+				if (dist >= curlLen) {
+					double translate = (dist - curlLen) / 2;
+					if (mViewMode == SHOW_TWO_PAGES) {
+	
+						mCurlPos.x -= mCurlDir.x * translate / dist;
+					} else {
+						float pageLeftX = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).left;
+						radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius),
+								0f);
+					}
+					mCurlPos.y -= mCurlDir.y * translate / dist;
+				} else {
+					double angle = Math.PI * Math.sqrt(dist / curlLen);
+					double translate = radius * Math.sin(angle);
+					mCurlPos.x += mCurlDir.x * translate / dist;
+					mCurlPos.y += mCurlDir.y * translate / dist;
+				}
 			}
+			if (mBindPosition == BIND_TOP) {
+				// Adjust curl radius so that if page is dragged far enough on
+				// opposite side, radius gets closer to zero.
+				float pageHeight = -mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT)
+						.height();
+				double curlLen = radius * Math.PI;
+				if (dist > (pageHeight * 2) - curlLen) {
+					curlLen = Math.max((pageHeight * 2) - dist, 0f);
+					radius = curlLen / Math.PI;
+				}
+	
+				// Actual curl position calculation.
+				if (dist >= curlLen) {
+					double translate = (dist - curlLen) / 2;
+					if (mViewMode == SHOW_TWO_PAGES) {
+	
+						mCurlPos.x -= mCurlDir.x * translate / dist;
+					} else {
+						float pageTopY = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).top;
+						radius = Math.max(Math.min(pageTopY - mCurlPos.y, radius),
+								0f);
+					}
+					mCurlPos.y -= mCurlDir.y * translate / dist;
+				} else {
+					double angle = Math.PI * Math.sqrt(dist / curlLen);
+					double translate = radius * Math.sin(angle);
+					mCurlPos.x += mCurlDir.x * translate / dist;
+					mCurlPos.y += mCurlDir.y * translate / dist;
+				}
+			}
+			//Log.wtf("CurlView", "Final CurlPos " + mCurlPos.x + ", " + mCurlPos.y);
+			
 		}
 		// Otherwise we'll let curl follow pointer position.
 		else if (mCurlState == CURL_LEFT) {
 
-			// Adjust radius regarding how close to page edge we are.
-			float pageLeftX = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).left;
-			radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius), 0f);
+			if (mBindPosition == BIND_LEFT || mBindPosition == BIND_RIGHT) {
+				// Adjust radius regarding how close to page edge we are.
+				float pageLeftX = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).left;
+				radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius), 0f);
+	
+				float pageRightX = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).right;
+				mCurlPos.x -= Math.min(pageRightX - mCurlPos.x, radius);
+				mCurlDir.x = mCurlPos.x + mDragStartPos.x;
+				mCurlDir.y = mCurlPos.y - mDragStartPos.y;
+			}
 
-			float pageRightX = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).right;
-			mCurlPos.x -= Math.min(pageRightX - mCurlPos.x, radius);
-			mCurlDir.x = mCurlPos.x + mDragStartPos.x;
-			mCurlDir.y = mCurlPos.y - mDragStartPos.y;
+			if (mBindPosition == BIND_TOP) {
+				// Adjust radius regarding how close to page edge we are.
+				float pageTopY = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).top;
+				radius = Math.max(Math.min(pageTopY - mCurlPos.y , radius), 0f);
+	
+				float pageBottomY = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).bottom;
+				mCurlPos.y -= Math.min(mCurlPos.y - pageBottomY, radius);
+				mCurlDir.y = mCurlPos.y + mDragStartPos.y;
+				mCurlDir.x = mCurlPos.x - mDragStartPos.x;
+			}
+			
 		}
 
 		setCurlPos(mCurlPos, mCurlDir, radius);
@@ -802,6 +1160,14 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		 * Index is a number between 0 and getBitmapCount() - 1.
 		 */
 		public void updatePage(CurlPage page, int width, int height, int index);
+
+		/**
+		 * Called when the curl index page is updated
+		 * 
+		 * @param index
+		 *			  Udpated index
+		 */
+		public void indexChanged(int index);
 	}
 
 	/**
