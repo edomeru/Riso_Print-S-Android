@@ -16,13 +16,11 @@
 
 package fi.harism.curl;
 
-import jp.co.riso.smartdeviceapp.R;
 import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -131,9 +129,6 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	 */
 	private void init(Context ctx) {
 		mRenderer = new CurlRenderer(this);
-
-		float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
-		mRenderer.setDropShadowSize(percentage);
 
 		setRenderer(mRenderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -837,6 +832,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	public int getBindPosition() {
 		return mBindPosition;
 	}
+
+    public void setDropShadowSize(float dropShadowSize) {
+        mRenderer.setDropShadowSize(dropShadowSize);
+    }
 
 	/**
 	 * Switches meshes and loads new bitmaps if available. Updated to support 2

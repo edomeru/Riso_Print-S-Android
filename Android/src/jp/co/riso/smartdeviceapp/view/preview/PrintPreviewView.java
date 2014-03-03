@@ -16,6 +16,7 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -24,7 +25,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.LruCache;
 import android.view.Gravity;
@@ -214,6 +214,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         mCurlView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         mCurlView.setRenderLeftPage(false);
         
+        if (!isInEditMode()) {
+            float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
+            mCurlView.setDropShadowSize(percentage);
+        }
+        
         addView(mCurlView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
     
@@ -373,16 +378,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         {
             updateSeekBar();
             
-            Handler mainHandler = new Handler(getContext().getMainLooper());
-
-            Runnable myRunnable = new Runnable() {
-                
-                @Override
+            ((Activity) getContext()).runOnUiThread(new Runnable() {
                 public void run() {
                     updatePageLabel();
                 }
-            };
-            mainHandler.post(myRunnable);
+            });
         }
     }
 
