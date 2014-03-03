@@ -15,7 +15,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 
-public class NavigationFragment extends BaseFragment implements View.OnClickListener {
+public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     public static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String FRAGMENT_TAG_PRINTJOBS = "fragment_printjobs";
@@ -32,7 +32,7 @@ public class NavigationFragment extends BaseFragment implements View.OnClickList
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_navigation;
+        return R.layout.fragment_home;
     }
     
     @Override

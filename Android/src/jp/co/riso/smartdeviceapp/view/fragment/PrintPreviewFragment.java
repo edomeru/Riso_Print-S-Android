@@ -22,10 +22,10 @@ import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 
-public class HomePreviewFragment extends BaseFragment implements PDFFileManagerInterface{
-
-    public static final String KEY_CURRENT_PAGE = "current_page";
+public class PrintPreviewFragment extends BaseFragment implements PDFFileManagerInterface {
     
+    public static final String KEY_CURRENT_PAGE = "current_page";
+
     PDFFileManager mPdfManager = null;
     PrintSettings mPrintSettings;
     
@@ -37,12 +37,12 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     
     private LruCache<String, Bitmap> mBmpCache;
     
-    public HomePreviewFragment() {
+    public PrintPreviewFragment() {
     }
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_homepreview;
+        return R.layout.fragment_printpreview;
     }
     
     @Override
