@@ -10,8 +10,10 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.LruCache;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
@@ -28,6 +30,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
     PrintSettings mPrintSettings;
     
     PrintPreviewView mPrintPreviewView = null;
+    ProgressBar mProgressBar = null;
     View mOpenInView = null;
     
     int mCurrentPage = 0;
@@ -54,11 +57,14 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
+
+            //data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
+            data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-squarish.pdf");
             
             mPdfManager = new PDFFileManager(this);
             
             if (data != null) {
-                mPdfManager.setPath(data.getPath());
+                mPdfManager.setPDF(data.getPath());
                 
                 // Automatically open asynchronously
                 mPdfManager.initializeAsync();
@@ -100,14 +106,17 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         }
         
         mOpenInView = view.findViewById(R.id.openInView);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.pdfLoadIndicator);
         
         // Hide appropriate views
-        if (mPdfManager.getPath() == null) {
+        if (mPdfManager.getFileName() == null) {
             mPrintPreviewView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
         } else {
             mOpenInView.setVisibility(View.GONE);
             if (!mPdfManager.isInitialized()) {
                 mPrintPreviewView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -141,7 +150,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         super.onResume();
         
         // The activity must call the GL surface view's onResume() on activity onResume().
-        mPrintPreviewView.getCurlView().onResume();
+        mPrintPreviewView.onResume();
     }
 
     @Override
@@ -149,7 +158,7 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
         super.onPause();
         
         // The activity must call the GL surface view's onPause() on activity onPause().
-        mPrintPreviewView.getCurlView().onPause();
+        mPrintPreviewView.onPause();
     }
 
     // ================================================================================
@@ -166,6 +175,9 @@ public class HomePreviewFragment extends BaseFragment implements PDFFileManagerI
                 }
                 if (mOpenInView != null) {
                     mOpenInView.setVisibility(View.GONE);
+                }
+                if (mProgressBar != null) {
+                    mProgressBar.setVisibility(View.GONE);
                 }
                 
                 break;

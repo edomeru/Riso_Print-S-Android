@@ -8,11 +8,15 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
+
+import jp.co.riso.android.util.FileUtils;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Environment;
 
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Global;
@@ -26,6 +30,8 @@ public class PDFFileManager {
     
     private Document mDocument;
     private String mPath;
+    private String mFileName;
+    private String mSandboxPath;
     private WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
     PDFInitTask mInitTask = null;
@@ -47,17 +53,35 @@ public class PDFFileManager {
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
-        mPath = null;
+        setPDF(null);
         mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
     }
     
     /**
      * Gets the current path of the pdf
      * 
-     * @return Gets the current path.
+     * @return Path from the file system.
      */
     public String getPath() {
         return mPath;
+    }
+    
+    /**
+     * Gets the current filename of the pdf
+     * 
+     * @return Filename of the PDF.
+     */
+    public String getFileName() {
+        return mFileName;
+    }
+    
+    /**
+     * Gets the path of the pdf in the app sandbox
+     * 
+     * @return Path from the app sandbax.
+     */
+    public String getSandboxPath() {
+        return mSandboxPath;
     }
     
     /**
@@ -66,9 +90,22 @@ public class PDFFileManager {
      * @param path
      *            New path value
      */
-    public void setPath(String path) {
+    public void setPDF(String path) {
         mIsInitialized = false;
+        
+        if (path == null) {
+            mPath = null;
+            mFileName = null;
+            mSandboxPath = null;
+            
+            return;
+        }
+        
+        File file = new File(path);
+        
         mPath = path;
+        mFileName = file.getName();
+        mSandboxPath = Environment.getExternalStorageDirectory() + "/" + file.getName();
     }
     
     /**
@@ -179,7 +216,7 @@ public class PDFFileManager {
             closeDocument();
         }
         
-        if (mPath == null || mPath == "") {
+        if (mSandboxPath == null || mSandboxPath == "") {
             return PDF_INVALID_PATH;
         }
         
@@ -213,6 +250,12 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
+            try {
+                FileUtils.copy(new File(mPath), new File(mSandboxPath));
+            } catch (Exception e) {
+                return PDF_INVALID_PATH;
+            }
+            
             int status = openDocument();
             
             if (CONST_KEEP_DOCUMENT_CLOSED) {

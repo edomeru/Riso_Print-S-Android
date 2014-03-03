@@ -41,6 +41,14 @@
             android:layout_height="match_parent"
             android:background="@color/theme_light_2" >
         </jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView>
+
+        <ProgressBar
+            android:id="@+id/pdfLoadIndicator"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
     </FrameLayout>
     
 
