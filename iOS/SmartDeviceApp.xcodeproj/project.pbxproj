@@ -33,6 +33,8 @@
 		2D9DD443185FFBCB0085AD88 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD446185FFC160085AD88 /* InfoPlist.strings */; };
 		2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD44E185FFED70085AD88 /* gtest-all.cc */; };
+		3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192AACA18C595A30000E7E7 /* PDFFileManager.m */; };
+		3192AAE218C5AF590000E7E7 /* PrintPreviewScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192AAE118C5AF590000E7E7 /* PrintPreviewScreenController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +71,10 @@
 		2D9DD447185FFC160085AD88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D9DD44E185FFED70085AD88 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
 		2D9DD44F185FFED70085AD88 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
+		3192AAC918C595A30000E7E7 /* PDFFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFFileManager.h; path = Managers/PDFFileManager.h; sourceTree = "<group>"; };
+		3192AACA18C595A30000E7E7 /* PDFFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDFFileManager.m; path = Managers/PDFFileManager.m; sourceTree = "<group>"; };
+		3192AAE018C5AF590000E7E7 /* PrintPreviewScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintPreviewScreenController.h; path = PrintPreview/PrintPreviewScreenController.h; sourceTree = "<group>"; };
+		3192AAE118C5AF590000E7E7 /* PrintPreviewScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintPreviewScreenController.m; path = PrintPreview/PrintPreviewScreenController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +171,7 @@
 		2D0AEC3A185FDE6C00810455 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				3192AAC818C5953B0000E7E7 /* Managers */,
 				2D0AEC3B185FDE6C00810455 /* Controllers */,
 			);
 			path = Classes;
@@ -193,6 +200,7 @@
 		2D0AEC40185FDE6C00810455 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				3192AADB18C5AEE30000E7E7 /* PrintPreview */,
 				2D0AEC41185FDE6C00810455 /* ViewController.h */,
 				2D0AEC42185FDE6C00810455 /* ViewController.m */,
 			);
@@ -383,6 +391,24 @@
 			path = gtest;
 			sourceTree = "<group>";
 		};
+		3192AAC818C5953B0000E7E7 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				3192AAC918C595A30000E7E7 /* PDFFileManager.h */,
+				3192AACA18C595A30000E7E7 /* PDFFileManager.m */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
+		3192AADB18C5AEE30000E7E7 /* PrintPreview */ = {
+			isa = PBXGroup;
+			children = (
+				3192AAE018C5AF590000E7E7 /* PrintPreviewScreenController.h */,
+				3192AAE118C5AF590000E7E7 /* PrintPreviewScreenController.m */,
+			);
+			name = PrintPreview;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -503,7 +529,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
+				3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
+				3192AAE218C5AF590000E7E7 /* PrintPreviewScreenController.m in Sources */,
 				2D0AEC45185FDE6C00810455 /* ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
