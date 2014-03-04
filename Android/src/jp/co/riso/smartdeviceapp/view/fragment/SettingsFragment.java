@@ -21,6 +21,11 @@ public class SettingsFragment extends BaseFragment {
     }
     
     @Override
+    public void initializeFragment(Bundle savedInstanceState) {
+        
+    }
+    
+    @Override
     public void initializeView(View view, Bundle savedInstanceState) {
     }
 
