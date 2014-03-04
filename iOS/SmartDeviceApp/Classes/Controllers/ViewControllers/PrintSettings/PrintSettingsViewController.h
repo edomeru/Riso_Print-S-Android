@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SlidingViewController.h"
 
-@interface PrintSettingsViewController : UIViewController
+@interface PrintSettingsViewController : SlidingViewController
 
 @end

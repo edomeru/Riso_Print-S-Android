@@ -23,6 +23,7 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
+		2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */; };
 		2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3518C4137000AC8AD0 /* RootViewController.m */; };
 		2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */; };
 		2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */; };
@@ -63,6 +64,8 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
+		2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
 		2D4B3E3418C4137000AC8AD0 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		2D4B3E3518C4137000AC8AD0 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		2D4B3E3818C4165B00AC8AD0 /* PrintPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintPreviewViewController.h; sourceTree = "<group>"; };
@@ -313,6 +316,8 @@
 			children = (
 				2D4B3E3418C4137000AC8AD0 /* RootViewController.h */,
 				2D4B3E3518C4137000AC8AD0 /* RootViewController.m */,
+				2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */,
+				2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */,
 			);
 			path = General;
 			sourceTree = "<group>";
@@ -581,6 +586,7 @@
 				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
 				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
 				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
+				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

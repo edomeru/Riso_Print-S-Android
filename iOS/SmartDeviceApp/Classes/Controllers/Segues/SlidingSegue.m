@@ -122,16 +122,15 @@ const float AnimationDuration = 0.3f;
     }
     
     // Reset constraints
-    slidingConstraint.constant = 0;
+    /*slidingConstraint.constant = 0;
     container.leftMainConstraint.constant = mainStart;
-    [container.view layoutIfNeeded];
+    [container.view layoutIfNeeded];*/
    
     // Prepare animation
     slidingConstraint.constant = -slidingFrame.size.width;
     container.leftMainConstraint.constant = 0;
     
-    
-    [UIView animateWithDuration:AnimationDuration animations:^
+    [UIView animateWithDuration:AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^
      {
          [container.view layoutIfNeeded];
      } completion:^(BOOL finished)

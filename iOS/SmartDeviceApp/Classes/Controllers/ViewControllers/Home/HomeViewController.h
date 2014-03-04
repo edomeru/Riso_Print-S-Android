@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SlidingViewController.h"
 
-@interface HomeViewController : UIViewController
+@interface HomeViewController : SlidingViewController
 
 @end
