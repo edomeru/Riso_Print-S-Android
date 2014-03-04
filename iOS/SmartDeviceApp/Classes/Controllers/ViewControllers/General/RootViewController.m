@@ -52,6 +52,13 @@
         segue.slideDirection = SlideLeft;
         return segue;
     }
+    else if ([identifier isEqualToString:@"UnwindRight"])
+    {
+        SlidingSegue *segue = [[SlidingSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+        segue.isUnwinding = YES;
+        segue.slideDirection = SlideRight;
+        return segue;
+    }
     
     return nil;
 }

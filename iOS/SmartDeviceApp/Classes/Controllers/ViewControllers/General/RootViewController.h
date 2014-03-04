@@ -11,9 +11,11 @@
 @interface RootViewController : UIViewController
 
 @property (nonatomic, weak) IBOutlet UIView *mainView;
-@property (nonatomic, weak) IBOutlet UIView *slidingView;
+@property (nonatomic, weak) IBOutlet UIView *leftSlidingView;
+@property (nonatomic, weak) IBOutlet UIView *rightSlidingView;
 
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftMainConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftSlidingConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightSlidingConstraint;
 
 @end

@@ -44,40 +44,45 @@ const float AnimationDuration = 0.3f;
     UIViewController *mainViewController = self.sourceViewController;
     UIViewController *slidingViewController = self.destinationViewController;
     RootViewController *container = (RootViewController *) mainViewController.parentViewController;
+   
+    UIView *slidingView;
+    NSLayoutConstraint *slidingConstraint;
+    
+    if (self.slideDirection == SlideLeft)
+    {
+        slidingView = container.leftSlidingView;
+        slidingConstraint = container.leftSlidingConstraint;
+    }
+    else
+    {
+        slidingView = container.rightSlidingView;
+        slidingConstraint = container.rightSlidingConstraint;
+    }
     
     // Reset constraints
-    container.leftSlidingConstraint.constant = 0;
+    slidingConstraint.constant = 0;
     container.leftMainConstraint.constant = 0;
     [container.view layoutIfNeeded];
-    
+    CGRect slidingFrame = CGRectMake(0, 0, slidingView.frame.size.width, slidingView.frame.size.height);
+
     // Add sliding container
     [container addChildViewController:slidingViewController];
-    CGRect slidingFrame = container.slidingView.frame;
-    CGRect mainFrame = container.mainView.frame;
     slidingViewController.view.frame = slidingFrame;
-    [container.slidingView addSubview:slidingViewController.view];
-    if (self.slideDirection == SlideLeft)
-    {
-        container.leftSlidingConstraint.constant = -slidingFrame.size.width;
-    } else
-    {
-        container.leftSlidingConstraint.constant = mainFrame.size.width;
-    }
+    [slidingView addSubview:slidingViewController.view];
+    slidingConstraint.constant = -slidingFrame.size.width;
     [container.view layoutIfNeeded];
-   
+    
     // Prepare animation
+    slidingConstraint.constant = 0;
     if (self.slideDirection == SlideLeft)
     {
-        container.leftSlidingConstraint.constant = 0;
         container.leftMainConstraint.constant = slidingFrame.size.width;
     }
     else
     {
-        container.leftSlidingConstraint.constant = mainFrame.size.width - slidingFrame.size.width;
         container.leftMainConstraint.constant = -slidingFrame.size.width;
     }
     
-    // Start animation
     [UIView animateWithDuration:AnimationDuration animations:^
      {
          [container.view layoutIfNeeded];
@@ -97,18 +102,35 @@ const float AnimationDuration = 0.3f;
     UIViewController *mainViewController = self.destinationViewController;
     UIViewController *slidingViewContoller = self.sourceViewController;
     RootViewController *container = (RootViewController *) mainViewController.parentViewController;
-    
-    // Reset Constraints
     CGRect slidingFrame = slidingViewContoller.view.frame;
-    container.leftSlidingConstraint.constant = 0;
-    container.leftMainConstraint.constant = slidingFrame.size.width;
-    [container.view layoutIfNeeded];
     
+    UIView *slidingView;
+    NSLayoutConstraint *slidingConstraint;
+    CGFloat mainStart;
+    // Prepare constraints
+    if (self.slideDirection == SlideLeft)
+    {
+        slidingView = container.leftSlidingView;
+        slidingConstraint = container.leftSlidingConstraint;
+        mainStart = slidingFrame.size.width;
+    }
+    else
+    {
+        slidingView = container.rightSlidingView;
+        slidingConstraint = container.rightSlidingConstraint;
+        mainStart = -slidingFrame.size.width;
+    }
+    
+    // Reset constraints
+    slidingConstraint.constant = 0;
+    container.leftMainConstraint.constant = mainStart;
+    [container.view layoutIfNeeded];
+   
     // Prepare animation
-    container.leftSlidingConstraint.constant = -slidingFrame.size.width;
+    slidingConstraint.constant = -slidingFrame.size.width;
     container.leftMainConstraint.constant = 0;
     
-    // Start animation
+    
     [UIView animateWithDuration:AnimationDuration animations:^
      {
          [container.view layoutIfNeeded];
