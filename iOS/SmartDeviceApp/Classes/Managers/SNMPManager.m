@@ -28,4 +28,14 @@
     //return nil;
 }
 
++ (BOOL) getPrinterStatus:(NSString *) ipAddress
+{
+    //TODO Get status from SNMP
+    
+    //TODO remove stub code
+    //STUB Code
+    int onlineStatus = arc4random() % 2;
+    
+    return onlineStatus;
+}
 @end

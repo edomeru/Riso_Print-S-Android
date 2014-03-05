@@ -26,4 +26,5 @@
  **/
 + (NSArray*)searchForPrinter:(NSString*)printerIP;
 
++ (BOOL) getPrinterStatus:(NSString *) ipAddress;
 @end

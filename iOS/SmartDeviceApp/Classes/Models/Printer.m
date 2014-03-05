@@ -24,8 +24,9 @@
 @dynamic ip_address;
 @dynamic name;
 @dynamic port;
+@dynamic onlineStatus;
 @dynamic defaultprinter;
-@dynamic printsetting;
 @dynamic printjob;
+@dynamic printsetting;
 
 @end

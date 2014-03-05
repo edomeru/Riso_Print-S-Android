@@ -170,6 +170,9 @@ typedef enum
                             
                             [self displayResult:NO_ERROR];
                             
+                            //since printer can be added, then it is online
+                            newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
+                            
                             // update the list of added printers
                             [self.addedPrinters addObject:newPrinter];
     

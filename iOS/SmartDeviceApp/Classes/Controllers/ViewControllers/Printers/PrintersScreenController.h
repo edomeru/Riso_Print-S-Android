@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PrintersScreenController : UITableViewController
+@interface PrintersScreenController : UITableViewController 
 
 /**
  Contains the Printer objects from DB.

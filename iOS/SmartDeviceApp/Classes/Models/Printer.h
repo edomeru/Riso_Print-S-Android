@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @class DefaultPrinter, PrintJob, PrintSetting;
 
@@ -22,9 +23,10 @@
 @property (nonatomic, retain) NSString * ip_address;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSNumber * port;
+@property (nonatomic, retain) NSNumber * onlineStatus;
 @property (nonatomic, retain) DefaultPrinter *defaultprinter;
-@property (nonatomic, retain) PrintSetting *printsetting;
 @property (nonatomic, retain) NSSet *printjob;
+@property (nonatomic, retain) PrintSetting *printsetting;
 @end
 
 @interface Printer (CoreDataGeneratedAccessors)

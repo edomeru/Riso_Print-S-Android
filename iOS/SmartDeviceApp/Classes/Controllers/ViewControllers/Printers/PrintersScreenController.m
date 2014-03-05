@@ -10,6 +10,7 @@
 #import "AddPrinterScreenController.h"
 #import "Printer.h"
 #import "PrinterManager.h"
+#import "PrinterCell.h"
 
 #define SEGUE_TO_ADD_PRINTER    @"PrintersToAddPrinter"
 #define SEGUE_TO_PRINTER_SEARCH @"PrintersToPrinterSearch"
@@ -115,15 +116,22 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString* cellIdentifier = PRINTERCELL;
-    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
+    PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
                                                             forIndexPath:indexPath];
     
     Printer* printer = [self.listSavedPrinters objectAtIndex:indexPath.row];
-    cell.textLabel.text = printer.name;
-    cell.detailTextLabel.text = printer.ip_address;
+    cell.printerName.text = printer.name;
+    cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+    cell.printerStatus.statusHelper.delegate = cell.printerStatus;
+    [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.printerStatus.statusHelper startPrinterStatusPolling];
+    
+    //cell.textLabel.text = printer.name;
+    //cell.detailTextLabel.text = printer.ip_address;
     
     return cell;
 }
+
 
 #pragma mark - Printers Data
 
