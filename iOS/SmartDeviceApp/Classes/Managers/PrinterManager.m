@@ -9,6 +9,10 @@
 #import "PrinterManager.h"
 #import "Printer.h"
 #import "DatabaseManager.h"
+#import "SNMPManager.h"
+
+#define PRINTER_IP      0
+#define PRINTER_NAME    1
 
 #define PRINTER_MAX_COUNT   20
 
@@ -16,13 +20,27 @@
 
 + (Printer*)createPrinter
 {
-    NSManagedObjectContext* context = nil;
     id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate performSelector:@selector(managedObjectContext)])
-        context = [delegate managedObjectContext];
+    NSManagedObjectContext* context = [delegate managedObjectContext];
     
     return [NSEntityDescription insertNewObjectForEntityForName:@"Printer"
                                          inManagedObjectContext:context];
+}
+
++ (BOOL)searchForPrinter:(Printer**)printer
+{
+    NSArray* printerInfoCapabilities = [SNMPManager searchForPrinter:(*printer).ip_address];
+    
+    if (printerInfoCapabilities != nil)
+    {
+        //save printer info and capabilities to Printer object
+        (*printer).name = [printerInfoCapabilities objectAtIndex:PRINTER_NAME];
+        //TODO: add others here..
+        
+        return YES;
+    }
+    else
+        return NO;
 }
 
 + (BOOL)addPrinterToDB:(Printer*)printer

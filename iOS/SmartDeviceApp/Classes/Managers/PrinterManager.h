@@ -16,8 +16,23 @@
  Creates a Printer object.
  This object is typed as a NSManagedObject and is created as
  a Core Data entity.
+ 
+ @return Printer*
  **/
 + (Printer*)createPrinter;
+
+/**
+ Calls the SNMP library to search for the printer in the network.
+ If the printer is found and is supported, its info and capabilities
+ are stored in the passed Printer object.
+ 
+ @param printer
+        reference to the Printer object, will contain the info
+        and capabilities if the printer is found
+ 
+ @return YES if printer found, NO otherwise.
+ **/
++ (BOOL)searchForPrinter:(Printer**)printer;
 
 /**
  Adds the Printer to the Database (Core Data).

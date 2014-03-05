@@ -13,6 +13,6 @@
 /**
  Contains the Printer objects from DB.
  **/
-@property NSMutableArray* listSavedPrinters;
+@property (nonatomic, strong) NSMutableArray* listSavedPrinters;
 
 @end

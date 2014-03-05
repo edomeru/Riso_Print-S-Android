@@ -11,18 +11,21 @@
 
 @implementation SNMPManager
 
-+ (BOOL)searchForPrinter:(Printer**)printer
++ (NSArray*)searchForPrinter:(NSString*)printerIP;
 {
-    //TODO send SNMP message to the printer
+    //TODO: send SNMP message to the printer
     
-    //TODO wait for SNMP response
+    //TODO: wait for SNMP response
     
-    //TODO check and get printer capabilities
+    //TODO: check and get printer capabilities
+    //TODO: check if printer is supported
     
-    //TODO save Printer info and capabilities
-    (*printer).name = @"New Printer";
+    //TODO: if printer is supported, store printer info and capabilities
+    NSArray* printerInfoCapabilities = @[printerIP, @"New Printer"];
+    return printerInfoCapabilities;
     
-    return YES;
+    //TODO: if printer is not supported
+    //return nil;
 }
 
 @end

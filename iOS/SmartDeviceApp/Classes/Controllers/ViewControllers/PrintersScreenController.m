@@ -25,12 +25,12 @@
 - (void)setupNavBarItems;
 
 /**
- Handler for the "Manual Add" button.
+ Segues to the Add Printer screen.
  **/
 - (void)onAdd:(id)sender;
 
 /**
- Handler for the "Printer Search" button.
+ Segues to the Printer Search screen.
  **/
 - (void)onSearch:(id)sender;
 
@@ -41,7 +41,7 @@
 
 /**
  FOR DEBUGGING ONLY.
- This method fills the list of saved printers with initial data.
+ This method fills the list of saved printers with static test data.
  **/
 - (void)initWithTestData;
 
@@ -73,7 +73,7 @@
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Setup Navigation Bar
+#pragma mark - Navigation Bar
 
 - (void)setupNavBarItems
 {
@@ -90,8 +90,6 @@
     self.navigationItem.rightBarButtonItems = @[searchButton, addButton];
 }
 
-#pragma mark - Navigation Bar Actions
-
 - (void)onAdd:(id)sender
 {
     [self performSegueWithIdentifier:SEGUE_TO_ADD_PRINTER sender:sender];
@@ -102,7 +100,7 @@
     [self performSegueWithIdentifier:SEGUE_TO_PRINTER_SEARCH sender:sender];
 }
 
-#pragma mark - Setup TableView
+#pragma mark - TableView
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -127,9 +125,7 @@
     return cell;
 }
 
-#pragma mark - TableView Actions
-
-#pragma mark - Setup Printers
+#pragma mark - Printers Data
 
 - (void)getSavedPrintersFromDB
 {
@@ -137,7 +133,7 @@
     
     NSString* pathToPList = [[NSBundle mainBundle] pathForResource:@"SmartDeviceApp-Settings" ofType:@"plist"];
     NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPList];
-    BOOL isLoadWithInitialData = [[dict objectForKey:@"LoadWithInitialData"] boolValue];
+    BOOL isLoadWithInitialData = [[dict objectForKey:@"LoadWithTestData"] boolValue];
     if (isLoadWithInitialData)
     {
         [self initWithTestData];
@@ -173,10 +169,10 @@
 {
     if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
     {
+        // give the Add Printer screen a copy of the list of saved printers
         UINavigationController* navController = [segue destinationViewController];
         AddPrinterScreenController* destController = [[navController viewControllers] objectAtIndex:0];
         destController.listSavedPrinters = self.listSavedPrinters;
-        destController.addedPrinter = nil;
     }
     
     if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
@@ -190,9 +186,9 @@
     if ([sourceViewController isKindOfClass:[AddPrinterScreenController class]])
     {
         AddPrinterScreenController* adderScreen = (AddPrinterScreenController*)sourceViewController;
-        if (adderScreen.addedPrinter != nil)
+        if ([adderScreen.addedPrinters count] != 0)
         {
-            [self.listSavedPrinters addObject:adderScreen.addedPrinter];
+            [self.listSavedPrinters addObjectsFromArray:adderScreen.addedPrinters];
             [self.tableView reloadData];
         }
     }

@@ -13,10 +13,10 @@
 /**
  A copy of the list of Printer objects from the Printers screen.
  **/
-@property NSArray* listSavedPrinters;
+@property (nonatomic, strong) NSArray* listSavedPrinters;
 
 /**
- Returns to the Printers screen.
+ Unwinds back to the Printers screen.
  **/
 - (IBAction)onBack:(UIBarButtonItem *)sender;
 

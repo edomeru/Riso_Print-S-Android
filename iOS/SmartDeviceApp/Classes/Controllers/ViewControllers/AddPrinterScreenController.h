@@ -10,31 +10,31 @@
 
 @class Printer;
 
-@interface AddPrinterScreenController : UITableViewController
+@interface AddPrinterScreenController : UITableViewController <UITextFieldDelegate>
 
 /**
  A copy of the list of Printer objects from the Printers screen.
  **/
-@property NSArray* listSavedPrinters;
+@property (nonatomic, strong) NSArray* listSavedPrinters;
 
 /**
- A copy of the new Printer object searched and added to the database.
- This will be set to nil if no printer was added.
+ A list of the new Printer objects searched and added to the database.
+ This is initially nil and will remain nil if no printer/s is/are added.
  **/
-@property Printer* addedPrinter;
+@property (nonatomic, strong) NSMutableArray* addedPrinters;
 
 /**
- This method is called when returning to the Printers screen.
- The Printer info is not saved.
+ Unwinds back to the Printers screen.
+ Any unsaved Printer info will not be saved.
  **/
 - (IBAction)onBack:(UIBarButtonItem *)sender;
 
 /**
- This method is called when returning to the Printers screen.
- The Printer is first searched from the network. If it is
- available, its info and capabilities are retrieved. The
- Printer object is then stored in the DB, and the list of the
- saved printers in the Printers screen is updated.
+ The input Printer info is retrieved from the UI, then
+ the printer is searched from the network. If it is
+ available, its info and capabilities are retrieved. If
+ the printer is supported, the printer object is created
+ and stored in the DB.
  **/
 - (IBAction)onSave:(UIBarButtonItem *)sender;
 
@@ -52,5 +52,10 @@
  Input TextField for the Password.
  **/
 @property (weak, nonatomic) IBOutlet UITextField *inputPassword;
+
+/**
+ Save Button.
+ **/
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 
 @end

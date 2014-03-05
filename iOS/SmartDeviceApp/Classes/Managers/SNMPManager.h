@@ -16,14 +16,14 @@
  Searches for the Printer in the network using its IP Address.
  If the Printer is accessible/available, its print capabilities
  are also retrieved and checked to determine if it is supported.
- If it is supported, its info and capabilities are saved to the
- same Printer object.
+ If it is supported, its info and capabilities are stored in 
+ an array and returned.
  
- @param printer
-        Printer object containing the IP Address to access
+ @param printerIP
+        IP address of the printer to search
  
- @return YES if printer was found, NO otherwise.
+ @return NSArray* containing printer info and capabilities, 'nil' otherwise.
  **/
-+ (BOOL)searchForPrinter:(Printer**)printer;
++ (NSArray*)searchForPrinter:(NSString*)printerIP;
 
 @end

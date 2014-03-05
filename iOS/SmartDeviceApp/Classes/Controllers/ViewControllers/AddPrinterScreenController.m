@@ -13,39 +13,44 @@
 #import "NetworkManager.h"
 #import "InputUtils.h"
 
+#define TAG_TEXT_IP         1
+#define TAG_TEXT_USERNAME   2
+#define TAG_TEXT_PASSWORD   3
+
 typedef enum
 {
     NO_ERROR,
     ERR_NO_NETWORK,
     ERR_INVALID_IP,
     ERR_CANNOT_ADD,
+    ERR_ALREADY_ADDED,
 } RESULT_TYPE;
 
 @interface AddPrinterScreenController ()
 
-@property NSString* savedIP;
-@property NSString* savedUsername;
-@property NSString* savedPassword;
+/**
+ Sets-up the Navigation Bar views.
+ 1. Disables the Save button.
+ **/
+- (void)setupNavBar;
 
 /**
  Displays an AlertView for the result of the Add Printer operation.
  
- @param addResult
-        YES if successful, NO otherwise
- 
- @param errorCode
-        One of the following error codes:
-            ERR_CODE_NO_ERROR,
-            ERR_CODE_NO_NETWORK,
-            ERR_CODE_INVALID_IP,
-            ERR_CODE_CANNOT_ADD
+ @param result
+        One of the following result types:
+            NO_ERROR,
+            ERR_NO_NETWORK,
+            ERR_INVALID_IP,
+            ERR_CANNOT_ADD,
+            ERR_ALREADY_ADDED
  **/
 - (void)displayResult:(RESULT_TYPE)result;
 
 /**
- Saves the content of the TextFields.
+ Tells the currently active TextField to close the keypad/numpad.
  **/
-- (void)getTextFieldInputs;
+- (void)dismissKeypad;
 
 @end
 
@@ -65,6 +70,12 @@ typedef enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    // setup properties
+    self.addedPrinters = [NSMutableArray array];
+
+    // setup view
+    [self setupNavBar];
 }
 
 - (void)didReceiveMemoryWarning
@@ -72,7 +83,12 @@ typedef enum
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Navigation Bar Actions
+#pragma mark - Navigation Bar
+
+- (void)setupNavBar
+{
+    [self.saveButton setEnabled:NO];
+}
 
 - (IBAction)onBack:(UIBarButtonItem *)sender
 {
@@ -81,71 +97,126 @@ typedef enum
 
 - (IBAction)onSave:(UIBarButtonItem *)sender
 {
-    // check if the device is connected to the network
-    BOOL isConnectedToNetwork = [NetworkManager checkNetworkConnection];
-    if (!isConnectedToNetwork)
-        [self displayResult:ERR_NO_NETWORK];
+    // check if trying to add the same printer
+    BOOL bIsAlreadyAdded = NO;
+    if ([self.addedPrinters count] != 0)
+    {
+        for (Printer* onePrinter in self.addedPrinters)
+        {
+            if ([onePrinter.ip_address isEqualToString:self.inputIP.text])
+            {
+                bIsAlreadyAdded = YES;
+                break;
+            }
+        }
+    }
+    if (bIsAlreadyAdded)
+    {
+        [self displayResult:ERR_ALREADY_ADDED];
+    }
     else
     {
-        // get the user input
-        [self getTextFieldInputs];
-        
-        // check if the input IP is valid
-        NSString* formattedIP = self.savedIP;
-        BOOL isInputValid = [InputUtils validateAndFormatIP:&formattedIP];
-        if (!isInputValid)
-            [self displayResult:ERR_INVALID_IP];
+        // check if the device is connected to the network
+        BOOL isConnectedToNetwork = [NetworkManager checkNetworkConnection];
+        if (!isConnectedToNetwork)
+        {
+            [self displayResult:ERR_NO_NETWORK];
+        }
         else
         {
-            // update IP address with the formatted copy
-            self.savedIP = formattedIP;
-            
-            // check if printer can be added to the list
-            BOOL canAddPrinter = [PrinterManager canAddPrinter:self.savedIP toList:self.listSavedPrinters];
-            if (!canAddPrinter)
-                [self displayResult:ERR_CANNOT_ADD];
+            // check if the input IP is valid
+            NSString* formattedIP = self.inputIP.text;
+            BOOL isInputValid = [InputUtils validateAndFormatIP:&formattedIP];
+            if (!isInputValid)
+            {
+                [self displayResult:ERR_INVALID_IP];
+            }
             else
             {
-                // create Printer object
-                Printer* newPrinter = [PrinterManager createPrinter];
-                newPrinter.ip_address = self.savedIP;
-                
-                //TODO: load searching/progress indicator
-                
-                // use SNMP to search for the printer and get its capabilities
-                BOOL isAccessibleAndSupported = [SNMPManager searchForPrinter:&newPrinter];
-                if (!isAccessibleAndSupported)
+                // check if printer can be added to the list of saved printers in DB
+                BOOL canAddPrinter = [PrinterManager canAddPrinter:formattedIP toList:self.listSavedPrinters];
+                if (!canAddPrinter)
+                {
                     [self displayResult:ERR_CANNOT_ADD];
+                }
                 else
                 {
-                    //TODO: copy the default print settings values to the print settings object of the printer object
+                    // create Printer object
+                    Printer* newPrinter = [PrinterManager createPrinter];
+                    newPrinter.ip_address = formattedIP;
                     
-                    // add the printer to DB
-                    BOOL isAddedToDB = [PrinterManager addPrinterToDB:newPrinter];
-                    if (!isAddedToDB)
+                    //TODO: load searching/progress indicator
+                    
+                    // use SNMP to search for the printer and get its capabilities
+                    // check if printer is supported
+                    BOOL isAvailableAndSupported = [PrinterManager searchForPrinter:&newPrinter];
+                    if (!isAvailableAndSupported)
+                    {
                         [self displayResult:ERR_CANNOT_ADD];
+                    }
                     else
                     {
-                        //TODO: disable searching indicator
+                        //TODO: copy the default print settings values to the print settings object of the printer object
                         
-                        [self displayResult:NO_ERROR];
-                        
-                        // set the copy of the Printer to be accessed by the Printers screen
-                        self.addedPrinter = newPrinter;
+                        // add the printer to DB
+                        BOOL isAddedToDB = [PrinterManager addPrinterToDB:newPrinter];
+                        if (!isAddedToDB)
+                        {
+                            [self displayResult:ERR_CANNOT_ADD];
+                        }
+                        else
+                        {
+                            //TODO: disable searching indicator
+                            
+                            [self displayResult:NO_ERROR];
+                            
+                            // update the list of added printers
+                            [self.addedPrinters addObject:newPrinter];
+    
+                            //newPrinter = nil;
+                        }
                     }
                 }
             }
         }
     }
+    
+    [self dismissKeypad];
 }
 
-#pragma mark - Get TextField Inputs
+#pragma mark - TextFields
 
-- (void)getTextFieldInputs
+- (void)dismissKeypad
 {
-    self.savedIP = self.inputIP.text;
-    self.savedUsername = self.inputUsername.text;
-    self.savedPassword = self.inputPassword.text;
+    if (self.inputIP.isEditing)
+        [self.inputIP resignFirstResponder];
+    else if (self.inputUsername.isEditing)
+        [self.inputUsername resignFirstResponder];
+    else if (self.inputPassword.isEditing)
+        [self.inputPassword resignFirstResponder];
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField
+{
+    // disable the Save button if the IP Address text is cleared
+    if (textField.tag == TAG_TEXT_IP)
+        [self.saveButton setEnabled:NO];
+    
+    return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textField.tag == TAG_TEXT_IP)
+    {
+        // disable the Save button if backspace will clear the IP Address text
+        if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
+            [self.saveButton setEnabled:NO];
+        else
+            [self.saveButton setEnabled:YES];
+    }
+    
+    return YES;
 }
 
 #pragma mark - Display Result
@@ -158,7 +229,7 @@ typedef enum
                                                 cancelButtonTitle:@"OK"
                                                 otherButtonTitles:nil];
     
-    //TODO: replace with localizable strings
+    //TODO: replace messages with localizable strings
     
     switch (result)
     {
@@ -171,11 +242,14 @@ typedef enum
         case ERR_INVALID_IP:
             [resultAlert setMessage:@"The IP address is invalid. The printer could not be found."];
             break;
+        case ERR_ALREADY_ADDED:
+            [resultAlert setMessage:@"The printer has already been added."];
+            break;
         case ERR_CANNOT_ADD:
         default:
             [resultAlert setMessage:@"The printer could not be added."];
             break;
-        //TODO: it would be better to explain why the printer could not be added
+            //TODO: it would be better to explain why the printer could not be added
     }
     
     [resultAlert show];
