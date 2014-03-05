@@ -190,8 +190,11 @@
     if ([sourceViewController isKindOfClass:[AddPrinterScreenController class]])
     {
         AddPrinterScreenController* adderScreen = (AddPrinterScreenController*)sourceViewController;
-        [self.listSavedPrinters addObject:adderScreen.addedPrinter];
-        [self.tableView reloadData];
+        if (adderScreen.addedPrinter != nil)
+        {
+            [self.listSavedPrinters addObject:adderScreen.addedPrinter];
+            [self.tableView reloadData];
+        }
     }
 }
 
