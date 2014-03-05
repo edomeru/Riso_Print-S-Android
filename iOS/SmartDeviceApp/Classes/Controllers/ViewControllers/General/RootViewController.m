@@ -29,7 +29,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    [self performSegueWithIdentifier:@"Root-PrintPreview" sender:self];
+    //[self performSegueWithIdentifier:@"Root-PrintPreview" sender:self];
+    [self performSegueWithIdentifier:@"Root-Printers" sender:self];
 }
 
 - (void)didReceiveMemoryWarning

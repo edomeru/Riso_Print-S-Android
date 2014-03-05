@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
+		2828310D18C705F3008B127C /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828310618C705F3008B127C /* DefaultPrinter.m */; };
+		2828310E18C705F3008B127C /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828310818C705F3008B127C /* Printer.m */; };
+		2828310F18C705F3008B127C /* PrintJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828310A18C705F3008B127C /* PrintJob.m */; };
+		2828311018C705F3008B127C /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828310C18C705F3008B127C /* PrintSetting.m */; };
+		2828311418C7060A008B127C /* AddPrinterScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311318C7060A008B127C /* AddPrinterScreenController.m */; };
+		2828311818C70636008B127C /* PrintersScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311718C70636008B127C /* PrintersScreenController.m */; };
+		2828311C18C7064B008B127C /* PrinterSearchScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311B18C7064B008B127C /* PrinterSearchScreenController.m */; };
+		2828312618C7066B008B127C /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311F18C7066B008B127C /* DatabaseManager.m */; };
+		2828312718C7066B008B127C /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312118C7066B008B127C /* NetworkManager.m */; };
+		2828312818C7066B008B127C /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312318C7066B008B127C /* PrinterManager.m */; };
+		2828312918C7066B008B127C /* SNMPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312518C7066B008B127C /* SNMPManager.m */; };
+		2828312E18C7067D008B127C /* InputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312D18C7067D008B127C /* InputUtils.m */; };
+		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
+		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -43,6 +58,33 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2828310518C705F3008B127C /* DefaultPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DefaultPrinter.h; path = Models/DefaultPrinter.h; sourceTree = "<group>"; };
+		2828310618C705F3008B127C /* DefaultPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DefaultPrinter.m; path = Models/DefaultPrinter.m; sourceTree = "<group>"; };
+		2828310718C705F3008B127C /* Printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Printer.h; path = Models/Printer.h; sourceTree = "<group>"; };
+		2828310818C705F3008B127C /* Printer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Printer.m; path = Models/Printer.m; sourceTree = "<group>"; };
+		2828310918C705F3008B127C /* PrintJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintJob.h; path = Models/PrintJob.h; sourceTree = "<group>"; };
+		2828310A18C705F3008B127C /* PrintJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintJob.m; path = Models/PrintJob.m; sourceTree = "<group>"; };
+		2828310B18C705F3008B127C /* PrintSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintSetting.h; path = Models/PrintSetting.h; sourceTree = "<group>"; };
+		2828310C18C705F3008B127C /* PrintSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintSetting.m; path = Models/PrintSetting.m; sourceTree = "<group>"; };
+		2828311218C7060A008B127C /* AddPrinterScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddPrinterScreenController.h; path = AddPrinter/AddPrinterScreenController.h; sourceTree = "<group>"; };
+		2828311318C7060A008B127C /* AddPrinterScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddPrinterScreenController.m; path = AddPrinter/AddPrinterScreenController.m; sourceTree = "<group>"; };
+		2828311618C70636008B127C /* PrintersScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersScreenController.h; path = Printers/PrintersScreenController.h; sourceTree = "<group>"; };
+		2828311718C70636008B127C /* PrintersScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersScreenController.m; path = Printers/PrintersScreenController.m; sourceTree = "<group>"; };
+		2828311A18C7064B008B127C /* PrinterSearchScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterSearchScreenController.h; path = PrinterSearch/PrinterSearchScreenController.h; sourceTree = "<group>"; };
+		2828311B18C7064B008B127C /* PrinterSearchScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterSearchScreenController.m; path = PrinterSearch/PrinterSearchScreenController.m; sourceTree = "<group>"; };
+		2828311E18C7066B008B127C /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseManager.h; path = Managers/DatabaseManager.h; sourceTree = "<group>"; };
+		2828311F18C7066B008B127C /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DatabaseManager.m; path = Managers/DatabaseManager.m; sourceTree = "<group>"; };
+		2828312018C7066B008B127C /* NetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkManager.h; path = Managers/NetworkManager.h; sourceTree = "<group>"; };
+		2828312118C7066B008B127C /* NetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NetworkManager.m; path = Managers/NetworkManager.m; sourceTree = "<group>"; };
+		2828312218C7066B008B127C /* PrinterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterManager.h; path = Managers/PrinterManager.h; sourceTree = "<group>"; };
+		2828312318C7066B008B127C /* PrinterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterManager.m; path = Managers/PrinterManager.m; sourceTree = "<group>"; };
+		2828312418C7066B008B127C /* SNMPManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SNMPManager.h; path = Managers/SNMPManager.h; sourceTree = "<group>"; };
+		2828312518C7066B008B127C /* SNMPManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SNMPManager.m; path = Managers/SNMPManager.m; sourceTree = "<group>"; };
+		2828312C18C7067D008B127C /* InputUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputUtils.h; sourceTree = "<group>"; };
+		2828312D18C7067D008B127C /* InputUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputUtils.m; sourceTree = "<group>"; };
+		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
+		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -97,6 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				282830FF18C7012B008B127C /* CoreData.framework in Frameworks */,
 				2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */,
 				2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */,
 				2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */,
@@ -130,6 +173,97 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2828310418C70515008B127C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2828310518C705F3008B127C /* DefaultPrinter.h */,
+				2828310618C705F3008B127C /* DefaultPrinter.m */,
+				2828310718C705F3008B127C /* Printer.h */,
+				2828310818C705F3008B127C /* Printer.m */,
+				2828310918C705F3008B127C /* PrintJob.h */,
+				2828310A18C705F3008B127C /* PrintJob.m */,
+				2828310B18C705F3008B127C /* PrintSetting.h */,
+				2828310C18C705F3008B127C /* PrintSetting.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		2828311118C705FD008B127C /* AddPrinter */ = {
+			isa = PBXGroup;
+			children = (
+				2828311218C7060A008B127C /* AddPrinterScreenController.h */,
+				2828311318C7060A008B127C /* AddPrinterScreenController.m */,
+			);
+			name = AddPrinter;
+			sourceTree = "<group>";
+		};
+		2828311518C7062B008B127C /* Printers */ = {
+			isa = PBXGroup;
+			children = (
+				2828311618C70636008B127C /* PrintersScreenController.h */,
+				2828311718C70636008B127C /* PrintersScreenController.m */,
+			);
+			name = Printers;
+			sourceTree = "<group>";
+		};
+		2828311918C7063E008B127C /* PrinterSearch */ = {
+			isa = PBXGroup;
+			children = (
+				2828311A18C7064B008B127C /* PrinterSearchScreenController.h */,
+				2828311B18C7064B008B127C /* PrinterSearchScreenController.m */,
+			);
+			name = PrinterSearch;
+			sourceTree = "<group>";
+		};
+		2828311D18C7065C008B127C /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				2828311E18C7066B008B127C /* DatabaseManager.h */,
+				2828311F18C7066B008B127C /* DatabaseManager.m */,
+				2828312018C7066B008B127C /* NetworkManager.h */,
+				2828312118C7066B008B127C /* NetworkManager.m */,
+				2828312218C7066B008B127C /* PrinterManager.h */,
+				2828312318C7066B008B127C /* PrinterManager.m */,
+				2828312418C7066B008B127C /* SNMPManager.h */,
+				2828312518C7066B008B127C /* SNMPManager.m */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
+		2828312A18C7066F008B127C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				2828312B18C7067D008B127C /* Utilities */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		2828312B18C7067D008B127C /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				2828312C18C7067D008B127C /* InputUtils.h */,
+				2828312D18C7067D008B127C /* InputUtils.m */,
+			);
+			name = Utilities;
+			path = Helpers/Utilities;
+			sourceTree = "<group>";
+		};
+		2828312F18C70699008B127C /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		2828313218C70699008B127C /* PropertyList */ = {
+			isa = PBXGroup;
+			children = (
+				2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */,
+			);
+			path = PropertyList;
+			sourceTree = "<group>";
+		};
 		2D0AEBF6185FDD2100810455 = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +290,7 @@
 		2D0AEC01185FDD2100810455 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				282830FE18C7012B008B127C /* CoreData.framework */,
 				2D0AEC8A185FE64A00810455 /* QuartzCore.framework */,
 				2D0AEC02185FDD2100810455 /* Foundation.framework */,
 				2D0AEC04185FDD2100810455 /* CoreGraphics.framework */,
@@ -186,8 +321,11 @@
 		2D0AEC3A185FDE6C00810455 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2828310418C70515008B127C /* Models */,
 				2D0AEC3B185FDE6C00810455 /* Controllers */,
 				2D4B3E3F18C41B9700AC8AD0 /* Views */,
+				2828311D18C7065C008B127C /* Managers */,
+				2828312A18C7066F008B127C /* Helpers */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -215,9 +353,11 @@
 		2D0AEC46185FDE8100810455 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2828312F18C70699008B127C /* Database */,
 				2D0AEC47185FDE8100810455 /* Images */,
 				2D0AEC49185FDE8100810455 /* Locales */,
 				2D0AEC4C185FDE8100810455 /* Storyboards */,
+				2828313218C70699008B127C /* PropertyList */,
 			);
 			name = Resources;
 			path = SmartDeviceApp/Resources;
@@ -307,6 +447,9 @@
 				2D4B3E4618C4691F00AC8AD0 /* Home */,
 				2D4B3E3718C4164A00AC8AD0 /* PrintPreview */,
 				2DDACC6B18C47C5E001DEC76 /* PrintSettings */,
+				2828311518C7062B008B127C /* Printers */,
+				2828311118C705FD008B127C /* AddPrinter */,
+				2828311918C7063E008B127C /* PrinterSearch */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -550,6 +693,7 @@
 				2D0AEC52185FDE8100810455 /* Main_iPhone.storyboard in Resources */,
 				2D9DD409185FF3200085AD88 /* .gitkeep in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
+				2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -577,16 +721,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2828312E18C7067D008B127C /* InputUtils.m in Sources */,
+				2828311818C70636008B127C /* PrintersScreenController.m in Sources */,
+				2828311018C705F3008B127C /* PrintSetting.m in Sources */,
+				2828310E18C705F3008B127C /* Printer.m in Sources */,
 				2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */,
 				2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */,
 				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
 				2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */,
+				2828311418C7060A008B127C /* AddPrinterScreenController.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
+				2828311C18C7064B008B127C /* PrinterSearchScreenController.m in Sources */,
+				2828312818C7066B008B127C /* PrinterManager.m in Sources */,
+				2828312618C7066B008B127C /* DatabaseManager.m in Sources */,
+				2828310F18C705F3008B127C /* PrintJob.m in Sources */,
 				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
+				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
+				2828312718C7066B008B127C /* NetworkManager.m in Sources */,
+				2828310D18C705F3008B127C /* DefaultPrinter.m in Sources */,
 				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
 				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
 				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
 				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
+				2828312918C7066B008B127C /* SNMPManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -873,6 +1030,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */,
+			);
+			currentVersion = 2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */;
+			path = SmartDeviceApp.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 2D0AEBF7185FDD2100810455 /* Project object */;
 }
