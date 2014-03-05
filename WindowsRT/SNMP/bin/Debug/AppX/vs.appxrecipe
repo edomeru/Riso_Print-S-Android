@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Machine>PC229</Machine>
+    <WindowsUser>Keith</WindowsUser>
+    <SolutionConfiguration>Debug|AnyCPU</SolutionConfiguration>
+    <PackageArchitecture>neutral</PackageArchitecture>
+    <PackageIdentityName>57d1eaa3-dc4f-4b91-b52a-089d8226486a</PackageIdentityName>
+    <RegisteredManifestChecksum>4DC0E9A1DBBF358D5F62BA4119A584AEFD5450934B793CD3DD9E682730E29D47</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>57d1eaa3-dc4f-4b91-b52a-089d8226486a_1.0.0.0_neutral__2q2rbms85kxqg</RegisteredPackageMoniker>
+    <RegisteredUserModeAppID>57d1eaa3-dc4f-4b91-b52a-089d8226486a_2q2rbms85kxqg!App</RegisteredUserModeAppID>
+    <RegisteredPackageID>57d1eaa3-dc4f-4b91-b52a-089d8226486a</RegisteredPackageID>
+    <RegisteredPackagePublisher>CN=Keith</RegisteredPackagePublisher>
+    <RegisteredVersion>1.0.0.0</RegisteredVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppXManifest Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\bin\Debug\AppxManifest.xml">
+      <PackagePath>AppxManifest.xml</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2014-02-27T09:03:26.006</Modified>
+    </AppXManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\bin\Debug\App5.exe">
+      <PackagePath>App5.exe</PackagePath>
+      <Modified>2014-03-05T07:11:24.441</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\Assets\Logo.scale-100.png">
+      <PackagePath>Assets\Logo.scale-100.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2013-07-22T21:01:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\Assets\SmallLogo.scale-100.png">
+      <PackagePath>Assets\SmallLogo.scale-100.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2013-07-22T21:01:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\Assets\SplashScreen.scale-100.png">
+      <PackagePath>Assets\SplashScreen.scale-100.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2013-07-22T21:01:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\Assets\StoreLogo.scale-100.png">
+      <PackagePath>Assets\StoreLogo.scale-100.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2013-07-22T21:01:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\bin\Debug\App.xbf">
+      <PackagePath>App.xbf</PackagePath>
+      <Modified>2014-02-20T12:14:59.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\bin\Debug\MainPage.xbf">
+      <PackagePath>MainPage.xbf</PackagePath>
+      <Modified>2014-02-20T12:20:10.159</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Keith\Documents\Visual Studio 2013\Projects\App5\App5\bin\Debug\resources.pri">
+      <PackagePath>resources.pri</PackagePath>
+      <Modified>2014-02-27T09:03:25.468</Modified>
+    </AppxPackagedFile>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>

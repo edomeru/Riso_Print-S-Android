@@ -1,0 +1,3 @@
+[submodule "SNMP"]
+	path = SNMP
+	url = C:/projects/RISOSDA/git/riso-smartdevice/WindowsRT/SNMP
