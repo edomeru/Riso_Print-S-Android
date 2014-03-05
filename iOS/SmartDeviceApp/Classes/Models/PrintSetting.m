@@ -9,7 +9,6 @@
 #import "PrintSetting.h"
 #import "Printer.h"
 
-
 @implementation PrintSetting
 
 @dynamic bind;

@@ -11,7 +11,6 @@
 #import "PrintJob.h"
 #import "PrintSetting.h"
 
-
 @implementation Printer
 
 @dynamic enabled_bind;

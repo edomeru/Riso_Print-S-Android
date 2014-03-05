@@ -9,7 +9,6 @@
 #import "DefaultPrinter.h"
 #import "Printer.h"
 
-
 @implementation DefaultPrinter
 
 @dynamic printer;

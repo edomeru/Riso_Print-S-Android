@@ -117,7 +117,7 @@
 {
     static NSString* cellIdentifier = PRINTERCELL;
     PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
-                                                            forIndexPath:indexPath];
+                                                        forIndexPath:indexPath];
     
     Printer* printer = [self.listSavedPrinters objectAtIndex:indexPath.row];
     cell.printerName.text = printer.name;
@@ -125,9 +125,6 @@
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
     [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
-    
-    //cell.textLabel.text = printer.name;
-    //cell.detailTextLabel.text = printer.ip_address;
     
     return cell;
 }

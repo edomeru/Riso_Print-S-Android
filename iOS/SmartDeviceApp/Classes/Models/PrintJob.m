@@ -9,7 +9,6 @@
 #import "PrintJob.h"
 #import "Printer.h"
 
-
 @implementation PrintJob
 
 @dynamic date;
