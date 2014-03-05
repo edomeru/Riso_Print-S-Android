@@ -21,6 +21,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        initializeFragment(savedInstanceState);
     }
 
     /** {@inheritDoc} */
@@ -67,6 +69,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     // ================================================================================
     
     public abstract int getViewLayout();
+    
+    public abstract void initializeFragment(Bundle savedInstanceState);
     
     public abstract void initializeView(View view, Bundle savedInstanceState);
     
