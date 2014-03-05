@@ -8,15 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum _SlideDirection
-{
-    SlideLeft = 0,
-    SlideRight = 1,
-} SlideDirection;
+@interface SlideSegue : UIStoryboardSegue
 
-@interface SlidingSegue : UIStoryboardSegue
-
-@property (nonatomic) SlideDirection slideDirection;
 @property (nonatomic) BOOL isUnwinding;
 
 @end

@@ -17,5 +17,6 @@ typedef enum _SlideDirection
 @interface SlidingViewController : UIViewController
 
 @property (nonatomic) SlideDirection slideDirection;
+@property (nonatomic) BOOL isFixedSize;
 
 @end

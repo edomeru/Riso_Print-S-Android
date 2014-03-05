@@ -7,7 +7,7 @@
 //
 
 #import "RootViewController.h"
-#import "SlidingSegue.h"
+#import "SlideSegue.h"
 
 @interface RootViewController ()
 
@@ -45,6 +45,7 @@
 
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier
 {
+    /*
     if ([identifier isEqualToString:@"UnwindLeft"])
     {
         SlidingSegue *segue = [[SlidingSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
@@ -57,6 +58,13 @@
         SlidingSegue *segue = [[SlidingSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
         segue.isUnwinding = YES;
         segue.slideDirection = SlideRight;
+        return segue;
+    }*/
+    
+    if ([identifier isEqualToString:@"UnwindLeft"] || [identifier isEqualToString:@"UnwindRight"])
+    {
+        SlideSegue *segue = [[SlideSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+        segue.isUnwinding = YES;
         return segue;
     }
     

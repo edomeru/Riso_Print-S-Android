@@ -31,9 +31,23 @@ const CGFloat _AnimationDuration = 0.3f;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
+    if (self)
+    {
         _slideDirection = SlideLeft;
         _isAnimating = NO;
+        _isFixedSize = YES;
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        _slideDirection = SlideLeft;
+        _isAnimating = NO;
+        _isFixedSize = YES;
     }
     return self;
 }
@@ -93,24 +107,46 @@ const CGFloat _AnimationDuration = 0.3f;
         return;
     }
     
+    CGPoint translation = [gestureRecognizer translationInView:self.container.view];
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
     {
-        if (self.slideDirection == SlideRight)
+        // Do panning
+        if (self.slideDirection == SlideLeft)
         {
-            self.container.rightSlidingConstraint.constant -= [gestureRecognizer translationInView:self.container.view].x;
+            CGFloat leftMainConstraint = self.container.leftMainConstraint.constant + translation.x;
+            CGFloat rightMainConstraint = self.container.rightMainConstraint.constant - translation.x;
+            CGFloat sideConstraint = self.container.leftSlidingConstraint.constant + translation.x;
+            
+            CGRect slidingFrame = self.container.leftSlidingView.frame;
+            if (self.isFixedSize == YES)
+            {
+                self.container.rightMainConstraint.constant = MIN(0, MAX(-slidingFrame.size.width, rightMainConstraint));
+            }
+            self.container.leftMainConstraint.constant = MAX(0, MIN(slidingFrame.size.width, leftMainConstraint));
+            self.container.leftSlidingConstraint.constant = MIN(0, MAX(-slidingFrame.size.width, sideConstraint));
         }
         else
         {
-            self.container.leftSlidingConstraint.constant += [gestureRecognizer translationInView:self.container.view].x;
+            CGFloat leftMainConstraint = self.container.leftMainConstraint.constant + translation.x;
+            CGFloat rightMainConstraint = self.container.rightMainConstraint.constant - translation.x;
+            CGFloat sideConstraint = self.container.rightSlidingConstraint.constant - translation.x;
+            
+            CGRect slidingFrame = self.container.rightSlidingView.frame;
+            if (self.isFixedSize == YES)
+            {
+                self.container.leftMainConstraint.constant = MIN(0, MAX(-slidingFrame.size.width, leftMainConstraint));
+            }
+            self.container.rightMainConstraint.constant = MAX(0, MIN(slidingFrame.size.width, rightMainConstraint));
+            self.container.rightSlidingConstraint.constant = MIN(0, MAX(-self.container.rightSlidingView.frame.size.width, sideConstraint));
         }
-        self.container.leftMainConstraint.constant += [gestureRecognizer translationInView:self.container.view].x;
         [self.container.view layoutIfNeeded];
     }
     else
     {
-        CGRect mainFrame = self.container.mainView.frame;
-        if (fabs(mainFrame.origin.x) <= mainFrame.size.width * SlideRangeFactor)
+        if ((self.slideDirection == SlideLeft && fabs(self.container.leftSlidingConstraint.constant) > self.container.leftSlidingView.frame.size.width / 3.0f) ||
+            (self.slideDirection == SlideRight && fabs(self.container.rightSlidingConstraint.constant) > self.container.rightSlidingView.frame.size.width / 3.0f))
         {
+            // Start segue if slide threshold is reached
             self.isAnimating =YES;
             if (self.slideDirection == SlideLeft)
             {
@@ -123,13 +159,24 @@ const CGFloat _AnimationDuration = 0.3f;
         }
         else
         {
+            // Snap back if slide threshold is not reached
             if (self.slideDirection == SlideLeft)
             {
-                self.container.leftMainConstraint.constant = self.container.leftSlidingView.frame.size.width;
+                CGRect slidingFrame = self.container.leftSlidingView.frame;
+                if (self.isFixedSize == YES)
+                {
+                    self.container.rightMainConstraint.constant = -slidingFrame.size.width;
+                }
+                self.container.leftMainConstraint.constant = slidingFrame.size.width;
                 self.container.leftSlidingConstraint.constant = 0;
             } else
             {
-                self.container.leftMainConstraint.constant = -self.container.rightSlidingView.frame.size.width;
+                CGRect slidingFrame = self.container.rightSlidingView.frame;
+                if (self.isFixedSize == YES)
+                {
+                    self.container.leftMainConstraint.constant = -slidingFrame.size.width;
+                }
+                self.container.rightMainConstraint.constant = slidingFrame.size.width;
                 self.container.rightSlidingConstraint.constant = 0;
             }
             

@@ -6,24 +6,24 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "SlidingSegue.h"
+#import "SlideSegue.h"
 #import "RootViewController.h"
+#import "SlidingViewController.h"
 
 const float AnimationDuration = 0.3f;
 
-@interface SlidingSegue()
+@interface SlideSegue()
 
 - (void)performSegue;
 - (void)performUnwindSegue;
 
 @end
 
-@implementation SlidingSegue
+@implementation SlideSegue
 
 - (id)initWithIdentifier:(NSString *)identifier source:(UIViewController *)source destination:(UIViewController *)destination
 {
     _isUnwinding = NO;
-    _slideDirection = SlideLeft;
     return [super initWithIdentifier:identifier source:source destination:destination];
 }
 
@@ -42,13 +42,13 @@ const float AnimationDuration = 0.3f;
 - (void)performSegue
 {
     UIViewController *mainViewController = self.sourceViewController;
-    UIViewController *slidingViewController = self.destinationViewController;
+    SlidingViewController *slidingViewController = self.destinationViewController;
     RootViewController *container = (RootViewController *) mainViewController.parentViewController;
    
     UIView *slidingView;
     NSLayoutConstraint *slidingConstraint;
     
-    if (self.slideDirection == SlideLeft)
+    if (slidingViewController.slideDirection == SlideLeft)
     {
         slidingView = container.leftSlidingView;
         slidingConstraint = container.leftSlidingConstraint;
@@ -62,6 +62,7 @@ const float AnimationDuration = 0.3f;
     // Reset constraints
     slidingConstraint.constant = 0;
     container.leftMainConstraint.constant = 0;
+    container.rightMainConstraint.constant = 0;
     [container.view layoutIfNeeded];
     CGRect slidingFrame = CGRectMake(0, 0, slidingView.frame.size.width, slidingView.frame.size.height);
 
@@ -74,13 +75,21 @@ const float AnimationDuration = 0.3f;
     
     // Prepare animation
     slidingConstraint.constant = 0;
-    if (self.slideDirection == SlideLeft)
+    if (slidingViewController.slideDirection == SlideLeft)
     {
+        if (slidingViewController.isFixedSize == YES)
+        {
+            container.rightMainConstraint.constant = -slidingFrame.size.width;
+        }
         container.leftMainConstraint.constant = slidingFrame.size.width;
     }
     else
     {
-        container.leftMainConstraint.constant = -slidingFrame.size.width;
+        if (slidingViewController.isFixedSize == YES)
+        {
+            container.leftMainConstraint.constant = -slidingFrame.size.width;
+        }
+        container.rightMainConstraint.constant = slidingFrame.size.width;
     }
     
     [UIView animateWithDuration:AnimationDuration animations:^
@@ -100,35 +109,32 @@ const float AnimationDuration = 0.3f;
 - (void)performUnwindSegue
 {
     UIViewController *mainViewController = self.destinationViewController;
-    UIViewController *slidingViewContoller = self.sourceViewController;
+    SlidingViewController *slidingViewContoller = self.sourceViewController;
     RootViewController *container = (RootViewController *) mainViewController.parentViewController;
     CGRect slidingFrame = slidingViewContoller.view.frame;
     
-    UIView *slidingView;
     NSLayoutConstraint *slidingConstraint;
-    CGFloat mainStart;
     // Prepare constraints
-    if (self.slideDirection == SlideLeft)
+    if (slidingViewContoller.slideDirection == SlideLeft)
     {
-        slidingView = container.leftSlidingView;
         slidingConstraint = container.leftSlidingConstraint;
-        mainStart = slidingFrame.size.width;
     }
     else
     {
-        slidingView = container.rightSlidingView;
         slidingConstraint = container.rightSlidingConstraint;
-        mainStart = -slidingFrame.size.width;
     }
     
-    // Reset constraints
-    /*slidingConstraint.constant = 0;
-    container.leftMainConstraint.constant = mainStart;
-    [container.view layoutIfNeeded];*/
-   
     // Prepare animation
     slidingConstraint.constant = -slidingFrame.size.width;
-    container.leftMainConstraint.constant = 0;
+    if (slidingViewContoller.slideDirection == SlideLeft)
+    {
+        container.leftMainConstraint.constant = 0;
+        container.rightMainConstraint.constant = 0;
+    } else
+    {
+        container.rightMainConstraint.constant = 0;
+        container.leftMainConstraint.constant = 0;
+    }
     
     [UIView animateWithDuration:AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^
      {

@@ -10,6 +10,8 @@
 
 @interface HomeViewController ()
 
+- (void)initialize;
+
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
 
 @end
@@ -19,17 +21,33 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
+    if (self)
+    {
+        [self initialize];
     }
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize
+{
+    self.slideDirection = SlideLeft;
+    self.isFixedSize = YES;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.slideDirection = SlideLeft;
 }
 
 - (void)didReceiveMemoryWarning

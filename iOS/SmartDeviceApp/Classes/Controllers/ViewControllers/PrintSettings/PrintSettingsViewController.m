@@ -10,6 +10,8 @@
 
 @interface PrintSettingsViewController ()
 
+- (void)initialize;
+
 @end
 
 @implementation PrintSettingsViewController
@@ -17,17 +19,40 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
+    if (self)
+    {
+        [self initialize];
     }
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        self.isFixedSize = NO;
+    }
+    else
+    {
+        self.isFixedSize = YES;
+    }
+    self.slideDirection = SlideRight;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.slideDirection = SlideRight;
 }
 
 - (void)didReceiveMemoryWarning

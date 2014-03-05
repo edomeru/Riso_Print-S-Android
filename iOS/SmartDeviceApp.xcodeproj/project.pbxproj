@@ -28,7 +28,7 @@
 		2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */; };
 		2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */; };
 		2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */; };
-		2D4B3E4518C4550800AC8AD0 /* SlidingSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4418C4550800AC8AD0 /* SlidingSegue.m */; };
+		2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */; };
 		2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */; };
 		2D9DD409185FF3200085AD88 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD407185FF3200085AD88 /* .gitkeep */; };
 		2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
@@ -74,8 +74,8 @@
 		2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplaceSegue.m; sourceTree = "<group>"; };
 		2D4B3E4018C41BAD00AC8AD0 /* DefaultView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultView.h; sourceTree = "<group>"; };
 		2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultView.m; sourceTree = "<group>"; };
-		2D4B3E4318C4550800AC8AD0 /* SlidingSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingSegue.h; sourceTree = "<group>"; };
-		2D4B3E4418C4550800AC8AD0 /* SlidingSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingSegue.m; sourceTree = "<group>"; };
+		2D4B3E4318C4550800AC8AD0 /* SlideSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideSegue.h; sourceTree = "<group>"; };
+		2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideSegue.m; sourceTree = "<group>"; };
 		2D4B3E4718C4693200AC8AD0 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		2D8E525518605F33009BE88B /* GTestEventListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = GTestEventListener.h; sourceTree = "<group>"; };
@@ -336,8 +336,8 @@
 			children = (
 				2D4B3E3C18C418A900AC8AD0 /* ReplaceSegue.h */,
 				2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */,
-				2D4B3E4318C4550800AC8AD0 /* SlidingSegue.h */,
-				2D4B3E4418C4550800AC8AD0 /* SlidingSegue.m */,
+				2D4B3E4318C4550800AC8AD0 /* SlideSegue.h */,
+				2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */,
 			);
 			path = Segues;
 			sourceTree = "<group>";
@@ -582,7 +582,7 @@
 				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
 				2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
-				2D4B3E4518C4550800AC8AD0 /* SlidingSegue.m in Sources */,
+				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
 				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
 				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
 				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
@@ -719,7 +719,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -733,7 +733,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

@@ -15,6 +15,7 @@
 @property (nonatomic, weak) IBOutlet UIView *rightSlidingView;
 
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftMainConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightMainConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftSlidingConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightSlidingConstraint;
 
