@@ -10,11 +10,12 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
@@ -25,7 +26,9 @@ import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 public class PrintPreviewFragment extends BaseFragment implements PDFFileManagerInterface {
     
     public static final String KEY_CURRENT_PAGE = "current_page";
-
+    
+    public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
+    
     PDFFileManager mPdfManager = null;
     PrintSettings mPrintSettings;
     
@@ -53,13 +56,13 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
             Uri data = null;
-    
+            
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-
-            //data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
-            data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-squarish.pdf");
+            
+            // data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
+            // data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-squarish.pdf");
             
             mPdfManager = new PDFFileManager(this);
             
@@ -84,7 +87,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 }
             };
         }
-
+        
         if (savedInstanceState != null) {
             mCurrentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0);
         }
@@ -92,8 +95,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-
-        mPrintPreviewView = (PrintPreviewView)view.findViewById(R.id.printPreviewView);
+        mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
@@ -108,10 +110,11 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         mOpenInView = view.findViewById(R.id.openInView);
         mProgressBar = (ProgressBar) view.findViewById(R.id.pdfLoadIndicator);
         
+        mProgressBar.setVisibility(View.GONE);
+        
         // Hide appropriate views
         if (mPdfManager.getFileName() == null) {
             mPrintPreviewView.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.GONE);
         } else {
             mOpenInView.setVisibility(View.GONE);
             if (!mPdfManager.isInitialized()) {
@@ -124,11 +127,11 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
+        
         mCurrentPage = mPrintPreviewView.getCurrentPage();
         mPrintPreviewView = null;
     }
-
+    
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -140,7 +143,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        
         mCurrentPage = mPrintPreviewView.getCurrentPage();
         outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
     }
@@ -152,7 +155,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         // The activity must call the GL surface view's onResume() on activity onResume().
         mPrintPreviewView.onResume();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
@@ -160,13 +163,23 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         // The activity must call the GL surface view's onPause() on activity onPause().
         mPrintPreviewView.onPause();
     }
-
+    
     // ================================================================================
     // INTERFACE - PDFFileManagerInterface
     // ================================================================================
-
+    
     @Override
     public void onFileInitialized(int status) {
+        if (mPrintPreviewView != null) {
+            mPrintPreviewView.setVisibility(View.GONE);
+        }
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+        if (mOpenInView != null) {
+            mOpenInView.setVisibility(View.VISIBLE);
+        }
+        
         switch (status) {
             case PDFFileManager.PDF_OK:
                 if (mPrintPreviewView != null) {
@@ -176,18 +189,19 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 if (mOpenInView != null) {
                     mOpenInView.setVisibility(View.GONE);
                 }
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(View.GONE);
-                }
                 
                 break;
             case PDFFileManager.PDF_ENCRYPTED:
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-encrypted", "OK"));
                 break;
             case PDFFileManager.PDF_UNKNOWN_ENCRYPTION:
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-unknown encryption", "OK"));
                 break;
             case PDFFileManager.PDF_DAMAGED:
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-damaged", "OK"));
                 break;
             case PDFFileManager.PDF_INVALID_PATH:
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-invalid path", "OK"));
                 break;
             default:
                 break;

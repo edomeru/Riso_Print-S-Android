@@ -552,6 +552,13 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	}
 
 	/**
+	 * Is last page curl allowed
+	 */
+	public boolean getAllowLastPageCurl() {
+		return mAllowLastPageCurl;
+	}
+
+	/**
 	 * Allow the last page to curl.
 	 */
 	public void setAllowLastPageCurl(boolean allowLastPageCurl) {
@@ -799,6 +806,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	public void setSizeChangedObserver(SizeChangedObserver observer) {
 		mSizeChangedObserver = observer;
 	}
+	
+	public int getViewMode() {
+		return mViewMode;
+	}
 
 	/**
 	 * Sets view mode. Value can be either SHOW_ONE_PAGE or SHOW_TWO_PAGES. In
@@ -819,23 +830,22 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			break;
 		}
 	}
-	
-	public int getViewMode() {
-		return mViewMode;
-	}
-	
-	public void setBindPosition(int bindPosition) {
-		mBindPosition = bindPosition;
-		mRenderer.setBindPosition(bindPosition);
-	}
-	
+
 	public int getBindPosition() {
 		return mBindPosition;
 	}
 
-    public void setDropShadowSize(float dropShadowSize) {
-        mRenderer.setDropShadowSize(dropShadowSize);
-    }
+	public void setBindPosition(int bindPosition) {
+		mBindPosition = bindPosition;
+		mRenderer.setBindPosition(bindPosition);
+		mPageLeft.setBindPosition(bindPosition);
+		mPageRight.setBindPosition(bindPosition);
+		mPageCurl.setBindPosition(bindPosition);
+	}
+
+	public void setDropShadowSize(float dropShadowSize) {
+		mRenderer.setDropShadowSize(dropShadowSize);
+	}
 
 	/**
 	 * Switches meshes and loads new bitmaps if available. Updated to support 2

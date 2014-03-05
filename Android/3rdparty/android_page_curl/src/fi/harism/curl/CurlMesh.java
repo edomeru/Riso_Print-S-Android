@@ -100,6 +100,8 @@ public class CurlMesh {
 	private int mVerticesCountBack;
 	private int mVerticesCountFront;
 
+	private int mBindPosition = CurlView.BIND_LEFT;
+
 	/**
 	 * Constructor for mesh object.
 	 * 
@@ -801,13 +803,21 @@ public class CurlMesh {
 		mTextureIds = null;
 	}
 
+	public void setBindPosition(int bindPosition) {
+		mBindPosition = bindPosition;
+	}
+
 	/**
 	 * If true, flips texture sideways.
 	 */
 	public synchronized void setFlipTexture(boolean flipTexture) {
 		mFlipTexture = flipTexture;
 		if (flipTexture) {
-			setTexCoords(1f, 0f, 0f, 1f);
+			if (mBindPosition == CurlView.BIND_TOP) {
+	 			setTexCoords(0f, 1f, 1f, 0f);
+			} else {
+				setTexCoords(1f, 0f, 0f, 1f);
+			}
 		} else {
 			setTexCoords(0f, 0f, 1f, 1f);
 		}
