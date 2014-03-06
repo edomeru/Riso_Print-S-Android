@@ -17,17 +17,14 @@
         android:layout_width="@dimen/drawer_width_max"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/theme_dark_1"
         android:orientation="vertical" >
     </FrameLayout>
-
-
+    
     <FrameLayout
         android:id="@+id/rightLayout"
         android:layout_width="@dimen/drawer_width_max"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/theme_dark_1"
         android:orientation="vertical" >
     </FrameLayout>
     
