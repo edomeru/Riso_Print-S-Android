@@ -7,6 +7,7 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -16,19 +17,34 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
+    public static final String KEY_STATE = "HomeFragment_State";
     
-    public static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
-    public static final String FRAGMENT_TAG_PRINTJOBS = "fragment_printjobs";
-    public static final String FRAGMENT_TAG_SETTINGS = "fragment_settings";
+    private static int MENU_ITEMS[] = {
+        R.id.printPreviewButton,
+        R.id.printersButton,
+        R.id.printJobsButton,
+        R.id.settingsButton,
+        R.id.helpButton,
+        R.id.legalButton
+    };
     
-    public static final String KEY_STATE = "state";
+    private static String FRAGMENT_TAGS[] = {
+        "fragment_printpreview",
+        "fragment_printers",
+        "fragment_printjobs",
+        "fragment_settings",
+        "fragment_help",
+        "fragment_legal"
+    };
     
-    public static final int STATE_PRINTERS = 0;
-    public static final int STATE_PRINTJOBS = 1;
-    public static final int STATE_SETTINGS = 2;
-    public static final int STATE_HELP = 3;
+    public static final int STATE_PRINTPREVIEW = 0;
+    public static final int STATE_PRINTERS = 1;
+    public static final int STATE_PRINTJOBS = 2;
+    public static final int STATE_SETTINGS = 3;
+    public static final int STATE_HELP = 4;
+    public static final int STATE_LEGAL = 5;
     
-    public int mState = STATE_PRINTERS;
+    public int mState = -1;
     
     @Override
     public int getViewLayout() {
@@ -42,27 +58,29 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        
-        view.findViewById(R.id.tempPrintersButton).setOnClickListener(this);
-        view.findViewById(R.id.tempPrintJobsButton).setOnClickListener(this);
-        view.findViewById(R.id.tempSettingsButton).setOnClickListener(this);
+        view.findViewById(R.id.printPreviewButton).setOnClickListener(this);
+        view.findViewById(R.id.printersButton).setOnClickListener(this);
+        view.findViewById(R.id.printJobsButton).setOnClickListener(this);
+        view.findViewById(R.id.settingsButton).setOnClickListener(this);
+        view.findViewById(R.id.helpButton).setOnClickListener(this);
+        view.findViewById(R.id.legalButton).setOnClickListener(this);
         
         if (savedInstanceState == null) {
             // No states were saved
-            
+            //setCurrentState(STATE_PRINTPREVIEW, false);
+            mState = STATE_PRINTPREVIEW;
         } else {
             mState = savedInstanceState.getInt(KEY_STATE, STATE_PRINTERS);
-            
             // No need to restore the fragment state as this is already handled
         }
+        setSelectedButton(view, mState);
     }
-
+    
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        // No navigation bar
-        view.findViewById(R.id.actionBarLayout).setVisibility(View.INVISIBLE);
+        //This has no custom action bar
     }
-
+    
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -73,95 +91,114 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // ================================================================================
     // Public Methods
     // ================================================================================
-
+    
     // ================================================================================
     // Private Methods
     // ================================================================================
-
-    private void switchToPrintersFragment(boolean animate) {
-        mState = STATE_PRINTERS;
+    
+    private void setSelectedButton(View view, int state) {
+        if (view == null) {
+            return;
+        }
+        if (state < 0 || state >= MENU_ITEMS.length) {
+            return;
+        }
         
-        BaseFragment fragment = new PrintersFragment();
+        for (int i = 0; i < MENU_ITEMS.length; i++) {
+            view.findViewById(MENU_ITEMS[i]).setSelected(false);
+        }
         
-        switchToFragment(fragment, FRAGMENT_TAG_PRINTERS, animate);
+        view.findViewById(MENU_ITEMS[state]).setSelected(true);
     }
-
-    private void switchToPrintJobsFragment(boolean animate) {
-        mState = STATE_PRINTJOBS;
-        
-        BaseFragment fragment = new PrintJobsFragment();
-        
-        switchToFragment(fragment, FRAGMENT_TAG_PRINTJOBS, animate);
+    
+    private void setCurrentState(int state) {
+        setCurrentState(state, true);
     }
-
-    private void switchToSettingsFragment(boolean animate) {
-        mState = STATE_SETTINGS;
-        
-        BaseFragment fragment = new SettingsFragment();
-        
-        switchToFragment(fragment, FRAGMENT_TAG_SETTINGS, animate);
-    }
-
-    private void switchToFragment(BaseFragment fragment, String tag, boolean animate) {
-        FragmentManager fm = getFragmentManager();
-        
-        if (fm.findFragmentByTag(tag) == null) {
-            FragmentTransaction ft = fm.beginTransaction();
-            
-            // Maintain a single back stack item
-            if (fm.getBackStackEntryCount() > 0) {
-                fm.popBackStack();
-            }
-            
-            //ft.setCustomAnimations(R.animator.nothing_in, R.animator.nothing_out, R.animator.fade_in, R.animator.nothing_out);
-            
-            ft.addToBackStack(null);
-            ft.replace(R.id.mainLayout, fragment, tag);
-            ft.commit();
+    
+    private void setCurrentState(int state, boolean animate) {
+        if (mState != state) {
+            setSelectedButton(getView(), state);
+            switchToFragment(state, animate);
+            mState = state;
         }
         
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             activity.closeDrawers();
         }
-        
-        /*
-        if (isTablet()) {
-            if (fm.findFragmentByTag(tag) == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                if (animate) {
-                    ft.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_right, R.animator.slide_in_right, R.animator.slide_out_right);
-                }
-                ft.replace(R.id.rightLayout, fragment, tag);
-                ft.commit();
-            }
-        } else {
-            FragmentTransaction ft = fm.beginTransaction();
-            if (animate) {
-                ft.setCustomAnimations(R.animator.zoom_in, R.animator.zoom_out, R.animator.zoom_in, R.animator.zoom_out);
-            }
-            ft.addToBackStack(null);
-            ft.replace(R.id.mainLayout, fragment);
-            ft.commit();
-        }
-        */
     }
+    
+    private void switchToFragment(int state, boolean animate) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
 
+        Fragment container = fm.findFragmentById(R.id.mainLayout);
+        if (container != null) {
+            if (container.getRetainInstance()) {
+                ft.detach(container);
+            } else {
+                ft.remove(container);
+            }
+        }
+        
+        String tag = FRAGMENT_TAGS[state];
+        
+        // Check retained fragments
+        Fragment fragment = fm.findFragmentByTag(tag);
+        if (fragment == null) {
+            switch (state) {
+                case STATE_PRINTPREVIEW:
+                    fragment = new PrintPreviewFragment();
+                    break;
+                case STATE_PRINTERS:
+                    fragment = new PrintersFragment();
+                    break;
+                case STATE_PRINTJOBS:
+                    fragment = new PrintJobsFragment();
+                    break;
+                case STATE_SETTINGS:
+                    fragment = new SettingsFragment();
+                    break;
+                case STATE_HELP:
+                    fragment = new HelpFragment();
+                    break;
+                case STATE_LEGAL:
+                    fragment = new LegalFragment();
+                    break;
+            }
+            
+            ft.add(R.id.mainLayout, fragment, tag);
+        } else {
+            ft.attach(fragment);
+        }
+        
+        ft.commit();
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
-
+    
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tempPrintersButton:
-                switchToPrintersFragment(true);
+            case R.id.printPreviewButton:
+                setCurrentState(STATE_PRINTPREVIEW);
                 break;
-            case R.id.tempPrintJobsButton:
-                switchToPrintJobsFragment(true);
+            case R.id.printersButton:
+                setCurrentState(STATE_PRINTERS);
                 break;
-            case R.id.tempSettingsButton:
-                switchToSettingsFragment(true);
+            case R.id.printJobsButton:
+                setCurrentState(STATE_PRINTJOBS);
+                break;
+            case R.id.settingsButton:
+                setCurrentState(STATE_SETTINGS);
+                break;
+            case R.id.helpButton:
+                setCurrentState(STATE_HELP);
+                break;
+            case R.id.legalButton:
+                setCurrentState(STATE_LEGAL);
                 break;
             default:
                 break;

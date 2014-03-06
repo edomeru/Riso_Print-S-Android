@@ -10,6 +10,10 @@
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
     
+    <dimen name="home_title_padding">24dp</dimen>
+    <dimen name="home_text_size">16dp</dimen>
+    <dimen name="home_menu_height">48dp</dimen>
+    
     <item name="drawer_width_percentage" type="dimen">85%</item>
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>
@@ -21,12 +25,8 @@
     <dimen name="preview_controls_margin_side">32dp</dimen>
     <dimen name="preview_controls_margin_bottom">8dp</dimen>
     
-    
     <!--  Temporary values -->
-    
     <dimen name="temp_splash_logo_width">240dp</dimen>
     <dimen name="temp_splash_logo_height">80dp</dimen>
-    
-    <dimen name="temp_sidebar_spacing">4dp</dimen>
 
 </resources>
