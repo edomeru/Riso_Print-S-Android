@@ -190,6 +190,12 @@
     <Folder Include="Converters\" />
     <Folder Include="Resources\Styles\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SNMP\SNMP.csproj">
+      <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
+      <Name>SNMP</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
