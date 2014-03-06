@@ -12,11 +12,13 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Global;
@@ -26,7 +28,10 @@ import com.radaee.pdf.Page;
 public class PDFFileManager {
     public static final String TAG = "PDFFileManager";
     
+    // For design
     private static boolean CONST_KEEP_DOCUMENT_CLOSED = true;
+    
+    public static String KEY_NEW_PDF_DATA = "new_pdf_data";
     
     private Document mDocument;
     private String mPath;
@@ -38,12 +43,15 @@ public class PDFFileManager {
     
     private volatile boolean mIsInitialized;
     private volatile int mPageCount;
+    private volatile float mPageWidth;
+    private volatile float mPageHeight;
     
     public static final int PDF_OK = 0;
     public static final int PDF_ENCRYPTED = -1;
     public static final int PDF_UNKNOWN_ENCRYPTION = -2;
     public static final int PDF_DAMAGED = -3;
     public static final int PDF_INVALID_PATH = -10;
+    public static final int UNKNOWN_ERROR = -100;
     
     /**
      * Constructor
@@ -53,8 +61,8 @@ public class PDFFileManager {
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
-        setPDF(null);
         mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
+        setPDF(null);
     }
     
     /**
@@ -101,11 +109,15 @@ public class PDFFileManager {
             return;
         }
         
+        if (SmartDeviceApp.getAppContext() == null) {
+            return;
+        }
+        
         File file = new File(path);
         
         mPath = path;
         mFileName = file.getName();
-        mSandboxPath = Environment.getExternalStorageDirectory() + "/" + file.getName();
+        mSandboxPath = SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/" + file.getName();
     }
     
     /**
@@ -124,6 +136,24 @@ public class PDFFileManager {
      */
     public int getPageCount() {
         return mPageCount;
+    }
+    
+    /**
+     * Gets the page width
+     * 
+     * @return page width
+     */
+    public float getPageWidth() {
+        return mPageWidth;
+    }
+    
+    /**
+     * Gets the page height
+     * 
+     * @return page height
+     */
+    public float getPageHeight() {
+        return mPageHeight;
     }
     
     /**
@@ -151,7 +181,7 @@ public class PDFFileManager {
      * 
      * @param pageNo
      *            PDF page of the requested page
-     *            
+     * 
      * @return Bitmap of the page
      */
     public synchronized Bitmap getPageBitmap(int pageNo) {
@@ -171,12 +201,16 @@ public class PDFFileManager {
             mDocument.Open(mPath, null);
         }
         
+        float scale = 1.0f;
         Page page = mDocument.GetPage(pageNo);
         
-        float pageWidth = mDocument.GetPageWidth(pageNo);
-        float pageHeight = mDocument.GetPageHeight(pageNo);
+        float pageWidth = mDocument.GetPageWidth(pageNo) * scale;
+        float pageHeight = mDocument.GetPageHeight(pageNo) * scale;
         
-        Matrix mat = new Matrix(1, -1, 0, pageHeight);
+        float x0 = 0;
+        float y0 = pageHeight;
+        
+        Matrix mat = new Matrix(scale, -scale, x0, y0);
         
         Bitmap bitmap = Bitmap.createBitmap((int) pageWidth, (int) pageHeight, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.WHITE);
@@ -196,11 +230,11 @@ public class PDFFileManager {
         
         return bitmap;
     }
-
-    //================================================================================
+    
+    // ================================================================================
     // Protected methods
-    //================================================================================
-
+    // ================================================================================
+    
     /**
      * Opens the document
      * 
@@ -220,11 +254,13 @@ public class PDFFileManager {
             return PDF_INVALID_PATH;
         }
         
-        int status = mDocument.Open(mPath, null);
+        int status = mDocument.Open(mSandboxPath, null);
         
         if (status == PDF_OK) {
             mIsInitialized = true;
             mPageCount = mDocument.GetPageCount();
+            mPageWidth = mDocument.GetPageWidth(0);
+            mPageHeight = mDocument.GetPageHeight(0);
         }
         
         return status;
@@ -250,10 +286,22 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
-            try {
-                FileUtils.copy(new File(mPath), new File(mSandboxPath));
-            } catch (Exception e) {
-                return PDF_INVALID_PATH;
+            if (SmartDeviceApp.getAppContext() == null) {
+                return UNKNOWN_ERROR;
+            }
+            
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+            if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
+                
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putBoolean(KEY_NEW_PDF_DATA, false);
+                edit.commit();
+                
+                try {
+                    FileUtils.copy(new File(mPath), new File(mSandboxPath));
+                } catch (Exception e) {
+                    return PDF_INVALID_PATH;
+                }
             }
             
             int status = openDocument();
