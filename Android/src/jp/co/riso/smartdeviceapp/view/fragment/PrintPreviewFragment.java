@@ -145,8 +145,10 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         
-        mCurrentPage = mPrintPreviewView.getCurrentPage();
-        outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
+        if (mPrintPreviewView != null) {
+            mCurrentPage = mPrintPreviewView.getCurrentPage();
+            outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
+        }
     }
     
     @Override
