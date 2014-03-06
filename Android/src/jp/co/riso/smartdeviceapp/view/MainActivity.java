@@ -29,7 +29,7 @@ import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 
 public class MainActivity extends BaseActivity {
     
-    public static final String KEY_TRANSLATION = "translate";
+    public static final String KEY_TRANSLATION = "MainActivity_Translate";
     
     private DrawerLayout mDrawerLayout;
     private ViewGroup mMainLayout;
@@ -141,6 +141,7 @@ public class MainActivity extends BaseActivity {
                 moveFactor *= -1;
             }
             
+            //http://stackoverflow.com/questions/16646476/textureview-solves-flickering
             mMainLayout.setTranslationX(moveFactor);
         }
         

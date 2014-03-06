@@ -93,7 +93,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
         actionMenuButton.setImageResource(R.drawable.ic_action_menu);
-        actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        actionMenuButton.setBackgroundResource(R.drawable.selector_actionmenu_button);
+        
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_button_padding);
+        actionMenuButton.setPadding(padding, padding, padding, padding);
         
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
         
