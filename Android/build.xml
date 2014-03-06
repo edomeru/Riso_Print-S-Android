@@ -89,4 +89,16 @@
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
 
+
+    <target name="-pre-build">
+        <exec executable="ndk-build" failonerror="true">
+            <arg line="" />
+        </exec>
+    </target>
+
+    <target name="-pre-clean">
+        <exec executable="ndk-build" failonerror="true">
+            <arg line="clean" />
+        </exec>
+    </target>
 </project>
