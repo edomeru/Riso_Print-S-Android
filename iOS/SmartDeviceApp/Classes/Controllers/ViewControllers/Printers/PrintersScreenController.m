@@ -9,8 +9,10 @@
 #import "PrintersScreenController.h"
 #import "AddPrinterScreenController.h"
 #import "Printer.h"
+#import "DefaultPrinter.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
+#import "DatabaseManager.h"
 
 #define SEGUE_TO_ADD_PRINTER    @"PrintersToAddPrinter"
 #define SEGUE_TO_PRINTER_SEARCH @"PrintersToPrinterSearch"
@@ -19,6 +21,9 @@
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersScreenController ()
+
+@property (strong, nonatomic) DefaultPrinter* defaultPrinter; //default printer object
+@property (strong, nonatomic) NSIndexPath* defaultPrinterIndexPath; //index path of default printer in printers list
 
 /**
  Sets-up the Navigation Bar controls and contents.
@@ -39,6 +44,21 @@
  Retrieves the Printer objects from DB.
  **/
 - (void)getSavedPrintersFromDB;
+
+/**
+ Retrieves the DefaultPrinter object from DB.
+ **/
+- (void) getDefaultPrinterFromDB;
+
+/**
+ Action when the PrinterCell is tapped to select as Default Printer
+ **/
+- (IBAction)onTapPrinterCell:(id)sender;
+
+/**
+ Action when the PrinterCell Disclosure is tapped to segue to the PrinterInfo screen
+ **/
+- (IBAction)onTapPrinterCellDisclosure:(id)sender;
 
 /**
  FOR DEBUGGING ONLY.
@@ -67,6 +87,7 @@
 
     [self setupNavBarItems];
     [self getSavedPrintersFromDB];
+    [self getDefaultPrinterFromDB];
 }
 
 - (void)didReceiveMemoryWarning
@@ -120,9 +141,16 @@
                                                         forIndexPath:indexPath];
     
     Printer* printer = [self.listSavedPrinters objectAtIndex:indexPath.row];
+    if([self.defaultPrinter.printer isEqual:printer] == YES)
+    {
+        self.defaultPrinterIndexPath = indexPath;
+        [cell setAsDefaultPrinterCell:YES];
+    }
+    
     cell.printerName.text = printer.name;
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
+
     [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
@@ -146,8 +174,10 @@
     else
     {
         //TODO: get from DB
+        self.listSavedPrinters = [PrinterManager getPrinters];
     }
 }
+
 
 - (void)initWithTestData
 {
@@ -166,6 +196,56 @@
     [self.listSavedPrinters addObject:printer1];
     [self.listSavedPrinters addObject:printer2];
     [self.listSavedPrinters addObject:printer3];
+}
+
+- (void)getDefaultPrinterFromDB
+{
+    self.defaultPrinter = [PrinterManager getDefaultPrinter];
+}
+
+#pragma mark - Gesture Recognizer Handler
+- (IBAction)onTapPrinterCell:(id)sender
+{
+    NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
+    //get selected printer from list
+    Printer *selectedPrinter = [self.listSavedPrinters objectAtIndex:selectedIndexPath.row];
+    
+    if(self.defaultPrinter == nil)
+    {
+        self.defaultPrinter = [PrinterManager createDefaultPrinter:selectedPrinter];
+    }
+    else
+    {
+        if([self.defaultPrinter.printer isEqual:selectedPrinter] == NO)
+        {
+            self.defaultPrinter.printer = selectedPrinter; // replace
+        }
+        else
+        {
+            return; //Do nothing;
+        }
+    }
+    
+    
+    if(self.defaultPrinterIndexPath != nil)
+    {
+        PrinterCell *previousDefaultCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.defaultPrinterIndexPath];
+        [previousDefaultCell setAsDefaultPrinterCell:NO];
+    }
+    
+    //set the formatting of the selected cell
+    self.defaultPrinterIndexPath = selectedIndexPath;
+    PrinterCell *selectedDefaultCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
+    [selectedDefaultCell setAsDefaultPrinterCell:YES];
+    
+    //save changes to DB
+    [DatabaseManager saveDB];
+}
+
+- (IBAction)onTapPrinterCellDisclosure:(id)sender
+{
+    NSLog(@"PrinterCell Tapped");
+    //TODO Add segue to printer info
 }
 
 #pragma mark - Segue

@@ -10,11 +10,28 @@
 
 @implementation DatabaseManager
 
++(NSManagedObjectContext *) getManagedObjectContext
+{
+    id delegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext* context = [delegate managedObjectContext];
+    return context;
+}
+
 + (BOOL)addToDB:(id)entity forEntityName:(NSString*)name;
 {
     //TODO
     
     return YES;
+}
+
++(void) saveDB
+{
+    NSError *error = nil;
+    if (![[DatabaseManager getManagedObjectContext] save:&error])
+    {
+        NSLog(@"Error saving to DB %@ %@", error, [error localizedDescription]);
+        return;
+    }
 }
 
 @end

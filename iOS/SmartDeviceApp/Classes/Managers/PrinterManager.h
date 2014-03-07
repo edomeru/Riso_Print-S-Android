@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @class Printer;
+@class DefaultPrinter;
+@class PrintSetting;
 
 @interface PrinterManager : NSObject
 
@@ -53,5 +55,43 @@
  @return YES if can add, NO otherwise
  **/
 + (BOOL)canAddPrinter:(NSString*)printerIP toList:(NSArray*)listSavedPrinters;
+
+
+/**
+ Gets the list of Printers from DB
+ 
+ @return NSMutableArray*
+ **/
++(NSMutableArray *) getPrinters;
+
+/**
+ Creates a PrintSetting object.
+ This object is typed as a NSManagedObject and is created as
+ a Core Data entity.
+ 
+ @return PrintSetting*
+ **/
++ (PrintSetting*)createPrintSetting;
+
+/**
+ Gets the DefaultPrinter object from DB
+ 
+ @return NSMutableArray*
+ **/
++(DefaultPrinter *) getDefaultPrinter;
+
+/**
+ Creates a DefaultPrinter object.
+ This object is typed as a NSManagedObject and is created as
+ a Core Data entity.
+ 
+ @param printer
+        printer object of the default printer to be created
+ 
+ @return DefaultPrinter*
+ **/
++(DefaultPrinter*)createDefaultPrinter :(Printer *) printer;
+
+
 
 @end

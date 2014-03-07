@@ -8,6 +8,7 @@
 
 #import "PrinterManager.h"
 #import "Printer.h"
+#import "DefaultPrinter.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
 
@@ -18,12 +19,20 @@
 
 @implementation PrinterManager
 
+
 + (Printer*)createPrinter
 {
-    id delegate = [[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext* context = [delegate managedObjectContext];
+    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
     
     return [NSEntityDescription insertNewObjectForEntityForName:@"Printer"
+                                         inManagedObjectContext:context];
+}
+
++ (PrintSetting *)createPrintSetting
+{
+    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    
+    return [NSEntityDescription insertNewObjectForEntityForName:@"PrintSetting"
                                          inManagedObjectContext:context];
 }
 
@@ -64,5 +73,42 @@
     // no issues, printer can be added
     return YES;
 }
++(NSMutableArray *) getPrinters
+{
+    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]  initWithEntityName:@"Printer" ];
+    NSError *error;
+    return [[context executeFetchRequest:fetchRequest error:&error] mutableCopy];
+}
 
++(DefaultPrinter *) getDefaultPrinter
+{
+    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]  initWithEntityName:@"DefaultPrinter" ];
+    NSError *error;
+    NSArray *fetchResult = [context executeFetchRequest:fetchRequest error:&error];
+    if(fetchResult != nil)
+    {
+        if([fetchResult count] > 0)
+        {
+            return [fetchResult objectAtIndex:0];
+        }
+    }
+    else
+    {
+        //TODO show error
+    }
+    return nil;
+}
+
++ (DefaultPrinter*)createDefaultPrinter :(Printer *) printer
+{
+    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    
+    DefaultPrinter *defaultPrinter = [NSEntityDescription insertNewObjectForEntityForName:@"DefaultPrinter"
+                                         inManagedObjectContext:context];
+    defaultPrinter.printer = printer;
+    
+    return defaultPrinter;
+}
 @end

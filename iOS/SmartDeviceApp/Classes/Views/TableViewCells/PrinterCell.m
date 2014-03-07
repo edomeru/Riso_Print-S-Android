@@ -7,7 +7,9 @@
 //
 
 #import "PrinterCell.h"
-
+@interface PrinterCell()
+@property UIColor *normalBackgroundColor;
+@end
 @implementation PrinterCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -15,6 +17,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
+        self.normalBackgroundColor = [self backgroundColor];
     }
     return self;
 }
@@ -24,6 +27,19 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+-(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell
+{
+    if(isDefaultPrinterCell == YES)
+    {
+        //TODO
+        [self setBackgroundColor:[UIColor purpleColor]];
+    }
+    else
+    {
+        [self setBackgroundColor:self.normalBackgroundColor];
+    }
 }
 
 @end

@@ -157,7 +157,8 @@ typedef enum
                     else
                     {
                         //TODO: copy the default print settings values to the print settings object of the printer object
-                        
+                        PrintSetting* printSetting = [PrinterManager createPrintSetting];
+                        newPrinter.printsetting = printSetting;
                         // add the printer to DB
                         BOOL isAddedToDB = [PrinterManager addPrinterToDB:newPrinter];
                         if (!isAddedToDB)

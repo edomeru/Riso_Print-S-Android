@@ -26,5 +26,12 @@
  **/
 + (NSArray*)searchForPrinter:(NSString*)printerIP;
 
-+ (BOOL) getPrinterStatus:(NSString *) ipAddress;
+/**
+ Get the Online/Offline status of the Printer
+ 
+ @param printerIP
+ IP address of the printer
+ 
+ @return YES if Online; NO if Offline
+ **/+ (BOOL) getPrinterStatus:(NSString *) ipAddress;
 @end

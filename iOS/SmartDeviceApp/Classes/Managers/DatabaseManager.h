@@ -24,4 +24,19 @@
  **/
 + (BOOL)addToDB:(id)entity forEntityName:(NSString*)name;
 
+/**
+ Returns the NSManagedObjectContext.
+ This is the context used for DB transactions.
+ 
+ @return NSManagedObjectContext*
+ **/
+
++(NSManagedObjectContext *) getManagedObjectContext;
+
+
+/**
+ Call to the DB to save the changes done to the managed objects
+
+ **/
++(void) saveDB;
 @end

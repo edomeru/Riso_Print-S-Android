@@ -58,6 +58,7 @@
 		3192116C18C72A7C000555C7 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116B18C72A7C000555C7 /* DefaultPrinter.m */; };
 		3192116F18C72A7D000555C7 /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116E18C72A7D000555C7 /* PrintSetting.m */; };
 		3192117218C72A7D000555C7 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192117118C72A7D000555C7 /* Printer.m */; };
+		31D91C9618C86FE400611C85 /* PrinterInfoScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -141,6 +142,8 @@
 		3192116E18C72A7D000555C7 /* PrintSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintSetting.m; path = Models/PrintSetting.m; sourceTree = "<group>"; };
 		3192117018C72A7D000555C7 /* Printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Printer.h; path = Models/Printer.h; sourceTree = "<group>"; };
 		3192117118C72A7D000555C7 /* Printer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Printer.m; path = Models/Printer.m; sourceTree = "<group>"; };
+		31D91C9418C86FE400611C85 /* PrinterInfoScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterInfoScreenController.h; path = PrinterInfo/PrinterInfoScreenController.h; sourceTree = "<group>"; };
+		31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterInfoScreenController.m; path = PrinterInfo/PrinterInfoScreenController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -454,6 +457,7 @@
 		2D4B3E3218C4136000AC8AD0 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				31D91C9318C86EAF00611C85 /* PrinterInfo */,
 				2D4B3E3318C4136000AC8AD0 /* General */,
 				2D4B3E4618C4691F00AC8AD0 /* Home */,
 				2D4B3E3718C4164A00AC8AD0 /* PrintPreview */,
@@ -626,10 +630,19 @@
 		3192115118C71BF5000555C7 /* TableViewCells */ = {
 			isa = PBXGroup;
 			children = (
-				3192115218C71C3D000555C7 /* PrinterCell.h */,
 				3192115318C71C3D000555C7 /* PrinterCell.m */,
+				3192115218C71C3D000555C7 /* PrinterCell.h */,
 			);
 			name = TableViewCells;
+			sourceTree = "<group>";
+		};
+		31D91C9318C86EAF00611C85 /* PrinterInfo */ = {
+			isa = PBXGroup;
+			children = (
+				31D91C9418C86FE400611C85 /* PrinterInfoScreenController.h */,
+				31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */,
+			);
+			name = PrinterInfo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -778,6 +791,7 @@
 				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
 				3192115418C71C3D000555C7 /* PrinterCell.m in Sources */,
 				2828312918C7066B008B127C /* SNMPManager.m in Sources */,
+				31D91C9618C86FE400611C85 /* PrinterInfoScreenController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

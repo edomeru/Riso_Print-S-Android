@@ -13,4 +13,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet PrinterStatusView *printerStatus;
 
+
+-(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
 @end
