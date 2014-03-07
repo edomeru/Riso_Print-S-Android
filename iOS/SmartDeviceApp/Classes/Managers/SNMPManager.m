@@ -21,7 +21,9 @@
     //TODO: check if printer is supported
     
     //TODO: if printer is supported, store printer info and capabilities
-    NSArray* printerInfoCapabilities = @[printerIP, @"New Printer"];
+    static int index = 0;
+    index++;
+    NSArray* printerInfoCapabilities = @[printerIP, [NSString stringWithFormat:@"New Printer %d", index]];
     return printerInfoCapabilities;
     
     //TODO: if printer is not supported

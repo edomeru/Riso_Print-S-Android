@@ -12,7 +12,7 @@
 #define BASE_NOTIF_NAME @"jp.alink-group_printerstatus"
 
 @interface PrinterStatusHelper ()
-@property NSString *ipAddress;
+
 @property NSTimer *pollingTimer;
 @property NSString *notifName;
 
@@ -39,7 +39,9 @@
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         BOOL onlineStatus = [SNMPManager getPrinterStatus:self.ipAddress];
-        [[NSNotificationCenter defaultCenter] postNotificationName:self.notifName object: [NSNumber numberWithBool:onlineStatus]];
+        //notification should be on main queue to update the UI
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:self.notifName object: [NSNumber numberWithBool:onlineStatus]];});
     });
 }
 
@@ -53,7 +55,7 @@
 {
     if(self.pollingTimer == nil)
     {
-        self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target: self selector: @selector(getPrinterStatus) userInfo:nil repeats:YES];
+        self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target: self selector: @selector(getPrinterStatus) userInfo:nil repeats:YES];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyPrinterStatus:) name:self.notifName object:nil];
     }
 }

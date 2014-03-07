@@ -23,20 +23,29 @@
 
 - (void) setStatus: (BOOL) isOnline
 {
+    if(self.onlineStatus == isOnline)
+    {
+        return; //do nothing if status is the same
+    }
+    
+    //TODO Refine Printer Status View
     self.onlineStatus = isOnline;
     if(isOnline){
+        NSLog(@"Set to online");
         [self setBackgroundColor:[UIColor greenColor]];
     }
     else{
+        NSLog(@"Set to offline");
         [self setBackgroundColor:[UIColor grayColor]];
     }
-   
 }
 
 - (void) updateStatus: (BOOL) isOnline
 {
-    [self setStatus: isOnline];
+    NSLog(@"%@ online status = %d", self.statusHelper.ipAddress, isOnline);
+    [self setStatus:isOnline];
 }
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

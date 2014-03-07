@@ -160,7 +160,7 @@ typedef enum
                         PrintSetting* printSetting = [PrinterManager createPrintSetting];
                         newPrinter.printsetting = printSetting;
                         // add the printer to DB
-                        BOOL isAddedToDB = [PrinterManager addPrinterToDB:newPrinter];
+                        BOOL isAddedToDB = [PrinterManager addPrinterToDB:newPrinter];//Amor: This line may not be needed because once the object is created using createPrinter and save is called, the object is automatically inserted in DB. 
                         if (!isAddedToDB)
                         {
                             [self displayResult:ERR_CANNOT_ADD];

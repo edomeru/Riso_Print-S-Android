@@ -20,6 +20,10 @@
 
 #define PRINTERCELL             @"PrinterCell"
 
+
+
+BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
+
 @interface PrintersScreenController ()
 
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter; //default printer object
@@ -157,7 +161,61 @@
     return cell;
 }
 
+-(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return UITableViewCellEditingStyleDelete;
+}
 
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+        if(editingStyle == UITableViewCellEditingStyleDelete)
+        {
+            //Get the printer to be deleted
+            Printer *printerToDelete = [self.listSavedPrinters objectAtIndex:indexPath.row];
+            
+            NSLog(@"Deleting Printer %@ at row %d", printerToDelete.name, indexPath.row);
+  
+            //check if printer to be deleted is the default printer
+            if(self.defaultPrinterIndexPath != nil && self.defaultPrinterIndexPath.row == indexPath.row)
+            {
+                
+                NSLog(@"Printer to be deleted is default printer. Removing default printer reference");
+                if([DatabaseManager deleteFromDB:self.defaultPrinter] == NO)
+                {
+                    //TODO Show delete error
+                    //If deleting default printer reference failed, do not proceed with deletion of printer
+                    return;
+                }
+                self.defaultPrinter = nil;
+                self.defaultPrinterIndexPath = nil;
+            }
+            
+            BOOL deleteSuccess = [DatabaseManager deleteFromDB:printerToDelete];
+            if(deleteSuccess == YES)
+            {
+                //remove the object from list
+                [self.listSavedPrinters removeObjectAtIndex:indexPath.row];
+                //set the view of the cell to stop polling for printer status
+                PrinterCell *cell = (PrinterCell *)[tableView cellForRowAtIndexPath:indexPath];
+                [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+                //set view to non default printer cell style
+                [cell setAsDefaultPrinterCell:NO];
+                //remove cell from view
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+            else
+            {
+                //TODO Show delete error;
+                NSLog(@"Delete Printer from DB failed");
+            }
+            
+        }
+}
 #pragma mark - Printers Data
 
 - (void)getSavedPrintersFromDB
@@ -167,14 +225,16 @@
     NSString* pathToPList = [[NSBundle mainBundle] pathForResource:@"SmartDeviceApp-Settings" ofType:@"plist"];
     NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPList];
     BOOL isLoadWithInitialData = [[dict objectForKey:@"LoadWithTestData"] boolValue];
+    isDummyDataEnabled = isLoadWithInitialData;
+    
     if (isLoadWithInitialData)
     {
         [self initWithTestData];
     }
     else
     {
-        //TODO: get from DB
         self.listSavedPrinters = [PrinterManager getPrinters];
+        //TODO: Check getPrinters status
     }
 }
 
@@ -210,11 +270,12 @@
     //get selected printer from list
     Printer *selectedPrinter = [self.listSavedPrinters objectAtIndex:selectedIndexPath.row];
     
+    //if there is no default printer, create a default printer
     if(self.defaultPrinter == nil)
     {
         self.defaultPrinter = [PrinterManager createDefaultPrinter:selectedPrinter];
     }
-    else
+    else //the default printer is changed
     {
         if([self.defaultPrinter.printer isEqual:selectedPrinter] == NO)
         {
@@ -222,10 +283,18 @@
         }
         else
         {
+            //If selected default printer is still the same printer, do not update UI and database
             return; //Do nothing;
         }
     }
     
+    //save changes to DB
+    if([DatabaseManager saveDB] == NO)
+    {
+        //If changes to default printer is not saved. Do not update UI
+        //TODO Show Error
+        return;
+    }
     
     if(self.defaultPrinterIndexPath != nil)
     {
@@ -233,13 +302,11 @@
         [previousDefaultCell setAsDefaultPrinterCell:NO];
     }
     
-    //set the formatting of the selected cell
+    //set the formatting of the selected cell to the default printer cell
     self.defaultPrinterIndexPath = selectedIndexPath;
     PrinterCell *selectedDefaultCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
     [selectedDefaultCell setAsDefaultPrinterCell:YES];
     
-    //save changes to DB
-    [DatabaseManager saveDB];
 }
 
 - (IBAction)onTapPrinterCellDisclosure:(id)sender
@@ -275,6 +342,7 @@
         {
             [self.listSavedPrinters addObjectsFromArray:adderScreen.addedPrinters];
             [self.tableView reloadData];
+            [DatabaseManager saveDB];
         }
     }
 }

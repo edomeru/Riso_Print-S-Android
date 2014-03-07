@@ -8,6 +8,8 @@
 
 #import "DatabaseManager.h"
 
+extern BOOL isDummyDataEnabled; //TODO REMOVE! For Debugging Purposes Only
+
 @implementation DatabaseManager
 
 +(NSManagedObjectContext *) getManagedObjectContext
@@ -24,14 +26,27 @@
     return YES;
 }
 
-+(void) saveDB
++(BOOL) saveDB
 {
+    //TODO REMOVE! For Debugging Purposes Only
+    if(isDummyDataEnabled){
+        return YES; //Don't execute save if dummy data is enabled
+    }
+    
     NSError *error = nil;
     if (![[DatabaseManager getManagedObjectContext] save:&error])
     {
         NSLog(@"Error saving to DB %@ %@", error, [error localizedDescription]);
-        return;
+        return NO;
     }
+    return YES;
+}
+
++(BOOL) deleteFromDB:(NSManagedObject *) object
+{
+    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    [context deleteObject:object];
+    return[DatabaseManager saveDB];
 }
 
 @end

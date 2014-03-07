@@ -16,6 +16,7 @@
 @interface PrinterStatusHelper : NSObject
 
 @property (weak, nonatomic) id <PrinterStatusHelperDelegate> delegate;
+@property NSString *ipAddress;
 
 -(id) initWithPrinterIP:(NSString *) ipAddress;
 -(void) stopPrinterStatusPolling;

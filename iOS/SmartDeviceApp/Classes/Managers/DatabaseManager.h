@@ -37,6 +37,9 @@
 /**
  Call to the DB to save the changes done to the managed objects
 
+ @return YES if successful, NO otherwise.
  **/
-+(void) saveDB;
++(BOOL) saveDB;
+
++(BOOL) deleteFromDB:(NSManagedObject *) object;
 @end
