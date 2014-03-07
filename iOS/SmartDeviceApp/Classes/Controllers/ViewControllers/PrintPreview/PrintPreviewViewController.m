@@ -9,6 +9,9 @@
 #import "PrintPreviewViewController.h"
 #import "RootViewController.h"
 #import "SlideSegue.h"
+#import "HomeViewController.h"
+#import "PrintSettingsViewController.h"
+#import "UIViewController+Segue.h"
 
 @interface PrintPreviewViewController ()
 
@@ -42,15 +45,15 @@
 #pragma mark IBActions
 - (IBAction)mainMenuAction:(id)sender
 {
-    [self performSegueWithIdentifier:@"PrintPreview-Home" sender:self];
+    [self performSegueTo:[HomeViewController class]];
 }
 
 - (IBAction)printSettingsAction:(id)sender
 {
-    [self performSegueWithIdentifier:@"PrintPreview-PrintSettings" sender:self];
+    [self performSegueTo:[PrintSettingsViewController class]];
 }
 
-- (IBAction)unwindFromSlidingDrawer:(UIStoryboardSegue *)segue
+- (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
 {
 }
 

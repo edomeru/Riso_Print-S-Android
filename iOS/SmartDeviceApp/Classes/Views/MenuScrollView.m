@@ -15,17 +15,19 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        self.delaysContentTouches = NO;
     }
     return self;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+- (BOOL)touchesShouldCancelInContentView:(UIView *)view
 {
-    // Drawing code
+    if ([view isKindOfClass:UIButton.class])
+    {
+        return YES;
+    }
+    
+    return [super touchesShouldCancelInContentView:view];
 }
-*/
 
 @end

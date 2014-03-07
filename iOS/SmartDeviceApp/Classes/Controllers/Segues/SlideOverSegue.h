@@ -10,4 +10,6 @@
 
 @interface SlideOverSegue : UIStoryboardSegue
 
+@property (nonatomic) BOOL isUnwinding;
+
 @end

@@ -87,17 +87,19 @@ const CGFloat _AnimationDuration = 0.3f;
     }
 }
 
-- (IBAction)handleTap:(UITapGestureRecognizer *)gestureRecognizer
+- (void)close
 {
     // Unwind
-    if (self.slideDirection == SlideLeft)
-    {
-        [self performSegueWithIdentifier:UnwindLeftId sender:self];
-    }
-    else
-    {
-        [self performSegueWithIdentifier:UnwindRightId sender:self];
-    }
+    NSString *className = NSStringFromClass([self.container.mainController class]);
+    NSError *error;
+    NSRegularExpression *pattern = [[NSRegularExpression alloc] initWithPattern:@"ViewController$" options:0 error:&error];
+    NSString *destination = [pattern stringByReplacingMatchesInString:className options:0 range:NSMakeRange(0, [className length]) withTemplate:@""];
+    [self performSegueWithIdentifier:[NSString stringWithFormat:@"UnwindTo%@", destination] sender:nil];
+}
+
+- (IBAction)handleTap:(UITapGestureRecognizer *)gestureRecognizer
+{
+    [self close];
 }
 
 - (IBAction)handlePan:(UIPanGestureRecognizer *)gestureRecognizer
@@ -148,14 +150,7 @@ const CGFloat _AnimationDuration = 0.3f;
         {
             // Start segue if slide threshold is reached
             self.isAnimating =YES;
-            if (self.slideDirection == SlideLeft)
-            {
-                [self performSegueWithIdentifier:UnwindLeftId sender:self];
-            }
-            else
-            {
-                [self performSegueWithIdentifier:UnwindRightId sender:self];
-            }
+            [self close];
         }
         else
         {

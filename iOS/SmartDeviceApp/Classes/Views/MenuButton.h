@@ -11,6 +11,7 @@
 @interface MenuButton : UIButton
 
 @property (nonatomic) BOOL borderHidden;
-@property (nonatomic, strong) NSString *sampleString;
+@property (nonatomic) UIColor *highlightColor;
+@property (nonatomic) UIColor *selectedColor;
 
 @end

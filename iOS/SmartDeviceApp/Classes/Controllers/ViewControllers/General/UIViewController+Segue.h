@@ -10,4 +10,8 @@
 
 @interface UIViewController (Segue)
 
+- (void)performSegueTo:(Class)viewControllerClass;
+- (void)unwindTo:(Class)viewControllerClass;
+- (void)unwindFromOverTo:(Class)viewControllerClass;
+
 @end
