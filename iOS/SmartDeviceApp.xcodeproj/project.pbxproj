@@ -25,7 +25,6 @@
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
 		2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */; };
-		2D3AAA5018C9647100D50FDA /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3AAA4F18C9647100D50FDA /* UIViewController+Segue.m */; };
 		2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */; };
 		2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3518C4137000AC8AD0 /* RootViewController.m */; };
 		2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */; };
@@ -46,6 +45,7 @@
 		2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */; };
 		2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */; };
 		2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE618C9DE4400C80355 /* PrintersViewController.m */; };
+		2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,8 +75,6 @@
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
 		2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
-		2D3AAA4E18C9647100D50FDA /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
-		2D3AAA4F18C9647100D50FDA /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
 		2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideOverSegue.h; sourceTree = "<group>"; };
 		2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideOverSegue.m; sourceTree = "<group>"; };
 		2D4B3E3418C4137000AC8AD0 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
@@ -111,6 +109,8 @@
 		2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIphoneViewController.m; sourceTree = "<group>"; };
 		2DF90BE518C9DE4400C80355 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersViewController.h; sourceTree = "<group>"; };
 		2DF90BE618C9DE4400C80355 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersViewController.m; sourceTree = "<group>"; };
+		2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
+		2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -340,8 +340,8 @@
 				2D4B3E3518C4137000AC8AD0 /* RootViewController.m */,
 				2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */,
 				2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */,
-				2D3AAA4E18C9647100D50FDA /* UIViewController+Segue.h */,
-				2D3AAA4F18C9647100D50FDA /* UIViewController+Segue.m */,
+				2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */,
+				2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */,
 			);
 			path = General;
 			sourceTree = "<group>";
@@ -637,11 +637,11 @@
 				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
 				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
 				2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */,
-				2D3AAA5018C9647100D50FDA /* UIViewController+Segue.m in Sources */,
 				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
 				2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */,
 				2DF90BDF18C9DE2000C80355 /* AddPrinterViewController.m in Sources */,
 				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
+				2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */,
 				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
 				2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */,
 				2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */,
