@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict/>
+<dict>
+	<key>Printer_MaxCount</key>
+	<integer>20</integer>
+	<key>PrintSettings_Default</key>
+	<dict>
+		<key>Bind</key>
+		<integer>0</integer>
+		<key>BookletBinding</key>
+		<integer>0</integer>
+		<key>BookletTray</key>
+		<integer>0</integer>
+		<key>CatchTray</key>
+		<integer>0</integer>
+		<key>ColorMode</key>
+		<integer>0</integer>
+		<key>Copies</key>
+		<integer>0</integer>
+		<key>Duplex</key>
+		<integer>0</integer>
+		<key>ImageQuality</key>
+		<integer>0</integer>
+		<key>Pagination</key>
+		<integer>0</integer>
+		<key>PaperSize</key>
+		<integer>0</integer>
+		<key>PaperType</key>
+		<integer>0</integer>
+		<key>Punch</key>
+		<integer>0</integer>
+		<key>Sort</key>
+		<integer>0</integer>
+		<key>Staple</key>
+		<integer>0</integer>
+		<key>Zoom</key>
+		<integer>0</integer>
+		<key>ZoomRate</key>
+		<integer>0</integer>
+	</dict>
+</dict>
 </plist>

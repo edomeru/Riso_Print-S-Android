@@ -277,7 +277,6 @@
         {
             [self.listSavedPrinters addObjectsFromArray:adderScreen.addedPrinters];
             [self.tableView reloadData];
-            [DatabaseManager saveChanges];
         }
     }
 }

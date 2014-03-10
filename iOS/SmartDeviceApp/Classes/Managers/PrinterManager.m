@@ -11,11 +11,10 @@
 #import "DefaultPrinter.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
+#import "PListUtils.h"
 
 #define PRINTER_IP              0
 #define PRINTER_NAME            1
-
-#define PRINTER_MAX_COUNT       20
 
 #define ENTITY_PRINTER          @"Printer"
 #define ENTITY_PRINTSETTING     @"PrintSetting"
@@ -28,8 +27,8 @@
 + (Printer*)createPrinter
 {
     // create first a PrintSetting object
-    PrintSetting* defaultPrintSettings = (PrintSetting*)[DatabaseManager addObject:ENTITY_PRINTSETTING];
-    //TODO: configure with default print settings (from plist? from a static class?)
+    PrintSetting* printSetting = (PrintSetting*)[DatabaseManager addObject:ENTITY_PRINTSETTING];
+    [self copyDefaultPrintSettings:&printSetting];
     
     // then create a Printer object
     Printer* printer = (Printer*)[DatabaseManager addObject:ENTITY_PRINTER];
@@ -40,7 +39,7 @@
     }
     
     // finally attach the PrintSetting to the Printer
-    printer.printsetting = defaultPrintSettings;
+    printer.printsetting = printSetting;
     
     return printer;
 }
@@ -94,10 +93,32 @@
 
 #pragma mark - Printer Utilities
 
++ (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
+{
+    NSDictionary* defaultPrintSettings = [PListUtils getDefaultPrintSettings];
+    (*printSetting).bind = [defaultPrintSettings objectForKey:@"Bind"];
+    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:@"BookletBinding"];
+    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:@"BookletTray"];
+    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:@"CatchTray"];
+    (*printSetting).color_mode = [defaultPrintSettings objectForKey:@"ColorMode"];
+    (*printSetting).copies = [defaultPrintSettings objectForKey:@"Copies"];
+    (*printSetting).duplex = [defaultPrintSettings objectForKey:@"Duplex"];
+    (*printSetting).image_quality = [defaultPrintSettings objectForKey:@"ImageQuality"];
+    (*printSetting).pagination = [defaultPrintSettings objectForKey:@"Pagination"];
+    (*printSetting).paper_size = [defaultPrintSettings objectForKey:@"PaperSize"];
+    (*printSetting).paper_type = [defaultPrintSettings objectForKey:@"PaperType"];
+    (*printSetting).punch = [defaultPrintSettings objectForKey:@"Punch"];
+    (*printSetting).sort = [defaultPrintSettings objectForKey:@"Sort"];
+    (*printSetting).staple = [defaultPrintSettings objectForKey:@"Staple"];
+    (*printSetting).zoom = [defaultPrintSettings objectForKey:@"Zoom"];
+    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:@"ZoomRate"];
+}
+
 + (BOOL)canAddPrinter:(NSString*)printerIP toList:(NSArray*)listSavedPrinters;
 {
     // check if maximum number of printers have been reached
-    if ([listSavedPrinters count] == PRINTER_MAX_COUNT)
+    NSUInteger maxPrinters = [PListUtils getMaxPrinters];
+    if ([listSavedPrinters count] == maxPrinters)
         return NO;
     
     // check if there is no existing/duplicate printer on the list
