@@ -8,6 +8,7 @@
 
 #import "PrinterManager.h"
 #import "Printer.h"
+#import "PrintSetting.h"
 #import "DefaultPrinter.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"

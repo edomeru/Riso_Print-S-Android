@@ -17,6 +17,12 @@
 
 @property (strong, nonatomic) NSMutableArray* listSearchResults;
 
+/**
+ Called when screen loads and in reaction to pull-to-refresh.
+ Searches for printers on the network and updates the display.
+ **/
+- (void)refresh;
+
 @end
 
 @implementation PrinterSearchScreenController
@@ -60,12 +66,7 @@
 {
     [super viewDidLoad];
     
-    // setup properties
-    //TODO: initalize a dictionary for the search results
-    //TODO: <Printer> : <isNew>
-    self.listSearchResults = [NSMutableArray arrayWithArray:self.listSavedPrinters];
-    
-    //TODO: perform search
+    [self refresh];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +79,18 @@
 - (IBAction)onBack:(UIBarButtonItem *)sender
 {
     [self performSegueWithIdentifier:UNWIND_TO_PRINTERS sender:self];
+}
+
+#pragma mark - Refresh
+
+- (void)refresh
+{
+    // setup properties
+    //TODO: initalize a dictionary for the search results
+    //TODO: <Printer> : <isNew>
+    self.listSearchResults = [NSMutableArray arrayWithArray:self.listSavedPrinters];
+    
+    //TODO: perform search
 }
 
 #pragma mark - TableView
