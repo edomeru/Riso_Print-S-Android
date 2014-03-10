@@ -13,7 +13,7 @@
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
 #import "PListUtils.h"
-#import "PrintSetting.h"
+
 
 #define PRINTER_IP              0
 #define PRINTER_NAME            1
