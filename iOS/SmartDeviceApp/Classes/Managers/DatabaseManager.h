@@ -11,35 +11,52 @@
 @interface DatabaseManager : NSObject
 
 /**
- Adds a NSManagedObject to the database.
- This can be used for adding the following objects to
- the DB: "Printer", "PrintJob", and "DefaultPrinter".
- 
- @param entity
-        The object to be added.
- @param name
-        The entity name as specified in the Core Data model.
- 
- @return YES if successful, NO otherwise.
- **/
-+ (BOOL)addToDB:(id)entity forEntityName:(NSString*)name;
-
-/**
- Returns the NSManagedObjectContext.
- This is the context used for DB transactions.
+ Retrieves the pre-defined NSManagedObjectContext from the AppDelegate.
  
  @return NSManagedObjectContext*
  **/
-
-+(NSManagedObjectContext *) getManagedObjectContext;
-
++ (NSManagedObjectContext*)getManagedObjectContext;
 
 /**
- Call to the DB to save the changes done to the managed objects
+ Retrieves objects from the database.
+ @param entityName
+        name as specified in the Core Data model
+ @return NSArray* of the matching results, nil otherwise.
+ **/
++ (NSArray*)getObjects:(NSString*)entityName;
+
+/**
+ Inserts a new object into the database
+ A call to saveChanges: must be made after this to
+ make the inserted object permanent.
+ @param entityName
+        name as specified in the Core Data model
+ @return the inserted object if successful, nil otherwise.
+ **/
++ (NSManagedObject*)addObject:(NSString*)entityName;
+
+/**
+ Removes an object from the database.
+ @param object
+        the NSManagedObject to be removed
+ @return YES if successful, NO otherwise
+ **/
++ (BOOL)deleteObject:(NSManagedObject*)object;
+
+/**
+ Saves all the changes made to the database.
+ This includes all previous insertions and deletions.
 
  @return YES if successful, NO otherwise.
  **/
-+(BOOL) saveDB;
++ (BOOL)saveChanges;
 
-+(BOOL) deleteFromDB:(NSManagedObject *) object;
+/**
+ Discards all the changes made to the database.
+ This includes all previous insertions and deletions.
+ 
+ @return YES if successful, NO otherwise.
+ **/
++ (void)discardChanges;
+
 @end

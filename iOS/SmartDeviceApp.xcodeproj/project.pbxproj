@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
-		2828311418C7060A008B127C /* AddPrinterScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311318C7060A008B127C /* AddPrinterScreenController.m */; };
-		2828311818C70636008B127C /* PrintersScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311718C70636008B127C /* PrintersScreenController.m */; };
-		2828311C18C7064B008B127C /* PrinterSearchScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311B18C7064B008B127C /* PrinterSearchScreenController.m */; };
+		2828311418C7060A008B127C /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311318C7060A008B127C /* AddPrinterViewController.m */; };
+		2828311818C70636008B127C /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311718C70636008B127C /* PrintersIphoneViewController.m */; };
+		2828311C18C7064B008B127C /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311B18C7064B008B127C /* PrinterSearchViewController.m */; };
 		2828312618C7066B008B127C /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311F18C7066B008B127C /* DatabaseManager.m */; };
 		2828312718C7066B008B127C /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312118C7066B008B127C /* NetworkManager.m */; };
 		2828312818C7066B008B127C /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312318C7066B008B127C /* PrinterManager.m */; };
@@ -35,7 +35,6 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
-		2D0BEB2018CD54C60059C15A /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */; };
 		2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */; };
 		2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */; };
 		2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3518C4137000AC8AD0 /* RootViewController.m */; };
@@ -54,11 +53,8 @@
 		2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD446185FFC160085AD88 /* InfoPlist.strings */; };
 		2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD44E185FFED70085AD88 /* gtest-all.cc */; };
 		2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */; };
-		2DF90BDF18C9DE2000C80355 /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */; };
-		2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */; };
-		2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */; };
-		2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE618C9DE4400C80355 /* PrintersViewController.m */; };
 		2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */; };
+		310626E618CDAFF700E3CB19 /* PListUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626E518CDAFF700E3CB19 /* PListUtils.m */; };
 		319210BE18C718A5000555C7 /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 319210BD18C718A5000555C7 /* PrinterStatusHelper.m */; };
 		3192115018C71BF0000555C7 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192114F18C71BF0000555C7 /* PrinterStatusView.m */; };
 		3192115418C71C3D000555C7 /* PrinterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192115318C71C3D000555C7 /* PrinterCell.m */; };
@@ -66,17 +62,19 @@
 		3192116C18C72A7C000555C7 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116B18C72A7C000555C7 /* DefaultPrinter.m */; };
 		3192116F18C72A7D000555C7 /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116E18C72A7D000555C7 /* PrintSetting.m */; };
 		3192117218C72A7D000555C7 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192117118C72A7D000555C7 /* Printer.m */; };
+		31AF6CCE18CD903F00C81F09 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */; };
+		31AF6CD218CD904A00C81F09 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AF6CD118CD904A00C81F09 /* PrintersViewController.m */; };
 		31D91C9618C86FE400611C85 /* PrinterInfoScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		2828311218C7060A008B127C /* AddPrinterScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddPrinterScreenController.h; path = AddPrinter/AddPrinterScreenController.h; sourceTree = "<group>"; };
-		2828311318C7060A008B127C /* AddPrinterScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddPrinterScreenController.m; path = AddPrinter/AddPrinterScreenController.m; sourceTree = "<group>"; };
-		2828311618C70636008B127C /* PrintersScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersScreenController.h; path = Printers/PrintersScreenController.h; sourceTree = "<group>"; };
-		2828311718C70636008B127C /* PrintersScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersScreenController.m; path = Printers/PrintersScreenController.m; sourceTree = "<group>"; };
-		2828311A18C7064B008B127C /* PrinterSearchScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterSearchScreenController.h; path = PrinterSearch/PrinterSearchScreenController.h; sourceTree = "<group>"; };
-		2828311B18C7064B008B127C /* PrinterSearchScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterSearchScreenController.m; path = PrinterSearch/PrinterSearchScreenController.m; sourceTree = "<group>"; };
+		2828311218C7060A008B127C /* AddPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddPrinterViewController.h; path = AddPrinter/AddPrinterViewController.h; sourceTree = "<group>"; };
+		2828311318C7060A008B127C /* AddPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddPrinterViewController.m; path = AddPrinter/AddPrinterViewController.m; sourceTree = "<group>"; };
+		2828311618C70636008B127C /* PrintersIphoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersIphoneViewController.h; path = Printers/PrintersIphoneViewController.h; sourceTree = "<group>"; };
+		2828311718C70636008B127C /* PrintersIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersIphoneViewController.m; path = Printers/PrintersIphoneViewController.m; sourceTree = "<group>"; };
+		2828311A18C7064B008B127C /* PrinterSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterSearchViewController.h; path = PrinterSearch/PrinterSearchViewController.h; sourceTree = "<group>"; };
+		2828311B18C7064B008B127C /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterSearchViewController.m; path = PrinterSearch/PrinterSearchViewController.m; sourceTree = "<group>"; };
 		2828311E18C7066B008B127C /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseManager.h; path = Managers/DatabaseManager.h; sourceTree = "<group>"; };
 		2828311F18C7066B008B127C /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DatabaseManager.m; path = Managers/DatabaseManager.m; sourceTree = "<group>"; };
 		2828312018C7066B008B127C /* NetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkManager.h; path = Managers/NetworkManager.h; sourceTree = "<group>"; };
@@ -89,7 +87,6 @@
 		2828312D18C7067D008B127C /* InputUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputUtils.m; sourceTree = "<group>"; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
-		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D00842918C6FDA2001558F7 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuButton.h; sourceTree = "<group>"; };
 		2D00842A18C6FDA2001558F7 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButton.m; sourceTree = "<group>"; };
 		2D0084B418C72F1A001558F7 /* MenuScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScrollView.h; sourceTree = "<group>"; };
@@ -114,8 +111,6 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		2D0BEB1E18CD54C60059C15A /* PrinterSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchViewController.h; sourceTree = "<group>"; };
-		2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterSearchViewController.m; sourceTree = "<group>"; };
 		2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
 		2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
 		2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideOverSegue.h; sourceTree = "<group>"; };
@@ -144,16 +139,10 @@
 		2D9DD44F185FFED70085AD88 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
 		2DDACC6C18C47C6A001DEC76 /* PrintSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsViewController.h; sourceTree = "<group>"; };
 		2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsViewController.m; sourceTree = "<group>"; };
-		2DF90BDD18C9DE2000C80355 /* AddPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPrinterViewController.h; sourceTree = "<group>"; };
-		2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPrinterViewController.m; sourceTree = "<group>"; };
-		2DF90BE118C9DE4400C80355 /* PrintersIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIpadViewController.h; sourceTree = "<group>"; };
-		2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIpadViewController.m; sourceTree = "<group>"; };
-		2DF90BE318C9DE4400C80355 /* PrintersIphoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIphoneViewController.h; sourceTree = "<group>"; };
-		2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIphoneViewController.m; sourceTree = "<group>"; };
-		2DF90BE518C9DE4400C80355 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersViewController.h; sourceTree = "<group>"; };
-		2DF90BE618C9DE4400C80355 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersViewController.m; sourceTree = "<group>"; };
 		2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
 		2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
+		310626E418CDAFF700E3CB19 /* PListUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PListUtils.h; sourceTree = "<group>"; };
+		310626E518CDAFF700E3CB19 /* PListUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListUtils.m; sourceTree = "<group>"; };
 		319210BC18C718A5000555C7 /* PrinterStatusHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusHelper.h; sourceTree = "<group>"; };
 		319210BD18C718A5000555C7 /* PrinterStatusHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelper.m; sourceTree = "<group>"; };
 		3192114E18C71BF0000555C7 /* PrinterStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusView.h; sourceTree = "<group>"; };
@@ -168,6 +157,10 @@
 		3192116E18C72A7D000555C7 /* PrintSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintSetting.m; path = Models/PrintSetting.m; sourceTree = "<group>"; };
 		3192117018C72A7D000555C7 /* Printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Printer.h; path = Models/Printer.h; sourceTree = "<group>"; };
 		3192117118C72A7D000555C7 /* Printer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Printer.m; path = Models/Printer.m; sourceTree = "<group>"; };
+		31AF6CCA18CD903F00C81F09 /* PrintersIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersIpadViewController.h; path = Printers/PrintersIpadViewController.h; sourceTree = "<group>"; };
+		31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersIpadViewController.m; path = Printers/PrintersIpadViewController.m; sourceTree = "<group>"; };
+		31AF6CD018CD904A00C81F09 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersViewController.h; path = Printers/PrintersViewController.h; sourceTree = "<group>"; };
+		31AF6CD118CD904A00C81F09 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersViewController.m; path = Printers/PrintersViewController.m; sourceTree = "<group>"; };
 		31D91C9418C86FE400611C85 /* PrinterInfoScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterInfoScreenController.h; path = PrinterInfo/PrinterInfoScreenController.h; sourceTree = "<group>"; };
 		31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterInfoScreenController.m; path = PrinterInfo/PrinterInfoScreenController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -229,10 +222,8 @@
 		2828311118C705FD008B127C /* AddPrinter */ = {
 			isa = PBXGroup;
 			children = (
-				2828311218C7060A008B127C /* AddPrinterScreenController.h */,
-				2828311318C7060A008B127C /* AddPrinterScreenController.m */,
-				2DF90BDD18C9DE2000C80355 /* AddPrinterViewController.h */,
-				2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */,
+				2828311218C7060A008B127C /* AddPrinterViewController.h */,
+				2828311318C7060A008B127C /* AddPrinterViewController.m */,
 			);
 			name = AddPrinter;
 			sourceTree = "<group>";
@@ -240,14 +231,12 @@
 		2828311518C7062B008B127C /* Printers */ = {
 			isa = PBXGroup;
 			children = (
-				2828311618C70636008B127C /* PrintersScreenController.h */,
-				2828311718C70636008B127C /* PrintersScreenController.m */,
-				2DF90BE118C9DE4400C80355 /* PrintersIpadViewController.h */,
-				2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */,
-				2DF90BE318C9DE4400C80355 /* PrintersIphoneViewController.h */,
-				2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */,
-				2DF90BE518C9DE4400C80355 /* PrintersViewController.h */,
-				2DF90BE618C9DE4400C80355 /* PrintersViewController.m */,
+				31AF6CD018CD904A00C81F09 /* PrintersViewController.h */,
+				31AF6CD118CD904A00C81F09 /* PrintersViewController.m */,
+				31AF6CCA18CD903F00C81F09 /* PrintersIpadViewController.h */,
+				31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */,
+				2828311618C70636008B127C /* PrintersIphoneViewController.h */,
+				2828311718C70636008B127C /* PrintersIphoneViewController.m */,
 			);
 			name = Printers;
 			sourceTree = "<group>";
@@ -255,10 +244,8 @@
 		2828311918C7063E008B127C /* PrinterSearch */ = {
 			isa = PBXGroup;
 			children = (
-				2828311A18C7064B008B127C /* PrinterSearchScreenController.h */,
-				2828311B18C7064B008B127C /* PrinterSearchScreenController.m */,
-				2D0BEB1E18CD54C60059C15A /* PrinterSearchViewController.h */,
-				2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */,
+				2828311A18C7064B008B127C /* PrinterSearchViewController.h */,
+				2828311B18C7064B008B127C /* PrinterSearchViewController.m */,
 			);
 			name = PrinterSearch;
 			sourceTree = "<group>";
@@ -289,6 +276,8 @@
 		2828312B18C7067D008B127C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				310626E418CDAFF700E3CB19 /* PListUtils.h */,
+				310626E518CDAFF700E3CB19 /* PListUtils.m */,
 				319210BC18C718A5000555C7 /* PrinterStatusHelper.h */,
 				319210BD18C718A5000555C7 /* PrinterStatusHelper.m */,
 				2828312C18C7067D008B127C /* InputUtils.h */,
@@ -808,40 +797,38 @@
 			buildActionMask = 2147483647;
 			files = (
 				2828312E18C7067D008B127C /* InputUtils.m in Sources */,
-				2828311818C70636008B127C /* PrintersScreenController.m in Sources */,
+				2828311818C70636008B127C /* PrintersIphoneViewController.m in Sources */,
 				2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */,
 				2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */,
 				2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */,
-				2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */,
+				31AF6CCE18CD903F00C81F09 /* PrintersIpadViewController.m in Sources */,
 				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
 				3192116918C72A7C000555C7 /* PrintJob.m in Sources */,
 				2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */,
 				319210BE18C718A5000555C7 /* PrinterStatusHelper.m in Sources */,
-				2828311418C7060A008B127C /* AddPrinterScreenController.m in Sources */,
+				2828311418C7060A008B127C /* AddPrinterViewController.m in Sources */,
 				3192115018C71BF0000555C7 /* PrinterStatusView.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
-				2828311C18C7064B008B127C /* PrinterSearchScreenController.m in Sources */,
+				2828311C18C7064B008B127C /* PrinterSearchViewController.m in Sources */,
 				2828312818C7066B008B127C /* PrinterManager.m in Sources */,
 				2828312618C7066B008B127C /* DatabaseManager.m in Sources */,
 				3192117218C72A7D000555C7 /* Printer.m in Sources */,
+				31AF6CD218CD904A00C81F09 /* PrintersViewController.m in Sources */,
 				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
 				2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */,
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2828312718C7066B008B127C /* NetworkManager.m in Sources */,
 				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
-				2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */,
-				2DF90BDF18C9DE2000C80355 /* AddPrinterViewController.m in Sources */,
 				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
 				2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */,
 				3192116F18C72A7D000555C7 /* PrintSetting.m in Sources */,
 				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
-				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
 				3192116C18C72A7C000555C7 /* DefaultPrinter.m in Sources */,
 				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
 				2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */,
-				2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */,
 				3192115418C71C3D000555C7 /* PrinterCell.m in Sources */,
 				2828312918C7066B008B127C /* SNMPManager.m in Sources */,
+				310626E618CDAFF700E3CB19 /* PListUtils.m in Sources */,
 				31D91C9618C86FE400611C85 /* PrinterInfoScreenController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

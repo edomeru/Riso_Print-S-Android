@@ -11,30 +11,69 @@
 #import "DefaultPrinter.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
+#import "PListUtils.h"
+#import "PrintSetting.h"
 
-#define PRINTER_IP      0
-#define PRINTER_NAME    1
+#define PRINTER_IP              0
+#define PRINTER_NAME            1
 
-#define PRINTER_MAX_COUNT   20
+#define ENTITY_PRINTER          @"Printer"
+#define ENTITY_PRINTSETTING     @"PrintSetting"
+#define ENTITY_DEFAULTPRINTER   @"DefaultPrinter"
 
 @implementation PrinterManager
 
+#pragma mark - Printers in DB
 
 + (Printer*)createPrinter
 {
-    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    // create first a PrintSetting object
+    PrintSetting* printSetting = (PrintSetting*)[DatabaseManager addObject:ENTITY_PRINTSETTING];
+    [self copyDefaultPrintSettings:&printSetting];
     
-    return [NSEntityDescription insertNewObjectForEntityForName:@"Printer"
-                                         inManagedObjectContext:context];
+    // then create a Printer object
+    Printer* printer = (Printer*)[DatabaseManager addObject:ENTITY_PRINTER];
+    if (printer == nil)
+    {
+        [DatabaseManager discardChanges]; //discard the PrintSetting object
+        return nil;
+    }
+    
+    // finally attach the PrintSetting to the Printer
+    printer.printsetting = printSetting;
+    
+    return printer;
 }
 
-+ (PrintSetting *)createPrintSetting
++ (DefaultPrinter*)createDefaultPrinter:(Printer*)printer
 {
-    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
+    DefaultPrinter* defaultPrinter = (DefaultPrinter*)[DatabaseManager addObject:ENTITY_DEFAULTPRINTER];
+    defaultPrinter.printer = printer;
     
-    return [NSEntityDescription insertNewObjectForEntityForName:@"PrintSetting"
-                                         inManagedObjectContext:context];
+    return defaultPrinter;
 }
+
++ (NSMutableArray*)getPrinters
+{
+    return [[DatabaseManager getObjects:ENTITY_PRINTER] mutableCopy];
+}
+
++ (DefaultPrinter*)getDefaultPrinter
+{
+    NSArray* results = [DatabaseManager getObjects:ENTITY_DEFAULTPRINTER];
+    if(results != nil)
+    {
+        if([results count] > 0)
+        {
+            return [results objectAtIndex:0];
+        }
+    }
+
+    //TODO: handle error (pass to controller to display error?)
+    return nil;
+}
+
+#pragma mark - Printers in Network (SNMP)
 
 + (BOOL)searchForPrinter:(Printer**)printer
 {
@@ -45,6 +84,7 @@
         //save printer info and capabilities to Printer object
         (*printer).name = [printerInfoCapabilities objectAtIndex:PRINTER_NAME];
         //TODO: add others here..
+        //TODO: also update print settings object if needed
         
         return YES;
     }
@@ -52,15 +92,34 @@
         return NO;
 }
 
-+ (BOOL)addPrinterToDB:(Printer*)printer
+#pragma mark - Printer Utilities
+
++ (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
 {
-    return [DatabaseManager addToDB:printer forEntityName:@"Printer"];
+    NSDictionary* defaultPrintSettings = [PListUtils getDefaultPrintSettings];
+    (*printSetting).bind = [defaultPrintSettings objectForKey:@"Bind"];
+    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:@"BookletBinding"];
+    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:@"BookletTray"];
+    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:@"CatchTray"];
+    (*printSetting).color_mode = [defaultPrintSettings objectForKey:@"ColorMode"];
+    (*printSetting).copies = [defaultPrintSettings objectForKey:@"Copies"];
+    (*printSetting).duplex = [defaultPrintSettings objectForKey:@"Duplex"];
+    (*printSetting).image_quality = [defaultPrintSettings objectForKey:@"ImageQuality"];
+    (*printSetting).pagination = [defaultPrintSettings objectForKey:@"Pagination"];
+    (*printSetting).paper_size = [defaultPrintSettings objectForKey:@"PaperSize"];
+    (*printSetting).paper_type = [defaultPrintSettings objectForKey:@"PaperType"];
+    (*printSetting).punch = [defaultPrintSettings objectForKey:@"Punch"];
+    (*printSetting).sort = [defaultPrintSettings objectForKey:@"Sort"];
+    (*printSetting).staple = [defaultPrintSettings objectForKey:@"Staple"];
+    (*printSetting).zoom = [defaultPrintSettings objectForKey:@"Zoom"];
+    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:@"ZoomRate"];
 }
 
 + (BOOL)canAddPrinter:(NSString*)printerIP toList:(NSArray*)listSavedPrinters;
 {
     // check if maximum number of printers have been reached
-    if ([listSavedPrinters count] == 20)
+    NSUInteger maxPrinters = [PListUtils getMaxPrinters];
+    if ([listSavedPrinters count] == maxPrinters)
         return NO;
     
     // check if there is no existing/duplicate printer on the list
@@ -73,42 +132,5 @@
     // no issues, printer can be added
     return YES;
 }
-+(NSMutableArray *) getPrinters
-{
-    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]  initWithEntityName:@"Printer" ];
-    NSError *error;
-    return [[context executeFetchRequest:fetchRequest error:&error] mutableCopy];
-}
 
-+(DefaultPrinter *) getDefaultPrinter
-{
-    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]  initWithEntityName:@"DefaultPrinter" ];
-    NSError *error;
-    NSArray *fetchResult = [context executeFetchRequest:fetchRequest error:&error];
-    if(fetchResult != nil)
-    {
-        if([fetchResult count] > 0)
-        {
-            return [fetchResult objectAtIndex:0];
-        }
-    }
-    else
-    {
-        //TODO show error
-    }
-    return nil;
-}
-
-+ (DefaultPrinter*)createDefaultPrinter :(Printer *) printer
-{
-    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
-    
-    DefaultPrinter *defaultPrinter = [NSEntityDescription insertNewObjectForEntityForName:@"DefaultPrinter"
-                                         inManagedObjectContext:context];
-    defaultPrinter.printer = printer;
-    
-    return defaultPrinter;
-}
 @end

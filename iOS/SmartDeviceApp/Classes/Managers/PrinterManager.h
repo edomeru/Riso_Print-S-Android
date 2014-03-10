@@ -14,14 +14,43 @@
 
 @interface PrinterManager : NSObject
 
+#pragma mark - Printers in DB
+
 /**
  Creates a Printer object.
- This object is typed as a NSManagedObject and is created as
- a Core Data entity.
+ It also creates the required PrintSetting object and attaches
+ it to this Printer.
  
  @return Printer*
  **/
 + (Printer*)createPrinter;
+
+/**
+ Creates a DefaultPrinter object.
+ It also attaches an existing Printer object to it.
+ 
+ @param printer
+        printer object of the default printer to be created
+ 
+ @return DefaultPrinter*
+ **/
++ (DefaultPrinter*)createDefaultPrinter:(Printer*)printer;
+
+/**
+ Gets the list of Printers from DB
+ 
+ @return NSMutableArray*
+ **/
++ (NSMutableArray*)getPrinters;
+
+/**
+ Gets the DefaultPrinter object from DB
+ 
+ @return NSMutableArray*
+ **/
++ (DefaultPrinter*)getDefaultPrinter;
+
+#pragma mark - Printers in Network (SNMP)
 
 /**
  Calls the SNMP library to search for the printer in the network.
@@ -36,12 +65,7 @@
  **/
 + (BOOL)searchForPrinter:(Printer**)printer;
 
-/**
- Adds the Printer to the Database (Core Data).
- 
- @return YES if successful, NO otherwise.
- **/
-+ (BOOL)addPrinterToDB:(Printer*)printer;
+#pragma mark - Printer Utilities
 
 /**
  Checks if a new Printer can be added to a list of Printer objects.
@@ -55,43 +79,5 @@
  @return YES if can add, NO otherwise
  **/
 + (BOOL)canAddPrinter:(NSString*)printerIP toList:(NSArray*)listSavedPrinters;
-
-
-/**
- Gets the list of Printers from DB
- 
- @return NSMutableArray*
- **/
-+(NSMutableArray *) getPrinters;
-
-/**
- Creates a PrintSetting object.
- This object is typed as a NSManagedObject and is created as
- a Core Data entity.
- 
- @return PrintSetting*
- **/
-+ (PrintSetting*)createPrintSetting;
-
-/**
- Gets the DefaultPrinter object from DB
- 
- @return NSMutableArray*
- **/
-+(DefaultPrinter *) getDefaultPrinter;
-
-/**
- Creates a DefaultPrinter object.
- This object is typed as a NSManagedObject and is created as
- a Core Data entity.
- 
- @param printer
-        printer object of the default printer to be created
- 
- @return DefaultPrinter*
- **/
-+(DefaultPrinter*)createDefaultPrinter :(Printer *) printer;
-
-
 
 @end
