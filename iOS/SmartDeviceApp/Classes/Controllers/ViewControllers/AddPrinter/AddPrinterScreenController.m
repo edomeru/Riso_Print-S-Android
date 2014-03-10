@@ -13,9 +13,12 @@
 #import "NetworkManager.h"
 #import "InputUtils.h"
 
-#define TAG_TEXT_IP         1
-#define TAG_TEXT_USERNAME   2
-#define TAG_TEXT_PASSWORD   3
+#define INPUT_ROWS          3
+#define CELL_ROW_IP         0
+#define CELL_ROW_USERNAME   1
+#define CELL_ROW_PASSWORD   2
+
+#define UNWIND_TO_PRINTERS  @"UnwindRight"
 
 typedef enum
 {
@@ -29,10 +32,12 @@ typedef enum
 @interface AddPrinterScreenController ()
 
 /**
- Sets-up the Navigation Bar views.
- 1. Disables the Save button.
+ Enables/Disables the Save button.
+ 
+ @param isEnabled
+        YES or NO
  **/
-- (void)setupNavBar;
+- (void)enableSaveButton:(BOOL)isEnabled;
 
 /**
  Displays an AlertView for the result of the Add Printer operation.
@@ -63,8 +68,32 @@ typedef enum
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
+        [self initialize];
     }
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        self.isFixedSize = NO;
+    }
+    else
+    {
+        self.isFixedSize = YES;
+    }
+    self.slideDirection = SlideRight;
 }
 
 - (void)viewDidLoad
@@ -75,7 +104,7 @@ typedef enum
     self.addedPrinters = [NSMutableArray array];
 
     // setup view
-    [self setupNavBar];
+    [self enableSaveButton:NO];
 }
 
 - (void)didReceiveMemoryWarning
@@ -83,36 +112,40 @@ typedef enum
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Navigation Bar
+#pragma mark - Header
 
-- (void)setupNavBar
+- (void)enableSaveButton:(BOOL)isEnabled
 {
-    [self.saveButton setEnabled:NO];
+    if (isEnabled)
+    {
+        [self.saveButton setAlpha:1.0f];
+        [self.saveButton setEnabled:YES];
+    }
+    else
+    {
+        [self.saveButton setAlpha:0.3f];
+        [self.saveButton setEnabled:NO];
+    }
 }
 
-- (IBAction)onBack:(UIBarButtonItem *)sender
+- (IBAction)onBack:(UIButton *)sender 
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self performSegueWithIdentifier:UNWIND_TO_PRINTERS sender:self];
 }
 
-- (IBAction)onSave:(UIBarButtonItem *)sender
+- (IBAction)onSave:(UIButton *)sender
 {
     // check if trying to add the same printer
-    BOOL bIsAlreadyAdded = NO;
     if ([self.addedPrinters count] != 0)
     {
         for (Printer* onePrinter in self.addedPrinters)
         {
-            if ([onePrinter.ip_address isEqualToString:self.inputIP.text])
+            if ([onePrinter.ip_address isEqualToString:self.textIP.text])
             {
-                bIsAlreadyAdded = YES;
+                [self displayResult:ERR_ALREADY_ADDED];
                 break;
             }
         }
-    }
-    if (bIsAlreadyAdded)
-    {
-        [self displayResult:ERR_ALREADY_ADDED];
     }
     else
     {
@@ -125,7 +158,7 @@ typedef enum
         else
         {
             // check if the input IP is valid
-            NSString* formattedIP = self.inputIP.text;
+            NSString* formattedIP = self.textIP.text;
             BOOL isInputValid = [InputUtils validateAndFormatIP:&formattedIP];
             if (!isInputValid)
             {
@@ -176,8 +209,7 @@ typedef enum
                             
                             // update the list of added printers
                             [self.addedPrinters addObject:newPrinter];
-    
-                            //newPrinter = nil;
+                            newPrinter = nil;
                         }
                     }
                 }
@@ -188,36 +220,68 @@ typedef enum
     [self dismissKeypad];
 }
 
+#pragma mark - TableView
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return INPUT_ROWS;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger row = indexPath.row;
+    UITableViewCell* cell;
+    switch (row)
+    {
+        case 0:
+            cell = self.cellIPAddress;
+            break;
+        case 1:
+            cell = self.cellUsername;
+            break;
+        case 2:
+            cell = self.cellPassword;
+            break;
+    }
+    
+    return cell;
+}
+
 #pragma mark - TextFields
 
 - (void)dismissKeypad
 {
-    if (self.inputIP.isEditing)
-        [self.inputIP resignFirstResponder];
-    else if (self.inputUsername.isEditing)
-        [self.inputUsername resignFirstResponder];
-    else if (self.inputPassword.isEditing)
-        [self.inputPassword resignFirstResponder];
+    if (self.textIP.isEditing)
+        [self.textIP resignFirstResponder];
+    else if (self.textUsername.isEditing)
+        [self.textUsername resignFirstResponder];
+    else if (self.textPassword.isEditing)
+        [self.textPassword resignFirstResponder];
 }
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
     // disable the Save button if the IP Address text is cleared
-    if (textField.tag == TAG_TEXT_IP)
-        [self.saveButton setEnabled:NO];
-    
+    if (textField.tag == CELL_ROW_IP)
+        [self enableSaveButton:NO];
+         
     return YES;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField.tag == TAG_TEXT_IP)
+    if (textField.tag == CELL_ROW_IP)
     {
         // disable the Save button if backspace will clear the IP Address text
         if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
-            [self.saveButton setEnabled:NO];
+            [self enableSaveButton:NO];
         else
-            [self.saveButton setEnabled:YES];
+            [self enableSaveButton:YES];
     }
     
     return YES;
@@ -227,13 +291,13 @@ typedef enum
 
 - (void)displayResult:(RESULT_TYPE)result
 {
+    //TODO: replace messages with localizable strings
+    
     UIAlertView* resultAlert = [[UIAlertView alloc] initWithTitle:@"Add Printer Info"
                                                           message:nil
                                                          delegate:nil
                                                 cancelButtonTitle:@"OK"
                                                 otherButtonTitles:nil];
-    
-    //TODO: replace messages with localizable strings
     
     switch (result)
     {

@@ -7,17 +7,15 @@
 //
 
 #import "PrinterSearchScreenController.h"
+#import "Printer.h"
 
-#define SEARCHRESULTCELL @"SearchResultCell"
+#define SEARCHRESULTCELL    @"SearchResultCell"
+
+#define UNWIND_TO_PRINTERS  @"UnwindRight"
 
 @interface PrinterSearchScreenController ()
 
-@property NSMutableArray* listSearchResults;
-
-/**
- Sets-up the list of searched Printer objects.
- **/
-- (void)initSearchResults;
+@property (strong, nonatomic) NSMutableArray* listSearchResults;
 
 @end
 
@@ -25,20 +23,49 @@
 
 #pragma mark - Lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithStyle:style];
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
+        [self initialize];
     }
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        self.isFixedSize = NO;
+    }
+    else
+    {
+        self.isFixedSize = YES;
+    }
+    self.slideDirection = SlideRight;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self initSearchResults];
+    // setup properties
+    //TODO: initalize a dictionary for the search results
+    //TODO: <Printer> : <isNew>
+    self.listSearchResults = [NSMutableArray arrayWithArray:self.listSavedPrinters];
+    
+    //TODO: perform search
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,14 +73,14 @@
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Navigation Bar Actions
+#pragma mark - Header
 
 - (IBAction)onBack:(UIBarButtonItem *)sender
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self performSegueWithIdentifier:UNWIND_TO_PRINTERS sender:self];
 }
 
-#pragma mark - Setup TableView
+#pragma mark - TableView
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -67,41 +94,19 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = SEARCHRESULTCELL;
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
                                                             forIndexPath:indexPath];
-
+    
+    Printer* printer = [self.listSearchResults objectAtIndex:indexPath.row];
+    //TODO: check if printer is on list of saved printers (isNew value)
+    //TODO: add checkmark for already existing printers
+    //TODO: add + button for new printers
+    
+    cell.textLabel.text = printer.name;
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    //cell.accessoryType = UITableViewCellAccessoryNone;
+    
     return cell;
 }
-
-#pragma mark - Setup Search Results
-
-- (void)initSearchResults
-{
-    self.listSearchResults = [NSMutableArray array];
-}
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
 
 @end

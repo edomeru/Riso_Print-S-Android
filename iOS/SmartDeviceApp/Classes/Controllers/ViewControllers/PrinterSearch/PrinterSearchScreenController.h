@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SlidingViewController.h"
 
-@interface PrinterSearchScreenController : UITableViewController
+@interface PrinterSearchScreenController : SlidingViewController <UITableViewDataSource, UITableViewDelegate>
 
 /**
  A copy of the list of Printer objects from the Printers screen.

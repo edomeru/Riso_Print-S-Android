@@ -8,15 +8,16 @@
 
 #import "PrintersScreenController.h"
 #import "AddPrinterScreenController.h"
+#import "PrinterSearchScreenController.h"
 #import "Printer.h"
 #import "DefaultPrinter.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
 #import "DatabaseManager.h"
 
-#define SEGUE_TO_ADD_PRINTER    @"PrintersToAddPrinter"
-#define SEGUE_TO_PRINTER_SEARCH @"PrintersToPrinterSearch"
-#define UNWIND_FROM_ADD_PRINTER @"AddPrinterToPrinters"
+#define SEGUE_TO_MAINMENU       @"Printers-MainMenu"
+#define SEGUE_TO_ADD_PRINTER    @"Printers-AddPrinter"
+#define SEGUE_TO_PRINTER_SEARCH @"Printers-PrinterSearch"
 
 #define PRINTERCELL             @"PrinterCell"
 
@@ -28,21 +29,6 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
 
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter; //default printer object
 @property (strong, nonatomic) NSIndexPath* defaultPrinterIndexPath; //index path of default printer in printers list
-
-/**
- Sets-up the Navigation Bar controls and contents.
- **/
-- (void)setupNavBarItems;
-
-/**
- Segues to the Add Printer screen.
- **/
-- (void)onAdd:(id)sender;
-
-/**
- Segues to the Printer Search screen.
- **/
-- (void)onSearch:(id)sender;
 
 /**
  Retrieves the Printer objects from DB.
@@ -76,11 +62,12 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
 
 #pragma mark - Lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithStyle:style];
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
+        // Custom initialization
     }
     return self;
 }
@@ -89,7 +76,6 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
 {
     [super viewDidLoad];
 
-    [self setupNavBarItems];
     [self getSavedPrintersFromDB];
     [self getDefaultPrinterFromDB];
 }
@@ -99,31 +85,21 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Navigation Bar
+#pragma mark - Header
 
-- (void)setupNavBarItems
+- (IBAction)onAdd:(UIButton *)sender
 {
-    // "Manual Add" Button
-    UIBarButtonItem* addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
-                                                                               target:self
-                                                                               action:@selector(onAdd:)];
-    
-    // "Printer Search" Button
-    UIBarButtonItem* searchButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
-                                                                                  target:self
-                                                                                  action:@selector(onSearch:)];
-    
-    self.navigationItem.rightBarButtonItems = @[searchButton, addButton];
+    [self performSegueWithIdentifier:SEGUE_TO_ADD_PRINTER sender:self];
 }
 
-- (void)onAdd:(id)sender
+- (IBAction)onSearch:(UIButton *)sender
 {
-    [self performSegueWithIdentifier:SEGUE_TO_ADD_PRINTER sender:sender];
+    [self performSegueWithIdentifier:SEGUE_TO_PRINTER_SEARCH sender:self];
 }
 
-- (void)onSearch:(id)sender
+- (IBAction)onMenu:(UIButton *)sender
 {
-    [self performSegueWithIdentifier:SEGUE_TO_PRINTER_SEARCH sender:sender];
+    [self performSegueWithIdentifier:SEGUE_TO_MAINMENU sender:self];
 }
 
 #pragma mark - TableView
@@ -322,13 +298,15 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
     if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
     {
         // give the Add Printer screen a copy of the list of saved printers
-        UINavigationController* navController = [segue destinationViewController];
-        AddPrinterScreenController* destController = [[navController viewControllers] objectAtIndex:0];
+        AddPrinterScreenController* destController = [segue destinationViewController];
         destController.listSavedPrinters = self.listSavedPrinters;
     }
     
     if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
     {
+        // give the Printer Search screen a copy of the list of saved printers
+        PrinterSearchScreenController* destController = [segue destinationViewController];
+        destController.listSavedPrinters = self.listSavedPrinters;
     }
 }
 
@@ -345,6 +323,10 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
             [DatabaseManager saveDB];
         }
     }
+}
+
+- (IBAction)unwindFromSlidingDrawer:(UIStoryboardSegue *)segue
+{
 }
 
 @end

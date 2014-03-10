@@ -7,27 +7,63 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SlidingViewController.h"
 
 @class Printer;
 
-@interface AddPrinterScreenController : UITableViewController <UITextFieldDelegate>
+@interface AddPrinterScreenController : SlidingViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 /**
  A copy of the list of Printer objects from the Printers screen.
  **/
-@property (nonatomic, strong) NSArray* listSavedPrinters;
+@property (strong, nonatomic) NSArray* listSavedPrinters;
 
 /**
  A list of the new Printer objects searched and added to the database.
  This is initially nil and will remain nil if no printer/s is/are added.
  **/
-@property (nonatomic, strong) NSMutableArray* addedPrinters;
+@property (strong, nonatomic) NSMutableArray* addedPrinters;
+
+/**
+ Input TextField for the IP Address.
+ **/
+@property (weak, nonatomic) IBOutlet UITextField *textIP;
+
+/**
+ Input TextField for the Username.
+ **/
+@property (weak, nonatomic) IBOutlet UITextField *textUsername;
+
+/**
+ Input TextField for the Password.
+ **/
+@property (weak, nonatomic) IBOutlet UITextField *textPassword;
+
+/**
+ Save Button.
+ **/
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
+
+/**
+ TableViewCell for the IP Address
+ **/
+@property (strong, nonatomic) IBOutlet UITableViewCell *cellIPAddress;
+
+/**
+ TableViewCell for the Username
+ **/
+@property (strong, nonatomic) IBOutlet UITableViewCell *cellUsername;
+
+/**
+ TableViewCell for the Password
+ **/
+@property (strong, nonatomic) IBOutlet UITableViewCell *cellPassword;
 
 /**
  Unwinds back to the Printers screen.
  Any unsaved Printer info will not be saved.
  **/
-- (IBAction)onBack:(UIBarButtonItem *)sender;
+- (IBAction)onBack:(UIButton *)sender;
 
 /**
  The input Printer info is retrieved from the UI, then
@@ -36,26 +72,6 @@
  the printer is supported, the printer object is created
  and stored in the DB.
  **/
-- (IBAction)onSave:(UIBarButtonItem *)sender;
-
-/**
- Input TextField for the IP Address.
- **/
-@property (weak, nonatomic) IBOutlet UITextField *inputIP;
-
-/**
- Input TextField for the Username.
- **/
-@property (weak, nonatomic) IBOutlet UITextField *inputUsername;
-
-/**
- Input TextField for the Password.
- **/
-@property (weak, nonatomic) IBOutlet UITextField *inputPassword;
-
-/**
- Save Button.
- **/
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
+- (IBAction)onSave:(UIButton *)sender;
 
 @end
