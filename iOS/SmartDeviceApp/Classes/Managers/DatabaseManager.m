@@ -31,7 +31,7 @@
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     NSError *error;
     
-    return [[context executeFetchRequest:fetchRequest error:&error] mutableCopy];
+    return [context executeFetchRequest:fetchRequest error:&error];
 }
 
 #pragma mark - Add
