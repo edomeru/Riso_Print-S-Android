@@ -19,4 +19,6 @@ typedef enum _SlideDirection
 @property (nonatomic) SlideDirection slideDirection;
 @property (nonatomic) BOOL isFixedSize;
 
+- (void)close;
+
 @end

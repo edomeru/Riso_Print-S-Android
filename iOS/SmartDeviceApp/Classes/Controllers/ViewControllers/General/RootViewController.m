@@ -7,7 +7,10 @@
 //
 
 #import "RootViewController.h"
+#import "PrintPreviewViewController.h"
 #import "SlideSegue.h"
+#import "SlideOverSegue.h"
+#import "UIViewController+Segue.h"
 
 @interface RootViewController ()
 
@@ -28,9 +31,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
-    //[self performSegueWithIdentifier:@"Root-PrintPreview" sender:self];
-    [self performSegueWithIdentifier:@"Root-Printers" sender:self];
+    [self performSegueTo:[PrintPreviewViewController class]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,27 +47,18 @@
 
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier
 {
-    /*
-    if ([identifier isEqualToString:@"UnwindLeft"])
-    {
-        SlidingSegue *segue = [[SlidingSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
-        segue.isUnwinding = YES;
-        segue.slideDirection = SlideLeft;
-        return segue;
-    }
-    else if ([identifier isEqualToString:@"UnwindRight"])
-    {
-        SlidingSegue *segue = [[SlidingSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
-        segue.isUnwinding = YES;
-        segue.slideDirection = SlideRight;
-        return segue;
-    }*/
-    
-    if ([identifier isEqualToString:@"UnwindLeft"] || [identifier isEqualToString:@"UnwindRight"])
+    if ([identifier hasPrefix:@"UnwindTo"])
     {
         SlideSegue *segue = [[SlideSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
         segue.isUnwinding = YES;
         return segue;
+    }
+    
+    if ([identifier hasPrefix:@"UnwindFromOverTo"])
+    {
+        SlideOverSegue *segue = [[SlideOverSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+        segue.isUnwinding = YES;
+        return  segue;
     }
     
     return nil;

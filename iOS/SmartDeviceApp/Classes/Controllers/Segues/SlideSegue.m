@@ -52,12 +52,15 @@ const float AnimationDuration = 0.3f;
     {
         slidingView = container.leftSlidingView;
         slidingConstraint = container.leftSlidingConstraint;
+        container.rightSlidingView.userInteractionEnabled = NO;
     }
     else
     {
         slidingView = container.rightSlidingView;
         slidingConstraint = container.rightSlidingConstraint;
+        container.leftSlidingView.userInteractionEnabled = NO;
     }
+    slidingView.userInteractionEnabled = YES;
     
     // Reset constraints
     slidingConstraint.constant = 0;
@@ -103,6 +106,9 @@ const float AnimationDuration = 0.3f;
          // Notify events
          [mainViewController didMoveToParentViewController:nil];
          [slidingViewController didMoveToParentViewController:container];
+         
+         // Add reference
+         container.sideController = slidingViewController;
      }];
 }
 
@@ -151,6 +157,9 @@ const float AnimationDuration = 0.3f;
          // Notify events
          [mainViewController didMoveToParentViewController:container];
          [slidingViewContoller didMoveToParentViewController:nil];
+         
+         // Remove reference
+         container.sideController = nil;
      }];
 }
 
