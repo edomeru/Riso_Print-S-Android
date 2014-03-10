@@ -8,45 +8,69 @@
 
 #import "DatabaseManager.h"
 
-extern BOOL isDummyDataEnabled; //TODO REMOVE! For Debugging Purposes Only
-
 @implementation DatabaseManager
 
-+(NSManagedObjectContext *) getManagedObjectContext
+#pragma mark - Context
+
++ (NSManagedObjectContext*)getManagedObjectContext
 {
+    NSManagedObjectContext* context = nil;
+    
     id delegate = [[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext* context = [delegate managedObjectContext];
+    if ([delegate respondsToSelector:@selector(managedObjectContext)])
+        context = [delegate managedObjectContext];
+    
     return context;
 }
 
-+ (BOOL)addToDB:(id)entity forEntityName:(NSString*)name;
+#pragma mark - Fetch
+
++ (NSArray*)getObjects:(NSString*)entityName;
 {
-    //TODO
+    NSManagedObjectContext* context = [self getManagedObjectContext];
+    NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
+    NSError *error;
     
-    return YES;
+    return [[context executeFetchRequest:fetchRequest error:&error] mutableCopy];
 }
 
-+(BOOL) saveDB
+#pragma mark - Add
+
++ (NSManagedObject*)addObject:(NSString*)entityName
 {
-    //TODO REMOVE! For Debugging Purposes Only
-    if(isDummyDataEnabled){
-        return YES; //Don't execute save if dummy data is enabled
-    }
+    return [NSEntityDescription insertNewObjectForEntityForName:entityName
+                                         inManagedObjectContext:[self getManagedObjectContext]];
+}
+
+#pragma mark - Delete
+
++ (BOOL)deleteObject:(NSManagedObject*)object
+{
+    NSManagedObjectContext* context = [self getManagedObjectContext];
+    [context deleteObject:object];
     
+    return [self saveChanges];
+}
+
+#pragma mark - Save Changes
+
++ (BOOL)saveChanges
+{
     NSError *error = nil;
-    if (![[DatabaseManager getManagedObjectContext] save:&error])
+    if (![[self getManagedObjectContext] save:&error])
     {
-        NSLog(@"Error saving to DB %@ %@", error, [error localizedDescription]);
+        NSLog(@"ERROR saving to DB %@", [error debugDescription]);
         return NO;
     }
+    
     return YES;
 }
 
-+(BOOL) deleteFromDB:(NSManagedObject *) object
+#pragma mark - Discard Changes
+
++ (void)discardChanges
 {
-    NSManagedObjectContext* context = [DatabaseManager getManagedObjectContext];
-    [context deleteObject:object];
-    return[DatabaseManager saveDB];
+    [[self getManagedObjectContext] rollback];
 }
 
 @end

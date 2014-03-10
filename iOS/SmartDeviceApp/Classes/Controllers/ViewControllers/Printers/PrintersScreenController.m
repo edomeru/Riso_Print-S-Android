@@ -21,10 +21,6 @@
 
 #define PRINTERCELL             @"PrinterCell"
 
-
-
-BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
-
 @interface PrintersScreenController ()
 
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter; //default printer object
@@ -49,12 +45,6 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
  Action when the PrinterCell Disclosure is tapped to segue to the PrinterInfo screen
  **/
 - (IBAction)onTapPrinterCellDisclosure:(id)sender;
-
-/**
- FOR DEBUGGING ONLY.
- This method fills the list of saved printers with static test data.
- **/
-- (void)initWithTestData;
 
 @end
 
@@ -161,7 +151,7 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
             {
                 
                 NSLog(@"Printer to be deleted is default printer. Removing default printer reference");
-                if([DatabaseManager deleteFromDB:self.defaultPrinter] == NO)
+                if([DatabaseManager deleteObject:self.defaultPrinter] == NO)
                 {
                     //TODO Show delete error
                     //If deleting default printer reference failed, do not proceed with deletion of printer
@@ -171,7 +161,7 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
                 self.defaultPrinterIndexPath = nil;
             }
             
-            BOOL deleteSuccess = [DatabaseManager deleteFromDB:printerToDelete];
+            BOOL deleteSuccess = [DatabaseManager deleteObject:printerToDelete];
             if(deleteSuccess == YES)
             {
                 //remove the object from list
@@ -197,41 +187,8 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
 - (void)getSavedPrintersFromDB
 {
     self.listSavedPrinters = [NSMutableArray array];
-    
-    NSString* pathToPList = [[NSBundle mainBundle] pathForResource:@"SmartDeviceApp-Settings" ofType:@"plist"];
-    NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPList];
-    BOOL isLoadWithInitialData = [[dict objectForKey:@"LoadWithTestData"] boolValue];
-    isDummyDataEnabled = isLoadWithInitialData;
-    
-    if (isLoadWithInitialData)
-    {
-        [self initWithTestData];
-    }
-    else
-    {
-        self.listSavedPrinters = [PrinterManager getPrinters];
-        //TODO: Check getPrinters status
-    }
-}
-
-
-- (void)initWithTestData
-{
-    Printer* printer1 = [PrinterManager createPrinter];
-    printer1.ip_address = @"111.111.111";
-    printer1.name= @"Printer 1";
-    
-    Printer* printer2 = [PrinterManager createPrinter];
-    printer2.ip_address = @"222.222.222";
-    printer2.name = @"Printer 2";
-    
-    Printer* printer3 = [PrinterManager createPrinter];
-    printer3.ip_address = @"333.333.333";
-    printer3.name = @"Printer 3";
-    
-    [self.listSavedPrinters addObject:printer1];
-    [self.listSavedPrinters addObject:printer2];
-    [self.listSavedPrinters addObject:printer3];
+    self.listSavedPrinters = [PrinterManager getPrinters];
+    //TODO: Check getPrinters status
 }
 
 - (void)getDefaultPrinterFromDB
@@ -265,7 +222,7 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
     }
     
     //save changes to DB
-    if([DatabaseManager saveDB] == NO)
+    if([DatabaseManager saveChanges] == NO)
     {
         //If changes to default printer is not saved. Do not update UI
         //TODO Show Error
@@ -320,7 +277,7 @@ BOOL isDummyDataEnabled = NO; //TODO REMOVE! For Debugging Purposes Only
         {
             [self.listSavedPrinters addObjectsFromArray:adderScreen.addedPrinters];
             [self.tableView reloadData];
-            [DatabaseManager saveDB];
+            [DatabaseManager saveChanges];
         }
     }
 }

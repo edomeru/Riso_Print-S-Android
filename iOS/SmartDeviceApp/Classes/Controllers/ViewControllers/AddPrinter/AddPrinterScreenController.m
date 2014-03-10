@@ -9,6 +9,7 @@
 #import "AddPrinterScreenController.h"
 #import "Printer.h"
 #import "PrinterManager.h"
+#import "DatabaseManager.h"
 #import "SNMPManager.h"
 #import "NetworkManager.h"
 #import "InputUtils.h"
@@ -136,16 +137,22 @@ typedef enum
 - (IBAction)onSave:(UIButton *)sender
 {
     // check if trying to add the same printer
+    BOOL isAlreadyAdded = NO;
     if ([self.addedPrinters count] != 0)
     {
         for (Printer* onePrinter in self.addedPrinters)
         {
             if ([onePrinter.ip_address isEqualToString:self.textIP.text])
             {
-                [self displayResult:ERR_ALREADY_ADDED];
+                isAlreadyAdded = YES;
                 break;
             }
         }
+    }
+    
+    if (isAlreadyAdded)
+    {
+        [self displayResult:ERR_ALREADY_ADDED];
     }
     else
     {
@@ -176,40 +183,45 @@ typedef enum
                 {
                     // create Printer object
                     Printer* newPrinter = [PrinterManager createPrinter];
-                    newPrinter.ip_address = formattedIP;
-                    
-                    //TODO: load searching/progress indicator
-                    
-                    // use SNMP to search for the printer and get its capabilities
-                    // check if printer is supported
-                    BOOL isAvailableAndSupported = [PrinterManager searchForPrinter:&newPrinter];
-                    if (!isAvailableAndSupported)
+                    if (newPrinter == nil)
                     {
                         [self displayResult:ERR_CANNOT_ADD];
                     }
                     else
                     {
-                        //TODO: copy the default print settings values to the print settings object of the printer object
-                        PrintSetting* printSetting = [PrinterManager createPrintSetting];
-                        newPrinter.printsetting = printSetting;
-                        // add the printer to DB
-                        BOOL isAddedToDB = [PrinterManager addPrinterToDB:newPrinter];//Amor: This line may not be needed because once the object is created using createPrinter and save is called, the object is automatically inserted in DB. 
-                        if (!isAddedToDB)
+                        newPrinter.ip_address = formattedIP;
+                        
+                        //TODO: load searching/progress indicator
+                        
+                        // use SNMP to search for the printer and get its capabilities
+                        BOOL isAvailableAndSupported = [PrinterManager searchForPrinter:&newPrinter];
+                        if (!isAvailableAndSupported)
                         {
                             [self displayResult:ERR_CANNOT_ADD];
+                            [DatabaseManager discardChanges];
                         }
                         else
                         {
-                            //TODO: disable searching indicator
-                            
-                            [self displayResult:NO_ERROR];
-                            
-                            //since printer can be added, then it is online
-                            newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
-                            
-                            // update the list of added printers
-                            [self.addedPrinters addObject:newPrinter];
-                            newPrinter = nil;
+                            // add the printer to DB
+                            BOOL isAddedToDB = [DatabaseManager saveChanges];
+                            if (!isAddedToDB)
+                            {
+                                [self displayResult:ERR_CANNOT_ADD];
+                                [DatabaseManager discardChanges]; 
+                            }
+                            else
+                            {
+                                //TODO: disable searching indicator
+                                
+                                [self displayResult:NO_ERROR];
+                                
+                                //since printer can be added, then it is online
+                                newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
+                                
+                                // update the list of added printers
+                                [self.addedPrinters addObject:newPrinter];
+                                newPrinter = nil;
+                            }
                         }
                     }
                 }
@@ -304,6 +316,7 @@ typedef enum
         case NO_ERROR:
             [resultAlert setMessage:@"The new printer was added successfully."];
             break;
+            
         case ERR_NO_NETWORK:
             [resultAlert setMessage:@"The device is not connected to the network."];
             break;
