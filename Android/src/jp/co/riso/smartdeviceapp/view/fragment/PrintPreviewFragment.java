@@ -7,9 +7,11 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
@@ -60,9 +63,13 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-            
-            // data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
-            // data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-squarish.pdf");
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
+            edit.commit();
+            data = Uri.parse(SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
+            //data = Uri.parse(SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
             
             mPdfManager = new PDFFileManager(this);
             

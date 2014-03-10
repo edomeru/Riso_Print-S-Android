@@ -281,7 +281,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return (mPrintSettings.getColorMode() != ColorMode.MONOCHROME);
     }
     
-    private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex) {
+    private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean flipX, boolean flipY) {
         //get page then draw in bitmap
         PrintSettings.Pagination pagination = mPrintSettings.getPagination();
         
@@ -313,16 +313,20 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             // Left to right
             curX += width;
             if (i % pagination.getCols() == pagination.getCols() - 1) {
-                curX = 0;
+                curX = beginX;
+                curY += height;
             }
             
             int dim[] = getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
             int x = left + ((right - left) - dim[0]) / 2;
             int y = top + ((bottom - top) - dim[1]) / 2;
-            
+
             Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
             
-            Bitmap page = mPdfManager.getPageBitmap(i + beginIndex);
+            float scale = 1.0f / pagination.getPerPage();
+            
+            Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
+            
             if (page != null) {
                 ImageUtils.renderBmpToBmp(page, bmp, true, destRect);
                 page.recycle();
@@ -335,10 +339,9 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     }
     
     private Bitmap[] getRenderBitmaps(int index, int width, int height) {
-        int bmpDimensions[] = getPageDimensions(width, height);
         
-        Bitmap front = Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE);
-        Bitmap back = Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE);
+        Bitmap front = Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE);
+        Bitmap back = Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE);
         
         int pagePerScreen = 1;
         if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
@@ -348,11 +351,13 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         pagePerScreen *= mPrintSettings.getPagination().getPerPage();
         
         int frontIndex = (index * pagePerScreen);
-        drawPDFPagesOnBitmap(front, frontIndex);
+        drawPDFPagesOnBitmap(front, frontIndex, false, false);
         
         if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
             int backIndex = (index * pagePerScreen) + mPrintSettings.getPagination().getPerPage();
-            drawPDFPagesOnBitmap(back, backIndex);
+            
+            boolean verticalFlip = mCurlView.getBindPosition() == CurlView.BIND_TOP;
+            drawPDFPagesOnBitmap(back, backIndex, !verticalFlip, verticalFlip);
         }
         
         if (mBmpCache != null) {
@@ -523,24 +528,47 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         @Override
         public void updatePage(CurlPage page, int width, int height, int index) {
-            Bitmap cachedPages[] = getBitmapsFromCacheForPage(index, width, height);
+            boolean GET_FROM_CACHE = false;
+            
+            if (GET_FROM_CACHE) {
+                Bitmap cachedPages[] = getBitmapsFromCacheForPage(index, width, height);
+                /*
+                int bmpDimensions[] = getPageDimensions(width, height);
+                Bitmap bmps[] = { 
+                        Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
+                        Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE)
+                };
+                bmps[0].eraseColor(Color.WHITE);
+                bmps[1].eraseColor(Color.WHITE);
+                
+                tryDrawRenderBitmaps(cachedPages, bmps);
+                
+                page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
+                page.setTexture(bmps[1], CurlPage.SIDE_BACK);
+                */
 
-            int bmpDimensions[] = getPageDimensions(width, height);
-            Bitmap bmps[] = { 
-                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
-                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE)
-            };
-            bmps[0].eraseColor(Color.WHITE);
-            bmps[1].eraseColor(Color.WHITE);
-            
-            tryDrawRenderBitmaps(cachedPages, bmps);
-            
-            page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
-            page.setTexture(bmps[1], CurlPage.SIDE_BACK);
-            
-            if (cachedPages[0] == null || cachedPages[1] == null) {
-                new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
+                Bitmap bmps[] = { 
+                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE),
+                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE)
+                };
+                
+                page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
+                page.setTexture(bmps[1], CurlPage.SIDE_BACK);
+                
+                if (cachedPages[0] == null || cachedPages[1] == null) {
+                    new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
+                } else {
+                    tryDrawRenderBitmaps(cachedPages, bmps);
+                }
+            } else {
+                Bitmap renderedPages[] = getRenderBitmaps(index, width, height);
+                
+                page.setTexture(renderedPages[0], CurlPage.SIDE_FRONT);
+                page.setTexture(renderedPages[1], CurlPage.SIDE_BACK);
             }
+            
+            page.setColor(Color.argb(255, 255, 255, 255), CurlPage.SIDE_FRONT);
+            page.setColor(Color.argb(255, 255, 255, 255), CurlPage.SIDE_BACK);
         }
 
         @Override

@@ -118,6 +118,13 @@ public class PDFFileManager {
         mPath = path;
         mFileName = file.getName();
         mSandboxPath = SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/" + file.getName();
+        
+        if (mPath.equalsIgnoreCase(mSandboxPath)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(KEY_NEW_PDF_DATA, false);
+            edit.commit();
+        }
     }
     
     /**
@@ -185,6 +192,18 @@ public class PDFFileManager {
      * @return Bitmap of the page
      */
     public synchronized Bitmap getPageBitmap(int pageNo) {
+        return getPageBitmap(pageNo, 1.0f, false, false);
+    }
+    
+    /**
+     * Gets the Bitmap of the page
+     * 
+     * @param pageNo
+     *            PDF page of the requested page
+     * 
+     * @return Bitmap of the page
+     */
+    public synchronized Bitmap getPageBitmap(int pageNo, float scale, boolean flipX, boolean flipY) {
         if (!isInitialized()) {
             return null;
         }
@@ -201,7 +220,6 @@ public class PDFFileManager {
             mDocument.Open(mPath, null);
         }
         
-        float scale = 1.0f;
         Page page = mDocument.GetPage(pageNo);
         
         float pageWidth = mDocument.GetPageWidth(pageNo) * scale;
@@ -210,10 +228,27 @@ public class PDFFileManager {
         float x0 = 0;
         float y0 = pageHeight;
         
-        Matrix mat = new Matrix(scale, -scale, x0, y0);
+        if (flipX) {
+            x0 = pageWidth;
+        }
+        if (flipY) {
+            y0 = 0;
+        }
+        
+        float scaleX = scale;
+        float scaleY = -scale;
+        
+        if (flipX) {
+            scaleX = -scaleX;
+        }
+        if (flipY) {
+            scaleY = -scaleY;
+        }
         
         Bitmap bitmap = Bitmap.createBitmap((int) pageWidth, (int) pageHeight, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.WHITE);
+        
+        Matrix mat = new Matrix(scaleX, scaleY, x0, y0);
         
         if (!page.RenderToBmp(bitmap, mat)) {
             bitmap.recycle();
