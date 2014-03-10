@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SlidingViewController.h"
 
 @interface RootViewController : UIViewController
 
@@ -18,5 +19,8 @@
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightMainConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftSlidingConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightSlidingConstraint;
+
+@property (nonatomic, weak) UIViewController *mainController;
+@property (nonatomic, weak) SlidingViewController *sideController;
 
 @end

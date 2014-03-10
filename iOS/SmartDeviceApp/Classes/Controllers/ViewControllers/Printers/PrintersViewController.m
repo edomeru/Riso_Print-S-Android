@@ -1,29 +1,25 @@
 //
-//  PrintPreviewViewController.m
+//  PrintersViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/3/14.
+//  Created by Seph on 3/6/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PrintPreviewViewController.h"
-#import "RootViewController.h"
-#import "SlideSegue.h"
+#import "PrintersViewController.h"
 #import "HomeViewController.h"
-#import "PrintSettingsViewController.h"
 #import "UIViewController+Segue.h"
 
-@interface PrintPreviewViewController ()
+@interface PrintersViewController ()
 
 @end
 
-@implementation PrintPreviewViewController
+@implementation PrintersViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
+    if (self) {
         // Custom initialization
     }
     return self;
@@ -48,12 +44,7 @@
     [self performSegueTo:[HomeViewController class]];
 }
 
-- (IBAction)printSettingsAction:(id)sender
-{
-    [self performSegueTo:[PrintSettingsViewController class]];
-}
-
-- (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
+- (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender
 {
 }
 
