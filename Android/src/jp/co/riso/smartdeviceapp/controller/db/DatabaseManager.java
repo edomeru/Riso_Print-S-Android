@@ -2,8 +2,9 @@
 package jp.co.riso.smartdeviceapp.controller.db;
 
 import jp.co.riso.android.util.AppUtils;
-
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -42,5 +43,26 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade - Begin ("+oldVersion+"=>"+newVersion+")");
         // Should not happen for now
         Log.d(TAG, "onUpgrade - End");
+    }
+    
+    public long insert(String table, String nullColumnHack, ContentValues values) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        return db.insertOrThrow(table, nullColumnHack, values);
+        
+    }
+    
+    public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cur = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        
+        return cur;
+        
+    }
+    
+    public void delete(String table, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table, whereClause, whereArgs);
+        db.close();
     }
 }

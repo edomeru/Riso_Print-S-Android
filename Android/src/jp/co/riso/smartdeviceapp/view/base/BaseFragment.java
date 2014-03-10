@@ -88,6 +88,14 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         return getResources().getBoolean(R.bool.is_tablet);
     }
     
+    public boolean isTabletLand() {
+        if (getActivity() == null) {
+            return false;
+        }
+        
+        return getResources().getBoolean(R.bool.is_tablet_land);
+    }
+    
     public void addActionMenuButton(View v) {
         ImageButton actionMenuButton = new ImageButton(v.getContext());
         

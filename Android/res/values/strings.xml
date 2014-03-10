@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- Android default values -->
     <string name="default_textview">&#8230;</string>
     <string name="default_content_description">Content Description</string>
-    
+
     <!-- Wordingリスト_20130131 -->
     <string name="ids_app_name">SmartDeviceApp</string>
     <string name="ids_lbl_back">Back</string>
@@ -114,4 +115,9 @@
     <string name="ids_err_msg_invalid_page_range">Page numbers in specified for page range does not exist in document.</string>
     <string name="ids_lbl_help">Help</string>
     <string name="ids_lbl_legal">Legal</string>
+    <string name="ids_lbl_expand">+</string>
+    <string name="ids_lbl_collapse">-</string>
+    <string name="ids_lbl_delete_jobs">"DELETE ALL"</string>
+    <string name="ids_lbl_delete_job">"DELETE"</string>
+    <string name="ids_lbl_print_job_status">"Print Job Status"</string>
 </resources>
