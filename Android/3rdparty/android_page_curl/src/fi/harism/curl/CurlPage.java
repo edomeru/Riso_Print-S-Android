@@ -42,7 +42,7 @@ public class CurlPage {
 	private Bitmap mTextureFront;
 	private boolean mTexturesChanged;
 	
-	private Object mHandler;
+	private volatile Object mHandler;
 
 	/**
 	 * Default constructor.
@@ -213,7 +213,7 @@ public class CurlPage {
 		mTexturesChanged = true;
 	}
 	
-	public Object createNewHandler() {
+	public synchronized Object createNewHandler() {
 		mHandler = new Object();
 		return mHandler;
 	}

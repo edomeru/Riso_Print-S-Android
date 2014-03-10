@@ -9,21 +9,28 @@ package jp.co.riso.android.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
 public final class ImageUtils {
     
-    public static void renderBmpToBmp(Bitmap src, Bitmap dest) {
-        renderBmpToBmp(src, dest, new Rect(0, 0, src.getWidth(), src.getHeight()),
-                new Rect(0, 0, dest.getWidth(), dest.getHeight()));
+    public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color) {
+        renderBmpToCanvas(bmp, canvas, color, new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
     }
     
-    public static void renderBmpToBmp(Bitmap src, Bitmap dest, Rect srcRect, Rect destRect) {
-        Canvas canvas = new Canvas(dest);
+    public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, Rect rect) {
         Paint paint = new Paint();
-
-        canvas.drawBitmap(src, new Rect(0, 0, src.getWidth(), src.getHeight()),
-                new Rect(0, 0, dest.getWidth(), dest.getHeight()), paint);
+        
+        if (!color) {
+            ColorMatrix cm = new ColorMatrix();
+            cm.setSaturation(0);
+            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(cm);
+            paint.setColorFilter(filter);            
+        }
+        
+        canvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()),
+                rect, paint);
     }
 }

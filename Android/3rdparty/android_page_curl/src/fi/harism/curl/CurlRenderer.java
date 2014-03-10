@@ -67,7 +67,6 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 
 	private static final boolean RENDER_DROP_SHADOW = true;
 
-
 	/*
 	 * Associated rectangle:
 	 *   4-------7
