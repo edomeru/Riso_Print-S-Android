@@ -16,12 +16,11 @@ import android.graphics.Rect;
 
 public final class ImageUtils {
     
-    public static void renderBmpToBmp(Bitmap src, Bitmap dest, boolean color) {
-        renderBmpToBmp(src, dest, color, new Rect(0, 0, dest.getWidth(), dest.getHeight()));
+    public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color) {
+        renderBmpToCanvas(bmp, canvas, color, new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
     }
     
-    public static void renderBmpToBmp(Bitmap src, Bitmap dest, boolean color, Rect destRect) {
-        Canvas canvas = new Canvas(dest);
+    public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, Rect rect) {
         Paint paint = new Paint();
         
         if (!color) {
@@ -31,7 +30,7 @@ public final class ImageUtils {
             paint.setColorFilter(filter);            
         }
         
-        canvas.drawBitmap(src, new Rect(0, 0, src.getWidth(), src.getHeight()),
-                destRect, paint);
+        canvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()),
+                rect, paint);
     }
 }
