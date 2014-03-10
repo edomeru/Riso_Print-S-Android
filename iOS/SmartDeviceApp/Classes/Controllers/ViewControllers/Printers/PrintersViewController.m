@@ -9,6 +9,8 @@
 #import "PrintersViewController.h"
 #import "HomeViewController.h"
 #import "UIViewController+Segue.h"
+#import "AddPrinterViewController.h"
+#import "PrinterSearchViewController.h"
 
 @interface PrintersViewController ()
 
@@ -42,6 +44,16 @@
 - (IBAction)mainMenuAction:(id)sender
 {
     [self performSegueTo:[HomeViewController class]];
+}
+
+- (IBAction)addPrinterAction:(id)sender
+{
+    [self performSegueTo:[AddPrinterViewController class]];
+}
+
+- (IBAction)printerSearchAction:(id)sender
+{
+    [self performSegueTo:[PrinterSearchViewController class]];
 }
 
 - (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender

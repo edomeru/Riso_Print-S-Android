@@ -10,4 +10,7 @@
 
 @interface PrintersViewController : UIViewController
 
+- (IBAction)addPrinterAction:(id)sender;
+- (IBAction)printerSearchAction:(id)sender;
+
 @end

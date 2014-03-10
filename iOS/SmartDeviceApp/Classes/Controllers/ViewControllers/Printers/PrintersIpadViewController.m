@@ -37,5 +37,16 @@
 
 #pragma mark -
 #pragma mark IBActions
+- (IBAction)addPrinterAction:(id)sender
+{
+    // TODO: Change button state
+    [super addPrinterAction:sender];
+}
+
+- (IBAction)printerSearchAction:(id)sender
+{
+    // TODO: Change button state
+    [super printerSearchAction:sender];
+}
 
 @end

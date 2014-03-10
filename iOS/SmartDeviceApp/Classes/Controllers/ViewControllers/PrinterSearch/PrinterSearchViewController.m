@@ -1,21 +1,20 @@
 //
-//  AddPrinterViewController.m
+//  PrinterSearchViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/7/14.
+//  Created by Seph on 3/10/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "AddPrinterViewController.h"
-#import "UIViewController+Segue.h"
+#import "PrinterSearchViewController.h"
 
-@interface AddPrinterViewController ()
+@interface PrinterSearchViewController ()
 
 - (void)initialize;
 
 @end
 
-@implementation AddPrinterViewController
+@implementation PrinterSearchViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -53,13 +52,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-#pragma mark -
-#pragma mark IBActions
-- (IBAction)backAction:(id)sender
-{
-    [self unwindFromOverTo:[self.parentViewController class]];
 }
 
 @end
