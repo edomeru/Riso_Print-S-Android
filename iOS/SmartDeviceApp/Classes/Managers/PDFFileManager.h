@@ -20,6 +20,7 @@ typedef enum
 @interface PDFFileManager : NSObject
 @property (strong, nonatomic) NSURL *pdfURL;
 @property  CGPDFDocumentRef pdfDocument;
+@property BOOL pdfFileAvailable;
 
 + (id)sharedManager;
 

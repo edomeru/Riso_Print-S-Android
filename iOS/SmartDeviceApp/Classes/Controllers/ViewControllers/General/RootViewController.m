@@ -11,6 +11,7 @@
 #import "SlideSegue.h"
 #import "SlideOverSegue.h"
 #import "UIViewController+Segue.h"
+#import "PDFFileManager.h"
 
 @interface RootViewController ()
 
@@ -31,6 +32,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    _isPrintPreviewMode = [[PDFFileManager sharedManager] pdfFileAvailable];
     [self performSegueTo:[PrintPreviewViewController class]];
 }
 
@@ -62,6 +64,23 @@
     }
     
     return nil;
+}
+
+- (void) loadPDFView
+{
+    
+    _isPrintPreviewMode = YES;
+    if (self.childViewControllers.count == 0)
+    {
+        return; //pdf set-up finished first before view was loaded
+    }
+    
+    UIViewController *currentController = [self.childViewControllers objectAtIndex:0];
+    if([currentController isKindOfClass:[PrintPreviewViewController class]])
+    {
+        NSLog(@"loading PDF...");
+        [(PrintPreviewViewController *)currentController loadPrintPreview];
+    }
 }
 
 @end

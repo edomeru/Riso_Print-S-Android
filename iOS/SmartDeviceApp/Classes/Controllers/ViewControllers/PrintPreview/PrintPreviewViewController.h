@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PDFPageContentViewController.h"
 
-@interface PrintPreviewViewController : UIViewController
+@interface PrintPreviewViewController : UIViewController <PDFPageViewContentDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate>
+
+- (void) loadPrintPreview;
 
 @end

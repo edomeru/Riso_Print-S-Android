@@ -8,8 +8,10 @@
 
 #import "AppDelegate.h"
 #import "PDFFileManager.h"
+#import "RootViewController.h"
 
 @implementation AppDelegate
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -17,7 +19,14 @@
     NSLog(@"Did Finish Launching");
     
     [self cleanUpPDF];
-
+    
+    {
+        //TODO REMOVE! For testing only
+        NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample.pdf" ofType:nil]];
+        NSLog(@"testfile url: %@", [fileURL path]);
+        [self setUpPreview:fileURL];
+    }
+    
     /*check if open-in*/
     if([launchOptions objectForKey: UIApplicationLaunchOptionsURLKey] != nil)
     {
@@ -27,15 +36,7 @@
         if([url isFileURL] == true)
         {
             NSLog(@"Opened with URL:%@", [url path]);
-            _PDFFileAvailable = true;
-        
-            // register main view controller for notification
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                              selector:@selector(didEndPPDFProcessing:)
-                                              name:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
-                                              object: nil];
-        
-            [self processPDF:url];// make async if necessary
+            [self setUpPreview:url];
         }
         
     }
@@ -48,13 +49,8 @@
 {
     NSLog(@"open URL:%@", [url path]);
     // register main view controller for notification
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                          selector:@selector(didEndPPDFProcessing:)
-                                          name:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
-                                          object: nil];
     [self cleanUpPDF];
-    [self processPDF:url]; //make async if necessary
-
+    [self setUpPreview:url];
     return YES;
 }
 							
@@ -82,9 +78,19 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+    // Saves changes in the application's managed object context before the application terminates.
     [self cleanUpPDF];
 }
 
+- (void) setUpPreview:(NSURL *) fileURL
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didEndPPDFProcessing:)
+                                                 name:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
+                                               object: nil];
+    
+    [self processPDF:fileURL]; //make async if necessary
+}
 
 #pragma mark  - PDF Processing methods
 - (void) processPDF:(NSURL *)pdfURL
@@ -111,7 +117,8 @@
     
     if(statusCode == PDF_ERROR_NONE)
     {
-       //call rootview to reload screen
+        RootViewController *rootController = (RootViewController *)self.window.rootViewController;
+        [rootController loadPDFView];
     }
     else
     {

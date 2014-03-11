@@ -28,6 +28,7 @@
     if(self == [super init])
     {
         _pdfDocument = nil;
+        _pdfFileAvailable = NO;
     }
     return self;
 }
@@ -41,8 +42,12 @@
     {
         _pdfURL = fileURL;
         _pdfDocument = CGPDFDocumentRetain(pdfDocument);
+        _pdfFileAvailable = YES;
     }
-    
+    else
+    {
+        _pdfFileAvailable = NO;
+    }
     CGPDFDocumentRelease(pdfDocument);
     
     return statusCode;
@@ -62,6 +67,7 @@
         [fileManager removeItemAtURL:_pdfURL error:&error];
         _pdfURL = nil;
     }
+    _pdfFileAvailable = NO;
 }
 
 
@@ -84,7 +90,7 @@
             return PDF_ERROR_PRINTING_NOT_ALLOWED; // does not allow printing
         }
     }
-    
+
     return PDF_ERROR_NONE;
 }
 

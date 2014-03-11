@@ -41,12 +41,16 @@
 		2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD446185FFC160085AD88 /* InfoPlist.strings */; };
 		2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD44E185FFED70085AD88 /* gtest-all.cc */; };
 		2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */; };
-		3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192AACA18C595A30000E7E7 /* PDFFileManager.m */; };
 		2DF90BDF18C9DE2000C80355 /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */; };
 		2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */; };
 		2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */; };
 		2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE618C9DE4400C80355 /* PrintersViewController.m */; };
 		2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */; };
+		310626E918CEB11B00E3CB19 /* PDFPageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */; };
+		310626EC18CEB15000E3CB19 /* PDFPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626EB18CEB15000E3CB19 /* PDFPageView.m */; };
+		3106270018CEDDB700E3CB19 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626FF18CEDDB700E3CB19 /* PreviewSetting.m */; };
+		3106270518CF06C400E3CB19 /* sample.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3106270418CF06C400E3CB19 /* sample.pdf */; };
+		3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192AACA18C595A30000E7E7 /* PDFFileManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,8 +106,6 @@
 		2D9DD44F185FFED70085AD88 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
 		2DDACC6C18C47C6A001DEC76 /* PrintSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsViewController.h; sourceTree = "<group>"; };
 		2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsViewController.m; sourceTree = "<group>"; };
-		3192AAC918C595A30000E7E7 /* PDFFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFFileManager.h; path = Managers/PDFFileManager.h; sourceTree = "<group>"; };
-		3192AACA18C595A30000E7E7 /* PDFFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDFFileManager.m; path = Managers/PDFFileManager.m; sourceTree = "<group>"; };
 		2DF90BDD18C9DE2000C80355 /* AddPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPrinterViewController.h; sourceTree = "<group>"; };
 		2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPrinterViewController.m; sourceTree = "<group>"; };
 		2DF90BE118C9DE4400C80355 /* PrintersIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIpadViewController.h; sourceTree = "<group>"; };
@@ -114,6 +116,15 @@
 		2DF90BE618C9DE4400C80355 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersViewController.m; sourceTree = "<group>"; };
 		2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
 		2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
+		310626E718CEB11B00E3CB19 /* PDFPageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageContentViewController.h; sourceTree = "<group>"; };
+		310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageContentViewController.m; sourceTree = "<group>"; };
+		310626EA18CEB15000E3CB19 /* PDFPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageView.h; sourceTree = "<group>"; };
+		310626EB18CEB15000E3CB19 /* PDFPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageView.m; sourceTree = "<group>"; };
+		310626FE18CEDDB700E3CB19 /* PreviewSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreviewSetting.h; path = Classes/Models/PreviewSetting.h; sourceTree = "<group>"; };
+		310626FF18CEDDB700E3CB19 /* PreviewSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreviewSetting.m; path = Classes/Models/PreviewSetting.m; sourceTree = "<group>"; };
+		3106270418CF06C400E3CB19 /* sample.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sample.pdf; sourceTree = "<group>"; };
+		3192AAC918C595A30000E7E7 /* PDFFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFFileManager.h; path = Managers/PDFFileManager.h; sourceTree = "<group>"; };
+		3192AACA18C595A30000E7E7 /* PDFFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDFFileManager.m; path = Managers/PDFFileManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +203,7 @@
 		2D0AEC08185FDD2100810455 /* SmartDeviceApp */ = {
 			isa = PBXGroup;
 			children = (
+				310626ED18CEDB5400E3CB19 /* Models */,
 				2D0AEC3A185FDE6C00810455 /* Classes */,
 				2D0AEC09185FDD2100810455 /* Supporting Files */,
 			);
@@ -237,10 +249,10 @@
 			path = AppLauncher;
 			sourceTree = "<group>";
 		};
-
 		2D0AEC46185FDE8100810455 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3106270118CF00E600E3CB19 /* Sample */,
 				2D0AEC47185FDE8100810455 /* Images */,
 				2D0AEC49185FDE8100810455 /* Locales */,
 				2D0AEC4C185FDE8100810455 /* Storyboards */,
@@ -356,6 +368,8 @@
 			children = (
 				2D4B3E3818C4165B00AC8AD0 /* PrintPreviewViewController.h */,
 				2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */,
+				310626E718CEB11B00E3CB19 /* PDFPageContentViewController.h */,
+				310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */,
 			);
 			path = PrintPreview;
 			sourceTree = "<group>";
@@ -382,6 +396,8 @@
 				2D00842A18C6FDA2001558F7 /* MenuButton.m */,
 				2D0084B418C72F1A001558F7 /* MenuScrollView.h */,
 				2D0084B518C72F1A001558F7 /* MenuScrollView.m */,
+				310626EA18CEB15000E3CB19 /* PDFPageView.h */,
+				310626EB18CEB15000E3CB19 /* PDFPageView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -493,15 +509,6 @@
 			path = PrintSettings;
 			sourceTree = "<group>";
 		};
-		3192AAC818C5953B0000E7E7 /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				3192AAC918C595A30000E7E7 /* PDFFileManager.h */,
-				3192AACA18C595A30000E7E7 /* PDFFileManager.m */,
-			);
-			name = Managers;
-			sourceTree = "<group>";
-		};
 		2DF90BDC18C9DE2000C80355 /* AddPrinter */ = {
 			isa = PBXGroup;
 			children = (
@@ -522,6 +529,32 @@
 				2DF90BE618C9DE4400C80355 /* PrintersViewController.m */,
 			);
 			path = Printers;
+			sourceTree = "<group>";
+		};
+		310626ED18CEDB5400E3CB19 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				310626FE18CEDDB700E3CB19 /* PreviewSetting.h */,
+				310626FF18CEDDB700E3CB19 /* PreviewSetting.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		3106270118CF00E600E3CB19 /* Sample */ = {
+			isa = PBXGroup;
+			children = (
+				3106270418CF06C400E3CB19 /* sample.pdf */,
+			);
+			name = Sample;
+			sourceTree = "<group>";
+		};
+		3192AAC818C5953B0000E7E7 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				3192AAC918C595A30000E7E7 /* PDFFileManager.h */,
+				3192AACA18C595A30000E7E7 /* PDFFileManager.m */,
+			);
+			name = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -612,6 +645,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3106270518CF06C400E3CB19 /* sample.pdf in Resources */,
 				2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
@@ -646,9 +680,12 @@
 				2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */,
 				2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */,
 				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
+				310626EC18CEB15000E3CB19 /* PDFPageView.m in Sources */,
+				3106270018CEDDB700E3CB19 /* PreviewSetting.m in Sources */,
 				2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */,
 				3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
+				310626E918CEB11B00E3CB19 /* PDFPageContentViewController.m in Sources */,
 				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
 				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
 				2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */,
