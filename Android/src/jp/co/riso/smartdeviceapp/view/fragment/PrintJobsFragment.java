@@ -7,8 +7,8 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jp.co.riso.smartdeviceapp.R;
@@ -28,9 +28,12 @@ import android.widget.TextView;
 public class PrintJobsFragment extends BaseFragment {
     
     private PrintJobsColumnView printJobColumnView;
-    private List<PrintJob> printJobs = new ArrayList<PrintJob>();
     private List<Printer> printerIds = new ArrayList<Printer>();
     private LinearLayout rootView;
+    
+    public PrintJobsFragment() {
+        super();
+    }
     
     @Override
     public int getViewLayout() {
@@ -63,9 +66,9 @@ public class PrintJobsFragment extends BaseFragment {
     public void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        
+
         printJobColumnView.setData(initializePJs(), initializePids(), isTablet() ? isTabletLand() ? 3 : 2 : 1);
-        
+       
         rootView.addView(printJobColumnView);
         
     }
@@ -170,5 +173,15 @@ public class PrintJobsFragment extends BaseFragment {
 //        printJobs.add(new PrintJob(16, 7, "1qqwerty.pdf", "2014/3/1 10:20", 1));
         
         return PrintJobManager.getPrintJobs();
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+//        if (mPrintPreviewView != null) {
+//            mCurrentPage = mPrintPreviewView.getCurrentPage();
+//            outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
+//        }
     }
 }

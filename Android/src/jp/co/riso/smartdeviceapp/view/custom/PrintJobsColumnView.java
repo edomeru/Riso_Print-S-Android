@@ -214,7 +214,7 @@ public class PrintJobsColumnView extends LinearLayout implements View.OnClickLis
         
         columns.get(column).addView(pjView);
         
-        Log.d("CESTEST", pjView.getViewHeight() + "addVieww" + " " + column + " " + pjView.getHeight());
+//        Log.d("CESTEST", pjView.getViewHeight() + "addVieww" + " " + column + " " + pjView.getHeight());
         
     }
     
