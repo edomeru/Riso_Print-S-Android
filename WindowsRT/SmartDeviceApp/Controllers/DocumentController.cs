@@ -75,12 +75,12 @@ namespace SmartDeviceApp.Controllers
             catch (FileNotFoundException)
             {
                 // File cannot be loaded
-                Messenger.Default.Send<LoadDocumentMessage>(new LoadDocumentMessage(LoadDocumentResult.OpenFileFailed, null, null));
+                // TODO: Call PrintPreviewController
                 return;
             }
 
             // Send notification after PDF is opened
-            Messenger.Default.Send<LoadDocumentMessage>(new LoadDocumentMessage(LoadDocumentResult.OpenFileSuccessful, null, null));
+            // TODO: Call PrintPreviewController
 
             GenerateLogicalPages(0); // Initial page number is 0
         }
@@ -101,7 +101,7 @@ namespace SmartDeviceApp.Controllers
         /// Generates N pages to JPEG then saves in AppData/temp
         /// </summary>
         /// <param name="basePageIndex">initial page number</param>
-        private async void GenerateLogicalPages(int basePageIndex)
+        public async void GenerateLogicalPages(int basePageIndex)
         {
             int pageCount = (int) _document.PdfDocument.PageCount;
             if (basePageIndex < 0 || basePageIndex > pageCount - 1)
@@ -136,9 +136,8 @@ namespace SmartDeviceApp.Controllers
             // Get bitmap image of a single page
             BitmapImage pageImage = await LoadPageImage(basePageIndex);
 
-            // Send notification after finished loading
-            Messenger.Default.Send<LoadDocumentMessage>(
-                new LoadDocumentMessage(LoadDocumentResult.GeneratePagesFinished, _document.LogicalPages[basePageIndex], pageImage));
+            // Send notification after finished loading and send the bitmap image
+            // TODO: Call PrintPreviewController
         }
 
         /// <summary>
@@ -215,48 +214,5 @@ namespace SmartDeviceApp.Controllers
                 await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
             }
         }
-    }
-
-    /// <summary>
-    /// Represents a message for load document.
-    /// Usage: When result is failed, LogicalPage and BitmapImage objects should be null.
-    /// </summary>
-    public sealed class LoadDocumentMessage
-    {
-        private LoadDocumentResult _result;
-        private LogicalPage _logicalPage;
-        private BitmapImage _pageImage;
-
-        public LoadDocumentMessage(LoadDocumentResult result, LogicalPage logicalPage, BitmapImage pageImage)
-        {
-            _result = result;
-            _logicalPage = logicalPage;
-            _pageImage = pageImage;
-        }
-
-        public LoadDocumentResult Result
-        {
-            get { return _result; }
-        }
-
-        public LogicalPage LogicalPage
-        {
-            get { return _logicalPage; }
-        }
-
-        public BitmapImage PageImage
-        {
-            get { return _pageImage; }
-        }
-    }
-
-    /// <summary>
-    /// Indicates the load document processing result
-    /// </summary>
-    public enum LoadDocumentResult
-    {
-        OpenFileFailed,
-        OpenFileSuccessful,
-        GeneratePagesFinished
     }
 }
