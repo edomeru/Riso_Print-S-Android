@@ -17,7 +17,7 @@
 		<key>ColorMode</key>
 		<integer>0</integer>
 		<key>Copies</key>
-		<integer>0</integer>
+		<integer>1</integer>
 		<key>Duplex</key>
 		<integer>0</integer>
 		<key>ImageQuality</key>
@@ -37,7 +37,7 @@
 		<key>Zoom</key>
 		<integer>0</integer>
 		<key>ZoomRate</key>
-		<integer>0</integer>
+		<integer>100</integer>
 	</dict>
 </dict>
 </plist>

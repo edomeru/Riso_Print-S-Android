@@ -8,6 +8,7 @@
 
 #import "AddPrinterViewController.h"
 #import "Printer.h"
+#import "Printer+Log.h"
 #import "PrinterManager.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
@@ -20,15 +21,6 @@
 #define CELL_ROW_PASSWORD   2
 
 #define UNWIND_TO_PRINTERS  @"UnwindRight"
-
-typedef enum
-{
-    NO_ERROR,
-    ERR_NO_NETWORK,
-    ERR_INVALID_IP,
-    ERR_CANNOT_ADD,
-    ERR_ALREADY_ADDED,
-} RESULT_TYPE;
 
 @interface AddPrinterViewController ()
 
@@ -212,6 +204,8 @@ typedef enum
                             }
                             else
                             {
+                                [newPrinter log];
+                                
                                 //TODO: disable searching indicator
                                 
                                 [self displayResult:NO_ERROR];

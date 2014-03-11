@@ -14,4 +14,8 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
     #import <CoreData/CoreData.h>
+
+    #import "EntityNames.h"
+    #import "PrintSettingNames.h"
+    #import "ErrorTypes.h"
 #endif

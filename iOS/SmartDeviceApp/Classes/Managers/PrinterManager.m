@@ -14,13 +14,8 @@
 #import "SNMPManager.h"
 #import "PListUtils.h"
 
-
 #define PRINTER_IP              0
 #define PRINTER_NAME            1
-
-#define ENTITY_PRINTER          @"Printer"
-#define ENTITY_PRINTSETTING     @"PrintSetting"
-#define ENTITY_DEFAULTPRINTER   @"DefaultPrinter"
 
 @implementation PrinterManager
 
@@ -29,11 +24,11 @@
 + (Printer*)createPrinter
 {
     // create first a PrintSetting object
-    PrintSetting* printSetting = (PrintSetting*)[DatabaseManager addObject:ENTITY_PRINTSETTING];
+    PrintSetting* printSetting = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
     [self copyDefaultPrintSettings:&printSetting];
     
     // then create a Printer object
-    Printer* printer = (Printer*)[DatabaseManager addObject:ENTITY_PRINTER];
+    Printer* printer = (Printer*)[DatabaseManager addObject:E_PRINTER];
     if (printer == nil)
     {
         [DatabaseManager discardChanges]; //discard the PrintSetting object
@@ -48,7 +43,7 @@
 
 + (DefaultPrinter*)createDefaultPrinter:(Printer*)printer
 {
-    DefaultPrinter* defaultPrinter = (DefaultPrinter*)[DatabaseManager addObject:ENTITY_DEFAULTPRINTER];
+    DefaultPrinter* defaultPrinter = (DefaultPrinter*)[DatabaseManager addObject:E_DEFAULTPRINTER];
     defaultPrinter.printer = printer;
     
     return defaultPrinter;
@@ -56,12 +51,12 @@
 
 + (NSMutableArray*)getPrinters
 {
-    return [[DatabaseManager getObjects:ENTITY_PRINTER] mutableCopy];
+    return [[DatabaseManager getObjects:E_PRINTER] mutableCopy];
 }
 
 + (DefaultPrinter*)getDefaultPrinter
 {
-    NSArray* results = [DatabaseManager getObjects:ENTITY_DEFAULTPRINTER];
+    NSArray* results = [DatabaseManager getObjects:E_DEFAULTPRINTER];
     if(results != nil)
     {
         if([results count] > 0)
@@ -98,22 +93,22 @@
 + (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
 {
     NSDictionary* defaultPrintSettings = [PListUtils getDefaultPrintSettings];
-    (*printSetting).bind = [defaultPrintSettings objectForKey:@"Bind"];
-    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:@"BookletBinding"];
-    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:@"BookletTray"];
-    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:@"CatchTray"];
-    (*printSetting).color_mode = [defaultPrintSettings objectForKey:@"ColorMode"];
-    (*printSetting).copies = [defaultPrintSettings objectForKey:@"Copies"];
-    (*printSetting).duplex = [defaultPrintSettings objectForKey:@"Duplex"];
-    (*printSetting).image_quality = [defaultPrintSettings objectForKey:@"ImageQuality"];
-    (*printSetting).pagination = [defaultPrintSettings objectForKey:@"Pagination"];
-    (*printSetting).paper_size = [defaultPrintSettings objectForKey:@"PaperSize"];
-    (*printSetting).paper_type = [defaultPrintSettings objectForKey:@"PaperType"];
-    (*printSetting).punch = [defaultPrintSettings objectForKey:@"Punch"];
-    (*printSetting).sort = [defaultPrintSettings objectForKey:@"Sort"];
-    (*printSetting).staple = [defaultPrintSettings objectForKey:@"Staple"];
-    (*printSetting).zoom = [defaultPrintSettings objectForKey:@"Zoom"];
-    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:@"ZoomRate"];
+    (*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
+    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
+    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];
+    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:PS_CATCH_TRAY];
+    (*printSetting).color_mode = [defaultPrintSettings objectForKey:PS_COLOR_MODE];
+    (*printSetting).copies = [defaultPrintSettings objectForKey:PS_COPIES];
+    (*printSetting).duplex = [defaultPrintSettings objectForKey:PS_DUPLEX];
+    (*printSetting).image_quality = [defaultPrintSettings objectForKey:PS_IMAGE_QUALITY];
+    (*printSetting).pagination = [defaultPrintSettings objectForKey:PS_PAGINATION];
+    (*printSetting).paper_size = [defaultPrintSettings objectForKey:PS_PAPER_SIZE];
+    (*printSetting).paper_type = [defaultPrintSettings objectForKey:PS_PAPER_TYPE];
+    (*printSetting).punch = [defaultPrintSettings objectForKey:PS_PUNCH];
+    (*printSetting).sort = [defaultPrintSettings objectForKey:PS_SORT];
+    (*printSetting).staple = [defaultPrintSettings objectForKey:PS_STAPLE];
+    (*printSetting).zoom = [defaultPrintSettings objectForKey:PS_ZOOM];
+    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];
 }
 
 + (BOOL)canAddPrinter:(NSString*)printerIP toList:(NSArray*)listSavedPrinters;
