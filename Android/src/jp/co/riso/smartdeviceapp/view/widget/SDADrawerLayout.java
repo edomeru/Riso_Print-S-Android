@@ -4,7 +4,6 @@ import jp.co.riso.smartdeviceapp.R;
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 
@@ -33,7 +32,6 @@ public class SDADrawerLayout extends DrawerLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.wtf("SDADrawerLayout", "Test");
         return super.onTouchEvent(ev);
     }
 }
