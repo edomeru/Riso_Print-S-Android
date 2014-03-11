@@ -13,31 +13,48 @@ import java.util.List;
 
 import jp.co.riso.smartdeviceapp.controller.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager;
+import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager.OnSNMPSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class PrinterManager {
+public class PrinterManager implements OnSNMPSearch {
     private List<Printer> mPrinterList;
     private Context mContext;
     private boolean mDefaultExists = false;
     
-    private static PrinterManager mSharedMngr;
+    private static SNMPManager mSNMPManager = null;
+    private static PrinterManager mSharedMngr = null;
     
     private PrinterManager(Context context) {
         mContext = context;
         mPrinterList = new ArrayList<Printer>();
+        mSNMPManager = new SNMPManager();
+        mSNMPManager.setOnPrinterSearchListener(this);
     }
-      
+    
     public static PrinterManager sharedManager(Context context) {
         if (mSharedMngr == null) {
             mSharedMngr = new PrinterManager(context);
-        }
+        }        
         return mSharedMngr;
     }
-        
+    
+    // ================================================================================
+    // Interface
+    // ================================================================================
+    private OnPrinterSearch mOnPrinterAdd;
+    public interface OnPrinterSearch {
+        public void onPrinterAdd(Printer printer);
+        public void onSearchEnd();
+    }
+    
+    public void setOnPrinterSearchListener(OnPrinterSearch onPrinterSearch) {
+        mOnPrinterAdd = onPrinterSearch;
+    }
     
     // ================================================================================
     // DataBase()
@@ -74,13 +91,13 @@ public class PrinterManager {
             return -1;
         }
         manager.close();
-
+        
         
         if(mDefaultExists == false) {
             setDefaultPrinter(printer);
             mDefaultExists = true;
         }
-            
+        
         return rowId;
     }
     
@@ -171,19 +188,19 @@ public class PrinterManager {
             cursor.close();
             return -1;
         }
-
+        
         ContentValues newDefaultPrinter = new ContentValues();
-
+        
         if (cursor.moveToFirst()) { 
-                newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
-                cursor.close();
+            newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
+            cursor.close();
         }
         else {
             manager.close();
             return -1;
         }
-
-
+        
+        
         if(db.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null) == -1) {
             manager.close();
             return -1;
@@ -195,7 +212,7 @@ public class PrinterManager {
         manager.close();
         return 0;
     }
-
+    
     public boolean removePrinter(Printer printer) {
         
         //Check database
@@ -210,7 +227,7 @@ public class PrinterManager {
         return true;
     }
     
-   public int getDefaultPrinter() {
+    public int getDefaultPrinter() {
         int printer = -1;
         //Check database
         DatabaseManager manager = new DatabaseManager(mContext);
@@ -233,9 +250,23 @@ public class PrinterManager {
         if (cursor.moveToFirst()) { 
             printer = cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID));
         }
-
+        
         cursor.close();
         manager.close();
         return printer;
+    }
+    
+    public void printerSearchStart() {
+        mSNMPManager.startSNMPDeviceDiscovery();
+    }
+    
+    @Override
+    public void onSearchedPrinterAdd(String printerName, String ipAddress) {
+        mOnPrinterAdd.onPrinterAdd(new Printer(printerName, ipAddress, false, null));
+    }
+    
+    @Override
+    public void onSearchEnd() {
+        mOnPrinterAdd.onSearchEnd();
     }
 }

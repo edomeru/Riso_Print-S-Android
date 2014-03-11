@@ -14,6 +14,7 @@ import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.ActionBar.LayoutParams;
@@ -22,7 +23,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +34,7 @@ import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener {
-    private static final String FRAGMENT_TAG_PRINTER_SEARCH_LIST = "fragment_printer_search_list";
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch {
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final String KEY_SEARCH_STATE = "searched_state";
@@ -47,7 +46,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private PullToRefreshListView mListView = null;
     private ArrayList<Printer> mPrinter = null;
     private ArrayAdapter<Printer> mPrinterSearchAdapter = null;
-    
+    private PrinterManager mPrinterManager = null;
     
     @Override
     public int getViewLayout() {
@@ -57,6 +56,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinter = new ArrayList<Printer>();
+        mPrinterManager = PrinterManager.sharedManager(getActivity());
+        mPrinterManager.setOnPrinterSearchListener(this);
     }
     
     @Override
@@ -68,7 +69,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        Log.i("PrinterSearchFragment","initializeCustomActionBar");
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers);
         addActionMenuButton(view);
@@ -138,34 +138,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 "OK");
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
     }
-    
-    
-    // ================================================================================
-    // Public Methods
-    // ================================================================================
-    //TODO Change this callback to include other Printer info
-    public void printerAdded(final String printerName, final String ipAddress)
-    {     
-        getActivity().runOnUiThread(new Runnable() {
-            
-            @Override
-            public void run() {
-                try{
-                    mPrinter.add(new Printer(printerName, ipAddress, false, null));
-                    mPrinterSearchAdapter.notifyDataSetChanged();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    
-    public void searchPrinterEnd() {
-        mIsSearching = false;
-        updateRefreshBar();
-    }
-    
+       
     public void updateRefreshBar() {
         
         getActivity().runOnUiThread(new Runnable(){
@@ -184,26 +157,16 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         });
         
     }
-    // ================================================================================
-    // SNMP NDK
-    // ================================================================================
-    public native void startSNMPDeviceDiscovery();
-    public native void snmpDeviceDiscoveryCancel();
-    
-    static {
-        System.loadLibrary("snmp");
-        System.loadLibrary("snmpAPI");
-    }
-    
+
     // ================================================================================
     // AsyncTask
     // ================================================================================  
-    class SNMPTask extends AsyncTask<Void, Void, Void> {
+    class PrinterSearchTask extends AsyncTask<Void, Void, Void> {
         
         @Override
         protected Void doInBackground(Void... arg0) {
             try{
-                startSNMPDeviceDiscovery();
+                mPrinterManager.printerSearchStart();
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -244,7 +207,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 mHolder.addedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton); 
                 
                 mHolder.printerName.setText(rowView.getName());
-                if(PrinterManager.sharedManager(mContext).isExists(mPrinter.get(position))) {
+                if(mPrinterManager.isExists(mPrinter.get(position))){
                     mHolder.addedIndicator.setBackgroundResource(R.drawable.check);
                 }
                 else {
@@ -267,14 +230,13 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         public void onClick(View v) {
             if(v.getId() == R.id.addPrinterButton) {
                 if(!mIsSearching) {
-                    PrinterManager printerMgr = PrinterManager.sharedManager(mContext);
                     
                     // For Add Button Press
                     Printer printer = mPrinter.get((Integer) v.getTag());
                     if(printer == null) {
                         return;
                     }
-                    printer.setId(printerMgr.savePrinterToDB(printer));
+                    printer.setId(mPrinterManager.savePrinterToDB(printer));
                     if(printer.getId() != -1) {
                         v.setBackgroundResource(R.drawable.check);
                         dialogCb();
@@ -291,7 +253,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onRefresh() {
         mPrinter.clear();
         mIsSearching = true;
-        new SNMPTask().execute();
+        new PrinterSearchTask().execute();
     }
     
     // ================================================================================
@@ -308,5 +270,31 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 ft.commit();
             }
         }
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnPrinterSearch
+    // ================================================================================
+    @Override
+    public void onPrinterAdd(final Printer printer) {
+        getActivity().runOnUiThread(new Runnable() {
+            
+            @Override
+            public void run() {
+                try{
+                    mPrinter.add(printer);
+                    mPrinterSearchAdapter.notifyDataSetChanged();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
+    @Override
+    public void onSearchEnd() {
+        mIsSearching = false;
+        updateRefreshBar();
     }
 }

@@ -29,7 +29,7 @@ JNIEnv* m_env;
 jobject m_jobj;
 
 JNIEXPORT void
-Java_jp_co_riso_smartdeviceapp_view_fragment_PrinterSearchFragment_startSNMPDeviceDiscovery( JNIEnv* env,
+Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_startSNMPDeviceDiscovery( JNIEnv* env,
                                                   jobject this)
 {
 	m_env = env;
