@@ -16,16 +16,18 @@ import android.database.Cursor;
 import android.util.Log;
 
 public class PrintJobManager {
+    
+    private static final String TAG = "PrintJobManager";
+    private static final String TABLE = "PrintJob";
+    private static final String C_PJB_ID = "pjb_id";
+    private static final String C_PRN_ID = "prn_id";
+    private static final String C_PJB_NAME = "pjb_name";
+    private static final String C_PJB_DATE = "pjb_date";
+    private static final String C_PJB_RESULT = "pjb_result";
+    private static final String WHERE_PJB_ID = C_PJB_ID + "=?";
+    private static final String WHERE_PRN_ID = C_PRN_ID + "=?";
     private static DatabaseManager manager;
     private static PrintJobManager instance;
-    private final static String TABLE = "PrintJob";
-    private final static String C_PJB_ID = "pjb_id";
-    private final static String C_PRN_ID = "prn_id";
-    private final static String C_PJB_NAME = "pjb_name";
-    private final static String C_PJB_DATE = "pjb_date";
-    private final static String C_PJB_RESULT = "pjb_result";
-    private final static String WHERE_PJB_ID = C_PJB_ID + "=?";
-    private final static String WHERE_PRN_ID = C_PRN_ID + "=?";
     
     private PrintJobManager(Context context) {
         manager = new DatabaseManager(context);
@@ -47,7 +49,7 @@ public class PrintJobManager {
         List<PrintJob> printJobs = new ArrayList<PrintJob>();
         manager.getReadableDatabase();
         
-        Cursor c = manager.query(TABLE, null, null, null, null, null, null);
+        Cursor c = manager.query(TABLE, null, null, null, null, null, C_PRN_ID);
         
         while (c.moveToNext()) {
             int pjb_id = c.getInt(c.getColumnIndex(C_PJB_ID));
@@ -61,7 +63,7 @@ public class PrintJobManager {
 
             printJobs.add(new PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result));
             
-            Log.d("CESTEST", "dates" + c.getLong(c.getColumnIndex(C_PJB_DATE)) + "+++" + pjb_date.toString());
+            Log.d(TAG, "dates" + c.getLong(c.getColumnIndex(C_PJB_DATE)) + "+++" + pjb_date.toString());
         }
         
         return printJobs;
@@ -113,7 +115,7 @@ public class PrintJobManager {
     
     public static String convertToDateTime(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Log.d("CESTEST", "convertdate" + dateFormat.format(date));
+        Log.d(TAG, "convertdate" + dateFormat.format(date));
         return dateFormat.format(date);
     }
     
@@ -121,18 +123,15 @@ public class PrintJobManager {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
         Date date = null;
-        String dateformat = "";
         
         try {
-            Log.d("CESTEST", "1convert" + strDate+ "---" + date);
+            Log.d(TAG, "convert" + strDate+ "---" + date);
             date = sdf.parse(strDate);
-            // sdf.applyPattern("dd-MMM-yyyy");
-            Log.d("CESTEST", "2convert" + strDate+ "---" + date);
-            dateformat = sdf.format(date);
-            Log.d("CESTEST", "convert" + strDate+ "---" + date);
+
+            String dateformat = sdf.format(date);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
         return date;        
     }

@@ -30,9 +30,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         
         String sqlString = AppUtils.getFileContentsFromAssets(mContext, DATABASE_SQL);
         String[] separated = sqlString.split(";");
-        Log.d("CESTEST", "oncreate" + separated.length);
+        Log.d(TAG, "oncreate" + separated.length);
         for (int i = 0; i < separated.length; i++) {
-            Log.d("CESTEST", separated[i]);
+            Log.d(TAG, separated[i]);
             db.execSQL(separated[i]);
         }
         
@@ -50,13 +50,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         long rowId = -1;
         
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.d("CESTEST", table + values.getAsString("prn_id"));
+        Log.d(TAG, table + values.getAsString("prn_id"));
         // return db.insertOrThrow(table, nullColumnHack, values);
         
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
-            Log.e("CESTEST", "failed insert to " + table);
+            Log.e(TAG, "failed insert to " + table);
         }
         
         if (rowId > -1)

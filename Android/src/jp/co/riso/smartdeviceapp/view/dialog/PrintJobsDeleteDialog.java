@@ -64,7 +64,6 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
     
     public void onClick(DialogInterface dialog, int which) {
         
-        Log.d("CESTEST", TAG + (listener!=null?"not null":"null"));
         if (listener != null) {
             
             switch (which) {
