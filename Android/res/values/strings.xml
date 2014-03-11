@@ -30,6 +30,7 @@
     <string name="ids_lbl_printer_status">Status</string>
     <string name="ids_lbl_printer_status_online">Online</string>
     <string name="ids_lbl_printer_status_offline">Offline</string>
+    <string name="ids_lbl_print_settings">Print Settings</string>
     <string name="ids_lbl_default_print_settings">Default Print Settings</string>
     <string name="ids_err_msg_printer_save_failure">Error Saving Settings</string>
     <string name="ids_err_msg_invalid_printer_port">Invalid Printer Port</string>
