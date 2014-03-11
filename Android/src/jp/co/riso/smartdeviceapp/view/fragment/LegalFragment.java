@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 All rights reserved.
  *
- * HomePreviewFragment.java
+ * LegalFragment.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -13,11 +13,15 @@ import android.widget.TextView;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 
-public class HomePreviewFragment extends BaseFragment {
+public class LegalFragment extends BaseFragment {
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_homepreview;
+        return R.layout.fragment_helplegal;
+    }
+    
+    @Override
+    public void initializeFragment(Bundle savedInstanceState) {
     }
     
     @Override
@@ -27,8 +31,9 @@ public class HomePreviewFragment extends BaseFragment {
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
-        textView.setText(R.string.ids_app_name);
+        textView.setText(R.string.ids_lbl_legal);
         
         addActionMenuButton(view);
     }
+    
 }

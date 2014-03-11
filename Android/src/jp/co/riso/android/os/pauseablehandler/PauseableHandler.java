@@ -70,4 +70,18 @@ public class PauseableHandler extends Handler {
             }
         }
     }
+    
+    final public boolean hasStoredMessage(int what) {
+        boolean contains = hasMessages(what);
+        
+        if (!contains) {
+            for (int i = 0; i < mMessageQueueBuffer.size(); i++) {
+                if (mMessageQueueBuffer.get(i).what == what) {
+                    return true;
+                }
+            }
+        }
+        
+        return contains;
+    }
 }

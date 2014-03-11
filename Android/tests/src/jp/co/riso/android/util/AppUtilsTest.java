@@ -247,4 +247,27 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         
         assertNull(size);
     }
+
+    //================================================================================
+    // Tests - getFileContentsFromAssets
+    //================================================================================
+
+    
+    public void testGetFileContentsFromAssets_ContextNull() {
+        String str = AppUtils.getFileContentsFromAssets(null, null);
+        
+        assertNull(str);
+    }
+    
+    public void testGetFileContentsFromAssets_Valid() {
+        String str = AppUtils.getFileContentsFromAssets(getActivity(), "db/SmartDeviceAppDB.sql");
+        
+        assertNotNull(str);
+    }
+    
+    public void testGetFileContentsFromAssets_InvalidAsset() {
+        String str = AppUtils.getFileContentsFromAssets(getActivity(), "db/non-existent.sql");
+        
+        assertNull(str);
+    }
 }
