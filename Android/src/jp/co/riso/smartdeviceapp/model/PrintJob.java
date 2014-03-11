@@ -8,11 +8,23 @@ public class PrintJob {
     private int mPrinterId;
     private String mName;
     private Date mDate;
-    private int mResult;
+    // private String mDate;
+    // private long mDate;
+    private JobResult mResult;
     
-    public PrintJob(int mId, int mPrinterId, String mName, Date mDate, int mResult) {
+    public PrintJob(int mId, int mPrinterId, String mName, Date mDate, JobResult mResult) {
+        // public PrintJob(int mId, int mPrinterId, String mName, String mDate, int mResult) {
         super();
         this.mId = mId;
+        this.mPrinterId = mPrinterId;
+        this.mName = mName;
+        this.mDate = mDate;
+        this.mResult = mResult;
+    }
+    
+    public PrintJob(int mPrinterId, String mName, Date mDate, JobResult mResult) {
+        // public PrintJob(int mPrinterId, String mName, String mDate, int mResult) {
+        super();
         this.mPrinterId = mPrinterId;
         this.mName = mName;
         this.mDate = mDate;
@@ -44,19 +56,26 @@ public class PrintJob {
     }
     
     public Date getDate() {
+        // public String getDate() {
         return mDate;
     }
     
     public void setDate(Date mDate) {
+        // public void setDate(String mDate) {
         this.mDate = mDate;
     }
     
-    public int getResult() {
+    public JobResult getResult() {
         return mResult;
     }
     
-    public void setResult(int mResult) {
+    public void setResult(JobResult mResult) {
         this.mResult = mResult;
+    }
+    
+    public enum JobResult{
+      SUCCESSFUL,
+      ERROR
     }
     
 }

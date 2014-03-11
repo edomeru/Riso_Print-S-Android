@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.controller.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.Context;
@@ -12,8 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class PrintJobsColumnView extends LinearLayout {
+public class PrintJobsColumnView extends LinearLayout implements View.OnClickListener {
     
     private Context c;
     private int placeJobGroupCtr = -1;
@@ -33,7 +36,7 @@ public class PrintJobsColumnView extends LinearLayout {
             columns.get(2).setVisibility(GONE);
         if (colNum < 2)
             columns.get(1).setVisibility(GONE);
-       
+        
         reset();
     }
     
@@ -73,8 +76,6 @@ public class PrintJobsColumnView extends LinearLayout {
             columns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column2));
             columns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column3));
             
-            
-           
         }
     }
     
@@ -100,7 +101,7 @@ public class PrintJobsColumnView extends LinearLayout {
                     }
                 }
                 if (!jobs.isEmpty()) {
-                    addPrintJobsGroupView(jobs, i, printerIds.get(i).getPrinterName());
+                    addPrintJobsGroupView(jobs, i, printerIds.get(i));
                     
                     jobs.clear();
                 }
@@ -129,7 +130,7 @@ public class PrintJobsColumnView extends LinearLayout {
                         smallestColumn = i;
                     }
                 }
-                addPrintJobsGroupView(jobs, smallestColumn, printerIds.get(placeJobGroupCtr).getPrinterName());
+                addPrintJobsGroupView(jobs, smallestColumn, printerIds.get(placeJobGroupCtr));
                 
                 jobs.clear();
             }
@@ -204,16 +205,50 @@ public class PrintJobsColumnView extends LinearLayout {
         
     }
     
-    private void addPrintJobsGroupView(List<PrintJob> jobsList, int column, String printerName) {
+    private void addPrintJobsGroupView(List<PrintJob> jobsList, int column, Printer printer) {
         PrintJobsGroupView pjView = new PrintJobsGroupView(getContext());
         if (column == 1)
-            pjView.setData(jobsList, false, printerName);
+            pjView.setData(jobsList, false, printer, this);
         else
-            pjView.setData(jobsList, true, printerName);
+            pjView.setData(jobsList, true, printer, this);
         
         columns.get(column).addView(pjView);
         
         Log.d("CESTEST", pjView.getViewHeight() + "addVieww" + " " + column + " " + pjView.getHeight());
+        
+    }
+    
+    @Override
+    public void onClick(View v) {
+//        for (int i = 0; i < getChildCount(); i++) {
+//            if (getChildAt(i).getClass().equals(PrintJobsGroupView.class)) {
+//                Log.d("CESTEST", "OMG");
+//                Toast.makeText(c, "OMG", Toast.LENGTH_SHORT).show();
+//                PrintJobsGroupView a = (PrintJobsGroupView)getChildAt(i);
+//
+//            }
+//            
+//        }
+//        
+//        // TODO Auto-generated method stub
+//        if (v.getId() == R.id.printJobGroupDelete) {
+//            Log.d("CESTEST", "delete printgroup");
+//            Toast.makeText(c, "delete group", Toast.LENGTH_SHORT).show();
+//            PrintJobManager.deleteWithPrinterId(((Printer) v.getTag()).getPrinterId());
+//            // reset screen
+//        } else {
+//            if (v.getId() == R.id.printJobDeleteBtn) {
+//                Log.d("CESTEST", "delete printJobView");
+//                
+//                PrintJobManager.deleteWithJobId(((PrintJob) v.getTag()).getId());
+//                Toast.makeText(c, "delete " + ((PrintJob) v.getTag()).getId() + ((PrintJob) v.getTag()).getName(), Toast.LENGTH_SHORT).show();
+//                // reset screen
+//            }
+//            
+//        }
+    }
+    
+    public void toggleDeleteButton() {
         
     }
 }

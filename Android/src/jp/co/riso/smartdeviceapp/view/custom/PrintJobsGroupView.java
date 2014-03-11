@@ -1,18 +1,23 @@
 package jp.co.riso.smartdeviceapp.view.custom;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.OnSwipeTouchListener;
+import jp.co.riso.smartdeviceapp.controller.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,12 +29,16 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private List<View> printJobViews = new ArrayList<View>();
     private List<PrintJob> printJobs = new ArrayList<PrintJob>();
     private boolean withMargin;
-    private String printerName;
+    private Printer printer;
+    private View.OnClickListener deleteListener;
     
-    public void setData(List<PrintJob> printJobs, boolean withMargin, String printerName) {
+    public void setData(List<PrintJob> printJobs, boolean withMargin, Printer printer, View.OnClickListener deleteListener) {
         this.printJobs = printJobs;
         this.withMargin = withMargin;
-        this.printerName = printerName;
+        this.printer = printer;
+        this.deleteListener = this;
+        //this.deleteListener = deleteListener;
+       // this.setOnClickListener(deleteListener);
         reset();
     }
     
@@ -85,9 +94,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             RelativeLayout printJobGroupLayout = (RelativeLayout) printGroupView.findViewById(R.id.printJobsGroupLayout);
             printJobGroupLayout.setOnClickListener(this);
             TextView printJobGroupText = (TextView) printGroupView.findViewById(R.id.printJobGroupText);
-            printJobGroupText.setText(printerName);
+            printJobGroupText.setText(printer.getPrinterName());
             Button printJobGroupDelete = (Button) printGroupView.findViewById(R.id.printJobGroupDelete);
-            printJobGroupDelete.setOnClickListener(this);
+            printJobGroupDelete.setTag(printer);
+            printJobGroupDelete.setOnClickListener(deleteListener);
             
         }
         
@@ -98,9 +108,14 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             // // View tempView = factory.inflate(R.layout.list_item,null,false);
             View tempView = factory.inflate(R.layout.view_printjobdetail, this, false);
             TextView printJobName = (TextView) tempView.findViewById(R.id.printJobName);
+            ImageView printJobError = (ImageView) tempView.findViewById(R.id.printJobError);
+            ImageView printJobSuccess = (ImageView) tempView.findViewById(R.id.printJobSuccess);
+            
             final Button printJobDeleteBtn = (Button) tempView.findViewById(R.id.printJobDeleteBtn);
             final TextView printJobDate = (TextView) tempView.findViewById(R.id.printJobDate);
-            printJobDeleteBtn.setOnClickListener(this);
+            printJobDeleteBtn.setOnClickListener(deleteListener);
+            printJobDeleteBtn.setTag(pj);
+            
             tempView.setOnTouchListener(new OnSwipeTouchListener(c) {
                 @Override
                 public void onSwipe() {
@@ -109,8 +124,18 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                     printJobDate.setVisibility(INVISIBLE);
                 }
             });
+            switch (pj.getResult()) {
+                case SUCCESSFUL:
+                    printJobSuccess.setVisibility(VISIBLE);
+                    printJobError.setVisibility(INVISIBLE);
+                    break;
+                case ERROR:
+                    printJobError.setVisibility(VISIBLE);
+                    printJobSuccess.setVisibility(INVISIBLE);
+                    break;
+            }
             printJobName.setText(pj.getName());
-            printJobDate.setText(pj.getDate().toString());
+            printJobDate.setText(convertDate(pj.getDate()));
             
             addView(tempView, i + 1);
             printJobViews.add(tempView);
@@ -119,48 +144,90 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
     }
     
+    private String convertDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/M/d HH:mm", Locale.getDefault());
+        
+        return dateFormat.format(date);
+    }
+    
     @Override
     public void onClick(View v) {
+        Log.d("CESTEST", "omggroup");
         // TODO Auto-generated method stub
         
+//        if (v.getId() == R.id.printJobGroupDelete) {
+//            Log.d("CESTEST", "delete printgroup");
+//            Toast.makeText(c, "delete group", Toast.LENGTH_SHORT).show();
+//            PrintJobManager.deleteWithPrinterId(((Printer)v.getTag()).getPrinterId());
+//        } else if (v.getId() == R.id.printJobsGroupLayout) {// printGroupView.getId()) {
+//            Toast.makeText(c, "collapsed", Toast.LENGTH_SHORT).show();
+//            Log.d("CESTEST", "printGroupView" + ((TextView) v.findViewById(R.id.printJobGroupExpand)).getText());
+//            if (isCollapsed) {
+//                for (int i = 0; i < printJobViews.size(); i++) {
+//                    printJobViews.get(i).setVisibility(VISIBLE);
+//                    
+//                }
+//                isCollapsed = false;
+//                ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_collapse);
+//                
+//            } else {
+//                for (int i = 0; i < printJobViews.size(); i++) {
+//                    printJobViews.get(i).setVisibility(GONE);
+//                }
+//                isCollapsed = true;
+//                ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_expand);
+//            }
+//            
+//        } else {
+//            if (v.getId() == R.id.printJobDeleteBtn) {
+//                Log.d("CESTEST", "delete printJobView");
+//                Toast.makeText(c, "delete", Toast.LENGTH_SHORT).show();
+//            }
+//            
+//        }
+        
+        // TODO Auto-generated method stub
         if (v.getId() == R.id.printJobGroupDelete) {
             Log.d("CESTEST", "delete printgroup");
             Toast.makeText(c, "delete group", Toast.LENGTH_SHORT).show();
-        } else if (v.getId() == R.id.printJobsGroupLayout) {// printGroupView.getId()) {
-            Toast.makeText(c, "collapsed", Toast.LENGTH_SHORT).show();
-            Log.d("CESTEST", "printGroupView" + ((TextView) v.findViewById(R.id.printJobGroupExpand)).getText());
-            if (isCollapsed) {
-                for (int i = 0; i < printJobViews.size(); i++) {
-                    printJobViews.get(i).setVisibility(VISIBLE);
-
-                }
-                isCollapsed = false;
-                ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_collapse);
-                
-            } else {
-                for (int i = 0; i < printJobViews.size(); i++) {
-                    printJobViews.get(i).setVisibility(GONE);
-                }
-                isCollapsed = true;
-                ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_expand);
-            }
-            
+            PrintJobManager.deleteWithPrinterId(((Printer) v.getTag()).getPrinterId());
+            // reset screen
         } else {
             if (v.getId() == R.id.printJobDeleteBtn) {
                 Log.d("CESTEST", "delete printJobView");
-                Toast.makeText(c, "delete", Toast.LENGTH_SHORT).show();
+                
+                PrintJobManager.deleteWithJobId(((PrintJob) v.getTag()).getId());
+                Toast.makeText(c, "delete " + ((PrintJob) v.getTag()).getId() + ((PrintJob) v.getTag()).getName(), Toast.LENGTH_SHORT).show();
+                // reset screen
             }
             
+        } 
+        if (v.getId() == R.id.printJobsGroupLayout) {// printGroupView.getId()) {
+          Toast.makeText(c, "collapsed", Toast.LENGTH_SHORT).show();
+          Log.d("CESTEST", "printGroupView" + ((TextView) v.findViewById(R.id.printJobGroupExpand)).getText());
+          if (isCollapsed) {
+              for (int i = 0; i < printJobViews.size(); i++) {
+                  printJobViews.get(i).setVisibility(VISIBLE);
+                  
+              }
+              isCollapsed = false;
+              ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_collapse);
+              
+          } else {
+              for (int i = 0; i < printJobViews.size(); i++) {
+                  printJobViews.get(i).setVisibility(GONE);
+              }
+              isCollapsed = true;
+              ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_expand);
+          }
         }
-        
     }
     
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) { // TODO Auto-generated method stub final
-
+    
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         // TODO Auto-generated method stub
@@ -174,11 +241,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     @Override
     protected void onSizeChanged(int w, int h, int xOld, int yOld) {
         super.onSizeChanged(w, h, xOld, yOld);
-
         
         setViewWidth(w);
         setViewHeight(h);
-
+        
     }
     
     public int getViewWidth() {
