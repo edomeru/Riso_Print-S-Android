@@ -28,5 +28,7 @@
     <!--  Temporary values -->
     <dimen name="temp_splash_logo_width">240dp</dimen>
     <dimen name="temp_splash_logo_height">80dp</dimen>
+	
+    <dimen name="row_right_margin">6dp</dimen>
 
 </resources>

@@ -34,3 +34,9 @@ PDFViewer SDK v2.9.7 (2014-02-08)
 		/libs/armeabi-v7a/librdpdf.so
 		/libs/mips/librdpdf.so
 		/libs/x86/librdpdf.so
+		
+PullToRefresh-ListView v1.3.0 (2013-06-07)
+	https://github.com/erikwt/PullToRefresh-ListView
+
+	Files included:
+		libraryproject\src\eu\erikw\PullToRefreshListView.java
