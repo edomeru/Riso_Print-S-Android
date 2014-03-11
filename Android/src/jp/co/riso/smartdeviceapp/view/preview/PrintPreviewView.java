@@ -53,7 +53,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     Bitmap stapleBmp;
     Bitmap punchBmp;
     
-    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d"; // path; page; side
+    private static final String FORMAT_CACHE_KEY = "%s-%d-%d"; // path; page; side
     
     private static Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
     
@@ -179,8 +179,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
     }
     
-    protected String getCacheKey(int index, int width, int height, int side) {
-        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, width, height, side);
+    protected String getCacheKey(int index, int side) {
+        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side);
     }
     
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -188,8 +188,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         Bitmap back = null;
         
         if (mBmpCache != null) {
-            front = mBmpCache.get(getCacheKey(index, width, height, CurlPage.SIDE_FRONT));
-            back = mBmpCache.get(getCacheKey(index, width, height, CurlPage.SIDE_BACK));
+            front = mBmpCache.get(getCacheKey(index, CurlPage.SIDE_FRONT));
+            back = mBmpCache.get(getCacheKey(index, CurlPage.SIDE_BACK));
         }
         
         if (front != null && front.isRecycled()) {
@@ -621,8 +621,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
         
         private Bitmap[] getRenderBitmaps() {
-            Bitmap front = Bitmap.createBitmap(mWidth, mHeight, BMP_CONFIG_TEXTURE);
-            Bitmap back = Bitmap.createBitmap(mWidth, mHeight, BMP_CONFIG_TEXTURE);
+            int dim[] = getPageDimensions(mWidth, mHeight);
+            
+            Bitmap front = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
+            Bitmap back = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
             
             int pagePerScreen = 1;
             if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
@@ -642,8 +644,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             }
             
             if (mBmpCache != null) {
-                mBmpCache.put(getCacheKey(mIndex, mWidth, mHeight, CurlPage.SIDE_FRONT), front);
-                mBmpCache.put(getCacheKey(mIndex, mWidth, mHeight, CurlPage.SIDE_BACK), back);
+                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_FRONT), front);
+                mBmpCache.put(getCacheKey(mIndex, CurlPage.SIDE_BACK), back);
             }
             
             return new Bitmap[] { front, back };
