@@ -30,5 +30,14 @@
     <dimen name="temp_splash_logo_height">80dp</dimen>
 	
     <dimen name="row_right_margin">6dp</dimen>
-
+    <dimen name="row_left_padding">10dp</dimen>
+    <dimen name="row_right_padding">6dp</dimen>
+    <dimen name="printer_status_icon_size">16dp</dimen>
+	<dimen name="row_with_disclosure_right_margin">22dp</dimen>
+    <dimen name="row_default_printer_margin">2dp</dimen>
+	<dimen name="row_height">40dp</dimen>
+    <dimen name="edit_box_width">60dp</dimen>
+    <dimen name="edit_box_height">34dp</dimen>
+    <dimen name="disclosure_width">16dp</dimen>
+    
 </resources>
