@@ -272,40 +272,17 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	 * @param leftRect
 	 * @return Will prevent touch
 	 */
-	private boolean preventTouch(RectF rightRect, RectF leftRect) {
-		if (mBindPosition == BIND_LEFT) {
-			if ((mDragStartPos.y > rightRect.top)
-					|| (mDragStartPos.y < rightRect.bottom)) {
-		    	return true;
-			}
-			if ((mDragStartPos.x > rightRect.right)
-					|| (mDragStartPos.x < leftRect.left)) {
-				return true;
-			}
-		}
+	private boolean preventTouch() {
+		RectF rect = getDropShadowRect();
 
-		if (mBindPosition == BIND_RIGHT) {
-			//Prevent touch out of margin
-			if ((mDragStartPos.y > rightRect.top)
-					|| (mDragStartPos.y < rightRect.bottom)) {
-				return true;
-			}
-			if ((mDragStartPos.x > leftRect.right)
-					|| (mDragStartPos.x < rightRect.left)) {
-				return true;
-			}
+		//Prevent touch out of margin
+		if ((mDragStartPos.y > rect.top)
+				|| (mDragStartPos.y < rect.bottom)) {
+			return true;
 		}
-
-		if (mBindPosition == BIND_TOP) {
-			//Prevent touch out of margin
-			if ((mDragStartPos.y > leftRect.top)
-					|| (mDragStartPos.y < rightRect.bottom)) {
-				return true;
-			}
-			if ((mDragStartPos.x > rightRect.right)
-					|| (mDragStartPos.x < rightRect.left)) {
-				return true;
-			}
+		if ((mDragStartPos.x > rect.right)
+				|| (mDragStartPos.x < rect.left)) {
+			return true;
 		}
 
 		return false;
@@ -340,7 +317,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			// user is holding the paper to make curl happen.
 			mDragStartPos.set(mPointerPos.mPos);
 			
-			if (preventTouch(rightRect, leftRect)) {
+			if (preventTouch()) {
 				return false;
 			}
 
@@ -362,7 +339,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 						mDragStartPos.x = rightRect.right;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-							return false;
+							return true;
 						}
 						startCurl(CURL_RIGHT);
 					}
@@ -377,7 +354,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 						mDragStartPos.x = rightRect.left;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-							return false;
+							return true;
 						}
 						startCurl(CURL_RIGHT);
 					}
@@ -394,7 +371,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 						mDragStartPos.y = rightRect.bottom;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-							return false;
+							return true;
 						}
 						startCurl(CURL_RIGHT);
 					}
@@ -412,7 +389,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 						mDragStartPos.x = rightRect.right;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-							return false;
+							return true;
 						}
 						startCurl(CURL_RIGHT);
 					}
@@ -428,7 +405,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 						mDragStartPos.x = rightRect.left;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-							return false;
+							return true;
 						}
 						startCurl(CURL_RIGHT);
 					}
@@ -444,7 +421,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 						mDragStartPos.y = rightRect.bottom;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
-							return false;
+							return true;
 						}
 						startCurl(CURL_RIGHT);
 					}
@@ -454,7 +431,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			// to next one. We have pointer position and drag position defined
 			// and this will create first render request given these points.
 			if (mCurlState == CURL_NONE) {
-				return false;
+				return true;
 			}
 		}
 		case MotionEvent.ACTION_MOVE: {
