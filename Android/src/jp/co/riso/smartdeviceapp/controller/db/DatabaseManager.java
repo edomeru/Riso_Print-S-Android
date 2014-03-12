@@ -48,17 +48,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
     
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
-        
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.d(TAG, table + values.getAsString("prn_id"));
-        // return db.insertOrThrow(table, nullColumnHack, values);
-        
+        Log.d(TAG, "insert " + table + values.getAsInteger("printer_id"));
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
             Log.e(TAG, "failed insert to " + table);
         }
         
+        db.close();
         if (rowId > -1)
             return true;
         else
@@ -68,20 +66,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cur = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
-
-        return cur;
-        
+        return cur;  
     }
     
     public boolean delete(String table, String whereClause, String[] whereArgs) {
-        int rowsNum = 0; 
+        int rowsNum = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         rowsNum = db.delete(table, whereClause, whereArgs);
         db.close();
-        if (rowsNum>0)
+        if (rowsNum > 0)
             return true;
         else
             return false;
-               
+        
     }
 }

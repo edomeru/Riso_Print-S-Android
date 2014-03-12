@@ -17,14 +17,13 @@ public class PrintJobsColumnView extends LinearLayout {
     
     private static final String TAG = "PrintJobsColumnView";
     private Context context;
-    private int placeJobGroupCtr = 0;
     private List<PrintJob> printJobs = new ArrayList<PrintJob>();
     private List<Printer> printerIds = new ArrayList<Printer>();
     private List<LinearLayout> columns = new ArrayList<LinearLayout>(3);
-
-    private boolean initial;
-    private int colNum = 0;
     private PrintDeleteListener delListener;
+
+    private int colNum = 0;
+    private int placeJobGroupCtr = 0;
 
     
     public PrintJobsColumnView(Context context, List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener) {
@@ -43,7 +42,6 @@ public class PrintJobsColumnView extends LinearLayout {
     
     private void init(Context context) {
 
-        initial = true;
         if (!isInEditMode()) {
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             if (colNum > 1)
@@ -64,59 +62,42 @@ public class PrintJobsColumnView extends LinearLayout {
                 columns.get(1).setVisibility(GONE);
             
         }
+        
     }
     
     private void addToColumns() {
         List<PrintJob> jobs = new ArrayList<PrintJob>();
         PrintJob pj = null;
-        int pid = -1;
-        pid = printerIds.get(placeJobGroupCtr).getPrinterId();
+        Printer printer = printerIds.get(placeJobGroupCtr);
+        int pid = printer.getPrinterId();
+        
+        //get printer's jobs list with printerid==pid
         for (int j = 0; j < printJobs.size(); j++) {
-            
             pj = printJobs.get(j);
             if (pj.getPrinterId() == pid) {
                 jobs.add(pj);
-                Log.d(TAG, "addToColumns add " + j + " " + placeJobGroupCtr + pid);
-                
             }
         }
+        
+        //use jobs list to add view to smallest column
         if (!jobs.isEmpty()) {
-            
-            int smallestColumn = 0;
-            int tempHeight = columns.get(0).getHeight();
-            Log.d(TAG, "smallest " + tempHeight + columns.get(1).getHeight());
-            for (int i = 1; i < colNum; i++) {
-                Log.d(TAG, i + "i " + columns.get(i).getHeight());
-                if (columns.get(i).getHeight() < tempHeight) {
-                    tempHeight = columns.get(i).getHeight();
-                    Log.d(TAG, i + "smallest " + tempHeight);
-                    smallestColumn = i;
-                }
-            }
-            addPrintJobsGroupView(jobs, smallestColumn, printerIds.get(placeJobGroupCtr));
-            
-            jobs.clear();
+            addPrintJobsGroupView(jobs, getSmallestColumn(), printer);
+       //     jobs.clear();
         }
     }
+
+    private int getSmallestColumn(){
+        //initially assign to 1st column
+        int smallestColumn = 0; 
+        int tempHeight = columns.get(smallestColumn).getHeight();
         
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        Log.d(TAG, changed + "onLayout column " + initial + columns.get(0).getHeight() + " " + (r - l) + " " + (b - t));
-        if (placeJobGroupCtr < printerIds.size()) {
-            
-            addToColumns();
-            placeJobGroupCtr++;
-            
-            // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
-            
-            post(new Runnable() {
-                public void run() {
-                    requestLayout();
-                }
-            });
-            
-        }
+        for (int i = 1; i < colNum; i++) {
+            if (columns.get(i).getHeight() < tempHeight) {
+                tempHeight = columns.get(i).getHeight();
+                smallestColumn = i;
+            }
+        }        
+        return smallestColumn;
     }
    
     private void addPrintJobsGroupView(List<PrintJob> jobsList, int column, Printer printer) {
@@ -129,6 +110,25 @@ public class PrintJobsColumnView extends LinearLayout {
         
         columns.get(column).addView(pjView);
         
+    }
+    
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        Log.d(TAG, changed + "onLayout column " + columns.get(0).getHeight() + " " + (r - l) + " " + (b - t));
+        if (placeJobGroupCtr < printerIds.size()) {
+            
+            addToColumns();
+            placeJobGroupCtr++;
+            
+            // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
+            post(new Runnable() {
+                public void run() {
+                    requestLayout();
+                }
+            });
+            
+        }
     }
     
 }

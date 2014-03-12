@@ -10,6 +10,7 @@ import java.util.Locale;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -44,86 +45,79 @@ public class PrintJobManager {
         
     }
     
-    public static List<PrintJob> getPrintJobs() {
-        
-        List<PrintJob> printJobs = new ArrayList<PrintJob>();
-        // manager.getReadableDatabase();
-        
+    public static List<PrintJob> getPrintJobs() {  
+        List<PrintJob> printJobs = new ArrayList<PrintJob>();      
         Cursor c = manager.query(TABLE, null, null, null, null, null, C_PRN_ID);
         
         while (c.moveToNext()) {
             int pjb_id = c.getInt(c.getColumnIndex(C_PJB_ID));
             int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
             String pjb_name = c.getString(c.getColumnIndex(C_PJB_NAME));
-            Date pjb_date = convertStringToDate(c.getString(c.getColumnIndex(C_PJB_DATE)));
-            // String pjb_date = c.getString(c.getColumnIndex(C_PJB_DATE));
+            Date pjb_date = convertSQLToDate(c.getString(c.getColumnIndex(C_PJB_DATE)));
             
             JobResult pjb_result = JobResult.values()[c.getInt(c.getColumnIndex(C_PJB_RESULT))];
-            // int pjb_result = c.getInt(c.getColumnIndex(C_PJB_RESULT));
             
             printJobs.add(new PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result));
-            
-            Log.d(TAG, "dates" + c.getLong(c.getColumnIndex(C_PJB_DATE)) + "+++" + pjb_date.toString());
         }
-        
+        c.close();
         return printJobs;
     }
     
     public static boolean deleteWithPrinterId(int prn_id) {
-        // manager.getWritableDatabase();
-        
         return manager.delete(TABLE, WHERE_PRN_ID, new String[] { String.valueOf(prn_id) });
-        // manager.close();
-        
     }
     
     public static boolean deleteWithJobId(int pjb_id) {
-        // manager.getWritableDatabase();
         return manager.delete(TABLE, WHERE_PJB_ID, new String[] { String.valueOf(pjb_id) });
-        // manager.close();
         
     }
     
     public static boolean createPrintJob(int prn_id, String PDFfilename, Date pjb_date, JobResult pjb_result) {
-        // public static boolean createPrintJob(int prn_id, String PDFfilename, String pjb_date, int pjb_result) {
         PrintJob pj = new PrintJob(prn_id, PDFfilename, pjb_date, pjb_result);
         return insertPrintJob(pj);
     }
     
     public static boolean insertPrintJob(PrintJob printJob) {
-        
         ContentValues pjvalues = new ContentValues();
         pjvalues.put(C_PRN_ID, printJob.getPrinterId());
         pjvalues.put(C_PJB_NAME, printJob.getName());
         pjvalues.put(C_PJB_RESULT, printJob.getResult().ordinal());
-        pjvalues.put(C_PJB_DATE, convertToDateTime(printJob.getDate()));
-        // pjvalues.put(C_PJB_DATE, printJob.getDate());//convertToDateTime(printJob.getDate()));
-        
-        // manager.getWritableDatabase();
+        pjvalues.put(C_PJB_DATE, formatSQLDateTime(printJob.getDate()));
         
         return manager.insert(TABLE, null, pjvalues);
         
-        // manager.close();
-        
     }
     
-    public static String convertToDateTime(Date date) {
+    public static String formatSQLDateTime(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return dateFormat.format(date);
     }
     
-    private static Date convertStringToDate(String strDate) {
+    private static Date convertSQLToDate(String strDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        
         Date date = null;
         
         try {
             date = sdf.parse(strDate);
             
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             Log.e(TAG, e.toString());
         }
         return date;
+    }
+    
+    //for testing only - may use PrinterManager's method instead
+    public static List<Printer> getPrinters() {  
+        List<Printer> printers = new ArrayList<Printer>();      
+        Cursor c = manager.query("Printer", null, null, null, null, null, null);
+        Log.d("CESTEST", "getprinters" + c.getCount());
+        while (c.moveToNext()) {
+            int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
+            String prn_name = c.getString(c.getColumnIndex("prn_name"));
+            
+            printers.add(new Printer(prn_id, prn_name));
+        }
+        c.close();
+        return printers;
     }
 }
