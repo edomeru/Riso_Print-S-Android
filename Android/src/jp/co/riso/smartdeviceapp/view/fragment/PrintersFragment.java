@@ -18,6 +18,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ import android.widget.TextView;
 public class PrintersFragment extends BaseFragment implements View.OnTouchListener {
     
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
+    public static final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
     
     public final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
     public final int ID_MENU_ACTION_ADD_BUTTON    = 0x11000003;
@@ -247,6 +249,18 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
             if(v.getId() == R.id.img_disclosure) {
                 hideDeleteButton();
                 
+                Printer printer = mPrinter.get((Integer)v.getTag());
+                Bundle args = getArguments();
+                if (args == null) {
+                    Intent intent = getActivity().getIntent();
+                    intent.putExtra(PrinterInfoFragment.KEY_PRINTER_INFO, printer);
+                    getActivity().setIntent(intent);
+                } else {
+                    args.putParcelable(PrinterInfoFragment.KEY_PRINTER_INFO, printer);
+                }    
+                
+                BaseFragment fragment = new PrinterInfoFragment();
+                switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
             }
             else if(v.getId() == R.id.printerListRow) {
                 hideDeleteButton();
