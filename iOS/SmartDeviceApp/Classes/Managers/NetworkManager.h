@@ -14,7 +14,7 @@
  Checks if the device is currently connected to the network.
  
  @return YES if connected, NO otherwise.
- **/
+ */
 + (BOOL)checkNetworkConnection;
 
 @end

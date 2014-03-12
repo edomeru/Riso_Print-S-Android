@@ -15,6 +15,7 @@ typedef enum
     
     ERR_NO_NETWORK,
     ERR_INVALID_IP,
+    ERR_PRINTER_NOT_FOUND,
     ERR_CANNOT_ADD,
     ERR_ALREADY_ADDED
     

@@ -10,7 +10,7 @@
 #define SmartDeviceApp_PrintSettingNames_h
 
 // names here should match the listing in the SmartDeviceApp-Settings.plist
-// if the names change, update string names then search and replace the macro name
+// if the string names change, only need to update the macro value here
 
 #define PS_BIND            @"Bind"
 #define PS_BOOKLET_BINDING @"BookletBinding"

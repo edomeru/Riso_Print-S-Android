@@ -7,6 +7,7 @@
 //
 
 #import <CoreData/CoreData.h>
+#import "PrinterSearchDelegate.h"
 
 @class Printer;
 
@@ -14,17 +15,20 @@
 
 /**
  Searches for the Printer in the network using its IP Address.
- If the Printer is accessible/available, its print capabilities
- are also retrieved and checked to determine if it is supported.
- If it is supported, its info and capabilities are stored in 
- an array and returned.
+ Uses the Manual Search function of the SNMP Common Library.
+ Posts a notification when the printer is found and when the search is over.
  
  @param printerIP
         IP address of the printer to search
- 
- @return NSArray* containing printer info and capabilities, 'nil' otherwise.
- **/
-+ (NSArray*)searchForPrinter:(NSString*)printerIP;
+ */
++ (void)searchForPrinter:(NSString*)printerIP;
+
+/**
+ Searches for all available and supported printers in the network.
+ Uses the Device Discovery function of the SNMP Common Library.
+ Posts a notification when a printer is found and when the search is over.
+ */
++ (void)searchForAvailablePrinters;
 
 /**
  Get the Online/Offline status of the Printer
@@ -33,5 +37,7 @@
  IP address of the printer
  
  @return YES if Online; NO if Offline
- **/+ (BOOL) getPrinterStatus:(NSString *) ipAddress;
+ */
++ (BOOL)getPrinterStatus:(NSString*)ipAddress;
+
 @end

@@ -11,15 +11,27 @@
 @interface PListUtils : NSObject
 
 /**
- Gets the maximum number of printers defined in the Property List.
+ Default Print Settings for New Printers.
+ @return NSDictionary*
+ */
++ (NSDictionary*)getDefaultPrintSettings;
+
+/**
+ Maximum Number of Allowed Printers
  @return NSUInteger
- **/
+ */
 + (NSUInteger)getMaxPrinters;
 
 /**
- Gets the list of default print settings defined in the Property List.
- @return NSDictionary*
- **/
-+ (NSDictionary*)getDefaultPrintSettings;
+ "Use SNMP Common Library"
+ @return BOOL
+ */
++ (BOOL)useSNMPCommonLib;
+
+/**
+ "Use SNMP Unicast Timeout"
+ @return BOOL
+ */
++ (BOOL)useSNMPUnicastTimeout;
 
 @end

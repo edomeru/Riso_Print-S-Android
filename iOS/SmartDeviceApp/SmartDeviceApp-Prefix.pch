@@ -16,6 +16,7 @@
     #import <CoreData/CoreData.h>
 
     #import "EntityNames.h"
-    #import "PrintSettingNames.h"
     #import "ErrorTypes.h"
+    #import "NotificationNames.h"
+    #import "PrintSettingNames.h"
 #endif

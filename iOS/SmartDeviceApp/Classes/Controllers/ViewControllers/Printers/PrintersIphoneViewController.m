@@ -13,9 +13,7 @@
 #import "DefaultPrinter.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
-#import "DatabaseManager.h"
 
-#define SEGUE_TO_MAINMENU       @"Printers-MainMenu"
 #define SEGUE_TO_ADD_PRINTER    @"PrintersIphone-AddPrinter"
 #define SEGUE_TO_PRINTER_SEARCH @"PrintersIphone-PrinterSearch"
 
@@ -23,27 +21,24 @@
 
 @interface PrintersIphoneViewController ()
 
-@property (strong, nonatomic) DefaultPrinter* defaultPrinter; //default printer object
-@property (strong, nonatomic) NSIndexPath* defaultPrinterIndexPath; //index path of default printer in printers list
+/** 
+ Internal manager for adding printers to the DB, removing printers from the DB, and
+ setting the default printer. It also maintains the list of the Printer objects from
+ the DB. This is shared amongst all the child screens of the Printer screen.
+ */
+@property (strong, nonatomic) PrinterManager* printerManager;
 
-/**
- Retrieves the Printer objects from DB.
- **/
-- (void)getSavedPrintersFromDB;
-
-/**
- Retrieves the DefaultPrinter object from DB.
- **/
-- (void) getDefaultPrinterFromDB;
+/** NSIndexPath of the default printer in the Printers list **/
+@property (strong, nonatomic) NSIndexPath* defaultPrinterIndexPath;
 
 /**
  Action when the PrinterCell is tapped to select as Default Printer
- **/
+ */
 - (IBAction)onTapPrinterCell:(id)sender;
 
 /**
  Action when the PrinterCell Disclosure is tapped to segue to the PrinterInfo screen
- **/
+ */
 - (IBAction)onTapPrinterCellDisclosure:(id)sender;
 
 @end
@@ -66,8 +61,10 @@
 {
     [super viewDidLoad];
 
-    [self getSavedPrintersFromDB];
-    [self getDefaultPrinterFromDB];
+    // setup the PrinterManager
+    self.printerManager = [[PrinterManager alloc] init];
+    [self.printerManager getPrinters];
+    [self.printerManager getDefaultPrinter];
 }
 
 - (void)didReceiveMemoryWarning
@@ -76,21 +73,6 @@
 }
 
 #pragma mark - Header
-
-- (IBAction)onAdd:(UIButton *)sender
-{
-    [self performSegueWithIdentifier:SEGUE_TO_ADD_PRINTER sender:self];
-}
-
-- (IBAction)onSearch:(UIButton *)sender
-{
-    [self performSegueWithIdentifier:SEGUE_TO_PRINTER_SEARCH sender:self];
-}
-
-- (IBAction)onMenu:(UIButton *)sender
-{
-    [self performSegueWithIdentifier:SEGUE_TO_MAINMENU sender:self];
-}
 
 #pragma mark - TableView
 
@@ -101,7 +83,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.listSavedPrinters count];
+    return [self.printerManager.listSavedPrinters count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -110,8 +92,8 @@
     PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
                                                         forIndexPath:indexPath];
     
-    Printer* printer = [self.listSavedPrinters objectAtIndex:indexPath.row];
-    if([self.defaultPrinter.printer isEqual:printer] == YES)
+    Printer* printer = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
+    if([self.printerManager.defaultPrinter.printer isEqual:printer] == YES)
     {
         self.defaultPrinterIndexPath = indexPath;
         [cell setAsDefaultPrinterCell:YES];
@@ -142,7 +124,7 @@
         if(editingStyle == UITableViewCellEditingStyleDelete)
         {
             //Get the printer to be deleted
-            Printer *printerToDelete = [self.listSavedPrinters objectAtIndex:indexPath.row];
+            Printer *printerToDelete = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
             
             NSLog(@"Deleting Printer %@ at row %d", printerToDelete.name, indexPath.row);
   
@@ -151,83 +133,35 @@
             {
                 
                 NSLog(@"Printer to be deleted is default printer. Removing default printer reference");
-                if([DatabaseManager deleteObject:self.defaultPrinter] == NO)
-                {
-                    //TODO Show delete error
-                    //If deleting default printer reference failed, do not proceed with deletion of printer
-                    return;
-                }
-                self.defaultPrinter = nil;
+                [self.printerManager deleteDefaultPrinter];
                 self.defaultPrinterIndexPath = nil;
             }
             
-            BOOL deleteSuccess = [DatabaseManager deleteObject:printerToDelete];
-            if(deleteSuccess == YES)
-            {
-                //remove the object from list
-                [self.listSavedPrinters removeObjectAtIndex:indexPath.row];
-                //set the view of the cell to stop polling for printer status
-                PrinterCell *cell = (PrinterCell *)[tableView cellForRowAtIndexPath:indexPath];
-                [cell.printerStatus.statusHelper stopPrinterStatusPolling];
-                //set view to non default printer cell style
-                [cell setAsDefaultPrinterCell:NO];
-                //remove cell from view
-                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-            else
-            {
-                //TODO Show delete error;
-                NSLog(@"Delete Printer from DB failed");
-            }
+            [self.printerManager deletePrinter:printerToDelete];
+
+            //set the view of the cell to stop polling for printer status
+            PrinterCell *cell = (PrinterCell *)[tableView cellForRowAtIndexPath:indexPath];
+            [cell.printerStatus.statusHelper stopPrinterStatusPolling];
             
+            //set view to non default printer cell style
+            [cell setAsDefaultPrinterCell:NO];
+            
+            //remove cell from view
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
 }
 #pragma mark - Printers Data
-
-- (void)getSavedPrintersFromDB
-{
-    self.listSavedPrinters = [NSMutableArray array];
-    self.listSavedPrinters = [PrinterManager getPrinters];
-    //TODO: Check getPrinters status
-}
-
-- (void)getDefaultPrinterFromDB
-{
-    self.defaultPrinter = [PrinterManager getDefaultPrinter];
-}
 
 #pragma mark - Gesture Recognizer Handler
 - (IBAction)onTapPrinterCell:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
+    
     //get selected printer from list
-    Printer *selectedPrinter = [self.listSavedPrinters objectAtIndex:selectedIndexPath.row];
+    Printer *selectedPrinter = [self.printerManager.listSavedPrinters objectAtIndex:selectedIndexPath.row];
     
-    //if there is no default printer, create a default printer
-    if(self.defaultPrinter == nil)
-    {
-        self.defaultPrinter = [PrinterManager createDefaultPrinter:selectedPrinter];
-    }
-    else //the default printer is changed
-    {
-        if([self.defaultPrinter.printer isEqual:selectedPrinter] == NO)
-        {
-            self.defaultPrinter.printer = selectedPrinter; // replace
-        }
-        else
-        {
-            //If selected default printer is still the same printer, do not update UI and database
-            return; //Do nothing;
-        }
-    }
-    
-    //save changes to DB
-    if([DatabaseManager saveChanges] == NO)
-    {
-        //If changes to default printer is not saved. Do not update UI
-        //TODO Show Error
-        return;
-    }
+    //set as default printer
+    [self.printerManager registerDefaultPrinter:selectedPrinter];
     
     if(self.defaultPrinterIndexPath != nil)
     {
@@ -254,16 +188,18 @@
 {
     if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
     {
-        // give the Add Printer screen a copy of the list of saved printers
         AddPrinterViewController* destController = [segue destinationViewController];
-        destController.listSavedPrinters = self.listSavedPrinters;
+        
+        //give the child screen a reference to the printer manager
+        destController.printerManager = self.printerManager;
     }
     
     if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
     {
-        // give the Printer Search screen a copy of the list of saved printers
         PrinterSearchViewController* destController = [segue destinationViewController];
-        destController.listSavedPrinters = self.listSavedPrinters;
+        
+        //give the child screen a reference to the printer manager
+        destController.printerManager = self.printerManager;
     }
 }
 
@@ -273,11 +209,14 @@
     if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
     {
         AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
-        if ([adderScreen.addedPrinters count] != 0)
-        {
-            [self.listSavedPrinters addObjectsFromArray:adderScreen.addedPrinters];
+        if (adderScreen.hasAddedPrinters)
             [self.tableView reloadData];
-        }
+    }
+    if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
+    {
+        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self.tableView reloadData];
     }
 }
 

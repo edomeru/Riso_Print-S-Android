@@ -7,47 +7,48 @@
 //
 
 #import "AddPrinterViewController.h"
-#import "Printer.h"
-#import "Printer+Log.h"
+#import "PrinterDetails.h"
 #import "PrinterManager.h"
-#import "DatabaseManager.h"
-#import "SNMPManager.h"
 #import "NetworkManager.h"
-#import "InputUtils.h"
+#import "AlertUtils.h"
 
 #define INPUT_ROWS          3
 #define CELL_ROW_IP         0
 #define CELL_ROW_USERNAME   1
 #define CELL_ROW_PASSWORD   2
 
-#define UNWIND_TO_PRINTERS  @"UnwindRight"
+#define ALERT_ADD_PRINTER @"Add Printer Info"
 
 @interface AddPrinterViewController ()
+
+/**
+ A list of the IP addresses of the new printers added.
+ This is initially nil and will remain nil if no printer/s is/are added.
+ */
+@property (strong, nonatomic) NSMutableArray* listAddedPrinters;
+
+/**
+ Stores the number of saved printers.
+ */
+@property (assign, nonatomic) BOOL willEndWithoutAdd;
+
+/**
+ Called when screen loads.
+ Sets-up this controller's properties and views.
+ */
+- (void)setup;
 
 /**
  Enables/Disables the Save button.
  
  @param isEnabled
         YES or NO
- **/
+ */
 - (void)enableSaveButton:(BOOL)isEnabled;
 
 /**
- Displays an AlertView for the result of the Add Printer operation.
- 
- @param result
-        One of the following result types:
-            NO_ERROR,
-            ERR_NO_NETWORK,
-            ERR_INVALID_IP,
-            ERR_CANNOT_ADD,
-            ERR_ALREADY_ADDED
- **/
-- (void)displayResult:(RESULT_TYPE)result;
-
-/**
  Tells the currently active TextField to close the keypad/numpad.
- **/
+ */
 - (void)dismissKeypad;
 
 @end
@@ -92,17 +93,26 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // setup properties
-    self.addedPrinters = [NSMutableArray array];
-
-    // setup view
-    [self enableSaveButton:NO];
+    
+    [self setup];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+}
+
+#pragma mark - Setup
+
+- (void)setup
+{
+    // setup properties
+    self.printerManager.delegate = self;
+    self.listAddedPrinters = [NSMutableArray array];
+    self.hasAddedPrinters = NO;
+    
+    // setup view
+    [self enableSaveButton:NO];
 }
 
 #pragma mark - Header
@@ -123,19 +133,19 @@
 
 - (IBAction)onBack:(UIButton *)sender 
 {
-     [self unwindFromOverTo:[self.parentViewController class]];
-    //[self performSegueWithIdentifier:UNWIND_TO_PRINTERS sender:self];
+    [self.printerManager stopSearching];
+    [self unwindFromOverTo:[self.parentViewController class]];
 }
 
 - (IBAction)onSave:(UIButton *)sender
 {
     // check if trying to add the same printer
     BOOL isAlreadyAdded = NO;
-    if ([self.addedPrinters count] != 0)
+    if ([self.listAddedPrinters count] != 0)
     {
-        for (Printer* onePrinter in self.addedPrinters)
+        for (NSString* printerIP in self.listAddedPrinters)
         {
-            if ([onePrinter.ip_address isEqualToString:self.textIP.text])
+            if ([printerIP isEqualToString:self.textIP.text])
             {
                 isAlreadyAdded = YES;
                 break;
@@ -145,7 +155,7 @@
     
     if (isAlreadyAdded)
     {
-        [self displayResult:ERR_ALREADY_ADDED];
+        [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
     }
     else
     {
@@ -153,78 +163,71 @@
         BOOL isConnectedToNetwork = [NetworkManager checkNetworkConnection];
         if (!isConnectedToNetwork)
         {
-            [self displayResult:ERR_NO_NETWORK];
+            [AlertUtils displayResult:ERR_NO_NETWORK withTitle:ALERT_ADD_PRINTER withDetails:nil];
         }
         else
         {
             // check if the input IP is valid
             NSString* formattedIP = self.textIP.text;
-            BOOL isInputValid = [InputUtils validateAndFormatIP:&formattedIP];
+            BOOL isInputValid = [self validateAndFormatIP:&formattedIP];
             if (!isInputValid)
             {
-                [self displayResult:ERR_INVALID_IP];
+                [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
             }
             else
             {
-                // check if printer can be added to the list of saved printers in DB
-                BOOL canAddPrinter = [PrinterManager canAddPrinter:formattedIP toList:self.listSavedPrinters];
-                if (!canAddPrinter)
-                {
-                    [self displayResult:ERR_CANNOT_ADD];
-                }
-                else
-                {
-                    // create Printer object
-                    Printer* newPrinter = [PrinterManager createPrinter];
-                    if (newPrinter == nil)
-                    {
-                        [self displayResult:ERR_CANNOT_ADD];
-                    }
-                    else
-                    {
-                        newPrinter.ip_address = formattedIP;
-                        
-                        //TODO: load searching/progress indicator
-                        
-                        // use SNMP to search for the printer and get its capabilities
-                        BOOL isAvailableAndSupported = [PrinterManager searchForPrinter:&newPrinter];
-                        if (!isAvailableAndSupported)
-                        {
-                            [self displayResult:ERR_CANNOT_ADD];
-                            [DatabaseManager discardChanges];
-                        }
-                        else
-                        {
-                            // add the printer to DB
-                            BOOL isAddedToDB = [DatabaseManager saveChanges];
-                            if (!isAddedToDB)
-                            {
-                                [self displayResult:ERR_CANNOT_ADD];
-                                [DatabaseManager discardChanges]; 
-                            }
-                            else
-                            {
-                                [newPrinter log];
-                                
-                                //TODO: disable searching indicator
-                                
-                                [self displayResult:NO_ERROR];
-                                
-                                //since printer can be added, then it is online
-                                newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
-                                
-                                // update the list of added printers
-                                [self.addedPrinters addObject:newPrinter];
-                                newPrinter = nil;
-                            }
-                        }
-                    }
-                }
+                NSLog(@"initiated search");
+                self.willEndWithoutAdd = YES; //catch for timeout
+                [self.printerManager searchForPrinter:formattedIP];
+                NSLog(@"returned to screen controller");
+                // callbacks for the search will be handled in delegate methods
+                
+                // if UI needs to do other things, do it here
+                //TODO: show the searching indicator
             }
         }
     }
     
     [self dismissKeypad];
+}
+
+#pragma mark - PrinterSearchDelegate
+
+- (void)searchEnded
+{
+    if (self.willEndWithoutAdd)
+        [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND withTitle:ALERT_ADD_PRINTER withDetails:nil];
+    
+    //TODO: hide the searching indicator
+}
+
+- (void)updateForNewPrinter:(PrinterDetails*)printerDetails
+{
+    NSLog(@"update UI for NEW printer with IP=%@", printerDetails.ip);
+    self.willEndWithoutAdd = NO; //search did not timed-out
+    
+    if ([self.printerManager registerPrinter:printerDetails])
+    {
+        [AlertUtils displayResult:NO_ERROR withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        self.hasAddedPrinters = YES;
+        [self.listAddedPrinters addObject:printerDetails.ip];
+    }
+    else
+    {
+        [AlertUtils displayResult:ERR_CANNOT_ADD withTitle:ALERT_ADD_PRINTER withDetails:nil];
+    }
+    
+    //TODO: hide the searching indicator
+}
+
+- (void)updateForOldPrinter:(NSString*)printerIP withExtra:(NSArray*)otherDetails
+{
+    NSLog(@"update UI for OLD printer with IP=%@", printerIP);
+    self.willEndWithoutAdd = NO; //search did not timed-out
+    
+    [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:@[printerIP]];
+    
+    //TODO: hide the searching indicator
 }
 
 #pragma mark - TableView
@@ -294,41 +297,28 @@
     return YES;
 }
 
-#pragma mark - Display Result
+#pragma mark - Input IP Validation
 
-- (void)displayResult:(RESULT_TYPE)result
+- (BOOL)validateAndFormatIP:(NSString**)ip
 {
-    //TODO: replace messages with localizable strings
+    //TODO: check if IP address is valid
+    //TODO: format the IP address (save in the same parameter)
+    /**
+     IP Address Format: xxx.xxx.xxx.xxx
+     
+     # of Characters: 7-15
+     Type of Characters: Digits and Dots
+     Numerical Values: 0-255
+     
+     Format:
+     - 4 dot-separated numbers
+     - leading zeroes are disregarded
+     - spaces are automatically trimmed
+     - cannot input over 15 characters
+     */
     
-    UIAlertView* resultAlert = [[UIAlertView alloc] initWithTitle:@"Add Printer Info"
-                                                          message:nil
-                                                         delegate:nil
-                                                cancelButtonTitle:@"OK"
-                                                otherButtonTitles:nil];
-    
-    switch (result)
-    {
-        case NO_ERROR:
-            [resultAlert setMessage:@"The new printer was added successfully."];
-            break;
-            
-        case ERR_NO_NETWORK:
-            [resultAlert setMessage:@"The device is not connected to the network."];
-            break;
-        case ERR_INVALID_IP:
-            [resultAlert setMessage:@"The IP address is invalid. The printer could not be found."];
-            break;
-        case ERR_ALREADY_ADDED:
-            [resultAlert setMessage:@"The printer has already been added."];
-            break;
-        case ERR_CANNOT_ADD:
-        default:
-            [resultAlert setMessage:@"The printer could not be added."];
-            break;
-            //TODO: it would be better to explain why the printer could not be added
-    }
-    
-    [resultAlert show];
+    //no issues
+    return YES;
 }
 
 @end

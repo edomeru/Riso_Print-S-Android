@@ -16,7 +16,7 @@
  
  @param printer
         the Printer object to log
- **/
+ */
 - (void)log;
 
 @end

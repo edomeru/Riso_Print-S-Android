@@ -12,9 +12,8 @@
 
 /**
  Retrieves the pre-defined NSManagedObjectContext from the AppDelegate.
- 
  @return NSManagedObjectContext*
- **/
+ */
 + (NSManagedObjectContext*)getManagedObjectContext;
 
 /**
@@ -22,41 +21,42 @@
  @param entityName
         name as specified in the Core Data model
  @return NSArray* of the matching results, nil otherwise.
- **/
+ */
 + (NSArray*)getObjects:(NSString*)entityName;
 
 /**
- Inserts a new object into the database
- A call to saveChanges: must be made after this to
- make the inserted object permanent.
+ Inserts a new object into the database. Does not save
+ the NSManagedObjectContext as this new object may only
+ be temporarily needed. A succeeding call to saveChanges: 
+ must be made after this to make the inserted object 
+ permanent.
  @param entityName
         name as specified in the Core Data model
  @return the inserted object if successful, nil otherwise.
- **/
+ */
 + (NSManagedObject*)addObject:(NSString*)entityName;
 
 /**
- Removes an object from the database.
+ Removes an object from the database then saves the
+ NSManagedObjectContext to make the deletion permanent.
  @param object
         the NSManagedObject to be removed
  @return YES if successful, NO otherwise
- **/
+ */
 + (BOOL)deleteObject:(NSManagedObject*)object;
 
 /**
  Saves all the changes made to the database.
  This includes all previous insertions and deletions.
-
  @return YES if successful, NO otherwise.
- **/
+ */
 + (BOOL)saveChanges;
 
 /**
  Discards all the changes made to the database.
  This includes all previous insertions and deletions.
- 
  @return YES if successful, NO otherwise.
- **/
+ */
 + (void)discardChanges;
 
 @end

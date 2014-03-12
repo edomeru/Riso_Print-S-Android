@@ -31,18 +31,18 @@
     //TODO Refine Printer Status View
     self.onlineStatus = isOnline;
     if(isOnline){
-        NSLog(@"Set to online");
+        //NSLog(@"Set to online");
         [self setBackgroundColor:[UIColor greenColor]];
     }
     else{
-        NSLog(@"Set to offline");
+        //NSLog(@"Set to offline");
         [self setBackgroundColor:[UIColor grayColor]];
     }
 }
 
 - (void) updateStatus: (BOOL) isOnline
 {
-    NSLog(@"%@ online status = %d", self.statusHelper.ipAddress, isOnline);
+    //NSLog(@"%@ online status = %d", self.statusHelper.ipAddress, isOnline);
     [self setStatus:isOnline];
 }
 

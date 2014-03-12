@@ -10,7 +10,7 @@
 #define SmartDeviceApp_EntityNames_h
 
 // names here should match the listing in the SmartDeviceApp.xcdatamodel
-// if the names change, update string names then search and replace the macro name
+// if the string names change, only need to update the macro value here
 
 #define E_PRINTER             @"Printer"
 #define E_PRINTSETTING        @"PrintSetting"

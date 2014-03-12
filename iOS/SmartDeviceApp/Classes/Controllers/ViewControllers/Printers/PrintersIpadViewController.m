@@ -7,8 +7,11 @@
 //
 
 #import "PrintersIpadViewController.h"
+#import "PrinterManager.h"
 
 @interface PrintersIpadViewController ()
+
+@property (strong, nonatomic) PrinterManager* printerManager;
 
 @end
 
@@ -26,7 +29,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+
+    self.printerManager = [[PrinterManager alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
