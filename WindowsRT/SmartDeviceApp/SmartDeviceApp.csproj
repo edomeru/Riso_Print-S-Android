@@ -106,6 +106,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Enum\PageViewMode.cs" />
+    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
+    <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Common\Utilities\DialogService.cs" />
     <Compile Include="Common\Utilities\DisplayOrientationsHelper.cs" />
     <Compile Include="Common\Utilities\IDialogService.cs" />
@@ -119,9 +123,20 @@
     <Compile Include="Common\Utilities\SuspensionManager.cs" />
     <Compile Include="Common\Base\UserControlBase.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
-    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\GestureController.cs" />
+    <Compile Include="Controls\PageControl.xaml.cs">
+      <DependentUpon>PageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TwoPageControl.xaml.cs">
+      <DependentUpon>TwoPageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ViewControl.xaml.cs">
+      <DependentUpon>ViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\PageNumberFormatConverter.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
+    <Compile Include="DummyControllers\DummyProvider.cs" />
     <Compile Include="Models\DataItem.cs" />
     <Compile Include="Models\DataService.cs" />
     <Compile Include="Models\Document.cs" />
@@ -129,7 +144,12 @@
     <Compile Include="Models\LogicalPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\PreviewPageViewModel.cs" />
+    <Compile Include="ViewModels\PrintPreviewViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\PrintPreviewPage.xaml.cs">
+      <DependentUpon>PrintPreviewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
@@ -146,6 +166,18 @@
   <ItemGroup>
     <Content Include="Assets\en-US\Help.html" />
     <Content Include="Assets\ja-JP\Help.html" />
+    <Content Include="Resources\Dummy\RZ1070-page1.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page10.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page11.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page12.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page2.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page3.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page4.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page5.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page6.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
     <Content Include="Resources\Images\SplashScreen.scale-100.png" />
@@ -156,6 +188,37 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\PageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TwoPageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\AppTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\Styles\ControlStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\Styles\TextStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\PrintPreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -179,8 +242,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\Constants\" />
-    <Folder Include="Converters\" />
-    <Folder Include="Resources\Styles\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

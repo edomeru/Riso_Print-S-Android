@@ -24,7 +24,8 @@
       </m2:VisualElements>
       <Extensions>
         <Extension Category="windows.fileTypeAssociation">
-          <FileTypeAssociation Name="pdf" m2:DesiredView="default">
+          <FileTypeAssociation Name="pdf" m2:DesiredView="useMore">
+            <DisplayName>PDF</DisplayName>
             <SupportedFileTypes>
               <FileType>.pdf</FileType>
             </SupportedFileTypes>

@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IDS_LBL_HOME.Text" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
+    <value>Page {0} / {1}</value>
+  </data>
 </root>

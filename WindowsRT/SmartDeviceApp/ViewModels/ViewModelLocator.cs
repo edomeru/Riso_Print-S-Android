@@ -36,11 +36,11 @@ namespace SmartDeviceApp.ViewModel
         [SuppressMessage("Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
-        public HomeViewModel HomeViewModel
+        public PrintPreviewViewModel PrintPreviewViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<HomeViewModel>();
+                return ServiceLocator.Current.GetInstance<PrintPreviewViewModel>();
             }
         }
 
@@ -59,7 +59,7 @@ namespace SmartDeviceApp.ViewModel
 
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
-            SimpleIoc.Default.Register<HomeViewModel>();
+            SimpleIoc.Default.Register<PrintPreviewViewModel>();
         }
 
         /// <summary>
