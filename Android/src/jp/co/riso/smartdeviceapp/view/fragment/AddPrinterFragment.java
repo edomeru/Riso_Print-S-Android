@@ -43,6 +43,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
+        view.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
     }

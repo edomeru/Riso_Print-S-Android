@@ -17,6 +17,8 @@ public class PrinterInfoFragment extends BaseFragment{
 
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     Printer mPrinter = null; 
+    TextView mPrinterName = null;
+    TextView mIpAddress = null;
     
     @Override
     public int getViewLayout() {
@@ -30,7 +32,9 @@ public class PrinterInfoFragment extends BaseFragment{
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        
+        view.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+        mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
+        mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
     }
 
     @Override
@@ -52,12 +56,10 @@ public class PrinterInfoFragment extends BaseFragment{
       if (extras == null) {
           extras = getActivity().getIntent().getExtras();
       }
-      mPrinter = extras.getParcelable(KEY_PRINTER_INFO);
-      
-      TextView printerName = (TextView) getActivity().findViewById(R.id.inputPrinterName);
-      printerName.setText(mPrinter.getName());
-      TextView ipAddress = (TextView) getActivity().findViewById(R.id.inputIpAddress);
-      ipAddress.setText(mPrinter.getIpAddress());
+      mPrinter = extras.getParcelable(KEY_PRINTER_INFO);      
+
+      mPrinterName.setText(mPrinter.getName());
+      mIpAddress.setText(mPrinter.getIpAddress());
 
     }
     
