@@ -23,12 +23,9 @@ import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView;
 import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView.PrintDeleteListener;
 import android.content.ContentValues;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements PrintDeleteListener, OnClickListener {
@@ -119,7 +116,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             pvalues.put("prn_port_setting", 0);
             manager.insert("Printer", "true", pvalues);
             
-            pvalues.put("prn_name", "printer");
+            pvalues.put("prn_name", "this is a long printer jobs group name.");
             pvalues.put("prn_port_setting", 0);
             manager.insert("Printer", "true", pvalues);
             

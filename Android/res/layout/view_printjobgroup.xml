@@ -33,10 +33,14 @@
             android:layout_centerVertical="true"
             android:layout_gravity="left|center_vertical"
             android:layout_toRightOf="@+id/printJobGroupExpand"
+            android:layout_toLeftOf="@+id/printJobGroupDeleteLayout"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/theme_light_1" />
 
         <LinearLayout
+            android:id="@+id/printJobGroupDeleteLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

@@ -1,10 +1,8 @@
 package jp.co.riso.smartdeviceapp.view.custom;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.smartdeviceapp.R;
@@ -17,6 +15,7 @@ import jp.co.riso.smartdeviceapp.view.dialog.PrintJobsDeleteErrorDialog;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -131,9 +130,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     private String formatDate(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/M/d HH:mm", Locale.getDefault());
-        
-        return dateFormat.format(date);
+        // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/M/d HH:mm", Locale.getDefault());
+        String dateStr = DateFormat.getDateFormat(context).format(date);
+        String timeStr = DateFormat.getTimeFormat(context).format(date);
+        return dateStr + " " + timeStr;
     }
     
     // toggle collapse/expand of a group view when clicked

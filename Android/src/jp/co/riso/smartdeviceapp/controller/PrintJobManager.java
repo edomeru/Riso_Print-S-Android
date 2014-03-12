@@ -111,6 +111,7 @@ public class PrintJobManager {
         List<Printer> printers = new ArrayList<Printer>();      
         Cursor c = manager.query("Printer", null, null, null, null, null, null);
         Log.d("CESTEST", "getprinters" + c.getCount());
+
         while (c.moveToNext()) {
             int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
             String prn_name = c.getString(c.getColumnIndex("prn_name"));
