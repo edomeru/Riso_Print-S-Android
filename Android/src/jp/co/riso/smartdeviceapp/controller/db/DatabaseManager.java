@@ -60,9 +60,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         
         if (rowId > -1)
-            return false;
-        else
             return true;
+        else
+            return false;
     }
     
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
@@ -73,9 +73,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
         
     }
     
-    public void delete(String table, String whereClause, String[] whereArgs) {
+    public boolean delete(String table, String whereClause, String[] whereArgs) {
+        int rowsNum = 0; 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(table, whereClause, whereArgs);
+        rowsNum = db.delete(table, whereClause, whereArgs);
         db.close();
+        if (rowsNum>0)
+            return true;
+        else
+            return false;
+               
     }
 }

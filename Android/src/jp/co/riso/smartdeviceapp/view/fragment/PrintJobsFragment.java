@@ -19,15 +19,19 @@ import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.custom.PrintJobsColumnView;
+import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView;
+import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView.PrintDeleteListener;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class PrintJobsFragment extends BaseFragment {
+public class PrintJobsFragment extends BaseFragment implements PrintDeleteListener, OnClickListener {
     
+    private static final String TAG = "PrintJobsFragment";
     private static final String KEY_PRINTERS = "printers";
     private static final String KEY_PRINTJOBS = "printjobs";
     
@@ -35,6 +39,8 @@ public class PrintJobsFragment extends BaseFragment {
     private List<PrintJob> printJobs = new ArrayList<PrintJob>();
     private List<Printer> printers = new ArrayList<Printer>();
     private LinearLayout rootView;
+    private PrintJobsGroupView printGroupToDelete;
+    
     
     public PrintJobsFragment() {
         super();
@@ -54,6 +60,7 @@ public class PrintJobsFragment extends BaseFragment {
     public void initializeView(View view, Bundle savedInstanceState) {
         
         rootView = (LinearLayout) view.findViewById(R.id.rootView);
+        view.setOnClickListener(this);
         
     }
     
@@ -77,11 +84,12 @@ public class PrintJobsFragment extends BaseFragment {
         if (printJobs.isEmpty()) {
             printJobs = PrintJobManager.getPrintJobs();
             //printers = PrintJobManager.getPrinters(); 
-            printJobColumnView = new PrintJobsColumnView(getActivity(), printJobs, printers, isTablet() ? isTabletLand() ? 3 : 2 : 1);
+            printJobColumnView = new PrintJobsColumnView(getActivity(), printJobs, printers, isTablet() ? isTabletLand() ? 3 : 2 : 1 , this);
+            printJobColumnView.setOnClickListener(this);
             rootView.removeAllViews();
             rootView.addView(printJobColumnView);
         }
-        
+      //  rootView.setOnTouchListener(this);
     }
     
     private List<Printer> initializePids() {
@@ -190,4 +198,32 @@ public class PrintJobsFragment extends BaseFragment {
         // outState.putParcelableArrayList(KEY_PRINTJOBS, printJobs);
         
     }
+
+    @Override
+    public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView) {
+        // TODO Auto-generated method stub
+        this.printGroupToDelete = printJobsGroupView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.d(TAG, "onclick");
+        if (printGroupToDelete!=null)
+            
+        printGroupToDelete.clearDeleteButton();
+        super.onClick(v);
+
+    }
+
+    @Override
+    public void clearButton() {
+        // TODO Auto-generated method stub
+        Log.d(TAG, "clearButton");
+        if (printGroupToDelete!=null)
+        printGroupToDelete.clearDeleteButton();
+    }
+    
+
+
+  
 }
