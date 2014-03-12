@@ -21,7 +21,6 @@ import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,7 +102,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         // Refresh Listener
         mListView.setOnRefreshListener(this);    
         
-        //For smooth transition
         if(mIsSearching){
             updateRefreshBar();
             mIsSearching = false;
@@ -132,15 +130,15 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // Private Methods
     // ================================================================================
     private void dialogCb() {
-        // Open Dialog box
+        // TODO: Get values from resources 
+        // Open Dialog box 
         InfoDialogFragment info = InfoDialogFragment.newInstance("Add Printer Info", 
                 "The new printer was added successfully", 
-                "OK");
+                getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
     }
        
     public void updateRefreshBar() {
-        
         getActivity().runOnUiThread(new Runnable(){
             @Override
             public void run() {
@@ -155,24 +153,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 }
             }
         });
-        
-    }
-
-    // ================================================================================
-    // AsyncTask
-    // ================================================================================  
-    class PrinterSearchTask extends AsyncTask<Void, Void, Void> {
-        
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            try{
-                mPrinterManager.printerSearchStart();
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-            return null;
-        }      
     }
     
     // ================================================================================
@@ -186,7 +166,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         
         private Context mContext;
         private int layoutId;
-        
         private ViewHolder mHolder;
         
         public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
@@ -230,14 +209,12 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         public void onClick(View v) {
             if(v.getId() == R.id.addPrinterButton) {
                 if(!mIsSearching) {
-                    
                     // For Add Button Press
                     Printer printer = mPrinter.get((Integer) v.getTag());
                     if(printer == null) {
                         return;
-                    }
-                    printer.setId(mPrinterManager.savePrinterToDB(printer));
-                    if(printer.getId() != -1) {
+                    }                
+                    if(mPrinterManager.savePrinterToDB(printer) != -1) {
                         v.setBackgroundResource(R.drawable.check);
                         dialogCb();
                     }
@@ -253,7 +230,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onRefresh() {
         mPrinter.clear();
         mIsSearching = true;
-        new PrinterSearchTask().execute();
+        mPrinterManager.startPrinterSearch();
     }
     
     // ================================================================================
@@ -278,7 +255,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onPrinterAdd(final Printer printer) {
         getActivity().runOnUiThread(new Runnable() {
-            
             @Override
             public void run() {
                 try{

@@ -13,7 +13,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Printer implements Parcelable {
-    private long mId;
+    private int mId;
     private String mName;
     private String mIpAddress;
     
@@ -60,11 +60,11 @@ public class Printer implements Parcelable {
         }
     };
     
-    public long getId() {
+    public int getId() {
         return mId;
     }
     
-    public void setId(long id) {
+    public void setId(int id) {
         this.mId = id;
     }
     

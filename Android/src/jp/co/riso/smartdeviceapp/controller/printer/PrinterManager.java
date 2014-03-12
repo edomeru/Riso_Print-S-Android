@@ -47,6 +47,7 @@ public class PrinterManager implements OnSNMPSearch {
     // Interface
     // ================================================================================
     private OnPrinterSearch mOnPrinterAdd;
+    
     public interface OnPrinterSearch {
         public void onPrinterAdd(Printer printer);
         public void onSearchEnd();
@@ -57,10 +58,9 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     // ================================================================================
-    // DataBase()
+    // DataBase
     // ================================================================================
-    public long savePrinterToDB(Printer printer) {
-        long rowId = -1;
+    public int savePrinterToDB(Printer printer) {
         if (printer == null || isExists(printer)) {
             return -1;
         }
@@ -70,15 +70,14 @@ public class PrinterManager implements OnSNMPSearch {
         
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.getIpAddress());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.getName()); 
-        //TODO update values
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, 0);
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_LPR, true); 
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_RAW, true);
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION, true); 
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX, true);
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING, true); 
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, true);
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, true);
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_LPR, printer.getLpr()); 
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_RAW, printer.getRaw());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION, printer.getPagination()); 
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX, printer.getDuplex());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING, printer.getBookletBinding()); 
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
         
         //Save Printer Information to Database
         DatabaseManager manager = new DatabaseManager(mContext);
@@ -86,31 +85,28 @@ public class PrinterManager implements OnSNMPSearch {
         if(db == null) {
             return -1;
         }
-        if((rowId = db.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) == -1) {   
+        if(db.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter) == -1) {   
             manager.close();
             return -1;
         }
-        manager.close();
-        
         
         if(mDefaultExists == false) {
             setDefaultPrinter(printer);
             mDefaultExists = true;
         }
+        manager.close();
         
-        return rowId;
+        return 0;
     }
     
     public boolean isExists(Printer printer) {
-        if(printer == null){
+        if(printer == null) {
             return false;
         }
         
-        //Check database
         DatabaseManager manager = new DatabaseManager(mContext);
         SQLiteDatabase db = manager.getWritableDatabase();
-        
-        if(db == null){
+        if(db == null) {
             return false;
         }
         
@@ -118,8 +114,7 @@ public class PrinterManager implements OnSNMPSearch {
                 KeyConstants.KEY_SQL_PRINTER_NAME + "=? and " + KeyConstants.KEY_SQL_PRINTER_IP + "=?", 
                 new String[]{printer.getName(), printer.getIpAddress()}, 
                 null, null, null);
-        if(cursor.getCount() > 0)  
-        {
+        if(cursor.getCount() > 0) {
             manager.close();
             cursor.close();
             return true;
@@ -129,7 +124,6 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     public List<Printer> getSavedPrintersList() {
-        //Check database
         DatabaseManager manager = new DatabaseManager(mContext);
         SQLiteDatabase db = manager.getWritableDatabase();
         
@@ -166,11 +160,11 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     public int setDefaultPrinter(Printer printer) {
+
         if(printer == null) {
             return -1;
         }
         
-        //Check database
         DatabaseManager manager = new DatabaseManager(mContext);
         SQLiteDatabase db = manager.getWritableDatabase();
         if(db == null) {
@@ -214,8 +208,6 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     public boolean removePrinter(Printer printer) {
-        
-        //Check database
         DatabaseManager manager = new DatabaseManager(mContext);
         SQLiteDatabase db = manager.getWritableDatabase();
         if(db == null) {
@@ -229,7 +221,6 @@ public class PrinterManager implements OnSNMPSearch {
     
     public int getDefaultPrinter() {
         int printer = -1;
-        //Check database
         DatabaseManager manager = new DatabaseManager(mContext);
         SQLiteDatabase db = manager.getWritableDatabase();
         if(db == null) {
@@ -256,10 +247,13 @@ public class PrinterManager implements OnSNMPSearch {
         return printer;
     }
     
-    public void printerSearchStart() {
-        mSNMPManager.startSNMPDeviceDiscovery();
+    public void startPrinterSearch() {
+        mSNMPManager.startSNMP();
     }
     
+    // ================================================================================
+    // Interface OnSNMPSearch
+    // ================================================================================
     @Override
     public void onSearchedPrinterAdd(String printerName, String ipAddress) {
         mOnPrinterAdd.onPrinterAdd(new Printer(printerName, ipAddress, false, null));
