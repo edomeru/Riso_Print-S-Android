@@ -24,11 +24,16 @@ public class SNMPManager {
     public void startSNMP() {
         new SNMPTask().execute();
     }
+
+    public void searchPrinter(String ipAddress) {
+        new manualSearchTask().execute(ipAddress);
+    }
     
     // ================================================================================
     // SNMP NDK
     // ================================================================================
     private native void startSNMPDeviceDiscovery();
+    private native void snmpManualSearch(String ipAddress);
     
     static {
         System.loadLibrary("snmp");
@@ -55,6 +60,19 @@ public class SNMPManager {
         protected Void doInBackground(Void... arg0) {
             try{
                 startSNMPDeviceDiscovery();
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }      
+    }
+    
+    class manualSearchTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... arg0) {
+            try{
+                snmpManualSearch(arg0[0]);
             }
             catch(Exception e) {
                 e.printStackTrace();

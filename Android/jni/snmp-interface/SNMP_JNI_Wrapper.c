@@ -29,6 +29,18 @@ JNIEnv* m_env;
 jobject m_jobj;
 
 JNIEXPORT void
+Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_snmpManualSearch( JNIEnv* env,
+                                                  jobject this, jstring ipaddress)
+{
+	m_env = env;
+	m_jobj = this;
+	const char *nativeString = (*env)->GetStringUTFChars(env, ipaddress, 0);
+
+	snmp_device_manualdiscovery(on_discovery_ended, on_printer_added, nativeString);
+	(*env)->ReleaseStringUTFChars(env, ipaddress, nativeString);
+}
+
+JNIEXPORT void
 Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_startSNMPDeviceDiscovery( JNIEnv* env,
                                                   jobject this)
 {

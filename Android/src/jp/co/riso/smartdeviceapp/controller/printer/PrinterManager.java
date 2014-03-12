@@ -251,6 +251,9 @@ public class PrinterManager implements OnSNMPSearch {
         mSNMPManager.startSNMP();
     }
     
+    public void searchPrinter(String ipAddress) {
+        mSNMPManager.searchPrinter(ipAddress);
+    }
     // ================================================================================
     // Interface OnSNMPSearch
     // ================================================================================

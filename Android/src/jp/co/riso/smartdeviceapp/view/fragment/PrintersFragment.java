@@ -35,6 +35,8 @@ import android.widget.TextView;
 public class PrintersFragment extends BaseFragment implements View.OnTouchListener {
     
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
+    public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
+
     public static final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
     
     public final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
@@ -113,6 +115,11 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     private void displayPrinterSearchFragment() {
         BaseFragment fragment = new PrinterSearchFragment();
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH);
+    }
+    
+    private void displayAddPrinterFragment() {
+        BaseFragment fragment = new AddPrinterFragment();
+        switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
     }
     
     public void switchToFragment(BaseFragment fragment, String tag) {
@@ -323,6 +330,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
                 displayPrinterSearchFragment();
                 break;
             case ID_MENU_ACTION_ADD_BUTTON:
+                displayAddPrinterFragment();
                 break;
             default:
                 break;
