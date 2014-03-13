@@ -1,0 +1,107 @@
+//
+//  PrintPreviewHelper.m
+//  SmartDeviceApp
+//
+//  Created by Amor Corazon Rio on 3/12/14.
+//  Copyright (c) 2014 aLink. All rights reserved.
+//
+
+#import "PrintPreviewHelper.h"
+struct {
+    float width;
+    float height;
+} paperDimensionsMM[] = {
+    {297.0, 420.0}, //A3
+    {210.0, 297.0}, //A4
+    {215.9, 279.4}, //Letter
+    {215.9, 355.6}, //Legal
+    {110.0, 220.0}  // Envelope
+};
+
+typedef enum {
+    PAGINATION_OFF,
+    PAGINATION_2IN1,
+    PAGINATION_4IN1,
+    PAGINATION_6IN1,
+    PAGINATION_9IN1,
+    PAGINATION_16IN1
+}T_PAGINATION;
+
+
+typedef enum {
+    PAPERSIZE_A3,
+    PAPERSIZE_A4,
+    PAPERSIZE_LETTER,
+    PAPERSIZE_LEGAL,
+    PAPERSIZE_ENVELOPE
+}T_PAPERSIZE;
+
+
+typedef enum  {
+    BIND_LEFT,
+    BIND_RIGHT,
+    BIND_TOP
+} T_BIND;
+
+typedef enum{
+    COLORMODE_AUTO,
+    COLORMODE_COLOR,
+    COLORMODE_MONO
+    
+}T_COLORMODE;
+
+BOOL isGrayScale(NSUInteger colorMode)
+{
+    if(colorMode == COLORMODE_MONO)
+    {
+        return YES;
+    }
+    return NO;
+}
+
+UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, BOOL duplex, BOOL bookletBinding)
+{
+    return UIPageViewControllerSpineLocationMin;
+}
+
+
+UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bind)
+{
+    //TODO
+    return UIPageViewControllerNavigationOrientationHorizontal;
+}
+
+BOOL isPaperLandscape(NSUInteger pagination)
+{
+    if(pagination == PAGINATION_2IN1 || pagination == PAGINATION_6IN1)
+    {
+        return YES;
+    }
+    return NO;
+}
+
+
+float getHeightToWidthRatio(NSUInteger paperSize)
+{
+    //TODO
+    float ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
+    return ratio;
+}
+
+NSUInteger getNumberOfPagesPerSheet(NSUInteger pagination)
+{
+    switch(pagination)
+    {
+        case PAGINATION_2IN1:
+            return 2;
+        case PAGINATION_4IN1:
+            return 4;
+        case PAGINATION_6IN1:
+            return 6;
+        case PAGINATION_9IN1 :
+            return 9;
+        case PAGINATION_16IN1:
+            return 16;
+    }
+    return 1;
+}

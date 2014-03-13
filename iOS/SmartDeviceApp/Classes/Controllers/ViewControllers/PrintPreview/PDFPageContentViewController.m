@@ -7,6 +7,7 @@
 //
 
 #import "PDFPageContentViewController.h"
+#import "PrintPreviewHelper.h"
 
 @interface PDFPageContentViewController ()
 
@@ -44,6 +45,18 @@
 -(CGPDFPageRef) getPage:(NSUInteger)pageNum
 {
     return [self.delegate getPDFPage:self.pageIndex withPageOffset:pageNum];
+}
+
+-(NSUInteger) getNumPages
+{
+    PreviewSetting *previewSetting = [self.delegate getPreviewSetting];
+    return getNumberOfPagesPerSheet(previewSetting.pagination);
+}
+
+-(BOOL) isGrayScale
+{
+    PreviewSetting *previewSetting = [self.delegate getPreviewSetting];
+    return isGrayScale(previewSetting.colorMode);
 }
 
 @end

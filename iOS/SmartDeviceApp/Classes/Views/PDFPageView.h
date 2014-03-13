@@ -11,6 +11,8 @@
 
 @protocol PDFPageViewDelegate
 - (CGPDFPageRef) getPage: (NSUInteger) pageNum;
+- (NSUInteger) getNumPages;
+- (BOOL) isGrayScale;
 @end;
 
 @interface PDFPageView : UIView

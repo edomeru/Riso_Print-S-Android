@@ -424,7 +424,23 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8sf-yM-sBz" userLabel="Content" customClass="DefaultView">
                                 <rect key="frame" x="0.0" y="50" width="320" height="498"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bN-pFV" userLabel="Preview">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="437"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    </view>
+                                    <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
+                                        <rect key="frame" x="18" y="456" width="284" height="23"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </slider>
+                                </subviews>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="q8a-bN-pFV" firstAttribute="top" secondItem="8sf-yM-sBz" secondAttribute="top" id="6FE-CD-zmR"/>
+                                    <constraint firstAttribute="bottom" secondItem="q8a-bN-pFV" secondAttribute="bottom" constant="61" id="Fxy-Nc-ons"/>
+                                    <constraint firstItem="q8a-bN-pFV" firstAttribute="leading" secondItem="8sf-yM-sBz" secondAttribute="leading" id="XGL-GK-jTJ"/>
+                                    <constraint firstAttribute="trailing" secondItem="q8a-bN-pFV" secondAttribute="trailing" id="eYN-pv-sco"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -443,7 +459,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="contentArea" destination="8sf-yM-sBz" id="iXg-DP-djS"/>
+                        <outlet property="previewArea" destination="q8a-bN-pFV" id="yV8-P0-wgE"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintPreview-Home" customClass="SlideSegue" id="c8V-UF-iWe"/>
                         <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintPreview-PrintSettings" customClass="SlideSegue" id="5pT-ga-236"/>
                     </connections>

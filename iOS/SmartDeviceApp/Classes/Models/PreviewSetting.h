@@ -11,4 +11,10 @@
 @interface PreviewSetting : NSObject
 @property NSUInteger colorMode;
 @property NSUInteger duplex;
+@property NSUInteger paperSize;
+@property NSUInteger pagination;
+@property NSUInteger bookletBinding;
+@property NSUInteger bind;
+@property NSUInteger staple;
+@property NSUInteger punch;
 @end
