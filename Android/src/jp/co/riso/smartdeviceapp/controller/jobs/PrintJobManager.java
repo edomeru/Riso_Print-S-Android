@@ -25,32 +25,32 @@ public class PrintJobManager {
     private static final String C_PJB_NAME = "pjb_name";
     private static final String C_PJB_DATE = "pjb_date";
     private static final String C_PJB_RESULT = "pjb_result";
-    private static final String WHERE_PJB_ID = C_PJB_ID + "=?";
-    private static final String WHERE_PRN_ID = C_PRN_ID + "=?";
+    private static final String C_WHERE_PJB_ID = C_PJB_ID + "=?";
+    private static final String C_WHERE_PRN_ID = C_PRN_ID + "=?";
     private static final String TABLE_PRINTER = "Printer";
     private static final String C_PRN_NAME = "prn_name";
-    
-    private static DatabaseManager manager;
-    private static PrintJobManager instance;
+    private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
+    private static DatabaseManager mManager;
+    private static PrintJobManager mInstance;
     
     private PrintJobManager(Context context) {
-        manager = new DatabaseManager(context);
+        mManager = new DatabaseManager(context);
     }
     
     public static PrintJobManager getInstance() {
-        return instance;
+        return mInstance;
     }
     
     public static void initializeInstance(Context context) {
-        if (instance == null) {
-            instance = new PrintJobManager(context);
+        if (mInstance == null) {
+            mInstance = new PrintJobManager(context);
         }
         
     }
     
-    public static List<PrintJob> getPrintJobs() {  
-        List<PrintJob> printJobs = new ArrayList<PrintJob>();      
-        Cursor c = manager.query(TABLE, null, null, null, null, null, C_PRN_ID);
+    public static List<PrintJob> getPrintJobs() {
+        List<PrintJob> printJobs = new ArrayList<PrintJob>();
+        Cursor c = mManager.query(TABLE, null, null, null, null, null, C_PRN_ID);
         
         while (c.moveToNext()) {
             int pjb_id = c.getInt(c.getColumnIndex(C_PJB_ID));
@@ -67,11 +67,11 @@ public class PrintJobManager {
     }
     
     public static boolean deleteWithPrinterId(int prn_id) {
-        return manager.delete(TABLE, WHERE_PRN_ID, new String[] { String.valueOf(prn_id) });
+        return mManager.delete(TABLE, C_WHERE_PRN_ID, new String[] { String.valueOf(prn_id) });
     }
     
     public static boolean deleteWithJobId(int pjb_id) {
-        return manager.delete(TABLE, WHERE_PJB_ID, new String[] { String.valueOf(pjb_id) });
+        return mManager.delete(TABLE, C_WHERE_PJB_ID, new String[] { String.valueOf(pjb_id) });
         
     }
     
@@ -80,18 +80,18 @@ public class PrintJobManager {
         return insertPrintJob(pj);
     }
     
-    public static boolean insertPrintJob(PrintJob printJob) {
+    private static boolean insertPrintJob(PrintJob printJob) {
         ContentValues pjvalues = new ContentValues();
         pjvalues.put(C_PRN_ID, printJob.getPrinterId());
         pjvalues.put(C_PJB_NAME, printJob.getName());
         pjvalues.put(C_PJB_RESULT, printJob.getResult().ordinal());
         pjvalues.put(C_PJB_DATE, formatSQLDateTime(printJob.getDate()));
         
-        return manager.insert(TABLE, null, pjvalues);
+        return mManager.insert(TABLE, null, pjvalues);
         
     }
     
-    public static String formatSQLDateTime(Date date) {
+    private static String formatSQLDateTime(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return dateFormat.format(date);
     }
@@ -109,15 +109,15 @@ public class PrintJobManager {
         return date;
     }
     
-    //for testing only - may use PrinterManager's method instead
-    public static List<Printer> getPrinters() {  
-        List<Printer> printers = new ArrayList<Printer>();      
-        Cursor c = manager.query(TABLE_PRINTER, null, null, null, null, null, C_PRN_ID);
-
+    public static List<Printer> getPrintersWithJobs() {
+        List<Printer> printers = new ArrayList<Printer>();
+        
+        Cursor c = mManager.query(TABLE_PRINTER, null, C_SEL_PRN_ID, null, null, null, C_PRN_ID);
+        
         while (c.moveToNext()) {
+            
             int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
             String prn_name = c.getString(c.getColumnIndex(C_PRN_NAME));
-            
             printers.add(new Printer(prn_id, prn_name));
         }
         c.close();

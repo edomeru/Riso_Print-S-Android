@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" >
+        android:paddingLeft="@dimen/printjob_status_padding_side"
+        android:paddingRight="@dimen/printjob_status_padding_side" >
 
         <ImageView
             android:id="@+id/printJobSuccess"
@@ -56,8 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp" >
+            android:paddingLeft="@dimen/printjob_date_frame_padding_side"
+            android:paddingRight="@dimen/printjob_date_frame_padding_side" >
 
             <TextView
                 android:id="@+id/printJobDate"
@@ -73,10 +73,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/printjob_delbtn_margin"
                 android:background="@color/theme_color_3"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
+                android:paddingLeft="@dimen/printjob_delbtn_padding_side"
+                android:paddingRight="@dimen/printjob_delbtn_padding_side"
                 android:text="@string/ids_lbl_delete_job"
                 android:textColor="@color/theme_light_1"
                 android:visibility="invisible" />

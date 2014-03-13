@@ -3,29 +3,38 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    
     <dimen name="actionbar_title_text_size">18dp</dimen>
-    
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
-    
+
     <item name="drawer_width_percentage" type="dimen">85%</item>
+
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>
-    
+
     <item name="preview_view_drop_shadow_percentage" type="dimen">2%</item>
+
     <dimen name="preview_view_margin">4dp</dimen>
     <dimen name="preview_controls_text_size">16dp</dimen>
     <dimen name="preview_controls_text_width">100dp</dimen>
     <dimen name="preview_controls_margin_side">32dp</dimen>
     <dimen name="preview_controls_margin_bottom">8dp</dimen>
     
-    
-    <!--  Temporary values -->
-    
+    <dimen name="printjob_column_margin_side">20dp</dimen>
+    <dimen name="printjob_margin_side">2dp</dimen>
+    <dimen name="printjob_margin_top">4dp</dimen>
+    <dimen name="printjob_status_padding_side">10dp</dimen>
+    <dimen name="printjob_date_frame_padding_side">5dp</dimen>
+    <dimen name="printjob_delbtn_padding_side">20dp</dimen>
+    <dimen name="printjob_delbtn_margin">5dp</dimen>
+    <dimen name="printjob_expand_padding_side">10dp</dimen>
+    <dimen name="printjob_delgroupbtn_margin_left">1dp</dimen>
+    <dimen name="printjob_delgroupbtn_padding_side">10dp</dimen>
+       
+    <!-- Temporary values -->
+
     <dimen name="temp_splash_logo_width">240dp</dimen>
     <dimen name="temp_splash_logo_height">80dp</dimen>
-    
     <dimen name="temp_sidebar_spacing">4dp</dimen>
 
 </resources>

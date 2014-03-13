@@ -120,4 +120,8 @@
     <string name="ids_lbl_delete_jobs">"DELETE ALL"</string>
     <string name="ids_lbl_delete_job">"DELETE"</string>
     <string name="ids_lbl_print_job_status">"Print Job Status"</string>
+    <string name="ids_err_msg_delete_failed">Error deleting Print Job</string>
+    <string name="ids_lbl_delete_jobs_title">"DELETE"</string>
+    <string name="ids_lbl_delete_jobs_msg">"DELETE"</string>
+    
 </resources>

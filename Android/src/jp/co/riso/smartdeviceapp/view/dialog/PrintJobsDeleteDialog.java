@@ -3,12 +3,11 @@ package jp.co.riso.smartdeviceapp.view.dialog;
 import jp.co.riso.smartdeviceapp.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -17,8 +16,8 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
     
     private static final String TAG = "PrintJobsDeleteDialog";
     private static final String KEY_PRINTERID = "delete_jobs";
-    private int printerId;
-    private PrintJobsDeleteDialogListener listener;
+    private int mPrinterId;
+    private PrintJobsDeleteDialogListener mListener;
         
     public PrintJobsDeleteDialog() {
         super();
@@ -37,7 +36,7 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (getArguments() != null) {
-            printerId = getArguments().getInt(KEY_PRINTERID);
+            mPrinterId = getArguments().getInt(KEY_PRINTERID);
         }
         
         Context context = getActivity();
@@ -50,8 +49,8 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
         TextView title = (TextView) deleteView.findViewById(R.id.deleteJobsTitle);
         TextView message = (TextView) deleteView.findViewById(R.id.deleteJobsMessage);
         
-        title.setText("Delete Printer Jobs");
-        message.setText("Are you sure you want to delete these print jobs?");
+        title.setText(R.string.ids_lbl_delete_jobs_title);
+        message.setText(R.string.ids_lbl_delete_jobs_msg);
         
         builder.setView(deleteView);
         builder.setPositiveButton(R.string.ids_lbl_ok, this);
@@ -64,17 +63,14 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
     
     public void onClick(DialogInterface dialog, int which) {
         
-        if (listener != null) {
+        if (mListener != null) {
             
             switch (which) {
                 case Dialog.BUTTON_POSITIVE:
-                    listener.onDelete(printerId);
+                    mListener.onDelete(mPrinterId);
                     break;
                 case Dialog.BUTTON_NEGATIVE:
                     //dismiss
-                    break;
-                default:
-                    Log.d(TAG, "action not supported");
                     break;
             }
         }
@@ -83,7 +79,7 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
     }
     
     public void setListener(PrintJobsDeleteDialogListener l){
-        this.listener = l;
+        this.mListener = l;
     }
     
     public interface PrintJobsDeleteDialogListener {

@@ -36,4 +36,16 @@ public class DatabaseManagerTest extends ActivityInstrumentationTestCase2<MainAc
         cursor.close();
         db.close();
     }
+    
+    public void testInsert(){
+    	//mDBManager.insert(table, nullColumnHack, values)
+    }
+        
+    public void testQuery(){
+    	//mDBManager.query(table, columns, selection, selectionArgs, groupBy, having, orderBy)
+    }
+    
+    public void testDelete(){
+    	//mDBManager.delete(table, whereClause, whereArgs)
+    }
 }

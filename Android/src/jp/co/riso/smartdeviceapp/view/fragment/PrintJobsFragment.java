@@ -29,12 +29,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements PrintDeleteListener, OnClickListener {
-        
-    private PrintJobsColumnView printJobColumnView;
-    private List<PrintJob> printJobs = new ArrayList<PrintJob>();
-    private List<Printer> printers = new ArrayList<Printer>();
-    private LinearLayout rootView;
-    private PrintJobsGroupView printGroupToDelete;
+    
+    private PrintJobsColumnView mPrintJobColumnView;
+    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
+    private List<Printer> mPrinters = new ArrayList<Printer>();
+    private LinearLayout mRootView;
+    private PrintJobsGroupView mPrintGroupToDelete;
     
     public PrintJobsFragment() {
         super();
@@ -47,15 +47,17 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        PrintJobManager.initializeInstance(getActivity());
+        if (PrintJobManager.getInstance() == null)
+            PrintJobManager.initializeInstance(getActivity());
+        
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
-        rootView = (LinearLayout) view.findViewById(R.id.rootView);
+        mRootView = (LinearLayout) view.findViewById(R.id.rootView);
         view.setOnClickListener(this);
-        rootView.setOnClickListener(this);
+        mRootView.setOnClickListener(this);
         
     }
     
@@ -75,16 +77,16 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         initializePids();
         initializePJs();
         // ///////////////
-        
-        if (printJobs.isEmpty()) {
+                
+        if (mPrintJobs.isEmpty()) {
             
-            printJobs = PrintJobManager.getPrintJobs();
+            mPrintJobs = PrintJobManager.getPrintJobs();
             
-            printers = PrintJobManager.getPrinters();
-            
-            printJobColumnView = new PrintJobsColumnView(getActivity(), printJobs, printers, isTablet() ? isTabletLand() ? 3 : 2 : 1, this);
-            rootView.removeAllViews();
-            rootView.addView(printJobColumnView);
+            mPrinters = PrintJobManager.getPrintersWithJobs();
+
+            mPrintJobColumnView = new PrintJobsColumnView(getActivity(), mPrintJobs, mPrinters, isTablet() ? isTabletLand() ? 3 : 2 : 1, this);
+            mRootView.removeAllViews();
+            mRootView.addView(mPrintJobColumnView);
             
         }
         
@@ -97,7 +99,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         DatabaseManager manager = new DatabaseManager(getActivity());
         ContentValues pvalues = new ContentValues();
         
-        if (PrintJobManager.getPrinters().isEmpty()) {
+        if (PrintJobManager.getPrintersWithJobs().isEmpty()) {
             
             pvalues.put("prn_name", "myprintername");
             pvalues.put("prn_port_setting", 0);
@@ -164,13 +166,13 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     
     @Override
     public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView) {
-        this.printGroupToDelete = printJobsGroupView;
+        this.mPrintGroupToDelete = printJobsGroupView;
     }
     
     @Override
     public void onClick(View v) {
-        if (printGroupToDelete != null)
-            printGroupToDelete.clearDeleteButton();
+        if (mPrintGroupToDelete != null)
+            mPrintGroupToDelete.clearDeleteButton();
         
         super.onClick(v);
         
@@ -178,8 +180,8 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     
     @Override
     public void clearButton() {
-        if (printGroupToDelete != null)
-            printGroupToDelete.clearDeleteButton();
+        if (mPrintGroupToDelete != null)
+            mPrintGroupToDelete.clearDeleteButton();
     }
     
 }

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class PrintJobsDeleteErrorDialog extends DialogFragment implements OnClickListener {
     
-       public PrintJobsDeleteErrorDialog() {
+    public PrintJobsDeleteErrorDialog() {
         super();
     }
     
@@ -27,7 +27,6 @@ public class PrintJobsDeleteErrorDialog extends DialogFragment implements OnClic
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         
         Context context = getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -39,12 +38,12 @@ public class PrintJobsDeleteErrorDialog extends DialogFragment implements OnClic
         TextView title = (TextView) deleteView.findViewById(R.id.deleteJobsTitle);
         TextView message = (TextView) deleteView.findViewById(R.id.deleteJobsMessage);
         
-        title.setText("Delete Printer Jobs");
-        message.setText("Deletion failed.");
+        title.setText(R.string.ids_lbl_delete_jobs_title);
+        message.setText(R.string.ids_err_msg_delete_failed);
         
         builder.setView(deleteView);
         builder.setPositiveButton(R.string.ids_lbl_ok, this);
-
+        
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         

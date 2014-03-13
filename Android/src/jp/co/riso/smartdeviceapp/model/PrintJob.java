@@ -8,12 +8,9 @@ public class PrintJob {
     private int mPrinterId;
     private String mName;
     private Date mDate;
-    // private String mDate;
-    // private long mDate;
     private JobResult mResult;
     
     public PrintJob(int mId, int mPrinterId, String mName, Date mDate, JobResult mResult) {
-        // public PrintJob(int mId, int mPrinterId, String mName, String mDate, int mResult) {
         super();
         this.mId = mId;
         this.mPrinterId = mPrinterId;
@@ -23,7 +20,6 @@ public class PrintJob {
     }
     
     public PrintJob(int mPrinterId, String mName, Date mDate, JobResult mResult) {
-        // public PrintJob(int mPrinterId, String mName, String mDate, int mResult) {
         super();
         this.mPrinterId = mPrinterId;
         this.mName = mName;
@@ -56,12 +52,10 @@ public class PrintJob {
     }
     
     public Date getDate() {
-        // public String getDate() {
         return mDate;
     }
     
     public void setDate(Date mDate) {
-        // public void setDate(String mDate) {
         this.mDate = mDate;
     }
     
