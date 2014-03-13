@@ -100,7 +100,7 @@
     [self.pdfPageViewController.view setClipsToBounds:true];
     
     //set view controllers
-    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:0];
+    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:6];
     NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
     
     if(self.previewSetting.duplex)
