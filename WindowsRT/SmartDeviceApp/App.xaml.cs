@@ -18,14 +18,19 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Threading;
 using SmartDeviceApp.Views;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp
 {
+
+    
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
+
+        static public  DatabaseController db;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -34,6 +39,9 @@ namespace SmartDeviceApp
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            db = new DatabaseController();
+            PrinterController pc = new PrinterController();
+            pc.getPrintersFromDB();
         }
 
         /// <summary>
@@ -43,6 +51,8 @@ namespace SmartDeviceApp
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+
+            
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -79,7 +89,8 @@ namespace SmartDeviceApp
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(HomePage), e.Arguments);
+                //rootFrame.Navigate(typeof(HomePage), e.Arguments); 
+                rootFrame.Navigate(typeof(PrintersPage), e.Arguments); // testing only PrintersModule
             }
             // Ensure the current window is active
             Window.Current.Activate();
