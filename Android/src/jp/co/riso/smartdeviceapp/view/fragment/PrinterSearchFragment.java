@@ -23,7 +23,6 @@ import android.app.FragmentTransaction;
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
