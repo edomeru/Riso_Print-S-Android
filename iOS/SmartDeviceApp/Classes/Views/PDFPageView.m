@@ -21,9 +21,6 @@
     return self;
 }
 
-
-
-
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
@@ -35,97 +32,97 @@
     }
     
     // Drawing code
-    BOOL isGrayScale = [self.delegate isGrayScale]; //TODO colormode
-    if(isGrayScale == YES)
-    {
-        [self drawInGrayScale:rect];
-    }
-    else
-    {
-        CGContextRef ctx = UIGraphicsGetCurrentContext();
-        [self drawPDFInCtx:ctx inRect:rect];
-    }
+    [self drawPage:rect];
 }
 
--(void) drawInGrayScale: (CGRect) rect
-{
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
-    CGContextRef ctx = CGBitmapContextCreate(nil, rect.size.width, rect.size.height, 8,0 ,colorSpace,(CGBitmapInfo)kCGImageAlphaNone);
 
-    [self drawPDFInCtx:ctx inRect:rect];
+-(void) drawPDFPage: (CGContextRef) graphicsCtx  inRect: (CGRect) rect forPageNumber:(NSUInteger) pageNumber inGrayScale: (BOOL) isGrayScale;
+{
+    CGPDFPageRef pdfPage = [self.delegate getPage:pageNumber];
     
+    //get the PDF box image
+    CGRect mediaRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
+  
+    //create a bitmap context
+    CGColorSpaceRef colorSpace = [self getColorSpace:isGrayScale];
+    CGContextRef ctx = CGBitmapContextCreate(nil, mediaRect.size.width, mediaRect.size.height, 8,0,colorSpace,[self getBitmapInfo:isGrayScale]);
+    
+    //Fill with white
+    CGContextSetFillColorWithColor(ctx, [[UIColor whiteColor]CGColor]);
+	CGContextFillRect(ctx, mediaRect);
+    
+    //Flip the coordinate axis
+    CGContextGetCTM(ctx);
+	CGContextScaleCTM(ctx, 1, -1);
+    CGContextTranslateCTM(ctx, 0, -mediaRect.size.height);
+    
+    //draw page in context
+    CGContextDrawPDFPage(ctx, pdfPage);
+    
+    //transform to image
     CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
     
+    //release the color space and bitmap context
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(ctx);
-    CGContextRef graphicsCtx  = UIGraphicsGetCurrentContext();
+    
+    //draw the image in rect
     CGContextDrawImage(graphicsCtx, rect, imageRef);
+    
+    //release the image
+    CGImageRelease(imageRef);
 }
 
-
--(void) drawPDFInCtx: (CGContextRef) ctx inRect: (CGRect) rect
+-(void) drawPage: (CGRect) rect
 {
-    //get number of pages to draw in sheet
     NSUInteger numPagesPerSheet = [self.delegate getNumPages];
+    
+    BOOL isGrayScale = [self.delegate isGrayScale];
     
     //compute the width and height to be occupied by 1 page in rect
     CGFloat pageWidth = [self getPageWidth: rect forNumOfPages:numPagesPerSheet];
     CGFloat pageHeight = [self getPageHeight: rect forNumOfPages:numPagesPerSheet];
     
-    //get first page
-    CGPDFPageRef pdfPage = [self.delegate getPage:0];
-    
-    if(pdfPage == nil){
-        NSLog(@"pdf is nil");
-    }
-    
-	// get the rectangle of the pdf page
-    CGRect mediaRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
-    
-    //get the scale of the original width and height to the width and height to be occuppied by page
-    CGFloat widthScaleFactor = pageWidth/mediaRect.size.width;
-    CGFloat heightScaleFactor = pageHeight/mediaRect.size.height;
-    
-    // PDF might be transparent, assume white paper
+    //get the graphics context
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(ctx, [[UIColor whiteColor]CGColor]);
 	CGContextFillRect(ctx, rect);
     
-    // Flip coordinates
-	CGContextGetCTM(ctx);
-	CGContextScaleCTM(ctx, 1, -1);
-	CGContextTranslateCTM(ctx, 0, -rect.size.height);
-    CGContextSaveGState(ctx);
-    
-    CGContextScaleCTM(ctx, widthScaleFactor, heightScaleFactor);
-    CGContextSaveGState(ctx);
-    
+    //draw the pages
     CGFloat xOffset = 0;
-    CGFloat yOffset = mediaRect.size.height * ((rect.size.height/pageHeight) - 1);
-    
+    CGFloat yOffset = 0;
     CGFloat totalWidth = 0;
     for(int i = 0; i < numPagesPerSheet; i++)
     {
-        CGContextTranslateCTM(ctx, 0 + xOffset , 0 + yOffset);
-        CGContextDrawPDFPage(ctx, pdfPage);
-        CGContextRestoreGState(ctx);
-        CGContextSaveGState(ctx);
-        totalWidth += pageWidth;
-        xOffset += mediaRect.size.width;
+    
+        CGRect pageRect = CGRectMake(xOffset, yOffset, pageWidth, pageHeight);
+        [self drawPDFPage:ctx inRect:pageRect forPageNumber:i inGrayScale:isGrayScale];
+        xOffset += pageWidth;
         if(totalWidth == rect.size.width)
         {
             xOffset = 0;
             totalWidth = 0;
-            yOffset -= mediaRect.size.height;
-        }
-        if((i+1) < numPagesPerSheet)
-        {
-            pdfPage = [self.delegate getPage:(i+1)];
-            if(pdfPage == nil){
-                NSLog(@"no more pages");
-                break;
-            }
+            yOffset += pageHeight;
         }
     }
+}
+
+-(CGColorSpaceRef) getColorSpace: (BOOL) isGrayScale
+{
+    if(isGrayScale == YES)
+    {
+        return CGColorSpaceCreateDeviceGray();
+    }
+    return CGColorSpaceCreateDeviceRGB();
+}
+
+-(CGBitmapInfo) getBitmapInfo: (BOOL) isGrayScale
+{
+    if(isGrayScale == YES)
+    {
+        return (CGBitmapInfo)kCGImageAlphaNone;
+    }
+    return (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
 }
 
 -(CGFloat) getPageWidth:(CGRect) origRect forNumOfPages: (NSUInteger) numPagesPerSheet
