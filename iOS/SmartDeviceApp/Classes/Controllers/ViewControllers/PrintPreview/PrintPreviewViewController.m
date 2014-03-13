@@ -22,7 +22,6 @@
 @property (strong, nonatomic) UIPageViewController *pdfPageViewController;
 @property (strong, nonatomic) PreviewSetting *previewSetting;
 @property (weak, nonatomic) IBOutlet UIView *previewArea;
-
 @end
 
 @implementation PrintPreviewViewController
@@ -53,8 +52,12 @@
         [self loadPrintPreview];
     }
     
-
-	
+}
+//detect rotation
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    //resize page view controller
+    [self setPageSize];
 }
 
 - (void)didReceiveMemoryWarning
@@ -62,13 +65,14 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 - (void) loadPrintPreview
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     __pdfDocument = manager.pdfDocument;
     __numPDFPages = CGPDFDocumentGetNumberOfPages(__pdfDocument);
-    [self loadPrintPreviewSettings];
     
+    [self loadPrintPreviewSettings];
     [self setUpPageViewController];
 }
 
@@ -82,15 +86,15 @@
     //TODO get from print settings
     self.previewSetting.duplex = NO;
     self.previewSetting.pagination = 0;
-    self.previewSetting.paperSize = 1;
+    self.previewSetting.paperSize = 0;
     self.previewSetting.colorMode = 0;
+    self.previewSetting.bind = 0;
 }
 
 -(void) setUpPageViewController
 {
     [self reloadPageViewController];
     
-    //TODO get initial page size
     [self setPageSize];
     
     [self.pdfPageViewController.view setClipsToBounds:true];
@@ -101,7 +105,8 @@
     
     if(self.previewSetting.duplex)
     {
-        [self.pdfPageViewController setDoubleSided:YES];
+        //[self.pdfPageViewController setDoubleSided:YES];
+        [initialViewControllers addObject:[self pageContentViewControllerAtIndex:1]];
     }
     
     [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
@@ -111,7 +116,7 @@
 -(PDFPageContentViewController *) pageContentViewControllerAtIndex:(NSUInteger) index
 {
     PDFPageContentViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
-    NSLog(@"get page view controller");
+
     controller.delegate = self;
     controller.pageIndex = index;
     return controller;
@@ -138,6 +143,7 @@
                                 navigationOrientation: navigationOrientation
                                 options:options];
     
+    
     self.pdfPageViewController.dataSource = self;
     self.pdfPageViewController.delegate =self;
     
@@ -150,6 +156,7 @@
 
 -(void) setPageSize
 {
+    NSLog(@"set page size %f %f", self.previewArea.frame.size.height,self.previewArea.frame.size.width);
     float heightToWidthRatio = getHeightToWidthRatio(self.previewSetting.paperSize);
     BOOL isLandscape = isPaperLandscape(self.previewSetting.pagination);
 
@@ -167,7 +174,6 @@
         temp = width / heightToWidthRatio;
         verticalMargin += (height -temp)/2;
         height = temp;
-
     }
     else
     {
@@ -184,10 +190,9 @@
             verticalMargin += (height - temp)/2;
             height = temp;
         }
-        
     }
     
-    NSLog(@"height = %f. width = %f", height, width);    
+    NSLog(@"Pageview controller height = %f. width = %f", height, width);    
     [self.pdfPageViewController.view setFrame: CGRectMake(horizontalMargin, verticalMargin, width, height)];
 }
 
@@ -197,6 +202,59 @@
 {
     NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
     
+    UIViewController * controller = nil;
+    if(self.pdfPageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    {
+        controller = [self goToNextPage:index];
+    }
+    else
+    {
+        controller = [self goToPreviousPage:index];
+    }
+    return controller;
+}
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+{
+    
+    NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
+    UIViewController * controller = nil;
+    if(self.pdfPageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    {
+        controller = [self goToPreviousPage:index];
+    }
+    else
+    {
+        controller = [self goToNextPage:index];
+    }
+    return controller;
+}
+
+-(UIViewController *) goToNextPage:(NSUInteger) index
+{
+    if (index == NSNotFound)
+    {
+        return nil;
+    }
+    
+    index++;
+    NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
+    NSUInteger numViewPages = __numPDFPages/numPagesPerSheet;
+    
+    if((__numPDFPages % numPagesPerSheet) > 0)
+    {
+        numViewPages++;
+    }
+    
+    if ((index + 1) > numViewPages)
+    {
+        return nil;
+    }
+    return [self pageContentViewControllerAtIndex:index];
+}
+
+-(UIViewController *) goToPreviousPage:(NSUInteger) index
+{
     if ((index == 0) || (index == NSNotFound)) {
         return nil;
     }
@@ -205,29 +263,11 @@
     return [self pageContentViewControllerAtIndex:index];
 }
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
-{
-    
-    NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
-    
-    if (index == NSNotFound) {
-        return nil;
-    }
-
-    index++;
-    NSUInteger numViewPages = __numPDFPages; //TODO take into account pagination
-    if ((index + 1) > numViewPages)
-    {
-        return nil;
-    }
-    return [self pageContentViewControllerAtIndex:index];
-}
-
 #pragma mark PageViewController Delegate
 - (UIPageViewControllerSpineLocation) pageViewController:(UIPageViewController *)pageViewController spineLocationForInterfaceOrientation:(UIInterfaceOrientation)orientation
 {
 
-    return UIPageViewControllerSpineLocationMin;
+    return getSpineLocation(self.previewSetting.bind, self.previewSetting.duplex, self.previewSetting.bookletBinding);
     
 }
 
@@ -235,7 +275,7 @@
 -(CGPDFPageRef) getPDFPage:(NSUInteger)pageIndex withPageOffset:(NSUInteger)pageOffset
 {
     NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
-    NSUInteger actualPage = (pageIndex * numPagesPerSheet) + 1; //TODO add multiply by number of pages
+    NSUInteger actualPage = (pageIndex * numPagesPerSheet) + 1;
     NSLog(@" pageIndex %d", pageIndex);
     if(actualPage + pageOffset > __numPDFPages)
     {

@@ -22,7 +22,7 @@
     
     {
         //TODO REMOVE! For testing only
-        NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample2.pdf" ofType:nil]];
+        NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample.pdf" ofType:nil]];
         NSLog(@"testfile url: %@", [fileURL path]);
         [self setUpPreview:fileURL];
     }
