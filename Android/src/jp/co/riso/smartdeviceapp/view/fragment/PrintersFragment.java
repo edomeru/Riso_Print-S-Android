@@ -13,6 +13,7 @@ import java.util.List;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
@@ -21,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,7 +52,12 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     private PrinterManager mPrinterManager = null;
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_printers;
+        if(isTablet()) {
+            return R.layout.fragment_printers_tablet;
+        }
+        else {
+            return R.layout.fragment_printers;
+        }
     }
     
     @Override
@@ -61,8 +68,13 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mListView = (ListView) view.findViewById(R.id.printer_list);
-        mListView.setOnTouchListener(this);
+        if(isTablet()) {
+            return;
+        }
+        else {
+            mListView = (ListView) view.findViewById(R.id.printer_list);
+            mListView.setOnTouchListener(this);
+        }
     }
     
     @Override
@@ -104,9 +116,14 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         super.onActivityCreated(savedInstanceState);
         
         setPrinterArrayList();
-        mPrinterAdapter = new PrinterArrayAdapter(getActivity(),
-                R.layout.printer_list_item, mPrinter);
-        mListView.setAdapter(mPrinterAdapter);
+        if(isTablet()) {
+            return;
+        }
+        else {
+            mPrinterAdapter = new PrinterArrayAdapter(getActivity(),
+                    R.layout.printer_list_item, mPrinter);
+            mListView.setAdapter(mPrinterAdapter);
+        }
     }
     
     // ================================================================================
@@ -124,11 +141,15 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     
     public void switchToFragment(BaseFragment fragment, String tag) {
         FragmentManager fm = getFragmentManager();
-        
+        FragmentTransaction ft = fm.beginTransaction();
         if (isTablet()) {
-            fragment.show(fm, tag);
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+                ft.replace(R.id.rightLayout, fragment, tag);
+                ft.commit();
+                activity.openDrawer(Gravity.RIGHT);
+            }
         } else {
-            FragmentTransaction ft = fm.beginTransaction();
             //TODO Add Animation: Must Slide
             ft.addToBackStack(null);
             ft.replace(R.id.mainLayout, fragment, tag);

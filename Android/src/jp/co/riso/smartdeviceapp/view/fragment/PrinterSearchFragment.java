@@ -16,12 +16,14 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
-        mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+        mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
         mListView.setLockScrollWhileRefreshing(false);
     }
     
@@ -81,6 +83,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
         actionMenuButton.setImageResource(R.drawable.back);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setOnClickListener(this);
         
         leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, 
@@ -240,11 +243,18 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onClick(View v) {
         //Back Button
         if(v.getId() == ID_MENU_ACTION_BUTTON) {
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();                
-            if (fm.getBackStackEntryCount() > 0) {
-                fm.popBackStack();
-                ft.commit();
+            if (isTablet()) {
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();              
+                    activity.closeDrawers();        
+                }
+            } else {
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                if (fm.getBackStackEntryCount() > 0) {
+                    fm.popBackStack();
+                    ft.commit();
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
@@ -43,13 +44,13 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        view.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+        view.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
         mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
     }
 
     @Override
-    public void initializeCustomActionBar(View view, Bundle savedInstanceState) {      
+    public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
         
@@ -107,13 +108,15 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
         actionMenuButton.setImageResource(R.drawable.back);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setOnClickListener(this);
 
         //Save Button
         saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
         saveMenuButton.setImageResource(R.drawable.save);
         saveMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        saveMenuButton.setOnClickListener(this);        
+        saveMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        saveMenuButton.setOnClickListener(this);
         
         leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         rightActionLayout.addView(saveMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
@@ -153,12 +156,19 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
-    private void popBackStack() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();                
-        if (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStack();
-            ft.commit();
+    private void closeScreen() {
+        if (isTablet()) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();              
+                activity.closeDrawers();        
+            }
+        } else {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+                ft.commit();
+            }
         }
     }
     // ================================================================================
@@ -167,7 +177,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public void onClick(View v) {
         if(v.getId() == ID_MENU_ACTION_BUTTON) {
-            popBackStack();
+            closeScreen();
         }
         else if (v.getId() == ID_MENU_SAVE_BUTTON) {
             if(!mIsSearching) {
@@ -188,7 +198,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         else {
             if(mPrinterManager.savePrinterToDB(printer) != -1) {
                 dialogCb(printer);
-                popBackStack();
+                closeScreen();
             }
         }
     }
