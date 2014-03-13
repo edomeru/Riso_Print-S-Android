@@ -4,6 +4,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
+    <dimen name="separator_size">1dp</dimen>
+    
     <dimen name="actionbar_title_text_size">18dp</dimen>
     
     <dimen name="dialog_width">320dp</dimen>

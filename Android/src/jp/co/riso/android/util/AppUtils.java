@@ -14,6 +14,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Locale;
 
+import jp.co.riso.smartdeviceapp.R;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -21,9 +25,13 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.graphics.Point;
 import android.util.AndroidRuntimeException;
 import android.view.Display;
+import android.widget.TextView;
 
 public final class AppUtils {
     
@@ -171,5 +179,18 @@ public final class AppUtils {
         }
         
         return buf.toString();
+    }
+    
+    public static void setTextViewTextColorState(TextView textView, Resources res, int resId) {
+        XmlResourceParser parser = res.getXml(R.color.selector_home_text);
+        ColorStateList colors;
+        try {
+            colors = ColorStateList.createFromXml(res, parser);
+            textView.setTextColor(colors);
+        } catch (XmlPullParserException e) {
+            //Should not happen
+        } catch (IOException e) {
+            //Should not happen
+        }
     }
 }

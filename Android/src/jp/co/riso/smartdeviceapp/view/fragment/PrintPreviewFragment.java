@@ -221,7 +221,6 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                         MainActivity activity = (MainActivity) getActivity();
                         activity.openDrawer(Gravity.RIGHT);
                     }
-                    
                 }
                 break;
         }
