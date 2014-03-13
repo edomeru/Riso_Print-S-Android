@@ -49,7 +49,7 @@ namespace SNMP
         }
 
         private int datacounter = 0;
-        internal async void sendData(byte[] data, string ipAddress, byte port, byte p2, int p3)
+        internal async void sendData(byte[] data, string ipAddress, byte port, byte timeout, int p3)
         {
             datacounter = 0;
 
@@ -67,6 +67,8 @@ namespace SNMP
             string p = port.ToString();
             //await udpSocket.BindServiceNameAsync("", connectionProfile.NetworkAdapter);
 
+
+            startTimer(timeout);
             if (true)
             {
                 //EndpointPair endpoint = new EndpointPair(null, "", host, p);
@@ -86,6 +88,28 @@ namespace SNMP
                 await writer.StoreAsync();
             }
         }
+
+
+        private bool isTimerRunning;
+        private async void startTimer(byte timeout)
+        {
+            this.isTimerRunning = true;
+
+            //while (this.isTimerRunning)
+            {
+                await Task.Delay(timeout * 1000);
+
+
+
+                stopTimer();
+            }
+        }
+
+        private void stopTimer()
+        {
+            this.isTimerRunning = false;
+        }
+
 
         public byte[] getSNMPPacket(string request, string community, string mibstring)
         {
