@@ -13,7 +13,7 @@
 
 @class PrinterManager;
 
-@interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate>
+@interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate, UIGestureRecognizerDelegate>
 
 /** Reference to the PrinterManager object of the Printers screen. */
 @property (strong, nonatomic) PrinterManager* printerManager;

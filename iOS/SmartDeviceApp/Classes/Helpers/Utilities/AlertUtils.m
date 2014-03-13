@@ -22,7 +22,7 @@
     
     switch (result)
     {
-        case NO_ERROR:
+        case INFO_PRINTER_ADDED:
             [alertView setMessage:@"The new printer was added successfully."];
             break;
             
@@ -34,6 +34,10 @@
             [alertView setMessage:@"The IP address is invalid. The printer could not be found."];
             break;
         
+        case ERR_MAX_PRINTERS:
+            [alertView setMessage:@"The number of printers saved is already at maximum."];
+            break;
+            
         case ERR_PRINTER_NOT_FOUND:
             [alertView setMessage:@"The printer was not found on the network."];
             break;

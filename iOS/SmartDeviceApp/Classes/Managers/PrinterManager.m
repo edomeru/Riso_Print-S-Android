@@ -182,21 +182,23 @@
     // get the printer details
     PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[notif object];
     
-    // check if this is a new printer or already saved
+    // check if this is a new printer
     __weak PrinterManager* weakSelf = self;
-    if ([self canAddPrinter:printerInfoCapabilities.ip])
+    if ([self isIPAlreadyRegistered:printerInfoCapabilities.ip])
     {
+        // this is an old printer
         // update the UI (UI thread)
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.delegate updateForNewPrinter:printerInfoCapabilities];
+            [weakSelf.delegate updateForOldPrinter:printerInfoCapabilities.ip
+                                          withName:printerInfoCapabilities.name];
         });
     }
     else
     {
+        // this is a new printer
         // update the UI (UI thread)
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.delegate updateForOldPrinter:printerInfoCapabilities.ip
-                                         withExtra:@[printerInfoCapabilities.name]];
+            [weakSelf.delegate updateForNewPrinter:printerInfoCapabilities];
         });
     }
 }
@@ -236,22 +238,24 @@
     (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];
 }
 
-- (BOOL)canAddPrinter:(NSString*)printerIP
+- (BOOL)isAtMaximumPrinters
 {
-    // check if maximum number of printers have been reached
     NSInteger maxPrinters = [PListUtils getMaxPrinters];
     if ([self.listSavedPrinters count] == maxPrinters)
+        return YES;
+    else
         return NO;
-    
-    // check if there is no existing/duplicate printer on the list
+}
+
+- (BOOL)isIPAlreadyRegistered:(NSString*)printerIP
+{
     for (Printer* onePrinter in self.listSavedPrinters)
     {
         if ([printerIP isEqualToString:onePrinter.ip_address])
-            return NO;
+            return YES;
     }
     
-    // no issues, printer can be added
-    return YES;
+    return NO;
 }
 
 @end

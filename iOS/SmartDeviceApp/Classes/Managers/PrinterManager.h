@@ -92,14 +92,22 @@
 #pragma mark - Printer Utilities
 
 /**
- Checks if a new Printer can be added to the existing list
- of saved Printer objects.
+ Checks if the list of saved printers is already at the
+ maximum number of allowed printers.
+ 
+ @return YES if already at maximum, NO otherwise.
+ */
+- (BOOL)isAtMaximumPrinters;
+
+/**
+ Checks if there is a printer on the list of saved printers
+ with the same printer IP.
  
  @param printerIP
-        IP Address of the new Printer object
+        the IP address of the printer to be added
  
- @return YES if can add, NO otherwise
+ @return YES if the specified printer IP is a duplicate, NO otherwise.
  */
-- (BOOL)canAddPrinter:(NSString*)printerIP;
+- (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
 
 @end

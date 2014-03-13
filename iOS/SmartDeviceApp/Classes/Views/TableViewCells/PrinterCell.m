@@ -33,12 +33,13 @@
 {
     if(isDefaultPrinterCell == YES)
     {
-        //TODO
-        [self setBackgroundColor:[UIColor purpleColor]];
+        [self setBackgroundColor:[UIColor blackColor]];
+        [self.printerName setTextColor:[UIColor whiteColor]];
     }
     else
     {
         [self setBackgroundColor:self.normalBackgroundColor];
+        [self.printerName setTextColor:[UIColor blackColor]];
     }
 }
 

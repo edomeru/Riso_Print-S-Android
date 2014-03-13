@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define ALERT_ADD_PRINTER   @"Add Printer Info"
+
 @interface AlertUtils : NSObject
 
 /**

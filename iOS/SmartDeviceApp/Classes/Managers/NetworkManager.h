@@ -15,6 +15,6 @@
  
  @return YES if connected, NO otherwise.
  */
-+ (BOOL)checkNetworkConnection;
++ (BOOL)isConnectedToNetwork;
 
 @end

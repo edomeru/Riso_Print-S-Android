@@ -90,6 +90,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         //  3. receive the "SNMP End Callback" after 30 seconds
         //  4. post notification that the search is over
         // note: timers need to be in main queue
+        printerCount = 0;
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSTimer scheduledTimerWithTimeInterval:5
                                              target:self
@@ -140,11 +141,11 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
     {
         // "fake" SNMP
         // invent printer info and capabilities
-        printerDetails.name = [NSString stringWithFormat:@"NewPrinter%d", printerCount];
         if (isManualSearch)
             printerDetails.ip = searchedIP;
         else
             printerDetails.ip = [NSString stringWithFormat:@"%d%d%d", printerCount, printerCount, printerCount];
+        printerDetails.name = [NSString stringWithFormat:@"RISO Printer %@", printerDetails.ip];
         printerDetails.port = [NSNumber numberWithUnsignedInt:printerCount*100];
         printerDetails.enBind = NO;
         printerDetails.enBookletBind = NO;

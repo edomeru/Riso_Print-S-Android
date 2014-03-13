@@ -17,15 +17,7 @@
 #define CELL_ROW_USERNAME   1
 #define CELL_ROW_PASSWORD   2
 
-#define ALERT_ADD_PRINTER @"Add Printer Info"
-
 @interface AddPrinterViewController ()
-
-/**
- A list of the IP addresses of the new printers added.
- This is initially nil and will remain nil if no printer/s is/are added.
- */
-@property (strong, nonatomic) NSMutableArray* listAddedPrinters;
 
 /**
  Stores the number of saved printers.
@@ -50,6 +42,21 @@
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
+
+/**
+ Removes leading zeroes and trims extra spaces from the
+ input IP string.
+ @param inputIP
+        the UITextField contents
+ @return the formatted IP string
+ */
+- (NSString*)formatIPString:(NSString*)inputIP;
+
+/**
+ Checks if the input IP is a valid IP address.
+ @return YES if valid, NO otherwise.
+ */
+- (BOOL)isIPValid:(NSString*)inputIP;
 
 @end
 
@@ -108,7 +115,6 @@
 {
     // setup properties
     self.printerManager.delegate = self;
-    self.listAddedPrinters = [NSMutableArray array];
     self.hasAddedPrinters = NO;
     
     // setup view
@@ -139,52 +145,36 @@
 
 - (IBAction)onSave:(UIButton *)sender
 {
-    // check if trying to add the same printer
-    BOOL isAlreadyAdded = NO;
-    if ([self.listAddedPrinters count] != 0)
+    if (![NetworkManager isConnectedToNetwork])
     {
-        for (NSString* printerIP in self.listAddedPrinters)
-        {
-            if ([printerIP isEqualToString:self.textIP.text])
-            {
-                isAlreadyAdded = YES;
-                break;
-            }
-        }
+        [AlertUtils displayResult:ERR_NO_NETWORK withTitle:ALERT_ADD_PRINTER withDetails:nil];
     }
-    
-    if (isAlreadyAdded)
+    else if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_MAX_PRINTERS withTitle:ALERT_ADD_PRINTER withDetails:nil];
     }
     else
     {
-        // check if the device is connected to the network
-        BOOL isConnectedToNetwork = [NetworkManager checkNetworkConnection];
-        if (!isConnectedToNetwork)
+        // check if the input IP is valid
+        NSString* formattedIP = [self formatIPString:self.textIP.text];
+        if (![self isIPValid:formattedIP])
         {
-            [AlertUtils displayResult:ERR_NO_NETWORK withTitle:ALERT_ADD_PRINTER withDetails:nil];
+            [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        }
+        else if ([self.printerManager isIPAlreadyRegistered:formattedIP])
+        {
+            [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
         }
         else
         {
-            // check if the input IP is valid
-            NSString* formattedIP = self.textIP.text;
-            BOOL isInputValid = [self validateAndFormatIP:&formattedIP];
-            if (!isInputValid)
-            {
-                [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
-            }
-            else
-            {
-                NSLog(@"initiated search");
-                self.willEndWithoutAdd = YES; //catch for timeout
-                [self.printerManager searchForPrinter:formattedIP];
-                NSLog(@"returned to screen controller");
-                // callbacks for the search will be handled in delegate methods
-                
-                // if UI needs to do other things, do it here
-                //TODO: show the searching indicator
-            }
+            NSLog(@"initiated search");
+            self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
+            [self.printerManager searchForPrinter:formattedIP];
+            NSLog(@"returned to screen controller");
+            // callbacks for the search will be handled in delegate methods
+            
+            // if UI needs to do other things, do it here
+            //TODO: show the searching indicator
         }
     }
     
@@ -204,13 +194,12 @@
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails
 {
     NSLog(@"update UI for NEW printer with IP=%@", printerDetails.ip);
-    self.willEndWithoutAdd = NO; //search did not timed-out
+    self.willEndWithoutAdd = NO; //search did not timeout
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertUtils displayResult:NO_ERROR withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:INFO_PRINTER_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
         self.hasAddedPrinters = YES;
-        [self.listAddedPrinters addObject:printerDetails.ip];
     }
     else
     {
@@ -220,12 +209,10 @@
     //TODO: hide the searching indicator
 }
 
-- (void)updateForOldPrinter:(NSString*)printerIP withExtra:(NSArray*)otherDetails
+- (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
 {
     NSLog(@"update UI for OLD printer with IP=%@", printerIP);
-    self.willEndWithoutAdd = NO; //search did not timed-out
-    
-    [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:@[printerIP]];
+    self.willEndWithoutAdd = NO; //search did not timeout
     
     //TODO: hide the searching indicator
 }
@@ -250,9 +237,11 @@
     {
         case 0:
             cell = self.cellIPAddress;
+            //TODO: add separator
             break;
         case 1:
             cell = self.cellUsername;
+            //TODO: add separator
             break;
         case 2:
             cell = self.cellPassword;
@@ -299,10 +288,17 @@
 
 #pragma mark - Input IP Validation
 
-- (BOOL)validateAndFormatIP:(NSString**)ip
+- (NSString*)formatIPString:(NSString*)inputIP
 {
-    //TODO: check if IP address is valid
-    //TODO: format the IP address (save in the same parameter)
+    //TODO: leading zeroes are disregarded
+    //TODO: spaces are automatically trimmed
+    
+    return inputIP;
+}
+
+- (BOOL)isIPValid:(NSString*)inputIP;
+{
+    //TODO:
     /**
      IP Address Format: xxx.xxx.xxx.xxx
      
@@ -312,8 +308,6 @@
      
      Format:
      - 4 dot-separated numbers
-     - leading zeroes are disregarded
-     - spaces are automatically trimmed
      - cannot input over 15 characters
      */
     

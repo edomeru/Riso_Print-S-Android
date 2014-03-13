@@ -136,7 +136,6 @@
                 [self.printerManager deleteDefaultPrinter];
                 self.defaultPrinterIndexPath = nil;
             }
-            
             [self.printerManager deletePrinter:printerToDelete];
 
             //set the view of the cell to stop polling for printer status

@@ -10,7 +10,7 @@
 
 @implementation NetworkManager
 
-+ (BOOL)checkNetworkConnection
++ (BOOL)isConnectedToNetwork
 {
     //TODO: use the Reachability library to check network availability
     return YES;
