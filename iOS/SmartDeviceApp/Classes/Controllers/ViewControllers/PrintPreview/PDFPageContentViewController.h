@@ -16,7 +16,6 @@
 
 @interface PDFPageContentViewController : UIViewController <PDFPageViewDelegate>
 @property (strong, nonatomic) IBOutlet PDFPageView *pageView;
-
 @property(weak, nonatomic) id <PDFPageViewContentDelegate> delegate;
 @property NSUInteger pageIndex;
 @end

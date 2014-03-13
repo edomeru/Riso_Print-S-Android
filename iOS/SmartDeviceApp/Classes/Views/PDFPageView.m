@@ -91,16 +91,14 @@
     //draw the pages
     CGFloat xOffset = 0;
     CGFloat yOffset = 0;
-    CGFloat totalWidth = 0;
     for(int i = 0; i < numPagesPerSheet; i++)
     {
         CGRect pageRect = CGRectMake(xOffset, yOffset, pageWidth, pageHeight);
         [self drawPDFPage:ctx inRect:pageRect forPageNumber:i inGrayScale:isGrayScale];
         xOffset += pageWidth;
-        if(totalWidth == rect.size.width)
+        if(xOffset == rect.size.width)
         {
             xOffset = 0;
-            totalWidth = 0;
             yOffset += pageHeight;
         }
     }

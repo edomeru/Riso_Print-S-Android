@@ -41,7 +41,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark Page View Content Delegate
+#pragma mark PDF Page View Delegate methods
 -(CGPDFPageRef) getPage:(NSUInteger)pageNum
 {
     return [self.delegate getPDFPage:self.pageIndex withPageOffset:pageNum];
