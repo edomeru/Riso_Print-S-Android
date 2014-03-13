@@ -267,19 +267,23 @@ namespace SNMP
                         else
                         {
                             //[self endRetrieveCapabilitiesSuccess];
+                            endRetrieveCapabilitiesSuccess();
                         }
                     }
                     else {
                         //[self endRetrieveCapabilitiesSuccess];
+                        endRetrieveCapabilitiesSuccess();
                     }
                 }
                 else {
                     //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Unexpected Result" code:SNMPRequestUnexpectedResponseError userInfo:nil]];
+                    endRetrieveCapabilitiesFailed();
                 }
             }
             else
             {
                 //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Invalid Data" code:SNMPRequestInvalidDataError userInfo:nil]];
+                endRetrieveCapabilitiesFailed();
             }
         }
 
