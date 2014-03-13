@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Windows.Networking;
@@ -7,6 +8,10 @@ namespace SNMP
 {
     public class SNMPDevice
     {
+
+        public Action<string, bool> snmpControllerCallBackGetStatus { get; set; } //PrintersModule
+
+
         //NSString *ipAddress;
         private string ipAddress;
         //NSString *sysId;
@@ -110,6 +115,8 @@ namespace SNMP
         //- (void) beginRetrieveCapabilities
         public void beginRetrieveCapabilities()
         {
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice Begin Capability Retrieval for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
             //[tempCapabilities removeAllObjects];
             tempCapabilities.Clear();
             //[tempCapabilyLevels removeAllObjects];
@@ -147,6 +154,10 @@ namespace SNMP
         //- (void) endRetrieveCapabilitiesSuccess
         void endRetrieveCapabilitiesSuccess()
         {
+            //callback to SNMPController
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
+            snmpControllerCallBackGetStatus(ipAddress, true);
             //[udpSocket pauseReceiving];
     
             //[capabilitiesList removeAllObjects];
@@ -179,6 +190,10 @@ namespace SNMP
         //- (void) endRetrieveCapabilitiesFailed:(NSError *)error
         void endRetrieveCapabilitiesFailed()
         {
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice failed for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
+            //callback to SNMPController
+            snmpControllerCallBackGetStatus(ipAddress, false);
             /*
             [udpSocket pauseReceiving];
     
@@ -213,6 +228,8 @@ namespace SNMP
 
         private void receiveData(HostName sender, byte[] responsedata)
         {
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
+            System.Diagnostics.Debug.WriteLine("");
             //SNMPMessage *response = [[SNMPMessage alloc] initWithResponse:data];
             SNMPMessage response = new SNMPMessage(responsedata);
     
@@ -267,19 +284,23 @@ namespace SNMP
                         else
                         {
                             //[self endRetrieveCapabilitiesSuccess];
+                            this.endRetrieveCapabilitiesSuccess();
                         }
                     }
                     else {
                         //[self endRetrieveCapabilitiesSuccess];
+                        this.endRetrieveCapabilitiesSuccess();
                     }
                 }
                 else {
                     //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Unexpected Result" code:SNMPRequestUnexpectedResponseError userInfo:nil]];
+                    this.endRetrieveCapabilitiesFailed();
                 }
             }
             else
             {
                 //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Invalid Data" code:SNMPRequestInvalidDataError userInfo:nil]];
+                this.endRetrieveCapabilitiesFailed();
             }
         }
 

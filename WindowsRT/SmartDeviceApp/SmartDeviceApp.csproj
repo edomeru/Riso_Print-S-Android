@@ -106,6 +106,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\NavigationHelper.cs" />
+    <Compile Include="Common\ObservableDictionary.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\Utilities\DialogService.cs" />
     <Compile Include="Common\Utilities\DisplayOrientationsHelper.cs" />
     <Compile Include="Common\Utilities\IDialogService.cs" />
@@ -131,9 +135,14 @@
     <Compile Include="SQLite.cs" />
     <Compile Include="SQLiteAsync.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\PrintersViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\AdaptableGridView.cs" />
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrintersPage.xaml.cs">
+      <DependentUpon>PrintersPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +157,7 @@
   <ItemGroup>
     <Content Include="Assets\en-US\Help.html" />
     <Content Include="Assets\ja-JP\Help.html" />
+    <Content Include="Common\ReadMe.txt" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
     <Content Include="Resources\Images\SplashScreen.scale-100.png" />
@@ -159,6 +169,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Views\HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
