@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -30,7 +29,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         
         String sqlString = AppUtils.getFileContentsFromAssets(mContext, DATABASE_SQL);
         String[] separated = sqlString.split(";");
-        Log.d(TAG, "oncreate" + separated.length);
+
         for (int i = 0; i < separated.length; i++) {
             Log.d(TAG, separated[i]);
             db.execSQL(separated[i]);
@@ -49,7 +48,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.d(TAG, "insert " + table + values.getAsInteger("printer_id"));
+
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {

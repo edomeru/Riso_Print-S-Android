@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.controller.PrintJobManager;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -29,11 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements PrintDeleteListener, OnClickListener {
-    
-    private static final String TAG = "PrintJobsFragment";
-    private static final String KEY_PRINTERS = "printers";
-    private static final String KEY_PRINTJOBS = "printjobs";
-    
+        
     private PrintJobsColumnView printJobColumnView;
     private List<PrintJob> printJobs = new ArrayList<PrintJob>();
     private List<Printer> printers = new ArrayList<Printer>();
@@ -78,7 +74,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         // for testing only
         initializePids();
         initializePJs();
-        /////////////////
+        // ///////////////
         
         if (printJobs.isEmpty()) {
             
@@ -89,7 +85,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             printJobColumnView = new PrintJobsColumnView(getActivity(), printJobs, printers, isTablet() ? isTabletLand() ? 3 : 2 : 1, this);
             rootView.removeAllViews();
             rootView.addView(printJobColumnView);
-
+            
         }
         
     }
@@ -124,6 +120,14 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             pvalues.put("prn_port_setting", 0);
             manager.insert("Printer", "true", pvalues);
             
+            pvalues.put("prn_name", "new printer");
+            pvalues.put("prn_port_setting", 0);
+            manager.insert("Printer", "true", pvalues);
+            
+            pvalues.put("prn_name", "7th printer");
+            pvalues.put("prn_port_setting", 0);
+            manager.insert("Printer", "true", pvalues);
+            
         }
     }
     
@@ -137,21 +141,24 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             PrintJobManager.createPrintJob(1, "this is a long filename.pdf", new Date(), JobResult.ERROR);
             PrintJobManager.createPrintJob(2, "ALLCAPS.pdf", new Date(), JobResult.SUCCESSFUL);
             PrintJobManager.createPrintJob(2, "qwerty.pdf", new Date(), JobResult.ERROR);
-            
             PrintJobManager.createPrintJob(2, "!@#$%^^&*.pdf", new Date(), JobResult.SUCCESSFUL);
             PrintJobManager.createPrintJob(3, "123456789 0987654321.pdf", new Date(), JobResult.ERROR);
             PrintJobManager.createPrintJob(3, "this is a long file name without a new line.pdf", new Date(), JobResult.SUCCESSFUL);
             PrintJobManager.createPrintJob(4, "this is a long file name \n with a newline.pdf", new Date(), JobResult.ERROR);
             PrintJobManager.createPrintJob(5, "riso file.pdf", new Date(), JobResult.SUCCESSFUL);
+            PrintJobManager.createPrintJob(6, "filename_with_underscore.pdf", new Date(), JobResult.SUCCESSFUL);
+            PrintJobManager.createPrintJob(6, "android.pdf", new Date(), JobResult.ERROR);
+            PrintJobManager.createPrintJob(6, "filename?!.pdf", new Date(), JobResult.SUCCESSFUL);
+            PrintJobManager.createPrintJob(6, "a loooooooooong filename.pdf", new Date(), JobResult.ERROR);
+            PrintJobManager.createPrintJob(7, "ANOTHER ALLCAPS.pdf", new Date(), JobResult.SUCCESSFUL);
+            PrintJobManager.createPrintJob(7, "asdfgqwerty.pdf", new Date(), JobResult.ERROR);
+            
         }
     }
     
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        
-        // outState.putParcelableArrayList(key, value)(KEY_PRINTERS, printerIds);
-        // outState.putParcelableArrayList(KEY_PRINTJOBS, printJobs);
         
     }
     

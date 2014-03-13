@@ -1,4 +1,4 @@
-package jp.co.riso.smartdeviceapp.controller;
+package jp.co.riso.smartdeviceapp.controller.jobs;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +27,9 @@ public class PrintJobManager {
     private static final String C_PJB_RESULT = "pjb_result";
     private static final String WHERE_PJB_ID = C_PJB_ID + "=?";
     private static final String WHERE_PRN_ID = C_PRN_ID + "=?";
+    private static final String TABLE_PRINTER = "Printer";
+    private static final String C_PRN_NAME = "prn_name";
+    
     private static DatabaseManager manager;
     private static PrintJobManager instance;
     
@@ -109,12 +112,11 @@ public class PrintJobManager {
     //for testing only - may use PrinterManager's method instead
     public static List<Printer> getPrinters() {  
         List<Printer> printers = new ArrayList<Printer>();      
-        Cursor c = manager.query("Printer", null, null, null, null, null, null);
-        Log.d("CESTEST", "getprinters" + c.getCount());
+        Cursor c = manager.query(TABLE_PRINTER, null, null, null, null, null, C_PRN_ID);
 
         while (c.moveToNext()) {
             int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
-            String prn_name = c.getString(c.getColumnIndex("prn_name"));
+            String prn_name = c.getString(c.getColumnIndex(C_PRN_NAME));
             
             printers.add(new Printer(prn_id, prn_name));
         }
