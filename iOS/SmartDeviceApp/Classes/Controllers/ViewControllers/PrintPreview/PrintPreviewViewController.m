@@ -100,7 +100,6 @@
 {
     [self loadPageViewController];
     [self setPageSize];
-    [self.pdfPageViewController.view setClipsToBounds:true];
     
     //set view controllers
     UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:__currentIndex];
@@ -109,7 +108,7 @@
     if(self.previewSetting.duplex)
     {
         [self.pdfPageViewController setDoubleSided:YES];
-        [initialViewControllers addObject:[self pageContentViewControllerAtIndex:1]];
+        [initialViewControllers addObject:[self pageContentViewControllerAtIndex:__currentIndex + 1]];
     }
     
     [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
@@ -144,6 +143,8 @@
                                 initWithTransitionStyle: UIPageViewControllerTransitionStylePageCurl
                                 navigationOrientation: navigationOrientation
                                 options:options];
+    
+    [self.pdfPageViewController.view setClipsToBounds:true];
     
     //set self as delegate and datasource
     self.pdfPageViewController.dataSource = self;
