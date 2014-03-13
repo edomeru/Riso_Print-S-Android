@@ -22,6 +22,8 @@
 @property (strong, nonatomic) UIPageViewController *pdfPageViewController;
 @property (strong, nonatomic) PreviewSetting *previewSetting;
 @property (weak, nonatomic) IBOutlet UIView *previewArea;
+@property (weak, nonatomic) IBOutlet UISlider *pageNavigationSlider;
+@property (weak, nonatomic) IBOutlet UILabel *screenTitle;
 @end
 
 @implementation PrintPreviewViewController
@@ -29,7 +31,7 @@
     CGPDFDocumentRef __pdfDocument;
     NSUInteger __numPDFPages;
     NSUInteger __currentIndex;
-    
+    NSUInteger __numViewPages;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -75,8 +77,15 @@
     __pdfDocument = manager.pdfDocument;
     __numPDFPages = CGPDFDocumentGetNumberOfPages(__pdfDocument);
     __currentIndex = 0;
+    NSString *screenTitle = [[[manager pdfURL] pathComponents] lastObject];
+    
+    [self.screenTitle setText:screenTitle];
+
     [self loadPrintPreviewSettings];
+    
+    [self computeNumViewPages];
     [self setUpPageViewController];
+    [self setUpPageNavigationSlider];
 }
 
 //retrieval of initial settings for preview
@@ -95,13 +104,13 @@
     self.previewSetting.bind = 0;
 }
 
-
+//initial set up of the page view controller
 -(void) setUpPageViewController
 {
     [self loadPageViewController];
     [self setPageSize];
     
-    //set view controllers
+    //set initial view controllers to show
     UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:__currentIndex];
     NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
     
@@ -114,6 +123,11 @@
     [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
 }
 
+-(void) setUpPageNavigationSlider
+{
+    [self.pageNavigationSlider setMaximumValue: __numViewPages];
+}
+
 //provider of view controllers per uipageview controller page
 -(PDFPageContentViewController *) pageContentViewControllerAtIndex:(NSUInteger) index
 {
@@ -122,6 +136,17 @@
     controller.delegate = self;
     controller.pageIndex = index;
     return controller;
+}
+
+//compute the total number of pages in the view controller taking into account pagination
+-(void) computeNumViewPages
+{    NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
+    __numViewPages = __numPDFPages/numPagesPerSheet;
+    
+    if((__numPDFPages % numPagesPerSheet) > 0)
+    {
+        __numViewPages++;
+    }
 }
 
 //creates the page view controller and adds to view
@@ -248,15 +273,9 @@
     }
     
     index++;
-    NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
-    NSUInteger numViewPages = __numPDFPages/numPagesPerSheet;
     
-    if((__numPDFPages % numPagesPerSheet) > 0)
-    {
-        numViewPages++;
-    }
     
-    if ((index + 1) > numViewPages)
+    if ((index + 1) > __numViewPages)
     {
         return nil;
     }
@@ -316,6 +335,14 @@
 
 - (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
 {
+}
+
+- (IBAction)sliderChanged:(id)sender {
+    UISlider *slider  = (UISlider *) sender;
+    NSInteger val = slider.value;
+    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:val];
+    NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
+    [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
 @end
