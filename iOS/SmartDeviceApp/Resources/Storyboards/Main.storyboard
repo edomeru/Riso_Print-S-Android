@@ -436,10 +436,12 @@
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
                                                 <rect key="frame" x="18" y="11" width="284" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <gestureRecognizers/>
                                                 <color key="minimumTrackTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="thumbTintColor" red="0.32156862745098036" green="0.027450980392156862" blue="0.71372549019607845" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
                                                     <action selector="sliderChanged:" destination="3J8-E3-ZCb" eventType="valueChanged" id="Tym-I0-NuR"/>
+                                                    <outletCollection property="gestureRecognizers" destination="HkB-bW-YX3" appends="YES" id="R2I-1U-0vu"/>
                                                 </connections>
                                             </slider>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PAGE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZT1-SS-2ii">
@@ -498,6 +500,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WGX-Mc-pLJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="HkB-bW-YX3">
+                    <connections>
+                        <action selector="tapSlider:" destination="3J8-E3-ZCb" id="42o-Ac-Dpi"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="128" y="803"/>
         </scene>

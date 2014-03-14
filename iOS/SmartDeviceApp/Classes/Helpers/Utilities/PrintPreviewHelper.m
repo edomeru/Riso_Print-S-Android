@@ -18,37 +18,7 @@ struct {
     {110.0, 220.0}  // Envelope
 };
 
-typedef enum {
-    PAGINATION_OFF,
-    PAGINATION_2IN1,
-    PAGINATION_4IN1,
-    PAGINATION_6IN1,
-    PAGINATION_9IN1,
-    PAGINATION_16IN1
-}T_PAGINATION;
 
-
-typedef enum {
-    PAPERSIZE_A3,
-    PAPERSIZE_A4,
-    PAPERSIZE_LETTER,
-    PAPERSIZE_LEGAL,
-    PAPERSIZE_ENVELOPE
-}T_PAPERSIZE;
-
-
-typedef enum  {
-    BIND_LEFT,
-    BIND_RIGHT,
-    BIND_TOP
-} T_BIND;
-
-typedef enum{
-    COLORMODE_AUTO,
-    COLORMODE_COLOR,
-    COLORMODE_MONO
-    
-}T_COLORMODE;
 
 BOOL isGrayScale(NSUInteger colorMode)
 {

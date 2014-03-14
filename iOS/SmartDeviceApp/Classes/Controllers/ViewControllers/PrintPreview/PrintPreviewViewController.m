@@ -167,7 +167,7 @@
     //check if paper should be in landscape orientation
     BOOL isLandscape = isPaperLandscape(self.previewSetting.pagination);
     
-    if(self.previewSetting.bookletBinding > 0)
+    if(self.previewSetting.bookletBinding > 0 && self.previewSetting.bind != BIND_TOP)
     {
         isLandscape = YES;
     }
@@ -377,6 +377,18 @@
     __currentIndex = pageIndex;
     [self setViewToPage: pageIndex];
     [self updatePageNumberLabel];
+}
+- (IBAction)tapSlider:(id)sender
+{
+    
+    UIGestureRecognizer *tap =  (UIGestureRecognizer *)sender;
+    CGPoint point = [tap locationInView:self.pageNavigationSlider];
+    CGFloat sliderPortion = point.x/self.pageNavigationSlider.bounds.size.width;
+    __currentIndex = __numViewPages * sliderPortion;
+    //update page in view, page number label. slider position
+    [self setViewToPage:__currentIndex];
+    [self updatePageNumberLabel];
+    [self.pageNavigationSlider setValue:__currentIndex];
 }
 
 @end
