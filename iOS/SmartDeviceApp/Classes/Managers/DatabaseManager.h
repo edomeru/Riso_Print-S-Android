@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#define E_PRINTER           @"Printer"
+#define E_PRINTSETTING      @"PrintSetting"
+#define E_PRINTJOB          @"PrintJob"
+#define E_DEFAULTPRINTER    @"DefaultPrinter"
+
 @interface DatabaseManager : NSObject
 
 /**
@@ -19,7 +24,9 @@
 /**
  Retrieves objects from the database.
  @param entityName
-        name as specified in the Core Data model
+        one of the following entities:
+        E_PRINTER, E_PRINTSETTING,
+        E_PRINTJOB, E_DEFAULTPRINTER
  @return NSArray* of the matching results, nil otherwise.
  */
 + (NSArray*)getObjects:(NSString*)entityName;
@@ -31,7 +38,9 @@
  must be made after this to make the inserted object 
  permanent.
  @param entityName
-        name as specified in the Core Data model
+        one of the following: 
+        E_PRINTER, E_PRINTSETTING,
+        E_PRINTJOB, E_DEFAULTPRINTER
  @return the inserted object if successful, nil otherwise.
  */
 + (NSManagedObject*)addObject:(NSString*)entityName;

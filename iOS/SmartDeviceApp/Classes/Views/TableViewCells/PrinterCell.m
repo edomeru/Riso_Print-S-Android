@@ -33,11 +33,13 @@
 {
     if(isDefaultPrinterCell == YES)
     {
+        //TODO: this only works for iOS7
         [self setBackgroundColor:[UIColor blackColor]];
         [self.printerName setTextColor:[UIColor whiteColor]];
     }
     else
     {
+        //TODO: this only works for iOS7
         [self setBackgroundColor:self.normalBackgroundColor];
         [self.printerName setTextColor:[UIColor blackColor]];
     }
