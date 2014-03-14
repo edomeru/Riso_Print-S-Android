@@ -61,7 +61,7 @@ BOOL isGrayScale(NSUInteger colorMode)
 
 UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, BOOL duplex, BOOL bookletBinding)
 {
-    if(duplex == YES)
+    if(duplex == YES || bookletBinding == YES)
     {
         return UIPageViewControllerSpineLocationMid;
     }

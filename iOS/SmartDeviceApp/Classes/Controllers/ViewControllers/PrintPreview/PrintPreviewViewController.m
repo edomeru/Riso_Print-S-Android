@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIView *previewArea;
 @property (weak, nonatomic) IBOutlet UISlider *pageNavigationSlider;
 @property (weak, nonatomic) IBOutlet UILabel *screenTitle;
+@property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay;
 @end
 
 @implementation PrintPreviewViewController
@@ -82,11 +83,12 @@
     [self.screenTitle setText:screenTitle];
 
     [self loadPrintPreviewSettings];
-    
     [self computeNumViewPages];
     [self setUpPageViewController];
     [self setUpPageNavigationSlider];
+    [self updatePageNumberLabel];
 }
+
 
 //retrieval of initial settings for preview
 -(void) loadPrintPreviewSettings
@@ -102,40 +104,7 @@
     self.previewSetting.paperSize = 0;
     self.previewSetting.colorMode = 0;
     self.previewSetting.bind = 0;
-}
-
-//initial set up of the page view controller
--(void) setUpPageViewController
-{
-    [self loadPageViewController];
-    [self setPageSize];
-    
-    //set initial view controllers to show
-    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:__currentIndex];
-    NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
-    
-    if(self.previewSetting.duplex)
-    {
-        [self.pdfPageViewController setDoubleSided:YES];
-        [initialViewControllers addObject:[self pageContentViewControllerAtIndex:__currentIndex + 1]];
-    }
-    
-    [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
-}
-
--(void) setUpPageNavigationSlider
-{
-    [self.pageNavigationSlider setMaximumValue: __numViewPages];
-}
-
-//provider of view controllers per uipageview controller page
--(PDFPageContentViewController *) pageContentViewControllerAtIndex:(NSUInteger) index
-{
-    PDFPageContentViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
-
-    controller.delegate = self;
-    controller.pageIndex = index;
-    return controller;
+    self.previewSetting.bookletBinding = 0;
 }
 
 //compute the total number of pages in the view controller taking into account pagination
@@ -147,6 +116,14 @@
     {
         __numViewPages++;
     }
+}
+
+//initial set up of the page view controller
+-(void) setUpPageViewController
+{
+    [self loadPageViewController];
+    [self setPageSize];
+    [self setViewToPage:__currentIndex];
 }
 
 //creates the page view controller and adds to view
@@ -163,11 +140,12 @@
     UIPageViewControllerSpineLocation spineLocation = getSpineLocation(self.previewSetting.bind, self.previewSetting.duplex,self.previewSetting.bookletBinding);
     UIPageViewControllerNavigationOrientation navigationOrientation = getNavigationOrientation(self.previewSetting.bind);
     NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithInteger:spineLocation] forKey: UIPageViewControllerOptionSpineLocationKey];
-
+    
+    //create page view controller
     self.pdfPageViewController = [[UIPageViewController alloc]
-                                initWithTransitionStyle: UIPageViewControllerTransitionStylePageCurl
-                                navigationOrientation: navigationOrientation
-                                options:options];
+                                  initWithTransitionStyle: UIPageViewControllerTransitionStylePageCurl
+                                  navigationOrientation: navigationOrientation
+                                  options:options];
     
     [self.pdfPageViewController.view setClipsToBounds:true];
     
@@ -188,7 +166,12 @@
     float heightToWidthRatio = getHeightToWidthRatio(self.previewSetting.paperSize);
     //check if paper should be in landscape orientation
     BOOL isLandscape = isPaperLandscape(self.previewSetting.pagination);
-
+    
+    if(self.previewSetting.bookletBinding > 0)
+    {
+        isLandscape = YES;
+    }
+    
     //set margins
     CGFloat horizontalMargin = 10;
     CGFloat verticalMargin = horizontalMargin;
@@ -229,6 +212,45 @@
     [self.pdfPageViewController.view setFrame: CGRectMake(horizontalMargin, verticalMargin, width, height)];
 }
 
+//set the page view controller to a specific page
+-(void) setViewToPage: (NSUInteger) pageIndex
+{
+
+    //set initial view controllers to show
+    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:pageIndex];
+    NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
+    
+    if(self.previewSetting.duplex == YES || self.previewSetting.bookletBinding > 0)
+    {
+        [self.pdfPageViewController setDoubleSided:YES];
+        [initialViewControllers addObject:[self pageContentViewControllerAtIndex:pageIndex + 1]];
+    }
+    
+    [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+}
+
+//set up the slider
+-(void) setUpPageNavigationSlider
+{
+    [self.pageNavigationSlider setValue:__currentIndex];
+    [self.pageNavigationSlider setMaximumValue: __numViewPages];
+}
+
+//update the page number label
+-(void) updatePageNumberLabel
+{
+    self.pageNumberDisplay.text = [NSString stringWithFormat:@"PAGE %d/%d",(__currentIndex + 1), __numViewPages];
+}
+
+//provider of view controllers per uipageview controller page
+-(PDFPageContentViewController *) pageContentViewControllerAtIndex:(NSUInteger) index
+{
+    PDFPageContentViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+    
+    controller.delegate = self;
+    controller.pageIndex = index;
+    return controller;
+}
 
 #pragma mark UIPageViewController Datasource methods
 
@@ -299,6 +321,17 @@
     return getSpineLocation(self.previewSetting.bind, self.previewSetting.duplex, self.previewSetting.bookletBinding);
     
 }
+//detect page turns
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
+{
+    if(completed == YES)
+    {
+        PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
+        __currentIndex = viewController.pageIndex;
+        [self updatePageNumberLabel];
+        [self.pageNavigationSlider setValue:__currentIndex];
+    }
+}
 
 //delegate of the controller of the page content
 #pragma mark PDF Page View Content Controller Delegate methods
@@ -337,12 +370,13 @@
 {
 }
 
-- (IBAction)sliderChanged:(id)sender {
+- (IBAction)sliderChanged:(id)sender
+{
     UISlider *slider  = (UISlider *) sender;
-    NSInteger val = slider.value;
-    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:val];
-    NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
-    [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    NSInteger pageIndex = slider.value;
+    __currentIndex = pageIndex;
+    [self setViewToPage: pageIndex];
+    [self updatePageNumberLabel];
 }
 
 @end
