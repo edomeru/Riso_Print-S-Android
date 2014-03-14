@@ -200,7 +200,41 @@ public class PrintSettings {
     }
     
     public enum Pagination {
-        OFF, TWO_IN_ONE, FOUR_IN_ONE, SIX_IN_ONE, NINE_IN_ONE, SIXTEEN_IN_ONE,
+        OFF (1, 1, 1, false),
+        TWO_IN_ONE (2, 2, 1, true),
+        FOUR_IN_ONE (4, 2, 2, false),
+        SIX_IN_ONE (6, 3, 2, true),
+        NINE_IN_ONE (9, 3, 3, false),
+        SIXTEEN_IN_ONE (16, 4, 4, false);
+        
+        private final int mPerPage;
+        private final int mRows;
+        private final int mCols;
+        private final boolean mFlipLandscape;
+        
+        Pagination(int perPage, int x, int y, boolean flipLandscape) {
+            mPerPage = perPage;
+            mCols = x;
+            mRows = y;
+            mFlipLandscape = flipLandscape;
+        }
+        
+        public int getPerPage() {
+            return mPerPage;
+        }
+        
+        public int getRows() {
+            return mRows;
+        }
+        
+        public int getCols() {
+            return mCols;
+        }
+        
+        public boolean isFlipLandscape() {
+            return mFlipLandscape;
+        }
+        
     }
     
     public enum ImageQuality {

@@ -3,36 +3,102 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:splitMotionEvents="false" >
+    android:splitMotionEvents="false"
+    android:background="@color/theme_dark_1"
+    android:layout_marginRight="1dp" >
 
-    <include layout="@layout/actionbar_main" />
-
-    <LinearLayout
-        android:id="@+id/rootView"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/theme_color_2"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/home_title_padding"
+        android:text="@string/ids_app_name"
+        android:textColor="@color/theme_light_1"
+        android:textSize="@dimen/actionbar_title_text_size" />
 
-        <Button
-            android:id="@+id/tempPrintersButton"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+       <LinearLayout
+            android:id="@+id/rootView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/temp_sidebar_spacing"
-            android:text="@string/ids_lbl_printers" />
-
-        <Button
-            android:id="@+id/tempPrintJobsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/temp_sidebar_spacing"
-            android:text="@string/ids_lbl_print_jobs" />
-
-        <Button
-            android:id="@+id/tempSettingsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/temp_sidebar_spacing"
-            android:text="@string/ids_lbl_settings" />
-    </LinearLayout>
-
+            android:orientation="vertical" >
+            
+            <FrameLayout
+                android:id="@+id/printPreviewButton"
+                style="@style/HomeMenuButton" >
+                <TextView
+                    android:text="@string/ids_lbl_home"
+                    style="@style/HomeMenuButtonText" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+            
+            <FrameLayout
+                android:id="@+id/printersButton"
+                style="@style/HomeMenuButton" >
+                <TextView
+                    android:text="@string/ids_lbl_printers"
+                    style="@style/HomeMenuButtonText" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/printJobsButton"
+                style="@style/HomeMenuButton" >
+                <TextView
+                    android:text="@string/ids_lbl_print_jobs"
+                    style="@style/HomeMenuButtonText" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/settingsButton"
+                style="@style/HomeMenuButton" >
+                <TextView
+                    android:text="@string/ids_lbl_settings"
+                    style="@style/HomeMenuButtonText" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/helpButton"
+                style="@style/HomeMenuButton" >
+                <TextView
+                    android:text="@string/ids_lbl_help"
+                    style="@style/HomeMenuButtonText" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/legalButton"
+                style="@style/HomeMenuButton" >
+                <TextView
+                    android:text="@string/ids_lbl_legal"
+                    style="@style/HomeMenuButtonText" />
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

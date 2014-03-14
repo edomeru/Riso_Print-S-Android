@@ -12,21 +12,25 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
-import com.radaee.pdf.Global;
 import com.radaee.pdf.Matrix;
 import com.radaee.pdf.Page;
 
 public class PDFFileManager {
     public static final String TAG = "PDFFileManager";
     
+    // For design
     private static boolean CONST_KEEP_DOCUMENT_CLOSED = true;
+    
+    public static String KEY_NEW_PDF_DATA = "new_pdf_data";
     
     private Document mDocument;
     private String mPath;
@@ -38,12 +42,15 @@ public class PDFFileManager {
     
     private volatile boolean mIsInitialized;
     private volatile int mPageCount;
+    private volatile float mPageWidth;
+    private volatile float mPageHeight;
     
     public static final int PDF_OK = 0;
     public static final int PDF_ENCRYPTED = -1;
     public static final int PDF_UNKNOWN_ENCRYPTION = -2;
     public static final int PDF_DAMAGED = -3;
     public static final int PDF_INVALID_PATH = -10;
+    public static final int UNKNOWN_ERROR = -100;
     
     /**
      * Constructor
@@ -53,8 +60,8 @@ public class PDFFileManager {
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
-        setPDF(null);
         mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
+        setPDF(null);
     }
     
     /**
@@ -101,11 +108,22 @@ public class PDFFileManager {
             return;
         }
         
+        if (SmartDeviceApp.getAppContext() == null) {
+            return;
+        }
+        
         File file = new File(path);
         
         mPath = path;
         mFileName = file.getName();
-        mSandboxPath = Environment.getExternalStorageDirectory() + "/" + file.getName();
+        mSandboxPath = SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/" + file.getName();
+        
+        if (mPath.equalsIgnoreCase(mSandboxPath)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(KEY_NEW_PDF_DATA, false);
+            edit.commit();
+        }
     }
     
     /**
@@ -124,6 +142,24 @@ public class PDFFileManager {
      */
     public int getPageCount() {
         return mPageCount;
+    }
+    
+    /**
+     * Gets the page width
+     * 
+     * @return page width
+     */
+    public float getPageWidth() {
+        return mPageWidth;
+    }
+    
+    /**
+     * Gets the page height
+     * 
+     * @return page height
+     */
+    public float getPageHeight() {
+        return mPageHeight;
     }
     
     /**
@@ -151,10 +187,22 @@ public class PDFFileManager {
      * 
      * @param pageNo
      *            PDF page of the requested page
-     *            
+     * 
      * @return Bitmap of the page
      */
     public synchronized Bitmap getPageBitmap(int pageNo) {
+        return getPageBitmap(pageNo, 1.0f, false, false);
+    }
+    
+    /**
+     * Gets the Bitmap of the page
+     * 
+     * @param pageNo
+     *            PDF page of the requested page
+     * 
+     * @return Bitmap of the page
+     */
+    public synchronized Bitmap getPageBitmap(int pageNo, float scale, boolean flipX, boolean flipY) {
         if (!isInitialized()) {
             return null;
         }
@@ -164,22 +212,42 @@ public class PDFFileManager {
         }
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Open(mPath, null);
+            mDocument.Open(mSandboxPath, null);
         } else {
             // For temporary fix of bug
-            mDocument.Close(); // This will clear the buffer
-            mDocument.Open(mPath, null);
+            //mDocument.Close(); // This will clear the buffer
+            //mDocument.Open(mSandboxPath, null);
         }
         
         Page page = mDocument.GetPage(pageNo);
         
-        float pageWidth = mDocument.GetPageWidth(pageNo);
-        float pageHeight = mDocument.GetPageHeight(pageNo);
+        float pageWidth = mDocument.GetPageWidth(pageNo) * scale;
+        float pageHeight = mDocument.GetPageHeight(pageNo) * scale;
         
-        Matrix mat = new Matrix(1, -1, 0, pageHeight);
+        float x0 = 0;
+        float y0 = pageHeight;
+        
+        if (flipX) {
+            x0 = pageWidth;
+        }
+        if (flipY) {
+            y0 = 0;
+        }
+        
+        float scaleX = scale;
+        float scaleY = -scale;
+        
+        if (flipX) {
+            scaleX = -scaleX;
+        }
+        if (flipY) {
+            scaleY = -scaleY;
+        }
         
         Bitmap bitmap = Bitmap.createBitmap((int) pageWidth, (int) pageHeight, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.WHITE);
+        
+        Matrix mat = new Matrix(scaleX, scaleY, x0, y0);
         
         if (!page.RenderToBmp(bitmap, mat)) {
             bitmap.recycle();
@@ -188,7 +256,6 @@ public class PDFFileManager {
         
         mat.Destroy();
         page.Close();
-        Global.RemoveTmp();
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
             mDocument.Close();
@@ -196,11 +263,11 @@ public class PDFFileManager {
         
         return bitmap;
     }
-
-    //================================================================================
+    
+    // ================================================================================
     // Protected methods
-    //================================================================================
-
+    // ================================================================================
+    
     /**
      * Opens the document
      * 
@@ -216,7 +283,7 @@ public class PDFFileManager {
             closeDocument();
         }
         
-        if (mSandboxPath == null || mSandboxPath == "") {
+        if (mPath == null || mPath == "") {
             return PDF_INVALID_PATH;
         }
         
@@ -225,6 +292,8 @@ public class PDFFileManager {
         if (status == PDF_OK) {
             mIsInitialized = true;
             mPageCount = mDocument.GetPageCount();
+            mPageWidth = mDocument.GetPageWidth(0);
+            mPageHeight = mDocument.GetPageHeight(0);
         }
         
         return status;
@@ -250,16 +319,30 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
-            try {
-                FileUtils.copy(new File(mPath), new File(mSandboxPath));
-            } catch (Exception e) {
-                return PDF_INVALID_PATH;
+            if (SmartDeviceApp.getAppContext() == null) {
+                return UNKNOWN_ERROR;
             }
             
             int status = openDocument();
             
             if (CONST_KEEP_DOCUMENT_CLOSED) {
                 closeDocument();
+            }
+            
+            if (status == PDF_OK) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+                if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
+                    
+                    SharedPreferences.Editor edit = prefs.edit();
+                    edit.putBoolean(KEY_NEW_PDF_DATA, false);
+                    edit.commit();
+                    
+                    try {
+                        FileUtils.copy(new File(mPath), new File(mSandboxPath));
+                    } catch (Exception e) {
+                        return PDF_INVALID_PATH;
+                    }
+                }
             }
             
             return status;
