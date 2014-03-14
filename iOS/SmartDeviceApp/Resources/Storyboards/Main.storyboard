@@ -1055,7 +1055,7 @@
                                 <rect key="frame" x="0.0" y="50" width="320" height="498"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
+                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="498"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
@@ -1112,6 +1112,12 @@
                                     </tableView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="3lb-qN-g3W" firstAttribute="leading" secondItem="KGg-D7-xhu" secondAttribute="leading" id="QXN-c8-5zk"/>
+                                    <constraint firstAttribute="trailing" secondItem="3lb-qN-g3W" secondAttribute="trailing" id="Vcz-Il-3P0"/>
+                                    <constraint firstAttribute="bottom" secondItem="3lb-qN-g3W" secondAttribute="bottom" id="bPI-aF-zzX"/>
+                                    <constraint firstItem="3lb-qN-g3W" firstAttribute="top" secondItem="KGg-D7-xhu" secondAttribute="top" id="vn9-hs-EDK"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -1209,14 +1215,31 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                 <prototypes>
-                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" id="TOE-xs-FJy" userLabel="SearchResultCell">
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" id="TOE-xs-FJy" userLabel="SearchResultCell" customClass="SearchResultCell">
                                                         <rect key="frame" x="0.0" y="22" width="270" height="44"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TOE-xs-FJy" id="KTt-bZ-HL0">
                                                             <rect key="frame" x="0.0" y="0.0" width="270" height="43"/>
                                                             <autoresizingMask key="autoresizingMask"/>
+                                                            <subviews>
+                                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1LA-cn-0Qi">
+                                                                    <rect key="frame" x="20" y="13" width="197" height="18"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstAttribute="centerY" secondItem="1LA-cn-0Qi" secondAttribute="centerY" id="GVm-b3-Yfl"/>
+                                                                <constraint firstItem="1LA-cn-0Qi" firstAttribute="leading" secondItem="KTt-bZ-HL0" secondAttribute="leading" constant="20" id="MoW-iV-D0c"/>
+                                                                <constraint firstAttribute="trailing" secondItem="1LA-cn-0Qi" secondAttribute="trailing" constant="53" id="kX8-yV-zHn"/>
+                                                            </constraints>
                                                         </tableViewCellContentView>
                                                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <outlet property="printerName" destination="1LA-cn-0Qi" id="4yg-1c-ZUS"/>
+                                                        </connections>
                                                     </tableViewCell>
                                                 </prototypes>
                                                 <connections>

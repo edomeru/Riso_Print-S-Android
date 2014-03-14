@@ -9,6 +9,7 @@
 #import "PrinterSearchViewController.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
+#import "SearchResultCell.h"
 #import "NetworkManager.h"
 #import "AlertUtils.h"
 
@@ -272,47 +273,21 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
+    SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
                                                             forIndexPath:indexPath];
    
-    BOOL isNewPrinter = NO;
-    
     // set the cell text
     if (indexPath.section == 0)
     {
         //this is an old printer
-        cell.textLabel.text = [self.listOldPrinterNames objectAtIndex:indexPath.row];
+        [cell setContents:[self.listOldPrinterNames objectAtIndex:indexPath.row]];
+        [cell putCheckmark];
     }
     else
     {
         //this is a new printer
-        cell.textLabel.text = [self.listNewPrinterNames objectAtIndex:indexPath.row];
-        isNewPrinter = YES;
-    }
-    
-    // set the accessory view
-    // for old printers : image
-    // for new printers : button + image (need to use a button to handle tap gesture)
-    if (isNewPrinter)
-    {
-        UIImage* plusImage = [UIImage imageNamed:@"SearchAddIcon"];
-        
-        // create the button
-        UIButton* plusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [plusButton setImage:plusImage forState:UIControlStateNormal];
-        [plusButton setEnabled:YES];
-        plusButton.frame = CGRectMake(0, 0, plusImage.size.width, plusImage.size.height);
-        
-        // set the tap gesture handler
-        [plusButton addTarget:self
-                       action:@selector(addPrinter:withEvent:)
-             forControlEvents:UIControlEventTouchUpInside];
-        
-        cell.accessoryView = plusButton;
-    }
-    else
-    {
-        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SearchSavedIcon"]];
+        [cell setContents:[self.listNewPrinterNames objectAtIndex:indexPath.row]];
+        [cell putPlusButton:self tapHandler:@selector(addPrinter:withEvent:)];
     }
     
     return cell;
