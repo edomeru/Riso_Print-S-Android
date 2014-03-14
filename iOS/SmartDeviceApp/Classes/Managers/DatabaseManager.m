@@ -19,6 +19,8 @@
     id delegate = [[UIApplication sharedApplication] delegate];
     if ([delegate respondsToSelector:@selector(managedObjectContext)])
         context = [delegate managedObjectContext];
+    else
+        NSLog(@"[ERROR][DBM] could not get NSManagedObjectContext");
     
     return context;
 }
@@ -31,7 +33,13 @@
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     NSError *error;
     
-    return [context executeFetchRequest:fetchRequest error:&error];
+    NSArray* results = [context executeFetchRequest:fetchRequest error:&error];
+    if (results == nil)
+        NSLog(@"[ERROR][DBM] fetch error, (%@)", [error debugDescription]);
+    else if ([results count] == 0)
+        NSLog(@"[INFO][DBM] fetch for %@ returned empty", entityName);
+        
+    return results;
 }
 
 #pragma mark - Add
@@ -59,7 +67,7 @@
     NSError *error = nil;
     if (![[self getManagedObjectContext] save:&error])
     {
-        NSLog(@"ERROR saving to DB %@", [error debugDescription]);
+        NSLog(@"[ERROR][DBM] save failed, (%@)", [error debugDescription]);
         return NO;
     }
     

@@ -64,7 +64,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         }
         else
         {
-            NSLog(@"** SNMP timed-out on search **");
+            NSLog(@"[INFO][SNMP] search timeout");
         }
         
         [NSThread sleepForTimeInterval:4];
@@ -128,7 +128,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
 
 + (void)add
 {
-    NSLog(@"received SNMP Add Printer Callback %d", ++printerCount);
+    NSLog(@"[INFO][SNMP] received SNMP Add Printer callback %d", ++printerCount);
     
     // get/parse printer info and capabilities
     PrinterDetails* printerDetails = [[PrinterDetails alloc] init];
@@ -165,7 +165,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
 
 + (void)end
 {
-    NSLog(@"received SNMP End Callback");
+    NSLog(@"[INFO][SNMP] received SNMP End callback");
     
     // notify observer that the search has ended (background thread)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

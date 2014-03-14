@@ -22,44 +22,55 @@
 #pragma mark - Printers in DB
 
 /**
- Creates a Printer object and saves it to DB.
- It also creates a PrintSetting object using the default print settings
- and attaches it to this Printer.
+ Creates a Printer object. It first creates the required PrintSetting object 
+ using the default print settings and attaches it to this Printer. All changes
+ are then saved to the DB. Finally, the newly registered Printer is also added 
+ to this PrinterManager's list of saved printers.
+ If a DB error occurs, all changes are discarded.
  
  @return YES if successful, NO otherwise.
  */
 - (BOOL)registerPrinter:(PrinterDetails*)printerDetails;
 
 /**
- Creates a DefaultPrinter object and saves it to DB.
- It also attaches the passed Printer object to it.
+ Assigns the Printer object to the DefaultPrinter object.
+ If the DefaultPrinter object does not exist yet, it is
+ first created. All changes are then saved to the DB.
+ If a DB error occurs, all changes are discarded.
  
  @param printer
         Printer object to be set as the default printer
  
- @return DefaultPrinter*
+ @return YES if successful, NO otherwise.
  */
 - (BOOL)registerDefaultPrinter:(Printer*)printer;
 
 /**
- Gets the list of Printers from the DB.
+ Gets the list of Printers stored in DB.
+ If the list is non-empty, this PrinterManager will keep
+ a reference to this list as its list of saved printers.
  */
 - (void)getPrinters;
 
 /**
- Gets the DefaultPrinter object from the DB.
+ Gets the DefaultPrinter object stored in DB.
+ If this object exists, this PrinterManager will keep a 
+ reference to this DefaultPrinter object.
  */
 - (void)getDefaultPrinter;
 
 /**
- Deletes a Printer object from the DB.
+ Removes a Printer object from the DB. If this Printer object
+ is set as the default printer, the DefaultPrinter object is 
+ first removed. The PrinterManager's reference to both the
+ Printer object and the DefaultPrinter objects are also removed.
+ All changes are saved to the DB.
+ 
+ @param printerToDelete
+        the Printer object to be deleted
+ @return YES if successful, NO otherwise.
  */
-- (void)deletePrinter:(Printer*)printer;
-
-/**
- Deletes the DefaultPrinter object from the DB.
- */
-- (void)deleteDefaultPrinter;
+- (BOOL)deletePrinter:(Printer*)printerToDelete;
 
 #pragma mark - Printers in Network (SNMP)
 

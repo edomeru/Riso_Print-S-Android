@@ -23,10 +23,10 @@
 - (BOOL)registerPrinter:(PrinterDetails*)printerDetails
 {
     // create a PrintSetting object
-    PrintSetting* printSetting = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
-    if (printSetting == nil)
+    PrintSetting* defaultPrintSettings = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
+    if (defaultPrintSettings == nil)
         return NO;
-    [self copyDefaultPrintSettings:&printSetting];
+    [self copyDefaultPrintSettings:&defaultPrintSettings];
     
     // create a Printer object
     Printer* newPrinter = (Printer*)[DatabaseManager addObject:E_PRINTER];
@@ -47,12 +47,13 @@
     newPrinter.enabled_raw = [NSNumber numberWithBool:printerDetails.enRAW];
     
     // attach the PrintSetting to the Printer
-    newPrinter.printsetting = printSetting;
+    newPrinter.printsetting = defaultPrintSettings;
     
     // set the online status
+    // since the printer will only be added if online, initial setting is YES
     newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
     
-    // save to DB
+    // save the Printer and PrintSetting objects to DB
     if ([DatabaseManager saveChanges])
     {
         [newPrinter log];
@@ -61,7 +62,7 @@
     }
     else
     {
-        [DatabaseManager discardChanges];
+        [DatabaseManager discardChanges]; //discard the Printer and PrintSetting objects
         return NO;
     }
 }
@@ -84,7 +85,7 @@
     }
     else
     {
-        [DatabaseManager discardChanges];
+        [DatabaseManager discardChanges]; //discard the DefaultPrinter object
         return NO;
     }
 }
@@ -107,22 +108,26 @@
     }
 }
 
-- (void)deletePrinter:(Printer*)printer
+- (BOOL)deletePrinter:(Printer*)printerToDelete
 {
-    NSUInteger indexDeleted = [self.listSavedPrinters indexOfObject:printer];
-    if ([DatabaseManager deleteObject:printer])
+    // check if this printer is the default printer
+    if ([self.defaultPrinter.printer isEqual:printerToDelete])
     {
-        [self.listSavedPrinters removeObjectAtIndex:indexDeleted];
+        // delete the default printer first
+        NSLog(@"[INFO][PM] this is the default printer, remove default printer first");
         self.defaultPrinter.printer = nil;
+        if ([DatabaseManager deleteObject:self.defaultPrinter])
+            self.defaultPrinter = nil;
+        else
+            return NO;
     }
-}
-
-- (void)deleteDefaultPrinter
-{
-    if ([DatabaseManager deleteObject:self.defaultPrinter])
-    {
-        self.defaultPrinter = nil;
-    }
+    
+    // delete the printer
+    [self.listSavedPrinters removeObject:printerToDelete];
+    if ([DatabaseManager deleteObject:printerToDelete])
+        return YES;
+    else
+        return NO;
 }
 
 #pragma mark - Printers in Network (SNMP)
@@ -140,6 +145,8 @@
                                                object:nil];
     
     // start the search (background thread)
+    NSLog(@"[INFO][PM] initiating search");
+    NSLog(@"[INFO][PM] waiting for notifications from SNMP");
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [SNMPManager searchForPrinter:printerIP];
     });
@@ -160,6 +167,8 @@
                                                object:nil];
     
     // start the search (background thread)
+    NSLog(@"[INFO][PM] initiating search");
+    NSLog(@"[INFO][PM] waiting for notifications from SNMP");
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [SNMPManager searchForAvailablePrinters];
     });
@@ -169,6 +178,7 @@
 
 - (void)stopSearching
 {
+    NSLog(@"[INFO][PM] stop waiting for notifications");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     //TODO: cascade the command to the SNMPManager
 }
@@ -177,7 +187,7 @@
 
 - (void)notifyPrinterFound:(NSNotification*)notif
 {
-    NSLog(@"received notification that a printer was found");
+    NSLog(@"[INFO][PM] received notification - printer found");
     
     // get the printer details
     PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[notif object];
@@ -205,7 +215,7 @@
 
 - (void)notifySearchEnded:(NSNotification*)notif
 {
-    NSLog(@"received notification that the search has ended");
+    NSLog(@"[INFO][PM] received notification - search ended");
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
