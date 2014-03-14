@@ -494,6 +494,7 @@
                         <outlet property="pageNavigationSlider" destination="k35-as-6xb" id="RQS-Eo-L0Q"/>
                         <outlet property="pageNumberDisplay" destination="ZT1-SS-2ii" id="Lfv-cw-EKO"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="yV8-P0-wgE"/>
+                        <outlet property="printSettingButton" destination="ABd-RJ-eVH" id="DbM-hD-xh7"/>
                         <outlet property="screenTitle" destination="4Rb-l1-7Cb" id="vyg-Sb-PZf"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintPreview-Home" customClass="SlideSegue" id="c8V-UF-iWe"/>
                         <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintPreview-PrintSettings" customClass="SlideSegue" id="5pT-ga-236"/>

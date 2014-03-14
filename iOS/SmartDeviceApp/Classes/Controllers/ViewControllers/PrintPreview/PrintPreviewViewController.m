@@ -25,6 +25,8 @@
 @property (weak, nonatomic) IBOutlet UISlider *pageNavigationSlider;
 @property (weak, nonatomic) IBOutlet UILabel *screenTitle;
 @property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay;
+@property (weak, nonatomic) IBOutlet UIButton *printSettingButton;
+
 @end
 
 @implementation PrintPreviewViewController
@@ -56,6 +58,11 @@
     {
         [self loadPrintPreview];
     }
+    else
+    {
+        //hide ui related to preview
+        [self hidePrintPreviewControls:YES];
+    }
     
 }
 //detect rotation
@@ -70,6 +77,13 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+//hide controls related to preview
+-(void) hidePrintPreviewControls: (BOOL) isHidden
+{
+    [self.printSettingButton setHidden:isHidden];
+    [self.pageNavigationSlider setHidden:isHidden];
+    [self.pageNumberDisplay setHidden:isHidden];
+}
 
 //intial loading of print preview
 - (void) loadPrintPreview
@@ -79,9 +93,13 @@
     __numPDFPages = CGPDFDocumentGetNumberOfPages(__pdfDocument);
     __currentIndex = 0;
     NSString *screenTitle = [[[manager pdfURL] pathComponents] lastObject];
-    
+    if(__pdfDocument == nil)
+    {
+        NSLog(@"document is nil");
+    }
     [self.screenTitle setText:screenTitle];
-
+    [self hidePrintPreviewControls:NO];
+    
     [self loadPrintPreviewSettings];
     [self computeNumViewPages];
     [self setUpPageViewController];
@@ -123,7 +141,6 @@
 {
     [self loadPageViewController];
     [self setPageSize];
-    [self setViewToPage:__currentIndex];
 }
 
 //creates the page view controller and adds to view
@@ -152,6 +169,8 @@
     //set self as delegate and datasource
     self.pdfPageViewController.dataSource = self;
     self.pdfPageViewController.delegate =self;
+    
+    [self setViewToPage:__currentIndex];
     
     //add ui page controller to view
     [self addChildViewController:_pdfPageViewController];
