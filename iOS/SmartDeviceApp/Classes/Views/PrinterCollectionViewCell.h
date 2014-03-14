@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@class PrinterStatusView;
+
 @interface PrinterCollectionViewCell : UICollectionViewCell
 
 @property (nonatomic, weak) IBOutlet UILabel *nameLabel;
 @property (nonatomic, weak) IBOutlet UILabel *ipAddressLabel;
 @property (nonatomic, weak) IBOutlet UILabel *portLabel;
 @property (nonatomic, weak) IBOutlet UISwitch *defaultSwitch;
+@property (nonatomic, weak) IBOutlet PrinterStatusView *statusView;
 
 @end

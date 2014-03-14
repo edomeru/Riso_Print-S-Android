@@ -11,13 +11,15 @@
 #import "Printer.h"
 #import "PrinterCollectionViewCell.h"
 #import "PrinterDetails.h"
+#import "PrinterStatusView.h"
+#import "PrinterStatusHelper.h"
 
 @interface PrintersIpadViewController ()
 
 @property (strong, nonatomic) PrinterManager* printerManager;
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
-@property (nonatomic, strong) UICollectionViewFlowLayout *layoutPortrait;
-@property (nonatomic, strong) UICollectionViewFlowLayout *layoutLandscape;
+@property (nonatomic) UIEdgeInsets insetPortrait;
+@property (nonatomic) UIEdgeInsets insetLandscape;
 
 @end
 
@@ -40,31 +42,39 @@
     [self.printerManager getPrinters];
     [self.printerManager getDefaultPrinter];
     
+    // For TEST data creation only
+    /*for (int i = 0; i < 5; i++)
+    {
+        PrinterDetails *printer = [[PrinterDetails alloc] init];
+        printer.name = [NSString stringWithFormat:@"Riso Printer #%d", i];
+        printer.ip = [NSString stringWithFormat:@"192.168.1.%d", 101 + i];
+        printer.port = [NSNumber numberWithInt:515];
+        [self.printerManager registerPrinter:printer];
+    }*/
+    
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
    
+    // Create insets for landscape and portrait orientations
     CGRect frame = [[UIScreen mainScreen] bounds];
     CGFloat basePortrait = MIN(frame.size.width, frame.size.height);
     CGFloat baseLandscape = MAX(frame.size.width, frame.size.height);
     int hInset;
-    // Prepare layout for portrait
-    self.layoutPortrait = [[UICollectionViewFlowLayout alloc] init];
     hInset = (basePortrait  - (320.0f * 2 + 10.0f * 1)) / 2.0f;
-    self.layoutPortrait.sectionInset = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
-    
-    // Prepare layout for landscape
-    self.layoutLandscape = [[UICollectionViewFlowLayout alloc] init];
+    self.insetPortrait = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
     hInset = (baseLandscape - (320.0f * 3 + 10.0f * 2)) / 2.0f;
-    self.layoutLandscape.sectionInset = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
+    self.insetLandscape = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
     
-    // Set layout based on orientation
+    // Set insets based on current orientation
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
     {
-        self.collectionView.collectionViewLayout = self.layoutLandscape;
+        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+        layout.sectionInset = self.insetLandscape;
     }
     else
     {
-        self.collectionView.collectionViewLayout = self.layoutPortrait;
+        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+        layout.sectionInset = self.insetPortrait;
     }
 }
 
@@ -94,6 +104,12 @@
     cell.ipAddressLabel.text = printer.ip_address;
     cell.portLabel.text = [printer.port stringValue];
     cell.defaultSwitch.on = NO;
+    
+    cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+    cell.statusView.statusHelper.delegate = cell.statusView;
+
+    [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.statusView.statusHelper startPrinterStatusPolling];
     return cell;
 }
 
@@ -107,11 +123,19 @@
 {
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
     {
-        [self.collectionView setCollectionViewLayout:self.layoutLandscape animated:YES];
+        [self.collectionView performBatchUpdates:^
+         {
+            UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+            layout.sectionInset = self.insetLandscape;
+         }completion:^(BOOL finished)
+         {
+         }];
     }
     else
     {
-        [self.collectionView setCollectionViewLayout:self.layoutPortrait animated:YES];
+        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+        layout.sectionInset = self.insetPortrait;
+        [self.collectionView.collectionViewLayout invalidateLayout];
     }
 }
 
