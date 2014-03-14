@@ -24,6 +24,8 @@
  */
 @property (assign, nonatomic) BOOL willEndWithoutAdd;
 
+@property (strong, nonatomic) UIActivityIndicatorView* progressIndicator;
+
 /**
  Called when screen loads.
  Sets-up this controller's properties and views.
@@ -119,6 +121,16 @@
     
     // setup view
     [self enableSaveButton:NO];
+    
+    // setup progress indicator
+    self.progressIndicator = [[UIActivityIndicatorView alloc]
+                              initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.progressIndicator.frame = CGRectMake(0, 0, 40, 40);
+    self.progressIndicator.center = self.view.center;
+    [self.progressIndicator setColor:[UIColor whiteColor]];
+    [self.view addSubview:self.progressIndicator];
+    [self.progressIndicator bringSubviewToFront:self.view];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 #pragma mark - Header
@@ -174,7 +186,12 @@
             // callbacks for the search will be handled in delegate methods
             
             // if UI needs to do other things, do it here
-            //TODO: show the searching indicator
+            
+            // show the searching indicator
+            [self.progressIndicator startAnimating];
+            
+            // disable save button
+            [self enableSaveButton:NO];
         }
     }
     
@@ -188,7 +205,11 @@
     if (self.willEndWithoutAdd)
         [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND withTitle:ALERT_ADD_PRINTER withDetails:nil];
     
-    //TODO: hide the searching indicator
+    // hide the searching indicator
+    [self.progressIndicator stopAnimating];
+    
+    // re-enable the save button
+    [self enableSaveButton:YES];
 }
 
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails
@@ -205,16 +226,12 @@
     {
         [AlertUtils displayResult:ERR_CANNOT_ADD withTitle:ALERT_ADD_PRINTER withDetails:nil];
     }
-    
-    //TODO: hide the searching indicator
 }
 
 - (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
 {
     NSLog(@"update UI for OLD printer with IP=%@", printerIP);
     self.willEndWithoutAdd = NO; //search did not timeout
-    
-    //TODO: hide the searching indicator
 }
 
 #pragma mark - TableView

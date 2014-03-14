@@ -51,6 +51,7 @@
             break;
             //TODO: it would be better to explain why the printer could not be added
             
+        case ERR_DEFAULT:
         default:
             [alertView setMessage:@"The operation could not be compeleted."];
             break;

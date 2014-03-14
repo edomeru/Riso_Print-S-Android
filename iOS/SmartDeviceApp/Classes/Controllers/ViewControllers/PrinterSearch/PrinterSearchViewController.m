@@ -9,6 +9,7 @@
 #import "PrinterSearchViewController.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
+#import "NetworkManager.h"
 #import "AlertUtils.h"
 
 #define SEARCHRESULTCELL    @"SearchResultCell"
@@ -41,12 +42,6 @@
  the search, using the printer IP address as the key.
  */
 @property (strong, nonatomic) NSMutableDictionary* listNewPrinterDetails;
-
-/**
- Flag that the search is ongoing.
- Avoids duplicate/multiple calls to search.
- */
-@property (assign, nonatomic) BOOL isSearchOngoing;
 
 /**
  Implements the pull-to-refresh gesture.
@@ -114,6 +109,11 @@
     [self refresh];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -130,13 +130,14 @@
     self.listNewPrinterIP = [NSMutableArray array];
     self.listNewPrinterDetails = [NSMutableDictionary dictionary];
     self.hasAddedPrinters = NO;
-    self.isSearchOngoing = NO;
     
     // setup pull-to-refresh
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl setBackgroundColor:[UIColor blackColor]];
+    [self.refreshControl setTintColor:[UIColor whiteColor]];
     [self.tableView addSubview:self.refreshControl];
 }
 
@@ -152,15 +153,13 @@
 
 - (void)refresh
 {
-    // check if already refreshing
-    if (self.isSearchOngoing)
+    // check for network connection
+    if (![NetworkManager isConnectedToNetwork])
     {
-        NSLog(@"search ongoing. ignoring pull-to-refresh.");
-        return; // ignore the search request
+        [AlertUtils displayResult:ERR_NO_NETWORK withTitle:ALERT_PRINTER_SEARCH withDetails:nil];
+        return;
     }
-    
-    //TODO: check for network connection
-    
+
     // clear the lists
     [self.listOldPrinterNames removeAllObjects];
     [self.listNewPrinterNames removeAllObjects];
@@ -174,11 +173,13 @@
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
-    // show the searching indicator
-    [self.refreshControl beginRefreshing];
-    self.isSearchOngoing = YES;
     
-    //TODO: disable gestures while searching?
+    // show the searching indicator
+    // note: content offset code is for fixing the bug in iOS7 where the view does not appear on load
+    if (self.tableView.contentOffset.y == 0)
+        self.tableView.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
+    [self.refreshControl beginRefreshing];
+    [self.refreshControl setHidden:NO];
 }
 
 #pragma mark - Add
@@ -196,6 +197,7 @@
     }
     else
     {
+        // add the printer
         NSString* printerIP = [self.listNewPrinterIP objectAtIndex:indexPath.row];
         PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
         if ([self.printerManager registerPrinter:printerDetails])
@@ -223,9 +225,7 @@
 {
     // hide the searching indicator
     [self.refreshControl endRefreshing];
-    self.isSearchOngoing = NO;
-    
-    //TODO: re-enable gestures when search ends?
+    [self.refreshControl setHidden:YES];
 }
 
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails

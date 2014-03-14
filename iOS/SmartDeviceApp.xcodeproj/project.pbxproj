@@ -75,9 +75,8 @@
 		2825AD0118D002D6006A8C53 /* PrinterDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterDetails.m; path = Models/PrinterDetails.m; sourceTree = "<group>"; };
 		2825AD0318D04C1A006A8C53 /* AlertUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertUtils.h; sourceTree = "<group>"; };
 		2825AD0418D04C1A006A8C53 /* AlertUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertUtils.m; sourceTree = "<group>"; };
-		2826DEAA18CE855D00A02CA0 /* EntityNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = EntityNames.h; path = Helpers/Constants/EntityNames.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2826DEAD18CE888500A02CA0 /* PrintSettingNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintSettingNames.h; path = Helpers/Constants/PrintSettingNames.h; sourceTree = "<group>"; };
-		2826DEAF18CE8AF900A02CA0 /* ErrorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorTypes.h; path = Helpers/Constants/ErrorTypes.h; sourceTree = "<group>"; };
+		2826DEAF18CE8AF900A02CA0 /* ErrorNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorNames.h; path = Helpers/Constants/ErrorNames.h; sourceTree = "<group>"; };
 		2826DEB218CE902B00A02CA0 /* Printer+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Printer+Log.h"; path = "ModelExtensions/Printer+Log.h"; sourceTree = "<group>"; };
 		2826DEB318CE902B00A02CA0 /* Printer+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Printer+Log.m"; path = "ModelExtensions/Printer+Log.m"; sourceTree = "<group>"; };
 		2826DEB918CE933900A02CA0 /* PrintSetting+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PrintSetting+Log.h"; path = "ModelExtensions/PrintSetting+Log.h"; sourceTree = "<group>"; };
@@ -221,8 +220,7 @@
 		2826DEAB18CE856300A02CA0 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
-				2826DEAA18CE855D00A02CA0 /* EntityNames.h */,
-				2826DEAF18CE8AF900A02CA0 /* ErrorTypes.h */,
+				2826DEAF18CE8AF900A02CA0 /* ErrorNames.h */,
 				2826DEBE18CEDE2F00A02CA0 /* NotificationNames.h */,
 				2826DEAD18CE888500A02CA0 /* PrintSettingNames.h */,
 			);
