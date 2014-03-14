@@ -31,7 +31,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] separated = sqlString.split(";");
 
         for (int i = 0; i < separated.length; i++) {
-            Log.d(TAG, separated[i]);
             db.execSQL(separated[i]);
         }
         

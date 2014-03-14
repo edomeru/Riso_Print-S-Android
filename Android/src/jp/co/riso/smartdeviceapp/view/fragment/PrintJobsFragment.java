@@ -27,7 +27,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,7 +36,6 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     private PrintJobsColumnView mPrintJobColumnView;
     private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
     private List<Printer> mPrinters = new ArrayList<Printer>();
-    private FrameLayout mRootView;
     private PrintJobsGroupView mPrintGroupToDelete;
     private ProgressBar mPrintJobsLoadIndicator;
     private LinearLayout mPrintJobContainer;
@@ -62,7 +60,6 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mPrintJobsView = view;
-        mRootView = (FrameLayout) view.findViewById(R.id.rootView);
         mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
        
@@ -214,7 +211,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         
         //set onClickListener (for delete button reset) only after loading of views     
         mPrintJobsView.setOnClickListener(this);
-        mRootView.setOnClickListener(this);
+        mPrintJobContainer.setOnClickListener(this);
     }
     
 }
