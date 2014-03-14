@@ -12,7 +12,7 @@
 
 - (void)log
 {
-    NSMutableString* msg = [NSMutableString stringWithString:@"  [INFO] Print Settings:"];
+    NSMutableString* msg = [NSMutableString stringWithString:@"  Print Settings:"];
     [msg appendFormat:@"\n   %@=%d", PS_BIND, [self.bind integerValue]];
     [msg appendFormat:@"\n   %@=%d", PS_BOOKLET_BINDING, [self.booklet_binding integerValue]];
     [msg appendFormat:@"\n   %@=%d", PS_BOOKLET_TRAY, [self.booklet_tray integerValue]];
@@ -29,7 +29,7 @@
     [msg appendFormat:@"\n   %@=%d", PS_STAPLE, [self.staple integerValue]];
     [msg appendFormat:@"\n   %@=%d", PS_ZOOM, [self.zoom integerValue]];
     [msg appendFormat:@"\n   %@=%d", PS_ZOOM_RATE, [self.zoom_rate integerValue]];
-    NSLog(@"\n%@\n", msg);
+    NSLog(@"[INFO][PrintSetting]\n%@\n", msg);
 }
 
 @end

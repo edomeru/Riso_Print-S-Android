@@ -13,6 +13,7 @@
 #import "DefaultPrinter.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
+#import "AlertUtils.h"
 
 #define SEGUE_TO_ADD_PRINTER    @"PrintersIphone-AddPrinter"
 #define SEGUE_TO_PRINTER_SEARCH @"PrintersIphone-PrinterSearch"
@@ -126,27 +127,28 @@
             //Get the printer to be deleted
             Printer *printerToDelete = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
             
-            NSLog(@"Deleting Printer %@ at row %d", printerToDelete.name, indexPath.row);
-  
-            //check if printer to be deleted is the default printer
-            if(self.defaultPrinterIndexPath != nil && self.defaultPrinterIndexPath.row == indexPath.row)
+            NSLog(@"[INFO][Printers] deleting Printer %@ at row %d", printerToDelete.name, indexPath.row);
+            if ([self.printerManager deletePrinter:printerToDelete])
             {
-                
-                NSLog(@"Printer to be deleted is default printer. Removing default printer reference");
-                [self.printerManager deleteDefaultPrinter];
-                self.defaultPrinterIndexPath = nil;
-            }
-            [self.printerManager deletePrinter:printerToDelete];
+                //check if reference to default printer was also deleted
+                if (self.printerManager.defaultPrinter == nil)
+                    self.defaultPrinterIndexPath = nil;
 
-            //set the view of the cell to stop polling for printer status
-            PrinterCell *cell = (PrinterCell *)[tableView cellForRowAtIndexPath:indexPath];
-            [cell.printerStatus.statusHelper stopPrinterStatusPolling];
-            
-            //set view to non default printer cell style
-            [cell setAsDefaultPrinterCell:NO];
-            
-            //remove cell from view
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                //set the view of the cell to stop polling for printer status
+                PrinterCell *cell = (PrinterCell *)[tableView cellForRowAtIndexPath:indexPath];
+                [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+                
+                //set view to non default printer cell style
+                [cell setAsDefaultPrinterCell:NO];
+                
+                //remove cell from view
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath]
+                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+            else
+            {
+                [AlertUtils displayResult:ERR_DEFAULT withTitle:ALERT_PRINTER withDetails:nil];
+            }
         }
 }
 #pragma mark - Printers Data
@@ -177,7 +179,7 @@
 
 - (IBAction)onTapPrinterCellDisclosure:(id)sender
 {
-    NSLog(@"PrinterCell Tapped");
+    NSLog(@"[INFO][Printers] PrinterCell Tapped");
     //TODO Add segue to printer info
 }
 

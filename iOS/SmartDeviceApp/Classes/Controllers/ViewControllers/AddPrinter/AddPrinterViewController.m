@@ -144,6 +144,7 @@
 
 - (IBAction)onBack:(UIButton *)sender 
 {
+    NSLog(@"[INFO][AddPrinter] canceling search");
     [self.printerManager stopSearching];
     [self unwindFromOverTo:[self.parentViewController class]];
 }
@@ -172,10 +173,9 @@
         }
         else
         {
-            NSLog(@"initiated search");
+            NSLog(@"[INFO][AddPrinter] initiating search");
             self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
             [self.printerManager searchForPrinter:formattedIP];
-            NSLog(@"returned to screen controller");
             // callbacks for the search will be handled in delegate methods
             
             // if UI needs to do other things, do it here
@@ -207,7 +207,8 @@
 
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails
 {
-    NSLog(@"update UI for NEW printer with IP=%@", printerDetails.ip);
+    NSLog(@"[INFO][AddPrinter] received NEW printer with IP=%@", printerDetails.ip);
+    NSLog(@"[INFO][AddPrinter] updating UI");
     self.willEndWithoutAdd = NO; //search did not timeout
     
     if ([self.printerManager registerPrinter:printerDetails])
@@ -223,7 +224,8 @@
 
 - (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
 {
-    NSLog(@"update UI for OLD printer with IP=%@", printerIP);
+    NSLog(@"[INFO][AddPrinter] received OLD printer with IP=%@", printerIP);
+    NSLog(@"[INFO][AddPrinter] updating UI");
     self.willEndWithoutAdd = NO; //search did not timeout
 }
 

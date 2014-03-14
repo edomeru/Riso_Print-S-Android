@@ -13,7 +13,7 @@
 
 - (void)log
 {
-    NSMutableString* msg = [NSMutableString stringWithString:@"  [INFO] Printer:"];
+    NSMutableString* msg = [NSMutableString stringWithString:@"  Printer:"];
     [msg appendFormat:@"\n   Name=%@", self.name];
     [msg appendFormat:@"\n   IP=%@", self.ip_address];
     [msg appendFormat:@"\n   Port=%d", [self.port integerValue]];
@@ -26,7 +26,7 @@
     [msg appendFormat:@"\n   enabled_staple=%d", [self.enabled_staple integerValue]];
     if (self.printsetting != nil)
         [self.printsetting log];
-    NSLog(@"\n%@\n", msg);
+    NSLog(@"[INFO][Printer]\n%@\n", msg);
 }
 
 @end

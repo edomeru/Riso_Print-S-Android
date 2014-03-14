@@ -146,6 +146,7 @@
 
 - (IBAction)onBack:(UIBarButtonItem *)sender
 {
+    NSLog(@"[INFO][PrinterSearch] cancel search");
     [self.printerManager stopSearching];
     [self unwindFromOverTo:[self.parentViewController class]];
 }
@@ -168,9 +169,8 @@
     [self.listNewPrinterDetails removeAllObjects];
 
     // start the search
-    NSLog(@"initiated search");
+    NSLog(@"[INFO][PrinterSearch] initiating search");
     [self.printerManager searchForAllPrinters];
-    NSLog(@"returned to screen controller");
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
@@ -231,7 +231,8 @@
 
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails
 {
-    NSLog(@"update UI for NEW printer with IP=%@", printerDetails.ip);
+    NSLog(@"[INFO][PrinterSearch] received NEW printer with IP=%@", printerDetails.ip);
+    NSLog(@"[INFO][PrinterSearch] updating UI");
     
     // save the printer name and IP
     [self.listNewPrinterNames addObject:printerDetails.name];
@@ -247,7 +248,8 @@
 
 - (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
 {
-    NSLog(@"update UI for OLD printer with IP=%@", printerIP);
+    NSLog(@"[INFO][PrinterSearch] received OLD printer with IP=%@", printerIP);
+    NSLog(@"[INFO][PrinterSearch] updating UI");
     
     // save the printer name
     [self.listOldPrinterNames addObject:printerName];
