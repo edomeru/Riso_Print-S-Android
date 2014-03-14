@@ -86,14 +86,7 @@
 
 - (void)initialize
 {
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
-        self.isFixedSize = NO;
-    }
-    else
-    {
-        self.isFixedSize = YES;
-    }
+    self.isFixedSize = YES;
     self.slideDirection = SlideRight;
 }
 

@@ -23,6 +23,7 @@
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D00842A18C6FDA2001558F7 /* MenuButton.m */; };
 		2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0084B518C72F1A001558F7 /* MenuScrollView.m */; };
+		2D0380AE18D2C79A00DAE09B /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0380AD18D2C79A00DAE09B /* PrinterCollectionViewCell.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -105,6 +106,8 @@
 		2D00842A18C6FDA2001558F7 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButton.m; sourceTree = "<group>"; };
 		2D0084B418C72F1A001558F7 /* MenuScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScrollView.h; sourceTree = "<group>"; };
 		2D0084B518C72F1A001558F7 /* MenuScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuScrollView.m; sourceTree = "<group>"; };
+		2D0380AC18D2C79A00DAE09B /* PrinterCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterCollectionViewCell.h; sourceTree = "<group>"; };
+		2D0380AD18D2C79A00DAE09B /* PrinterCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterCollectionViewCell.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -588,6 +591,8 @@
 				2D00842A18C6FDA2001558F7 /* MenuButton.m */,
 				2D0084B418C72F1A001558F7 /* MenuScrollView.h */,
 				2D0084B518C72F1A001558F7 /* MenuScrollView.m */,
+				2D0380AC18D2C79A00DAE09B /* PrinterCollectionViewCell.h */,
+				2D0380AD18D2C79A00DAE09B /* PrinterCollectionViewCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -858,6 +863,7 @@
 				3192115018C71BF0000555C7 /* PrinterStatusView.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
 				2826DEBB18CE933900A02CA0 /* PrintSetting+Log.m in Sources */,
+				2D0380AE18D2C79A00DAE09B /* PrinterCollectionViewCell.m in Sources */,
 				2828311C18C7064B008B127C /* PrinterSearchViewController.m in Sources */,
 				2828312818C7066B008B127C /* PrinterManager.m in Sources */,
 				2828312618C7066B008B127C /* DatabaseManager.m in Sources */,
