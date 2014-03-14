@@ -22,10 +22,12 @@ import jp.co.riso.smartdeviceapp.view.custom.PrintJobsColumnView;
 import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView;
 import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView.PrintDeleteListener;
 import android.content.ContentValues;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements PrintDeleteListener, OnClickListener {
@@ -33,8 +35,9 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     private PrintJobsColumnView mPrintJobColumnView;
     private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
     private List<Printer> mPrinters = new ArrayList<Printer>();
-    private LinearLayout mRootView;
+    private FrameLayout mRootView;
     private PrintJobsGroupView mPrintGroupToDelete;
+    private ProgressBar mPrintJobsLoadIndicator;
     
     public PrintJobsFragment() {
         super();
@@ -55,7 +58,8 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
-        mRootView = (LinearLayout) view.findViewById(R.id.rootView);
+        mRootView = (FrameLayout) view.findViewById(R.id.rootView);
+        mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
         view.setOnClickListener(this);
         mRootView.setOnClickListener(this);
         
@@ -73,22 +77,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     public void onResume() {
         super.onResume();
         
-        // for testing only
-        initializePids();
-        initializePJs();
-        // ///////////////
-                
-        if (mPrintJobs.isEmpty()) {
-            
-            mPrintJobs = PrintJobManager.getPrintJobs();
-            
-            mPrinters = PrintJobManager.getPrintersWithJobs();
-
-            mPrintJobColumnView = new PrintJobsColumnView(getActivity(), mPrintJobs, mPrinters, isTablet() ? isTabletLand() ? 3 : 2 : 1, this);
-            mRootView.removeAllViews();
-            mRootView.addView(mPrintJobColumnView);
-            
-        }
+        (new LoadPrintJobsFromDB()).execute();
         
     }
     
@@ -182,6 +171,35 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     public void clearButton() {
         if (mPrintGroupToDelete != null)
             mPrintGroupToDelete.clearDeleteButton();
+    }
+    
+    private class LoadPrintJobsFromDB extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // for testing only
+            initializePids();
+            initializePJs();
+            // ///////////////
+                    
+            if (mPrintJobs.isEmpty()) {
+                
+                mPrintJobs = PrintJobManager.getPrintJobs();
+                
+                mPrinters = PrintJobManager.getPrintersWithJobs();
+                
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            mPrintJobColumnView = new PrintJobsColumnView(PrintJobsFragment.this.getActivity(), mPrintJobs, mPrinters, isTablet() ? isTabletLand() ? 3 : 2 : 1, PrintJobsFragment.this);           
+            mRootView.addView(mPrintJobColumnView);
+            mPrintJobsLoadIndicator.setVisibility(View.INVISIBLE);
+        }
+        
     }
     
 }
