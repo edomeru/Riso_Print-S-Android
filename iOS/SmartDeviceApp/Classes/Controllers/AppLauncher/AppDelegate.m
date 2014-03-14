@@ -18,8 +18,6 @@
     // Override point for customization after application launch.
     NSLog(@"Did Finish Launching");
     
-    [self cleanUpPDF];
-    
     /*{
         //TODO REMOVE! For testing only
         NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample.pdf" ofType:nil]];
@@ -37,10 +35,11 @@
         {
             NSLog(@"Opened with URL:%@", [url path]);
             [self setUpPreview:url];
+            return YES;
         }
-        
     }
     
+    [self cleanUpPDF];
     return YES;
 }
 
@@ -48,8 +47,6 @@
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
     NSLog(@"open URL:%@", [url path]);
-    // register main view controller for notification
-    [self cleanUpPDF];
     [self setUpPreview:url];
     return YES;
 }
@@ -64,6 +61,7 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -88,23 +86,31 @@
                                              selector:@selector(didEndPPDFProcessing:)
                                                  name:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
                                                object: nil];
-    [self processPDF:fileURL]; //make async if necessary
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [self cleanUpPDF];
+        [self processPDF:fileURL]; //make async if necessary
+    });
+    NSLog(@"Set-up Preview Returned");
 }
+
 
 #pragma mark  - PDF Processing methods
 - (void) processPDF:(NSURL *)pdfURL
 {
+    NSLog(@"Process PDF");
     PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
 
     int statusCode = [pdfFileManager setUpPDF:pdfURL];
-    
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
-        object:[NSNumber numberWithInt:statusCode]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
+         object:[NSNumber numberWithInt:statusCode]]; //make async if necessary
+    });
 }
 
 - (void) cleanUpPDF
 {
+    NSLog(@"Cleanup PDF");
     PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
     [pdfFileManager cleanUp];
 }
