@@ -26,17 +26,22 @@ public class PrintJobsColumnView extends LinearLayout {
     private int mJobCtr = 0;
     
     private Runnable mRunnable;
+    private LoadingViewListener mLoadingListener;
     
-    public PrintJobsColumnView(Context context, List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener) {
+    public PrintJobsColumnView(Context context, List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener, LoadingViewListener loadingListener) {
         this(context);
         this.mContext = context;
         this.mPrintJobs = printJobs;
         this.mPrinterIds = printerIds;
         this.mColNum = colNum;
         this.mDelListener = delListener;
+        this.mLoadingListener = loadingListener;
         this.mRunnable = new Runnable() {
             public void run() {
                 requestLayout();
+                if (mJobGroupCtr == mPrinterIds.size()){ 
+                    mLoadingListener.hideLoading();
+                }
             }
         };
         
@@ -148,8 +153,19 @@ public class PrintJobsColumnView extends LinearLayout {
             
             // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
             post(mRunnable);
-            
+
         }
+        
+        //if columns > 1 -> call hideLoading() inside runnable
+        if (mJobGroupCtr == mPrinterIds.size() && mColNum == 1){ 
+            mLoadingListener.hideLoading();
+        }
+        
+
+    }
+    
+    public interface LoadingViewListener{
+        public void hideLoading();
     }
     
 }
