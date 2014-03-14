@@ -16,12 +16,13 @@
 
     <!-- APP THEME CONSTANTS START -->
     <x:Double x:Key="MARGIN_Default">20</x:Double>
+    <x:Double x:Key="MARGIN_Small">10</x:Double>
+    <x:Double x:Key="MARGIN_SidePane">-400</x:Double>    
     
     <GridLength x:Key="SIZE_TitleBarHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberSliderHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberTextHeight">20</GridLength>
-    
-
+    <x:Double x:Key="SIZE_SidePaneWidth">400</x:Double>
     <!-- APP THEME CONSTANTS END-->
 
 </ResourceDictionary>

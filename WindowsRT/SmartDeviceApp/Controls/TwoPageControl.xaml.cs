@@ -34,9 +34,9 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("LeftPageImage", typeof(ImageSource), typeof(TwoPageControl),
             new PropertyMetadata(null, new PropertyChangedCallback(SetLeftPageImage)));
 
-        public static readonly DependencyProperty ViewModeProperty =
-           DependencyProperty.Register("ViewMode", typeof(PageViewMode), typeof(TwoPageControl),
-           new PropertyMetadata(PageViewMode.SinglePageView, new PropertyChangedCallback(SetViewMode)));
+        public static readonly DependencyProperty PageViewModeProperty =
+           DependencyProperty.Register("PageViewMode", typeof(PageViewMode), typeof(TwoPageControl),
+           new PropertyMetadata(PageViewMode.SinglePageView, new PropertyChangedCallback(SetPageViewMode)));
 
         public Grid PageAreaGrid
         {
@@ -55,10 +55,10 @@ namespace SmartDeviceApp.Controls
             set { SetValue(LeftPageImageProperty, value); }
         }
 
-        public PageViewMode ViewMode
+        public PageViewMode PageViewMode
         {
-            get { return (PageViewMode)GetValue(ViewModeProperty); }
-            set { SetValue(ViewModeProperty, value); }
+            get { return (PageViewMode)GetValue(PageViewModeProperty); }
+            set { SetValue(PageViewModeProperty, value); }
         }
 
         private static void SetRightPageImage(DependencyObject obj, DependencyPropertyChangedEventArgs e)
@@ -77,7 +77,7 @@ namespace SmartDeviceApp.Controls
             }
         }
 
-        private static void SetViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if ((PageViewMode)e.NewValue == PageViewMode.SinglePageView)
             {

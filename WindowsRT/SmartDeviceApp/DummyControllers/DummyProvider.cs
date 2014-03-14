@@ -21,6 +21,7 @@ namespace SmartDeviceApp.DummyControllers
 
         public uint TOTAL_PAGES = 12;
         public PageViewMode PAGE_VIEW_MODE = PageViewMode.SinglePageView;
+        public string PDF_FILENAME = "RZ1070.pdf";
 
         #endregion
 

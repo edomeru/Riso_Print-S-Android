@@ -12,14 +12,15 @@ namespace SmartDeviceApp.Converters
     public class PageNumberFormatConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
-        {   
+        {
+            if (value == null) return String.Empty;
             var pageNumber = value as PageNumberInfo;
             string formattedPageNumber = String.Empty;
-            if (pageNumber.ViewMode == PageViewMode.SinglePageView)
+            if (pageNumber.PageViewMode == PageViewMode.SinglePageView)
             {
                 formattedPageNumber = (pageNumber.RightPageIndex + 1).ToString();
             }
-            else if (pageNumber.ViewMode == PageViewMode.TwoPageView)
+            else if (pageNumber.PageViewMode == PageViewMode.TwoPageView)
             {
                 formattedPageNumber = String.Format("{0} - {1}", pageNumber.LeftPageIndex + 1, pageNumber.RightPageIndex + 1);
             }

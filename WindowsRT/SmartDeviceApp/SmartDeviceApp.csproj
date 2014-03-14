@@ -107,7 +107,17 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Enum\PageViewMode.cs" />
+    <Compile Include="Common\Enum\PreviewViewMode.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controls\ListItemControl.xaml.cs">
+      <DependentUpon>ListItemControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MenuPaneControl.xaml.cs">
+      <DependentUpon>MenuPaneControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SidePanelControl.xaml.cs">
+      <DependentUpon>SidePanelControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Common\Utilities\DialogService.cs" />
@@ -161,7 +171,9 @@
     <None Include="packages.config" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
-    <PRIResource Include="Resources\Strings\en-US\Resources.resw" />
+    <PRIResource Include="Resources\Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\en-US\Help.html" />
@@ -188,7 +200,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ListItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MenuPaneControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SidePanelControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

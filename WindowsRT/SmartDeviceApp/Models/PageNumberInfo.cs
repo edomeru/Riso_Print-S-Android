@@ -12,7 +12,7 @@ namespace SmartDeviceApp.Models
         private uint _leftPageIndex;
         private uint _rightPageIndex;
         private uint _pageTotal;
-        private PageViewMode _viewMode;
+        private PageViewMode _pageViewMode;
 
         public uint LeftPageIndex
         {
@@ -32,19 +32,19 @@ namespace SmartDeviceApp.Models
             set { _pageTotal = value; }
         }
 
-        public PageViewMode ViewMode
+        public PageViewMode PageViewMode
         {
-            get { return _viewMode; }
-            set { _viewMode = value; }
+            get { return _pageViewMode; }
+            set { _pageViewMode = value; }
         }
 
         public PageNumberInfo(uint leftPageIndex, uint rightPageIndex, 
-            uint pageTotal, PageViewMode viewMode)
+            uint pageTotal, PageViewMode pageViewMode)
         {
             _leftPageIndex = leftPageIndex;
             _rightPageIndex = rightPageIndex;
             _pageTotal = pageTotal;
-            _viewMode = viewMode;
+            _pageViewMode = pageViewMode;
         }
     }
 }

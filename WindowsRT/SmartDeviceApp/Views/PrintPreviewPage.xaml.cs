@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -24,12 +25,14 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Diagnostics;
+using Windows.UI.Input;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Controls;
-using Windows.UI.Input;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Common.Enum;
+
 
 namespace SmartDeviceApp.Views
 {
@@ -37,11 +40,11 @@ namespace SmartDeviceApp.Views
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class PrintPreviewPage : PageBase
-    {
-        private GestureController _gestureController;
-        
+    {        
         public PrintPreviewPage()
         {
+            // TODO: Verify if this is acceptable for MVVM
+            Messenger.Default.Register<PreviewViewMode>(this, (previewViewMode) => OnSetPreviewView(previewViewMode));
             this.InitializeComponent();
         }
 
@@ -61,32 +64,38 @@ namespace SmartDeviceApp.Views
             // Initialize gesture controller
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
-          
-            // Save page height to be used in resizing page images
-            var scalingFactor = pageAreaGrid.ActualHeight / ViewModel.RightPageActualSize.Height;
-
-            var pageAreaScrollViewer = (UIElement)pageAreaGrid.Parent; // TODO create dependency property??
-            _gestureController = new GestureController(pageAreaGrid, pageAreaScrollViewer, 
-                ViewModel.RightPageActualSize, scalingFactor,
-                new GestureController.SwipeRightDelegate(SwipeRight), 
-                new GestureController.SwipeLeftDelegate(SwipeLeft));
-
-            // TODO: Two-page view handling
-        }
-
-        private void SwipeRight()
-        {
-            ViewModel.GoToPreviousPage.Execute(null);
-        }
-
-        private void SwipeLeft()
-        {
-            ViewModel.GoToNextPage.Execute(null);
+            ViewModel.InitializeGestures(pageAreaGrid);
         }
 
         private void ResetTransforms(object sender, RoutedEventArgs e)
         {
-            _gestureController.ResetTransforms();
+            ViewModel._gestureController.ResetTransforms();
+        }
+
+        // Note: Cannot set this in ViewModel because need to get this object
+        // for VisualStateManager.GoToState
+        private void OnSetPreviewView(PreviewViewMode previewViewMode)
+        {
+            switch (previewViewMode)
+            {
+                case PreviewViewMode.MainMenuPaneVisible:
+                {
+                    VisualStateManager.GoToState(this, "MainMenuPaneVisibleState", true);
+                    break;
+                }
+
+                case PreviewViewMode.PreviewViewFullScreen:
+                {
+                    VisualStateManager.GoToState(this, "PreviewViewFullScreenState", true);
+                    break;
+                }
+
+                case PreviewViewMode.PrintSettingsPaneVisible:
+                {
+                    VisualStateManager.GoToState(this, "PrintSettingsPaneVisibleState", true);
+                    break;
+                }
+            }
         }
     }
 }

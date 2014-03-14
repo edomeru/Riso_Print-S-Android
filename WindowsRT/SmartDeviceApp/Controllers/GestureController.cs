@@ -36,6 +36,8 @@ namespace SmartDeviceApp.Controllers
         private bool _isScaled;
         private Point _startPoint;
 
+        private bool _isEnabled;
+
         private bool _isTranslateXEnabled;
         private bool _isTranslateYEnabled;
 
@@ -49,6 +51,8 @@ namespace SmartDeviceApp.Controllers
             _swipeRightHandler = swipeRightHandler;
             _swipeLeftHandler = swipeLeftHandler;
             Initialize();
+
+            ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
         
         public delegate void SwipeRightDelegate();
@@ -68,23 +72,57 @@ namespace SmartDeviceApp.Controllers
                 GestureSettings.ManipulationMultipleFingerPanning  | //reduces zoom jitter when panning with multiple fingers
                 GestureSettings.ManipulationScaleInertia;
 
-            // Pointer event handlers
-            _control.PointerCanceled += OnPointerCanceled;
-            _control.PointerPressed += OnPointerPressed;
-            _control.PointerReleased += OnPointerReleased;
-            _control.PointerMoved += OnPointerMoved;
-
-            // Gesture recognizer outputs
-            _gestureRecognizer.Tapped += OnTapped;
-            _gestureRecognizer.RightTapped += OnRightTapped;
-            _gestureRecognizer.ManipulationStarted += OnManipulationStarted;
-            _gestureRecognizer.ManipulationUpdated += OnManipulationUpdated;
-            _gestureRecognizer.ManipulationCompleted += OnManipulationCompleted;
+            EnableGestures();
             
             // InitializeTransforms
             _controlSize = new Size(((ScrollViewer)_controlReference).ActualWidth, ((ScrollViewer)_controlReference).ActualHeight);
             _center = new Point(_controlSize.Width / 2, _controlSize.Height / 2);
             ResetTransforms();
+        }
+
+        public void EnableGestures()
+        {
+            if (!_isEnabled)
+            {
+                _control.PointerCanceled += OnPointerCanceled;
+                _control.PointerPressed += OnPointerPressed;
+                _control.PointerReleased += OnPointerReleased;
+                _control.PointerMoved += OnPointerMoved;
+
+                // Gesture recognizer outputs
+                _gestureRecognizer.Tapped += OnTapped;
+                _gestureRecognizer.RightTapped += OnRightTapped;
+                _gestureRecognizer.ManipulationStarted += OnManipulationStarted;
+                _gestureRecognizer.ManipulationUpdated += OnManipulationUpdated;
+                _gestureRecognizer.ManipulationCompleted += OnManipulationCompleted;
+                _isEnabled = true;
+            }
+        }
+
+        public void DisableGestures()
+        {
+            if (_isEnabled)
+            {
+                _control.PointerCanceled -= OnPointerCanceled;
+                _control.PointerPressed -= OnPointerPressed;
+                _control.PointerReleased -= OnPointerReleased;
+                _control.PointerMoved -= OnPointerMoved;
+
+                // Gesture recognizer outputs
+                _gestureRecognizer.Tapped -= OnTapped;
+                _gestureRecognizer.RightTapped -= OnRightTapped;
+                _gestureRecognizer.ManipulationStarted -= OnManipulationStarted;
+                _gestureRecognizer.ManipulationUpdated -= OnManipulationUpdated;
+                _gestureRecognizer.ManipulationCompleted -= OnManipulationCompleted;
+                _isEnabled = false;
+            }
+        }
+
+        private void ControlReferenceSizeChanged(Object sender, SizeChangedEventArgs e)
+        {
+            _controlSize = new Size(((ScrollViewer)_controlReference).ActualWidth, ((ScrollViewer)_controlReference).ActualHeight);
+            _center = new Point(_controlSize.Width / 2, _controlSize.Height / 2);
+            Normalize();
         }
 
         public void ResetTransforms() // TODO: Set to private after debug!!

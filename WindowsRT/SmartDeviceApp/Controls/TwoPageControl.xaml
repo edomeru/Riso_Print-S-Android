@@ -13,8 +13,8 @@
                 <ColumnDefinition x:Name="leftPageArea"/>
                 <ColumnDefinition x:Name="rightPageArea"/>
             </Grid.ColumnDefinitions>
-            <local:PageControl Grid.Column="0" x:Name="leftPage" Style="{StaticResource STYLE_LeftPageWrapper}"/>
-            <local:PageControl Grid.Column="1" x:Name="rightPage" Style="{StaticResource STYLE_RightPageWrapper}"/>
+            <local:PageControl Grid.Column="0" x:Name="leftPage" Style="{StaticResource STYLE_AlignLeft}"/>
+            <local:PageControl Grid.Column="1" x:Name="rightPage" Style="{StaticResource STYLE_AlignRight}"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

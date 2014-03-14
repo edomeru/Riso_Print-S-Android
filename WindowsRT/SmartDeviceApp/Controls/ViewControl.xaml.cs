@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,15 +15,34 @@ using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace SmartDeviceApp.Controls
 {
     [ContentProperty(Name = "Children")]
     public sealed partial class ViewControl : UserControl
     {
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register("Title", typeof(string), typeof(ViewControl),
+            new PropertyMetadata(String.Empty, new PropertyChangedCallback(SetTitle)));
+
         public static readonly DependencyProperty ChildrenProperty = DependencyProperty.Register(
             "Children", typeof(UIElementCollection), typeof(ViewControl), null);
+        
+        //public static new readonly DependencyProperty WidthProperty =
+        //    DependencyProperty.Register("Width", typeof(double), typeof(ViewControl),
+        //    new PropertyMetadata(Visibility.Visible, new PropertyChangedCallback(SetWidth)));
+
+        public static readonly DependencyProperty Button1CommandProperty =
+            DependencyProperty.Register("Button1Command", typeof(ICommand), typeof(ViewControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton1Command)));
+
+        public static readonly DependencyProperty Button2CommandProperty =
+            DependencyProperty.Register("Button2Command", typeof(ICommand), typeof(ViewControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton2Command)));
+
+        public static readonly DependencyProperty Button3CommandProperty =
+            DependencyProperty.Register("Button3Command", typeof(ICommand), typeof(ViewControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton3Command)));
+        
 
         public ViewControl()
         {
@@ -30,10 +50,78 @@ namespace SmartDeviceApp.Controls
             Children = contentGrid.Children;
         }
 
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
         public UIElementCollection Children
         {
             get { return (UIElementCollection)GetValue(ChildrenProperty); }
             private set { SetValue(ChildrenProperty, value); }
         }
+        
+        //public new double Width
+        //{
+        //    get { return (double)GetValue(WidthProperty); }
+        //    set { SetValue(WidthProperty, value); }
+        //}
+
+        public ICommand Button1Command
+        {
+            get { return (ICommand)GetValue(Button1CommandProperty); }
+            set { SetValue(Button1CommandProperty, value); }
+        }
+
+        public ICommand Button2Command
+        {
+            get { return (ICommand)GetValue(Button2CommandProperty); }
+            set { SetValue(Button2CommandProperty, value); }
+        }
+
+        public ICommand Button3Command
+        {
+            get { return (ICommand)GetValue(Button3CommandProperty); }
+            set { SetValue(Button3CommandProperty, value); }
+        }
+
+        #region PRIVATE METHODS
+
+        private static void SetTitle(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ((ViewControl)obj).viewTitle.Text = (string)e.NewValue;
+        }
+
+        //private static void SetWidth(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((ViewControl)obj).viewControl.Width = (double)e.NewValue;
+        //}
+
+        private static void SetButton1Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if ((ICommand)e.NewValue != null)
+            {
+                ((ViewControl)obj).button1.Command = (ICommand)e.NewValue;
+            }
+        }
+
+        private static void SetButton2Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if ((ICommand)e.NewValue != null)
+            {
+                ((ViewControl)obj).button2.Command = (ICommand)e.NewValue;
+            }
+        }
+
+        private static void SetButton3Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if ((ICommand)e.NewValue != null)
+            {
+                ((ViewControl)obj).button3.Command = (ICommand)e.NewValue;
+            }
+        }
+
+        #endregion
     }
 }
