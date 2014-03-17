@@ -135,8 +135,10 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     // ================================================================================
     private void findPrinter(String ipAddress) {
         if(ipAddress.isEmpty()) {
+            mIsSearching = false;
             return;
         }
+        mIsSearching = true;
         mPrinterManager.searchPrinter(ipAddress);
     }
     
@@ -183,7 +185,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         }
         else if (v.getId() == ID_MENU_SAVE_BUTTON) {
             if(!mIsSearching) {
-                mIsSearching = true;
                 findPrinter(mIpAddress.getText().toString());
             }
         }
@@ -194,6 +195,9 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     // ================================================================================
     @Override
     public void onPrinterAdd(Printer printer) {
+        if(!mIsSearching)
+            return;
+        
         if(mPrinterManager.isExists(printer)) {
             dialogErrCb(printer);
         }

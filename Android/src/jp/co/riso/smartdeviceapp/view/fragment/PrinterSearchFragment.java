@@ -8,7 +8,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
@@ -18,23 +17,21 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSear
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter;
+import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter.SearchAdapterInterface;
+import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ActionBar.LayoutParams;
-import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch {
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, SearchAdapterInterface {
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final String KEY_SEARCH_STATE = "searched_state";
@@ -45,7 +42,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     //ListView parameters
     private PullToRefreshListView mListView = null;
     private ArrayList<Printer> mPrinter = null;
-    private ArrayAdapter<Printer> mPrinterSearchAdapter = null;
+    private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
     
     @Override
@@ -55,9 +52,17 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        mPrinter = new ArrayList<Printer>();
+        if(savedInstanceState != null) {
+            mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
+            mIsSearching = savedInstanceState.getBoolean(KEY_SEARCH_STATE, false);
+        }
+        else {
+            mPrinter = new ArrayList<Printer>();
+        }
+        mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printer_search_list_item, mPrinter);
+        mPrinterSearchAdapter.setSearchAdapterInterface(this);
         mPrinterManager = PrinterManager.sharedManager(getActivity());
-        mPrinterManager.setOnPrinterSearchListener(this);
+        mPrinterManager.setOnPrinterSearchListener(this);   
     }
     
     @Override
@@ -65,6 +70,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
         mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
         mListView.setLockScrollWhileRefreshing(false);
+        mListView.setAdapter(mPrinterSearchAdapter);
+        mListView.setOnRefreshListener(this); 
     }
     
     @Override
@@ -87,7 +94,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setOnClickListener(this);
-        
         leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, 
                 LayoutParams.MATCH_PARENT);
     }
@@ -95,18 +101,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
-        if(savedInstanceState != null) {
-            mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
-            mIsSearching = savedInstanceState.getBoolean(KEY_SEARCH_STATE, false);
-        }
-        
-        mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(),
-                R.layout.printer_search_list_item, mPrinter);
-        mListView.setAdapter(mPrinterSearchAdapter);
-        // Refresh Listener
-        mListView.setOnRefreshListener(this);    
-        
         if(mIsSearching){
             updateRefreshBar();
             mIsSearching = false;
@@ -134,15 +128,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // ================================================================================
     // Private Methods
     // ================================================================================
-    private void dialogCb() {
-        // TODO: Get values from resources 
-        // Open Dialog box 
-        InfoDialogFragment info = InfoDialogFragment.newInstance("Add Printer Info", 
-                "The new printer was added successfully", 
-                getResources().getString(R.string.ids_lbl_ok));
-        DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
-    }
-    
     public void updateRefreshBar() {
         getActivity().runOnUiThread(new Runnable(){
             @Override
@@ -160,73 +145,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         });
     }
     
-    // ================================================================================
-    // Adapter - PrinterSearchAdapter
-    // ================================================================================
-    public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
-        public class ViewHolder{
-            ImageView addedIndicator;
-            TextView printerName;
-        }
-        
-        private Context mContext;
-        private int layoutId;
-        private ViewHolder mHolder;
-        
-        public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
-            super(context, resource, values);
-            this.mContext = context;
-            this.layoutId = resource;
-        }
-        
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Printer rowView =  getItem(position);
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            
-            if (convertView == null) {             
-                convertView = inflater.inflate(layoutId, parent, false);
-                mHolder = new ViewHolder();
-                mHolder.printerName = (TextView) convertView.findViewById(R.id.printer_text);
-                mHolder.addedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton); 
-                
-                mHolder.printerName.setText(rowView.getName());
-                if(mPrinterManager.isExists(mPrinter.get(position))){
-                    mHolder.addedIndicator.setBackgroundResource(R.drawable.check);
-                }
-                else {
-                    mHolder.addedIndicator.setBackgroundResource(R.drawable.add);  
-                }
-                
-                mHolder.addedIndicator.setTag(position);
-                
-                
-                //Set listener for Add Button
-                mHolder.addedIndicator.setOnClickListener(this);            
-            }
-            else
-                mHolder = (ViewHolder) convertView.getTag();        
-            
-            return convertView;
-        }
-        
-        @Override
-        public void onClick(View v) {
-            if(v.getId() == R.id.addPrinterButton) {
-                if(!mIsSearching) {
-                    // For Add Button Press
-                    Printer printer = mPrinter.get((Integer) v.getTag());
-                    if(printer == null) {
-                        return;
-                    }                
-                    if(mPrinterManager.savePrinterToDB(printer) != -1) {
-                        v.setBackgroundResource(R.drawable.check);
-                        dialogCb();
-                    }
-                }
-            }
-        }
-    }
     
     // ================================================================================
     // INTERFACE - onRefresh()
@@ -284,5 +202,21 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onSearchEnd() {
         mIsSearching = false;
         updateRefreshBar();
+    }
+    
+    // ================================================================================
+    // INTERFACE - SearchAdapterInterface
+    // ================================================================================
+    @Override
+    public boolean isSearching() {
+        return mIsSearching;
+    }
+    
+    @Override
+    public void dialog() {
+        InfoDialogFragment info = InfoDialogFragment.newInstance("Add Printer Info", 
+                "The new printer was added successfully", 
+                getResources().getString(R.string.ids_lbl_ok));
+        DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);       
     }
 }
