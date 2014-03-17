@@ -90,7 +90,7 @@
     }
 }
 
-- (void)getPrinters
+- (void)getListOfSavedPrinters
 {
     self.listSavedPrinters = [[DatabaseManager getObjects:E_PRINTER] mutableCopy];
 }
@@ -108,13 +108,36 @@
     }
 }
 
-- (BOOL)deletePrinter:(Printer*)printerToDelete
+- (Printer*)getPrinterAtIndex:(NSUInteger)index
 {
+    NSUInteger countSavedPrinters = [self.listSavedPrinters count];
+    if (index >= countSavedPrinters)
+    {
+        NSLog(@"[ERROR][PM] printer index=%d >= countSavedPrinters=%d", index, countSavedPrinters);
+        return nil;
+    }
+    else
+        return [self.listSavedPrinters objectAtIndex:index];
+}
+
+- (BOOL)deletePrinterAtIndex:(NSUInteger)index
+{
+    // check if the index is valid
+    NSUInteger countSavedPrinters = [self.listSavedPrinters count];
+    if (index >= countSavedPrinters)
+    {
+        NSLog(@"[ERROR][PM] printer index=%d >= countSavedPrinters=%d", index, countSavedPrinters);
+        return NO;
+    }
+    
+    // get the printer to delete
+    Printer* printerToDelete = [self.listSavedPrinters objectAtIndex:index];
+    
     // check if this printer is the default printer
     if ([self.defaultPrinter.printer isEqual:printerToDelete])
     {
         // delete the default printer first
-        NSLog(@"[INFO][PM] this is the default printer, remove default printer first");
+        NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
         self.defaultPrinter.printer = nil;
         if ([DatabaseManager deleteObject:self.defaultPrinter])
             self.defaultPrinter = nil;
@@ -123,8 +146,26 @@
     }
     
     // delete the printer
-    [self.listSavedPrinters removeObject:printerToDelete];
+    NSLog(@"[INFO][PM] deleting Printer %@ at row %d",printerToDelete.name, index);
+    [self.listSavedPrinters removeObjectAtIndex:index];
     if ([DatabaseManager deleteObject:printerToDelete])
+        return YES;
+    else
+        return NO;
+}
+
+- (BOOL)hasDefaultPrinter
+{
+    if (self.defaultPrinter.printer == nil)
+        return NO;
+    else
+        return YES;
+}
+
+- (BOOL)isDefaultPrinter:(Printer*)printer;
+{
+    if (self.defaultPrinter.printer != nil
+        && [self.defaultPrinter.printer isEqual:printer])
         return YES;
     else
         return NO;

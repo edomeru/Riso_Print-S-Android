@@ -39,7 +39,7 @@
     [super viewDidLoad];
 
     self.printerManager = [[PrinterManager alloc] init];
-    [self.printerManager getPrinters];
+    [self.printerManager getListOfSavedPrinters];
     [self.printerManager getDefaultPrinter];
     
     // For TEST data creation only

@@ -50,7 +50,7 @@
  If the list is non-empty, this PrinterManager will keep
  a reference to this list as its list of saved printers.
  */
-- (void)getPrinters;
+- (void)getListOfSavedPrinters;
 
 /**
  Gets the DefaultPrinter object stored in DB.
@@ -60,17 +60,39 @@
 - (void)getDefaultPrinter;
 
 /**
+ Gets a Printer object from the list of saved printers.
+ @param index
+        index from the list of saved printers
+        (must have called getListOfSavedPrinters: beforehand)
+ @return Printer* object or nil if the index is not valid
+ */
+- (Printer*)getPrinterAtIndex:(NSUInteger)index;
+
+/**
  Removes a Printer object from the DB. If this Printer object
  is set as the default printer, the DefaultPrinter object is 
  first removed. The PrinterManager's reference to both the
  Printer object and the DefaultPrinter objects are also removed.
  All changes are saved to the DB.
  
- @param printerToDelete
-        the Printer object to be deleted
+ @param index
+        index from the list of saved printers
+        (must have called getListOfSavedPrinters: beforehand)
  @return YES if successful, NO otherwise.
  */
-- (BOOL)deletePrinter:(Printer*)printerToDelete;
+- (BOOL)deletePrinterAtIndex:(NSUInteger)index;
+
+/**
+ Checks if the PrinterManager holds a reference to a default printer.
+ @return YES if a default printer is set, NO otherwise.
+ */
+- (BOOL)hasDefaultPrinter;
+
+/**
+ Checks if the specified printer is default printer.
+ @return YES if the printer is the default printer, NO otherwise.
+ */
+- (BOOL)isDefaultPrinter:(Printer*)printer;
 
 #pragma mark - Printers in Network (SNMP)
 

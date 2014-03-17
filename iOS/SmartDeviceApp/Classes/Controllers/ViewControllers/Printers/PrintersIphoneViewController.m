@@ -64,7 +64,7 @@
 
     // setup the PrinterManager
     self.printerManager = [[PrinterManager alloc] init];
-    [self.printerManager getPrinters];
+    [self.printerManager getListOfSavedPrinters];
     [self.printerManager getDefaultPrinter];
 }
 
@@ -93,8 +93,8 @@
     PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
                                                         forIndexPath:indexPath];
     
-    Printer* printer = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
-    if([self.printerManager.defaultPrinter.printer isEqual:printer] == YES)
+    Printer* printer = [self.printerManager getPrinterAtIndex:indexPath.row];
+    if ([self.printerManager isDefaultPrinter:printer])
     {
         self.defaultPrinterIndexPath = indexPath;
         [cell setAsDefaultPrinterCell:YES];
@@ -124,14 +124,10 @@
 {
         if(editingStyle == UITableViewCellEditingStyleDelete)
         {
-            //Get the printer to be deleted
-            Printer *printerToDelete = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
-            
-            NSLog(@"[INFO][Printers] deleting Printer %@ at row %d", printerToDelete.name, indexPath.row);
-            if ([self.printerManager deletePrinter:printerToDelete])
+            if ([self.printerManager deletePrinterAtIndex:indexPath.row])
             {
                 //check if reference to default printer was also deleted
-                if (self.printerManager.defaultPrinter == nil)
+                if (![self.printerManager hasDefaultPrinter])
                     self.defaultPrinterIndexPath = nil;
 
                 //set the view of the cell to stop polling for printer status
@@ -151,7 +147,6 @@
             }
         }
 }
-#pragma mark - Printers Data
 
 #pragma mark - Gesture Recognizer Handler
 - (IBAction)onTapPrinterCell:(id)sender
