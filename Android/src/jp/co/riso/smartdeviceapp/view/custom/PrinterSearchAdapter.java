@@ -20,21 +20,21 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         TextView printerName;
     }
     
-    public interface SearchAdapterInterface {
-        public boolean isSearching();
-        public void dialog();
-    }
-    
-    public void setSearchAdapterInterface(SearchAdapterInterface searchAdapterInterface) {
-        mSearchAdapterInterface = searchAdapterInterface;
-    }
-    
-    private SearchAdapterInterface mSearchAdapterInterface = null;
+    private PrinteSearchAdapterInterface mSearchAdapterInterface = null;
     private Context mContext;
     private int layoutId;
     private ViewHolder mHolder;
     private PrinterManager mPrinterManager = null;
-
+    
+    public interface PrinteSearchAdapterInterface {
+        public boolean isSearching();
+        public void dialog();
+    }
+    
+    public void setSearchAdapterInterface(PrinteSearchAdapterInterface searchAdapterInterface) {
+        mSearchAdapterInterface = searchAdapterInterface;
+    }
+    
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
         this.mContext = context;
@@ -81,7 +81,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
                 // For Add Button Press
                 if(printer == null) {
                     return;
-                }                
+                }
                 if(mPrinterManager.savePrinterToDB(printer) != -1) {
                     v.setBackgroundResource(R.drawable.check);
                     mSearchAdapterInterface.dialog();
@@ -89,6 +89,5 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             }
         }
     }
-    
     
 }

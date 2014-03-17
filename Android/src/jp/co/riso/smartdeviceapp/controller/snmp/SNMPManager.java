@@ -58,7 +58,7 @@ public class SNMPManager {
         
         @Override
         protected Void doInBackground(Void... arg0) {
-            try{
+            try {
                 startSNMPDeviceDiscovery();
             }
             catch(Exception e) {
@@ -71,7 +71,7 @@ public class SNMPManager {
     class manualSearchTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... arg0) {
-            try{
+            try {
                 snmpManualSearch(arg0[0]);
             }
             catch(Exception e) {

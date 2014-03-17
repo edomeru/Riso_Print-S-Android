@@ -18,7 +18,8 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter;
-import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter.SearchAdapterInterface;
+import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter.PrinteSearchAdapterInterface;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -31,7 +32,7 @@ import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, SearchAdapterInterface {
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, PrinteSearchAdapterInterface {   
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final String KEY_SEARCH_STATE = "searched_state";
@@ -44,6 +45,13 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private ArrayList<Printer> mPrinter = null;
     private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
+    
+    //Interface
+    private PrinteSearchTabletInterface mPrinteSearchTabletInterface = null;
+    
+    public void setPrinteSearchTabletInterface(PrinteSearchTabletInterface printeSearchTabletInterface) {
+        mPrinteSearchTabletInterface = printeSearchTabletInterface;
+    }
     
     @Override
     public int getViewLayout() {
@@ -163,11 +171,20 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onClick(View v) {
         //Back Button
         if(v.getId() == ID_MENU_ACTION_BUTTON) {
-            if (isTablet()) {
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();              
-                    activity.closeDrawers();        
-                }
+            if (isTablet()) {                
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MainActivity activity = (MainActivity) getActivity();              
+                            activity.closeDrawers();        
+                            mPrinteSearchTabletInterface.refreshPrintersList();
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             } else {
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -205,7 +222,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     }
     
     // ================================================================================
-    // INTERFACE - SearchAdapterInterface
+    // INTERFACE - PrinteSearchAdapterInterface
     // ================================================================================
     @Override
     public boolean isSearching() {

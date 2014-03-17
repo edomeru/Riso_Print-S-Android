@@ -9,7 +9,9 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSear
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.ActionBar.LayoutParams;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
     
+    
     private EditText mIpAddress = null;
     PrinterManager mPrinterManager = null;
     private boolean mIsSearching = false;
@@ -30,6 +33,13 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     private static final String KEY_SEARCH_STATE = "add_searched_state";
     
     public final int ID_MENU_SAVE_BUTTON    = 0x11000004;
+    
+    //Interface
+    private PrinteSearchTabletInterface mPrinteSearchTabletInterface = null;
+    
+    public void setPrinteSearchTabletInterface(PrinteSearchTabletInterface printeSearchTabletInterface) {
+        mPrinteSearchTabletInterface = printeSearchTabletInterface;
+    }
     
     @Override
     public int getViewLayout() {
@@ -162,9 +172,20 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     private void closeScreen() {
         if (isTablet()) {
-            if (getActivity() != null && getActivity() instanceof MainActivity) {
-                MainActivity activity = (MainActivity) getActivity();              
-                activity.closeDrawers();        
+            if (getActivity() != null && getActivity() instanceof MainActivity) {               
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MainActivity activity = (MainActivity) getActivity();              
+                            activity.closeDrawers();        
+                            mPrinteSearchTabletInterface.refreshPrintersList();
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         } else {
             FragmentManager fm = getFragmentManager();
@@ -214,4 +235,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         mIsSearching = false;
         return;
     }
+    
+    
 }

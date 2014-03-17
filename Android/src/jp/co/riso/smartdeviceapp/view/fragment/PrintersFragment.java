@@ -30,10 +30,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class PrintersFragment extends BaseFragment implements View.OnTouchListener {
+    public interface PrinteSearchTabletInterface {
+        public void refreshPrintersList();
+    }
     
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
-        
+    
     public final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
     public final int ID_MENU_ACTION_ADD_BUTTON    = 0x11000003;
     
@@ -61,7 +64,9 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinterManager =  PrinterManager.sharedManager(getActivity());
-        mPrinter = new ArrayList<Printer>();
+        if(!isTablet()) {
+            mPrinter = new ArrayList<Printer>();
+        }
     }
     
     @Override
@@ -86,11 +91,11 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         
-        setPrinterArrayList();
         if(isTablet()) {       
-            mPrinterTabletView.notifyDataSetChanged(mPrinter);
+            mPrinterTabletView.refreshPrintersList();
         }
         else {
+            setPrinterArrayList();
             mPrinterAdapter = new PrinterArrayAdapter(getActivity(),
                     R.layout.printer_list_item, mPrinter);
             mListView.setAdapter(mPrinterAdapter);
@@ -127,12 +132,18 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     }
     
     private void displayPrinterSearchFragment() {
-        BaseFragment fragment = new PrinterSearchFragment();
+        PrinterSearchFragment fragment = new PrinterSearchFragment();
+        if(isTablet()) {
+            fragment.setPrinteSearchTabletInterface(mPrinterTabletView);
+        }
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH);
     }
     
     private void displayAddPrinterFragment() {
-        BaseFragment fragment = new AddPrinterFragment();
+        AddPrinterFragment fragment = new AddPrinterFragment();
+        if(isTablet()) {
+            fragment.setPrinteSearchTabletInterface(mPrinterTabletView);
+        }
         switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
     }
     
@@ -159,7 +170,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
     }
     
-   
+    
     
     // ================================================================================
     // INTERFACE - View.OnClickListener
@@ -190,5 +201,11 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         printerArrayAdapter.hideDeleteButton();        
         return false;
     }
-      
+    
+    // ================================================================================
+    // INTERFACE - OnRefreshPrintersList
+    // ================================================================================
+    public void onRefreshPrintersList() {
+        mPrinterTabletView.refreshPrintersList();        
+    }    
 }
