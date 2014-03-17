@@ -26,6 +26,7 @@ import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView.PrintDeleteListe
 import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -78,8 +79,11 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     @Override
     public void onResume() {
         super.onResume();
-        mLoadPrintJobsTask = new LoadPrintJobsFromDB();
-        mLoadPrintJobsTask.execute();
+        if (mLoadPrintJobsTask == null && mPrintJobs.isEmpty()) {
+            mLoadPrintJobsTask = new LoadPrintJobsFromDB();
+            
+            mLoadPrintJobsTask.execute();
+        }
         
     }
     
@@ -2661,6 +2665,15 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("CESTEST", "onpause");
+        
+    }
+    
+    @Override
+    public void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        Log.d("CESTEST", "onDestroy");
         mLoadPrintJobsTask.cancel(true);
         mPrintJobs.clear();
         mPrinters.clear();
@@ -2698,13 +2711,13 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             initializePJs();
             // ///////////////
             
-            if (mPrintJobs.isEmpty()) {
+            //if (mPrintJobs.isEmpty()) {
                 
                 mPrintJobs = PrintJobManager.getPrintJobs();
                 
                 mPrinters = PrintJobManager.getPrintersWithJobs();
                 
-            }
+           // }
             return null;
         }
         

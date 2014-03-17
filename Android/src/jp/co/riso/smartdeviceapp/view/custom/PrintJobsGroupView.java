@@ -41,7 +41,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private PrintDeleteListener mDelListener;
     
     private boolean mWithMargin;
-    private boolean misCollapsed = false;
+    private boolean mIsCollapsed = false;
     
     public PrintJobsGroupView(Context context, List<PrintJob> printJobs, boolean withMargin, Printer printer, PrintDeleteListener delListener) {
         this(context);
@@ -144,19 +144,21 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     // toggle collapse/expand of a group view when clicked
     private void toggleGroupView(View v) {
-        if (misCollapsed) {
+        if (mIsCollapsed) {
             for (int i = 0; i < mPrintJobViews.size(); i++) {
                 mPrintJobViews.get(i).setVisibility(VISIBLE);
             }
-            misCollapsed = false;
-            ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_collapse);
-            
+            mIsCollapsed = false;
+            ((ImageView) v.findViewById(R.id.printJobGroupExpand)).setVisibility(VISIBLE);
+            ((ImageView) v.findViewById(R.id.printJobGroupCollapse)).setVisibility(INVISIBLE);
+           
         } else {
             for (int i = 0; i < mPrintJobViews.size(); i++) {
                 mPrintJobViews.get(i).setVisibility(GONE);
             }
-            misCollapsed = true;
-            ((TextView) v.findViewById(R.id.printJobGroupExpand)).setText(R.string.ids_lbl_expand);
+            mIsCollapsed = true;
+            ((ImageView) v.findViewById(R.id.printJobGroupExpand)).setVisibility(INVISIBLE);
+            ((ImageView) v.findViewById(R.id.printJobGroupCollapse)).setVisibility(VISIBLE); 
         }
         
     }
