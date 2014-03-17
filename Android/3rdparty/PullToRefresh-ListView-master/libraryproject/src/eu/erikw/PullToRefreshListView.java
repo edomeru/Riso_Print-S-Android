@@ -1,5 +1,6 @@
 package eu.erikw;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.*;
@@ -69,7 +70,8 @@ public class PullToRefreshListView extends ListView{
     private String  releaseToRefreshText;
     private String  refreshingText;
     private String  lastUpdatedText;
-    private SimpleDateFormat lastUpdatedDateFormat = new SimpleDateFormat("dd/MM HH:mm");
+    @SuppressLint("SimpleDateFormat")
+	private SimpleDateFormat lastUpdatedDateFormat = new SimpleDateFormat("dd/MM HH:mm");
 
     private float                   previousY;
     private int                     headerPadding;
@@ -299,6 +301,8 @@ public class PullToRefreshListView extends ListView{
 
                         case PULL_TO_REFRESH:
                             resetHeader();
+                            break;
+                        default:
                             break;
                     }
                 }

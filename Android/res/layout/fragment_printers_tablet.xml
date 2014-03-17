@@ -6,6 +6,16 @@
     android:splitMotionEvents="false" >
 
     <include layout="@layout/actionbar_main" />
-    
-    
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <jp.co.riso.smartdeviceapp.view.custom.PrintersScreenTabletView
+            android:id="@+id/printerParentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </jp.co.riso.smartdeviceapp.view.custom.PrintersScreenTabletView>
+    </ScrollView>
+
 </LinearLayout>

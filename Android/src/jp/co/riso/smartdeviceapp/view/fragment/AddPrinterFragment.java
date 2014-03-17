@@ -22,15 +22,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
-
+    
     private EditText mIpAddress = null;
     PrinterManager mPrinterManager = null;
     private boolean mIsSearching = false;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final String KEY_SEARCH_STATE = "add_searched_state";
-
+    
     public final int ID_MENU_SAVE_BUTTON    = 0x11000004;
-
+    
     @Override
     public int getViewLayout() {
         return R.layout.fragment_add_printer;
@@ -48,9 +48,12 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
     }
-
+    
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
+        if(isTablet()) {
+            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)/getResources().getDisplayMetrics().density), 0, 0, 0);
+        }
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
         
@@ -59,42 +62,41 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-      super.onActivityCreated(savedInstanceState);
-      
-      if(savedInstanceState != null) {
-          mIsSearching = savedInstanceState.getBoolean(KEY_SEARCH_STATE, false);
-          if(mIsSearching) {
-              findPrinter(mIpAddress.getText().toString());
-          }
-      }
-      
-      InputFilter[] ipv4Filter = new InputFilter[2];
-      //IPv4 
-      ipv4Filter[0] = new InputFilter.LengthFilter(15);
-      ipv4Filter[1] = new InputFilter() {
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String regEx = "^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?";
-            if (end > start) {
-                String destTxt = dest.toString();
-                String ipv4Address = destTxt.substring(0, dstart) +
-                source.subSequence(start, end) + destTxt.substring(dend);
-                if (!ipv4Address.matches (regEx)) { 
-                    return "";
-                } else {
-                    String[] splits = ipv4Address.split("\\.");
-                    for (int i=0; i < splits.length; i++) {
-                        if (Integer.valueOf(splits[i]) > 255) {
-                            return "";
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            mIsSearching = savedInstanceState.getBoolean(KEY_SEARCH_STATE, false);
+            if(mIsSearching) {
+                findPrinter(mIpAddress.getText().toString());
+            }
+        }
+        
+        InputFilter[] ipv4Filter = new InputFilter[2];
+        //IPv4 
+        ipv4Filter[0] = new InputFilter.LengthFilter(15);
+        ipv4Filter[1] = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                String regEx = "^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?";
+                if (end > start) {
+                    String destTxt = dest.toString();
+                    String ipv4Address = destTxt.substring(0, dstart) +
+                            source.subSequence(start, end) + destTxt.substring(dend);
+                    if (!ipv4Address.matches (regEx)) { 
+                        return "";
+                    } else {
+                        String[] splits = ipv4Address.split("\\.");
+                        for (int i=0; i < splits.length; i++) {
+                            if (Integer.valueOf(splits[i]) > 255) {
+                                return "";
+                            }
                         }
                     }
                 }
+                return null;
             }
-        return null;
-        }
-      };
-      
-      mIpAddress.setFilters(ipv4Filter);
+        };
+        
+        mIpAddress.setFilters(ipv4Filter);
     }
     
     @Override
@@ -103,14 +105,14 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         ImageButton saveMenuButton = new ImageButton(v.getContext());
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
         ViewGroup rightActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
-   
+        
         //Back Button
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
         actionMenuButton.setImageResource(R.drawable.back);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setOnClickListener(this);
-
+        
         //Save Button
         saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
         saveMenuButton.setImageResource(R.drawable.save);

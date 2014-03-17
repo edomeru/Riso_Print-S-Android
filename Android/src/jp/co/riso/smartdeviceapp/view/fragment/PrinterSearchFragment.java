@@ -76,6 +76,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void addActionMenuButton(View v) {
+        if(isTablet()) {
+            v.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)/getResources().getDisplayMetrics().density), 0, 0, 0);
+        }
         ImageButton actionMenuButton = new ImageButton(v.getContext());
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
         
@@ -139,7 +142,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
     }
-       
+    
     public void updateRefreshBar() {
         getActivity().runOnUiThread(new Runnable(){
             @Override
