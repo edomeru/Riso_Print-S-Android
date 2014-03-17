@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <deployment defaultVersion="1552" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <deployment defaultVersion="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -544,16 +544,22 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="C0F-ZU-1ZN" userLabel="Status">
-                                                            <rect key="frame" x="20" y="0.0" width="40" height="40"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hpg-ir-rwX" customClass="PrinterStatusView">
+                                                            <rect key="frame" x="20" y="12" width="16" height="16"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <color key="backgroundColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="Fag-2G-J02"/>
-                                                                <constraint firstAttribute="height" constant="40" id="iZ7-zg-6Hl"/>
+                                                                <constraint firstAttribute="height" constant="16" id="Imd-XI-ngH"/>
+                                                                <constraint firstAttribute="width" constant="16" id="oMY-5X-Jdf"/>
                                                             </constraints>
-                                                        </imageView>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                    <integer key="value" value="8"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </view>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLl-rF-Cku" userLabel="Name">
-                                                            <rect key="frame" x="70" y="10" width="240" height="21"/>
+                                                            <rect key="frame" x="46" y="10" width="264" height="21"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="highlightedColor"/>
@@ -562,10 +568,10 @@
                                                     <color key="backgroundColor" red="0.56862745098039214" green="0.56862745098039214" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="trailing" secondItem="OLl-rF-Cku" secondAttribute="trailing" constant="10" id="0Ws-S6-qty"/>
-                                                        <constraint firstItem="C0F-ZU-1ZN" firstAttribute="leading" secondItem="vc7-tr-dlt" secondAttribute="leading" constant="20" id="BUN-rZ-VYQ"/>
-                                                        <constraint firstItem="OLl-rF-Cku" firstAttribute="leading" secondItem="C0F-ZU-1ZN" secondAttribute="trailing" constant="10" id="Fqq-8D-RZ3"/>
-                                                        <constraint firstAttribute="centerY" secondItem="C0F-ZU-1ZN" secondAttribute="centerY" id="UIv-en-3Ip"/>
                                                         <constraint firstAttribute="height" constant="40" id="g60-KF-OJi"/>
+                                                        <constraint firstAttribute="centerY" secondItem="Hpg-ir-rwX" secondAttribute="centerY" id="gWh-Es-mTj"/>
+                                                        <constraint firstItem="OLl-rF-Cku" firstAttribute="leading" secondItem="Hpg-ir-rwX" secondAttribute="trailing" constant="10" id="qbY-It-id7"/>
+                                                        <constraint firstItem="Hpg-ir-rwX" firstAttribute="leading" secondItem="vc7-tr-dlt" secondAttribute="leading" constant="20" id="sMu-iK-kxX"/>
                                                         <constraint firstAttribute="centerY" secondItem="OLl-rF-Cku" secondAttribute="centerY" id="xz4-Ua-eNG"/>
                                                     </constraints>
                                                 </view>
@@ -733,6 +739,7 @@
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
                                             <outlet property="nameLabel" destination="OLl-rF-Cku" id="2wp-TI-eY3"/>
                                             <outlet property="portLabel" destination="g9c-CT-O65" id="4Um-eL-kLt"/>
+                                            <outlet property="statusView" destination="Hpg-ir-rwX" id="4MB-ps-zOi"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -1279,13 +1286,22 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e5p-YT-ltt" customClass="PrinterStatusView">
-                                                            <rect key="frame" x="8" y="6" width="37" height="31"/>
+                                                            <rect key="frame" x="8" y="14" width="16" height="16"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                                             <gestureRecognizers/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="16" id="PVK-RG-ECN"/>
+                                                                <constraint firstAttribute="height" constant="16" id="UXT-Fx-FTO"/>
+                                                            </constraints>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                    <integer key="value" value="8"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
                                                         </view>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BVA-iB-fru" userLabel="Name">
-                                                            <rect key="frame" x="53" y="11" width="247" height="21"/>
+                                                            <rect key="frame" x="32" y="11" width="268" height="21"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1294,11 +1310,9 @@
                                                     </subviews>
                                                     <gestureRecognizers/>
                                                     <constraints>
-                                                        <constraint firstItem="BVA-iB-fru" firstAttribute="leading" secondItem="yJX-Vz-3ka" secondAttribute="leading" constant="53" id="3T8-Ss-i2W"/>
+                                                        <constraint firstAttribute="centerY" secondItem="e5p-YT-ltt" secondAttribute="centerY" id="3ve-QI-tLz"/>
                                                         <constraint firstItem="e5p-YT-ltt" firstAttribute="leading" secondItem="yJX-Vz-3ka" secondAttribute="leading" constant="8" id="L2V-IP-rZZ"/>
                                                         <constraint firstAttribute="trailing" secondItem="BVA-iB-fru" secondAttribute="trailing" id="PM6-km-mMB"/>
-                                                        <constraint firstAttribute="bottom" secondItem="e5p-YT-ltt" secondAttribute="bottom" constant="6" id="aGN-ML-JHO"/>
-                                                        <constraint firstItem="e5p-YT-ltt" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="6" id="goe-G0-Fgs"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="leading" secondItem="e5p-YT-ltt" secondAttribute="trailing" constant="8" id="jRG-LF-ZUg"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="11" id="qyW-HC-lZt"/>
                                                         <constraint firstAttribute="bottom" secondItem="BVA-iB-fru" secondAttribute="bottom" constant="11" id="vh9-7j-fFP"/>
@@ -1516,7 +1530,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="suq-fU-kcs"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="Ysc-8g-iB4"/>
     </inferredMetricsTieBreakers>
 </document>

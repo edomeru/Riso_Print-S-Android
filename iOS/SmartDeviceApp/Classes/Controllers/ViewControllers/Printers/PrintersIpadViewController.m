@@ -113,30 +113,23 @@
     return cell;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    // TODO: Add to constant
-    return CGSizeMake(320, 270);
-}
-
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-    {
-        [self.collectionView performBatchUpdates:^
-         {
+    [self.collectionView performBatchUpdates:^
+     {
+        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+        {
             UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
             layout.sectionInset = self.insetLandscape;
-         }completion:^(BOOL finished)
-         {
-         }];
-    }
-    else
-    {
-        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-        layout.sectionInset = self.insetPortrait;
-        [self.collectionView.collectionViewLayout invalidateLayout];
-    }
+        }
+        else
+        {
+            UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+            layout.sectionInset = self.insetPortrait;
+        }
+     } completion:^(BOOL finished)
+     {
+     }];
 }
 
 #pragma mark -
