@@ -26,4 +26,5 @@
 @property (nonatomic, weak) id <PrinterCollectionViewCellDelegate> delegate;
 @property (nonatomic, weak) NSIndexPath *indexPath;
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
+-(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
 @end

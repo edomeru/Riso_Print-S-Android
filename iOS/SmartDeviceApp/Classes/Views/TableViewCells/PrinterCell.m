@@ -8,7 +8,6 @@
 
 #import "PrinterCell.h"
 @interface PrinterCell()
-@property UIColor *normalBackgroundColor;
 @end
 @implementation PrinterCell
 
@@ -17,7 +16,6 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.normalBackgroundColor = [self backgroundColor];
     }
     return self;
 }
@@ -40,7 +38,8 @@
     else
     {
         //TODO: this only works for iOS7
-        [self setBackgroundColor:self.normalBackgroundColor];
+        UIColor *bgColor = [UIColor colorWithRed:173.0/255.0 green:173.0/255.0 blue:173.0/255.0 alpha:1.0];
+        [self setBackgroundColor:bgColor];
         [self.printerName setTextColor:[UIColor blackColor]];
     }
 }

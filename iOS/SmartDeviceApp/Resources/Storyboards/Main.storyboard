@@ -564,16 +564,35 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c">
+                                                            <rect key="frame" x="277" y="0.0" width="43" height="44"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
+                                                            <state key="normal" title="X">
+                                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="printerDeleteButtonAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="D67-pg-Ugw"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                     <color key="backgroundColor" red="0.56862745098039214" green="0.56862745098039214" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <gestureRecognizers/>
                                                     <constraints>
                                                         <constraint firstAttribute="trailing" secondItem="OLl-rF-Cku" secondAttribute="trailing" constant="10" id="0Ws-S6-qty"/>
+                                                        <constraint firstItem="tCl-QS-N9c" firstAttribute="top" secondItem="vc7-tr-dlt" secondAttribute="top" id="8hr-sw-6b0"/>
+                                                        <constraint firstAttribute="trailing" secondItem="tCl-QS-N9c" secondAttribute="trailing" id="aNL-NE-lZf"/>
+                                                        <constraint firstItem="tCl-QS-N9c" firstAttribute="leading" secondItem="Hpg-ir-rwX" secondAttribute="trailing" constant="241" id="eCz-fQ-782"/>
                                                         <constraint firstAttribute="height" constant="40" id="g60-KF-OJi"/>
                                                         <constraint firstAttribute="centerY" secondItem="Hpg-ir-rwX" secondAttribute="centerY" id="gWh-Es-mTj"/>
                                                         <constraint firstItem="OLl-rF-Cku" firstAttribute="leading" secondItem="Hpg-ir-rwX" secondAttribute="trailing" constant="10" id="qbY-It-id7"/>
                                                         <constraint firstItem="Hpg-ir-rwX" firstAttribute="leading" secondItem="vc7-tr-dlt" secondAttribute="leading" constant="20" id="sMu-iK-kxX"/>
                                                         <constraint firstAttribute="centerY" secondItem="OLl-rF-Cku" secondAttribute="centerY" id="xz4-Ua-eNG"/>
                                                     </constraints>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="HlX-fd-vdF" appends="YES" id="8d6-yo-MfU"/>
+                                                    </connections>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yUJ-yN-hjT" userLabel="Row - IP">
                                                     <rect key="frame" x="0.0" y="107" width="320" height="40"/>
@@ -711,6 +730,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                        <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstItem="SjP-Aq-fJU" firstAttribute="top" secondItem="DUX-Tp-Hyn" secondAttribute="bottom" id="3y8-vi-QRG"/>
                                             <constraint firstAttribute="trailing" secondItem="dXr-Bg-3bc" secondAttribute="trailing" id="4yU-ja-Kx6"/>
@@ -740,13 +760,18 @@
                                         <connections>
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
                                             <outlet property="defaultSwitch" destination="Xs2-X2-H9b" id="7kt-b4-tsC"/>
+                                            <outlet property="deleteButton" destination="tCl-QS-N9c" id="W5U-Vw-A4c"/>
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
                                             <outlet property="nameLabel" destination="OLl-rF-Cku" id="2wp-TI-eY3"/>
                                             <outlet property="portLabel" destination="g9c-CT-O65" id="4Um-eL-kLt"/>
                                             <outlet property="statusView" destination="Hpg-ir-rwX" id="4MB-ps-zOi"/>
+                                            <outletCollection property="gestureRecognizers" destination="ydW-FU-dB5" appends="YES" id="832-ao-Yxo"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="ydW-FU-dB5" appends="YES" id="yEc-lQ-Xhs"/>
+                                </connections>
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -772,6 +797,16 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tCH-ks-STu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="HlX-fd-vdF">
+                    <connections>
+                        <action selector="printerCellLongPressedAction:" destination="ZEw-b3-LhF" id="Pyv-dF-5Wv"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+                <tapGestureRecognizer id="ydW-FU-dB5">
+                    <connections>
+                        <action selector="collectionViewTappedAction:" destination="ZEw-b3-LhF" id="La4-Af-DCJ"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="128" y="2188"/>
         </scene>

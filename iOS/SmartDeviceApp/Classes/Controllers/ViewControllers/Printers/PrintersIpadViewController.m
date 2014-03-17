@@ -15,6 +15,7 @@
 #import "PrinterDetails.h"
 #import "PrinterStatusView.h"
 #import "PrinterStatusHelper.h"
+#import "AlertUtils.h"
 
 #define SEGUE_TO_ADD_PRINTER    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_PRINTER_SEARCH @"PrintersIpad-PrinterSearch"
@@ -25,7 +26,7 @@
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
-
+@property (weak, nonatomic) NSIndexPath *toDeleteIndexPath;
 @end
 
 @implementation PrintersIpadViewController
@@ -174,6 +175,59 @@
 }
 
 #pragma mark IBActions
+- (IBAction)printerCellLongPressedAction:(id)sender
+{
+    NSIndexPath *selectedIndexPath = [self.collectionView indexPathForItemAtPoint:[sender locationInView:self.collectionView]];
+    PrinterCollectionViewCell *cell = nil;
+    if(self.toDeleteIndexPath != nil)
+    {
+        cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
+        [cell setCellToBeDeletedState:NO];
+    }
+    
+    cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectedIndexPath];
+    self.toDeleteIndexPath = selectedIndexPath;
+    [cell setCellToBeDeletedState:YES];
+
+}
+
+- (IBAction)collectionViewTappedAction:(id)sender {
+    
+    if(self.toDeleteIndexPath != nil)
+    {
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
+        [cell setCellToBeDeletedState:NO];
+        self.toDeleteIndexPath = nil;
+    }
+}
+
+- (IBAction)printerDeleteButtonAction:(id)sender
+{
+    if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
+    {
+        //check if reference to default printer was also deleted
+        if (![self.printerManager hasDefaultPrinter])
+            self.defaultPrinterIndexPath = nil;
+        
+        //set the view of the cell to stop polling for printer status
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
+        [cell.statusView.statusHelper stopPrinterStatusPolling];
+        
+        cell.indexPath = nil;
+        //set view to non default printer cell style
+        [cell setAsDefaultPrinterCell:NO];
+        [cell setCellToBeDeletedState:NO];
+        
+        //remove cell from view
+        [self.collectionView deleteItemsAtIndexPaths:@[self.toDeleteIndexPath]];
+        self.toDeleteIndexPath = nil;
+    }
+    else
+    {
+        [AlertUtils displayResult:ERR_DEFAULT withTitle:ALERT_PRINTER withDetails:nil];
+    }
+}
+
 - (IBAction)addPrinterAction:(id)sender
 {
     // TODO: Change button state
