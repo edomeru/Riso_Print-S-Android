@@ -104,7 +104,8 @@
     return YES;
 }
 
--(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+
+/*-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
         if(editingStyle == UITableViewCellEditingStyleDelete)
         {
@@ -130,7 +131,7 @@
                 [AlertUtils displayResult:ERR_DEFAULT withTitle:ALERT_PRINTER withDetails:nil];
             }
         }
-}
+}*/
 
 #pragma mark - Gesture Recognizer Handler
 - (IBAction)onTapPrinterCell:(id)sender
@@ -156,6 +157,58 @@
 {
     NSLog(@"[INFO][Printers] PrinterCell Tapped");
     //TODO Add segue to printer info
+}
+- (IBAction)swipePrinterCellAction:(id)sender
+{
+    NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
+    
+    PrinterCell *cell = nil;
+    if(self.toDeleteIndexPath != nil)
+    {
+        NSLog(@"Not nil");
+        cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
+        [cell setCellToBeDeletedState:NO];
+    }
+    
+    cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
+    [cell setCellToBeDeletedState:YES];
+    self.toDeleteIndexPath = selectedIndexPath;
+}
+
+- (IBAction)tapTableView:(id)sender
+{
+    if(self.toDeleteIndexPath != nil)
+    {
+         PrinterCell *cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
+        [cell setCellToBeDeletedState:NO];
+        self.toDeleteIndexPath = nil;
+    }
+}
+- (IBAction)deleteButtonAction:(id)sender
+{
+    if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
+    {
+        //check if reference to default printer was also deleted
+        if (![self.printerManager hasDefaultPrinter])
+            self.defaultPrinterIndexPath = nil;
+        
+        //set the view of the cell to stop polling for printer status
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
+        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+        
+        //set view to non default printer cell style
+        [cell setAsDefaultPrinterCell:NO];
+        [cell setCellToBeDeletedState:NO];
+        
+        //remove cell from view
+        [self.tableView deleteRowsAtIndexPaths:@[self.toDeleteIndexPath]
+                              withRowAnimation:UITableViewRowAnimationAutomatic];
+        self.toDeleteIndexPath = nil;
+    }
+    else
+    {
+        [AlertUtils displayResult:ERR_DEFAULT withTitle:ALERT_PRINTER withDetails:nil];
+    }
 }
 
 #pragma mark - Segue

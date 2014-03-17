@@ -32,6 +32,7 @@
 {
     [super viewDidLoad];
     // setup the PrinterManager
+    self.toDeleteIndexPath = nil;
     NSLog(@"setup");
     self.printerManager = [[PrinterManager alloc] init];
     [self.printerManager getListOfSavedPrinters];

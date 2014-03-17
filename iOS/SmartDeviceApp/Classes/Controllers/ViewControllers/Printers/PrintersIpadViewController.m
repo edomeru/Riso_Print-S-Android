@@ -26,7 +26,7 @@
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
-@property (weak, nonatomic) NSIndexPath *toDeleteIndexPath;
+
 @end
 
 @implementation PrintersIpadViewController
@@ -191,7 +191,8 @@
 
 }
 
-- (IBAction)collectionViewTappedAction:(id)sender {
+- (IBAction)collectionViewTappedAction:(id)sender
+{
     
     if(self.toDeleteIndexPath != nil)
     {

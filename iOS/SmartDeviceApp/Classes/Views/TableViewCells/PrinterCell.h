@@ -15,4 +15,5 @@
 
 
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
+-(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
 @end

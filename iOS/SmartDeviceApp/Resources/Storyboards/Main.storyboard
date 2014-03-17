@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
@@ -564,8 +564,8 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c">
-                                                            <rect key="frame" x="277" y="0.0" width="43" height="44"/>
+                                                        <button hidden="YES" opaque="NO" alpha="0.94999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c">
+                                                            <rect key="frame" x="277" y="0.0" width="43" height="28"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                                             <state key="normal" title="X">
@@ -1360,7 +1360,7 @@
                                     <constraint firstAttribute="centerY" secondItem="vao-bW-C6W" secondAttribute="centerY" id="yOQ-9S-Kl3"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KGg-D7-xhu" userLabel="Content" customClass="DefaultView">
+                            <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KGg-D7-xhu" userLabel="Content" customClass="DefaultView">
                                 <rect key="frame" x="0.0" y="50" width="320" height="498"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
@@ -1369,10 +1369,10 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterCell" id="C8K-fM-PVD" userLabel="PrinterCell" customClass="PrinterCell">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="PrinterCell" id="C8K-fM-PVD" userLabel="PrinterCell" customClass="PrinterCell">
                                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C8K-fM-PVD" id="yJX-Vz-3ka">
+                                                <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" horizontalCompressionResistancePriority="718" tableViewCell="C8K-fM-PVD" id="yJX-Vz-3ka">
                                                     <rect key="frame" x="0.0" y="0.0" width="300" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
@@ -1398,12 +1398,27 @@
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jZk-UU-XZR">
+                                                            <rect key="frame" x="262" y="0.0" width="58" height="43"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <color key="backgroundColor" red="0.97254901960784312" green="0.29411764705882354" blue="0.29411764705882354" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                            <state key="normal" title="DELETE">
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="deleteButtonAction:" destination="jTA-Cg-WoR" eventType="touchUpInside" id="Jyr-4X-fWF"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                     <gestureRecognizers/>
                                                     <constraints>
                                                         <constraint firstAttribute="centerY" secondItem="e5p-YT-ltt" secondAttribute="centerY" id="3ve-QI-tLz"/>
+                                                        <constraint firstItem="jZk-UU-XZR" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" id="Bff-uC-BG0"/>
                                                         <constraint firstItem="e5p-YT-ltt" firstAttribute="leading" secondItem="yJX-Vz-3ka" secondAttribute="leading" constant="8" id="L2V-IP-rZZ"/>
                                                         <constraint firstAttribute="trailing" secondItem="BVA-iB-fru" secondAttribute="trailing" id="PM6-km-mMB"/>
+                                                        <constraint firstAttribute="bottom" secondItem="jZk-UU-XZR" secondAttribute="bottom" id="aSC-CM-2Se"/>
+                                                        <constraint firstAttribute="trailing" secondItem="jZk-UU-XZR" secondAttribute="trailing" constant="-20" id="isA-wU-8Hc"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="leading" secondItem="e5p-YT-ltt" secondAttribute="trailing" constant="8" id="jRG-LF-ZUg"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="11" id="qyW-HC-lZt"/>
                                                         <constraint firstAttribute="bottom" secondItem="BVA-iB-fru" secondAttribute="bottom" constant="11" id="vh9-7j-fFP"/>
@@ -1415,15 +1430,18 @@
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                 <gestureRecognizers/>
                                                 <connections>
+                                                    <outlet property="deleteButton" destination="jZk-UU-XZR" id="byW-aQ-ZRp"/>
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="e5p-YT-ltt" id="dGr-z2-791"/>
                                                     <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="SOc-Og-K3j"/>
+                                                    <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="CF6-TP-3SW"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
                                         <connections>
                                             <outlet property="dataSource" destination="jTA-Cg-WoR" id="ttJ-3O-0oH"/>
                                             <outlet property="delegate" destination="jTA-Cg-WoR" id="gqw-Gc-ysw"/>
+                                            <outletCollection property="gestureRecognizers" destination="r2U-Vk-eVm" appends="YES" id="HYJ-KH-USY"/>
                                         </connections>
                                     </tableView>
                                 </subviews>
@@ -1469,6 +1487,16 @@
                         <action selector="onTapPrinterCellDisclosure:" destination="jTA-Cg-WoR" id="JJh-CQ-p3m"/>
                     </connections>
                 </tapGestureRecognizer>
+                <tapGestureRecognizer id="r2U-Vk-eVm">
+                    <connections>
+                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="jR0-Du-6Wy"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <swipeGestureRecognizer direction="left" id="U8N-P0-69T">
+                    <connections>
+                        <action selector="swipePrinterCellAction:" destination="jTA-Cg-WoR" id="Gt1-2q-Uxk"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="268" y="1457"/>
         </scene>
@@ -1608,7 +1636,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="suq-fU-kcs"/>
         <segue reference="uoe-Al-ug4"/>
     </inferredMetricsTieBreakers>
 </document>
