@@ -274,6 +274,32 @@ namespace SmartDeviceApp.Models
         #endregion Properties
 
         /// <summary>
+        /// PrintSetting default class constructor
+        /// </summary>
+        public PrintSetting()
+        {
+            PrinterId = -1;
+            Id = -1;
+            ColorMode = -1;
+            Orientation = -1;
+            Copies = -1;
+            Duplex = -1;
+            PaperSize = -1;
+            ScaleToFit = false;
+            PaperType = -1;
+            InputTray = -1;
+            Imposition = -1;
+            ImpositionOrder = -1;
+            Sort = -1;
+            Booklet = false;
+            BookletFinishing = -1;
+            BookletLayout = -1;
+            FinishingSide = -1;
+            Staple = -1;
+            Punch = -1;
+            OutputTray = -1;
+        }
+        /// <summary>
         /// PrintSetting class constructor
         /// </summary>
         /// <param name="printerId">printer ID</param>

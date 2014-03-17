@@ -56,6 +56,17 @@ namespace SmartDeviceApp.Models
         #endregion Properties
 
         /// <summary>
+        /// PrintJob default class constructor
+        /// </summary>
+        public PrintJob()
+        {
+            Id = -1;
+            PrinterId = -1;
+            Name = null;
+            Date = DateTime.MinValue;
+            Result = -1;
+        }
+        /// <summary>
         /// PrintJob class constructor
         /// </summary>
         /// <param name="id">print job ID</param>

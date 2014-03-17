@@ -109,6 +109,40 @@ namespace SmartDeviceApp.Models
 
         #endregion Properties
 
+        /// <summary>
+        /// Printer default class constructor
+        /// </summary>
+        public Printer()
+        {
+            Id = -1;
+            PrintSettingId = -1;
+            IpAddress = null;
+            Name = null;
+            PortSetting = -1;
+            EnabledLpr = false;
+            EnabledRaw = false;
+            EnabledPagination = false;
+            EnabledDuplex = false;
+            EnabledBookletBinding = false;
+            EnabledStaple = false;
+            EnabledBind = false;
+        }
+
+        /// <summary>
+        /// Print class constructor
+        /// </summary>
+        /// <param name="id">printer ID</param>
+        /// <param name="printSettingId">print setting ID</param>
+        /// <param name="ipAddress">IP address</param>
+        /// <param name="name">printer name</param>
+        /// <param name="portSetting">port setting</param>
+        /// <param name="enabledLpr">enabled LPR</param>
+        /// <param name="enabledRaw">enabled RAW</param>
+        /// <param name="enabledPagination">enabled pagination</param>
+        /// <param name="enabledDuplex">enabled duplex</param>
+        /// <param name="enabledBookletBinding">enabled booklet binding</param>
+        /// <param name="enabledStaple">enabled staple</param>
+        /// <param name="enabledBind">enabled bind</param>
         public Printer(int id, int printSettingId, string ipAddress, string name, int portSetting,
             bool enabledLpr, bool enabledRaw, bool enabledPagination, bool enabledDuplex,
             bool enabledBookletBinding, bool enabledStaple, bool enabledBind)

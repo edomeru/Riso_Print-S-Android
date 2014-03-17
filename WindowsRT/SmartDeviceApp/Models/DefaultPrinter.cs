@@ -32,6 +32,14 @@ namespace SmartDeviceApp.Models
         #endregion Properties
 
         /// <summary>
+        /// DefaultPrinter default class constructor
+        /// </summary>
+        public DefaultPrinter()
+        {
+            PrinterId = -1;
+        }
+
+        /// <summary>
         /// DefaultPrinter class constructor
         /// </summary>
         /// <param name="printerId">Printer id of the selected default printer</param>

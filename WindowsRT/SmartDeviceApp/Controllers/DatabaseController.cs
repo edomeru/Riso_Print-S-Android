@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SQLite;
 using SmartDeviceApp.Models;
+using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -61,6 +62,7 @@ namespace SmartDeviceApp.Controllers
                     */
 
                     // Create the tables if they don't exist
+
                     //Printer table
                     db.CreateTable<Printer>();
                     db.Commit();
@@ -89,46 +91,19 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        #region Printer Table Operations
+
         /*
         private void insertPrinters()
         {
-            Printer printer = new Printer() { prn_id=1, prn_ip_address="192.168.0.22", prn_name="RISO_Printer1", prn_port_setting=1,
-                prn_enabled_lpr = true, prn_enabled_raw = true, prn_enabled_pagination = true, prn_enabled_duplex = true,
-                                              prn_enabled_booklet_binding = true,
-                                              prn_enabled_staple = true,
-                                              prn_enabled_bind = true
-            };
+            Printer printer = new Printer(1, 1, "192.168.0.22", "RISO_Printer1", 1, true, true,
+                true, true, true, true, true);
+            Printer printer2 = new Printer(2, 2, "192.168.0.2", "RISO_Printer2", 1, true, true,
+                true, true, true, true, true);
+            Printer printer3 = new Printer(3, 3, "192.168.0.3", "RISO_Printer3", 1, true, true,
+                true, true, true, true, true);
 
-            Printer printer2 = new Printer()
-            {
-                prn_id = 2,
-                prn_ip_address = "192.168.0.2",
-                prn_name = "RISO_Printer2",
-                prn_port_setting = 1,
-                prn_enabled_lpr = true,
-                prn_enabled_raw = true,
-                prn_enabled_pagination = true,
-                prn_enabled_duplex = true,
-                prn_enabled_booklet_binding = true,
-                prn_enabled_staple = true,
-                prn_enabled_bind = true
-            };
-            Printer printer3 = new Printer()
-            {
-                prn_id = 3,
-                prn_ip_address = "192.168.0.3",
-                prn_name = "RISO_Printer3",
-                prn_port_setting = 1,
-                prn_enabled_lpr = true,
-                prn_enabled_raw = true,
-                prn_enabled_pagination = true,
-                prn_enabled_duplex = true,
-                prn_enabled_booklet_binding = true,
-                prn_enabled_staple = true,
-                prn_enabled_bind = true
-            };
-
-            DefaultPrinter dp = new DefaultPrinter() { prn_id = printer.prn_id };
+            DefaultPrinter dp = new DefaultPrinter(printer.Id);
 
             var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             using (var db = new SQLite.SQLiteConnection(dbpath))
@@ -137,11 +112,11 @@ namespace SmartDeviceApp.Controllers
                 db.Insert(printer);
                 db.Commit();
 
-                //db.Insert(printer2);
-                //db.Commit();
+                db.Insert(printer2);
+                db.Commit();
 
-                //db.Insert(printer3);
-                //db.Commit();
+                db.Insert(printer3);
+                db.Commit();
 
                 db.Insert(dp);
                 db.Commit();
@@ -149,8 +124,25 @@ namespace SmartDeviceApp.Controllers
                 db.Dispose();
                 db.Close();
             }
-                
-         
+
+
+        }
+         * */
+
+        private void insertPrinter(Printer printer)
+        {
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            using (var db = new SQLite.SQLiteConnection(dbpath))
+            {
+                // Create the tables if they don't exist
+                db.Insert(printer);
+                db.Commit();
+
+                db.Dispose();
+                db.Close();
+            }
+
+
         }
 
         public async Task<List<Printer>> getPrinters()
@@ -158,20 +150,11 @@ namespace SmartDeviceApp.Controllers
             var printerList = new List<Printer>();
             try
             {
-                var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+                var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
                 
                 var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
                 printerList = await (db.Table<Printer>().ToListAsync());
-
-                //var defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
-                //foreach (var sd in d)
-                //{
-                    
-                    
-
-                //    printerList.Add(sd);
-                //}
             }
             catch
             {
@@ -182,16 +165,13 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> setDefaultPrinter(int printerId)
         {
-            //DefaultPrinter existingDefault = new DefaultPrinter();
-            
-            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             try
             {
                 if (printerId < 0)
                 {
                     //delete value in table
-
                 }
                 else
                 {
@@ -200,20 +180,19 @@ namespace SmartDeviceApp.Controllers
                     if (existingDefault != null)
                     {
                         // update default printer id
-                        existingDefault.prn_id = printerId;
-
+                        existingDefault.PrinterId = printerId;
                     }
                     else
                     {
                         // no default printer, insert new
                         DefaultPrinter dp = new DefaultPrinter();
-                        dp.prn_id = printerId;
+                        dp.PrinterId = printerId;
 
                         int success = await db.InsertAsync(dp);
                     }
                 }
-                
-            }catch
+            }
+            catch
             {
                 return 0;
             }
@@ -222,19 +201,19 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> deletePrinterFromDB(int printerId)
         {
-            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
             try
             {
                 //delete in printer table
                 var printer = await db.Table<Printer>().Where(
-                    p => p.prn_id == printerId).FirstAsync();
+                    p => p.Id == printerId).FirstAsync();
 
                 //check if default printer
                 var defaultPrinter = await db.Table<DefaultPrinter>().FirstAsync();
             
-                if (printer.prn_id == defaultPrinter.prn_id)
+                if (printer.Id == defaultPrinter.PrinterId)
                 {
                     //update default printer in DB
                     await db.DeleteAsync(defaultPrinter);
@@ -255,7 +234,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<DefaultPrinter> getDefaultPrinter()
         {
-            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             DefaultPrinter defaultPrinter = new DefaultPrinter();
             try
@@ -268,7 +247,8 @@ namespace SmartDeviceApp.Controllers
             }
             return defaultPrinter;
         }
-        */
+
+        #endregion Printer Table Operations
 
     }
 }
