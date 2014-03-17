@@ -116,8 +116,11 @@
     <Compile Include="Common\Utilities\OrientationStateMessage.cs" />
     <Compile Include="Common\Base\PageBase.cs" />
     <Compile Include="Common\Utilities\PageOrientations.cs" />
+    <Compile Include="Common\Utilities\SQLite.cs" />
+    <Compile Include="Common\Utilities\SQLiteAsync.cs" />
     <Compile Include="Common\Utilities\SuspensionManager.cs" />
     <Compile Include="Common\Base\UserControlBase.cs" />
+    <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Design\DesignDataService.cs" />
@@ -138,7 +141,9 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw" />
@@ -175,6 +180,12 @@
   <ItemGroup>
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.1">
+      <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
