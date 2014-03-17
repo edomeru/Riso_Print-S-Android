@@ -1,66 +1,65 @@
-﻿using System;
+﻿//
+//  DatabaseController.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/03/17.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using SmartDeviceApp.Models;
 
 namespace SmartDeviceApp.Controllers
 {
     public class DatabaseController
     {
-        static private string sdaDatabase = "SmartDeviceAppDB.db";
+        static readonly DatabaseController _instance = new DatabaseController();
 
-        /*
-        //DefaultPrinter Table
-        public class DefaultPrinter
+        private const string sdaDatabase = "SmartDeviceAppDB.db";
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        // http://csharpindepth.com/Articles/General/Singleton.aspx
+        static DatabaseController() { }
+
+        private DatabaseController() { }
+
+        public static DatabaseController Instance
         {
-            [MaxLength(5), PrimaryKey]
-
-            public int prn_id { get; set; }
-            
+            get { return _instance; }
         }
 
-        //Printer Table
-        public class Printer
-        {
-            public int prn_id { get; set; }                //id in database
-            [MaxLength(20)]
-            public string prn_ip_address { get; set; }     //ip address of the printer
-            [MaxLength(255)]
-            public string prn_name { get; set; }           //printer name
-            public int prn_port_setting { get; set; }
-            public bool prn_enabled_lpr { get; set; }
-            public bool prn_enabled_raw { get; set; }
-            public bool prn_enabled_pagination { get; set; }
-            public bool prn_enabled_duplex { get; set; }
-            public bool prn_enabled_booklet_binding { get; set; }
-            public bool prn_enabled_staple { get; set; }
-            public bool prn_enabled_bind { get; set; }
-        }
-
-        
-       
-        //class table for printers
-        public DatabaseController()
+        public void Initialize()
         {
             createDatabase();
         }
 
-
-        private void createDatabase(){
+        private void createDatabase()
+        {
             try
             {
                 var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
                 using (var db = new SQLite.SQLiteConnection(dbpath))
                 {
+                    /*
                     // DeleteAll is for testing purposes only PrintersModule
                     db.DeleteAll<Printer>();
                     db.Commit();
 
                     db.DeleteAll<DefaultPrinter>();
                     db.Commit();
+                    */
+
                     // Create the tables if they don't exist
                     //Printer table
                     db.CreateTable<Printer>();
@@ -71,13 +70,17 @@ namespace SmartDeviceApp.Controllers
                     db.Commit();
 
                     //PrintSettings Table
+                    db.CreateTable<PrintSetting>();
+                    db.Commit();
 
                     //PrintJob Table
+                    db.CreateTable<PrintJob>();
+                    db.Commit();
 
                     db.Dispose();
                     db.Close();
 
-                    insertPrinters(); //for testing PrintersModule
+                    //insertPrinters(); //for testing PrintersModule
                 }
             }
             catch
@@ -86,7 +89,7 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-
+        /*
         private void insertPrinters()
         {
             Printer printer = new Printer() { prn_id=1, prn_ip_address="192.168.0.22", prn_name="RISO_Printer1", prn_port_setting=1,

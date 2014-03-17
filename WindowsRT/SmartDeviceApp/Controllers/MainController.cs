@@ -52,7 +52,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private static void InitializeDataStorage()
         {
-            //TODO: Call DatabaseController here
+            DatabaseController.Instance.Initialize();
         }
 
     }
