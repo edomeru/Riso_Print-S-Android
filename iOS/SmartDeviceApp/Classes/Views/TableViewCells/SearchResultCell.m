@@ -52,10 +52,14 @@
 {
     self.printerName.text = printerName;
     
-    // set other cell properties
-    
     //TODO: different fonts for ipad and iphone?
     self.printerName.font = [UIFont fontWithName:@"Helvetica Neue" size:17];
+}
+
+- (void)setStyle
+{
+    //fix for the bugged always-white cell in iPad iOS7
+    self.backgroundColor = [UIColor clearColor];
 }
 
 @end

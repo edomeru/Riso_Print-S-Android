@@ -12,9 +12,9 @@
 #import "NetworkManager.h"
 #import "AlertUtils.h"
 
-#define CELL_ROW_IP         0
-#define CELL_ROW_USERNAME   1
-#define CELL_ROW_PASSWORD   2
+#define TAG_TEXT_IP         0
+#define TAG_TEXT_USERNAME   1
+#define TAG_TEXT_PASSWORD   2
 
 @interface AddPrinterViewController ()
 
@@ -37,9 +37,7 @@
 
 /**
  Enables/Disables the Save button.
- 
- @param isEnabled
-        YES or NO
+ @param YES to enable, NO to disable.
  */
 - (void)enableSaveButton:(BOOL)isEnabled;
 
@@ -49,8 +47,7 @@
 - (void)dismissKeypad;
 
 /**
- Removes leading zeroes and trims extra spaces from the
- input IP string.
+ Removes leading zeroes and trims extra spaces from the input IP string.
  @param inputIP
         the UITextField contents
  @return the formatted IP string
@@ -115,18 +112,35 @@
     self.printerManager.delegate = self;
     self.hasAddedPrinters = NO;
     
-    // setup view
+    // setup the header buttons
     [self enableSaveButton:NO];
     
     // setup progress indicator
     self.progressIndicator = [[UIActivityIndicatorView alloc]
                               initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     self.progressIndicator.frame = CGRectMake(0, 0, 40, 40);
-    self.progressIndicator.center = self.view.center;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+        self.progressIndicator.center = self.view.center;
+    else
+        //for iPad, cannot use self.view.center because it is only partially visible (slide panel)
+        self.progressIndicator.center = CGPointMake(self.container.frame.size.width/2,
+                                                    self.view.frame.size.height/2);
     [self.progressIndicator setColor:[UIColor whiteColor]];
     [self.view addSubview:self.progressIndicator];
     [self.progressIndicator bringSubviewToFront:self.view];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+#pragma mark - Segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // if the SNMP is still searching, the search is canceled
+    // the printer, if found, will not be added to the list of saved printers
+    if ([self.progressIndicator isAnimating])
+    {
+        NSLog(@"[INFO][AddPrinter] canceling search");
+        [self.printerManager stopSearching];
+    }
 }
 
 #pragma mark - Header
@@ -147,51 +161,56 @@
 
 - (IBAction)onBack:(UIButton *)sender 
 {
-    NSLog(@"[INFO][AddPrinter] canceling search");
-    [self.printerManager stopSearching];
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
 - (IBAction)onSave:(UIButton *)sender
 {
+    [self dismissKeypad];
+    
+    // can the device connect to the network?
     if (![NetworkManager isConnectedToNetwork])
     {
         [AlertUtils displayResult:ERR_NO_NETWORK withTitle:ALERT_ADD_PRINTER withDetails:nil];
-    }
-    else if ([self.printerManager isAtMaximumPrinters])
-    {
-        [AlertUtils displayResult:ERR_MAX_PRINTERS withTitle:ALERT_ADD_PRINTER withDetails:nil];
-    }
-    else
-    {
-        // check if the input IP is valid
-        NSString* formattedIP = [self formatIPString:self.textIP.text];
-        if (![self isIPValid:formattedIP])
-        {
-            [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
-        }
-        else if ([self.printerManager isIPAlreadyRegistered:formattedIP])
-        {
-            [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
-        }
-        else
-        {
-            NSLog(@"[INFO][AddPrinter] initiating search");
-            self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
-            [self.printerManager searchForPrinter:formattedIP];
-            // callbacks for the search will be handled in delegate methods
-            
-            // if UI needs to do other things, do it here
-            
-            // show the searching indicator
-            [self.progressIndicator startAnimating];
-            
-            // disable save button
-            [self enableSaveButton:NO];
-        }
+        return;
     }
     
-    [self dismissKeypad];
+    // is it still possible to add a printer
+    if ([self.printerManager isAtMaximumPrinters])
+    {
+        [AlertUtils displayResult:ERR_MAX_PRINTERS withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        return;
+    }
+    
+    // get the input IP
+    NSString* formattedIP = [self formatIPString:self.textIP.text];
+    
+    // is the IP a valid IP address?
+    if (![self isIPValid:formattedIP])
+    {
+        [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        return;
+    }
+    
+    // was this printer already added before?
+    if ([self.printerManager isIPAlreadyRegistered:formattedIP])
+    {
+        [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        return;
+    }
+
+    NSLog(@"[INFO][AddPrinter] initiating search");
+    self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
+    [self.printerManager searchForPrinter:formattedIP];
+    // callbacks for the search will be handled in delegate methods
+    
+    // if UI needs to do other things, do it here
+    
+    // show the searching indicator
+    [self.progressIndicator startAnimating];
+    
+    // disable the save button
+    [self enableSaveButton:NO];
 }
 
 #pragma mark - PrinterSearchDelegate
@@ -227,9 +246,8 @@
 
 - (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
 {
-    NSLog(@"[INFO][AddPrinter] received OLD printer with IP=%@", printerIP);
-    NSLog(@"[INFO][AddPrinter] updating UI");
-    self.willEndWithoutAdd = NO; //search did not timeout
+    // will not be called since search will only be initiated
+    // if the IP is not yet registered
 }
 
 #pragma mark - TextFields
@@ -244,10 +262,16 @@
         [self.textPassword resignFirstResponder];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self dismissKeypad];
+    return YES;
+}
+
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
     // disable the Save button if the IP Address text is cleared
-    if (textField.tag == CELL_ROW_IP)
+    if (textField.tag == TAG_TEXT_IP)
         [self enableSaveButton:NO];
          
     return YES;
@@ -255,7 +279,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField.tag == CELL_ROW_IP)
+    if (textField.tag == TAG_TEXT_IP)
     {
         // disable the Save button if backspace will clear the IP Address text
         if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
@@ -267,7 +291,7 @@
     return YES;
 }
 
-#pragma mark - Input IP Validation
+#pragma mark - TextFields - Input IP
 
 - (NSString*)formatIPString:(NSString*)inputIP
 {

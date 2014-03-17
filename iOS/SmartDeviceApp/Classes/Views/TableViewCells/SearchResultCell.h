@@ -36,4 +36,9 @@
  */
 - (void)setContents:(NSString*)printerName;
 
+/**
+ Sets the cell's UI/layout attributes.
+ */
+- (void)setStyle;
+
 @end

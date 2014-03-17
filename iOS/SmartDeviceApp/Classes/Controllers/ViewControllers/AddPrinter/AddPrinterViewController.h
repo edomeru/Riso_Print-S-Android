@@ -33,8 +33,12 @@
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
+/** Reference to the entire UIView below the Header. */
+@property (weak, nonatomic) IBOutlet UIView *container;
+
 /**
  Unwinds back to the Printers screen.
+ This is for iPhone only.
  */
 - (IBAction)onBack:(UIButton*)sender;
 

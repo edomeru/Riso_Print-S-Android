@@ -7,12 +7,17 @@
 //
 
 #import "PrintersIpadViewController.h"
+#import "AddPrinterViewController.h"
+#import "PrinterSearchViewController.h"
 #import "PrinterManager.h"
 #import "Printer.h"
 #import "PrinterCollectionViewCell.h"
 #import "PrinterDetails.h"
 #import "PrinterStatusView.h"
 #import "PrinterStatusHelper.h"
+
+#define SEGUE_TO_ADD_PRINTER    @"PrintersIpad-AddPrinter"
+#define SEGUE_TO_PRINTER_SEARCH @"PrintersIpad-PrinterSearch"
 
 @interface PrintersIpadViewController ()
 
@@ -179,6 +184,44 @@
 {
     // TODO: Change button state
     [super printerSearchAction:sender];
+}
+
+#pragma mark - Segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
+    {
+        AddPrinterViewController* destController = [segue destinationViewController];
+        
+        //give the child screen a reference to the printer manager
+        destController.printerManager = self.printerManager;
+    }
+    
+    if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
+    {
+        PrinterSearchViewController* destController = [segue destinationViewController];
+        
+        //give the child screen a reference to the printer manager
+        destController.printerManager = self.printerManager;
+    }
+}
+
+- (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
+{
+    UIViewController* sourceViewController = [unwindSegue sourceViewController];
+    if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    {
+        AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self.collectionView reloadData];
+    }
+    if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
+    {
+        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self.collectionView reloadData];
+    }
 }
 
 @end

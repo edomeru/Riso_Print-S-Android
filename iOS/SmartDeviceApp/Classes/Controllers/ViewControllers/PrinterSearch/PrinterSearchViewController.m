@@ -142,12 +142,23 @@
     [self.tableView addSubview:self.refreshControl];
 }
 
+#pragma mark - Segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // if the SNMP is still searching, the search is canceled
+    // the printer, if found, will not be added to the list of saved printers
+    if ([self.refreshControl isRefreshing])
+    {
+        NSLog(@"[INFO][PrinterSearch] canceling search");
+        [self.printerManager stopSearching];
+    }
+}
+
 #pragma mark - Header
 
 - (IBAction)onBack:(UIBarButtonItem *)sender
 {
-    NSLog(@"[INFO][PrinterSearch] cancel search");
-    [self.printerManager stopSearching];
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
@@ -277,6 +288,7 @@
 {
     SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
                                                             forIndexPath:indexPath];
+    [cell setStyle];
    
     // set the cell text
     if (indexPath.section == 0)
@@ -291,7 +303,7 @@
         [cell setContents:[self.listNewPrinterNames objectAtIndex:indexPath.row]];
         [cell putPlusButton:self tapHandler:@selector(addPrinter:withEvent:)];
     }
-    
+   
     return cell;
 }
 
