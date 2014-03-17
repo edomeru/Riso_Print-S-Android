@@ -30,6 +30,7 @@ public class PrintJobManager {
     private static final String TABLE_PRINTER = "Printer";
     private static final String C_PRN_NAME = "prn_name";
     private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
+    private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
     private static DatabaseManager mManager;
     private static PrintJobManager mInstance;
     
@@ -63,6 +64,7 @@ public class PrintJobManager {
             printJobs.add(new PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result));
         }
         c.close();
+        mManager.close();
         return printJobs;
     }
     
@@ -92,19 +94,19 @@ public class PrintJobManager {
     }
     
     private static String formatSQLDateTime(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        return dateFormat.format(date);
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
+        return sdf.format(date);
     }
     
     private static Date convertSQLToDate(String strDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         Date date = null;
         
         try {
             date = sdf.parse(strDate);
             
         } catch (ParseException e) {
-            Log.e(TAG, e.toString());
+            Log.e(TAG, "convertSQLToDate parsing error.");
         }
         return date;
     }
@@ -121,6 +123,7 @@ public class PrintJobManager {
             printers.add(new Printer(prn_id, prn_name));
         }
         c.close();
+        mManager.close();
         return printers;
     }
 }

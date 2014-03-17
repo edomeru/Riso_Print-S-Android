@@ -29,7 +29,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         
         String sqlString = AppUtils.getFileContentsFromAssets(mContext, DATABASE_SQL);
         String[] separated = sqlString.split(";");
-
+        
         for (int i = 0; i < separated.length; i++) {
             db.execSQL(separated[i]);
         }
@@ -47,7 +47,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
         SQLiteDatabase db = this.getWritableDatabase();
-
+        
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
@@ -64,7 +64,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cur = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
-        return cur;  
+        return cur;
     }
     
     public boolean delete(String table, String whereClause, String[] whereArgs) {

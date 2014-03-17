@@ -65,12 +65,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         if (!isInEditMode()) {
             setOrientation(VERTICAL);
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            if (mWithMargin){
+            if (mWithMargin) {
                 lp.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
                 lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
                 lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
             }
-
+            
             setLayoutParams(lp);
             
         }
@@ -129,8 +129,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             
             mPrintJobViews.add(tempView);
             addView(tempView, i + 1);
+            
         }
-        
+        mPrintJobs.clear();
+        mPrintJobs = null;
     }
     
     private String formatDate(Date date) {
@@ -177,7 +179,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             for (int i = 0; i < mPrintJobViews.size(); i++) {
                 if (mPrintJobViews.get(i).equals(viewToRemove)) {
                     mPrintJobViews.remove(i);
-                    mPrintJobs.remove(i);
                 }
             }
             
@@ -215,7 +216,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         if (isSuccess) {
             ((LinearLayout) mPrintGroupView.getParent()).removeView(mPrintGroupView);
             mPrintJobViews.clear();
-            mPrintJobs.clear();
         } else {
             // show dialog
             PrintJobsDeleteErrorDialog dialog = PrintJobsDeleteErrorDialog.newInstance();

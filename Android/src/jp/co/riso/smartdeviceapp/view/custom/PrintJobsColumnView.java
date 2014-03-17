@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 public class PrintJobsColumnView extends LinearLayout {
     
-    private static final String TAG = "PrintJobsColumnView";
     private Context mContext;
     private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
     private List<Printer> mPrinterIds = new ArrayList<Printer>();
@@ -28,7 +27,8 @@ public class PrintJobsColumnView extends LinearLayout {
     private Runnable mRunnable;
     private LoadingViewListener mLoadingListener;
     
-    public PrintJobsColumnView(Context context, List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener, LoadingViewListener loadingListener) {
+    public PrintJobsColumnView(Context context, List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener,
+            LoadingViewListener loadingListener) {
         this(context);
         this.mContext = context;
         this.mPrintJobs = printJobs;
@@ -38,9 +38,14 @@ public class PrintJobsColumnView extends LinearLayout {
         this.mLoadingListener = loadingListener;
         this.mRunnable = new Runnable() {
             public void run() {
+                addToColumns();
+                mJobGroupCtr++;
                 requestLayout();
-                if (mJobGroupCtr == mPrinterIds.size()){ 
+                if (mJobGroupCtr >= mPrinterIds.size()) {
                     mLoadingListener.hideLoading();
+                    mPrintJobs.clear();
+                    mPrinterIds.clear();
+                    mColumns.clear();
                 }
             }
         };
@@ -75,37 +80,40 @@ public class PrintJobsColumnView extends LinearLayout {
             if (mColNum < 2)
                 mColumns.get(1).setVisibility(GONE);
             
-            // if # of columns == 1, no need to depend on change in column size
-            if (mColNum == 1) {
-                addToColumns();
-            }
         }
         
     }
     
     private void addToColumns() {
+        
         List<PrintJob> jobs = new ArrayList<PrintJob>();
         Printer printer = mPrinterIds.get(mJobGroupCtr);
         int pid = printer.getPrinterId();
         // get printer's jobs list with printerid==pid
         // printJobs is ordered according to prn_id in query
         for (int i = mJobCtr; i < mPrintJobs.size(); i++) {
+            
             PrintJob pj = mPrintJobs.get(i);
             int id = pj.getPrinterId();
             
-            if (id > pid) {
-                mJobCtr = i;
-                break;
-            } else if (id == pid) {
+            if (id == pid) {
                 jobs.add(pj);
+            }
+            mJobCtr = i;
+            
+            //if current printer id is different from printer id of next print job in the list
+            if (i == mPrintJobs.size() - 1 || pid != mPrintJobs.get(i + 1).getPrinterId()) {
+                break;
             }
         }
         
         // use jobs list to add view to smallest column
         if (!jobs.isEmpty()) {
             addPrintJobsGroupView(jobs, getSmallestColumn(), printer);
-            // jobs.clear();
+            jobs.clear();
         }
+        jobs = null;
+        printer = null;
         
         // if # of columns == 1, no need to depend on change in column size
         if (mColNum == 1) {
@@ -145,26 +153,13 @@ public class PrintJobsColumnView extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        
-        if (mJobGroupCtr < mPrinterIds.size() && mJobCtr < mPrintJobs.size() && mColNum > 1) {
-            
-            addToColumns();
-            mJobGroupCtr++;
-            
+        if (mJobGroupCtr < mPrinterIds.size() && mJobCtr < mPrintJobs.size()) {
             // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
             post(mRunnable);
-
         }
-        
-        //if columns > 1 -> call hideLoading() inside runnable
-        if (mJobGroupCtr == mPrinterIds.size() && mColNum == 1){ 
-            mLoadingListener.hideLoading();
-        }
-        
-
     }
     
-    public interface LoadingViewListener{
+    public interface LoadingViewListener {
         public void hideLoading();
     }
     
