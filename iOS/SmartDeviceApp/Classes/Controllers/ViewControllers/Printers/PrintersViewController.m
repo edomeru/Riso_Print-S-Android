@@ -11,6 +11,7 @@
 #import "UIViewController+Segue.h"
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
+#import "PrinterManager.h"
 
 @interface PrintersViewController ()
 
@@ -30,6 +31,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // setup the PrinterManager
+    NSLog(@"setup");
+    self.printerManager = [[PrinterManager alloc] init];
+    [self.printerManager getListOfSavedPrinters];
+    [self.printerManager getDefaultPrinter];
 }
 
 - (void)didReceiveMemoryWarning
@@ -39,6 +45,16 @@
 }
 
 #pragma mark -
+
+- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
+{
+    //get selected printer from list
+    Printer *selectedPrinter = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
+    
+    //set as default printer
+    return [self.printerManager registerDefaultPrinter:selectedPrinter];
+}
+
 #pragma mark IBActions
 - (IBAction)mainMenuAction:(id)sender
 {

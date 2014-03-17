@@ -138,10 +138,7 @@
     {
         // delete the default printer first
         NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
-        self.defaultPrinter.printer = nil;
-        if ([DatabaseManager deleteObject:self.defaultPrinter])
-            self.defaultPrinter = nil;
-        else
+        if ([self deleteDefaultPrinter] == NO)
             return NO;
     }
     
@@ -152,6 +149,24 @@
         return YES;
     else
         return NO;
+}
+
+- (BOOL) deleteDefaultPrinter
+{
+    if(self.defaultPrinter == nil)
+    {
+        return YES;
+    }
+    self.defaultPrinter.printer = nil;
+    if ([DatabaseManager deleteObject:self.defaultPrinter] == YES)
+    {
+        self.defaultPrinter = nil;
+    }
+    else
+    {
+        return NO;
+    }
+    return YES;
 }
 
 - (BOOL)hasDefaultPrinter

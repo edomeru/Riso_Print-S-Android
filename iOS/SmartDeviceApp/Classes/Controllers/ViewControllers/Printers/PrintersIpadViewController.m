@@ -38,9 +38,6 @@
 {
     [super viewDidLoad];
 
-    self.printerManager = [[PrinterManager alloc] init];
-    [self.printerManager getListOfSavedPrinters];
-    [self.printerManager getDefaultPrinter];
     
     // For TEST data creation only
     /*for (int i = 0; i < 5; i++)
@@ -99,12 +96,23 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
+    cell.delegate = self;
+    cell.indexPath = indexPath;
+    
     Printer *printer = [self.printerManager.listSavedPrinters objectAtIndex:[indexPath item]];
+    if ([self.printerManager isDefaultPrinter:printer])
+    {
+        self.defaultPrinterIndexPath = indexPath;
+        [cell setAsDefaultPrinterCell:YES];
+    }
+    else
+    {
+        [cell setAsDefaultPrinterCell:NO];
+    }
     cell.nameLabel.text = printer.name;
     cell.ipAddressLabel.text = printer.ip_address;
     cell.portLabel.text = [printer.port stringValue];
-    cell.defaultSwitch.on = NO;
-    
+
     cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.statusView.statusHelper.delegate = cell.statusView;
 
@@ -132,7 +140,34 @@
      }];
 }
 
-#pragma mark -
+#pragma mark - PrinterCollectioViewCellDelegate methods
+-(void) setDefaultPrinterCell:(BOOL) isDefaultOn forIndexPath:(NSIndexPath *) indexPath;
+{
+    if(isDefaultOn == YES)
+    {
+        if(indexPath != self.defaultPrinterIndexPath)
+        {
+            [self setDefaultPrinter:indexPath];
+            if(self.defaultPrinterIndexPath != nil)
+            {
+                PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+            
+                [cell setAsDefaultPrinterCell:FALSE];
+            }
+    
+            self.defaultPrinterIndexPath = indexPath;
+        }
+    }
+    else
+    {
+        if(indexPath == self.defaultPrinterIndexPath)
+        {
+            [self.printerManager deleteDefaultPrinter];
+            self.defaultPrinterIndexPath = nil;
+        }
+    }
+}
+
 #pragma mark IBActions
 - (IBAction)addPrinterAction:(id)sender
 {

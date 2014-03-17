@@ -143,4 +143,10 @@
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
 
+/**
+Removes the defaultprinter record
+ 
+ @return YES if successful, NO otherwise.
+ */
+- (BOOL) deleteDefaultPrinter;
 @end

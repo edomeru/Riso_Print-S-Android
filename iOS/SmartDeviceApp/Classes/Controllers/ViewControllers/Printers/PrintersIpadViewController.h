@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "PrintersViewController.h"
+#import "PrinterCollectionViewCell.h"
 
-@interface PrintersIpadViewController : PrintersViewController<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface PrintersIpadViewController : PrintersViewController<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PrinterCollectionViewCellDelegate>
 
 @end

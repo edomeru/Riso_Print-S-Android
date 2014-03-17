@@ -21,17 +21,6 @@
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersIphoneViewController ()
-
-/** 
- Internal manager for adding printers to the DB, removing printers from the DB, and
- setting the default printer. It also maintains the list of the Printer objects from
- the DB. This is shared amongst all the child screens of the Printer screen.
- */
-@property (strong, nonatomic) PrinterManager* printerManager;
-
-/** NSIndexPath of the default printer in the Printers list **/
-@property (strong, nonatomic) NSIndexPath* defaultPrinterIndexPath;
-
 /**
  Action when the PrinterCell is tapped to select as Default Printer
  */
@@ -61,11 +50,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // setup the PrinterManager
-    self.printerManager = [[PrinterManager alloc] init];
-    [self.printerManager getListOfSavedPrinters];
-    [self.printerManager getDefaultPrinter];
 }
 
 - (void)didReceiveMemoryWarning
@@ -153,11 +137,7 @@
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
     
-    //get selected printer from list
-    Printer *selectedPrinter = [self.printerManager.listSavedPrinters objectAtIndex:selectedIndexPath.row];
-    
-    //set as default printer
-    [self.printerManager registerDefaultPrinter:selectedPrinter];
+    [self setDefaultPrinter:selectedIndexPath];
     
     if(self.defaultPrinterIndexPath != nil)
     {
