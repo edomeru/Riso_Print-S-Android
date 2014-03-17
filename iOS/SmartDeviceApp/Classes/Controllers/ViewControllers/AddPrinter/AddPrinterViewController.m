@@ -12,7 +12,6 @@
 #import "NetworkManager.h"
 #import "AlertUtils.h"
 
-#define INPUT_ROWS          3
 #define CELL_ROW_IP         0
 #define CELL_ROW_USERNAME   1
 #define CELL_ROW_PASSWORD   2
@@ -20,10 +19,14 @@
 @interface AddPrinterViewController ()
 
 /**
- Stores the number of saved printers.
+ Flag that indicates that a printer search was initiated, but
+ either the printer was not found or the search timed-out.
  */
 @property (assign, nonatomic) BOOL willEndWithoutAdd;
 
+/**
+ Progress indicator that a search is ongoing.
+ */
 @property (strong, nonatomic) UIActivityIndicatorView* progressIndicator;
 
 /**
@@ -227,40 +230,6 @@
     NSLog(@"[INFO][AddPrinter] received OLD printer with IP=%@", printerIP);
     NSLog(@"[INFO][AddPrinter] updating UI");
     self.willEndWithoutAdd = NO; //search did not timeout
-}
-
-#pragma mark - TableView
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return INPUT_ROWS;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = indexPath.row;
-    UITableViewCell* cell;
-    switch (row)
-    {
-        case 0:
-            cell = self.cellIPAddress;
-            //TODO: add separator
-            break;
-        case 1:
-            cell = self.cellUsername;
-            //TODO: add separator
-            break;
-        case 2:
-            cell = self.cellPassword;
-            break;
-    }
-    
-    return cell;
 }
 
 #pragma mark - TextFields

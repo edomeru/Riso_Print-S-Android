@@ -13,7 +13,7 @@
 
 @class PrinterManager;
 
-@interface AddPrinterViewController : SlidingViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, PrinterSearchDelegate>
+@interface AddPrinterViewController : SlidingViewController <UITextFieldDelegate, PrinterSearchDelegate>
 
 /** Reference to the PrinterManager object of the Printers screen. */
 @property (strong, nonatomic) PrinterManager* printerManager;
@@ -32,15 +32,6 @@
 
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
-
-/** Static TableViewCell for the IP Address */
-@property (strong, nonatomic) IBOutlet UITableViewCell *cellIPAddress;
-
-/** Static TableViewCell for the Username */
-@property (strong, nonatomic) IBOutlet UITableViewCell *cellUsername;
-
-/** Static TableViewCell for the Password */
-@property (strong, nonatomic) IBOutlet UITableViewCell *cellPassword;
 
 /**
  Unwinds back to the Printers screen.
