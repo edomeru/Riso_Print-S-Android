@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -171,5 +172,22 @@ public final class AppUtils {
         }
         
         return buf.toString();
+    }
+    
+    //http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
+    public static int getResourseId(String variableName, Class<?> c, int defaultId) {
+        if (variableName == null) {
+            return defaultId;
+        }
+        
+        int id = defaultId;
+        try {
+            Field idField = c.getDeclaredField(variableName);
+            id = idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        
+        return id;
     }
 }

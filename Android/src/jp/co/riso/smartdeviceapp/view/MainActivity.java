@@ -28,6 +28,7 @@ import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 public class MainActivity extends BaseActivity {
     
     public static final String KEY_TRANSLATION = "translate";
+    public static final String KEY_RIGHT_OPEN = "right_drawer_open";
     
     private DrawerLayout mDrawerLayout;
     private ViewGroup mMainLayout;
@@ -74,8 +75,9 @@ public class MainActivity extends BaseActivity {
             ft.commit();
         } else {
             float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
-            if (isTablet() && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            if (isTablet() && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
+                mMainLayout.requestLayout();
             } else {
                 mMainLayout.setTranslationX(translate);                
             }
@@ -94,6 +96,7 @@ public class MainActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         
         outState.putFloat(KEY_TRANSLATION, mMainLayout.getTranslationX());
+        outState.putBoolean(KEY_RIGHT_OPEN, mDrawerLayout.isDrawerOpen(Gravity.RIGHT));
     }
     
     @Override
@@ -126,6 +129,16 @@ public class MainActivity extends BaseActivity {
         public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
             super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
+        }
+        
+        
+        @Override
+        public void syncState() {
+            super.syncState();
+            
+            if (isTablet() && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                mMainLayout.setPadding(0, 0, getDrawerWidth(), 0);
+            }
         }
         
         @Override

@@ -35,7 +35,7 @@
                     style="@style/HomeMenuButtonText" />
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/separator_size"
                     android:layout_gravity="bottom"
                     android:background="@drawable/selector_home_separator" />
             </FrameLayout>
@@ -48,7 +48,7 @@
                     style="@style/HomeMenuButtonText" />
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/separator_size"
                     android:layout_gravity="bottom"
                     android:background="@drawable/selector_home_separator" />
             </FrameLayout>
@@ -57,11 +57,11 @@
                 android:id="@+id/printJobsButton"
                 style="@style/HomeMenuButton" >
                 <TextView
-                    android:text="@string/ids_lbl_print_jobs"
+                    android:text="@string/ids_lbl_print_job_history"
                     style="@style/HomeMenuButtonText" />
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/separator_size"
                     android:layout_gravity="bottom"
                     android:background="@drawable/selector_home_separator" />
             </FrameLayout>
@@ -74,7 +74,7 @@
                     style="@style/HomeMenuButtonText" />
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/separator_size"
                     android:layout_gravity="bottom"
                     android:background="@drawable/selector_home_separator" />
             </FrameLayout>
