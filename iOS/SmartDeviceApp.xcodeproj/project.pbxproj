@@ -69,7 +69,7 @@
 		3192117218C72A7D000555C7 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192117118C72A7D000555C7 /* Printer.m */; };
 		31AF6CCE18CD903F00C81F09 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */; };
 		31AF6CD218CD904A00C81F09 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AF6CD118CD904A00C81F09 /* PrintersViewController.m */; };
-		31D91C9618C86FE400611C85 /* PrinterInfoScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */; };
+		31D91C9618C86FE400611C85 /* PrinterInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31D91C9518C86FE400611C85 /* PrinterInfoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -180,8 +180,8 @@
 		31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersIpadViewController.m; path = Printers/PrintersIpadViewController.m; sourceTree = "<group>"; };
 		31AF6CD018CD904A00C81F09 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersViewController.h; path = Printers/PrintersViewController.h; sourceTree = "<group>"; };
 		31AF6CD118CD904A00C81F09 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersViewController.m; path = Printers/PrintersViewController.m; sourceTree = "<group>"; };
-		31D91C9418C86FE400611C85 /* PrinterInfoScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterInfoScreenController.h; path = PrinterInfo/PrinterInfoScreenController.h; sourceTree = "<group>"; };
-		31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterInfoScreenController.m; path = PrinterInfo/PrinterInfoScreenController.m; sourceTree = "<group>"; };
+		31D91C9418C86FE400611C85 /* PrinterInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterInfoViewController.h; path = PrinterInfo/PrinterInfoViewController.h; sourceTree = "<group>"; };
+		31D91C9518C86FE400611C85 /* PrinterInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterInfoViewController.m; path = PrinterInfo/PrinterInfoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -728,8 +728,8 @@
 		31D91C9318C86EAF00611C85 /* PrinterInfo */ = {
 			isa = PBXGroup;
 			children = (
-				31D91C9418C86FE400611C85 /* PrinterInfoScreenController.h */,
-				31D91C9518C86FE400611C85 /* PrinterInfoScreenController.m */,
+				31D91C9418C86FE400611C85 /* PrinterInfoViewController.h */,
+				31D91C9518C86FE400611C85 /* PrinterInfoViewController.m */,
 			);
 			name = PrinterInfo;
 			sourceTree = "<group>";
@@ -891,7 +891,7 @@
 				3192115418C71C3D000555C7 /* PrinterCell.m in Sources */,
 				2828312918C7066B008B127C /* SNMPManager.m in Sources */,
 				310626E618CDAFF700E3CB19 /* PListUtils.m in Sources */,
-				31D91C9618C86FE400611C85 /* PrinterInfoScreenController.m in Sources */,
+				31D91C9618C86FE400611C85 /* PrinterInfoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

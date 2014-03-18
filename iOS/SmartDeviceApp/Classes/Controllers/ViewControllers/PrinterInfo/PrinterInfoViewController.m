@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PrinterInfoScreenController.h"
+#import "PrinterInfoViewController.h"
 
-@interface PrinterInfoScreenController ()
+@interface PrinterInfoViewController ()
 
 @end
 
-@implementation PrinterInfoScreenController
+@implementation PrinterInfoViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
