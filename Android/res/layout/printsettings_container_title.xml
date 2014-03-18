@@ -20,7 +20,7 @@
 	        android:layout_height="@dimen/printsettings_icon_width"
 	        android:layout_gravity="center_vertical"
 	        android:contentDescription="@string/default_content_description"
-	        android:src="@drawable/selector_printsettings_disclosure"
+	        android:src="@drawable/temp_img_disclosure"
 	        android:visibility="gone" />
         
 	    <ImageView

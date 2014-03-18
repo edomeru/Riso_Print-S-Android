@@ -5,7 +5,7 @@ import android.view.View;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import jp.co.riso.smartdeviceapp.view.preview.PrintSettingsView;
+import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
 
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.ValueChangedListener {
     public static final String TAG = "PrintSettingsFragment";

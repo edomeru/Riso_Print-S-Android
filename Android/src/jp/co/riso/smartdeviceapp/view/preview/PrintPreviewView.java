@@ -24,7 +24,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
@@ -34,7 +33,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -101,13 +99,13 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     // ================================================================================
     
     public void loadResources() {
-        stapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
-        punchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        stapleBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        punchBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
     }
     
     public void freeResources() {
-        stapleBmp.recycle();
-        punchBmp.recycle();
+        //stapleBmp.recycle();
+        //punchBmp.recycle();
     }
     
     public void refreshView() {

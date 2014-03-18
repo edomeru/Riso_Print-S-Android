@@ -1,4 +1,4 @@
-package jp.co.riso.smartdeviceapp.view.preview;
+package jp.co.riso.smartdeviceapp.view.printsettings;
 
 import java.io.IOException;
 import java.io.StringReader;

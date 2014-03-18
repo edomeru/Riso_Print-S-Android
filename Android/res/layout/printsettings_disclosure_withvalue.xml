@@ -23,6 +23,6 @@
         android:layout_weight="0.0"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/default_content_description"
-        android:src="@drawable/selector_printsettings_disclosure" />
+        android:src="@drawable/temp_img_disclosure" />
 
 </LinearLayout>

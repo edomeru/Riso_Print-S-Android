@@ -17,11 +17,11 @@
         android:textColor="@color/theme_light_1"
         android:textSize="@dimen/actionbar_title_text_size" />
 
-    <jp.co.riso.smartdeviceapp.view.preview.PrintSettingsView
+    <jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView
         android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-    </jp.co.riso.smartdeviceapp.view.preview.PrintSettingsView>
+    </jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView>
 
 </LinearLayout>

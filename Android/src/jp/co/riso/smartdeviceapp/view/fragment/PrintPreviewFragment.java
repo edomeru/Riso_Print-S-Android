@@ -189,7 +189,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         ImageButton newMenuButton = new ImageButton(v.getContext());
         
         newMenuButton.setId(ID_PRINT_BUTTON);
-        newMenuButton.setImageResource(R.drawable.temp_img_print);
+        newMenuButton.setImageResource(R.drawable.img_btn_default_print_settings);
         newMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
