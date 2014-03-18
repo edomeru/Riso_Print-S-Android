@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "PrinterStatusHelper.h"
 
-@interface PrinterStatusView : UIView <PrinterStatusHelperDelegate>
+@interface PrinterStatusView : UIImageView <PrinterStatusHelperDelegate>
 
 @property (nonatomic) BOOL onlineStatus;
 @property (strong, nonatomic) PrinterStatusHelper *statusHelper;

@@ -32,11 +32,13 @@
     self.onlineStatus = isOnline;
     if(isOnline){
         //NSLog(@"Set to online");
-        [self setBackgroundColor:[UIColor greenColor]];
+        //[self setBackgroundColor:[UIColor greenColor]];
+        [self setHighlighted:YES];
     }
     else{
         //NSLog(@"Set to offline");
-        [self setBackgroundColor:[UIColor grayColor]];
+        //[self setBackgroundColor:[UIColor grayColor]];
+        [self setHighlighted:NO];
     }
 }
 
