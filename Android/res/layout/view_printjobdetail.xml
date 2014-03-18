@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/ids_lbl_print_job_status"
-            android:src="@android:drawable/ic_menu_edit"
+            android:src="@drawable/img_btn_job_status_ok"
             android:visibility="visible" />
 
         <ImageView
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/ids_lbl_print_job_status"
-            android:src="@android:drawable/ic_menu_info_details"
+            android:src="@drawable/img_btn_job_status_ng"
             android:visibility="invisible" />
     </FrameLayout>
 
@@ -47,7 +47,6 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/theme_dark_2" />
 
         <FrameLayout
@@ -65,16 +64,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/theme_light_1" />
 
             <Button
                 android:id="@+id/printJobDeleteBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_gravity="center_vertical|right"
                 android:layout_margin="@dimen/printjob_delbtn_margin"
                 android:background="@color/theme_color_3"
+                android:gravity="center"
                 android:paddingLeft="@dimen/printjob_delbtn_padding_side"
                 android:paddingRight="@dimen/printjob_delbtn_padding_side"
                 android:text="@string/ids_lbl_delete_job"

@@ -18,8 +18,7 @@ import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
 public class PrintJobManagerTest extends AndroidTestCase {
-	private PrintJobManager mPrintJobManager;
-	private DatabaseManager mManager;
+
 
 	private static final String TABLE = "PrintJob";
 	private static final String C_PJB_ID = "pjb_id";
@@ -29,23 +28,25 @@ public class PrintJobManagerTest extends AndroidTestCase {
 	private static final String C_PJB_RESULT = "pjb_result";
 	private static final String TABLE_PRINTER = "Printer";
 	private static final String C_PRN_NAME = "prn_name";
-	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss";
-	private SimpleDateFormat sdf;
-
+	private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
+	private SimpleDateFormat mSdf;
+	private RenamingDelegatingContext mContext; 
+	private PrintJobManager mPrintJobManager;
+	private DatabaseManager mManager;
+	
 	public PrintJobManagerTest() {
 		super();
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		RenamingDelegatingContext context = new RenamingDelegatingContext(
+		mContext = new RenamingDelegatingContext(
 				getContext(), "test_");
 
-		sdf = new SimpleDateFormat(strDateFormat, Locale.getDefault());
+		mSdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
 
-		PrintJobManager.initializeInstance(context);
-		mPrintJobManager = PrintJobManager.getInstance();
-		mManager = new DatabaseManager(context);
+		mPrintJobManager = PrintJobManager.getInstance(mContext);
+		mManager = new DatabaseManager(mContext);
 
 		// set printers
 		ContentValues pvalues = new ContentValues();
@@ -67,14 +68,10 @@ public class PrintJobManagerTest extends AndroidTestCase {
 	}
 
 	public void testGetInstance() {
-		assertEquals(mPrintJobManager, PrintJobManager.getInstance());
+		assertEquals(mPrintJobManager, PrintJobManager.getInstance(mContext));
 	}
 
-	public void testInitializeInstance() {
-		PrintJobManager.initializeInstance(getContext());
-		assertEquals(mPrintJobManager, PrintJobManager.getInstance());
-	}
-
+	
 	public void testGetPrintJobs() {
 		mManager.getWritableDatabase();
 		SQLiteDatabase db = mManager.getWritableDatabase();
@@ -98,7 +95,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 		assertEquals("Print Job Name", pj.get(0).getName());
 		assertEquals(JobResult.SUCCESSFUL, pj.get(0).getResult());
 
-		assertTrue(sdf.format(pj.get(0).getDate())
+		assertTrue(mSdf.format(pj.get(0).getDate())
 				.equals("2014-03-17 13:12:11"));
 
 	}
@@ -143,7 +140,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 		Date date = null;
 
 		try {
-			date = sdf.parse("2014-03-17 13:12:11");
+			date = mSdf.parse("2014-03-17 13:12:11");
 
 		} catch (ParseException e) {
 			Log.e("PrintJobManagerTest", "convertSQLToDate parsing error.");

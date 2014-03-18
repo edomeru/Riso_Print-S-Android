@@ -10,7 +10,7 @@
                 android:width="1dp"
                 android:color="@color/theme_light_2" />
 
-            <solid android:color="@color/theme_light_3" />
+         <solid android:color="@android:color/transparent"/>
         </shape>
     </item>
 

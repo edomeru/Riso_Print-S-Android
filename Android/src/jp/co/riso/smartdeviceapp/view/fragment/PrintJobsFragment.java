@@ -26,7 +26,6 @@ import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView.PrintDeleteListe
 import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -55,9 +54,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        if (PrintJobManager.getInstance() == null)
-            PrintJobManager.initializeInstance(SmartDeviceApp.getAppContext());
-        
+        PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
     }
     
     @Override
@@ -143,8 +140,8 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             PrintJobManager.createPrintJob(7, "ANOTHER ALLCAPS.pdf", new Date(), JobResult.SUCCESSFUL);
             PrintJobManager.createPrintJob(7, "asdfgqwerty.pdf", new Date(), JobResult.ERROR);
             
-            // uncomment for small data set
-            addPrintJobsLarge();
+            // comment for small data set
+            // addPrintJobsLarge();
         }
     }
     
@@ -2663,17 +2660,8 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     }
     
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("CESTEST", "onpause");
-        
-    }
-    
-    @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
-        Log.d("CESTEST", "onDestroy");
         mLoadPrintJobsTask.cancel(true);
         mPrintJobs.clear();
         mPrinters.clear();
@@ -2711,13 +2699,13 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             initializePJs();
             // ///////////////
             
-            //if (mPrintJobs.isEmpty()) {
-                
-                mPrintJobs = PrintJobManager.getPrintJobs();
-                
-                mPrinters = PrintJobManager.getPrintersWithJobs();
-                
-           // }
+            // if (mPrintJobs.isEmpty()) {
+            
+            mPrintJobs = PrintJobManager.getPrintJobs();
+            
+            mPrinters = PrintJobManager.getPrintersWithJobs();
+            
+            // }
             return null;
         }
         

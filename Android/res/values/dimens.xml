@@ -34,6 +34,7 @@
     <dimen name="printjob_expand_padding_side">10dp</dimen>
     <dimen name="printjob_delgroupbtn_margin_left">1dp</dimen>
     <dimen name="printjob_delgroupbtn_padding_side">10dp</dimen>
+    <dimen name="printjob_delgroupbtn_padding_topbottom">16dp</dimen>
        
     <!-- Temporary values -->
 

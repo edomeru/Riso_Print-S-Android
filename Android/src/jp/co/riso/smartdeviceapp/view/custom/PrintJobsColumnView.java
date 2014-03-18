@@ -36,19 +36,7 @@ public class PrintJobsColumnView extends LinearLayout {
         this.mColNum = colNum;
         this.mDelListener = delListener;
         this.mLoadingListener = loadingListener;
-        this.mRunnable = new Runnable() {
-            public void run() {
-                addToColumns();
-                mJobGroupCtr++;
-                requestLayout();
-                if (mJobGroupCtr >= mPrinterIds.size()) {
-                    mLoadingListener.hideLoading();
-                    mPrintJobs.clear();
-                    mPrinterIds.clear();
-                    mColumns.clear();
-                }
-            }
-        };
+        this.mRunnable = new AddViewRunnable();
         
         init(context);
     }
@@ -101,7 +89,7 @@ public class PrintJobsColumnView extends LinearLayout {
             }
             mJobCtr = i;
             
-            //if current printer id is different from printer id of next print job in the list
+            // if current printer id is different from printer id of next print job in the list
             if (i == mPrintJobs.size() - 1 || pid != mPrintJobs.get(i + 1).getPrinterId()) {
                 break;
             }
@@ -154,7 +142,8 @@ public class PrintJobsColumnView extends LinearLayout {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         if (mJobGroupCtr < mPrinterIds.size() && mJobCtr < mPrintJobs.size()) {
-            // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
+            addToColumns();
+            mJobGroupCtr++;
             post(mRunnable);
         }
     }
@@ -163,4 +152,19 @@ public class PrintJobsColumnView extends LinearLayout {
         public void hideLoading();
     }
     
+    // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
+    private class AddViewRunnable implements Runnable {
+        
+        @Override
+        public void run() {
+            requestLayout();
+            if (mJobGroupCtr >= mPrinterIds.size()) {
+                mLoadingListener.hideLoading();
+                mPrintJobs.clear();
+                mPrinterIds.clear();
+                mColumns.clear();
+            }
+        }
+        
+    }
 }

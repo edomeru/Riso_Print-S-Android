@@ -31,6 +31,7 @@ public class PrintJobManager {
     private static final String C_PRN_NAME = "prn_name";
     private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
     private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
+    
     private static DatabaseManager mManager;
     private static PrintJobManager mInstance;
     
@@ -38,17 +39,13 @@ public class PrintJobManager {
         mManager = new DatabaseManager(context);
     }
     
-    public static PrintJobManager getInstance() {
-        return mInstance;
-    }
-    
-    public static void initializeInstance(Context context) {
+    public static PrintJobManager getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new PrintJobManager(context);
         }
-        
+        return mInstance;
     }
-    
+        
     public static List<PrintJob> getPrintJobs() {
         List<PrintJob> printJobs = new ArrayList<PrintJob>();
         Cursor c = mManager.query(TABLE, null, null, null, null, null, C_PRN_ID);
