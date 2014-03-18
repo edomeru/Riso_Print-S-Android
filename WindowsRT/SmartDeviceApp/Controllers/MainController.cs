@@ -45,6 +45,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             DocumentController.Instance.Load(e.Files[0] as StorageFile);
+            PrintPreviewController.Instance.Initialize();
         }
 
         /// <summary>

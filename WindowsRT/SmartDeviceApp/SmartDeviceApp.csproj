@@ -106,6 +106,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Utilities\DialogService.cs" />
     <Compile Include="Common\Utilities\DisplayOrientationsHelper.cs" />
     <Compile Include="Common\Utilities\IDialogService.cs" />
@@ -123,6 +125,9 @@
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PrintPreviewController.cs" />
+    <Compile Include="Converters\BasePrintSettingConverter.cs" />
+    <Compile Include="Converters\PrintSettingConverter.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
     <Compile Include="Models\DataItem.cs" />
@@ -131,6 +136,7 @@
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\IDataService.cs" />
     <Compile Include="Models\LogicalPage.cs" />
+    <Compile Include="Models\PreviewPage.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\PrintJob.cs" />
     <Compile Include="Models\PrintSetting.cs" />
@@ -193,8 +199,6 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Common\Constants\" />
-    <Folder Include="Converters\" />
     <Folder Include="Resources\Styles\" />
   </ItemGroup>
   <ItemGroup>

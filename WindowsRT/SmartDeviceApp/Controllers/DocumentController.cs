@@ -10,19 +10,13 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-
 using SmartDeviceApp.Models;
-using Windows.Data.Pdf;
+using System;
 using System.IO;
+using System.Threading.Tasks;
+using Windows.Data.Pdf;
+using Windows.Storage;
 using Windows.Storage.Streams;
-using GalaSoft.MvvmLight.Messaging;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -30,7 +24,7 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly DocumentController _instance = new DocumentController();
 
-        private const int MAX_PAGES = 5;
+        private const int MAX_PAGES = 7;
         private const string TEMP_PDF_NAME = "temp.pdf";
         private const string FORMAT_IMAGE_FILENAME = "image{0:0000}.jpg";
 
@@ -75,14 +69,14 @@ namespace SmartDeviceApp.Controllers
             catch (FileNotFoundException)
             {
                 // File cannot be loaded
-                // TODO: Call PrintPreviewController
+                PrintPreviewController.Instance.OnLoadDocumentFinished(false);
                 return;
             }
 
             // Send notification after PDF is opened
-            // TODO: Call PrintPreviewController
+            PrintPreviewController.Instance.OnLoadDocumentFinished(true);
 
-            GenerateLogicalPages(0); // Initial page number is 0
+            GenerateLogicalPages(0, false); // Initial page number is 0
         }
 
         /// <summary>
@@ -100,8 +94,9 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Generates N pages to JPEG then saves in AppData/temp
         /// </summary>
-        /// <param name="basePageIndex">initial page number</param>
-        public async void GenerateLogicalPages(int basePageIndex)
+        /// <param name="basePageIndex">requested page number</param>
+        /// <param name="enableSendPage">enable send page to caller</param>
+        public async void GenerateLogicalPages(int basePageIndex, bool enableSendPage)
         {
             int pageCount = (int) _document.PdfDocument.PageCount;
             if (basePageIndex < 0 || basePageIndex > pageCount - 1)
@@ -133,11 +128,10 @@ namespace SmartDeviceApp.Controllers
                 ++generatedPageCount;
             } while (generatedPageCount < MAX_PAGES && currPageIndex < pageCount);
 
-            // Get bitmap image of a single page
-            BitmapImage pageImage = await LoadPageImage(basePageIndex);
-
-            // Send notification after finished loading and send the bitmap image
-            // TODO: Call PrintPreviewController
+            if (enableSendPage)
+            {
+                PrintPreviewController.Instance.OnReceiveLogicalPage(_document.LogicalPages[basePageIndex]);
+            }
         }
 
         /// <summary>
@@ -181,25 +175,6 @@ namespace SmartDeviceApp.Controllers
             {
                 // Error in reading PDF
             }
-        }
-
-        /// <summary>
-        /// Loads the image file to a bitmap
-        /// </summary>
-        /// <param name="pageIndex">page index</param>
-        /// <returns>task with a bitmap image as a result</returns>
-        private async Task<BitmapImage> LoadPageImage(int pageIndex)
-        {
-            BitmapImage pageImage = new BitmapImage();
-
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile jpgFile = await tempFolder.TryGetItemAsync(String.Format(FORMAT_IMAGE_FILENAME, pageIndex)) as StorageFile;
-            using (IRandomAccessStream raStream = await jpgFile.OpenAsync(FileAccessMode.Read))
-            {
-                await pageImage.SetSourceAsync(raStream);
-            }
-
-            return pageImage;
         }
 
         /// <summary>

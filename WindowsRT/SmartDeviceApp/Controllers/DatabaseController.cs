@@ -42,10 +42,10 @@ namespace SmartDeviceApp.Controllers
 
         public void Initialize()
         {
-            createDatabase();
+            CreateDatabase();
         }
 
-        private void createDatabase()
+        private void CreateDatabase()
         {
             try
             {
@@ -129,7 +129,7 @@ namespace SmartDeviceApp.Controllers
         }
          * */
 
-        private void insertPrinter(Printer printer)
+        private void InsertPrinter(Printer printer)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             using (var db = new SQLite.SQLiteConnection(dbpath))
@@ -145,13 +145,13 @@ namespace SmartDeviceApp.Controllers
 
         }
 
-        public async Task<List<Printer>> getPrinters()
+        public async Task<List<Printer>> GetPrinters()
         {
             var printerList = new List<Printer>();
             try
             {
                 var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
-                
+
                 var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
                 printerList = await (db.Table<Printer>().ToListAsync());
@@ -163,7 +163,7 @@ namespace SmartDeviceApp.Controllers
             return printerList;
         }
 
-        public async Task<int> setDefaultPrinter(int printerId)
+        public async Task<int> SetDefaultPrinter(int printerId)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
@@ -199,7 +199,7 @@ namespace SmartDeviceApp.Controllers
             return 1;
         }
 
-        public async Task<int> deletePrinterFromDB(int printerId)
+        public async Task<int> DeletePrinterFromDB(int printerId)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
@@ -212,7 +212,7 @@ namespace SmartDeviceApp.Controllers
 
                 //check if default printer
                 var defaultPrinter = await db.Table<DefaultPrinter>().FirstAsync();
-            
+
                 if (printer.Id == defaultPrinter.PrinterId)
                 {
                     //update default printer in DB
@@ -227,28 +227,51 @@ namespace SmartDeviceApp.Controllers
             {
                 return 1;
             }
-                        
+
             return 0;
         }
-        
 
-        public async Task<DefaultPrinter> getDefaultPrinter()
+        public async Task<Printer> GetDefaultPrinter()
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            DefaultPrinter defaultPrinter = new DefaultPrinter();
+            DefaultPrinter defaultPrinter = null;
+            Printer printer = null;
             try
             {
                 defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
+                printer = await (db.GetAsync<Printer>(defaultPrinter.PrinterId));
+                printer.IsDefault = true;
             }
             catch
             {
-
+                // Error handling here
             }
-            return defaultPrinter;
+            return printer;
         }
 
         #endregion Printer Table Operations
+
+        #region PrintSetting Table Operations
+
+        public async Task<PrintSetting> GetPrintSetting(int printerId)
+        {
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var db = new SQLite.SQLiteAsyncConnection(dbpath);
+            PrintSetting printSetting = null;
+
+            try
+            {
+                printSetting = await db.GetAsync<PrintSetting>(printerId);
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return printSetting;
+        }
+
+        #endregion PrintSetting Table Operations
 
     }
 }

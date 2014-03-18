@@ -107,6 +107,12 @@ namespace SmartDeviceApp.Models
         [SQLite.Ignore]
         public bool IsOnline { get; set; }
 
+        /// <summary>
+        /// Print settings associated to the printer
+        /// </summary>
+        [SQLite.Ignore]
+        public PrintSetting PrintSetting { get; set; }
+
         #endregion Properties
 
         /// <summary>
@@ -126,6 +132,9 @@ namespace SmartDeviceApp.Models
             EnabledBookletBinding = false;
             EnabledStaple = false;
             EnabledBind = false;
+            IsDefault = false;
+            IsOnline = false;
+            PrintSetting = null;
         }
 
         /// <summary>
@@ -159,6 +168,9 @@ namespace SmartDeviceApp.Models
             EnabledBookletBinding = enabledBookletBinding;
             EnabledStaple = enabledStaple;
             EnabledBind = enabledBind;
+            IsDefault = false;
+            IsOnline = false;
+            PrintSetting = null;
         }
 
     }

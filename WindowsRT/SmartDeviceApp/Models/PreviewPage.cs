@@ -1,5 +1,5 @@
 ﻿//
-//  LogicalPage.cs
+//  PreviewPage.cs
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group on 2014/03/07.
@@ -17,20 +17,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Pdf;
 using Windows.Foundation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Models
 {
-    public class LogicalPage
+    public class PreviewPage
     {
         private uint _pageIndex;
-        private string _name;
+        private BitmapImage _pageImage;
         private Size _size;
         private PdfPageRotation _rotation;
 
-        public LogicalPage(uint pageIndex, string name, Size size, PdfPageRotation rotation)
+        public PreviewPage(uint pageIndex, BitmapImage pageImage, Size size, PdfPageRotation rotation)
         {
             _pageIndex = pageIndex;
-            _name = name;
+            _pageImage = pageImage;
             _size = size;
             _rotation = rotation;
         }
@@ -40,9 +41,9 @@ namespace SmartDeviceApp.Models
             get { return _pageIndex; }
         }
 
-        public string Name
+        public BitmapImage PageImage
         {
-            get { return _name; }
+            get { return _pageImage; }
         }
 
         public Size Size
