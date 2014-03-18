@@ -1,0 +1,7 @@
+# Generated files
+bin/
+obj/
+
+# User files
+*.csproj.user
+*.suo

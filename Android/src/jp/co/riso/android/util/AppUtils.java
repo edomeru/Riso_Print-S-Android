@@ -7,7 +7,12 @@
  */
 package jp.co.riso.android.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -142,5 +147,47 @@ public final class AppUtils {
         display.getSize(size);
         
         return size;
+    }
+    
+    public static String getFileContentsFromAssets(Context context, String assetFile) {
+        if (context == null) {
+            return null;
+        }
+        
+        StringBuilder buf = new StringBuilder();
+        InputStream stream;
+        try {
+            stream = context.getApplicationContext().getAssets().open(assetFile);
+            
+            BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+            String str;
+            
+            while ((str = in.readLine()) != null) {
+                buf.append(str);
+            }
+            
+            in.close();
+        } catch (IOException e) {
+            return null;
+        }
+        
+        return buf.toString();
+    }
+    
+    //http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
+    public static int getResourseId(String variableName, Class<?> c, int defaultId) {
+        if (variableName == null) {
+            return defaultId;
+        }
+        
+        int id = defaultId;
+        try {
+            Field idField = c.getDeclaredField(variableName);
+            id = idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        
+        return id;
     }
 }

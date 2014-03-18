@@ -4,10 +4,30 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
+    <dimen name="separator_size">1dp</dimen>
+    
     <dimen name="actionbar_title_text_size">18dp</dimen>
     
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
+    
+    <dimen name="home_title_padding">24dp</dimen>
+    <dimen name="home_text_size">16dp</dimen>
+    <dimen name="home_menu_height">48dp</dimen>
+    
+    <dimen name="printsettings_menu_padding">10dp</dimen>
+    <dimen name="printsettings_icon_width">20dp</dimen>
+    
+    <dimen name="printsettings_separator_padding">40dp</dimen>
+    <dimen name="printsettings_input_width">80dp</dimen>
+    <dimen name="printsettings_input_padding_lr">8dp</dimen>
+    <dimen name="printsettings_input_padding_tb">6dp</dimen>
+    <dimen name="printsettings_input_text_size">16dp</dimen>
+    
+    <dimen name="printsettings_listvalue_text_size">16dp</dimen>
+    <dimen name="printsettings_disclosure_size">20dp</dimen>
+    
+    <dimen name="printsettings_icon_setting_padding">12dp</dimen>
     
     <item name="drawer_width_percentage" type="dimen">85%</item>
     <dimen name="drawer_width_min">240dp</dimen>
@@ -21,10 +41,7 @@
     <dimen name="preview_controls_margin_bottom">8dp</dimen>
     
     <!--  Temporary values -->
-    
     <dimen name="temp_splash_logo_width">240dp</dimen>
     <dimen name="temp_splash_logo_height">80dp</dimen>
-    
-    <dimen name="temp_sidebar_spacing">4dp</dimen>
 
 </resources>

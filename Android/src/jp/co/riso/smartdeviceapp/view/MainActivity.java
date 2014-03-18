@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -21,7 +20,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
@@ -30,6 +28,7 @@ import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 public class MainActivity extends BaseActivity {
     
     public static final String KEY_TRANSLATION = "translate";
+    public static final String KEY_RIGHT_OPEN = "right_drawer_open";
     
     private DrawerLayout mDrawerLayout;
     private ViewGroup mMainLayout;
@@ -50,17 +49,8 @@ public class MainActivity extends BaseActivity {
         mLeftLayout = (ViewGroup) findViewById(R.id.leftLayout);
         mRightLayout = (ViewGroup) findViewById(R.id.rightLayout);
         
-        Point screenSize = AppUtils.getScreenDimensions(this);
-        float drawerWidthPercentage = getResources().getFraction(R.dimen.drawer_width_percentage, 1, 1);
-        float minDrawerWidth = getResources().getDimension(R.dimen.drawer_width_min);
-        float maxDrawerWidth = getResources().getDimension(R.dimen.drawer_width_max);
-        
-        float drawerWidth = screenSize.x * drawerWidthPercentage;
-        drawerWidth = Math.max(drawerWidth, minDrawerWidth);
-        drawerWidth = Math.min(drawerWidth, maxDrawerWidth);
-        
-        mLeftLayout.getLayoutParams().width = (int)drawerWidth;
-        mRightLayout.getLayoutParams().width = (int)drawerWidth;
+        mLeftLayout.getLayoutParams().width = (int)getDrawerWidth();
+        mRightLayout.getLayoutParams().width = (int)getDrawerWidth();
         
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.default_content_description,
                 R.string.default_content_description);
@@ -84,7 +74,13 @@ public class MainActivity extends BaseActivity {
             
             ft.commit();
         } else {
-            mMainLayout.setTranslationX(savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f));
+            float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
+            if (isTablet() && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
+                mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
+                mMainLayout.requestLayout();
+            } else {
+                mMainLayout.setTranslationX(translate);                
+            }
         }
     }
     
@@ -100,6 +96,7 @@ public class MainActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         
         outState.putFloat(KEY_TRANSLATION, mMainLayout.getTranslationX());
+        outState.putBoolean(KEY_RIGHT_OPEN, mDrawerLayout.isDrawerOpen(Gravity.RIGHT));
     }
     
     @Override
@@ -134,6 +131,16 @@ public class MainActivity extends BaseActivity {
             super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
         }
         
+        
+        @Override
+        public void syncState() {
+            super.syncState();
+            
+            if (isTablet() && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                mMainLayout.setPadding(0, 0, getDrawerWidth(), 0);
+            }
+        }
+        
         @Override
         public void onDrawerSlide(View drawerView, float slideOffset) {
             float moveFactor = (mLeftLayout.getWidth() * slideOffset);
@@ -141,7 +148,11 @@ public class MainActivity extends BaseActivity {
                 moveFactor *= -1;
             }
             
-            mMainLayout.setTranslationX(moveFactor);
+            if (isTablet() && drawerView.getId() == mRightLayout.getId()) {
+                mMainLayout.setPadding(0, 0, (int)Math.abs(moveFactor), 0);
+            } else {
+                mMainLayout.setTranslationX(moveFactor);                
+            }
         }
         
         @Override

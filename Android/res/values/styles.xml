@@ -1,9 +1,10 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     
     <!-- Application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.NoActionBar">
         <item name="android:actionBarStyle">@style/SDAActionBar</item>
         <item name="android:windowBackground">@color/theme_light_2</item>
+    	<item name="android:listChoiceIndicatorSingle">@drawable/widgettheme_btn_radio_holo_dark</item>
     </style>
     
     <style name="SplashTheme" parent="android:Theme.NoTitleBar">
@@ -15,4 +16,20 @@
            parent="@android:style/Widget.Holo.ActionBar.Solid">
         <item name="android:background">@color/theme_color_1</item>
     </style>
+    
+    <style name="HomeMenuButton">
+	    <item name="android:layout_width">match_parent</item>
+	    <item name="android:layout_height">@dimen/home_menu_height</item>
+	    <item name="android:background">@drawable/selector_home_menuitem</item>
+	    <item name="android:paddingLeft">@dimen/home_title_padding</item>
+	</style>
+    
+    <style name="HomeMenuButtonText">
+	    <item name="android:layout_width">match_parent</item>
+	    <item name="android:layout_height">match_parent</item>
+	    <item name="android:gravity">left|center_vertical</item>
+	    <item name="android:textColor">@color/selector_home_text</item>
+	    <item name="android:textSize">@dimen/home_text_size</item>
+	    <item name="android:textAllCaps">true</item>
+	</style>
 </resources>

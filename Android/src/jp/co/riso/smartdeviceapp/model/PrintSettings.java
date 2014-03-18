@@ -1,267 +1,493 @@
 package jp.co.riso.smartdeviceapp.model;
 
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.BookletFinish;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.BookletLayout;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.ColorMode;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Duplex;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.FinishingSide;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Imposition;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.ImpositionOrder;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.InputTray;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Orientation;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.OutputTray;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.PaperSize;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.PaperType;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Punch;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Sort;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Staple;
+
 public class PrintSettings {
     
-    private int mCopies;
     private ColorMode mColorMode;
-    private boolean mZoom;
-    private int mZoomRate;
-    private PaperType mPaperType;
+    private Orientation mOrientation;
+    private int mCopies;
+    private Duplex mDuplex;
     private PaperSize mPaperSize;
-    private boolean mDuplex;
+    private boolean mScaleToFit;
+    private PaperType mPaperType;
+    private InputTray mInputTray;
     
-    private Pagination mPagination;
-    
-    private ImageQuality mImageQuality;
+    private Imposition mImposition;
+    private ImpositionOrder mImpositionOrder;
     
     private Sort mSort;
-    private BookletBinding mBookletBinding;
-    private Bind mBind;
+    private boolean mBooklet;
+    private BookletFinish mBookletFinish;
+    private BookletLayout mBookletLayout;
+    private FinishingSide mFinishingSide;
     private Staple mStaple;
     private Punch mPunch;
-    private Tray mCatchTray;
+    private OutputTray mOutputTray;
     
     public PrintSettings() {
-        mCopies = 1;
         mColorMode = ColorMode.AUTO;
-        mZoom = false;
-        mZoomRate = 100;
-        mPaperType = PaperType.NORMAL;
+        mOrientation = Orientation.PORTRAIT;
+        mCopies = 1;
+        mDuplex = Duplex.OFF;
         mPaperSize = PaperSize.A4;
-        mDuplex = false;
+        mScaleToFit = false;
+        mPaperType = PaperType.ANY;
+        mInputTray = InputTray.AUTO;
         
-        mPagination = Pagination.OFF;
+        mImposition = Imposition.OFF;
+        mImpositionOrder = ImpositionOrder.L_R;
         
-        mImageQuality = ImageQuality.STANDARD;
-        
-        mSort = Sort.BETWEEN_PAGES;
-        mBookletBinding = BookletBinding.OFF;
-        mBind = Bind.LEFT;
+        mSort = Sort.PER_PAGE;
+        mBooklet = false;
+        mBookletFinish = BookletFinish.PAPER_FOLDING;
+        mBookletLayout = BookletLayout.L_R;
+        mFinishingSide = FinishingSide.LEFT;
         mStaple = Staple.OFF;
         mPunch = Punch.OFF;
-        mCatchTray = Tray.AUTO;
+        mOutputTray = OutputTray.AUTO;
+    }
+    
+    public PrintSettings(PrintSettings printSettings) {
+        mColorMode = printSettings.mColorMode;
+        mOrientation = printSettings.mOrientation;
+        mCopies = printSettings.mCopies;
+        mDuplex = printSettings.mDuplex;
+        mPaperSize = printSettings.mPaperSize;
+        mScaleToFit = printSettings.mScaleToFit;
+        mPaperType = printSettings.mPaperType;
+        mInputTray = printSettings.mInputTray;
+        
+        mImposition = printSettings.mImposition;
+        mImpositionOrder = printSettings.mImpositionOrder;
+        
+        mSort = printSettings.mSort;
+        mBooklet = printSettings.mBooklet;
+        mBookletFinish = printSettings.mBookletFinish;
+        mBookletLayout = printSettings.mBookletLayout;
+        mFinishingSide = printSettings.mFinishingSide;
+        mStaple = printSettings.mStaple;
+        mPunch = printSettings.mPunch;
+        mOutputTray = printSettings.mOutputTray;
     }
     
     // ================================================================================
     // Getter/Setters
     // ================================================================================
     
-    public int getCopies() {
-        return mCopies;
-    }
-    
-    public void setCopies(int copies) {
-        mCopies = copies;
-    }
-    
+    /**
+     * @return the ColorMode
+     */
     public ColorMode getColorMode() {
         return mColorMode;
     }
     
+    /**
+     * @param colorMode
+     *            the ColorMode to set
+     */
     public void setColorMode(ColorMode colorMode) {
         mColorMode = colorMode;
     }
     
-    public boolean getZoom() {
-        return mZoom;
+    /**
+     * @return the Orientation
+     */
+    public Orientation getOrientation() {
+        return mOrientation;
     }
     
-    public void setZoom(boolean zoom) {
-        mZoom = zoom;
+    /**
+     * @param orientation
+     *            the mOrientation to set
+     */
+    public void setOrientation(Orientation orientation) {
+        mOrientation = orientation;
     }
     
-    public int getZoomRate() {
-        return mZoomRate;
+    /**
+     * @return the mCopies
+     */
+    public int getCopies() {
+        return mCopies;
     }
     
-    public void setZoomRate(int zoomRate) {
-        mZoomRate = zoomRate;
+    /**
+     * @param copies
+     *            the mCopies to set
+     */
+    public void setCopies(int copies) {
+        this.mCopies = copies;
     }
     
-    public PaperType getPaperType() {
-        return mPaperType;
+    /**
+     * @return the mDuplex
+     */
+    public Duplex getDuplex() {
+        return mDuplex;
     }
     
-    public void setPaperType(PaperType paperType) {
-        mPaperType = paperType;
+    /**
+     * @param duplex
+     *            the mDuplex to set
+     */
+    public void setDuplex(Duplex duplex) {
+        mDuplex = duplex;
     }
     
+    /**
+     * @return the mPaperSize
+     */
     public PaperSize getPaperSize() {
         return mPaperSize;
     }
     
+    /**
+     * @param paperSize
+     *            the mPaperSize to set
+     */
     public void setPaperSize(PaperSize paperSize) {
         mPaperSize = paperSize;
     }
     
-    public boolean isDuplex() {
-        return mDuplex;
+    /**
+     * @return the mScaleToFit
+     */
+    public boolean isScaleToFit() {
+        return mScaleToFit;
     }
     
-    public void setDuplex(boolean duplex) {
-        mDuplex = duplex;
+    /**
+     * @param scaleToFit
+     *            the mScaleToFitInt to set in int value
+     */
+    public void setScaleToFit(int scaleToFitInt) {
+        mScaleToFit = (scaleToFitInt == 1);
     }
     
-    public Pagination getPagination() {
-        return mPagination;
+    /**
+     * @param scaleToFit
+     *            the mScaleToFit to set
+     */
+    public void setScaleToFit(boolean scaleToFit) {
+        mScaleToFit = scaleToFit;
     }
     
-    public void setPagination(Pagination pagination) {
-        mPagination = pagination;
+    /**
+     * @return the mPaperType
+     */
+    public PaperType getPaperType() {
+        return mPaperType;
     }
     
-    public ImageQuality getImageQuality() {
-        return mImageQuality;
+    /**
+     * @param paperType
+     *            the mPaperType to set
+     */
+    public void setPaperType(PaperType paperType) {
+        mPaperType = paperType;
     }
     
-    public void setImageQuality(ImageQuality imageQuality) {
-        mImageQuality = imageQuality;
+    /**
+     * @return the mInputTray
+     */
+    public InputTray getInputTray() {
+        return mInputTray;
     }
     
+    /**
+     * @param inputTray
+     *            the mInputTray to set
+     */
+    public void setInputTray(InputTray inputTray) {
+        mInputTray = inputTray;
+    }
+    
+    /**
+     * @return the mImposition
+     */
+    public Imposition getImposition() {
+        return mImposition;
+    }
+    
+    /**
+     * @param imposition
+     *            the mImposition to set
+     */
+    public void setImposition(Imposition imposition) {
+        mImposition = imposition;
+    }
+    
+    /**
+     * @return the mImpositionOrder
+     */
+    public ImpositionOrder getImpositionOrder() {
+        return mImpositionOrder;
+    }
+    
+    /**
+     * @param impositionOrder
+     *            the mImpositionOrder to set
+     */
+    public void setImpositionOrder(ImpositionOrder impositionOrder) {
+        mImpositionOrder = impositionOrder;
+    }
+    
+    /**
+     * @return the mSort
+     */
     public Sort getSort() {
         return mSort;
     }
     
+    /**
+     * @param sort
+     *            the mSort to set
+     */
     public void setSort(Sort sort) {
         mSort = sort;
     }
     
-    public BookletBinding getBookletBinding() {
-        return mBookletBinding;
+    /**
+     * @return the mBooklet
+     */
+    public boolean isBooklet() {
+        return mBooklet;
     }
     
-    public void setBookletBinding(BookletBinding bookletBinding) {
-        mBookletBinding = bookletBinding;
+    /**
+     * @param booklet
+     *            the mBooklet to set int value
+     */
+    public void setBooklet(int bookletInt) {
+        mBooklet = (bookletInt == 1);
     }
     
-    public Bind getBind() {
-        return mBind;
+    /**
+     * @param booklet
+     *            the mBooklet to set
+     */
+    public void setBooklet(boolean booklet) {
+        mBooklet = booklet;
     }
     
-    public void setBind(Bind bind) {
-        mBind = bind;
+    /**
+     * @return the mBookletFinish
+     */
+    public BookletFinish getBookletFinish() {
+        return mBookletFinish;
     }
     
+    /**
+     * @param bookletFinish
+     *            the mBookletFinish to set
+     */
+    public void setBookletFinish(BookletFinish bookletFinish) {
+        mBookletFinish = bookletFinish;
+    }
+    
+    /**
+     * @return the mBookletLayout
+     */
+    public BookletLayout getBookletLayout() {
+        return mBookletLayout;
+    }
+    
+    /**
+     * @param bookletLayout
+     *            the mBookletLayout to set
+     */
+    public void setBookletLayout(BookletLayout bookletLayout) {
+        mBookletLayout = bookletLayout;
+    }
+    
+    /**
+     * @return the mFinishingSide
+     */
+    public FinishingSide getFinishingSide() {
+        return mFinishingSide;
+    }
+    
+    /**
+     * @param finishingSide
+     *            the mFinishingSide to set
+     */
+    public void setFinishingSide(FinishingSide finishingSide) {
+        mFinishingSide = finishingSide;
+    }
+    
+    /**
+     * @return the mStaple
+     */
     public Staple getStaple() {
         return mStaple;
     }
     
+    /**
+     * @param staple
+     *            the mStaple to set
+     */
     public void setStaple(Staple staple) {
         mStaple = staple;
     }
     
+    /**
+     * @return the mPunch
+     */
     public Punch getPunch() {
         return mPunch;
     }
     
+    /**
+     * @param punch
+     *            the mPunch to set
+     */
     public void setPunch(Punch punch) {
         mPunch = punch;
     }
     
-    public Tray getCatchTray() {
-        return mCatchTray;
+    /**
+     * @return the mOutputTray
+     */
+    public OutputTray getOutputTray() {
+        return mOutputTray;
     }
     
-    public void setCatchTray(Tray catchTray) {
-        mCatchTray = catchTray;
+    /**
+     * @param outputTray
+     *            the mOutputTray to set
+     */
+    public void setOutputTray(OutputTray outputTray) {
+        mOutputTray = outputTray;
     }
     
     // ================================================================================
-    // Internal Enumaration Types
+    // Getter/Setters by tag
     // ================================================================================
     
-    public enum ColorMode {
-        AUTO, COLOR, MONOCHROME
-    }
-    
-    public enum PaperType {
-        NORMAL, THIN, THICK
-    }
-    
-    // sizes from http://en.wikipedia.org/wiki/Paper_size
-    public enum PaperSize {
-        A3(297.0f, 420.0f), A4(210.0f, 297.0f), LETTER(215.9f, 279.4f), LEGAL(215.9f, 355.6f), ENVELOPE(110.0f, 220.0f);
+    public int getValue(String tag) {
         
-        private final float mWidth;
-        private final float mHeight;
+        // Refresh view here
+        PrintSettingsConstants.Setting setting = PrintSettingsConstants.SETTTING_MAP.get(tag);
         
-        PaperSize(float width, float height) {
-            mWidth = width;
-            mHeight = height;
+        switch (setting) {
+            case COLOR_MODE:
+                return getColorMode().ordinal();
+            case ORIENTATION:
+                return getOrientation().ordinal();
+            case NUM_COPIES:
+                return getCopies();
+            case DUPLEX:
+                return getDuplex().ordinal();
+            case PAPER_SIZE:
+                return getPaperSize().ordinal();
+            case SCALE_TO_FIT:
+                return isScaleToFit() ? 1 : 0;
+            case PAPER_TYPE:
+                return getPaperType().ordinal();
+            case INPUT_TRAY:
+                return getInputTray().ordinal();
+            case IMPOSITION:
+                return getImposition().ordinal();
+            case IMPOSITION_ORDER:
+                return getImpositionOrder().ordinal();
+            case SORT:
+                return getSort().ordinal();
+            case BOOKLET:
+                return isBooklet() ? 1 : 0;
+            case BOOKLET_LAYOUT:
+                return getBookletLayout().ordinal();
+            case BOOKLET_FINISH:
+                return getBookletFinish().ordinal();
+            case FINISHING_SIDE:
+                return getFinishingSide().ordinal();
+            case STAPLE:
+                return getStaple().ordinal();
+            case PUNCH:
+                return getPunch().ordinal();
+            case OUTPUT_TRAY:
+                return getOutputTray().ordinal();
         }
         
-        public float getWidth() {
-            return mWidth;
+        return 0;
+    }
+    
+    public boolean setValue(String tag, int value) {
+        
+        // Refresh view here
+        PrintSettingsConstants.Setting setting = PrintSettingsConstants.SETTTING_MAP.get(tag);
+        
+        switch (setting) {
+            case COLOR_MODE:
+                setColorMode(ColorMode.values()[value]);
+                break;
+            case ORIENTATION:
+                setOrientation(Orientation.values()[value]);
+                break;
+            case NUM_COPIES:
+                setCopies(value);
+                break;
+            case DUPLEX:
+                setDuplex(Duplex.values()[value]);
+                break;
+            case PAPER_SIZE:
+                setPaperSize(PaperSize.values()[value]);
+                break;
+            case SCALE_TO_FIT:
+                setScaleToFit(value);
+                break;
+            case PAPER_TYPE:
+                setPaperType(PaperType.values()[value]);
+                break;
+            case INPUT_TRAY:
+                setInputTray(InputTray.values()[value]);
+                break;
+            case IMPOSITION:
+                setImposition(Imposition.values()[value]);
+                break;
+            case IMPOSITION_ORDER:
+                setImpositionOrder(ImpositionOrder.values()[value]);
+                break;
+            case SORT:
+                setSort(Sort.values()[value]);
+                break;
+            case BOOKLET:
+                setBooklet(value);
+                break;
+            case BOOKLET_LAYOUT:
+                setBookletLayout(BookletLayout.values()[value]);
+                break;
+            case BOOKLET_FINISH:
+                setBookletFinish(BookletFinish.values()[value]);
+                break;
+            case FINISHING_SIDE:
+                setFinishingSide(FinishingSide.values()[value]);
+                break;
+            case STAPLE:
+                setStaple(Staple.values()[value]);
+                break;
+            case PUNCH:
+                setPunch(Punch.values()[value]);
+                break;
+            case OUTPUT_TRAY:
+                setOutputTray(OutputTray.values()[value]);
+                break;
         }
         
-        public float getHeight() {
-            return mHeight;
-        }
-    }
-    
-    public enum Pagination {
-        OFF (1, 1, 1, false),
-        TWO_IN_ONE (2, 2, 1, true),
-        FOUR_IN_ONE (4, 2, 2, false),
-        SIX_IN_ONE (6, 3, 2, true),
-        NINE_IN_ONE (9, 3, 3, false),
-        SIXTEEN_IN_ONE (16, 4, 4, false);
-        
-        private final int mPerPage;
-        private final int mRows;
-        private final int mCols;
-        private final boolean mFlipLandscape;
-        
-        Pagination(int perPage, int x, int y, boolean flipLandscape) {
-            mPerPage = perPage;
-            mCols = x;
-            mRows = y;
-            mFlipLandscape = flipLandscape;
-        }
-        
-        public int getPerPage() {
-            return mPerPage;
-        }
-        
-        public int getRows() {
-            return mRows;
-        }
-        
-        public int getCols() {
-            return mCols;
-        }
-        
-        public boolean isFlipLandscape() {
-            return mFlipLandscape;
-        }
-        
-    }
-    
-    public enum ImageQuality {
-        DRAFT, STANDARD, HIGH_DEFINITION
-    }
-    
-    public enum Sort {
-        BETWEEN_PAGES, BETWEEN_SECTIONS
-    }
-    
-    public enum BookletBinding {
-        OFF, FOLD_AND_STAPLE
-    }
-    
-    public enum Bind {
-        LEFT, RIGHT, TOP
-    }
-    
-    public enum Staple {
-        OFF, LEFT_2, LEFT_TOP_1, RIGHT_2, RIGHT_TOP_1
-    }
-    
-    public enum Punch {
-        OFF, TWO_HOLES, FOUR_HOLES
-    }
-    
-    public enum Tray {
-        AUTO, TRAY_1, TRAY_2, TRAY_3, BYPASS_TRAY
+        return true;
     }
 }
