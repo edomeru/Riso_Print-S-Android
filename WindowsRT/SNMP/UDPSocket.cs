@@ -19,10 +19,16 @@ namespace SNMP
         private DatagramSocket udpSocket;
 
         Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
+        Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
 
         internal void assignDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {
             dataReceivedHandler = d;
+        }
+
+        internal void assignTimeoutDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> t)
+        {
+            timeoutHandler = t;
         }
 
         private void socket_MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
@@ -35,7 +41,7 @@ namespace SNMP
             r.ReadBytes(buff);
             //NotifyUserFromAsyncThread("received : " + l + " bytes");            
 
-            dataReceivedHandler(args.RemoteAddress, buff);
+            if (dataReceivedHandler != null) dataReceivedHandler(args.RemoteAddress, buff);
         }
 
         internal void close()
@@ -68,7 +74,7 @@ namespace SNMP
             //await udpSocket.BindServiceNameAsync("", connectionProfile.NetworkAdapter);
 
 
-            startTimer(timeout);
+            
             if (true)
             {
                 //EndpointPair endpoint = new EndpointPair(null, "", host, p);
@@ -87,6 +93,7 @@ namespace SNMP
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
+            startTimer(timeout);
         }
 
 
@@ -99,9 +106,13 @@ namespace SNMP
             {
                 await Task.Delay(timeout * 1000);
 
-
+                if (writer != null) writer.Dispose();
+                if (outputStream != null) outputStream.Dispose();
+                if (udpSocket != null) udpSocket.Dispose();
 
                 stopTimer();
+
+                if (timeoutHandler != null) timeoutHandler(null, null);
             }
         }
 

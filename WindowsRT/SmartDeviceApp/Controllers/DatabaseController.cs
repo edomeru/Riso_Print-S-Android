@@ -58,11 +58,14 @@ namespace SmartDeviceApp.Controllers
                     /**
                      * DeleteAll is for testing purposes only PrintersModule
                      * */
+                    /*
                     db.DeleteAll<Printer>();
                     db.Commit();
 
                     db.DeleteAll<DefaultPrinter>();
                     db.Commit();
+                     */
+
                     // Create the tables if they don't exist
                     //Printer table
                     db.CreateTable<Printer>();
@@ -91,7 +94,7 @@ namespace SmartDeviceApp.Controllers
 
         private void insertPrinters()
         {
-            Printer printer = new Printer() { prn_id=1, prn_ip_address="192.168.0.22", prn_name="RISO_Printer1", prn_port_setting=1,
+            Printer printer = new Printer() { prn_id=1, prn_ip_address="192.168.1.24", prn_name="RISO_Printer1", prn_port_setting=1,
                 prn_enabled_lpr = true, prn_enabled_raw = true, prn_enabled_pagination = true, prn_enabled_duplex = true,
                                               prn_enabled_booklet_binding = true,
                                               prn_enabled_staple = true,
