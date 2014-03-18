@@ -1,4 +1,4 @@
-package jp.co.riso.smartdeviceapp.view.custom;
+package jp.co.riso.smartdeviceapp.view.jobs;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,7 +67,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             if (mWithMargin) {
                 lp.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
                 lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
-               // lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
+                lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
             }
             setOrientation(VERTICAL);       
             setLayoutParams(lp);

@@ -1,4 +1,4 @@
-package jp.co.riso.smartdeviceapp.view.custom;
+package jp.co.riso.smartdeviceapp.view.jobs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.view.custom.PrintJobsGroupView.PrintDeleteListener;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintDeleteListener;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
