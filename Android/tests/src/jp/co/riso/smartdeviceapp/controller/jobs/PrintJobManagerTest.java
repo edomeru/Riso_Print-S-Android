@@ -19,7 +19,6 @@ import android.util.Log;
 
 public class PrintJobManagerTest extends AndroidTestCase {
 
-
 	private static final String TABLE = "PrintJob";
 	private static final String C_PJB_ID = "pjb_id";
 	private static final String C_PRN_ID = "prn_id";
@@ -30,18 +29,17 @@ public class PrintJobManagerTest extends AndroidTestCase {
 	private static final String C_PRN_NAME = "prn_name";
 	private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
 	private SimpleDateFormat mSdf;
-	private RenamingDelegatingContext mContext; 
+	private RenamingDelegatingContext mContext;
 	private PrintJobManager mPrintJobManager;
 	private DatabaseManager mManager;
-	
+
 	public PrintJobManagerTest() {
 		super();
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		mContext = new RenamingDelegatingContext(
-				getContext(), "test_");
+		mContext = new RenamingDelegatingContext(getContext(), "test_");
 
 		mSdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
 
@@ -71,7 +69,6 @@ public class PrintJobManagerTest extends AndroidTestCase {
 		assertEquals(mPrintJobManager, PrintJobManager.getInstance(mContext));
 	}
 
-	
 	public void testGetPrintJobs() {
 		mManager.getWritableDatabase();
 		SQLiteDatabase db = mManager.getWritableDatabase();
@@ -95,17 +92,76 @@ public class PrintJobManagerTest extends AndroidTestCase {
 		assertEquals("Print Job Name", pj.get(0).getName());
 		assertEquals(JobResult.SUCCESSFUL, pj.get(0).getResult());
 
-		assertTrue(mSdf.format(pj.get(0).getDate())
-				.equals("2014-03-17 13:12:11"));
+		assertTrue(mSdf.format(pj.get(0).getDate()).equals(
+				"2014-03-17 13:12:11"));
 
 	}
 
-	// public void testGetPrintJobsEmpty() {
-	// mManager.delete(TABLE, null, null);
-	// List<PrintJob> pj = PrintJobManager.getPrintJobs();
-	// assertNotNull(pj);
-	// assertTrue(pj.size() == 0);
-	// }
+	public void testGetPrintJobsOrder() {
+		mManager.getWritableDatabase();
+		SQLiteDatabase db = mManager.getWritableDatabase();
+		db.delete(TABLE, null, null);
+
+		ContentValues pvalues = new ContentValues();
+
+		pvalues.put(C_PRN_ID, 1);
+		pvalues.put(C_PJB_NAME, "Print Job Name");
+		pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
+		pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
+
+		db.insert(TABLE, null, pvalues);
+
+		pvalues.clear();
+
+		pvalues.put(C_PRN_ID, 1);
+		pvalues.put(C_PJB_NAME, "Print Job Name1");
+		pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
+		pvalues.put(C_PJB_DATE, "2014-03-18 08:12:11");
+
+		db.insert(TABLE, null, pvalues);
+
+		pvalues.clear();
+
+		pvalues.put(C_PRN_ID, 1);
+		pvalues.put(C_PJB_NAME, "Print Job Name2");
+		pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
+		pvalues.put(C_PJB_DATE, "2012-03-18 08:12:11");
+
+		db.insert(TABLE, null, pvalues);
+
+		pvalues.clear();
+
+		pvalues.put(C_PRN_ID, 2);
+		pvalues.put(C_PJB_NAME, "Print Job Name3");
+		pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
+		pvalues.put(C_PJB_DATE, "2014-01-18 08:12:11");
+
+		db.insert(TABLE, null, pvalues);
+
+		pvalues.clear();
+
+		pvalues.put(C_PRN_ID, 1);
+		pvalues.put(C_PJB_NAME, "Print Job Name4");
+		pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
+		pvalues.put(C_PJB_DATE, "2014-01-18 08:12:11");
+
+		db.insert(TABLE, null, pvalues);
+
+		db.close();
+
+		List<PrintJob> pj = PrintJobManager.getPrintJobs();
+		assertNotNull(pj);
+		assertEquals(5, pj.size());
+
+		for (int i = 0; i < pj.size() - 1; i++) {
+			//printer id is sorted
+			assertTrue(pj.get(i).getPrinterId() <= pj.get(i + 1).getPrinterId());
+			//same printer group; sorted according to date
+			if (pj.get(i).getPrinterId() == pj.get(i + 1).getPrinterId())
+				assertTrue(pj.get(i).getDate().before(pj.get(i + 1).getDate()));
+		}
+
+	}
 
 	public void testGetPrintersWithJobs() {
 

@@ -27,6 +27,7 @@ public class PrintJobManager {
     private static final String C_PJB_RESULT = "pjb_result";
     private static final String C_WHERE_PJB_ID = C_PJB_ID + "=?";
     private static final String C_WHERE_PRN_ID = C_PRN_ID + "=?";
+    private static final String C_ORDERBY_DATE = C_PRN_ID + "," + C_PJB_DATE;
     private static final String TABLE_PRINTER = "Printer";
     private static final String C_PRN_NAME = "prn_name";
     private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
@@ -48,7 +49,7 @@ public class PrintJobManager {
         
     public static List<PrintJob> getPrintJobs() {
         List<PrintJob> printJobs = new ArrayList<PrintJob>();
-        Cursor c = mManager.query(TABLE, null, null, null, null, null, C_PRN_ID);
+        Cursor c = mManager.query(TABLE, null, null, null, null, null, C_ORDERBY_DATE);
         
         while (c.moveToNext()) {
             int pjb_id = c.getInt(c.getColumnIndex(C_PJB_ID));

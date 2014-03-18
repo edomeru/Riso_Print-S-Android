@@ -7,9 +7,12 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -120,7 +123,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     
     // for testing only
     private void initializePJs() {
-        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         if (PrintJobManager.getPrintJobs().isEmpty()) {
             PrintJobManager.createPrintJob(1, "file1.pdf", new Date(), JobResult.SUCCESSFUL);
             PrintJobManager.createPrintJob(1, "test file.pdf", new Date(), JobResult.ERROR);
@@ -138,7 +141,19 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             PrintJobManager.createPrintJob(6, "filename?!.pdf", new Date(), JobResult.SUCCESSFUL);
             PrintJobManager.createPrintJob(6, "a loooooooooong filename.pdf", new Date(), JobResult.ERROR);
             PrintJobManager.createPrintJob(7, "ANOTHER ALLCAPS.pdf", new Date(), JobResult.SUCCESSFUL);
-            PrintJobManager.createPrintJob(7, "asdfgqwerty.pdf", new Date(), JobResult.ERROR);
+            
+            
+            try {
+                PrintJobManager.createPrintJob(7, "march 2014 new.pdf", sdf.parse("2014-03-17 19:12:11"), JobResult.SUCCESSFUL);
+                PrintJobManager.createPrintJob(7, "new time.pdf", sdf.parse("2014-03-17 13:12:11"), JobResult.SUCCESSFUL);
+                PrintJobManager.createPrintJob(7, "feb 2014.pdf", sdf.parse("2014-02-17 13:12:11"), JobResult.ERROR);
+                PrintJobManager.createPrintJob(7, "march 2014.pdf", sdf.parse("2013-03-17 13:12:11"), JobResult.SUCCESSFUL);
+                PrintJobManager.createPrintJob(7, "jan 2014.pdf", sdf.parse("2014-01-17 13:12:11"), JobResult.ERROR);
+                                
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             
         }
     }

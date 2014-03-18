@@ -48,7 +48,7 @@
     <dimen name="printjob_delbtn_padding_side">20dp</dimen>
     <dimen name="printjob_delbtn_margin">5dp</dimen>
     <dimen name="printjob_expand_padding_side">10dp</dimen>
-    <dimen name="printjob_delgroupbtn_padding_side">10dp</dimen>
+    <dimen name="printjob_delgroupbtn_padding_side">20dp</dimen>
     <dimen name="printjob_row_height">52dp</dimen>
     <dimen name="printjob_icon_width">30dp</dimen>
     <dimen name="printjob_groupicon_width">12dp</dimen>
