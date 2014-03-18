@@ -9,10 +9,15 @@
 
     <Application.Resources>
         <!-- Application-specific resources -->
-
+        <ResourceDictionary>
         <x:String x:Key="AppName">SmartDeviceApp</x:String>
-
         <vm:ViewModelLocator x:Key="Locator"
                              d:IsDataSource="True" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/AppTheme.xaml" />
+                <ResourceDictionary Source="Resources/Styles/ControlStyles.xaml" />
+                <ResourceDictionary Source="Resources/Styles/TextStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
