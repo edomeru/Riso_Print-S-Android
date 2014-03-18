@@ -14,6 +14,6 @@
         android:layout_gravity="center"
         android:background="@color/bg_color_splash"
         android:contentDescription="@string/default_content_description"
-        android:src="@drawable/img_riso_splash" />
+        android:src="@drawable/temp_img_riso_splash" />
 
 </FrameLayout>
