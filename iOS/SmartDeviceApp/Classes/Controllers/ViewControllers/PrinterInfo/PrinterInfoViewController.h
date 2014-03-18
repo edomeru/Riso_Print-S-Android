@@ -8,6 +8,6 @@
 
 #import "SlidingViewController.h"
 
-@interface PrinterInfoScreenController : SlidingViewController
+@interface PrinterInfoViewController : SlidingViewController
 
 @end
