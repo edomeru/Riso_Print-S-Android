@@ -17,7 +17,7 @@ public class PrintJobsFragment extends BaseFragment {
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_printer_search;
+        return R.layout.temp_fragment_base;
     }
     
     @Override
@@ -32,7 +32,7 @@ public class PrintJobsFragment extends BaseFragment {
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
-        textView.setText(R.string.ids_lbl_print_jobs);
+        textView.setText(R.string.ids_lbl_print_job_history);
         
         addActionMenuButton(view);
     }

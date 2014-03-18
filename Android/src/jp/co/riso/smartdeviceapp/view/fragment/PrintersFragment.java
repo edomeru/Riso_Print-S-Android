@@ -114,13 +114,13 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         
         //Manual Add Button
         addMenuButton.setId(ID_MENU_ACTION_ADD_BUTTON);
-        addMenuButton.setImageResource(R.drawable.img_btn_add_printer_normal);
+        addMenuButton.setImageResource(R.drawable.temp_img_btn_add_printer_normal);
         addMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         addMenuButton.setPadding(padding, padding, padding, padding);
      
         //Search Button
         searchMenuButton.setId(ID_MENU_ACTION_SEARCH_BUTTON);
-        searchMenuButton.setImageResource(R.drawable.img_btn_search_printer_normal);
+        searchMenuButton.setImageResource(R.drawable.temp_img_btn_search_printer_normal);
         searchMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         searchMenuButton.setPadding(padding, padding, padding, padding);
 

@@ -21,7 +21,6 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
-import com.radaee.pdf.Global;
 import com.radaee.pdf.Matrix;
 import com.radaee.pdf.Page;
 
@@ -118,6 +117,13 @@ public class PDFFileManager {
         mPath = path;
         mFileName = file.getName();
         mSandboxPath = SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/" + file.getName();
+        
+        if (mPath.equalsIgnoreCase(mSandboxPath)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(KEY_NEW_PDF_DATA, false);
+            edit.commit();
+        }
     }
     
     /**
@@ -185,6 +191,18 @@ public class PDFFileManager {
      * @return Bitmap of the page
      */
     public synchronized Bitmap getPageBitmap(int pageNo) {
+        return getPageBitmap(pageNo, 1.0f, false, false);
+    }
+    
+    /**
+     * Gets the Bitmap of the page
+     * 
+     * @param pageNo
+     *            PDF page of the requested page
+     * 
+     * @return Bitmap of the page
+     */
+    public synchronized Bitmap getPageBitmap(int pageNo, float scale, boolean flipX, boolean flipY) {
         if (!isInitialized()) {
             return null;
         }
@@ -194,14 +212,13 @@ public class PDFFileManager {
         }
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Open(mPath, null);
+            mDocument.Open(mSandboxPath, null);
         } else {
             // For temporary fix of bug
-            mDocument.Close(); // This will clear the buffer
-            mDocument.Open(mPath, null);
+            //mDocument.Close(); // This will clear the buffer
+            //mDocument.Open(mSandboxPath, null);
         }
         
-        float scale = 1.0f;
         Page page = mDocument.GetPage(pageNo);
         
         float pageWidth = mDocument.GetPageWidth(pageNo) * scale;
@@ -210,10 +227,27 @@ public class PDFFileManager {
         float x0 = 0;
         float y0 = pageHeight;
         
-        Matrix mat = new Matrix(scale, -scale, x0, y0);
+        if (flipX) {
+            x0 = pageWidth;
+        }
+        if (flipY) {
+            y0 = 0;
+        }
+        
+        float scaleX = scale;
+        float scaleY = -scale;
+        
+        if (flipX) {
+            scaleX = -scaleX;
+        }
+        if (flipY) {
+            scaleY = -scaleY;
+        }
         
         Bitmap bitmap = Bitmap.createBitmap((int) pageWidth, (int) pageHeight, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.WHITE);
+        
+        Matrix mat = new Matrix(scaleX, scaleY, x0, y0);
         
         if (!page.RenderToBmp(bitmap, mat)) {
             bitmap.recycle();
@@ -222,7 +256,6 @@ public class PDFFileManager {
         
         mat.Destroy();
         page.Close();
-        Global.RemoveTmp();
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
             mDocument.Close();
@@ -250,11 +283,11 @@ public class PDFFileManager {
             closeDocument();
         }
         
-        if (mSandboxPath == null || mSandboxPath == "") {
+        if (mPath == null || mPath == "") {
             return PDF_INVALID_PATH;
         }
         
-        int status = mDocument.Open(mSandboxPath, null);
+        int status = mDocument.Open(mPath, null);
         
         if (status == PDF_OK) {
             mIsInitialized = true;
@@ -290,24 +323,26 @@ public class PDFFileManager {
                 return UNKNOWN_ERROR;
             }
             
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-            if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
-                
-                SharedPreferences.Editor edit = prefs.edit();
-                edit.putBoolean(KEY_NEW_PDF_DATA, false);
-                edit.commit();
-                
-                try {
-                    FileUtils.copy(new File(mPath), new File(mSandboxPath));
-                } catch (Exception e) {
-                    return PDF_INVALID_PATH;
-                }
-            }
-            
             int status = openDocument();
             
             if (CONST_KEEP_DOCUMENT_CLOSED) {
                 closeDocument();
+            }
+            
+            if (status == PDF_OK) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+                if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
+                    
+                    SharedPreferences.Editor edit = prefs.edit();
+                    edit.putBoolean(KEY_NEW_PDF_DATA, false);
+                    edit.commit();
+                    
+                    try {
+                        FileUtils.copy(new File(mPath), new File(mSandboxPath));
+                    } catch (Exception e) {
+                        return PDF_INVALID_PATH;
+                    }
+                }
             }
             
             return status;

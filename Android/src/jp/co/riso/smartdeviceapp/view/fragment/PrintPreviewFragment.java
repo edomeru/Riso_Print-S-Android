@@ -7,11 +7,17 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.LruCache;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import jp.co.riso.android.dialog.DialogUtils;
@@ -20,14 +26,18 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 
 public class PrintPreviewFragment extends BaseFragment implements PDFFileManagerInterface {
+    public static final String TAG = "PrintPreviewFragment";
     
     public static final String KEY_CURRENT_PAGE = "current_page";
+    public final int ID_PRINT_BUTTON = 0x11000002;
     
     public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
+    public static final String FRAGMENT_TAG_PRINTSETTINGS = "fragment_printsettings";
     
     PDFFileManager mPdfManager = null;
     PrintSettings mPrintSettings;
@@ -41,6 +51,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     private LruCache<String, Bitmap> mBmpCache;
     
     public PrintPreviewFragment() {
+        
     }
     
     @Override
@@ -50,7 +61,6 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        
         setRetainInstance(true);
         
         // Initialize PDF File Manager if it has not been previously initialized yet
@@ -61,10 +71,14 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 data = getActivity().getIntent().getData();
             }
             
-            // data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf");
-            // data = Uri.parse(Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-squarish.pdf");
-            
-        
+            /*
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
+            edit.commit();
+            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
+            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
+            */
             mPdfManager = new PDFFileManager(this);
             
             if (data != null) {
@@ -129,8 +143,11 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     public void onDestroyView() {
         super.onDestroyView();
         
-        mCurrentPage = mPrintPreviewView.getCurrentPage();
-        mPrintPreviewView = null;
+        if (mPrintPreviewView != null) {
+            mCurrentPage = mPrintPreviewView.getCurrentPage();
+            mPrintPreviewView.freeResources();
+            mPrintPreviewView = null;
+        }
     }
     
     @Override
@@ -139,12 +156,13 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         textView.setText(R.string.ids_app_name);
         
         addActionMenuButton(view);
+        addPrintButton(view);
     }
     
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        
+
         if (mPrintPreviewView != null) {
             mCurrentPage = mPrintPreviewView.getCurrentPage();
             outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
@@ -165,6 +183,47 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         
         // The activity must call the GL surface view's onPause() on activity onPause().
         mPrintPreviewView.onPause();
+    }
+    
+    public void addPrintButton(View v) {
+        ImageButton newMenuButton = new ImageButton(v.getContext());
+        
+        newMenuButton.setId(ID_PRINT_BUTTON);
+        newMenuButton.setImageResource(R.drawable.temp_img_btn_default_print_settings);
+        newMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        
+        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
+        
+        leftActionLayout.addView(newMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        
+        newMenuButton.setOnClickListener(this);
+    }
+    
+    // ================================================================================
+    // INTERFACE - View.OnLayoutChangeListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        
+        switch (v.getId()) {
+            case ID_PRINT_BUTTON:
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    PrintSettingsFragment fragment = new PrintSettingsFragment();
+                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                    ft.commit();
+
+                    if (getActivity() != null && getActivity() instanceof MainActivity) {
+                        MainActivity activity = (MainActivity) getActivity();
+                        activity.openDrawer(Gravity.RIGHT);
+                    }
+                }
+                break;
+        }
     }
     
     // ================================================================================

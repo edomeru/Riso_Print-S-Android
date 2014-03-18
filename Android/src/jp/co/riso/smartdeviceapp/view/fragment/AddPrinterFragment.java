@@ -116,14 +116,14 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         
         //Back Button
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.img_btn_back_normal);
+        actionMenuButton.setImageResource(R.drawable.temp_img_btn_back_normal);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setOnClickListener(this);
         
         //Save Button
         saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
-        saveMenuButton.setImageResource(R.drawable.img_btn_save_printer);
+        saveMenuButton.setImageResource(R.drawable.temp_img_btn_save_printer);
         saveMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         saveMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         saveMenuButton.setOnClickListener(this);

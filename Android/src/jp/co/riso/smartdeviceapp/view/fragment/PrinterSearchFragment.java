@@ -99,7 +99,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_button_padding);        
 
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.img_btn_back_normal);
+        actionMenuButton.setImageResource(R.drawable.temp_img_btn_back_normal);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setPadding(padding, padding, padding, padding);
@@ -207,6 +207,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             @Override
             public void run() {
                 try{
+                    if(mPrinter.contains(printer)) {
+                        return;
+                    }
                     mPrinter.add(printer);
                     mPrinterSearchAdapter.notifyDataSetChanged();
                 }

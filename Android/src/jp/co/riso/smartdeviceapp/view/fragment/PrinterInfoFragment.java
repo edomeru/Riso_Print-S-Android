@@ -76,13 +76,13 @@ public class PrinterInfoFragment extends BaseFragment{
         
         //Back Menu Button
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.img_btn_back_normal);
+        actionMenuButton.setImageResource(R.drawable.temp_img_btn_back_normal);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setPadding(padding, padding, padding, padding);
         
         //Default Printer Settings Menu Button
         defaultPrintSettingsMenuButton.setId(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON);
-        defaultPrintSettingsMenuButton.setImageResource(R.drawable.img_btn_default_print_settings);
+        defaultPrintSettingsMenuButton.setImageResource(R.drawable.temp_img_btn_default_print_settings);
         defaultPrintSettingsMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector); 
         defaultPrintSettingsMenuButton.setPadding(padding, padding, padding, padding);
 

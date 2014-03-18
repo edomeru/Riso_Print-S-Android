@@ -6,11 +6,32 @@
     android:splitMotionEvents="false" >
 
     <include layout="@layout/actionbar_main" />
-    
-    <ListView
-        android:id="@+id/printer_list"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </ListView>
-    
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/rootView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/tempPrinterSearchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/ids_lbl_search_printers" />
+
+            <Button
+                android:id="@+id/tempAddPrinterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/ids_lbl_add_printer" />
+
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>
