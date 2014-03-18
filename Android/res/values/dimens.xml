@@ -15,6 +15,20 @@
     <dimen name="home_text_size">16dp</dimen>
     <dimen name="home_menu_height">48dp</dimen>
     
+    <dimen name="printsettings_menu_padding">10dp</dimen>
+    <dimen name="printsettings_icon_width">20dp</dimen>
+    
+    <dimen name="printsettings_separator_padding">40dp</dimen>
+    <dimen name="printsettings_input_width">80dp</dimen>
+    <dimen name="printsettings_input_padding_lr">8dp</dimen>
+    <dimen name="printsettings_input_padding_tb">6dp</dimen>
+    <dimen name="printsettings_input_text_size">16dp</dimen>
+    
+    <dimen name="printsettings_listvalue_text_size">16dp</dimen>
+    <dimen name="printsettings_disclosure_size">20dp</dimen>
+    
+    <dimen name="printsettings_icon_setting_padding">12dp</dimen>
+    
     <item name="drawer_width_percentage" type="dimen">85%</item>
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>

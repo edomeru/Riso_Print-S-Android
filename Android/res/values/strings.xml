@@ -3,6 +3,7 @@
     <!-- Android default values -->
     <string name="default_textview">&#8230;</string>
     <string name="default_content_description">Content Description</string>
+    <string name="default_empty_textview"></string>
     
     <!-- WordingListLBL -->
     <string name="ids_app_name">SmartDeviceApp</string>
@@ -33,7 +34,8 @@
     <string name="ids_lbl_printer_status_online">Online</string>
     <string name="ids_lbl_printer_status_offline">Offline</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
-    <string name="ids_lbl_select_printer">Selected Printer</string>
+    <string name="ids_lbl_print">Print</string>
+    <string name="ids_lbl_printer">Printer</string>
     <string name="ids_lbl_default_print_settings">Default Print Settings</string>
     <string name="ids_lbl_card_reader_group">CARD READER</string>
     <string name="ids_lbl_card_id">ID</string>
@@ -49,6 +51,7 @@
     <string name="ids_lbl_orientation_landscape">Landscape</string>
     <string name="ids_lbl_number_of_copies">Copies</string>
     <string name="ids_lbl_duplex">Duplex</string>
+    <string name="ids_lbl_duplex_off">Off</string>
     <string name="ids_lbl_duplex_long_edge">Long Edge</string>
     <string name="ids_lbl_duplex_short_edge">Short Edge</string>
     <string name="ids_lbl_papersize">Paper Size</string>
@@ -96,6 +99,10 @@
     <string name="ids_lbl_sort_percopy">Per Copy</string>
     <string name="ids_lbl_booklet">Booklet</string>
     <string name="ids_lbl_booklet_on">On</string>
+    <string name="ids_lbl_booklet_layout">Booklet Layout</string>
+    <string name="ids_lbl_booklet_layout_lr">Left to right</string>
+    <string name="ids_lbl_booklet_layout_rl">Right to left</string>
+    <string name="ids_lbl_booklet_layout_tb">Top to bottom</string>
     <string name="ids_lbl_booklet_finishing">Booklet Finishing</string>
     <string name="ids_lbl_booklet_finishing_fold">Paper folding</string>
     <string name="ids_lbl_booklet_finishing_foldstaple">Fold + Staple</string>

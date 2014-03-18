@@ -15,7 +15,9 @@ import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
-import jp.co.riso.smartdeviceapp.model.PrintSettings.ColorMode;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.ColorMode;
+import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Duplex;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 import android.app.Activity;
@@ -32,6 +34,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -200,7 +203,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             back = null;
         }
         
-        return new Bitmap[] {front, back};
+        return new Bitmap[] { front, back };
     }
     
     // ================================================================================
@@ -215,11 +218,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         // will depend on PDF and pagination, always false for now
         int count = mPdfManager.getPageCount();
         
-        if (mPrintSettings.isDuplex()) {
+        if (mPrintSettings.getDuplex() != Duplex.OFF) {
             count = (int) Math.ceil(count / 2.0f);
         }
         
-        count = (int) Math.ceil(count / (double) mPrintSettings.getPagination().getPerPage());
+        count = (int) Math.ceil(count / (double) mPrintSettings.getImposition().getPerPage());
         
         return count;
     }
@@ -235,7 +238,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         boolean flipToLandscape = (pdfWidth > pdfHeight);
         
-        if (mPrintSettings.getPagination().isFlipLandscape()) {
+        if (mPrintSettings.getImposition().isFlipLandscape()) {
             flipToLandscape = !flipToLandscape;
         }
         
@@ -266,7 +269,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
 
-        if (mPrintSettings.isDuplex()) {
+        if (mPrintSettings.getDuplex() != Duplex.OFF) {
             twoPage = true;
 
             if (getCurrentPage() % 2 == 0) {
@@ -286,7 +289,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     private void setupCurlBind() {
         int bindPosition = CurlView.BIND_LEFT;
-
+        /*
         switch (mPrintSettings.getBind()) {
             case LEFT:
                 bindPosition = CurlView.BIND_LEFT;
@@ -298,6 +301,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 bindPosition = CurlView.BIND_TOP;
                 break;
         }
+        */
         
         mCurlView.setBindPosition(bindPosition);
     }
@@ -400,7 +404,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
             mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount));
         } else {
-            mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage+1, pageCount));
+            mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount));
         }
     }
     
@@ -511,7 +515,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         int mWidth;
         int mHeight;
         int mIndex;
-
+        
         Bitmap mBmps[];
         
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
@@ -561,7 +565,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             //get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
-            PrintSettings.Pagination pagination = mPrintSettings.getPagination();
+            PrintSettingsConstants.Imposition pagination = mPrintSettings.getImposition();
             
             int width = bmp.getWidth() / pagination.getCols();
             int height = bmp.getHeight() / pagination.getRows();
@@ -631,13 +635,13 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 pagePerScreen = 2;
             }
             
-            pagePerScreen *= mPrintSettings.getPagination().getPerPage();
+            pagePerScreen *= mPrintSettings.getImposition().getPerPage();
             
             int frontIndex = (mIndex * pagePerScreen);
             drawPDFPagesOnBitmap(front, frontIndex, false, false);
             
             if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
-                int backIndex = (mIndex * pagePerScreen) + mPrintSettings.getPagination().getPerPage();
+                int backIndex = (mIndex * pagePerScreen) + mPrintSettings.getImposition().getPerPage();
                 
                 boolean verticalFlip = mCurlView.getBindPosition() == CurlView.BIND_TOP;
                 drawPDFPagesOnBitmap(back, backIndex, !verticalFlip, verticalFlip);
