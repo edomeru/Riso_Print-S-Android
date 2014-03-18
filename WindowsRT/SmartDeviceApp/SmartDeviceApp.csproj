@@ -106,8 +106,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\PreviewViewMode.cs" />
+    <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controls\ListItemControl.xaml.cs">
       <DependentUpon>ListItemControl.xaml</DependentUpon>
@@ -130,8 +132,11 @@
     <Compile Include="Common\Utilities\OrientationStateMessage.cs" />
     <Compile Include="Common\Base\PageBase.cs" />
     <Compile Include="Common\Utilities\PageOrientations.cs" />
+    <Compile Include="Common\Utilities\SQLite.cs" />
+    <Compile Include="Common\Utilities\SQLiteAsync.cs" />
     <Compile Include="Common\Utilities\SuspensionManager.cs" />
     <Compile Include="Common\Base\UserControlBase.cs" />
+    <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\GestureController.cs" />
     <Compile Include="Controls\PageControl.xaml.cs">
@@ -144,14 +149,22 @@
       <DependentUpon>ViewControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\PageNumberFormatConverter.cs" />
+    <Compile Include="Controllers\PrintPreviewController.cs" />
+    <Compile Include="Converters\BasePrintSettingConverter.cs" />
+    <Compile Include="Converters\PrintSettingConverter.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
     <Compile Include="DummyControllers\DummyProvider.cs" />
     <Compile Include="Models\DataItem.cs" />
     <Compile Include="Models\DataService.cs" />
+    <Compile Include="Models\DefaultPrinter.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\IDataService.cs" />
     <Compile Include="Models\LogicalPage.cs" />
+    <Compile Include="Models\PreviewPage.cs" />
+    <Compile Include="Models\Printer.cs" />
+    <Compile Include="Models\PrintJob.cs" />
+    <Compile Include="Models\PrintSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\PreviewPageViewModel.cs" />
@@ -168,7 +181,9 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
@@ -263,9 +278,22 @@
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
     </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.1">
+      <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
+    </SDKReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\Constants\" />
+    <Folder Include="Resources\Styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SNMP\SNMP.csproj">
+      <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
+      <Name>SNMP</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

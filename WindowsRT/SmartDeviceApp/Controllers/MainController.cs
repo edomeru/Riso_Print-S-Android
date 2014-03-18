@@ -45,6 +45,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             DocumentController.Instance.Load(e.Files[0] as StorageFile);
+            PrintPreviewController.Instance.Initialize();
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private static void InitializeDataStorage()
         {
-            //TODO: Call DatabaseController here
+            DatabaseController.Instance.Initialize();
         }
 
     }
