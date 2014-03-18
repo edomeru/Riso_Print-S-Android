@@ -158,7 +158,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 			assertTrue(pj.get(i).getPrinterId() <= pj.get(i + 1).getPrinterId());
 			//same printer group; sorted according to date
 			if (pj.get(i).getPrinterId() == pj.get(i + 1).getPrinterId())
-				assertTrue(pj.get(i).getDate().before(pj.get(i + 1).getDate()));
+				assertTrue(pj.get(i).getDate().after(pj.get(i + 1).getDate()));
 		}
 
 	}

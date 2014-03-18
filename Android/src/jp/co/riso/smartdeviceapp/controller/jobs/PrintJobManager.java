@@ -27,7 +27,7 @@ public class PrintJobManager {
     private static final String C_PJB_RESULT = "pjb_result";
     private static final String C_WHERE_PJB_ID = C_PJB_ID + "=?";
     private static final String C_WHERE_PRN_ID = C_PRN_ID + "=?";
-    private static final String C_ORDERBY_DATE = C_PRN_ID + "," + C_PJB_DATE;
+    private static final String C_ORDERBY_DATE = C_PRN_ID + " ASC ," + C_PJB_DATE + " DESC";
     private static final String TABLE_PRINTER = "Printer";
     private static final String C_PRN_NAME = "prn_name";
     private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
