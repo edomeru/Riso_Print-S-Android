@@ -206,6 +206,22 @@ public class PrinterManager implements OnSNMPSearch {
         manager.close();
         return 0;
     }
+
+    public int clearDefaultPrinter() {  
+        DatabaseManager manager = new DatabaseManager(mContext);
+        SQLiteDatabase db = manager.getWritableDatabase();
+        if(db == null) {
+            return -1;
+        }
+        
+        if(db.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null) == -1) {
+            manager.close();
+            return -1;
+        }
+
+        manager.close();
+        return 0;
+    }
     
     public boolean removePrinter(Printer printer) {
         DatabaseManager manager = new DatabaseManager(mContext);

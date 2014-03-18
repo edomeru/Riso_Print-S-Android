@@ -16,17 +16,6 @@
             android:background="@color/theme_light_4" >
 
             <ImageView
-                android:id="@+id/btn_delete"
-                android:layout_width="@dimen/edit_box_width"
-                android:layout_height="@dimen/edit_box_height"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@color/theme_light_4"
-                android:contentDescription="@string/default_content_description"
-                android:src="@drawable/delete"
-                android:visibility="gone" />
-
-            <ImageView
                 android:id="@+id/img_tablet_onOff"
                 android:layout_width="@dimen/printer_status_icon_size"
                 android:layout_height="@dimen/printer_status_icon_size"
@@ -37,15 +26,13 @@
                 android:layout_marginTop="10dp"
                 android:background="@color/theme_light_4"
                 android:contentDescription="@string/default_content_description"
-                android:src="@drawable/on" />
+                android:src="@drawable/img_btn_printer_status_online" />
 
             <TextView
                 android:id="@+id/txt_printerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/img_tablet_onOff"
                 android:background="@color/theme_light_4"
                 android:clickable="false"
@@ -54,6 +41,18 @@
                 android:maxLines="1"
                 android:paddingLeft="@dimen/row_left_padding"
                 android:textColor="@color/theme_dark_1" />
+            
+            <ImageView
+                android:id="@+id/btn_delete"
+                android:layout_width="@dimen/edit_box_width"
+                android:layout_height="@dimen/edit_box_height"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/theme_light_4"
+                android:contentDescription="@string/default_content_description"
+                android:src="@drawable/delete"
+                android:visibility="gone" />
+
         </RelativeLayout>
 
         <ImageView
@@ -157,7 +156,7 @@
                         android:textColor="@color/theme_dark_1" />
 
                     <Switch
-                        android:id="@+id/switch1"
+                        android:id="@+id/default_printer_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -189,13 +188,16 @@
                         android:text="@string/ids_lbl_default_print_settings"
                         android:textColor="@color/theme_dark_1" />
 
-                    <TextView
+                    <Button
                         android:id="@+id/inputPrinterName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/row_height"
+                        android:layout_height="@dimen/row_height"
                         android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/img_btn_default_print_settings"
                         android:padding="10dp"
                         android:textColor="@color/theme_light_1" />
+
                 </RelativeLayout>
 
                 <View

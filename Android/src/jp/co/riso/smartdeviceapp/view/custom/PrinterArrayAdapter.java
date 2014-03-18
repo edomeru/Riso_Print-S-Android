@@ -12,7 +12,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,9 +21,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-// ================================================================================
-// INTERFACE - PrinterArrayAdapter
-// ================================================================================
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, View.OnTouchListener {
     public class ViewHolder{
         ImageView onlineIndcator;
@@ -33,7 +29,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         ImageView discloseImage;
     }
     
-    public static final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
+    public final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
     private final Context mContext;
     private int mLayoutId = 0;
     private ViewHolder mHolder;
@@ -82,12 +78,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             convertView.setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));
         }
         
-        // Check if default printer
-        if(printer.getId() == mPrinterManager.getDefaultPrinter()) {
-            prevView = convertView;
-            mHolder.printerName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-            convertView.setBackgroundColor(mContext.getResources().getColor(R.color.theme_dark_1));
-        }
+        setPrinterRow(mHolder);
         
         return convertView;
     }
@@ -100,7 +91,8 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     private float downX = 0;
     private float upX = 0;
     private float HORIZONTAL_MIN_DISTANCE = 50;
-    private Button mDeleteButton = null;
+    private ViewHolder mDeleteViewHolder = null;
+    private ViewHolder mDefaultViewHolder = null;
     
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -120,9 +112,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 if (deltaX > HORIZONTAL_MIN_DISTANCE) {                        
                     if(v.getId() == R.id.printerListRow){
                         hideDeleteButton();
-                        mDeleteButton = (Button) v.findViewById(R.id.btn_delete);
-                        mDeleteButton.setVisibility(View.VISIBLE);
-                        mDeleteButton.setBackgroundColor(Color.RED);
+                        setPrinterRowToDelete((ViewHolder)v.getTag());
                         return true;
                     }   
                 }       
@@ -131,26 +121,16 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         return false;
     }
     
-    private void switchToFragment(BaseFragment fragment, String tag) {
-        FragmentManager fm = ((Activity) mContext).getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        
-        //TODO Add Animation: Must Slide
-        ft.addToBackStack(null);
-        ft.replace(R.id.mainLayout, fragment, tag);
-        ft.commit();
-    }
-    
     // ================================================================================
     // ADAPTER INTERFACE - View.OnClick
     // ================================================================================
     @Override
     public void onClick(View v) {
-
+        
         if(v.getId() == R.id.img_disclosure) {
             Printer printer = (Printer) v.getTag();
             hideDeleteButton();
-
+            
             Intent intent = ((Activity) mContext).getIntent();
             intent.putExtra(PrinterInfoFragment.KEY_PRINTER_INFO, printer);
             ((Activity) mContext).setIntent(intent);
@@ -162,25 +142,21 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             ViewHolder viewHolder = (ViewHolder) v.getTag();
             Printer printer = (Printer) viewHolder.discloseImage.getTag();
             hideDeleteButton();
-
-            v.setBackgroundColor(mContext.getResources().getColor(R.color.theme_dark_1));
-            viewHolder.printerName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
+            
+            setPrinterRowToDefault(viewHolder);
+            
             
             mPrinterManager.setDefaultPrinter(printer);
-            if(prevView == v) {
-            }
-            else if(prevView == null)
+            if(prevView == null)
                 prevView = v;
-            else {
-                TextView textView = (TextView) prevView.findViewById(R.id.txt_printerName);
-                textView.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
-                prevView.setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));                
+            else if(prevView != v){
+                setPrinterRowToNormal((ViewHolder)prevView.getTag());        
                 prevView = v;
             }
         }
         else if(v.getId() == R.id.btn_delete) {
             final Printer printer = (Printer) v.getTag();
-
+            
             mPrinterManager.removePrinter(printer);
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 @Override
@@ -197,10 +173,60 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         }
     }
     
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
     public void hideDeleteButton() {
-        if(mDeleteButton != null)
-            mDeleteButton.setVisibility(View.GONE);
-        mDeleteButton = null;
+        if(mDeleteViewHolder != null) {
+            setPrinterRow(mDeleteViewHolder);
+        }
+        mDeleteViewHolder = null;
     }
     
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    private void setPrinterRowToNormal(ViewHolder viewHolder) {
+        viewHolder.printerName.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
+        ((View)viewHolder.printerName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));
+        viewHolder.deleteButton.setVisibility(View.GONE);    
+    }
+    
+    private void setPrinterRowToDefault(ViewHolder viewHolder) {
+        if(mDefaultViewHolder != null) {
+            setPrinterRowToNormal(mDefaultViewHolder);
+        }            
+        viewHolder.printerName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
+        ((View)viewHolder.printerName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_dark_1));
+        viewHolder.deleteButton.setVisibility(View.GONE);
+        mDefaultViewHolder = viewHolder;
+    }
+    
+    private void setPrinterRowToDelete(ViewHolder viewHolder) {
+        viewHolder.printerName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
+        ((View)viewHolder.printerName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_color_2));
+        viewHolder.deleteButton.setVisibility(View.VISIBLE);
+        viewHolder.deleteButton.setBackgroundColor(mContext.getResources().getColor(R.color.theme_red_1));
+        mDeleteViewHolder = viewHolder;
+    }
+    
+    private void setPrinterRow(ViewHolder viewHolder) {
+        Printer printer = (Printer) viewHolder.printerName.getTag();
+        if(printer.getId() == mPrinterManager.getDefaultPrinter()) {
+            setPrinterRowToDefault(viewHolder);
+        }
+        else {
+            setPrinterRowToNormal(viewHolder);
+        }  
+    }
+    
+    private void switchToFragment(BaseFragment fragment, String tag) {
+        FragmentManager fm = ((Activity) mContext).getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        
+        //TODO Add Animation: Must Slide
+        ft.addToBackStack(null);
+        ft.replace(R.id.mainLayout, fragment, tag);
+        ft.commit();
+    }   
 }

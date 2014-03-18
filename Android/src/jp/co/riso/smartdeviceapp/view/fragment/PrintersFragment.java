@@ -198,7 +198,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         PrinterArrayAdapter printerArrayAdapter = (PrinterArrayAdapter) mPrinterAdapter;
-        printerArrayAdapter.hideDeleteButton();        
+        printerArrayAdapter.hideDeleteButton();
         return false;
     }
     

@@ -20,18 +20,21 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrintersScreenTabletView extends LinearLayout implements OnLongClickListener, View.OnClickListener, OnTouchListener, 
-PrinteSearchTabletInterface {
+public class PrintersScreenTabletView extends LinearLayout implements OnLongClickListener, 
+    View.OnClickListener, OnTouchListener, PrinteSearchTabletInterface, OnCheckedChangeListener {
     public class ViewHolder{
         ImageView onlineIndcator;
         TextView printerName;
         ImageView deleteButton;
         TextView ipAddress;
-        boolean defaultPrinter; //TODO
+        Switch defaultPrinter;
     }
     
     private PrinterManager mPrinterManager = null;
@@ -99,15 +102,21 @@ PrinteSearchTabletInterface {
         viewHolder.printerName.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
         viewHolder.printerName.setTextColor(getResources().getColor(R.color.theme_dark_1));
         viewHolder.deleteButton.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.defaultPrinter.setChecked(false);
     }
     
     private void setPrinterViewToDefault(ViewHolder viewHolder) {
+        if(mDefaultViewHolder != null) {
+            setPrinterViewToNormal(mDefaultViewHolder);
+        }
         viewHolder.deleteButton.setVisibility(View.GONE);
         ((View)viewHolder.printerName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
         viewHolder.onlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
         viewHolder.printerName.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
         viewHolder.printerName.setTextColor(getResources().getColor(R.color.theme_light_1));
         viewHolder.deleteButton.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.defaultPrinter.setChecked(true);
+        mDefaultViewHolder = viewHolder;
     }
     
     private void setPrinterViewToDelete(ViewHolder viewHolder) {
@@ -119,6 +128,17 @@ PrinteSearchTabletInterface {
         viewHolder.deleteButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
     }
     
+    private void setPrinterView(ViewHolder viewHolder) {
+        Printer printer = (Printer) viewHolder.deleteButton.getTag();
+
+        if(mPrinterManager.getDefaultPrinter() == printer.getId()) {
+            setPrinterViewToDefault(viewHolder);
+        }
+        else {
+            setPrinterViewToNormal(viewHolder);
+        } 
+    }
+    
     private int getActionBarHeight() {
         int actionBarHeight = 0;
         TypedValue tv = new TypedValue();
@@ -127,6 +147,31 @@ PrinteSearchTabletInterface {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, mContext.getResources().getDisplayMetrics());
         }
         return actionBarHeight;
+    }
+    
+    private ViewGroup getParentView() {
+        switch(mOrientation) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                if(mPrinterViewArray.get(0).getChildCount() <= mPrinterViewArray.get(1).getChildCount() &&
+                mPrinterViewArray.get(0).getChildCount() <= mPrinterViewArray.get(2).getChildCount()) {
+                    return mPrinterViewArray.get(0);
+                }
+                else if(mPrinterViewArray.get(1).getChildCount() <= mPrinterViewArray.get(2).getChildCount()) {
+                    return mPrinterViewArray.get(1);
+                    
+                }
+                else {
+                    return mPrinterViewArray.get(2);
+                }
+            case Configuration.ORIENTATION_PORTRAIT:
+                if(mPrinterViewArray.get(0).getChildCount() <= mPrinterViewArray.get(1).getChildCount()) {
+                    return mPrinterViewArray.get(0);
+                }
+                else {
+                    return mPrinterViewArray.get(1);
+                }
+        }
+        return null;
     }
     
     private void addToTabletPrinterScreen(Printer printer) {
@@ -145,6 +190,9 @@ PrinteSearchTabletInterface {
         int numberOfRow = 2;
         int numberOfColumn = 3;
         
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ViewGroup parentView = getParentView();
+        
         if(mOrientation == Configuration.ORIENTATION_PORTRAIT) {
             //Update values for portrait screen (3x2)
             numberOfRow = 3;
@@ -154,57 +202,35 @@ PrinteSearchTabletInterface {
         width = (int) (screenSize.x/numberOfColumn); 
         height = (int) (0.95 * (screenSize.y - actionBarHeight)/numberOfRow);
         
-        
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View pView = inflater.inflate(R.layout.printer_tablet_view, mPrinterViewArray.get(0), false);
-        pView.setPadding(left, top, right, bottom);
-        
-        switch(mOrientation) {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                if(mPrinterViewArray.get(0).getChildCount() <= mPrinterViewArray.get(1).getChildCount() &&
-                mPrinterViewArray.get(0).getChildCount() <= mPrinterViewArray.get(2).getChildCount()) {
-                    mPrinterViewArray.get(0).addView(pView, width, height);
-                }
-                else if(mPrinterViewArray.get(1).getChildCount() <= mPrinterViewArray.get(2).getChildCount()) {
-                    mPrinterViewArray.get(1).addView(pView, width, height);
-                    
-                }
-                else {
-                    mPrinterViewArray.get(2).addView(pView, width, height);
-                }
-                break;
-            case Configuration.ORIENTATION_PORTRAIT:
-                if(mPrinterViewArray.get(0).getChildCount() <= mPrinterViewArray.get(1).getChildCount()) {
-                    mPrinterViewArray.get(0).addView(pView, width, height);
-                }
-                else {
-                    mPrinterViewArray.get(1).addView(pView, width, height);
-                }
-                break;
+        if(parentView == null) {
+            return;
         }
         
+        View pView = inflater.inflate(R.layout.printer_tablet_view, parentView, false);
+        pView.setPadding(left, top, right, bottom);
+        
+        parentView.addView(pView, width, height);
+ 
         ViewHolder viewHolder = new ViewHolder();
         viewHolder.printerName = (TextView) pView.findViewById(R.id.txt_printerName);
         viewHolder.deleteButton = (ImageView) pView.findViewById(R.id.btn_delete);
         viewHolder.onlineIndcator = (ImageView) pView.findViewById(R.id.img_tablet_onOff);
         viewHolder.ipAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
+        viewHolder.defaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
                 
         viewHolder.printerName.setText(printer.getName());
         viewHolder.ipAddress.setText(printer.getIpAddress());
         
         viewHolder.printerName.setOnLongClickListener(this);
         viewHolder.deleteButton.setOnClickListener(this);
-        
+        viewHolder.defaultPrinter.setOnCheckedChangeListener(this);
+
         viewHolder.printerName.setTag(viewHolder);
+        viewHolder.defaultPrinter.setTag(viewHolder);
         viewHolder.deleteButton.setTag(printer);
         
-        if(mPrinterManager.getDefaultPrinter() == printer.getId()) {
-            viewHolder.defaultPrinter = true;
-            setPrinterViewToDefault(viewHolder);
-        }
-        else {
-            viewHolder.defaultPrinter = false;
-        }        
+        
+        setPrinterView(viewHolder);       
             
         return;
     }
@@ -217,12 +243,16 @@ PrinteSearchTabletInterface {
     // ================================================================================
     // INTERFACE - onLongClick
     // ================================================================================
-    private ViewHolder mViewHolder = null;
-    
+    private ViewHolder mDeleteViewHolder = null;
+    private ViewHolder mDefaultViewHolder = null;
+
     @Override
     public boolean onLongClick(View v) {
-        mViewHolder = (ViewHolder) v.getTag();
-        setPrinterViewToDelete(mViewHolder);
+        if(mDeleteViewHolder != null) {
+            setPrinterView(mDeleteViewHolder);
+        }
+        mDeleteViewHolder = (ViewHolder) v.getTag();
+        setPrinterViewToDelete(mDeleteViewHolder);
         return true;
     }
     
@@ -242,16 +272,27 @@ PrinteSearchTabletInterface {
     // ================================================================================
     @Override
     public boolean onTouch(View arg0, MotionEvent arg1) {
-        if(mViewHolder != null) {
-            if(mViewHolder.defaultPrinter) {
-                setPrinterViewToDefault(mViewHolder);
-            }
-            else {
-                setPrinterViewToNormal(mViewHolder);
-            }
-            mViewHolder = null;
+        if(mDeleteViewHolder != null) {
+            setPrinterView(mDeleteViewHolder);
+            mDeleteViewHolder = null;
         }
         return false;
+    }
+
+    // ================================================================================
+    // INTERFACE - onCheckedChanged
+    // ================================================================================
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
+        Printer printer = (Printer) viewHolder.deleteButton.getTag();
+        if(isChecked) {
+            setPrinterViewToDefault(viewHolder);            
+            mPrinterManager.setDefaultPrinter(printer);
+        } else {
+            mPrinterManager.clearDefaultPrinter();
+            setPrinterViewToNormal(viewHolder);
+        }
     }
     
 }
