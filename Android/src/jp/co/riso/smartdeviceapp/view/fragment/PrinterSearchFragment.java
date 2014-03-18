@@ -55,7 +55,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public int getViewLayout() {
-        return R.layout.temp_fragment_base;
+        return R.layout.fragment_printer_search;
     }
     
     @Override
@@ -92,15 +92,17 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void addActionMenuButton(View v) {
         if(isTablet()) {
-            v.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)/getResources().getDisplayMetrics().density), 0, 0, 0);
+            v.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
         }
         ImageButton actionMenuButton = new ImageButton(v.getContext());
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
-        
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_button_padding);        
+
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.back);
+        actionMenuButton.setImageResource(R.drawable.img_btn_back_normal);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        actionMenuButton.setPadding(padding, padding, padding, padding);
         actionMenuButton.setOnClickListener(this);
         leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, 
                 LayoutParams.MATCH_PARENT);

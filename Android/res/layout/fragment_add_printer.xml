@@ -8,19 +8,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/theme_light_3"
         android:orientation="vertical" >
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
-                android:padding="10dp"
+                android:padding="@dimen/row_left_padding"
                 android:text="@string/ids_lbl_ip_address"
                 android:textColor="@color/theme_dark_1" />
 
@@ -33,7 +34,7 @@
                 android:background="@color/theme_light_1"
                 android:gravity="center_vertical|center_horizontal"
                 android:hint=""
-                android:padding="10dp"
+                android:padding="@dimen/row_left_padding"
                 android:textColor="@color/theme_dark_1" />
         </RelativeLayout>
 
@@ -41,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.2dp"
             android:background="@color/line_color_1"
+            android:layout_marginLeft="@dimen/row_left_padding"
             android:visibility="visible" />
     </LinearLayout>
 

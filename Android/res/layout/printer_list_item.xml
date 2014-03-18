@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/printerListRow"   
+    android:id="@+id/printerListRow"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_height"
     android:descendantFocusability="blocksDescendants"
@@ -20,13 +20,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/row_with_disclosure_right_margin"
         android:layout_toRightOf="@+id/img_onOff"
         android:clickable="false"
         android:ellipsize="end"
         android:longClickable="false"
         android:maxLines="1"
         android:paddingLeft="@dimen/row_left_padding"
-        android:layout_marginRight="@dimen/row_with_disclosure_right_margin"
         android:textColor="@color/theme_dark_1" />
 
     <ImageView
@@ -36,18 +36,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/default_content_description"
-        android:src="@drawable/disclosure_icon" />
-
-    <TextView
-        android:id="@+id/txt_default"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/row_default_printer_margin"
-        android:layout_toLeftOf="@+id/img_disclosure"
-        android:text="@string/ids_lbl_default_printer"
-        android:textColor="@color/theme_dark_1"
-        android:visibility="invisible" />
+        android:src="@drawable/temp_img_btn_disclosure_icon" />
 
     <Button
         android:id="@+id/btn_delete"
@@ -56,22 +45,11 @@
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/img_disclosure"
         android:layout_centerVertical="true"
-        android:background="@color/theme_dark_1"
-        android:layout_marginTop="@dimen/delete_padding"
         android:layout_marginBottom="@dimen/delete_padding"
+        android:layout_marginTop="@dimen/delete_padding"
+        android:background="@color/theme_dark_1"
         android:text="@string/ids_lbl_delete_printer"
         android:textColor="@color/theme_light_1"
         android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/img_checkPrinterList"
-        android:layout_width="@dimen/disclosure_width"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/img_disclosure"
-        android:layout_alignParentTop="true"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/default_content_description"
-        android:src="@drawable/check"
-        android:visibility="invisible" />
 
 </RelativeLayout>

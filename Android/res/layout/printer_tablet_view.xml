@@ -21,9 +21,7 @@
                 android:layout_height="@dimen/printer_status_icon_size"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="@dimen/row_left_padding"
                 android:background="@color/theme_light_4"
                 android:contentDescription="@string/default_content_description"
                 android:src="@drawable/img_btn_printer_status_online" />
@@ -41,7 +39,7 @@
                 android:maxLines="1"
                 android:paddingLeft="@dimen/row_left_padding"
                 android:textColor="@color/theme_dark_1" />
-            
+
             <ImageView
                 android:id="@+id/btn_delete"
                 android:layout_width="@dimen/edit_box_width"
@@ -50,9 +48,8 @@
                 android:layout_centerVertical="true"
                 android:background="@color/theme_light_4"
                 android:contentDescription="@string/default_content_description"
-                android:src="@drawable/delete"
+                android:src="@drawable/img_btn_delete_printer_tablet"
                 android:visibility="gone" />
-
         </RelativeLayout>
 
         <ImageView
@@ -61,10 +58,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/edit_box_height"
             android:layout_marginRight="@dimen/edit_box_width"
+            android:layout_marginTop="@dimen/edit_box_height"
             android:contentDescription="@string/ids_lbl_printers"
-            android:src="@drawable/riso_printer" />
+            android:src="@drawable/temp_riso_printer" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -85,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:padding="10dp"
+                        android:padding="@dimen/row_left_padding"
                         android:text="@string/ids_lbl_ip_address"
                         android:textColor="@color/theme_dark_1" />
 
@@ -94,13 +91,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:padding="10dp"
+                        android:padding="@dimen/row_left_padding"
                         android:textColor="@color/theme_light_1" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="0.2dp"
+                    android:layout_marginLeft="@dimen/row_left_padding"
                     android:background="@color/line_color_1"
                     android:visibility="visible" />
             </LinearLayout>
@@ -118,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:padding="10dp"
+                        android:padding="@dimen/row_left_padding"
                         android:text="@string/ids_lbl_port"
                         android:textColor="@color/theme_dark_1" />
 
@@ -127,13 +125,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:padding="10dp"
+                        android:padding="@dimen/row_left_padding"
                         android:textColor="@color/theme_light_1" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="0.2dp"
+                    android:layout_marginLeft="@dimen/row_left_padding"
                     android:background="@color/line_color_1"
                     android:visibility="visible" />
             </LinearLayout>
@@ -151,7 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:padding="10dp"
+                        android:padding="@dimen/row_left_padding"
                         android:text="@string/ids_lbl_set_default_printer"
                         android:textColor="@color/theme_dark_1" />
 
@@ -167,45 +166,33 @@
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="0.2dp"
+                    android:layout_marginLeft="@dimen/row_left_padding"
                     android:background="@color/line_color_1"
                     android:visibility="visible" />
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_height="wrap_content" >
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:padding="@dimen/row_left_padding"
+                    android:text="@string/ids_lbl_default_print_settings"
+                    android:textColor="@color/theme_dark_1" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:padding="10dp"
-                        android:text="@string/ids_lbl_default_print_settings"
-                        android:textColor="@color/theme_dark_1" />
-
-                    <Button
-                        android:id="@+id/inputPrinterName"
-                        android:layout_width="@dimen/row_height"
-                        android:layout_height="@dimen/row_height"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="10dp"
-                        android:background="@drawable/img_btn_default_print_settings"
-                        android:padding="10dp"
-                        android:textColor="@color/theme_light_1" />
-
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="0.2dp"
-                    android:background="@color/line_color_1"
-                    android:visibility="visible" />
-            </LinearLayout>
+                <Button
+                    android:id="@+id/inputPrinterName"
+                    android:layout_width="@dimen/row_height"
+                    android:layout_height="@dimen/row_height"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/row_left_padding"
+                    android:background="@drawable/img_btn_default_print_settings"
+                    android:padding="@dimen/row_left_padding"
+                    android:textColor="@color/theme_light_1" />
+            </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
 

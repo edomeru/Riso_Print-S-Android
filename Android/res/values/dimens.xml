@@ -39,7 +39,6 @@
     <dimen name="edit_box_width">60dp</dimen>
     <dimen name="edit_box_height">34dp</dimen>
     <dimen name="disclosure_width">16dp</dimen>
-    <dimen name="delete_padding">4dp</dimen>
-    
-    
+    <dimen name="delete_padding">4dp</dimen>    
+ 
 </resources>

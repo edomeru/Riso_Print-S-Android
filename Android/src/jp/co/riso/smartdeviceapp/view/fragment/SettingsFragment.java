@@ -17,7 +17,7 @@ public class SettingsFragment extends BaseFragment {
     
     @Override
     public int getViewLayout() {
-        return R.layout.temp_fragment_base;
+        return R.layout.fragment_printer_search;
     }
     
     @Override

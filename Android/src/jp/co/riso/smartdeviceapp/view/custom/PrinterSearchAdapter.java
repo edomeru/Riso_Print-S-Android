@@ -55,10 +55,10 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             
             mHolder.printerName.setText(printer.getName());
             if(mPrinterManager.isExists(printer)){
-                mHolder.addedIndicator.setBackgroundResource(R.drawable.check);
+                mHolder.addedIndicator.setBackgroundResource(R.drawable.img_btn_add_printer_ok_pressed);
             }
             else {
-                mHolder.addedIndicator.setBackgroundResource(R.drawable.add);  
+                mHolder.addedIndicator.setBackgroundResource(R.drawable.img_btn_add_printer_normal);  
             }
             
             mHolder.addedIndicator.setTag(position);
@@ -83,7 +83,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
                     return;
                 }
                 if(mPrinterManager.savePrinterToDB(printer) != -1) {
-                    v.setBackgroundResource(R.drawable.check);
+                    v.setBackgroundResource(R.drawable.img_btn_add_printer_ok_pressed);
                     mSearchAdapterInterface.dialog();
                 }
             }

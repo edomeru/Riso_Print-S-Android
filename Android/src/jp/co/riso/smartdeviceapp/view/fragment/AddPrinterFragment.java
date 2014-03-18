@@ -11,7 +11,6 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.ActionBar.LayoutParams;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -54,7 +53,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        view.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
         mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
     }
@@ -62,7 +60,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         if(isTablet()) {
-            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)/getResources().getDisplayMetrics().density), 0, 0, 0);
+            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
         }
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
@@ -118,14 +116,14 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         
         //Back Button
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.back);
+        actionMenuButton.setImageResource(R.drawable.img_btn_back_normal);
         actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         actionMenuButton.setOnClickListener(this);
         
         //Save Button
         saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
-        saveMenuButton.setImageResource(R.drawable.save);
+        saveMenuButton.setImageResource(R.drawable.img_btn_save_printer);
         saveMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
         saveMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
         saveMenuButton.setOnClickListener(this);

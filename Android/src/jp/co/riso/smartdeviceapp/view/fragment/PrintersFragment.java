@@ -84,7 +84,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
-        addPrinterActionMenuButton(view);
+        addActionMenuButton(view);
     }
     
     @Override
@@ -102,10 +102,11 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         }
     }    
     
-    // ================================================================================
-    // Private Methods
-    // ================================================================================
-    private void addPrinterActionMenuButton(View v) {
+    @Override
+    public void addActionMenuButton(View v) {
+        super.addActionMenuButton(v);
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_button_padding);        
+
         ImageButton addMenuButton = new ImageButton(v.getContext());
         ImageButton searchMenuButton = new ImageButton(v.getContext());
         
@@ -113,24 +114,26 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         
         //Manual Add Button
         addMenuButton.setId(ID_MENU_ACTION_ADD_BUTTON);
-        addMenuButton.setImageResource(R.drawable.add);
+        addMenuButton.setImageResource(R.drawable.img_btn_add_printer_normal);
         addMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        
+        addMenuButton.setPadding(padding, padding, padding, padding);
+     
         //Search Button
         searchMenuButton.setId(ID_MENU_ACTION_SEARCH_BUTTON);
-        searchMenuButton.setImageResource(R.drawable.search);
+        searchMenuButton.setImageResource(R.drawable.img_btn_search_printer_normal);
         searchMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        
+        searchMenuButton.setPadding(padding, padding, padding, padding);
+
         rightActionLayout.addView(addMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         rightActionLayout.addView(searchMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         
         searchMenuButton.setOnClickListener(this);
         addMenuButton.setOnClickListener(this);
-        
-        //Left Action Button
-        addActionMenuButton(v);
     }
     
+    // ================================================================================
+    // Private Methods
+    // ================================================================================   
     private void displayPrinterSearchFragment() {
         PrinterSearchFragment fragment = new PrinterSearchFragment();
         if(isTablet()) {
