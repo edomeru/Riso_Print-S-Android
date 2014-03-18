@@ -35,16 +35,11 @@
     self.isDefaultPrinterCell = isDefaultPrinterCell;
     if(isDefaultPrinterCell == YES)
     {
-        //TODO: this only works for iOS7
-        [self setBackgroundColor:[UIColor blackColor]];
-        [self.printerName setTextColor:[UIColor whiteColor]];
+        [self setCellStyleForDefaultCell];
     }
     else
     {
-        //TODO: this only works for iOS7
-        UIColor *bgColor = [UIColor colorWithRed:173.0/255.0 green:173.0/255.0 blue:173.0/255.0 alpha:1.0];
-        [self setBackgroundColor:bgColor];
-        [self.printerName setTextColor:[UIColor blackColor]];
+        [self setCellStyleForNormalCell];
     }
 }
 
@@ -52,18 +47,48 @@
 {
     if(isCellForDelete == YES)
     {
-        //TODO: this only works for iOS7
-        UIColor *bgColor = [UIColor colorWithRed:82.0/255.0 green:7.0/255.0 blue:182.0/255.0 alpha:1.0];
-        [self setBackgroundColor:bgColor];
-        [self.printerName setTextColor:[UIColor whiteColor]];
-        [self.deleteButton setHidden: NO];
+        [self setCellStyleForToDeleteCell];
     }
     else
     {
-        [self setAsDefaultPrinterCell:self.isDefaultPrinterCell];
-        [self.deleteButton setHidden: YES];
+        if(self.isDefaultPrinterCell)
+        {
+            [self setCellStyleForDefaultCell];
+        }
+        else
+        {
+            [self setCellStyleForNormalCell];
+        }
     }
 }
 
+- (void) setCellStyleForToDeleteCell
+{
+    //TODO: this only works for iOS7
+    UIColor *bgColor = [UIColor colorWithRed:82.0/255.0 green:7.0/255.0 blue:182.0/255.0 alpha:1.0];
+    [self setBackgroundColor:bgColor];
+    [self.printerName setTextColor:[UIColor whiteColor]];
+    [self.deleteButton setHidden: NO];
+    [self.accessoryView setHidden: YES];
+}
+
+- (void) setCellStyleForDefaultCell
+{
+    self.isDefaultPrinterCell = YES;
+    [self setBackgroundColor:[UIColor blackColor]];
+    [self.printerName setTextColor:[UIColor whiteColor]];
+    [self.deleteButton setHidden: YES];
+    [self.accessoryView setHidden: NO];
+}
+
+-(void) setCellStyleForNormalCell
+{
+    self.isDefaultPrinterCell = NO;
+    UIColor *bgColor = [UIColor colorWithRed:173.0/255.0 green:173.0/255.0 blue:173.0/255.0 alpha:1.0];
+    [self setBackgroundColor:bgColor];
+    [self.printerName setTextColor:[UIColor blackColor]];
+    [self.deleteButton setHidden: YES];
+    [self.accessoryView setHidden: NO];
+}
 
 @end
