@@ -61,7 +61,7 @@
     else
     {
         [self setAsDefaultPrinterCell:self.isDefaultPrinterCell];
-         [self.deleteButton setHidden: YES];
+        [self.deleteButton setHidden: YES];
     }
 }
 

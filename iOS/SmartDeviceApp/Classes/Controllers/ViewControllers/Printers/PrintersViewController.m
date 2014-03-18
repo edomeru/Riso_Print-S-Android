@@ -33,7 +33,7 @@
     [super viewDidLoad];
     // setup the PrinterManager
     self.toDeleteIndexPath = nil;
-    NSLog(@"setup");
+    NSLog(@"[INFO][Printers] setup");
     self.printerManager = [[PrinterManager alloc] init];
     [self.printerManager getListOfSavedPrinters];
     [self.printerManager getDefaultPrinter];
@@ -56,19 +56,23 @@
     return [self.printerManager registerDefaultPrinter:selectedPrinter];
 }
 
-#pragma mark IBActions
+#pragma mark - IBActions
+
 - (IBAction)mainMenuAction:(id)sender
 {
+    [self.mainMenuButton setEnabled:NO];
     [self performSegueTo:[HomeViewController class]];
 }
 
 - (IBAction)addPrinterAction:(id)sender
 {
+    [self.addPrinterButton setEnabled:NO];
     [self performSegueTo:[AddPrinterViewController class]];
 }
 
 - (IBAction)printerSearchAction:(id)sender
 {
+    [self.printerSearchButton setEnabled:NO];
     [self performSegueTo:[PrinterSearchViewController class]];
 }
 

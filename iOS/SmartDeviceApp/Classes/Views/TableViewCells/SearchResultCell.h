@@ -11,6 +11,7 @@
 @interface SearchResultCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel* printerName;
+@property (weak, nonatomic) IBOutlet UIView* separator;
 
 /**
  Adds a checkmark image as the accessory view of the cell.
@@ -39,6 +40,6 @@
 /**
  Sets the cell's UI/layout attributes.
  */
-- (void)setStyle;
+- (void)setStyle:(BOOL)isLastCell;
 
 @end

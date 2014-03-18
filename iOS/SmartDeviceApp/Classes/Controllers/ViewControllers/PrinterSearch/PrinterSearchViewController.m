@@ -288,7 +288,12 @@
 {
     SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
                                                             forIndexPath:indexPath];
-    [cell setStyle];
+    BOOL isLastCell = NO;
+    if ((indexPath.section == 1) && (indexPath.row == [self.listNewPrinterNames count]-1))
+        isLastCell = YES;
+
+    // set the cell style
+    [cell setStyle:isLastCell];
    
     // set the cell text
     if (indexPath.section == 0)

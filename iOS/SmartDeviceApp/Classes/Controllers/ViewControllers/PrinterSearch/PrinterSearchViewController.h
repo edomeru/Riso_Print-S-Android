@@ -23,6 +23,7 @@
 
 /** TableView for the Search Results */
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIView *separator;
 
 /**
  Unwinds back to the Printers screen.

@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
+#import "HomeViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
@@ -90,6 +91,9 @@
 
     [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
+    
+    if (indexPath.row == [self.printerManager.listSavedPrinters count]-1)
+        [cell.separator setHidden:YES];
     
     return cell;
 }
@@ -235,22 +239,27 @@
 - (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
 {
     UIViewController* sourceViewController = [unwindSegue sourceViewController];
-    if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    
+    if ([sourceViewController isKindOfClass:[HomeViewController class]])
     {
+        [self.mainMenuButton setEnabled:YES];
+    }
+    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    {
+        [self.addPrinterButton setEnabled:YES];
+        
         AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
             [self.tableView reloadData];
     }
-    if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
+    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
     {
+        [self.printerSearchButton setEnabled:YES];
+        
         PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
             [self.tableView reloadData];
     }
-}
-
-- (IBAction)unwindFromSlidingDrawer:(UIStoryboardSegue *)segue
-{
 }
 
 @end

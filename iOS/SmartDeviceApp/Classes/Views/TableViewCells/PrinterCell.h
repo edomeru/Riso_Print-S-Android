@@ -12,6 +12,7 @@
 @interface PrinterCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet PrinterStatusView *printerStatus;
+@property (weak, nonatomic) IBOutlet UIView* separator;
 
 
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;

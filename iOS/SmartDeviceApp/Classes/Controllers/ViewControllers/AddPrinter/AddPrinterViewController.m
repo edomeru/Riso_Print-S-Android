@@ -36,12 +36,6 @@
 - (void)setup;
 
 /**
- Enables/Disables the Save button.
- @param YES to enable, NO to disable.
- */
-- (void)enableSaveButton:(BOOL)isEnabled;
-
-/**
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
@@ -113,7 +107,7 @@
     self.hasAddedPrinters = NO;
     
     // setup the header buttons
-    [self enableSaveButton:NO];
+    [self.saveButton setEnabled:NO];
     
     // setup progress indicator
     self.progressIndicator = [[UIActivityIndicatorView alloc]
@@ -145,21 +139,7 @@
 
 #pragma mark - Header
 
-- (void)enableSaveButton:(BOOL)isEnabled
-{
-    if (isEnabled)
-    {
-        [self.saveButton setAlpha:1.0f];
-        [self.saveButton setEnabled:YES];
-    }
-    else
-    {
-        [self.saveButton setAlpha:0.3f];
-        [self.saveButton setEnabled:NO];
-    }
-}
-
-- (IBAction)onBack:(UIButton *)sender 
+- (IBAction)onBack:(UIButton *)sender
 {
     [self unwindFromOverTo:[self.parentViewController class]];
 }
@@ -210,7 +190,7 @@
     [self.progressIndicator startAnimating];
     
     // disable the save button
-    [self enableSaveButton:NO];
+    [self.saveButton setEnabled:NO];
 }
 
 #pragma mark - PrinterSearchDelegate
@@ -224,7 +204,7 @@
     [self.progressIndicator stopAnimating];
     
     // re-enable the save button
-    [self enableSaveButton:YES];
+    [self.saveButton setEnabled:YES];
 }
 
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails
@@ -272,7 +252,7 @@
 {
     // disable the Save button if the IP Address text is cleared
     if (textField.tag == TAG_TEXT_IP)
-        [self enableSaveButton:NO];
+        [self.saveButton setEnabled:NO];
          
     return YES;
 }
@@ -283,9 +263,9 @@
     {
         // disable the Save button if backspace will clear the IP Address text
         if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
-            [self enableSaveButton:NO];
+            [self.saveButton setEnabled:NO];
         else
-            [self enableSaveButton:YES];
+            [self.saveButton setEnabled:YES];
     }
     
     return YES;

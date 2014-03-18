@@ -27,12 +27,12 @@
 
 - (void)putCheckmark
 {
-    self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SearchSavedIcon"]];
+    self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"PrinterSearchResultsCheckIcon"]];
 }
 
 - (void)putPlusButton:(id<UIGestureRecognizerDelegate>)buttonOwner tapHandler:(SEL)actionOnTap
 {
-    UIImage* plusImage = [UIImage imageNamed:@"SearchAddIcon"];
+    UIImage* plusImage = [UIImage imageNamed:@"PrinterSearchResultsPlusIcon"];
     
     // create the button
     UIButton* plusButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -56,10 +56,15 @@
     self.printerName.font = [UIFont fontWithName:@"Helvetica Neue" size:17];
 }
 
-- (void)setStyle
+- (void)setStyle:(BOOL)isLastCell
 {
     //fix for the bugged always-white cell in iPad iOS7
     self.backgroundColor = [UIColor clearColor];
+    
+    if (isLastCell)
+        [self.separator setHidden:YES];
+    else
+        [self.separator setHidden:NO];
 }
 
 @end

@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
+#import "HomeViewController.h"
 #import "PrintersIpadViewController.h"
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
@@ -229,18 +230,6 @@
     }
 }
 
-- (IBAction)addPrinterAction:(id)sender
-{
-    // TODO: Change button state
-    [super addPrinterAction:sender];
-}
-
-- (IBAction)printerSearchAction:(id)sender
-{
-    // TODO: Change button state
-    [super printerSearchAction:sender];
-}
-
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -265,14 +254,23 @@
 - (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
 {
     UIViewController* sourceViewController = [unwindSegue sourceViewController];
-    if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    
+    if ([sourceViewController isKindOfClass:[HomeViewController class]])
     {
+        [self.mainMenuButton setEnabled:YES];
+    }
+    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    {
+        [self.addPrinterButton setEnabled:YES];
+        
         AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
             [self.collectionView reloadData];
     }
-    if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
+    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
     {
+        [self.printerSearchButton setEnabled:YES];
+        
         PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
             [self.collectionView reloadData];
