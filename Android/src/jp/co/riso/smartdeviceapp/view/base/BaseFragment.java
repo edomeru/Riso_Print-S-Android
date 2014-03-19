@@ -1,7 +1,9 @@
 
 package jp.co.riso.smartdeviceapp.view.base;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.DialogFragment;
 import android.app.ActionBar.LayoutParams;
@@ -11,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView.ScaleType;
 
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
     
@@ -21,6 +25,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        initializeFragment(savedInstanceState);
     }
 
     /** {@inheritDoc} */
@@ -40,7 +46,9 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             initializeCustomActionBar(view, savedInstanceState);
             
             // Add size change listener to prevent overlaps
-            view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(this);
+            if (view.findViewById(R.id.actionBarLayout) instanceof FrameLayout) {
+                view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(this);
+            }
         }
 
         // set width and height of dialog
@@ -59,6 +67,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             }
         }
         
+        AppUtils.changeChildrenFont((ViewGroup)view, SmartDeviceApp.getAppFont());
+        
         return view;
     }
     
@@ -67,6 +77,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     // ================================================================================
     
     public abstract int getViewLayout();
+    
+    public abstract void initializeFragment(Bundle savedInstanceState);
     
     public abstract void initializeView(View view, Bundle savedInstanceState);
     
@@ -84,16 +96,28 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         return getResources().getBoolean(R.bool.is_tablet);
     }
     
+    public boolean isTabletLand() {
+        if (getActivity() == null) {
+            return false;
+        }
+        
+        return getResources().getBoolean(R.bool.is_tablet_land);
+    }
+    
     public void addActionMenuButton(View v) {
         ImageButton actionMenuButton = new ImageButton(v.getContext());
         
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.ic_action_menu);
-        actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        actionMenuButton.setImageResource(R.drawable.selector_actionbar_mainmenu);
+        actionMenuButton.setBackgroundResource(R.color.theme_color_1);
+        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
+        
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
+        actionMenuButton.setPadding(padding, padding, padding, padding);
         
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
-        
-        leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        int width = ((BaseActivity)getActivity()).getActionBarHeight();
+        leftActionLayout.addView(actionMenuButton, width, LayoutParams.MATCH_PARENT);
         
         actionMenuButton.setOnClickListener(this);
     }

@@ -8,23 +8,27 @@
 
 package jp.co.riso.smartdeviceapp;
 
-import jp.co.riso.android.util.Logger;
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Typeface;
 
 public class SmartDeviceApp extends Application {
 
-    private static volatile Context context;
+    private static volatile Context mContext;
+    private static volatile Typeface mAppFont;
     
     @Override
     public void onCreate() {
-        Logger.init(getApplicationContext());
-        Logger.setLogLevel(Logger.LOGLEVEL_DEBUG);
-        
-        SmartDeviceApp.context = getApplicationContext();
+        SmartDeviceApp.mContext = getApplicationContext();
+        SmartDeviceApp.mAppFont = Typeface.createFromAsset(getResources().getAssets(),
+                AppConstants.APP_FONT_FILE);
     }
 
     public static Context getAppContext() {
-        return SmartDeviceApp.context;
+        return SmartDeviceApp.mContext;
+    }
+
+    public static Typeface getAppFont() {
+        return SmartDeviceApp.mAppFont;
     }
 }
