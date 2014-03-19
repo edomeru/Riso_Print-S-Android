@@ -8,37 +8,62 @@
 
 #import "DatabaseManager.h"
 
+static NSManagedObjectContext* sharedManagedObjectContext = nil;
+
+@interface DatabaseManager ()
+
+/**
+ Sets the shared NSManagedObjectContext object for use by DatabaseManager.
+ This method should be called only once during the lifecycle of this class.
+ */
++ (void)setSharedManagedObjectContext;
+
+@end
+
 @implementation DatabaseManager
 
 #pragma mark - Context
 
-+ (NSManagedObjectContext*)getManagedObjectContext
++ (void)setSharedManagedObjectContext
 {
-    NSManagedObjectContext* context = nil;
-    
+    // get from AppDelegate
     id delegate = [[UIApplication sharedApplication] delegate];
     if ([delegate respondsToSelector:@selector(managedObjectContext)])
-        context = [delegate managedObjectContext];
-    else
-        NSLog(@"[ERROR][DBM] could not get NSManagedObjectContext");
+    {
+        sharedManagedObjectContext = [delegate managedObjectContext];
+    }
     
-    return context;
+    // check if NSManagedObjectContext was successfully set
+    if (sharedManagedObjectContext == nil)
+    {
+        NSLog(@"[ERROR][DBM] could not set NSManagedObjectContext");
+    }
 }
 
 #pragma mark - Fetch
 
 + (NSArray*)getObjects:(NSString*)entityName;
 {
-    NSManagedObjectContext* context = [self getManagedObjectContext];
+    if (sharedManagedObjectContext == nil)
+        [self setSharedManagedObjectContext];
+    
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     NSError *error;
     
-    NSArray* results = [context executeFetchRequest:fetchRequest error:&error];
+    NSArray* results = [sharedManagedObjectContext executeFetchRequest:fetchRequest error:&error];
     if (results == nil)
+    {
         NSLog(@"[ERROR][DBM] fetch error, (%@)", [error debugDescription]);
+    }
     else if ([results count] == 0)
+    {
         NSLog(@"[INFO][DBM] fetch for %@ returned empty", entityName);
-        
+    }
+    else
+    {
+        NSLog(@"[INFO][DBM] fetch returned %u results", [results count]);
+    }
+    
     return results;
 }
 
@@ -46,16 +71,21 @@
 
 + (NSManagedObject*)addObject:(NSString*)entityName
 {
+    if (sharedManagedObjectContext == nil)
+        [self setSharedManagedObjectContext];
+    
     return [NSEntityDescription insertNewObjectForEntityForName:entityName
-                                         inManagedObjectContext:[self getManagedObjectContext]];
+                                         inManagedObjectContext:sharedManagedObjectContext];
 }
 
 #pragma mark - Delete
 
 + (BOOL)deleteObject:(NSManagedObject*)object
 {
-    NSManagedObjectContext* context = [self getManagedObjectContext];
-    [context deleteObject:object];
+    if (sharedManagedObjectContext == nil)
+        [self setSharedManagedObjectContext];
+    
+    [sharedManagedObjectContext deleteObject:object];
     
     return [self saveChanges];
 }
@@ -64,8 +94,11 @@
 
 + (BOOL)saveChanges
 {
+    if (sharedManagedObjectContext == nil)
+        [self setSharedManagedObjectContext];
+    
     NSError *error = nil;
-    if (![[self getManagedObjectContext] save:&error])
+    if (![sharedManagedObjectContext save:&error])
     {
         NSLog(@"[ERROR][DBM] save failed, (%@)", [error debugDescription]);
         return NO;
@@ -78,7 +111,10 @@
 
 + (void)discardChanges
 {
-    [[self getManagedObjectContext] rollback];
+    if (sharedManagedObjectContext == nil)
+        [self setSharedManagedObjectContext];
+    
+    [sharedManagedObjectContext rollback];
 }
 
 @end

@@ -16,13 +16,7 @@
 @interface DatabaseManager : NSObject
 
 /**
- Retrieves the pre-defined NSManagedObjectContext from the AppDelegate.
- @return NSManagedObjectContext*
- */
-+ (NSManagedObjectContext*)getManagedObjectContext;
-
-/**
- Retrieves objects from the database.
+ Retrieves objects of the specified entity from the database.
  @param entityName
         one of the following entities:
         E_PRINTER, E_PRINTSETTING,
@@ -32,10 +26,10 @@
 + (NSArray*)getObjects:(NSString*)entityName;
 
 /**
- Inserts a new object into the database. Does not save
- the NSManagedObjectContext as this new object may only
- be temporarily needed. A succeeding call to saveChanges: 
- must be made after this to make the inserted object 
+ Inserts a new object of the specified entity into the database.
+ This method does not save the NSManagedObjectContext as this new
+ object may only be temporarily needed. A succeeding call to 
+ saveChanges: must be made after this to make the inserted object
  permanent.
  @param entityName
         one of the following: 
@@ -46,8 +40,9 @@
 + (NSManagedObject*)addObject:(NSString*)entityName;
 
 /**
- Removes an object from the database then saves the
- NSManagedObjectContext to make the deletion permanent.
+ Removes the specified object from the database.
+ This method saves the NSManagedObjectContext, 
+ making the deletion permanent.
  @param object
         the NSManagedObject to be removed
  @return YES if successful, NO otherwise
