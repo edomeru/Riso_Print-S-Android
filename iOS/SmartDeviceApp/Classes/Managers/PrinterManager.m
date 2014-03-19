@@ -22,9 +22,44 @@
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter;
 @property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters; //redeclare to modify
 
+/**
+ Gets the list of Printers stored in DB.
+ If the list is non-empty, this PrinterManager will keep
+ a reference to this list as its list of saved printers.
+ */
+- (void)getListOfSavedPrinters;
+
+/**
+ Gets the DefaultPrinter object stored in DB.
+ If this object exists, this PrinterManager will keep a
+ reference to this DefaultPrinter object.
+ */
+- (void)getDefaultPrinter;
+
 @end
 
 @implementation PrinterManager
+
+#pragma mark - Initialization
+
+/** Designated Initializer */
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        NSLog(@"[INFO][PM] setup");
+        self.searchDelegate = nil;
+        [self getListOfSavedPrinters];
+        [self getDefaultPrinter];
+    }
+    return self;
+}
+
++ (PrinterManager*)setupManager
+{
+    return [[self alloc] init];
+}
 
 #pragma mark - Printers in DB
 

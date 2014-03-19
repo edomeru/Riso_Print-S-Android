@@ -27,6 +27,10 @@
  */
 @property (readonly, assign, nonatomic) NSUInteger countSavedPrinters;
 
+#pragma mark - Initialization
+
++ (PrinterManager*)setupManager;
+
 #pragma mark - Printers in DB
 
 /**
@@ -52,20 +56,6 @@
  @return YES if successful, NO otherwise.
  */
 - (BOOL)registerDefaultPrinter:(Printer*)printer;
-
-/**
- Gets the list of Printers stored in DB.
- If the list is non-empty, this PrinterManager will keep
- a reference to this list as its list of saved printers.
- */
-- (void)getListOfSavedPrinters;
-
-/**
- Gets the DefaultPrinter object stored in DB.
- If this object exists, this PrinterManager will keep a 
- reference to this DefaultPrinter object.
- */
-- (void)getDefaultPrinter;
 
 /**
  Gets a Printer object from the list of saved printers.

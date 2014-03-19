@@ -31,12 +31,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // setup the PrinterManager
+    
+    self.printerManager = [PrinterManager setupManager];
     self.toDeleteIndexPath = nil;
-    NSLog(@"[INFO][Printers] setup");
-    self.printerManager = [[PrinterManager alloc] init];
-    [self.printerManager getListOfSavedPrinters];
-    [self.printerManager getDefaultPrinter];
 }
 
 - (void)didReceiveMemoryWarning
