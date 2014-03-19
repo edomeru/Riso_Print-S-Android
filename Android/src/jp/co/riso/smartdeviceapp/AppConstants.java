@@ -10,4 +10,5 @@ package jp.co.riso.smartdeviceapp;
 
 public class AppConstants {
     public static long APP_SPLASH_DURATION = 3000;
+    public static String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
 }

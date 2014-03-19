@@ -23,7 +23,7 @@
                 android:layout_width="@dimen/temp_splash_logo_width"
                 android:layout_height="@dimen/temp_splash_logo_height"
                 android:contentDescription="@string/default_content_description"
-                android:src="@drawable/img_riso_splash" />
+                android:src="@drawable/temp_img_riso_splash" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -31,6 +31,8 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/border_topbottom"
                 android:gravity="center"
+                android:textAllCaps="true"
+                android:textSize="@dimen/actionbar_title_text_size"
                 android:text="@string/ids_lbl_open_in_android"
                 android:textColor="@color/theme_color_2" />
         </LinearLayout>
