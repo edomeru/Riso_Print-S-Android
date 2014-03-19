@@ -69,7 +69,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.printerManager.listSavedPrinters count];
+    return self.printerManager.countSavedPrinters;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -92,7 +92,7 @@
     [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
-    if (indexPath.row == [self.printerManager.listSavedPrinters count]-1)
+    if (indexPath.row == self.printerManager.countSavedPrinters-1)
         [cell.separator setHidden:YES];
     
     return cell;

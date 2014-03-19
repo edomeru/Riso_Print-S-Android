@@ -103,7 +103,7 @@
 - (void)setup
 {
     // setup properties
-    self.printerManager.delegate = self;
+    self.printerManager.searchDelegate = self;
     self.hasAddedPrinters = NO;
     
     // setup the header buttons
@@ -118,7 +118,7 @@
     else
         //for iPad, cannot use self.view.center because it is only partially visible (slide panel)
         self.progressIndicator.center = CGPointMake(self.container.frame.size.width/2,
-                                                    self.view.frame.size.height/2);
+                                                    self.container.frame.size.height/2);
     [self.progressIndicator setColor:[UIColor whiteColor]];
     [self.view addSubview:self.progressIndicator];
     [self.progressIndicator bringSubviewToFront:self.view];

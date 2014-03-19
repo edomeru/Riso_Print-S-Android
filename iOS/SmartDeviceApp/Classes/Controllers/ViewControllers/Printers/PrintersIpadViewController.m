@@ -97,16 +97,17 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [self.printerManager.listSavedPrinters count];
+    return self.printerManager.countSavedPrinters;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
+    PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
+                                                                                forIndexPath:indexPath];
     cell.delegate = self;
     cell.indexPath = indexPath;
     
-    Printer *printer = [self.printerManager.listSavedPrinters objectAtIndex:[indexPath item]];
+    Printer *printer = [self.printerManager getPrinterAtIndex:[indexPath item]];
     if ([self.printerManager isDefaultPrinter:printer])
     {
         self.defaultPrinterIndexPath = indexPath;

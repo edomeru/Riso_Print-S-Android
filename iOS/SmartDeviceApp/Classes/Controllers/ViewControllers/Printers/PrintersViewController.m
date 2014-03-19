@@ -50,7 +50,7 @@
 - (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
 {
     //get selected printer from list
-    Printer *selectedPrinter = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
+    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
     
     //set as default printer
     return [self.printerManager registerDefaultPrinter:selectedPrinter];

@@ -16,6 +16,14 @@
 #import "SNMPManager.h"
 #import "PListUtils.h"
 
+@interface PrinterManager ()
+
+@property (strong, nonatomic) NSMutableArray* listSavedPrinters;
+@property (strong, nonatomic) DefaultPrinter* defaultPrinter;
+@property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters; //redeclare to modify
+
+@end
+
 @implementation PrinterManager
 
 #pragma mark - Printers in DB
@@ -58,6 +66,7 @@
     {
         [newPrinter log];
         [self.listSavedPrinters addObject:newPrinter];
+        self.countSavedPrinters++;
         return YES;
     }
     else
@@ -93,6 +102,7 @@
 - (void)getListOfSavedPrinters
 {
     self.listSavedPrinters = [[DatabaseManager getObjects:E_PRINTER] mutableCopy];
+    self.countSavedPrinters = [self.listSavedPrinters count];
 }
 
 - (void)getDefaultPrinter
@@ -123,10 +133,9 @@
 - (BOOL)deletePrinterAtIndex:(NSUInteger)index
 {
     // check if the index is valid
-    NSUInteger countSavedPrinters = [self.listSavedPrinters count];
-    if (index >= countSavedPrinters)
+    if (index >= self.countSavedPrinters)
     {
-        NSLog(@"[ERROR][PM] printer index=%d >= countSavedPrinters=%d", index, countSavedPrinters);
+        NSLog(@"[ERROR][PM] printer index=%d >= countSavedPrinters=%d", index, self.countSavedPrinters);
         return NO;
     }
     
@@ -138,20 +147,22 @@
     {
         // delete the default printer first
         NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
-        if ([self deleteDefaultPrinter] == NO)
-            return NO;
+        [self deleteDefaultPrinter];
     }
     
     // delete the printer
     NSLog(@"[INFO][PM] deleting Printer %@ at row %d",printerToDelete.name, index);
-    [self.listSavedPrinters removeObjectAtIndex:index];
     if ([DatabaseManager deleteObject:printerToDelete])
+    {
+        [self.listSavedPrinters removeObjectAtIndex:index];
+        self.countSavedPrinters--;
         return YES;
+    }
     else
         return NO;
 }
 
-- (BOOL) deleteDefaultPrinter
+- (BOOL)deleteDefaultPrinter
 {
     if(self.defaultPrinter == nil)
     {
@@ -171,7 +182,7 @@
 
 - (BOOL)hasDefaultPrinter
 {
-    if (self.defaultPrinter.printer == nil)
+    if (self.defaultPrinter == nil)
         return NO;
     else
         return YES;
@@ -239,7 +250,7 @@
     //TODO: cascade the command to the SNMPManager
 }
 
-#pragma mark - SNMP Notifications
+#pragma mark - SNMP Printer Search Notifications
 
 - (void)notifyPrinterFound:(NSNotification*)notif
 {
@@ -255,7 +266,7 @@
         // this is an old printer
         // update the UI (UI thread)
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.delegate updateForOldPrinter:printerInfoCapabilities.ip
+            [weakSelf.searchDelegate updateForOldPrinter:printerInfoCapabilities.ip
                                           withName:printerInfoCapabilities.name];
         });
     }
@@ -264,7 +275,7 @@
         // this is a new printer
         // update the UI (UI thread)
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.delegate updateForNewPrinter:printerInfoCapabilities];
+            [weakSelf.searchDelegate updateForNewPrinter:printerInfoCapabilities];
         });
     }
 }
@@ -277,7 +288,7 @@
     
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.delegate searchEnded];
+        [weakSelf.searchDelegate searchEnded];
     });
 }
 

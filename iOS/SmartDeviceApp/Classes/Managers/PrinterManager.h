@@ -15,9 +15,17 @@
 
 @interface PrinterManager : NSObject
 
-@property (weak, nonatomic) id<PrinterSearchDelegate> delegate;
-@property (strong, nonatomic) NSMutableArray* listSavedPrinters;
-@property (strong, nonatomic) DefaultPrinter* defaultPrinter;
+/** 
+ UIViewController for the SNMP search operations.
+ The delegate receives the update that a printer was found or when
+ the search has ended.
+ */
+@property (weak, nonatomic) id<PrinterSearchDelegate> searchDelegate;
+
+/**
+ Number of saved printers held by the PrinterManager.
+ */
+@property (readonly, assign, nonatomic) NSUInteger countSavedPrinters;
 
 #pragma mark - Printers in DB
 
@@ -67,6 +75,13 @@
  @return Printer* object or nil if the index is not valid
  */
 - (Printer*)getPrinterAtIndex:(NSUInteger)index;
+
+/**
+ Removes the defaultprinter record
+ 
+ @return YES if successful, NO otherwise.
+ */
+- (BOOL) deleteDefaultPrinter;
 
 /**
  Removes a Printer object from the DB. If this Printer object
@@ -143,10 +158,4 @@
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
 
-/**
-Removes the defaultprinter record
- 
- @return YES if successful, NO otherwise.
- */
-- (BOOL) deleteDefaultPrinter;
 @end
