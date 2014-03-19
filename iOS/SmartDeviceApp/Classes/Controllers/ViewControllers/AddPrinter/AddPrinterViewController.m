@@ -103,6 +103,7 @@
 - (void)setup
 {
     // setup properties
+    self.printerManager = [PrinterManager sharedPrinterManager];
     self.printerManager.searchDelegate = self;
     self.hasAddedPrinters = NO;
     

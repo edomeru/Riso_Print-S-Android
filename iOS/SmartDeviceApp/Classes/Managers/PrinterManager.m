@@ -16,6 +16,8 @@
 #import "SNMPManager.h"
 #import "PListUtils.h"
 
+static PrinterManager* sharedPrinterManager = nil;
+
 @interface PrinterManager ()
 
 @property (strong, nonatomic) NSMutableArray* listSavedPrinters;
@@ -49,16 +51,26 @@
     if (self)
     {
         NSLog(@"[INFO][PM] setup");
+        
         self.searchDelegate = nil;
+        
+        NSLog(@"[INFO][PM] getting printers from DB");
         [self getListOfSavedPrinters];
+        
+        NSLog(@"[INFO][PM] getting default printer from DB");
         [self getDefaultPrinter];
     }
     return self;
 }
 
-+ (PrinterManager*)setupManager
++ (PrinterManager*)sharedPrinterManager
 {
-    return [[self alloc] init];
+    @synchronized(self)
+    {
+        if (sharedPrinterManager == nil)
+            sharedPrinterManager = [[self alloc] init];
+    }
+    return sharedPrinterManager;
 }
 
 #pragma mark - Printers in DB

@@ -32,7 +32,7 @@
 {
     [super viewDidLoad];
     
-    self.printerManager = [PrinterManager setupManager];
+    self.printerManager = [PrinterManager sharedPrinterManager];
     self.toDeleteIndexPath = nil;
 }
 

@@ -29,7 +29,11 @@
 
 #pragma mark - Initialization
 
-+ (PrinterManager*)setupManager;
+/**
+ Gets access to the singleton PrinterManager object.
+ If the object does not exist yet, then this method creates it.
+ */
++ (PrinterManager*)sharedPrinterManager;
 
 #pragma mark - Printers in DB
 

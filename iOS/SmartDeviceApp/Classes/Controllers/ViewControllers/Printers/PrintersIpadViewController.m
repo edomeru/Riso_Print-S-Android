@@ -18,9 +18,6 @@
 #import "PrinterStatusHelper.h"
 #import "AlertUtils.h"
 
-#define SEGUE_TO_ADD_PRINTER    @"PrintersIpad-AddPrinter"
-#define SEGUE_TO_PRINTER_SEARCH @"PrintersIpad-PrinterSearch"
-
 @interface PrintersIpadViewController ()
 
 @property (strong, nonatomic) PrinterManager* printerManager;
@@ -235,21 +232,6 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
-    {
-        AddPrinterViewController* destController = [segue destinationViewController];
-        
-        //give the child screen a reference to the printer manager
-        destController.printerManager = self.printerManager;
-    }
-    
-    if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
-    {
-        PrinterSearchViewController* destController = [segue destinationViewController];
-        
-        //give the child screen a reference to the printer manager
-        destController.printerManager = self.printerManager;
-    }
 }
 
 - (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
