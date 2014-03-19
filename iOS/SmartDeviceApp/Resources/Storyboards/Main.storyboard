@@ -1438,11 +1438,11 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="PrinterCell" id="C8K-fM-PVD" userLabel="PrinterCell" customClass="PrinterCell">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="PrinterCell" id="C8K-fM-PVD" userLabel="PrinterCell" customClass="PrinterCell">
                                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" horizontalCompressionResistancePriority="718" tableViewCell="C8K-fM-PVD" id="yJX-Vz-3ka">
-                                                    <rect key="frame" x="0.0" y="0.0" width="300" height="44"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PrinterOfflineStatusIcon" highlightedImage="PrinterOnlineStatusIcon" translatesAutoresizingMaskIntoConstraints="NO" id="rJB-WH-qpf" customClass="PrinterStatusView">
@@ -1450,14 +1450,14 @@
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         </imageView>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BVA-iB-fru" userLabel="Name">
-                                                            <rect key="frame" x="40" y="11" width="260" height="21"/>
+                                                            <rect key="frame" x="40" y="11" width="280" height="21"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jZk-UU-XZR">
-                                                            <rect key="frame" x="242" y="0.0" width="58" height="44"/>
+                                                            <rect key="frame" x="262" y="0.0" width="58" height="44"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" red="0.97254901960784312" green="0.29411764705882354" blue="0.29411764705882354" alpha="1" colorSpace="calibratedRGB"/>
                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -1468,16 +1468,25 @@
                                                                 <action selector="deleteButtonAction:" destination="jTA-Cg-WoR" eventType="touchUpInside" id="Jyr-4X-fWF"/>
                                                             </connections>
                                                         </button>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="DisclosureIcon" translatesAutoresizingMaskIntoConstraints="NO" id="UoX-YQ-VNL" userLabel="Image-Disclosure Indicator">
+                                                            <rect key="frame" x="288" y="11" width="22" height="22"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="22" id="cDM-CO-02z"/>
+                                                                <constraint firstAttribute="height" constant="22" id="l78-uh-tmZ"/>
+                                                            </constraints>
+                                                        </imageView>
                                                         <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="fGJ-hZ-slT" userLabel="Separator">
-                                                            <rect key="frame" x="40" y="42" width="310" height="1"/>
+                                                            <rect key="frame" x="40" y="42" width="280" height="1"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
                                                         </view>
                                                     </subviews>
                                                     <gestureRecognizers/>
                                                     <constraints>
-                                                        <constraint firstAttribute="trailing" secondItem="fGJ-hZ-slT" secondAttribute="trailing" constant="-50" id="1bs-dm-YGi"/>
+                                                        <constraint firstAttribute="trailing" secondItem="fGJ-hZ-slT" secondAttribute="trailing" id="1bs-dm-YGi"/>
                                                         <constraint firstItem="jZk-UU-XZR" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" id="Bff-uC-BG0"/>
+                                                        <constraint firstAttribute="centerY" secondItem="UoX-YQ-VNL" secondAttribute="centerY" id="Bgp-SU-TGw"/>
                                                         <constraint firstAttribute="trailing" secondItem="BVA-iB-fru" secondAttribute="trailing" id="PM6-km-mMB"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="leading" secondItem="rJB-WH-qpf" secondAttribute="trailing" constant="3" id="QBJ-II-uY9"/>
                                                         <constraint firstItem="fGJ-hZ-slT" firstAttribute="top" secondItem="BVA-iB-fru" secondAttribute="bottom" constant="10" id="R9N-ZQ-D4q"/>
@@ -1488,21 +1497,21 @@
                                                         <constraint firstAttribute="centerY" secondItem="rJB-WH-qpf" secondAttribute="centerY" id="hHm-6j-Lce"/>
                                                         <constraint firstAttribute="trailing" secondItem="jZk-UU-XZR" secondAttribute="trailing" id="isA-wU-8Hc"/>
                                                         <constraint firstItem="rJB-WH-qpf" firstAttribute="leading" secondItem="yJX-Vz-3ka" secondAttribute="leading" constant="7" id="j2N-gc-PAA"/>
+                                                        <constraint firstAttribute="trailing" secondItem="UoX-YQ-VNL" secondAttribute="trailing" constant="10" id="lWs-cB-Pv8"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="11" id="qyW-HC-lZt"/>
                                                     </constraints>
-                                                    <connections>
-                                                        <outletCollection property="gestureRecognizers" destination="YWv-Uw-8kL" appends="YES" id="3Vz-9D-Ze3"/>
-                                                    </connections>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                 <gestureRecognizers/>
                                                 <connections>
+                                                    <outlet property="accessoryView" destination="UoX-YQ-VNL" id="w2k-lb-yxx"/>
                                                     <outlet property="deleteButton" destination="jZk-UU-XZR" id="byW-aQ-ZRp"/>
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="rJB-WH-qpf" id="YhY-j0-8dY"/>
                                                     <outlet property="separator" destination="fGJ-hZ-slT" id="G9k-Xa-iLb"/>
                                                     <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="SOc-Og-K3j"/>
                                                     <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="CF6-TP-3SW"/>
+                                                    <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="T1q-rt-9bf"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
@@ -1548,26 +1557,26 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7EE-4m-YZw" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="YWv-Uw-8kL" userLabel="Tap Cell">
+                <swipeGestureRecognizer direction="right" id="3yy-Wb-ueD" userLabel="Swipe Right Printer Cell">
                     <connections>
-                        <action selector="onTapPrinterCell:" destination="jTA-Cg-WoR" id="1jA-OF-ho3"/>
+                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="AKR-hi-45I"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <tapGestureRecognizer id="r2U-Vk-eVm" userLabel="Tap Table View">
+                    <connections>
+                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="Ut5-0V-Deo"/>
                     </connections>
                 </tapGestureRecognizer>
-                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Accessory">
-                    <connections>
-                        <action selector="onTapPrinterCellDisclosure:" destination="jTA-Cg-WoR" id="JJh-CQ-p3m"/>
-                    </connections>
-                </tapGestureRecognizer>
-                <tapGestureRecognizer id="r2U-Vk-eVm">
-                    <connections>
-                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="jR0-Du-6Wy"/>
-                    </connections>
-                </tapGestureRecognizer>
-                <swipeGestureRecognizer direction="left" id="U8N-P0-69T">
+                <swipeGestureRecognizer direction="left" id="U8N-P0-69T" userLabel="Swipe Left Printer Cell">
                     <connections>
                         <action selector="swipePrinterCellAction:" destination="jTA-Cg-WoR" id="Gt1-2q-Uxk"/>
                     </connections>
                 </swipeGestureRecognizer>
+                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Printer Cell">
+                    <connections>
+                        <action selector="tapPrinterCellAction:" destination="jTA-Cg-WoR" id="6e8-XS-gQb"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="268" y="1457"/>
         </scene>
@@ -1715,6 +1724,7 @@
         <image name="BackPressedIcon" width="30" height="30"/>
         <image name="DefaultPrintSettingsIcon" width="30" height="30"/>
         <image name="DeletePrinterIcon" width="35" height="35"/>
+        <image name="DisclosureIcon" width="16" height="22"/>
         <image name="MainMenuNormalIcon" width="30" height="30"/>
         <image name="MainMenuPressedIcon" width="30" height="30"/>
         <image name="PrintSettingsNormalIcon" width="30" height="30"/>
