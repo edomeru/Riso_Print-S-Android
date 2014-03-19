@@ -25,6 +25,12 @@ public class Printer implements Parcelable {
     private boolean mBookletBinding;
     private boolean mStaple;
     private boolean mBind;
+
+    public Printer(int id, String name) {
+        super();
+        mId = id;
+        mName = name;
+    }
     
     public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
         mName = name;

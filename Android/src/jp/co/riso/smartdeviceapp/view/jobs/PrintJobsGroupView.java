@@ -89,7 +89,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             TextView printJobGroupText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupText);
             Button printJobGroupDelete = (Button) mPrintGroupView.findViewById(R.id.printJobGroupDelete);
             
-            printJobGroupText.setText(mPrinter.getPrinterName());
+            printJobGroupText.setText(mPrinter.getName());
             
             printJobGroupDelete.setTag(mPrinter);
             printJobGroupLayout.setOnClickListener(this);
@@ -193,7 +193,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     // display delete print jobs dialog when clicked
     private void deleteJobGroup(View v) {
-        int printerId = ((Printer) v.getTag()).getPrinterId();
+        int printerId = ((Printer) v.getTag()).getId();
         PrintJobsDeleteDialog dialog = PrintJobsDeleteDialog.newInstance(printerId);
         dialog.setListener(this);
         DialogUtils.displayDialog((Activity) mContext, TAG, dialog);

@@ -78,7 +78,7 @@ public class PrintJobsColumnView extends LinearLayout {
         
         List<PrintJob> jobs = new ArrayList<PrintJob>();
         Printer printer = mPrinterIds.get(mJobGroupCtr);
-        int pid = printer.getPrinterId();
+        int pid = printer.getId();
         // get printer's jobs list with printerid==pid
         // printJobs is ordered according to prn_id in query
         for (int i = mJobCtr; i < mPrintJobs.size(); i++) {
