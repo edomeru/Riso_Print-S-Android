@@ -92,8 +92,6 @@
 #pragma mark - IBAction
 - (IBAction)tapPrinterCellAction:(id)sender
 {
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    self.selectedPrinterIndexPath = indexPath;
     [self removeDeleteState];
     
 }
