@@ -44,7 +44,7 @@ namespace SmartDeviceApp
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 
 #if DEBUG
@@ -83,6 +83,7 @@ namespace SmartDeviceApp
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 rootFrame.Navigate(typeof(PrintPreviewPage), e.Arguments);
+                await MainController.InitializeSamplePdf(); // TODO: For deletion, used for testing
             }
             // Ensure the current window is active
             Window.Current.Activate();
@@ -117,13 +118,13 @@ namespace SmartDeviceApp
                 DispatcherHelper.Initialize();
             }
 
-            if (rootFrame.Content == null)
-            {
+            //if (rootFrame.Content == null)
+            //{
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(HomePage));
-            }
+                rootFrame.Navigate(typeof(PrintPreviewPage));
+            //}
 
             MainController.FileActivationHandler(e);
 

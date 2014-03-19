@@ -9,7 +9,7 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class DefaultsUtility
     {
-        public static PrintSetting createDefaultPrintSetting()
+        public static PrintSetting CreateDefaultPrintSetting()
         {
             PrintSetting defaultPrintSetting = new PrintSetting();
 

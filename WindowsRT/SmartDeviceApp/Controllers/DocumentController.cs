@@ -12,6 +12,7 @@
 
 using SmartDeviceApp.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Data.Pdf;
@@ -24,11 +25,26 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly DocumentController _instance = new DocumentController();
 
-        private const int MAX_PAGES = 7;
-        private const string TEMP_PDF_NAME = "temp.pdf";
+        private const int MAX_PAGES = 5;
+        private const string TEMP_PDF_NAME = "tempDoc.pdf";
         private const string FORMAT_IMAGE_FILENAME = "image{0:0000}.jpg";
 
         private Document _document;
+
+        /// <summary>
+        /// Number of pages of the actual PDF file
+        /// </summary>
+        public uint PageCount { get; private set; }
+
+        /// <summary>
+        /// File name of the actual PDF file
+        /// </summary>
+        public string FileName { get; private set; }
+
+        /// <summary>
+        /// Status if PDF file is successfully loaded
+        /// </summary>
+        public bool IsFileLoaded { get; private set; }
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -37,17 +53,20 @@ namespace SmartDeviceApp.Controllers
 
         private DocumentController() {}
 
+        /// <summary>
+        /// Singleton instance
+        /// </summary>
         public static DocumentController Instance
         {
             get { return _instance; }
         }
 
         /// <summary>
-        /// Marks the entry point of PDF processing
+        /// Copies the PDF to AppData temporary store and opens it
         /// </summary>
-        /// <param name="filePath">File path of the PDF file</param>
-        /// <returns>true when loading is successful. Otherwise, false.</returns>
-        public async void Load(StorageFile file)
+        /// <param name="file">source file path of the PDF file</param>
+        /// <returns>task</returns>
+        public async Task Load(StorageFile file)
         {
             if (file == null)
             {
@@ -60,28 +79,28 @@ namespace SmartDeviceApp.Controllers
             {
                 // Copy to AppData temporary store
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                StorageFile tempPdfFile =  await file.CopyAsync(tempFolder, TEMP_PDF_NAME, NameCollisionOption.ReplaceExisting);
+                StorageFile tempPdfFile =  await file.CopyAsync(tempFolder, TEMP_PDF_NAME,
+                    NameCollisionOption.ReplaceExisting);
 
-                // Load PDF
+                // Open and load PDF
                 PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(tempPdfFile);
                 _document = new Document(file.Path, tempPdfFile.Path, pdfDocument);
+                PageCount = pdfDocument.PageCount;
+                FileName = file.Name;
+                IsFileLoaded = true;
             }
             catch (FileNotFoundException)
             {
                 // File cannot be loaded
-                PrintPreviewController.Instance.OnLoadDocumentFinished(false);
+                IsFileLoaded = false;
                 return;
             }
-
-            // Send notification after PDF is opened
-            PrintPreviewController.Instance.OnLoadDocumentFinished(true);
-
-            GenerateLogicalPages(0, false); // Initial page number is 0
         }
 
         /// <summary>
-        /// Marks the end of PDF processing
+        /// Clean up loaded PDF and images
         /// </summary>
+        /// <returns>task</returns>
         public async Task Unload()
         {
             await DeleteTempFiles();
@@ -89,20 +108,29 @@ namespace SmartDeviceApp.Controllers
             {
                 _document = null;
             }
+            IsFileLoaded = false;
         }
 
         /// <summary>
-        /// Generates N pages to JPEG then saves in AppData/temp
+        /// Generates N pages to JPEG then saves in AppData temporary store
         /// </summary>
         /// <param name="basePageIndex">requested page number</param>
-        /// <param name="enableSendPage">enable send page to caller</param>
-        public async void GenerateLogicalPages(int basePageIndex, bool enableSendPage)
+        /// <param name="numPages">number of pages to generate</param>
+        /// <returns>task</returns>
+        public async Task<List<LogicalPage>> GenerateLogicalPages(int basePageIndex, int numPages)
         {
-            int pageCount = (int) _document.PdfDocument.PageCount;
+            if (!IsFileLoaded)
+            {
+                return null;
+            }
+
+            int pageCount = (int)_document.PdfDocument.PageCount;
             if (basePageIndex < 0 || basePageIndex > pageCount - 1)
             {
-                return;
+                return null;
             }
+
+            List<LogicalPage> logicalPages = new List<LogicalPage>();
 
             // Compute for start page index
             int midPt = MAX_PAGES / 2; // Round down to the nearest whole number
@@ -118,56 +146,92 @@ namespace SmartDeviceApp.Controllers
             {
                 startPageIndex = 0;
             }
-            
+
             int generatedPageCount = 0;
             int currPageIndex = startPageIndex;
             do
             {
-                await GenerateLogicalPage(currPageIndex);
+                LogicalPage logicalPage = await GenerateLogicalPage(currPageIndex);
+                if (logicalPage != null)
+                {
+                    if (currPageIndex >= basePageIndex && numPages > 0)
+                    {
+                        // Add only to result if requested
+                        logicalPages.Add(logicalPage);
+                        --numPages;
+                    }
+                    ++generatedPageCount;
+                }
                 ++currPageIndex;
-                ++generatedPageCount;
             } while (generatedPageCount < MAX_PAGES && currPageIndex < pageCount);
 
-            if (enableSendPage)
-            {
-                PrintPreviewController.Instance.OnReceiveLogicalPage(_document.LogicalPages[basePageIndex]);
-            }
+            return logicalPages;
         }
 
         /// <summary>
-        /// Generates a page to JPEG then saved to AppData/temp
+        /// Generates a page to JPEG then saved to AppData temporary store
         /// </summary>
         /// <param name="pageIndex">page index</param>
-        private async Task GenerateLogicalPage(int pageIndex)
+        /// <returns>task</returns>
+        private async Task<LogicalPage> GenerateLogicalPage(int pageIndex)
         {
             var pageCount = _document.PdfDocument.PageCount;
             if (pageIndex < 0 || pageIndex > pageCount - 1)
             {
-                return;
+                return null;
             }
 
             // Convert page to JPEG
+            LogicalPage logicalPage = null;
             try
             {
                 using (PdfPage pdfPage = _document.PdfDocument.GetPage((uint)pageIndex))
                 {
                     await pdfPage.PreparePageAsync();
+                    StorageFile jpegFile = null;
+                    bool jpegFileExists = false;
+
+                    StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+                    string fileName = String.Format(FORMAT_IMAGE_FILENAME, pageIndex);
+
+                    // Check if page image exists in AppData
                     try
                     {
-                        StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                        // TODO: Check if saving image to AppData is necessary
-                        StorageFile jpgFile = await tempFolder.CreateFileAsync(String.Format(FORMAT_IMAGE_FILENAME, pageIndex),
-                            CreationCollisionOption.FailIfExists);
-                        using (IRandomAccessStream raStream = await jpgFile.OpenAsync(FileAccessMode.ReadWrite))
-                        {
-                            await pdfPage.RenderToStreamAsync(raStream);
-                            LogicalPage logicalPage = new LogicalPage((uint)pageIndex, jpgFile.Name, pdfPage.Size, pdfPage.Rotation);
-                            _document.AddLogicalPage(pageIndex, logicalPage);
-                        }
+                        StorageFile testJpegFile = await tempFolder.GetFileAsync(fileName);
+                        jpegFileExists = true;
+                        jpegFile = testJpegFile;
                     }
                     catch (Exception)
                     {
-                        // JPEG already exists in temp folder
+                        // JPEG file does not exist
+                    }
+
+                    if (!jpegFileExists)
+                    {
+                        try
+                        {
+                            jpegFile = await tempFolder.CreateFileAsync(fileName,
+                                CreationCollisionOption.ReplaceExisting);
+                            using (IRandomAccessStream raStream =
+                                await jpegFile.OpenAsync(FileAccessMode.ReadWrite))
+                            {
+                                await pdfPage.RenderToStreamAsync(raStream);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // Bizzare error
+                        }
+                    }
+
+                    if (jpegFile != null)
+                    {
+                        logicalPage = new LogicalPage((uint)pageIndex, jpegFile.Name, pdfPage.Size,
+                            pdfPage.Rotation);
+                        if (!_document.LogicalPages.ContainsKey(pageIndex))
+                        {
+                            _document.AddLogicalPage(pageIndex, logicalPage);
+                        }
                     }
                 }
             }
@@ -175,11 +239,14 @@ namespace SmartDeviceApp.Controllers
             {
                 // Error in reading PDF
             }
+
+            return logicalPage;
         }
 
         /// <summary>
         /// Deletes all files in AppData temporary store
         /// </summary>
+        /// <returns>task</returns>
         private async Task DeleteTempFiles()
         {
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;

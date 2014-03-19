@@ -36,7 +36,7 @@ namespace SmartDeviceApp.Controllers
         /// Initiates loading of PDF document
         /// </summary>
         /// <param name="e"></param>
-        public static void FileActivationHandler(FileActivatedEventArgs e)
+        public async static void FileActivationHandler(FileActivatedEventArgs e)
         {
             // Should handle only one file
             if (e.Files.Count != 1)
@@ -44,8 +44,8 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            DocumentController.Instance.Load(e.Files[0] as StorageFile);
-            PrintPreviewController.Instance.Initialize();
+            await DocumentController.Instance.Load(e.Files[0] as StorageFile);
+            await PrintPreviewController.Instance.Initialize();
         }
 
         /// <summary>
@@ -55,6 +55,17 @@ namespace SmartDeviceApp.Controllers
         {
             DatabaseController.Instance.Initialize();
         }
+
+        #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
+
+        public static async Task InitializeSamplePdf()
+        {
+            StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
+            await DocumentController.Instance.Load(samplePdf);
+            await PrintPreviewController.Instance.Initialize();
+        }
+
+        #endregion TEST - Sample PDF Page - FOR DELETION -----------------------------------------------------------------------------
 
     }
 }

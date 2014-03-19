@@ -88,7 +88,7 @@
                         <RowDefinition Height="{StaticResource SIZE_PageNumberTextHeight}"/>
                     </Grid.RowDefinitions>
                     <controls:TwoPageControl Grid.Row="0" RightPageImage="{Binding Path=RightPageImage}" LeftPageImage="{Binding Path=LeftPageImage}" PageViewMode="{Binding Path=PageViewMode}" Loaded="OnPageAreaLoaded"/>
-                    <Slider x:Name="pageNumberSlider" Grid.Row="1" Style="{StaticResource STYLE_PageNumberSlider}" IsEnabled="{Binding Path=IsPageNumberSliderEnabled}" Maximum="{Binding Path=PageTotal}" Value="{Binding Path=CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}">
+                    <Slider x:Name="pageNumberSlider" Grid.Row="1" Style="{StaticResource STYLE_PageNumberSlider}" IsEnabled="{Binding Path=IsPageNumberSliderEnabled}" Maximum="{Binding Path=PageTotal, Mode=TwoWay}" Value="{Binding Path=CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}">
                         <Interactivity:Interaction.Behaviors>
                             <Core:EventTriggerBehavior EventName="ValueChanged">
                                 <Core:InvokeCommandAction Command="{Binding Path=PageNumberSliderValueChange}" CommandParameter="{Binding ElementName=pageNumberSlider, Path=Value}"/>

@@ -235,13 +235,17 @@ namespace SmartDeviceApp.Controllers
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            DefaultPrinter defaultPrinter = null;
-            Printer printer = null;
+            DefaultPrinter defaultPrinter = new DefaultPrinter();
+            Printer printer = new Printer();
             try
             {
-                defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
-                printer = await (db.GetAsync<Printer>(defaultPrinter.PrinterId));
-                printer.IsDefault = true;
+                int defaultPrinterCount = await db.Table<DefaultPrinter>().CountAsync();
+                if (defaultPrinterCount > 0)
+                {
+                    defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
+                    printer = await (db.GetAsync<Printer>(defaultPrinter.PrinterId));
+                    printer.IsDefault = true;
+                }
             }
             catch
             {

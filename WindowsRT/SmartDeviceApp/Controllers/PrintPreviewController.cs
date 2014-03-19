@@ -10,21 +10,19 @@
 //  ----------------------------------------------------------------------
 //
 
+using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Graphics.Imaging;
-using SmartDeviceApp.Common.Utilities;
-using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -32,15 +30,13 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
-        private bool _isInitPageLoaded;
-        private bool _isPrintSettingsAvailable;
-
-        private int _currLogicalPageIndex;
-        private int _currPreviewPageIndex;
+        private const string TEMP_IMAGE_NAME = "tempPage.jpg";
 
         private Printer _selectedPrinter;
-        private int _requestPageCount;
-        private int _pagesPerSheet;
+        private int _pagesPerSheet = 1;
+        private List<LogicalPage> _logicalPages;
+        private uint _previewPageTotal;
+        private PageViewMode _pageViewMode;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -49,140 +45,157 @@ namespace SmartDeviceApp.Controllers
 
         private PrintPreviewController() { }
 
+        /// <summary>
+        /// Singleton instance
+        /// </summary>
         public static PrintPreviewController Instance
         {
             get { return _instance; }
         }
 
-        public void Initialize()
-        {
-            // TODO: Not sure what to do
-
-            _isInitPageLoaded = false;
-            _isPrintSettingsAvailable = false;
-            _currLogicalPageIndex = 0;
-            _currPreviewPageIndex = 0;
-            _selectedPrinter = null;
-            _requestPageCount = 0;
-        }
-
-        public void Cleanup()
-        {
-            // TODO: Unregister stuff???
-
-            _isInitPageLoaded = false;
-            _isPrintSettingsAvailable = false;
-            _currLogicalPageIndex = 0;
-            _currPreviewPageIndex = 0;
-            _selectedPrinter = null;
-            _requestPageCount = 0;
-        }
-
         /// <summary>
-        /// Handles load document processing result
+        /// Notifies view model of PDF load result and starts query of printer and print settings
         /// </summary>
-        /// <param name="message">message containing the result</param>
-        public async void OnLoadDocumentFinished(bool isPdfLoaded)
+        /// <returns>Task</returns>
+        public async Task Initialize()
         {
-            if (isPdfLoaded)
-            {
-                _isInitPageLoaded = true;
+            _selectedPrinter = null;
 
-                // Get default printer and print settings from database
-                _selectedPrinter = await DatabaseController.Instance.GetDefaultPrinter();
-                if (_selectedPrinter.Id < 0 || !_selectedPrinter.IsDefault)
-                {
-                    // No default printer
-                    _selectedPrinter.PrintSetting = DefaultsUtility.createDefaultPrintSetting();
-                    OnReceivePrintSettings();
-                }
-                else
-                {
-                    // Get print settings
-                    _selectedPrinter.PrintSetting =
-                       await DatabaseController.Instance.GetPrintSetting(_selectedPrinter.Id);
-                    if (_selectedPrinter.PrintSetting == null)
-                    {
-                        _selectedPrinter.PrintSetting = DefaultsUtility.createDefaultPrintSetting();
-                    }
-                    OnReceivePrintSettings();
-                }
+            // Get print settings if document is successfully loaded
+            if (DocumentController.Instance.IsFileLoaded)
+            {
+                _previewPageTotal = DocumentController.Instance.PageCount;
+                Messenger.Default.Send<DocumentMessage>(new DocumentMessage(true, DocumentController.Instance.FileName) );
+
+                // Get print settings
+                await GetPrintAndPrintSetting();
+                OnPrintSettingUpdated();
             }
             else
             {
-                // Show error message to PrintPreviewPage
+                // Notify error
             }
         }
 
         /// <summary>
-        /// Handle print settings
+        /// Clean up
         /// </summary>
-        public void OnReceivePrintSettings()
+        public void Cleanup()
         {
-            _isPrintSettingsAvailable = true;
-            _requestPageCount = 0;
+            _selectedPrinter = null;
+        }
 
-            // Save print settings to cache (internal variable only)
-            // Check pagination settings then request pages
+        /// <summary>
+        /// Retrieves printer and print settings.
+        /// If no default printer is found, a dummy printer (with ID = -1) is set as
+        /// selected printer and default print settings are assigned.
+        /// </summary>
+        /// <returns>task</returns>
+        public async Task GetPrintAndPrintSetting()
+        {
+            // Get default printer and print settings from database
+            _selectedPrinter = await DatabaseController.Instance.GetDefaultPrinter();
+            if (_selectedPrinter.Id < 0 || !_selectedPrinter.IsDefault)
+            {
+                // No default printer
+                _selectedPrinter.PrintSetting = DefaultsUtility.CreateDefaultPrintSetting();
+            }
+            else
+            {
+                // Get print settings
+                _selectedPrinter.PrintSetting =
+                    await DatabaseController.Instance.GetPrintSetting(_selectedPrinter.Id);
+                if (_selectedPrinter.PrintSetting == null)
+                {
+                    _selectedPrinter.PrintSetting = DefaultsUtility.CreateDefaultPrintSetting();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks for view related print setting and notifies view model
+        /// </summary>
+        private void OnPrintSettingUpdated()
+        {
+            if (_selectedPrinter.PrintSetting.Booklet)
+            {
+                _pageViewMode = PageViewMode.TwoPageView;
+            }
+            else
+            {
+                _pageViewMode = PageViewMode.SinglePageView;
+            }
+
             _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
                 .Convert(_selectedPrinter.PrintSetting.Imposition);
-            for (int i = 0; i < _pagesPerSheet; ++i)
-            {
-                DocumentController.Instance.GenerateLogicalPages(_currLogicalPageIndex, true);
-                _currLogicalPageIndex += i;
-            }
-        }
 
-        /// <summary>
-        /// Handles load document processing result
-        /// </summary>
-        /// <param name="message">message containing the result</param>
-        public async void OnReceiveLogicalPage(LogicalPage logicalPage)
-        {
-            if (logicalPage == null)
-            {
-                return;
-            }
-
-            ++_requestPageCount;
-            _currLogicalPageIndex = (int)logicalPage.PageIndex;
-
-            if (_requestPageCount == _pagesPerSheet)
-            {
-                await ApplyPrintSettings(logicalPage);
-            }
+            _previewPageTotal = (uint)Math.Ceiling(
+                (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
+            Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
+                _pageViewMode));
         }
 
         #region Preview Page Navigation
 
-        public void NextPage()
+        /// <summary>
+        /// Requests for LogicalPages and then applies print setting for the target page only
+        /// </summary>
+        /// <param name="targetPreviewPageIndex">requested page index</param>
+        /// <returns>task</returns>
+        public async Task LoadPage(int targetPreviewPageIndex)
         {
-            // TODO: Consider pagination
-            DocumentController.Instance.GenerateLogicalPages(_currLogicalPageIndex + 1, true);
+            int targetLogicalPageIndex = targetPreviewPageIndex * _pagesPerSheet;
+            _logicalPages =
+                await DocumentController.Instance.GenerateLogicalPages(targetPreviewPageIndex,
+                    _pagesPerSheet);
+            await ApplyPrintSettings();
         }
 
-        public void PreviousPage()
+        /*
+        /// <summary>
+        /// Requests for LogicalPages near the next page
+        /// and then applies print settings for the target pages only
+        /// </summary>
+        /// <param name="targetPreviewPageIndex"></param>
+        /// <returns>task</returns>
+        public async Task NextPage(int targetPreviewPageIndex)
         {
-            // TODO: Consider pagination
-            DocumentController.Instance.GenerateLogicalPages(_currLogicalPageIndex - 1, true);
+            int targetLogicalPageIndex = _currLogicalPageIndex + _pagesPerSheet;
+            if (targetPreviewPageIndex == targetLogicalPageIndex)
+            {
+                _logicalPages = await DocumentController.Instance.GenerateLogicalPages(
+                    targetLogicalPageIndex, _pagesPerSheet);
+            }
+            await ApplyPrintSettings();
         }
+
+        public async Task PreviousPage(int targetPreviewPageIndex)
+        {
+            int targetLogicalPageIndex = _currLogicalPageIndex - _pagesPerSheet;
+            if (targetPreviewPageIndex == targetLogicalPageIndex)
+            {
+                _logicalPages = await DocumentController.Instance.GenerateLogicalPages(
+                    targetLogicalPageIndex, _pagesPerSheet);
+            }
+            await ApplyPrintSettings();
+        }
+         * */
 
         #endregion Preview Page Navigation
 
         #region Apply Print Settings
 
         /// <summary>
-        /// Applies print settings to logical page then creates a preview page
+        /// Applies print settings to LogicalPage(s) then creates a PreviewPage (BitmapImage)
         /// </summary>
-        /// <param name="pageIndex">page index</param>
-        /// <returns>task with a bitmap image as a result</returns>
-        private async Task<BitmapImage> ApplyPrintSettings(LogicalPage logicalPage)
+        /// <returns>task</returns>
+        private async Task ApplyPrintSettings()
         {
             BitmapImage pageImage = new BitmapImage();
 
-            string pageImagePath = logicalPage.Name; // TODO: Update
+            string pageImageFileName = _logicalPages[0].Name; // TODO: Update for Imposition
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile jpgFile = await tempFolder.GetFileAsync(pageImagePath);
+            StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
             using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
             {
                 BitmapDecoder decoder = await BitmapDecoder.CreateAsync(raStream);
@@ -206,6 +219,16 @@ namespace SmartDeviceApp.Controllers
                 enc.BitmapTransform.Bounds = bounds;
                 */
 
+                // Apply Paper Size
+
+                // Apply Scale to Fit
+
+                // Apply Imposition and Imposition Order
+
+                // Apply Staple
+
+                // Apply Punch
+
                 PixelDataProvider pixelData = await decoder.GetPixelDataAsync(
                     decoder.BitmapPixelFormat,
                     decoder.BitmapAlphaMode,
@@ -226,34 +249,29 @@ namespace SmartDeviceApp.Controllers
                     await encoder.FlushAsync();
                 }
 
-                // Render the stream to the screen
-                BitmapImage bImg = new BitmapImage();
-                bImg.SetSource(imrasStream);
-
-                #region TEST - For Deletion ------------------------------------------------------------------------------------------------------------
-
-                // TEST for dumping into file
-                StorageFile testFile = await tempFolder.CreateFileAsync("sampleOutput.jpg");
-
-                using (var destinationStream = await testFile.OpenAsync(FileAccessMode.ReadWrite))
+                // Save output into AppData temporary store
+                StorageFile tempPageImage = await tempFolder.CreateFileAsync(TEMP_IMAGE_NAME,
+                    CreationCollisionOption.ReplaceExisting);
+                using (var destinationStream = await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    BitmapEncoder testEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, destinationStream);
-                    testEncoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
+                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destinationStream);
+                    newEncoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
                         decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY, pixelBytes);
-                    await testEncoder.FlushAsync();
+                    await newEncoder.FlushAsync();
                 }
-                /// END OF TEST
-                /// 
-                #endregion TEST - For Deletion ---------------------------------------------------------------------------------------------------------
-            }
 
-            return pageImage;
+                // Open the bitmap
+                BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+
+                // Create message and send
+                Messenger.Default.Send<PreviewPage>(new PreviewPage(bitmapImage, _logicalPages[0].Size));  // TODO: Update size
+            }
         }
 
         /// <summary>
         /// Changes the bitmap to grayscale
         /// </summary>
-        /// <param name="pixelBytes"></param>
+        /// <param name="pixelBytes">pixel bytes</param>
         private byte[] ApplyMonochrome(byte[] pixelBytes)
         {
             byte[] newPixelBytes = new byte[pixelBytes.Length];
@@ -267,7 +285,8 @@ namespace SmartDeviceApp.Controllers
 
                 byte a = pixelBytes[i + 3];
 
-                double e = (0.21 * r + 0.71 * g + 0.07 * b) * 255;
+                // Altered color factor to be equal
+                double e = (0.33 * r + 0.33 * g + 0.33 * b) * 255;
                 byte f = Convert.ToByte(e);
 
                 newPixelBytes[i] = f;
@@ -281,4 +300,29 @@ namespace SmartDeviceApp.Controllers
 
         #endregion Apply Print Settings
     }
+
+    public sealed class DocumentMessage
+    {
+        public bool IsLoaded { get; private set; }
+        public string DocTitle { get; private set; }
+
+        public DocumentMessage(bool isPdfLoaded, string docTitle)
+        {
+            IsLoaded = isPdfLoaded;
+            DocTitle = docTitle;
+        }
+    }
+
+    public sealed class PreviewInfoMessage
+    {
+        public uint PageTotal { get; private set; }
+        public PageViewMode PageViewMode { get; private set; }
+
+        public PreviewInfoMessage(uint pageTotal, PageViewMode pageViewMode)
+        {
+            PageTotal = pageTotal;
+            PageViewMode = pageViewMode;
+        }
+    }
+
 }

@@ -27,7 +27,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
-using SmartDeviceApp.DummyControllers;
+// using SmartDeviceApp.DummyControllers;
 using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.ViewModels
@@ -41,6 +41,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
+        private Grid _pageAreaGrid;
         public GestureController _gestureController; // TODO: Set to private after removing easter egg!!
         private bool _isPageNumberSliderEnabled;
         private ICommand _goToPage;
@@ -72,7 +73,10 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             _rightPageIndex = 0;
-            Messenger.Default.Register<DummyPageMessage>(this, (pageMessage) => OnPageImageLoaded(pageMessage));
+            // Messenger.Default.Register<DummyPageMessage>(this, (pageMessage) => OnPageImageLoaded(pageMessage));
+            Messenger.Default.Register<DocumentMessage>(this, (documentMessage) => OnDocumentLoaded(documentMessage));
+            Messenger.Default.Register<PreviewInfoMessage>(this, (previewInfoMessage) => OnPreviewInfoUpdated(previewInfoMessage));
+            Messenger.Default.Register<PreviewPage>(this, (previewPage) => OnPageImageLoaded(previewPage));
             Initialize();
         }
 
@@ -80,25 +84,38 @@ namespace SmartDeviceApp.ViewModels
         private void Initialize()
         {
             SetPreviewView(PreviewViewMode.PreviewViewFullScreen);
-            DocumentTitleText = DummyProvider.Instance.PDF_FILENAME;
+            /*
+            //DocumentTitleText = DummyProvider.Instance.PDF_FILENAME;
+            DocumentTitleText = DocumentController.Instance.FileName;
 
-            PageTotal = DummyProvider.Instance.TOTAL_PAGES;
-            PageViewMode = DummyProvider.Instance.PAGE_VIEW_MODE;
+            // PageTotal = DummyProvider.Instance.TOTAL_PAGES;
+            PageTotal = PrintPreviewController.Instance.PageTotal;
+            // PageViewMode = DummyProvider.Instance.PAGE_VIEW_MODE;
+            PageViewMode = PrintPreviewController.Instance.PageViewMode;
             GoToPage(0); // Go to first page
+             * */
         }
 
-        public void InitializeGestures(Grid pageAreaGrid)
+        public void SetPageAreaGrid(Grid pageAreaGrid)
         {
-            // Save page height to be used in resizing page images
-            var scalingFactor = pageAreaGrid.ActualHeight / RightPageActualSize.Height;
+            _pageAreaGrid = pageAreaGrid;
+        }
 
-            var pageAreaScrollViewer = (UIElement)pageAreaGrid.Parent; 
-            _gestureController = new GestureController(pageAreaGrid, pageAreaScrollViewer,
-                RightPageActualSize, scalingFactor,
-                new GestureController.SwipeRightDelegate(SwipeRight),
-                new GestureController.SwipeLeftDelegate(SwipeLeft));
+        public void InitializeGestures()
+        {
+            if (_pageAreaGrid != null && _gestureController == null)
+            {
+                // Save page height to be used in resizing page images
+                var scalingFactor = _pageAreaGrid.ActualHeight / RightPageActualSize.Height;
 
-            // TODO: Two-page view handling
+                var pageAreaScrollViewer = (UIElement)_pageAreaGrid.Parent;
+                _gestureController = new GestureController(_pageAreaGrid, pageAreaScrollViewer,
+                    RightPageActualSize, scalingFactor,
+                    new GestureController.SwipeRightDelegate(SwipeRight),
+                    new GestureController.SwipeLeftDelegate(SwipeLeft));
+
+                // TODO: Two-page view handling
+            }
         }
 
         private void SwipeRight()
@@ -222,7 +239,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetPreviewView(PreviewViewMode previewViewMode)
         {
-            Messenger.Default.Send<PreviewViewMode>(previewViewMode);    
+            Messenger.Default.Send<PreviewViewMode>(previewViewMode);
             switch (previewViewMode)
             {
                 case PreviewViewMode.MainMenuPaneVisible:
@@ -241,9 +258,9 @@ namespace SmartDeviceApp.ViewModels
                 {
                     EnablePreviewGestures();
                     break;
-                }                
+                }
             }
-            _previewViewMode = previewViewMode;            
+            _previewViewMode = previewViewMode;
         }
 
         private void EnablePreviewGestures()
@@ -329,12 +346,33 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        private async void OnPreviewInfoUpdated(PreviewInfoMessage printSettingMessage)
+        {
+            PageTotal = printSettingMessage.PageTotal;
+            PageViewMode = printSettingMessage.PageViewMode;
+            await GoToPage(0); // Go to first page
+        }
+
+        private void OnDocumentLoaded(DocumentMessage pdfStatusMessage)
+        {
+            if (pdfStatusMessage.IsLoaded)
+            {
+                DocumentTitleText = pdfStatusMessage.DocTitle;
+            }
+            else
+            {
+                // Signal error
+            }
+        }
+
         // TODO: Add handling for left and right pages
         // Note: For current right page only
-        private void OnPageImageLoaded(DummyPageMessage pageMessage)
+        // private void OnPageImageLoaded(DummyPageMessage pageMessage)
+        private void OnPageImageLoaded(PreviewPage previewPage)
         {
-            RightPageImage = pageMessage.PageImage;
-            RightPageActualSize = pageMessage.ActualSize;
+            RightPageImage = previewPage.PageImage;
+            RightPageActualSize = previewPage.ActualSize;
+            InitializeGestures();
         }
 
         #endregion
@@ -385,17 +423,21 @@ namespace SmartDeviceApp.ViewModels
         }
 
         // TODO: Two-page view
-        private void GoToPage(uint index)
+        private async Task GoToPage(uint index)
         {
-            DummyProvider.Instance.LoadPageImage(index);
+            //DummyProvider.Instance.LoadPageImage(index);
+            Task task = PrintPreviewController.Instance.LoadPage((int)index);
             _rightPageIndex = index;
             SetPageIndexes();
+
+            await task;
         }
         
         // TODO: Two-page view
-        private void GoToPreviousPageExecute()
+        private async void GoToPreviousPageExecute()
         {
-            DummyProvider.Instance.LoadPageImage(--_rightPageIndex);
+            // DummyProvider.Instance.LoadPageImage(--_rightPageIndex);
+            await PrintPreviewController.Instance.LoadPage((int)--_rightPageIndex);
             SetPageIndexes();
         }
 
@@ -407,9 +449,10 @@ namespace SmartDeviceApp.ViewModels
         }
 
         // TODO: Two-page view
-        private void GoToNextPageExecute()
+        private async void GoToNextPageExecute()
         {
-            DummyProvider.Instance.LoadPageImage(++_rightPageIndex);
+            // DummyProvider.Instance.LoadPageImage(++_rightPageIndex);
+            await PrintPreviewController.Instance.LoadPage((int)++_rightPageIndex);
             SetPageIndexes();
         }
 
@@ -505,8 +548,9 @@ namespace SmartDeviceApp.ViewModels
 
         private void PageNumberSliderValueChangeExecute()
         {
+            // TODO: Consider handling the event only when drag is released 
             var newValue = CurrentPageIndex; // verify 0-based
-            GoToPage(newValue);
+            GoToPage(newValue); // Not awaited ?? since crashing on await
         }
 
         #endregion
