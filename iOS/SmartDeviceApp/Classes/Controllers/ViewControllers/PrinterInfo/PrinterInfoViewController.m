@@ -18,10 +18,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet UILabel *ipAddress;
 @property (weak, nonatomic) IBOutlet UILabel *port;
-@property (weak, nonatomic) IBOutlet UILabel *onlineStatus;
+@property (weak, nonatomic) IBOutlet UILabel *printerStatus;
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
 
 @property (weak, nonatomic) Printer* printer;
+@property (weak, nonatomic) PrinterManager *printerManager;
+@property (strong, nonatomic) PrinterStatusHelper *statusHelper;
 @end
 
 @implementation PrinterInfoViewController
@@ -38,23 +40,36 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    if(self.delegate == nil)
-    {
-        NSLog(@"delegate not provided!");
-    }
+    self.printerManager = [PrinterManager sharedPrinterManager];
     
-    self.printer = [self.delegate getPrinterAtIndexPath:self.indexPath];
+    self.printer = [self.printerManager getPrinterAtIndex:self.indexPath.row];
+
     if(self.printer != nil)
     {
         self.printerName.text = self.printer.name;
         self.ipAddress.text = self.printer.ip_address;
         self.port.text = [self.printer.port stringValue];
-        [self setStatus:self.printer.onlineStatus.boolValue];
+        [self setStatus:self.onlineStatus];
         if(self.isDefaultPrinter == YES)
         {
             self.defaultPrinterSwitch.on = YES;
         }
     }
+    
+    self.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:self.printer.ip_address];
+    self.statusHelper.delegate = self;
+}
+
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.statusHelper startPrinterStatusPolling];
+}
+
+-(void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self.statusHelper stopPrinterStatusPolling];
 }
 
 - (void)didReceiveMemoryWarning
@@ -65,17 +80,33 @@
 
 - (void) setStatus: (BOOL) isOnline
 {
-    self.printer.onlineStatus = [NSNumber numberWithBool:isOnline];
+    self.onlineStatus = isOnline;
     if(isOnline)
     {
-        self.onlineStatus.text = ONLINE_STATUS;
+        self.printerStatus.text = ONLINE_STATUS;
     }
     else
     {
-        self.onlineStatus.text = OFFLINE_STATUS;
+        self.printerStatus.text = OFFLINE_STATUS;
     }
 }
 
+-(void) updateDefaultPrinter: (BOOL) isDefaultOn
+{
+    if(isDefaultOn == NO)
+    {
+        if([self.printerManager isDefaultPrinter:self.printer] == YES)
+        {
+            [self.printerManager deleteDefaultPrinter];
+        }
+    }
+    else
+    {
+        [self.printerManager registerDefaultPrinter:self.printer];
+    }
+}
+
+#pragma mark - IBActions
 - (IBAction)defautltPrinterSwitchAction:(id)sender
 {
     if(self.isDefaultPrinter == self.defaultPrinterSwitch.on)
@@ -85,7 +116,7 @@
     
     self.isDefaultPrinter = self.defaultPrinterSwitch.on;
 
-    [self.delegate updateDefaultPrinter:self.isDefaultPrinter  atIndexPath: self.indexPath];
+    [self updateDefaultPrinter:self.isDefaultPrinter];
 }
 
 - (IBAction)onBack:(UIButton *)sender
@@ -93,13 +124,14 @@
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
+
+#pragma mark - PrinterStatusHelper method
 - (void) updateStatus: (BOOL) isOnline
 {
-    if([self.printer.onlineStatus boolValue] == isOnline)
+    if(self.onlineStatus == isOnline)
     {
         return;
     }
     [self setStatus:isOnline];
 }
-
 @end

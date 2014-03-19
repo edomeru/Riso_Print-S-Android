@@ -13,7 +13,7 @@
 @class Printer;
 @class PrinterManager;
 
-@interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate, PrinterInfoViewControllerDelegate>
+@interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 

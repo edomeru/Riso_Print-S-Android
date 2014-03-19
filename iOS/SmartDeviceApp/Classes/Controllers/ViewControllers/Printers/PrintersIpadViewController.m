@@ -8,8 +8,6 @@
 
 #import "HomeViewController.h"
 #import "PrintersIpadViewController.h"
-#import "AddPrinterViewController.h"
-#import "PrinterSearchViewController.h"
 #import "PrinterManager.h"
 #import "Printer.h"
 #import "PrinterCollectionViewCell.h"
@@ -17,9 +15,6 @@
 #import "PrinterStatusView.h"
 #import "PrinterStatusHelper.h"
 #import "AlertUtils.h"
-
-#define SEGUE_TO_ADD_PRINTER    @"PrintersIpad-AddPrinter"
-#define SEGUE_TO_PRINTER_SEARCH @"PrintersIpad-PrinterSearch"
 
 @interface PrintersIpadViewController ()
 
@@ -97,16 +92,17 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [self.printerManager.listSavedPrinters count];
+    return self.printerManager.countSavedPrinters;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
+    PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
+                                                                                forIndexPath:indexPath];
     cell.delegate = self;
     cell.indexPath = indexPath;
     
-    Printer *printer = [self.printerManager.listSavedPrinters objectAtIndex:[indexPath item]];
+    Printer *printer = [self.printerManager getPrinterAtIndex:[indexPath item]];
     if ([self.printerManager isDefaultPrinter:printer])
     {
         self.defaultPrinterIndexPath = indexPath;
@@ -234,47 +230,12 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
-    {
-        AddPrinterViewController* destController = [segue destinationViewController];
-        
-        //give the child screen a reference to the printer manager
-        destController.printerManager = self.printerManager;
-    }
-    
-    if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
-    {
-        PrinterSearchViewController* destController = [segue destinationViewController];
-        
-        //give the child screen a reference to the printer manager
-        destController.printerManager = self.printerManager;
-    }
 }
 
-- (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
+- (void)reloadData
 {
-    UIViewController* sourceViewController = [unwindSegue sourceViewController];
-    
-    if ([sourceViewController isKindOfClass:[HomeViewController class]])
-    {
-        [self.mainMenuButton setEnabled:YES];
-    }
-    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
-    {
-        [self.addPrinterButton setEnabled:YES];
-        
-        AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
-        if (adderScreen.hasAddedPrinters)
-            [self.collectionView reloadData];
-    }
-    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
-    {
-        [self.printerSearchButton setEnabled:YES];
-        
-        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
-        if (adderScreen.hasAddedPrinters)
-            [self.collectionView reloadData];
-    }
+    [super reloadData];
+    [self.collectionView reloadData];
 }
 
 @end

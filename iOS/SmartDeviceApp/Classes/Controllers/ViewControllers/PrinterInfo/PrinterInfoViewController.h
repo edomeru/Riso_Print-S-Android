@@ -12,16 +12,11 @@
 @class Printer;
 @class PrinterManager;
 
-@protocol PrinterInfoViewControllerDelegate
--(void) updateDefaultPrinter:(BOOL) isDefaultOn atIndexPath: (NSIndexPath *) indexPath;
--(Printer *) getPrinterAtIndexPath: (NSIndexPath *) indexPath;
-@end
-
 @interface PrinterInfoViewController : SlidingViewController <PrinterStatusHelperDelegate>
 /*NSIndexPath of the printer of which info was shown*/
 @property (weak, nonatomic) NSIndexPath* indexPath;
-/*Delegate to get and update printer*/
-@property (weak, nonatomic) id <PrinterInfoViewControllerDelegate> delegate;
 /*Default printer indicator*/
 @property BOOL isDefaultPrinter;
+/*Online status of printer*/
+@property BOOL onlineStatus;
 @end

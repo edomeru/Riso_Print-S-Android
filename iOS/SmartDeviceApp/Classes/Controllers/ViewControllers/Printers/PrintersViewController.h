@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+
 @class PrinterManager;
 
 @interface PrintersViewController : UIViewController
+
 /**
  Internal manager for adding printers to the DB, removing printers from the DB, and
  setting the default printer. It also maintains the list of the Printer objects from
@@ -30,5 +32,8 @@
 - (IBAction)mainMenuAction:(id)sender;
 - (IBAction)addPrinterAction:(id)sender;
 - (IBAction)printerSearchAction:(id)sender;
+
+/** Reloads the list of Printers data */
+- (void)reloadData;
 
 @end

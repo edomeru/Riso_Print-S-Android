@@ -125,7 +125,8 @@
 - (void)setup
 {
     // setup properties
-    self.printerManager.delegate = self;
+    self.printerManager = [PrinterManager sharedPrinterManager];
+    self.printerManager.searchDelegate = self;
     self.listOldPrinterNames = [NSMutableArray array];
     self.listNewPrinterNames = [NSMutableArray array];
     self.listNewPrinterIP = [NSMutableArray array];
