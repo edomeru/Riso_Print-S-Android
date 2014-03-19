@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
         mLeftLayout.getLayoutParams().width = (int)getDrawerWidth();
         mRightLayout.getLayoutParams().width = (int)getDrawerWidth();
         
-        mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.default_content_description,
+        mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.img_btn_main_menu_normal, R.string.default_content_description,
                 R.string.default_content_description);
         
         // Set the drawer toggle as the DrawerListener

@@ -16,6 +16,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter.PrinteSearchAdapterInterface;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
@@ -55,7 +57,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_printer_search;
+        return R.layout.fragment_printersearch;
     }
     
     @Override
@@ -67,7 +69,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         else {
             mPrinter = new ArrayList<Printer>();
         }
-        mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printer_search_list_item, mPrinter);
+        mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);
         mPrinterManager = PrinterManager.sharedManager(getActivity());
         mPrinterManager.setOnPrinterSearchListener(this);   
@@ -91,21 +93,21 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void addActionMenuButton(View v) {
+        int width = ((BaseActivity)getActivity()).getActionBarHeight();
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);        
+        ImageButton actionMenuButton = new ImageButton(v.getContext());
+        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
+        
         if(isTablet()) {
             v.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
         }
-        ImageButton actionMenuButton = new ImageButton(v.getContext());
-        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
-        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_button_padding);        
-
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.temp_img_btn_back_normal);
-        actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        actionMenuButton.setImageResource(R.drawable.selector_actionbar_back);
+        actionMenuButton.setBackgroundResource(R.color.theme_color_2);
+        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
         actionMenuButton.setPadding(padding, padding, padding, padding);
         actionMenuButton.setOnClickListener(this);
-        leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, 
-                LayoutParams.MATCH_PARENT);
+        leftActionLayout.addView(actionMenuButton, width, LayoutParams.MATCH_PARENT);
     }
     
     @Override
@@ -203,11 +205,12 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // ================================================================================
     @Override
     public void onPrinterAdd(final Printer printer) {
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    if(mPrinter.contains(printer)) {
+                    if(!mIsSearching) {
                         return;
                     }
                     mPrinter.add(printer);

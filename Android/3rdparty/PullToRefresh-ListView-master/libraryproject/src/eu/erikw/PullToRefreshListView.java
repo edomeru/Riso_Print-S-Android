@@ -228,7 +228,7 @@ public class PullToRefreshListView extends ListView{
     private void init(){
         setVerticalFadingEdgeEnabled(false);
 
-        headerContainer = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.ptr_header, null);
+        headerContainer = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.pulltorefreshview_ptr_header, null);
         header = (RelativeLayout) headerContainer.findViewById(R.id.ptr_id_header);
         text = (TextView) header.findViewById(R.id.ptr_id_text);
         lastUpdatedTextView = (TextView) header.findViewById(R.id.ptr_id_last_updated);

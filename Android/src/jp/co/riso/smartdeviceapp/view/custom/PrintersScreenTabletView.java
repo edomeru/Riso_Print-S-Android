@@ -5,6 +5,7 @@ import java.util.List;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
@@ -83,7 +84,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     // Private methods
     // ================================================================================
     private void init(Context context) {
-        View viewGroup = View.inflate(context, R.layout.view_columns, this);
+        ViewGroup viewGroup = (ViewGroup) View.inflate(context, R.layout.printers_tablet_container, this);
         mPrinterViewArray.add((LinearLayout) viewGroup.findViewById(R.id.column1));
         mPrinterViewArray.add((LinearLayout) viewGroup.findViewById(R.id.column2));
         mPrinterViewArray.add((LinearLayout) viewGroup.findViewById(R.id.column3));
@@ -206,7 +207,9 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
             return;
         }
         
-        View pView = inflater.inflate(R.layout.printer_tablet_view, parentView, false);
+        View pView = inflater.inflate(R.layout.printers_tablet_container_item, parentView, false);
+        AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
+
         pView.setPadding(left, top, right, bottom);
         
         parentView.addView(pView, width, height);

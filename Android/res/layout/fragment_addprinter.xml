@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/actionbar_sub" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/theme_light_3"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:gravity="left"
+                android:padding="@dimen/printers_row_left_padding"
+                android:text="@string/ids_lbl_ip_address"
+                android:textColor="@color/theme_dark_1" />
+
+            <EditText
+                android:id="@+id/inputIpAddress"
+                android:layout_width="@dimen/addprinter_edit_box_width"
+                android:layout_height="@dimen/printers_edit_box_height"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/theme_light_1"
+                android:hint=""
+                android:padding="@dimen/printers_row_left_padding"
+                android:textColor="@color/theme_dark_1" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_size"
+            android:layout_marginLeft="@dimen/printers_row_left_padding"
+            android:background="@color/line_color_1"
+            android:visibility="visible" />
+    </LinearLayout>
+
+</LinearLayout>

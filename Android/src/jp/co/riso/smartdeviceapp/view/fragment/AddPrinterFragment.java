@@ -8,6 +8,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.ActionBar.LayoutParams;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
     
@@ -42,7 +44,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public int getViewLayout() {
-        return R.layout.fragment_add_printer;
+        return R.layout.fragment_addprinter;
     }
     
     @Override
@@ -109,27 +111,32 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void addActionMenuButton(View v) {
+        int width = ((BaseActivity)getActivity()).getActionBarHeight();
         ImageButton actionMenuButton = new ImageButton(v.getContext());
         ImageButton saveMenuButton = new ImageButton(v.getContext());
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
         ViewGroup rightActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
         
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
+        
         //Back Button
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.temp_img_btn_back_normal);
-        actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        actionMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        actionMenuButton.setImageResource(R.drawable.selector_actionbar_back);
+        actionMenuButton.setBackgroundResource(R.color.theme_color_2);
+        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
+        actionMenuButton.setPadding(padding, padding, padding, padding);
         actionMenuButton.setOnClickListener(this);
         
         //Save Button
         saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
         saveMenuButton.setImageResource(R.drawable.temp_img_btn_save_printer);
-        saveMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        saveMenuButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        saveMenuButton.setBackgroundResource(R.color.theme_color_2);
+        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
+        saveMenuButton.setPadding(padding, padding, padding, padding);
         saveMenuButton.setOnClickListener(this);
         
-        leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-        rightActionLayout.addView(saveMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        leftActionLayout.addView(actionMenuButton, width, LayoutParams.MATCH_PARENT);
+        rightActionLayout.addView(saveMenuButton, width, LayoutParams.MATCH_PARENT);
     }
     
     @Override

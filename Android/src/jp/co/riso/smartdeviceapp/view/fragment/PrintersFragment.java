@@ -13,6 +13,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.custom.PrinterArrayAdapter;
 import jp.co.riso.smartdeviceapp.view.custom.PrintersScreenTabletView;
@@ -28,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 public class PrintersFragment extends BaseFragment implements View.OnTouchListener {
     public interface PrinteSearchTabletInterface {
@@ -57,7 +59,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
             return R.layout.fragment_printers_tablet;
         }
         else {
-            return R.layout.fragment_printers;
+            return R.layout.fragment_printers_phone;
         }
     }
     
@@ -97,7 +99,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         else {
             setPrinterArrayList();
             mPrinterAdapter = new PrinterArrayAdapter(getActivity(),
-                    R.layout.printer_list_item, mPrinter);
+                    R.layout.printers_phone_container_item, mPrinter);
             mListView.setAdapter(mPrinterAdapter);
         }
     }    
@@ -105,7 +107,8 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     @Override
     public void addActionMenuButton(View v) {
         super.addActionMenuButton(v);
-        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_button_padding);        
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);        
+        int width = ((BaseActivity)getActivity()).getActionBarHeight();
 
         ImageButton addMenuButton = new ImageButton(v.getContext());
         ImageButton searchMenuButton = new ImageButton(v.getContext());
@@ -114,18 +117,20 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         
         //Manual Add Button
         addMenuButton.setId(ID_MENU_ACTION_ADD_BUTTON);
-        addMenuButton.setImageResource(R.drawable.temp_img_btn_add_printer_normal);
-        addMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        addMenuButton.setImageResource(R.drawable.selector_actionbar_add_printer);
+        addMenuButton.setBackgroundResource(R.color.theme_color_1);
+        addMenuButton.setScaleType(ScaleType.FIT_CENTER);
         addMenuButton.setPadding(padding, padding, padding, padding);
      
         //Search Button
         searchMenuButton.setId(ID_MENU_ACTION_SEARCH_BUTTON);
-        searchMenuButton.setImageResource(R.drawable.temp_img_btn_search_printer_normal);
-        searchMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        searchMenuButton.setImageResource(R.drawable.selector_actionbar_printer_search);
+        searchMenuButton.setBackgroundResource(R.color.theme_color_1);
+        searchMenuButton.setScaleType(ScaleType.FIT_CENTER);
         searchMenuButton.setPadding(padding, padding, padding, padding);
 
-        rightActionLayout.addView(addMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-        rightActionLayout.addView(searchMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        rightActionLayout.addView(addMenuButton, width, LayoutParams.MATCH_PARENT);
+        rightActionLayout.addView(searchMenuButton, width, LayoutParams.MATCH_PARENT);
         
         searchMenuButton.setOnClickListener(this);
         addMenuButton.setOnClickListener(this);

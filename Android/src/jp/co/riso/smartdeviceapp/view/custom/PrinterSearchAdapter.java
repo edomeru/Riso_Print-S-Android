@@ -2,7 +2,9 @@ package jp.co.riso.smartdeviceapp.view.custom;
 
 import java.util.List;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.Context;
@@ -46,19 +48,23 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     public View getView(int position, View convertView, ViewGroup parent) {
         Printer printer =  getItem(position);
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        
+
         if (convertView == null) {             
             convertView = inflater.inflate(layoutId, parent, false);
+            AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
+
             mHolder = new ViewHolder();
-            mHolder.printerName = (TextView) convertView.findViewById(R.id.printer_text);
+            mHolder.printerName = (TextView) convertView.findViewById(R.id.printerText);
             mHolder.addedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton); 
             
             mHolder.printerName.setText(printer.getName());
+            
             if(mPrinterManager.isExists(printer)){
-                mHolder.addedIndicator.setBackgroundResource(R.drawable.temp_img_btn_add_printer_ok_pressed);
+                //mHolder.addedIndicator
+                mHolder.addedIndicator.setBackgroundResource(R.drawable.img_btn_add_printer_ok_pressed);
             }
             else {
-                mHolder.addedIndicator.setBackgroundResource(R.drawable.temp_img_btn_add_printer_normal);  
+                mHolder.addedIndicator.setBackgroundResource(R.drawable.selector_printersearch_add_printer);  
             }
             
             mHolder.addedIndicator.setTag(position);
@@ -83,7 +89,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
                     return;
                 }
                 if(mPrinterManager.savePrinterToDB(printer) != -1) {
-                    v.setBackgroundResource(R.drawable.temp_img_btn_add_printer_ok_pressed);
+                    v.setBackgroundResource(R.drawable.img_btn_add_printer_ok_pressed);
                     mSearchAdapterInterface.dialog();
                 }
             }

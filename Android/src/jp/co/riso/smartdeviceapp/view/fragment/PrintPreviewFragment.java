@@ -20,6 +20,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
@@ -27,6 +28,7 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 
@@ -186,17 +188,21 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     }
     
     public void addPrintButton(View v) {
-        ImageButton newMenuButton = new ImageButton(v.getContext());
+        ImageButton printSettingsButton = new ImageButton(v.getContext());
         
-        newMenuButton.setId(ID_PRINT_BUTTON);
-        newMenuButton.setImageResource(R.drawable.temp_img_btn_default_print_settings);
-        newMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
+        printSettingsButton.setId(ID_PRINT_BUTTON);
+        printSettingsButton.setImageResource(R.drawable.selector_actionbar_printsettings);
+        printSettingsButton.setBackgroundResource(R.color.theme_color_1);
+        printSettingsButton.setScaleType(ScaleType.FIT_CENTER);
         
-        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
+        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
+        printSettingsButton.setPadding(padding, padding, padding, padding);
         
-        leftActionLayout.addView(newMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        ViewGroup rightActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
+        int width = ((BaseActivity)getActivity()).getActionBarHeight();
+        rightActionLayout.addView(printSettingsButton, width, LayoutParams.MATCH_PARENT);
         
-        newMenuButton.setOnClickListener(this);
+        printSettingsButton.setOnClickListener(this);
     }
     
     // ================================================================================
