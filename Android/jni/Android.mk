@@ -2,6 +2,13 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE     := librdpdf-prebuilt
+LOCAL_SRC_FILES := librdpdf/$(TARGET_ARCH_ABI)/librdpdf.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
 COMMON_API_DIR   := $(LOCAL_PATH)/../../CommonAPI
 
 LOCAL_MODULE     := CommonAPI
