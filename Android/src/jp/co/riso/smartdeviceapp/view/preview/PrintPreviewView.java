@@ -54,7 +54,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     Bitmap stapleBmp;
     Bitmap punchBmp;
     
-    private static final String FORMAT_CACHE_KEY = "%s-%d-%d"; // path; page; side
+    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d"; // path; page; side; duplex; imposition
     
     private static Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
     
@@ -127,6 +127,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         setupCurlPageView();
         setupCurlBind();
+        requestLayout();
     }
     
     public void setBmpCache(LruCache<String, Bitmap> bmpCache) {
@@ -164,7 +165,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return new int[]{newWidth, newHeight};
     }
     
-    protected int[] getPageDimensions(int screenWidth, int screenHeight) {
+    protected int[] getScreenDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
         float paperWidth = getPaperDisplayWidth();
         float paperHeight = getPaperDisplayHeight();
@@ -180,8 +181,18 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
     }
     
+    protected int[] getPaperDimensions(int screenWidth, int screenHeight) {
+        // Compute margins based on the paper size in preview settings.
+        float paperWidth = getPaperDisplayWidth();
+        float paperHeight = getPaperDisplayHeight();
+        
+        return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
+    }
+    
     protected String getCacheKey(int index, int side) {
-        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side);
+        int imposition = mPrintSettings.getImposition().ordinal();
+        int duplexMode = mPrintSettings.getDuplex().ordinal();
+        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition);
     }
     
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -415,7 +426,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         MarginLayoutParams params = (MarginLayoutParams) mPageControlLayout.getLayoutParams();
         int pageControlSize = mPageControlLayout.getHeight() + params.bottomMargin;
         
-        int newDimensions[] = getPageDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
+        int newDimensions[] = getScreenDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
         
         float lrMargin = ((w - newDimensions[0]) / (w * 2.0f));
         float tbMargin = (((h - pageControlSize) - newDimensions[1]) / (h * 2.0f));
@@ -523,7 +534,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             mHeight = height;
             mIndex = index;
 
-            int bmpDimensions[] = getPageDimensions(width, height);
+            int bmpDimensions[] = getPaperDimensions(width, height);
             mBmps = new Bitmap[]{ 
                     Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
                     Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE)
@@ -623,7 +634,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
         
         private Bitmap[] getRenderBitmaps() {
-            int dim[] = getPageDimensions(mWidth, mHeight);
+            int dim[] = getPaperDimensions(mWidth, mHeight);
             
             Bitmap front = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
             Bitmap back = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
