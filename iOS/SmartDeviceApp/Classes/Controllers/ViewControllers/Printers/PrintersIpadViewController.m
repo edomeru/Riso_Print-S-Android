@@ -8,8 +8,6 @@
 
 #import "HomeViewController.h"
 #import "PrintersIpadViewController.h"
-#import "AddPrinterViewController.h"
-#import "PrinterSearchViewController.h"
 #import "PrinterManager.h"
 #import "Printer.h"
 #import "PrinterCollectionViewCell.h"
@@ -234,30 +232,10 @@
 {
 }
 
-- (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
+- (void)reloadData
 {
-    UIViewController* sourceViewController = [unwindSegue sourceViewController];
-    
-    if ([sourceViewController isKindOfClass:[HomeViewController class]])
-    {
-        [self.mainMenuButton setEnabled:YES];
-    }
-    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
-    {
-        [self.addPrinterButton setEnabled:YES];
-        
-        AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
-        if (adderScreen.hasAddedPrinters)
-            [self.collectionView reloadData];
-    }
-    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
-    {
-        [self.printerSearchButton setEnabled:YES];
-        
-        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
-        if (adderScreen.hasAddedPrinters)
-            [self.collectionView reloadData];
-    }
+    [super reloadData];
+    [self.collectionView reloadData];
 }
 
 @end

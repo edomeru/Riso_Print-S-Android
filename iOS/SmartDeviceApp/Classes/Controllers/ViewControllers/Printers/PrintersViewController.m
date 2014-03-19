@@ -73,8 +73,38 @@
     [self performSegueTo:[PrinterSearchViewController class]];
 }
 
+#pragma mark - Segue
+
 - (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender
 {
+    UIViewController* sourceViewController = [sender sourceViewController];
+    
+    if ([sourceViewController isKindOfClass:[HomeViewController class]])
+    {
+        [self.mainMenuButton setEnabled:YES];
+    }
+    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    {
+        [self.addPrinterButton setEnabled:YES];
+        
+        AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self reloadData];
+    }
+    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
+    {
+        [self.printerSearchButton setEnabled:YES];
+        
+        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self reloadData];
+    }
+}
+
+- (void)reloadData
+{
+    NSLog(@"[INFO][Printers] reloading data");
+    //should be implemented depending on display
 }
 
 @end

@@ -194,7 +194,8 @@ static PrinterManager* sharedPrinterManager = nil;
     {
         // delete the default printer first
         NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
-        [self deleteDefaultPrinter];
+        if (![self deleteDefaultPrinter])
+            return NO;
     }
     
     // delete the printer
