@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/printerListRow"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/printers_row_height"
+    android:descendantFocusability="blocksDescendants" >
+
+    <ImageView
+        android:id="@+id/img_onOff"
+        android:layout_width="@dimen/printers_row_left_icon_size"
+        android:layout_height="@dimen/printers_row_left_icon_size"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/default_content_description"
+        android:paddingLeft="@dimen/printers_row_left_padding"
+        android:src="@drawable/img_btn_printer_status_online" />
+
+    <TextView
+        android:id="@+id/txt_printerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/printers_row_right_margin"
+        android:layout_toRightOf="@+id/img_onOff"
+        android:clickable="false"
+        android:ellipsize="end"
+        android:longClickable="false"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/printers_row_left_padding"
+        android:textColor="@color/theme_dark_1" />
+
+    <ImageView
+        android:id="@+id/img_disclosure"
+        android:layout_width="@dimen/printers_row_right_icon_size"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/default_content_description"
+        android:paddingRight="@dimen/printers_row_right_padding"
+        android:src="@drawable/temp_img_disclosure" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="@dimen/printers_edit_box_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/img_disclosure"
+        android:layout_centerVertical="true"
+        android:background="@color/theme_dark_1"
+        android:paddingRight="@dimen/printers_row_right_padding"
+        android:text="@string/ids_lbl_delete_printer"
+        android:textColor="@color/theme_light_1"
+        android:visibility="gone" />
+
+</RelativeLayout>
