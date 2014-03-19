@@ -183,8 +183,8 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
 		assertNotNull(printers);
 		assertTrue(printers.size() == 1);
-		assertTrue(printers.get(0).getPrinterId() == 1);
-		assertTrue(printers.get(0).getPrinterName().equals("printer with job"));
+		assertTrue(printers.get(0).getId() == 1);
+		assertTrue(printers.get(0).getName().equals("printer with job"));
 	}
 
 	public void testCreatePrintJob() {
