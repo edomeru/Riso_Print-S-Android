@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants;
 
@@ -579,6 +580,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         } else {
             mMainScrollView.setVisibility(View.GONE);
         }
+        
+        AppUtils.changeChildrenFont(mSubScrollView, SmartDeviceApp.getAppFont());
     }
     
     private void dismissOptionsSubview(boolean animate) {

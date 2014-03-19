@@ -13,7 +13,7 @@
         android:layout_weight="1.0"
         android:layout_gravity="center_vertical"
         android:gravity="right|center_vertical"
-        android:text="@string/default_empty_textview"
+        android:text="@string/default_textview"
         android:textColor="@color/theme_light_1"
         android:textSize="@dimen/printsettings_listvalue_text_size" />
 

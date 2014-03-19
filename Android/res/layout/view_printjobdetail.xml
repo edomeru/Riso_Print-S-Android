@@ -19,7 +19,7 @@
             android:layout_width="@dimen/printjob_icon_width"
             android:layout_height="@dimen/printjob_icon_width"
             android:layout_gravity="center_vertical"
-            android:contentDescription="@string/ids_lbl_print_job_status"
+            android:contentDescription="@string/ids_lbl_print_job_successful"
             android:src="@drawable/img_btn_job_status_ok"
             android:visibility="visible" />
 
@@ -28,7 +28,7 @@
             android:layout_width="@dimen/printjob_icon_width"
             android:layout_height="@dimen/printjob_icon_width"
             android:layout_gravity="center_vertical"
-            android:contentDescription="@string/ids_lbl_print_job_status"
+            android:contentDescription="@string/ids_lbl_print_job_failed"
             android:src="@drawable/img_btn_job_status_ng"
             android:visibility="invisible" />
     </FrameLayout>

@@ -4,7 +4,6 @@
     <!-- Android default values -->
     <string name="default_textview">&#8230;</string>
     <string name="default_content_description">Content Description</string>
-    <string name="default_empty_textview"></string>
 
     <!-- WordingListLBL -->
     <string name="ids_app_name">SmartDeviceApp</string>
@@ -87,7 +86,7 @@
     <string name="ids_lbl_imposition">Imposition</string>
     <string name="ids_lbl_imposition_2up">2-up</string>
     <string name="ids_lbl_imposition_4up">4-up</string>
-    <string name="ids_lbl_imposition_order">Impositiion Order</string>
+    <string name="ids_lbl_imposition_order">Imposition Order</string>
     <string name="ids_lbl_imposition_order_2up_rl">Right to left (B to T)</string>
     <string name="ids_lbl_imposition_order_2up_lr">Left to right (T to B)</string>
     <string name="ids_lbl_imposition_order_4up_ulb">Left top to bottom</string>
@@ -136,7 +135,6 @@
     <string name="ids_lbl_collapse">Collapse Print Jobs Group</string>
     <string name="ids_lbl_delete_jobs">"DELETE ALL"</string>
     <string name="ids_lbl_delete_job">"DELETE"</string>
-    <string name="ids_lbl_print_job_status">"Print Job Status"</string>
     <string name="ids_err_msg_delete_failed">Error deleting Print Job</string>
     <string name="ids_lbl_delete_jobs_title">"Delete Print Job"</string>
     <string name="ids_lbl_delete_jobs_msg">"Are you sure you want to delete the print jobs?"</string>
