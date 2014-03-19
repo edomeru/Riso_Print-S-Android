@@ -287,7 +287,7 @@
         [self.pdfPageViewController setDoubleSided:YES];
         [initialViewControllers addObject:[self pageContentViewControllerAtIndex:pageIndex + 1]];
     }
-    
+  
     [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
@@ -296,6 +296,9 @@
 {
     [self.pageNavigationSlider setValue:__currentIndex];
     [self.pageNavigationSlider setMaximumValue: __numViewPages];
+    [self.pageNavigationSlider setMinimumTrackImage:[UIImage imageNamed:@"SliderMinimum.png"] forState:UIControlStateNormal];
+    [self.pageNavigationSlider setMaximumTrackImage:[UIImage imageNamed:@"SliderMaximum.png"] forState:UIControlStateNormal];
+    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"SliderThumb.png"] forState:UIControlStateNormal];
 }
 
 //update the page number label

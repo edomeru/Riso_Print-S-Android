@@ -36,8 +36,6 @@
 -(void) layoutSubviews
 {
     [super layoutSubviews];
-    NSLog(@"layout subviews");
-    
     if(self.isFirstDraw == NO)
     {
         /* redraw view if the view is initially drawn in a smaller frame (i.e the app is initally launched in landscape)
@@ -55,7 +53,6 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    NSLog(@"Draw page view");
     if(self.delegate == nil){
         NSLog(@"delegate is nil");
         return;
