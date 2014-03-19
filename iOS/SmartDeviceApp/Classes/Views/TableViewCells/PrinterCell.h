@@ -15,6 +15,7 @@
 @property (weak, nonatomic) IBOutlet UIView* separator;
 
 
--(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
 -(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
+-(void) setCellStyleForDefaultCell;
+-(void) setCellStyleForNormalCell;
 @end
