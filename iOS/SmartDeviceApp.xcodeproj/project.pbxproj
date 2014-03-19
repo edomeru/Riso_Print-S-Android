@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		280E181F18D971A1009B5259 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 280E181E18D971A1009B5259 /* Reachability.m */; };
 		2825AD0218D002D6006A8C53 /* PrinterDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 2825AD0118D002D6006A8C53 /* PrinterDetails.m */; };
 		2825AD0518D04C1A006A8C53 /* AlertUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2825AD0418D04C1A006A8C53 /* AlertUtils.m */; };
 		2826DEB418CE902B00A02CA0 /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2826DEB318CE902B00A02CA0 /* Printer+Log.m */; };
@@ -73,12 +74,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		280E181D18D971A1009B5259 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		280E181E18D971A1009B5259 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2825AD0018D002D6006A8C53 /* PrinterDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterDetails.h; path = Models/PrinterDetails.h; sourceTree = "<group>"; };
 		2825AD0118D002D6006A8C53 /* PrinterDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterDetails.m; path = Models/PrinterDetails.m; sourceTree = "<group>"; };
 		2825AD0318D04C1A006A8C53 /* AlertUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertUtils.h; sourceTree = "<group>"; };
 		2825AD0418D04C1A006A8C53 /* AlertUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertUtils.m; sourceTree = "<group>"; };
 		2826DEAD18CE888500A02CA0 /* PrintSettingNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintSettingNames.h; path = Helpers/Constants/PrintSettingNames.h; sourceTree = "<group>"; };
-		2826DEAF18CE8AF900A02CA0 /* ErrorNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorNames.h; path = Helpers/Constants/ErrorNames.h; sourceTree = "<group>"; };
 		2826DEB218CE902B00A02CA0 /* Printer+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Printer+Log.h"; path = "ModelExtensions/Printer+Log.h"; sourceTree = "<group>"; };
 		2826DEB318CE902B00A02CA0 /* Printer+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Printer+Log.m"; path = "ModelExtensions/Printer+Log.m"; sourceTree = "<group>"; };
 		2826DEB918CE933900A02CA0 /* PrintSetting+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PrintSetting+Log.h"; path = "ModelExtensions/PrintSetting+Log.h"; sourceTree = "<group>"; };
@@ -223,10 +225,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		280E181B18D97115009B5259 /* OpenSource */ = {
+			isa = PBXGroup;
+			children = (
+				280E181C18D971A1009B5259 /* Reachability */,
+			);
+			name = OpenSource;
+			sourceTree = "<group>";
+		};
+		280E181C18D971A1009B5259 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				280E181D18D971A1009B5259 /* Reachability.h */,
+				280E181E18D971A1009B5259 /* Reachability.m */,
+			);
+			name = Reachability;
+			path = SmartDeviceApp/OpenSource/Reachability;
+			sourceTree = SOURCE_ROOT;
+		};
 		2826DEAB18CE856300A02CA0 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
-				2826DEAF18CE8AF900A02CA0 /* ErrorNames.h */,
 				2826DEBE18CEDE2F00A02CA0 /* NotificationNames.h */,
 				2826DEAD18CE888500A02CA0 /* PrintSettingNames.h */,
 			);
@@ -418,6 +437,7 @@
 				2828311D18C7065C008B127C /* Managers */,
 				2826DEBD18CE9E9200A02CA0 /* Protocols */,
 				2828312A18C7066F008B127C /* Helpers */,
+				280E181B18D97115009B5259 /* OpenSource */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -534,12 +554,12 @@
 		2D4B3E3218C4136000AC8AD0 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				31D91C9318C86EAF00611C85 /* PrinterInfo */,
 				2D4B3E3318C4136000AC8AD0 /* General */,
 				2D4B3E4618C4691F00AC8AD0 /* Home */,
 				2D4B3E3718C4164A00AC8AD0 /* PrintPreview */,
 				2DDACC6B18C47C5E001DEC76 /* PrintSettings */,
 				2828311518C7062B008B127C /* Printers */,
+				31D91C9318C86EAF00611C85 /* PrinterInfo */,
 				2828311118C705FD008B127C /* AddPrinter */,
 				2828311918C7063E008B127C /* PrinterSearch */,
 			);
@@ -887,6 +907,7 @@
 				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
 				3192116C18C72A7C000555C7 /* DefaultPrinter.m in Sources */,
 				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
+				280E181F18D971A1009B5259 /* Reachability.m in Sources */,
 				2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */,
 				3192115418C71C3D000555C7 /* PrinterCell.m in Sources */,
 				2828312918C7066B008B127C /* SNMPManager.m in Sources */,

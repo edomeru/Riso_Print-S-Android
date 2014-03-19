@@ -7,13 +7,24 @@
 //
 
 #import "NetworkManager.h"
+#import "Reachability.h"
+
+static Reachability* sharedReachabilityForInternet = nil;
 
 @implementation NetworkManager
 
 + (BOOL)isConnectedToNetwork
 {
-    //TODO: use the Reachability library to check network availability
-    return YES;
+    if (sharedReachabilityForInternet == nil)
+        sharedReachabilityForInternet = [Reachability reachabilityForInternetConnection];
+ 
+    // check for internet connection
+    NetworkStatus internetStatus = [sharedReachabilityForInternet currentReachabilityStatus];
+    
+    if (internetStatus != NotReachable)
+        return YES;
+    else
+        return NO;
 }
 
 @end
