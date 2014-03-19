@@ -421,20 +421,20 @@
                                     <constraint firstAttribute="trailing" secondItem="ABd-RJ-eVH" secondAttribute="trailing" id="ipN-Aj-yo6"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8sf-yM-sBz" userLabel="Content" customClass="DefaultView">
+                            <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8sf-yM-sBz" userLabel="Content" customClass="DefaultView">
                                 <rect key="frame" x="0.0" y="50" width="320" height="498"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bN-pFV" userLabel="Preview">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="437"/>
+                                    <view autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bN-pFV" userLabel="Preview">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="438"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XgQ-UQ-sVe">
-                                        <rect key="frame" x="0.0" y="437" width="320" height="61"/>
+                                    <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XgQ-UQ-sVe" userLabel="Page Number and Slider">
+                                        <rect key="frame" x="0.0" y="438" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
-                                                <rect key="frame" x="18" y="11" width="284" height="23"/>
+                                                <rect key="frame" x="18" y="10" width="284" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
                                                 <color key="minimumTrackTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -445,9 +445,9 @@
                                                 </connections>
                                             </slider>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PAGE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZT1-SS-2ii">
-                                                <rect key="frame" x="20" y="37" width="280" height="21"/>
+                                                <rect key="frame" x="20" y="40" width="280" height="14"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -455,18 +455,18 @@
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="ZT1-SS-2ii" secondAttribute="trailing" constant="20" id="14n-9I-H1I"/>
                                             <constraint firstItem="ZT1-SS-2ii" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" constant="20" id="6hS-5i-fLk"/>
-                                            <constraint firstItem="ZT1-SS-2ii" firstAttribute="top" secondItem="XgQ-UQ-sVe" secondAttribute="top" constant="37" id="aB4-tR-yDi"/>
+                                            <constraint firstAttribute="height" constant="60" id="Pk8-dR-V9V"/>
+                                            <constraint firstItem="ZT1-SS-2ii" firstAttribute="top" secondItem="XgQ-UQ-sVe" secondAttribute="top" constant="40" id="aB4-tR-yDi"/>
                                             <constraint firstItem="k35-as-6xb" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" constant="20" id="p5c-dn-zTt"/>
                                             <constraint firstAttribute="trailing" secondItem="k35-as-6xb" secondAttribute="trailing" constant="20" id="wFY-96-omg"/>
-                                            <constraint firstItem="k35-as-6xb" firstAttribute="top" secondItem="XgQ-UQ-sVe" secondAttribute="top" constant="11" id="wpz-j1-nhV"/>
+                                            <constraint firstItem="k35-as-6xb" firstAttribute="top" secondItem="XgQ-UQ-sVe" secondAttribute="top" constant="10" id="wpz-j1-nhV"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="XgQ-UQ-sVe" secondAttribute="bottom" id="6sw-FS-AHp"/>
-                                    <constraint firstAttribute="bottom" secondItem="q8a-bN-pFV" secondAttribute="bottom" constant="61" id="Fxy-Nc-ons"/>
-                                    <constraint firstItem="XgQ-UQ-sVe" firstAttribute="top" secondItem="q8a-bN-pFV" secondAttribute="bottom" id="MFo-NG-9rw"/>
+                                    <constraint firstItem="XgQ-UQ-sVe" firstAttribute="top" secondItem="q8a-bN-pFV" secondAttribute="bottom" id="8lw-uM-y6t"/>
                                     <constraint firstAttribute="trailing" secondItem="XgQ-UQ-sVe" secondAttribute="trailing" id="UTo-sB-ZnN"/>
                                     <constraint firstItem="q8a-bN-pFV" firstAttribute="top" secondItem="8sf-yM-sBz" secondAttribute="top" id="W3h-3C-ILv"/>
                                     <constraint firstItem="q8a-bN-pFV" firstAttribute="leading" secondItem="8sf-yM-sBz" secondAttribute="leading" id="XGL-GK-jTJ"/>
@@ -491,11 +491,15 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="pageLabelRightConstraint" destination="14n-9I-H1I" id="3fQ-NQ-dmi"/>
+                        <outlet property="pageLabelTopConstraint" destination="aB4-tR-yDi" id="nte-hJ-uij"/>
+                        <outlet property="pageNavAreaHeight" destination="Pk8-dR-V9V" id="mGl-J0-r6X"/>
                         <outlet property="pageNavigationSlider" destination="k35-as-6xb" id="RQS-Eo-L0Q"/>
                         <outlet property="pageNumberDisplay" destination="ZT1-SS-2ii" id="Lfv-cw-EKO"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="yV8-P0-wgE"/>
                         <outlet property="printSettingButton" destination="ABd-RJ-eVH" id="DbM-hD-xh7"/>
                         <outlet property="screenTitle" destination="4Rb-l1-7Cb" id="vyg-Sb-PZf"/>
+                        <outlet property="sliderLeftConstraint" destination="p5c-dn-zTt" id="9G4-rU-v4y"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintPreview-Home" customClass="SlideSegue" id="c8V-UF-iWe"/>
                         <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintPreview-PrintSettings" customClass="SlideSegue" id="5pT-ga-236"/>
                     </connections>

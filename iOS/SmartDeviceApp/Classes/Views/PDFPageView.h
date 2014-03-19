@@ -19,4 +19,5 @@
 @property (nonatomic, weak) id <PDFPageViewDelegate> delegate;
 @property NSUInteger numPagesPerSheet;
 @property NSUInteger colorMode;
+-(id) initWithCoder:(NSCoder *)aDecoder;
 @end

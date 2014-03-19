@@ -7,10 +7,12 @@
 //
 
 #import "PDFPageView.h"
-
+@interface PDFPageView()
+@property BOOL isFirstDraw;
+@end
 @implementation PDFPageView
 {
-    
+    CGFloat _initialFrameHeight;
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -19,6 +21,34 @@
         // Initialization code
     }
     return self;
+}
+
+-(id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        self.isFirstDraw = TRUE;
+    }
+    return self;
+}
+
+-(void) layoutSubviews
+{
+    [super layoutSubviews];
+    NSLog(@"layout subviews");
+    
+    if(self.isFirstDraw == NO)
+    {
+        /* redraw view if the view is initially drawn in a smaller frame (i.e the app is initally launched in landscape)
+         to the adapt the image to the bigger frame so it will not pixilate*/
+        if(_initialFrameHeight < self.frame.size.height)
+        {
+            //set the frame to the larger frame size so it will not redraw the view
+            _initialFrameHeight = self.frame.size.height;
+            [self setNeedsDisplay];
+        }
+    }
 }
 
 // Only override drawRect: if you perform custom drawing.
@@ -30,11 +60,14 @@
         NSLog(@"delegate is nil");
         return;
     }
-    
+    if(self.isFirstDraw == YES)
+    {
+        self.isFirstDraw = NO;
+        _initialFrameHeight = self.frame.size.height;
+    }
     // Drawing code
     [self drawPage:rect];
 }
-
 
 -(void) drawPDFPage: (CGContextRef) graphicsCtx  inRect: (CGRect) rect forPageNumber:(NSUInteger) pageNumber inGrayScale: (BOOL) isGrayScale;
 {

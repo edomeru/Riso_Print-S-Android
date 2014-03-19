@@ -30,6 +30,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay;
 @property (weak, nonatomic) IBOutlet UIButton *printSettingButton;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *sliderLeftConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeight;
+
 @end
 
 @implementation PrintPreviewViewController
@@ -78,9 +84,31 @@
 //detect rotation
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    //resize page view controller
+    
+    //adjust position of slider and page label for phone when in landscape
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+    {
+        if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) == YES)
+        {
+            self.pageNavAreaHeight.constant = 40;
+            //adjust
+            self.pageLabelTopConstraint.constant = 20 ;
+            self.pageLabelRightConstraint.constant =  self.previewArea.frame.size.width - 100;
+            self.self.sliderLeftConstraint.constant = 120;
+        }
+        else
+        {
+            //Original values
+            self.pageNavAreaHeight.constant = 60;
+            self.pageLabelRightConstraint.constant  = 20;
+            self.pageLabelTopConstraint.constant = 40;
+            self.sliderLeftConstraint.constant = 20;
+        }
+    }
+    
     [self setPageSize];
 }
+
 
 //hide controls related to preview
 -(void) hidePrintPreviewControls: (BOOL) isHidden
@@ -273,7 +301,7 @@
 //update the page number label
 -(void) updatePageNumberLabel
 {
-    self.pageNumberDisplay.text = [NSString stringWithFormat:@"PAGE %d/%d",(__currentIndex + 1), __numViewPages];
+    self.pageNumberDisplay.text = [NSString stringWithFormat:@"PAGE %lu/%lu", (unsigned long)(__currentIndex + 1), (unsigned long)__numViewPages];
 }
 
 //provider of view controllers per uipageview controller page
