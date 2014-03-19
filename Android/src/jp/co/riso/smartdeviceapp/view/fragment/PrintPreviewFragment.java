@@ -103,6 +103,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                     return value.getByteCount();
                 }
             };
+            mBmpCache.evictAll();
         }
         
         if (savedInstanceState != null) {
@@ -130,15 +131,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         mProgressBar.setVisibility(View.GONE);
         
         // Hide appropriate views
-        if (mPdfManager.getFileName() == null) {
-            mPrintPreviewView.setVisibility(View.GONE);
-        } else {
-            mOpenInView.setVisibility(View.GONE);
-            if (!mPdfManager.isInitialized()) {
-                mPrintPreviewView.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
-        }
+        setPrintPreviewViewDisplayed(view, mPdfManager.getFileName() != null);
     }
     
     @Override
@@ -205,6 +198,42 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         printSettingsButton.setOnClickListener(this);
     }
     
+    public void setPrintSettings(PrintSettings printSettings) {
+        mPrintSettings = new PrintSettings(printSettings);
+        if (mPrintPreviewView != null) {
+            mPrintPreviewView.setPrintSettings(mPrintSettings);
+            mPrintPreviewView.refreshView();
+        }
+    }
+    
+    public void setPrintPreviewViewDisplayed(View v, boolean show) {
+        if (show) {
+            mProgressBar.setVisibility(View.GONE);
+            mOpenInView.setVisibility(View.GONE);
+            if (!mPdfManager.isInitialized()) {
+                mPrintPreviewView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.VISIBLE);
+                showPrintSettingsButton(v, false);
+            } else {
+                mPrintPreviewView.setVisibility(View.VISIBLE);
+                showPrintSettingsButton(v, true);
+            }
+        } else {
+            mPrintPreviewView.setVisibility(View.GONE);
+            showPrintSettingsButton(v, false);
+        }
+    }
+    
+    public void showPrintSettingsButton(View v, boolean show) {
+        if (v.findViewById(ID_PRINT_BUTTON) != null) {
+            if (show) {
+                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.VISIBLE);   
+            } else {
+                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.GONE);            
+            }
+        }
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnLayoutChangeListener
     // ================================================================================
@@ -218,10 +247,18 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             case ID_PRINT_BUTTON:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     FragmentManager fm = getFragmentManager();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    PrintSettingsFragment fragment = new PrintSettingsFragment();
-                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                    ft.commit();
+                    
+                    // Always make new
+                    PrintSettingsFragment fragment = null;//(PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
+                    if (fragment == null) {
+                        FragmentTransaction ft = fm.beginTransaction();
+                        fragment = new PrintSettingsFragment();
+                        ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                        ft.commit();
+                    }
+                    
+                    fragment.setPrintSettings(mPrintSettings);
+                    fragment.setTargetFragment(this, 0);
 
                     if (getActivity() != null && getActivity() instanceof MainActivity) {
                         MainActivity activity = (MainActivity) getActivity();
@@ -238,25 +275,11 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     
     @Override
     public void onFileInitialized(int status) {
-        if (mPrintPreviewView != null) {
-            mPrintPreviewView.setVisibility(View.GONE);
-        }
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-        }
-        if (mOpenInView != null) {
-            mOpenInView.setVisibility(View.VISIBLE);
-        }
+        setPrintPreviewViewDisplayed(getView(), false);
         
         switch (status) {
             case PDFFileManager.PDF_OK:
-                if (mPrintPreviewView != null) {
-                    mPrintPreviewView.refreshView();
-                    mPrintPreviewView.setVisibility(View.VISIBLE);
-                }
-                if (mOpenInView != null) {
-                    mOpenInView.setVisibility(View.GONE);
-                }
+                setPrintPreviewViewDisplayed(getView(), true);
                 
                 break;
             case PDFFileManager.PDF_ENCRYPTED:

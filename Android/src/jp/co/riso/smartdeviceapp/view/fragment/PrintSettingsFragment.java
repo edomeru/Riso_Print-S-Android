@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
@@ -11,7 +12,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public static final String TAG = "PrintSettingsFragment";
     
     PrintSettings mPrintSettings;
-    PrintSettingsView mRootView;
+    PrintSettingsView mPrintSettingsView;
     Bundle printSettingsBundle = null;
     
     @Override
@@ -30,17 +31,33 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mRootView = (PrintSettingsView) view.findViewById(R.id.rootView);
+        Log.wtf(TAG, "initializeView");
         
-        mRootView.setValueChangedListener(this);
-        mRootView.setPrintSettings(mPrintSettings);
+        mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
+        
+        mPrintSettingsView.setValueChangedListener(this);
+        mPrintSettingsView.setPrintSettings(mPrintSettings);
         
         if (printSettingsBundle != null) {
-            mRootView.restoreState(printSettingsBundle);
+            mPrintSettingsView.restoreState(printSettingsBundle);
             printSettingsBundle = null;
         }
     }
     
+    @Override
+    public void onPause() {
+        super.onPause();
+        
+        Log.wtf(TAG, "onPause");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        Log.wtf(TAG, "onResume");
+    }
+
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
     }
@@ -49,9 +66,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         
-        if (mRootView != null) {
+        if (mPrintSettingsView != null) {
             printSettingsBundle = new Bundle();
-            mRootView.saveState(printSettingsBundle);
+            mPrintSettingsView.saveState(printSettingsBundle);
         }
     }
     
@@ -66,5 +83,10 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     @Override
     public void onPrintSettingsValueChanged(PrintSettings printSettings) {
         setPrintSettings(printSettings);
+        
+        if (getTargetFragment() instanceof PrintPreviewFragment) {
+            PrintPreviewFragment fragment = (PrintPreviewFragment) getTargetFragment();
+            fragment.setPrintSettings(printSettings);
+        }
     }
 }

@@ -493,7 +493,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         RadioButton radioButton = (RadioButton) li.inflate(R.layout.printsettings_radiobutton, null);
         radioButton.setId(ID_SUBVIEW_STATUS);
         radioButton.setClickable(false);
-        Log.wtf(TAG, "CHECKED " + value + " " + id);
         if (value == id) {
             radioButton.setChecked(true);
         }
@@ -975,7 +974,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         public synchronized void afterTextChanged(Editable s) {
-            Log.wtf(TAG, "afterTextChanged: " + s.toString());
             if (!mEditing) {
                 mEditing = true;
                 
@@ -999,11 +997,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            Log.wtf(TAG, "beforeTextChanged: " + s.toString() + " " + start + " " + count + " " + after);
         }
         
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            Log.wtf(TAG, "onTextChanged: " + s.toString() + " " + start + " " + before + " " + count);
         }
         
     }

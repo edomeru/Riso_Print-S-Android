@@ -39,8 +39,6 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
 
         View view = inflater.inflate(getViewLayout(), container, false);
         
-        initializeView(view, savedInstanceState);
-        
         if (view.findViewById(R.id.actionBarLayout) != null) {
             
             initializeCustomActionBar(view, savedInstanceState);
@@ -50,6 +48,9 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
                 view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(this);
             }
         }
+        
+        // Let the action bar be initialized first
+        initializeView(view, savedInstanceState);
 
         // set width and height of dialog
         if (getDialog() != null){
