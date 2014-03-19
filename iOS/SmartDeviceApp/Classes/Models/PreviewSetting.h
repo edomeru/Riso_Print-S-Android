@@ -13,8 +13,10 @@
 @property NSUInteger duplex;
 @property NSUInteger paperSize;
 @property NSUInteger pagination;
-@property NSUInteger bookletBinding;
 @property NSUInteger bind;
 @property NSUInteger staple;
 @property NSUInteger punch;
+@property NSUInteger orientation;
+@property BOOL isBookletBind;
+@property BOOL isScaleToFit;
 @end

@@ -122,6 +122,7 @@
     return (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
 }
 
+
 -(CGFloat) getPageWidth:(CGRect) origRect forNumOfPages: (NSUInteger) numPagesPerSheet
 {
     CGFloat pageWidth = origRect.size.width;

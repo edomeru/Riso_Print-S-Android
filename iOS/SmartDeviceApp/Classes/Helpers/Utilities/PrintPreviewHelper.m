@@ -29,9 +29,9 @@ BOOL isGrayScale(NSUInteger colorMode)
     return NO;
 }
 
-UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, BOOL duplex, BOOL bookletBinding)
+UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, NSUInteger duplex, BOOL isBookletBind)
 {
-    if(duplex == YES || bookletBinding == YES)
+    if(duplex > DUPLEX_OFF || isBookletBind == YES)
     {
         return UIPageViewControllerSpineLocationMid;
     }
@@ -54,12 +54,28 @@ UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bi
     return UIPageViewControllerNavigationOrientationHorizontal;
 }
 
-BOOL isPaperLandscape(NSUInteger pagination)
+BOOL isPaperLandscape(PreviewSetting *setting)
 {
-    if(pagination == PAGINATION_2IN1 || pagination == PAGINATION_6IN1)
+    if(setting == nil)
+    {
+        return NO;
+    }
+    
+    if(setting.isBookletBind == YES && setting.bind != BIND_TOP)
     {
         return YES;
     }
+    
+    if(setting.pagination == PAGINATION_2IN1 || setting.pagination == PAGINATION_6IN1)
+    {
+        return YES;
+    }
+    
+    if(setting.orientation == ORIENTATION_LANDSCAPE)
+    {
+        return YES;
+    }
+    
     return NO;
 }
 

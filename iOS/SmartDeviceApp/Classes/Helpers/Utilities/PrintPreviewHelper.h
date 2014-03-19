@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PreviewSetting.h"
 
 typedef enum {
     PAGINATION_OFF,
@@ -37,13 +38,27 @@ typedef enum{
     COLORMODE_MONO
 }T_COLORMODE;
 
+typedef enum
+{
+    ORIENTATION_PORTRAIT,
+    ORIENTATION_LANDSCAPE
+    
+}T_ORIENTATION;
+
+typedef enum
+{
+    DUPLEX_OFF,
+    DUPLEX_SHORT_EDGE,
+    DUPLEX_LONG_EDGE
+} T_DUPLEX;
+
 BOOL isGrayScale(NSUInteger colorMode);
 
-UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, BOOL duplex, BOOL bookletBinding);
+UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, NSUInteger duplex, BOOL isBookletBind);
 
 UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bind);
 
-BOOL isPaperLandscape(NSUInteger pagination);
+BOOL isPaperLandscape(PreviewSetting *setting);
 
 float getHeightToWidthRatio(NSUInteger paperSize);
 
