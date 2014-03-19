@@ -7,6 +7,7 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,10 +24,11 @@ import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView.LoadingViewListener;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintDeleteListener;
 import android.content.ContentValues;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -79,8 +81,9 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     @Override
     public void onResume() {
         super.onResume();
-        if (mLoadPrintJobsTask == null && mPrintJobs.isEmpty()) {
-            mLoadPrintJobsTask = new LoadPrintJobsFromDB();
+        
+        if (mLoadPrintJobsTask == null && mPrintJobColumnView == null) {
+            mLoadPrintJobsTask = new LoadPrintJobsFromDB(getActivity());
             
             mLoadPrintJobsTask.execute();
         }
@@ -142,19 +145,16 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             PrintJobManager.createPrintJob(6, "a loooooooooong filename.pdf", new Date(), JobResult.ERROR);
             PrintJobManager.createPrintJob(7, "ANOTHER ALLCAPS.pdf", new Date(), JobResult.SUCCESSFUL);
             
-            
             try {
                 PrintJobManager.createPrintJob(7, "march 2014 new.pdf", sdf.parse("2014-03-17 19:12:11"), JobResult.SUCCESSFUL);
                 PrintJobManager.createPrintJob(7, "new time.pdf", sdf.parse("2014-03-17 13:12:11"), JobResult.SUCCESSFUL);
                 PrintJobManager.createPrintJob(7, "feb 2014.pdf", sdf.parse("2014-02-17 13:12:11"), JobResult.ERROR);
                 PrintJobManager.createPrintJob(7, "march 2014.pdf", sdf.parse("2013-03-17 13:12:11"), JobResult.SUCCESSFUL);
                 PrintJobManager.createPrintJob(7, "jan 2014.pdf", sdf.parse("2014-01-17 13:12:11"), JobResult.ERROR);
-                                
+                
             } catch (ParseException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            
         }
     }
     
@@ -164,8 +164,10 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         mLoadPrintJobsTask.cancel(true);
         mPrintJobs.clear();
         mPrinters.clear();
-        if (mPrintJobColumnView != null)
+        if (mPrintJobColumnView != null) {
             mPrintJobColumnView.removeAllViews();
+            mPrintJobColumnView = null;
+        }
         mPrintJobContainer.removeView(mPrintJobColumnView);
     }
     
@@ -190,6 +192,11 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     }
     
     private class LoadPrintJobsFromDB extends AsyncTask<Void, Void, Void> {
+        WeakReference<Context> mContext;
+        
+        public LoadPrintJobsFromDB(Context context) {
+            mContext = new WeakReference<Context>(context);
+        }
         
         @Override
         protected Void doInBackground(Void... arg0) {
@@ -215,17 +222,25 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
             if (mPrintJobs.isEmpty() || isCancelled()) {
                 mPrintJobsLoadIndicator.setVisibility(View.INVISIBLE);
             } else {
-                mPrintJobColumnView = new PrintJobsColumnView(PrintJobsFragment.this.getActivity(), mPrintJobs, mPrinters, isTablet() ? isTabletLand() ? 3 : 2
-                        : 1, PrintJobsFragment.this, PrintJobsFragment.this);
+                if (mContext != null && mContext.get() != null) {
+                    mPrintJobColumnView = new PrintJobsColumnView(mContext.get(), mPrintJobs, mPrinters, isTablet() ? isTabletLand() ? 3 : 2 : 1,
+                            PrintJobsFragment.this, PrintJobsFragment.this);
+                }
                 mPrintJobColumnView.setVisibility(View.INVISIBLE);
                 mPrintJobContainer.addView(mPrintJobColumnView, 0);
             }
+            
         }
         
     }
     
     @Override
     public void hideLoading() {
+        if (!isTablet())
+            mPrintJobsView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+        
+        // AppUtils.changeChildrenFont((ViewGroup) mPrintJobsView, SmartDeviceApp.getAppFont());
+        
         mPrintJobColumnView.setVisibility(View.VISIBLE);
         
         mPrintJobsLoadIndicator.setVisibility(View.INVISIBLE);
@@ -233,6 +248,6 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         // set onClickListener (for delete button reset) only after loading of views
         mPrintJobsView.setOnClickListener(this);
         mPrintJobContainer.setOnClickListener(this);
+        
     }
-    
 }

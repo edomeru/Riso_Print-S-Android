@@ -1,5 +1,6 @@
 package jp.co.riso.smartdeviceapp.view.jobs;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintDeleteListener;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,7 +27,7 @@ public class PrintJobsColumnView extends LinearLayout {
     private int mJobCtr = 0;
     
     private Runnable mRunnable;
-    private LoadingViewListener mLoadingListener;
+    private WeakReference<LoadingViewListener> mLoadingListener;
     
     public PrintJobsColumnView(Context context, List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener,
             LoadingViewListener loadingListener) {
@@ -35,7 +37,7 @@ public class PrintJobsColumnView extends LinearLayout {
         this.mPrinterIds = printerIds;
         this.mColNum = colNum;
         this.mDelListener = delListener;
-        this.mLoadingListener = loadingListener;
+        this.mLoadingListener = new WeakReference<LoadingViewListener>(loadingListener);
         this.mRunnable = new AddViewRunnable();
         
         init(context);
@@ -57,7 +59,7 @@ public class PrintJobsColumnView extends LinearLayout {
             setLayoutParams(lp);
             
             LayoutInflater factory = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View viewgroup_printjobs = factory.inflate(R.layout.view_printjobs, this, true);
+            View viewgroup_printjobs = factory.inflate(R.layout.printjobs_column, this, true);
             
             mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column1));
             mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column2));
@@ -140,7 +142,7 @@ public class PrintJobsColumnView extends LinearLayout {
     
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+        super.onLayout(changed, l, t, r, b);       
         if (mJobGroupCtr < mPrinterIds.size() && mJobCtr < mPrintJobs.size()) {
             addToColumns();
             mJobGroupCtr++;
@@ -158,8 +160,10 @@ public class PrintJobsColumnView extends LinearLayout {
         @Override
         public void run() {
             requestLayout();
-            if (mJobGroupCtr >= mPrinterIds.size()) {
-                mLoadingListener.hideLoading();
+            if (mPrinterIds.size() > 0 && mJobGroupCtr >= mPrinterIds.size()) {
+                if (mLoadingListener != null && mLoadingListener.get() != null) {
+                    mLoadingListener.get().hideLoading();
+                }
                 mPrintJobs.clear();
                 mPrinterIds.clear();
                 mColumns.clear();

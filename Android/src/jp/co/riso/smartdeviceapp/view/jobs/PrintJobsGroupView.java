@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -21,6 +23,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,15 +42,15 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private View mViewToDelete;
     private PrintDeleteListener mDelListener;
     
-    private boolean mWithMargin;
+    private boolean mIsMultColumn;
     private boolean mIsCollapsed = false;
     
-    public PrintJobsGroupView(Context context, List<PrintJob> printJobs, boolean withMargin, Printer printer, PrintDeleteListener delListener) {
+    public PrintJobsGroupView(Context context, List<PrintJob> printJobs, boolean isMultColumn, Printer printer, PrintDeleteListener delListener) {
         this(context);
         
         this.mContext = context;
         this.mPrintJobs = printJobs;
-        this.mWithMargin = withMargin;
+        this.mIsMultColumn = isMultColumn;
         this.mPrinter = printer;
         this.mDelListener = delListener;
         init(context);
@@ -62,14 +65,14 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private void init(Context context) {
         
         if (!isInEditMode()) {
-
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0f);
-            if (mWithMargin) {
+            
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            if (mIsMultColumn) {
                 lp.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
                 lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
                 lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
             }
-            setOrientation(VERTICAL);       
+            setOrientation(VERTICAL);
             setLayoutParams(lp);
             
         }
@@ -81,7 +84,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
         // create header
         if (!mPrintJobs.isEmpty()) {
-            mPrintGroupView = factory.inflate(R.layout.view_printjobgroup, this, true);
+            mPrintGroupView = factory.inflate(R.layout.printjobs_group, this, true);
             RelativeLayout printJobGroupLayout = (RelativeLayout) mPrintGroupView.findViewById(R.id.printJobsGroupLayout);
             TextView printJobGroupText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupText);
             Button printJobGroupDelete = (Button) mPrintGroupView.findViewById(R.id.printJobGroupDelete);
@@ -91,11 +94,17 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             printJobGroupDelete.setTag(mPrinter);
             printJobGroupLayout.setOnClickListener(this);
             printJobGroupDelete.setOnClickListener(this);
+            
+            AppUtils.changeChildrenFont((ViewGroup) mPrintGroupView, SmartDeviceApp.getAppFont());
+            
+            if (mIsMultColumn)
+                mPrintGroupView.findViewById(R.id.printJobDeleteSeparator).setVisibility(INVISIBLE);
+            
         }
         
         // add print jobs
         for (int i = 0; i < mPrintJobs.size(); i++) {
-            View tempView = factory.inflate(R.layout.view_printjobdetail, this, false);
+            View tempView = factory.inflate(R.layout.printjobs_item, this, false);
             TextView printJobName = (TextView) tempView.findViewById(R.id.printJobName);
             ImageView printJobError = (ImageView) tempView.findViewById(R.id.printJobError);
             ImageView printJobSuccess = (ImageView) tempView.findViewById(R.id.printJobSuccess);
@@ -129,9 +138,16 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mPrintJobViews.add(tempView);
             addView(tempView, i + 1);
             
+            AppUtils.changeChildrenFont((ViewGroup) tempView, SmartDeviceApp.getAppFont());
+            
+            if (i == mPrintJobs.size() - 1) {
+                tempView.findViewById(R.id.printJobSeparator).setVisibility(GONE);
+            }
+            
         }
         mPrintJobs.clear();
         mPrintJobs = null;
+        
     }
     
     private String formatDate(Date date) {
@@ -144,22 +160,35 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // toggle collapse/expand of a group view when clicked
     private void toggleGroupView(View v) {
         if (mIsCollapsed) {
-            for (int i = 0; i < mPrintJobViews.size(); i++) {
-                mPrintJobViews.get(i).setVisibility(VISIBLE);
-            }
+            expandGroup(v);
             mIsCollapsed = false;
-            ((ImageView) v.findViewById(R.id.printJobGroupExpand)).setVisibility(INVISIBLE);
-            ((ImageView) v.findViewById(R.id.printJobGroupCollapse)).setVisibility(VISIBLE); 
-           
         } else {
-            for (int i = 0; i < mPrintJobViews.size(); i++) {
-                mPrintJobViews.get(i).setVisibility(GONE);
-            }
+            collapseGroup(v);
             mIsCollapsed = true;
-            ((ImageView) v.findViewById(R.id.printJobGroupExpand)).setVisibility(VISIBLE);
-            ((ImageView) v.findViewById(R.id.printJobGroupCollapse)).setVisibility(INVISIBLE);
         }
         
+    }
+    
+    private void expandGroup(View v) {
+        for (int i = 0; i < mPrintJobViews.size(); i++) {
+            mPrintJobViews.get(i).setVisibility(VISIBLE);
+        }
+        
+        v.findViewById(R.id.printJobGroupExpand).setVisibility(INVISIBLE);
+        v.findViewById(R.id.printJobGroupCollapse).setVisibility(VISIBLE);
+        if (!mIsMultColumn)
+            this.findViewById(R.id.printJobGroupSeparator).setVisibility(GONE);
+    }
+    
+    private void collapseGroup(View v) {
+        for (int i = 0; i < mPrintJobViews.size(); i++) {
+            mPrintJobViews.get(i).setVisibility(GONE);
+        }
+        
+        v.findViewById(R.id.printJobGroupExpand).setVisibility(VISIBLE);
+        v.findViewById(R.id.printJobGroupCollapse).setVisibility(INVISIBLE);
+        if (!mIsMultColumn)
+            this.findViewById(R.id.printJobGroupSeparator).setVisibility(VISIBLE);
     }
     
     // display delete print jobs dialog when clicked
@@ -173,26 +202,33 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // delete a print job when clicked
     private void deletePrintJob(View v) {
         int jobId = ((PrintJob) v.getTag()).getId();
-        View viewToRemove = mPrintGroupView.findViewWithTag(jobId);
         boolean isSuccess = PrintJobManager.deleteWithJobId(jobId);
         
         if (isSuccess) {
-            for (int i = 0; i < mPrintJobViews.size(); i++) {
-                if (mPrintJobViews.get(i).equals(viewToRemove)) {
-                    mPrintJobViews.remove(i);
-                }
-            }
-            
-            ((LinearLayout) mPrintGroupView).removeView(viewToRemove);
-            
-            if (mPrintJobViews.size() == 0) {
-                ((LinearLayout) mPrintGroupView.getParent()).removeView(mPrintGroupView);
-            }
+            deletePrintJobView(mPrintGroupView.findViewWithTag(jobId));
         } else {
             // show dialog
             PrintJobsDeleteErrorDialog dialog = PrintJobsDeleteErrorDialog.newInstance();
             DialogUtils.displayDialog((Activity) mContext, TAG, dialog);
         }
+    }
+    
+    private void deletePrintJobView(View v) {
+        for (int i = 0; i < mPrintJobViews.size(); i++) {
+            if (mPrintJobViews.get(i).equals(v)) {
+                mPrintJobViews.remove(i);
+            }
+        }
+        
+        ((LinearLayout) mPrintGroupView).removeView(v);
+        
+        if (mPrintJobViews.size() == 0) {
+            deletePrintJobGroupView();
+        }
+    }
+    
+    private void deletePrintJobGroupView() {
+        ((LinearLayout) mPrintGroupView.getParent()).removeView(mPrintGroupView);
     }
     
     @Override
@@ -215,7 +251,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void onDelete(int printerId) {
         boolean isSuccess = PrintJobManager.deleteWithPrinterId(printerId);
         if (isSuccess) {
-            ((LinearLayout) mPrintGroupView.getParent()).removeView(mPrintGroupView);
+            deletePrintJobGroupView();
             mPrintJobViews.clear();
         } else {
             // show dialog
@@ -227,10 +263,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void clearDeleteButton() {
         
         if (mViewToDelete != null) {
-            ((Button) mViewToDelete.findViewById(R.id.printJobDeleteBtn)).setVisibility(INVISIBLE);
-            ((TextView) mViewToDelete.findViewById(R.id.printJobDate)).setVisibility(VISIBLE);
+            mViewToDelete.findViewById(R.id.printJobDeleteBtn).setVisibility(INVISIBLE);
+            mViewToDelete.findViewById(R.id.printJobDate).setVisibility(VISIBLE);
             mViewToDelete.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
-            mViewToDelete = null;   
+            mViewToDelete = null;
         }
     }
     
@@ -245,8 +281,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
         
         public void showDeleteButton(View view) {
-            ((Button) view.findViewById(R.id.printJobDeleteBtn)).setVisibility(VISIBLE);
-            ((TextView) view.findViewById(R.id.printJobDate)).setVisibility(INVISIBLE);
+            view.findViewById(R.id.printJobDeleteBtn).setVisibility(VISIBLE);
+            view.findViewById(R.id.printJobDate).setVisibility(INVISIBLE);
             view.setBackgroundColor(getResources().getColor(R.color.theme_color_1));
             mDelListener.setPrintJobsGroupView(PrintJobsGroupView.this);
             mViewToDelete = view;
