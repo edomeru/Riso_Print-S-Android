@@ -44,6 +44,14 @@ namespace SmartDeviceApp.ViewModel
             }
         }
 
+        public PrintersViewModel PrintersViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PrintersViewModel>();
+            }
+        }
+
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
@@ -60,6 +68,7 @@ namespace SmartDeviceApp.ViewModel
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
             SimpleIoc.Default.Register<PrintPreviewViewModel>();
+            SimpleIoc.Default.Register<PrintersViewModel>();
         }
 
         /// <summary>

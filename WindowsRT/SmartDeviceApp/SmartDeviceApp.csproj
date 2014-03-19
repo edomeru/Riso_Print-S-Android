@@ -108,11 +108,13 @@
     </Compile>
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\PreviewViewMode.cs" />
+    <Compile Include="Common\Enum\PrintersViewMode.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Common\MainController.cs" />
+    <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Controls\ListItemControl.xaml.cs">
       <DependentUpon>ListItemControl.xaml</DependentUpon>
     </Compile>
@@ -206,6 +208,14 @@
     <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
+    <Content Include="Resources\Images\img_btn_add_printer_normal.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_normal.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_pressed.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_pressed.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_normal.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_pressed.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_normal.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_pressed.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
     <Content Include="Resources\Images\SplashScreen.scale-100.png" />
@@ -246,6 +256,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Resources\Styles\ControlStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\Styles\IpAddressStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -292,8 +307,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\Constants\" />
-    <Folder Include="Converters\" />
-    <Folder Include="Resources\Styles\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SNMP\SNMP.csproj">

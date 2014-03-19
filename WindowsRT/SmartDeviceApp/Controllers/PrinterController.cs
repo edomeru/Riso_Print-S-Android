@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using SmartDeviceApp.Models;
 using Windows.System.Threading;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using Windows.Networking;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -14,6 +17,8 @@ namespace SmartDeviceApp.Controllers
         ThreadPoolTimer periodicTimer;
         private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
         private ObservableCollection<Printer> _printerListTemp = new ObservableCollection<Printer>();
+
+        private ObservableCollection<Printer> _printerSearchList = new ObservableCollection<Printer>();
         private bool waitingForPrinterStatus;
         public ObservableCollection<Printer> PrinterList
         {
@@ -21,13 +26,36 @@ namespace SmartDeviceApp.Controllers
             {
                 return this._printerList;
             }
+            set
+            {
+                _printerList = value;
+
+                PropertyChanged(this, new PropertyChangedEventArgs("_isOnline"));
+            }
         }
+
+        public ObservableCollection<Printer> PrinterSearchList
+        {
+            get
+            {
+                return this._printerSearchList;
+            }
+            set
+            {
+                _printerSearchList = value;
+
+                //PropertyChanged(this, new PropertyChangedEventArgs("_isOnline"));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         SNMPController snmpController = new SNMPController();
 
 
         public PrinterController()
         {
+            //_printerList.CollectionChanged += ContentCollectionChanged;
         }
 
         //request saved printers
@@ -38,7 +66,7 @@ namespace SmartDeviceApp.Controllers
 
         }
 
-        public async Task<ObservableCollection<Printer>> populatePrintersScreen()
+        public async void populatePrintersScreen()
         {
             //get printers from db
             int indexOfDefaultPrinter = 0;
@@ -92,13 +120,12 @@ namespace SmartDeviceApp.Controllers
                 //call snmp
                 //create callback when snmp gets the results
                 updateStatus();
-                updateStatus2();
-                //startPolling();
+                startPolling();
             }
 
             
 
-            return _printerList;
+            //return _printerList;
 
         }
 
@@ -146,7 +173,7 @@ namespace SmartDeviceApp.Controllers
 
         public void startPolling()
         {
-            int period = 500;
+            int period = 5000;
             var timerHandler = new TimerElapsedHandler(getStatus);
 
             periodicTimer = ThreadPoolTimer.CreatePeriodicTimer(timerHandler, TimeSpan.FromMilliseconds(period));
@@ -162,7 +189,7 @@ namespace SmartDeviceApp.Controllers
 
         private void updateStatus()
         {
-            foreach (Printer printer in _printerList)
+            foreach (Printer printer in _printerListTemp)
             {
                 //request for eachs printer's printer status
                 System.Diagnostics.Debug.WriteLine(printer.Ip_address);
@@ -173,11 +200,34 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        private void updateStatus2()
-        {
-            //_printerList = _printerListTemp;
+
+        //public void ContentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Remove)
+        //    {
+        //        foreach (Printer item in e.OldItems)
+        //        {
+        //            //Removed items
+        //            item.PropertyChanged -= EntityViewModelPropertyChanged;
+        //        }
+        //    }
+        //    else if (e.Action == NotifyCollectionChangedAction.Add)
+        //    {
+        //        foreach (Printer item in e.NewItems)
+        //        {
+        //            //Added items
+        //            item.PropertyChanged += EntityViewModelPropertyChanged;
+        //        }
+        //    }
+        //}
+
+        //private void EntityViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    //throw new NotImplementedException();
+        //    //NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
             
-        }
+        //}
+
 
         private async void handlePrinterStatus(string ip, bool isOnline)
         {
@@ -186,16 +236,13 @@ namespace SmartDeviceApp.Controllers
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 //find the printer
-                Printer printer = _printerListTemp.Where(x => x.Ip_address == ip).First();
+                Printer printer = _printerList.First(x => x.Ip_address == ip);
                 System.Diagnostics.Debug.WriteLine(printer.Ip_address);
-                int index = _printerListTemp.IndexOf(printer);
+                int index = _printerList.IndexOf(printer);
 
                 //update status
                 printer.isOnline = isOnline;
 
-                //update list
-                _printerListTemp.Insert(index, printer);
-                waitingForPrinterStatus = false;
                 System.Diagnostics.Debug.WriteLine(index);
                 System.Diagnostics.Debug.WriteLine(isOnline);
             });
@@ -209,10 +256,211 @@ namespace SmartDeviceApp.Controllers
             
         }
 
+        public void updateOnlineStatus()
+        {
+            foreach (Printer printer in _printerList)
+            {
+                printer.isOnline = !printer.isOnline;
+            }
+        }
 
 
 
-        
+        /**
+         * 
+         * Add Printer Functions
+         * 
+         * */
+
+        public bool addPrinter(string ip)
+        {
+            //check if valid ip address
+            if (!isValidIpAddress(ip))
+            {
+                //display error theat ip is invalid
+                return false;
+            }
+
+            //check if already in _printerList
+            Printer printer = null;
+            try { 
+            printer = _printerList.First(x => x.Ip_address == ip);
+                }
+            catch {
+                if (printer != null)
+                {
+                    //cannot add, printer already in list
+                    return false;
+                }
+
+                //check if online
+                //get MIB
+                snmpController.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                snmpController.getCapability(ip);
+
+                
+            }
+            finally
+            {
+                //error
+
+            }
+            
+
+            return true;
+
+        }
+
+        public bool isValidIpAddress(string ip)
+        {
+            //  Split string by ".", check that array length is 3
+            char chrFullStop = '.';
+            string[] arrOctets = ip.Split(chrFullStop);
+            if (arrOctets.Length != 4)
+            {
+                return false;
+            }
+            //  Check each substring checking that the int value is less than 255 and that is char[] length is !> 2
+            Int16 MAXVALUE = 255;
+            Int32 temp; // Parse returns Int32
+            foreach (String strOctet in arrOctets)
+            {
+                if (strOctet.Length > 3)
+                {
+                    return false;
+                }
+
+                temp = int.Parse(strOctet);
+                if (temp > MAXVALUE)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public async void handleAddPrinterStatus(string ip, bool isOnline, List<string> capabilities)
+        {
+            if (isOnline)
+            {
+                //add to _printerList
+                DatabaseController.Printer printerDB = new DatabaseController.Printer()
+                {
+                    prn_ip_address = ip,
+                    //Temp data
+                    prn_name = "Manually Added Printer!",
+                    prn_port_setting  = 1,
+                    prn_enabled_lpr  = true,
+                    prn_enabled_raw  = true, 
+                    prn_enabled_pagination  = true,
+                    prn_enabled_duplex  = true, 
+                    prn_enabled_booklet_binding  = true,
+                    prn_enabled_staple = true,
+                    prn_enabled_bind = true 
+                };
+                //insert to database
+                int id = await App.db.insertPrinter(printerDB);
+                if (id < 0)
+                {
+                    return;
+                }
+
+                //add to printerList
+                Printer printer = new Printer()
+               {
+                   Id = id,
+                   Ip_address = printerDB.prn_ip_address,
+                   Name = printerDB.prn_name,
+                   Enabled_LPR = printerDB.prn_enabled_lpr,
+                   Enabled_Raw = printerDB.prn_enabled_raw,
+                   Enabled_Pagination = printerDB.prn_enabled_pagination,
+                   Enabled_BooketBinding = printerDB.prn_enabled_booklet_binding,
+                   Enabled_Duplex = printerDB.prn_enabled_duplex,
+                   Enabled_Staple = printerDB.prn_enabled_staple,
+                   Enabled_Bind = printerDB.prn_enabled_bind,
+                   isDefaultPrinter = false,
+                    isOnline = true
+               };
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+
+                _printerList.Add(printer);
+
+                _printerListTemp = _printerList;
+            });
+                
+
+            }
+            else
+            {
+                //display error cannot add printer
+            }
+        }
+
+
+        /**
+         * Scan Functions
+         * 
+         * */
+        public void scanPrinters()
+        {
+            _printerSearchList.Clear();
+            snmpController.printerControllerDiscoverCallback = new Action<Printer>(handleDeviceDiscovered);
+            snmpController.startDiscover();
+        }
+
+        private async void handleDeviceDiscovered(Printer printer)
+        {
+            Printer printerInList = null;
+            
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                {
+            try
+            {
+                printerInList = _printerSearchList.First(x => x.Ip_address == printer.Ip_address);
+            }
+            catch
+            {
+                //not in the list
+                if(printerInList == null)
+                {
+                    
+                _printerSearchList.Add(printer);
+                
+                }
+            }
+                });
+
+        }
+
+
+        /**
+         * Delete functions
+         * 
+         * */
+
+        public async Task<bool> deletePrinter(int index)
+        {
+            Printer printer = _printerList.ElementAt(index);
+
+            int result = await App.db.deletePrinterFromDB(printer.Id);
+
+            if (result > 0)
+            {
+                return false;
+            }
+
+
+            _printerList.RemoveAt(index);
+
+            _printerListTemp = _printerList;
+
+            return true;
+        }
+
 
     }
 }

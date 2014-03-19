@@ -13,9 +13,14 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using SmartDeviceApp.Controllers;
+
+using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
+using SmartDeviceApp.ViewModels;
+using Windows.UI;
+using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -24,52 +29,23 @@ namespace SmartDeviceApp.Views
     /// <summary>
     /// A basic page that provides characteristics common to most applications.
     /// </summary>
-    public sealed partial class PrintersPage : Page
+    public sealed partial class PrintersPage : PageBase
     {
-
-        private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        private PrinterController printerController = new PrinterController();
-        private ObservableCollection<Printer> printerList;
-
-        /// <summary>
-        /// This can be changed to a strongly typed view model.
-        /// </summary>
-        public ObservableDictionary DefaultViewModel
+        public PrintersViewModel ViewModel
         {
-            get { return this.defaultViewModel; }
+            get
+            {
+                return (PrintersViewModel)DataContext;
+            }
         }
-
-        /// <summary>
-        /// NavigationHelper is used on each page to aid in navigation and 
-        /// process lifetime management
-        /// </summary>
-        public NavigationHelper NavigationHelper
-        {
-            get { return this.navigationHelper; }
-        }
-
 
         public PrintersPage()
         {
+            Messenger.Default.Register<PrintersViewMode>(this, (printersViewMode) => OnSetPrintersView(printersViewMode));
             this.InitializeComponent();
-            this.navigationHelper = new NavigationHelper(this);
-            this.navigationHelper.LoadState += navigationHelper_LoadState;
-            this.navigationHelper.SaveState += navigationHelper_SaveState;
-
-            //Call PrinterController and get printers
-            populateScreen();
-
-
-            
-            
         }
 
-        private async void populateScreen()
-        {
-            printerList = await printerController.populatePrintersScreen();
-            adaptableGridView.ItemsSource = printerList;
-        }
+        
 
         /// <summary>
         /// Populates the page with content passed during navigation. Any saved state is also
@@ -96,7 +72,7 @@ namespace SmartDeviceApp.Views
         /// serializable state.</param>
         private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
-            printerController.endPolling();
+            
         }
 
         #region NavigationHelper registration
@@ -110,16 +86,49 @@ namespace SmartDeviceApp.Views
         /// The navigation parameter is available in the LoadState method 
         /// in addition to page state preserved during an earlier session.
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            navigationHelper.OnNavigatedTo(e);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            navigationHelper.OnNavigatedFrom(e);
-        }
+       
 
         #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //printerController.updateOnlineStatus();
+        }
+
+        private void buttonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            //printerController.addPrinter("192.168.0.199");
+        }
+
+        // Note: Cannot set this in ViewModel because need to get this object
+        // for VisualStateManager.GoToState
+        private void OnSetPrintersView(PrintersViewMode previewViewMode)
+        {
+            switch (previewViewMode)
+            {
+                case PrintersViewMode.MainMenuPaneVisible:
+                    {
+                        VisualStateManager.GoToState(this, "MainMenuPaneVisibleState", true);
+                        break;
+                    }
+
+                case PrintersViewMode.PrintersFullScreen:
+                    {
+                        VisualStateManager.GoToState(this, "PrintersFullScreenState", true);
+                        break;
+                    }
+
+                case PrintersViewMode.AddPrinterPaneVisible:
+                    {
+                        VisualStateManager.GoToState(this, "AddPrinterPaneVisibleState", true);
+                        break;
+                    }
+                case PrintersViewMode.ScanPrintersPaneVisible:
+                    {
+                        VisualStateManager.GoToState(this, "ScanPrintersPaneVisibleState", true);
+                        break;
+                    }
+            }
+        }
     }
 }
