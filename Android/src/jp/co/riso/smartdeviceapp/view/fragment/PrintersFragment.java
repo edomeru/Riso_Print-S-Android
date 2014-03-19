@@ -27,9 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 
 public class PrintersFragment extends BaseFragment implements View.OnTouchListener {
     public interface PrinteSearchTabletInterface {
@@ -65,6 +65,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        ((MainActivity)getActivity()).mPrintPreviewScreen = false;
         mPrinterManager =  PrinterManager.sharedManager(getActivity());
         if(!isTablet()) {
             mPrinter = new ArrayList<Printer>();

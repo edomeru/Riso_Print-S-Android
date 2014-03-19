@@ -35,6 +35,7 @@ public class MainActivity extends BaseActivity {
     private ViewGroup mLeftLayout;
     private ViewGroup mRightLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    public boolean mPrintPreviewScreen = true;
     
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class MainActivity extends BaseActivity {
             ft.commit();
         } else {
             float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
-            if (isTablet() && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
+            if (isTablet() && mPrintPreviewScreen && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
                 mMainLayout.requestLayout();
             } else {
@@ -136,7 +137,7 @@ public class MainActivity extends BaseActivity {
         public void syncState() {
             super.syncState();
             
-            if (isTablet() && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            if (isTablet() && mPrintPreviewScreen && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
                 mMainLayout.setPadding(0, 0, getDrawerWidth(), 0);
             }
         }
@@ -148,7 +149,7 @@ public class MainActivity extends BaseActivity {
                 moveFactor *= -1;
             }
             
-            if (isTablet() && drawerView.getId() == mRightLayout.getId()) {
+            if (isTablet() && mPrintPreviewScreen && drawerView.getId() == mRightLayout.getId()) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(moveFactor), 0);
             } else {
                 mMainLayout.setTranslationX(moveFactor);                

@@ -70,16 +70,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         init(context);
         
     }
-    
-    public void refreshPrintersList() {
-        List<Printer> printer = mPrinterManager.getSavedPrintersList();
-        for(int i = 0; i< mPrinterViewArray.size(); i++)
-            mPrinterViewArray.get(i).removeAllViews();
-        for(int i=0; i < printer.size(); i++) {
-            addToTabletPrinterScreen(printer.get(i));
-        }
-    }
-    
+        
     // ================================================================================
     // Private methods
     // ================================================================================
@@ -298,4 +289,15 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         }
     }
     
+    // ================================================================================
+    // INTERFACE - PrinteSearchTabletInterface
+    // ================================================================================
+    public void refreshPrintersList() {
+        List<Printer> printer = mPrinterManager.getSavedPrintersList();
+        for(int i = 0; i< mPrinterViewArray.size(); i++)
+            mPrinterViewArray.get(i).removeAllViews();
+        for(int i=0; i < printer.size(); i++) {
+            addToTabletPrinterScreen(printer.get(i));
+        }
+    }
 }

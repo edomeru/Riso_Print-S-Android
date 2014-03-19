@@ -30,6 +30,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     private EditText mIpAddress = null;
     PrinterManager mPrinterManager = null;
     private boolean mIsSearching = false;
+    private boolean mAdded = false;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final String KEY_SEARCH_STATE = "add_searched_state";
     
@@ -49,6 +50,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        mAdded = false;
         mPrinterManager = PrinterManager.sharedManager(getActivity());
         mPrinterManager.setOnPrinterSearchListener(this);
     }
@@ -175,6 +177,14 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
+    private void dialogErrCb(String ipAddress) {
+        // TODO: Get values from resources 
+        // Open Dialog box 
+        InfoDialogFragment info = InfoDialogFragment.newInstance("Printer Info", 
+                ipAddress + " Request TIMEDOUT", 
+                getResources().getString(R.string.ids_lbl_ok));
+        DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+    }
     private void closeScreen() {
         if (isTablet()) {
             if (getActivity() != null && getActivity() instanceof MainActivity) {               
@@ -229,6 +239,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         }
         else {
             if(mPrinterManager.savePrinterToDB(printer) != -1) {
+                mAdded = true;
                 dialogCb(printer);
                 closeScreen();
             }
@@ -237,7 +248,11 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void onSearchEnd() {
+        String ipAddress = mIpAddress.getText().toString();
         mIsSearching = false;
+        if(!mAdded && !ipAddress.isEmpty()) {
+            dialogErrCb(ipAddress);
+        }
         return;
     }
     
