@@ -13,6 +13,7 @@
 + (void)displayResult:(RESULT_TYPE)result withTitle:(NSString*)title withDetails:(NSArray*)details
 {
     //TODO: replace messages with localizable strings
+    //TODO: if using a custom AlertView, implement it here
     
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:title
                                                         message:nil
@@ -31,7 +32,7 @@
             break;
             
         case ERR_INVALID_IP:
-            [alertView setMessage:@"The IP address is invalid. The printer could not be found."];
+            [alertView setMessage:@"The IP address format is invalid."];
             break;
         
         case ERR_MAX_PRINTERS:

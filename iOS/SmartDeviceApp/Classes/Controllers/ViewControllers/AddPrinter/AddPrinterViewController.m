@@ -46,7 +46,7 @@
         the UITextField contents
  @return the formatted IP string
  */
-- (NSString*)formatIPString:(NSString*)inputIP;
+- (NSString*)trimIPString:(NSString*)inputIP;
 
 /**
  Checks if the input IP is a valid IP address.
@@ -164,17 +164,17 @@
     }
     
     // get the input IP
-    NSString* formattedIP = [self formatIPString:self.textIP.text];
+    NSString* trimmedIP = [self trimIPString:self.textIP.text];
     
     // is the IP a valid IP address?
-    if (![self isIPValid:formattedIP])
+    if (![self isIPValid:trimmedIP])
     {
         [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
         return;
     }
     
     // was this printer already added before?
-    if ([self.printerManager isIPAlreadyRegistered:formattedIP])
+    if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
     {
         [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
         return;
@@ -182,7 +182,7 @@
 
     NSLog(@"[INFO][AddPrinter] initiating search");
     self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
-    [self.printerManager searchForPrinter:formattedIP];
+    [self.printerManager searchForPrinter:trimmedIP];
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
@@ -272,9 +272,9 @@
     return YES;
 }
 
-#pragma mark - TextFields - Input IP
+#pragma mark - Utilities
 
-- (NSString*)formatIPString:(NSString*)inputIP
+- (NSString*)trimIPString:(NSString*)inputIP
 {
     //TODO: leading zeroes are disregarded
     //TODO: spaces are automatically trimmed
@@ -284,21 +284,39 @@
 
 - (BOOL)isIPValid:(NSString*)inputIP;
 {
-    //TODO:
-    /**
-     IP Address Format: xxx.xxx.xxx.xxx
-     
-     # of Characters: 7-15
-     Type of Characters: Digits and Dots
-     Numerical Values: 0-255
-     
-     Format:
-     - 4 dot-separated numbers
-     - cannot input over 15 characters
-     */
+    // quick check : # of characters must be 7-15
+    NSUInteger numChars = [inputIP length];
+    if (numChars < 7 || numChars > 15)
+        return NO;
     
-    //no issues
-    return YES;
+    // create the IP Address regex pattern
+    NSMutableString* pattern = [NSMutableString stringWithString:@""];
+    [pattern appendString:@"^"];                                //start
+    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //1st digit
+    [pattern appendString:@"\\."];                              //dot separator
+    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //2nd digit
+    [pattern appendString:@"\\."];                              //dot separator
+    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //3rd digit
+    [pattern appendString:@"\\."];                              //dot separator
+    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //4th digit
+    [pattern appendString:@"$"];                                //end
+    
+    // create the regex
+    NSError* error = nil;
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                           options:0
+                                                                             error:&error];
+    
+    // find the pattern in the input string
+    NSRange matches = [regex rangeOfFirstMatchInString:inputIP
+                                               options:NSMatchingReportProgress
+                                                 range:NSMakeRange(0, [inputIP length])];
+    
+    // check if input matched the pattern
+    if (matches.location == NSNotFound)
+        return NO;
+    else
+        return YES;
 }
 
 @end
