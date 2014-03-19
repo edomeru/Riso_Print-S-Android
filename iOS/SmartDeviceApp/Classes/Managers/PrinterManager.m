@@ -344,7 +344,7 @@ static PrinterManager* sharedPrinterManager = nil;
 
 - (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
 {
-    NSDictionary* defaultPrintSettings = [PListUtils getDefaultPrintSettings];
+    NSDictionary* defaultPrintSettings = [PListUtils readDefaultPrintSettings];
     (*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
     (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
     (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];
@@ -365,7 +365,7 @@ static PrinterManager* sharedPrinterManager = nil;
 
 - (BOOL)isAtMaximumPrinters
 {
-    NSInteger maxPrinters = [PListUtils getMaxPrinters];
+    NSInteger maxPrinters = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
     if ([self.listSavedPrinters count] == maxPrinters)
         return YES;
     else

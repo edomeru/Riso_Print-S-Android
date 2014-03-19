@@ -10,38 +10,82 @@
 
 #define SDA_PROP_LIST   @"SmartDeviceApp-Settings"
 
+static NSDictionary* sharedSettingsDict = nil;
+
+@interface PListUtils ()
+
+/**
+ Sets the shared NSDictionary for the SmartDeviceApp Settings property list.
+ This method should be called only once during the lifecycle of this class.
+ */
++ (void)setSharedSettingsDict;
+
+@end
+
 @implementation PListUtils
 
-+ (NSDictionary*)getDefaultPrintSettings
+#pragma mark - Initializer
+
++ (void)setSharedSettingsDict
 {
-    NSString* pathToPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
-    NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPlist];
-    
-    return [dict objectForKey:@"PrintSettings_Default"];
+    NSString* pathToSettingsPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
+    if (pathToSettingsPlist == nil)
+    {
+        NSLog(@"[ERROR][PListUtils] plist file (%@) not found", SDA_PROP_LIST);
+        
+        //TODO: to prevent possible crashes, set sharedSettingsDict to an empty dictionary?
+    }
+
+    sharedSettingsDict = [[NSDictionary alloc] initWithContentsOfFile:pathToSettingsPlist];
+    if (sharedSettingsDict == nil)
+    {
+        NSLog(@"[ERROR][PListUtils] plist file error or invalid contents for dictionary (%@)", SDA_PROP_LIST);
+        
+        //TODO: to prevent possible crashes, set sharedSettingsDict to an empty dictionary?
+    }
 }
 
-+ (NSUInteger)getMaxPrinters
+#pragma mark - Readers
+
++ (NSDictionary*)readDefaultPrintSettings
 {
-    NSString* pathToPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
-    NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPlist];
+    if (sharedSettingsDict == nil)
+        [self setSharedSettingsDict];
     
-    return [[dict objectForKey:@"Printer_MaxCount"] unsignedIntegerValue];
+    return [sharedSettingsDict objectForKey:@"PrintSettings_Default"];
 }
 
-+ (BOOL)useSNMPCommonLib
++ (NSUInteger)readUint:(PL_UINT_TYPE)type
 {
-    NSString* pathToPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
-    NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPlist];
+    if (sharedSettingsDict == nil)
+        [self setSharedSettingsDict];
     
-    return [[dict objectForKey:@"Use_SNMPCommonLib"] boolValue];
+    switch (type)
+    {
+        case PL_UINT_MAX_PRINTERS:
+            return [[sharedSettingsDict objectForKey:@"Printer_MaxCount"] unsignedIntegerValue];
+            
+        default:
+            return 0;
+    }
 }
 
-+ (BOOL)useSNMPUnicastTimeout
++ (BOOL)readBool:(PL_BOOL_TYPE)type;
 {
-    NSString* pathToPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
-    NSDictionary* dict = [[NSDictionary alloc] initWithContentsOfFile:pathToPlist];
+    if (sharedSettingsDict == nil)
+        [self setSharedSettingsDict];
     
-    return [[dict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
+    switch (type)
+    {
+        case PL_BOOL_USE_SNMP:
+            return [[sharedSettingsDict objectForKey:@"Use_SNMPCommonLib"] boolValue];
+            
+        case PL_BOOL_USE_SNMP_TIMEOUT:
+            return [[sharedSettingsDict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
+            
+        default:
+            return NO;
+    }
 }
 
 @end

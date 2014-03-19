@@ -37,6 +37,8 @@ static NSManagedObjectContext* sharedManagedObjectContext = nil;
     if (sharedManagedObjectContext == nil)
     {
         NSLog(@"[ERROR][DBM] could not set NSManagedObjectContext");
+        
+        //TODO: to prevent possible crashes, set sharedManagedObjectContext to ??
     }
 }
 

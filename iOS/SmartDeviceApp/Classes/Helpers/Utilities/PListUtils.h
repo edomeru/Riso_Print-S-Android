@@ -8,30 +8,39 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum
+{
+    PL_UINT_MAX_PRINTERS,
+    
+} PL_UINT_TYPE;
+
+typedef enum
+{
+    PL_BOOL_USE_SNMP,
+    PL_BOOL_USE_SNMP_TIMEOUT,
+    
+} PL_BOOL_TYPE;
+
 @interface PListUtils : NSObject
 
 /**
- Default Print Settings for New Printers.
+ Wrapper for reading the default print settings for a new printer.
  @return NSDictionary*
  */
-+ (NSDictionary*)getDefaultPrintSettings;
++ (NSDictionary*)readDefaultPrintSettings;
 
 /**
- Maximum Number of Allowed Printers
- @return NSUInteger
+ Wrapper for reading an unsigned int value from the property list.
+ @param PL_UINT_TYPE key
+ @return value for the specified key
  */
-+ (NSUInteger)getMaxPrinters;
++ (NSUInteger)readUint:(PL_UINT_TYPE)type;
 
 /**
- "Use SNMP Common Library"
- @return BOOL
+ Wrapper for reading a boolean value from the property list.
+ @param PL_BOOL_TYPE key
+ @return value for the specified key
  */
-+ (BOOL)useSNMPCommonLib;
-
-/**
- "Use SNMP Unicast Timeout"
- @return BOOL
- */
-+ (BOOL)useSNMPUnicastTimeout;
++ (BOOL)readBool:(PL_BOOL_TYPE)type;
 
 @end

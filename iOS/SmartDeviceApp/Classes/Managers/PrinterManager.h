@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "PrinterSearchDelegate.h"
 
-@class Printer;
-@class DefaultPrinter;
-@class PrintSetting;
-
 @interface PrinterManager : NSObject
 
 /** 
