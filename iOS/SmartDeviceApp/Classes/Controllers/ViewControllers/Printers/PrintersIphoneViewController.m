@@ -103,16 +103,12 @@
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    
-    PrinterCell *cell = nil;
-    if(self.toDeleteIndexPath != nil)
+    if(selectedIndexPath != self.toDeleteIndexPath)
     {
-        NSLog(@"Not nil");
-        cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
-        [cell setCellToBeDeletedState:NO];
+        //remove delete state of other cells if any
+        [self removeDeleteState];
     }
-    
-    cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
+    PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
     [cell setCellToBeDeletedState:YES];
     self.toDeleteIndexPath = selectedIndexPath;
 }
