@@ -1597,14 +1597,6 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Th4-IQ-zaV" userLabel="Separator">
-                                                <rect key="frame" x="20" y="44" width="300" height="1"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="1" id="xE1-f2-MeV"/>
-                                                </constraints>
-                                            </view>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="V7Y-Ut-ufD">
                                                 <rect key="frame" x="233" y="9" width="79" height="27"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1615,12 +1607,9 @@
                                             </switch>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="Th4-IQ-zaV" secondAttribute="bottom" id="1Io-rX-8jj"/>
-                                            <constraint firstAttribute="trailing" secondItem="Th4-IQ-zaV" secondAttribute="trailing" id="Exa-7G-Rim"/>
                                             <constraint firstAttribute="height" constant="45" id="HNe-cn-JGw"/>
                                             <constraint firstItem="kRb-dB-sEY" firstAttribute="leading" secondItem="3po-Ej-HzX" secondAttribute="leading" constant="20" id="J26-F4-AUs"/>
                                             <constraint firstAttribute="trailing" secondItem="V7Y-Ut-ufD" secondAttribute="trailing" constant="10" id="Jgg-3u-aIk"/>
-                                            <constraint firstItem="Th4-IQ-zaV" firstAttribute="leading" secondItem="3po-Ej-HzX" secondAttribute="leading" constant="20" id="Uek-Kh-dme"/>
                                             <constraint firstAttribute="centerY" secondItem="V7Y-Ut-ufD" secondAttribute="centerY" id="w2O-oc-8AE"/>
                                             <constraint firstAttribute="centerY" secondItem="kRb-dB-sEY" secondAttribute="centerY" id="zqv-f9-TWf"/>
                                         </constraints>
