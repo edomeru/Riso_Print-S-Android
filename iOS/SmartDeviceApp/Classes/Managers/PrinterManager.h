@@ -15,9 +15,25 @@
 
 @interface PrinterManager : NSObject
 
-@property (weak, nonatomic) id<PrinterSearchDelegate> delegate;
-@property (strong, nonatomic) NSMutableArray* listSavedPrinters;
-@property (strong, nonatomic) DefaultPrinter* defaultPrinter;
+/** 
+ UIViewController for the SNMP search operations.
+ The delegate receives the update that a printer was found or when
+ the search has ended.
+ */
+@property (weak, nonatomic) id<PrinterSearchDelegate> searchDelegate;
+
+/**
+ Number of saved printers held by the PrinterManager.
+ */
+@property (readonly, assign, nonatomic) NSUInteger countSavedPrinters;
+
+#pragma mark - Initialization
+
+/**
+ Gets access to the singleton PrinterManager object.
+ If the object does not exist yet, then this method creates it.
+ */
++ (PrinterManager*)sharedPrinterManager;
 
 #pragma mark - Printers in DB
 
@@ -46,20 +62,6 @@
 - (BOOL)registerDefaultPrinter:(Printer*)printer;
 
 /**
- Gets the list of Printers stored in DB.
- If the list is non-empty, this PrinterManager will keep
- a reference to this list as its list of saved printers.
- */
-- (void)getListOfSavedPrinters;
-
-/**
- Gets the DefaultPrinter object stored in DB.
- If this object exists, this PrinterManager will keep a 
- reference to this DefaultPrinter object.
- */
-- (void)getDefaultPrinter;
-
-/**
  Gets a Printer object from the list of saved printers.
  @param index
         index from the list of saved printers
@@ -67,6 +69,13 @@
  @return Printer* object or nil if the index is not valid
  */
 - (Printer*)getPrinterAtIndex:(NSUInteger)index;
+
+/**
+ Removes the defaultprinter record
+ 
+ @return YES if successful, NO otherwise.
+ */
+- (BOOL) deleteDefaultPrinter;
 
 /**
  Removes a Printer object from the DB. If this Printer object
@@ -143,10 +152,4 @@
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
 
-/**
-Removes the defaultprinter record
- 
- @return YES if successful, NO otherwise.
- */
-- (BOOL) deleteDefaultPrinter;
 @end

@@ -8,16 +8,11 @@
 
 #import "HomeViewController.h"
 #import "PrintersIphoneViewController.h"
-#import "AddPrinterViewController.h"
-#import "PrinterSearchViewController.h"
 #import "Printer.h"
 #import "DefaultPrinter.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
 #import "AlertUtils.h"
-
-#define SEGUE_TO_ADD_PRINTER    @"PrintersIphone-AddPrinter"
-#define SEGUE_TO_PRINTER_SEARCH @"PrintersIphone-PrinterSearch"
 
 #define PRINTERCELL             @"PrinterCell"
 
@@ -65,7 +60,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.printerManager.listSavedPrinters count];
+    return self.printerManager.countSavedPrinters;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -88,7 +83,7 @@
     [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
-    if (indexPath.row == [self.printerManager.listSavedPrinters count]-1)
+    if (indexPath.row == self.printerManager.countSavedPrinters-1)
         [cell.separator setHidden:YES];
     
     return cell;
@@ -155,47 +150,12 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
-    {
-        AddPrinterViewController* destController = [segue destinationViewController];
-        
-        //give the child screen a reference to the printer manager
-        destController.printerManager = self.printerManager;
-    }
-    
-    if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
-    {
-        PrinterSearchViewController* destController = [segue destinationViewController];
-        
-        //give the child screen a reference to the printer manager
-        destController.printerManager = self.printerManager;
-    }
 }
 
-- (IBAction)unwindToPrinters:(UIStoryboardSegue*)unwindSegue
+- (void)reloadData
 {
-    UIViewController* sourceViewController = [unwindSegue sourceViewController];
-    
-    if ([sourceViewController isKindOfClass:[HomeViewController class]])
-    {
-        [self.mainMenuButton setEnabled:YES];
-    }
-    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
-    {
-        [self.addPrinterButton setEnabled:YES];
-        
-        AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
-        if (adderScreen.hasAddedPrinters)
-            [self.tableView reloadData];
-    }
-    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
-    {
-        [self.printerSearchButton setEnabled:YES];
-        
-        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
-        if (adderScreen.hasAddedPrinters)
-            [self.tableView reloadData];
-    }
+    [super reloadData];
+    [self.tableView reloadData];
 }
 
 #pragma mark - private helper methods

@@ -31,12 +31,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // setup the PrinterManager
+    
+    self.printerManager = [PrinterManager sharedPrinterManager];
     self.toDeleteIndexPath = nil;
-    NSLog(@"[INFO][Printers] setup");
-    self.printerManager = [[PrinterManager alloc] init];
-    [self.printerManager getListOfSavedPrinters];
-    [self.printerManager getDefaultPrinter];
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,7 +47,7 @@
 - (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
 {
     //get selected printer from list
-    Printer *selectedPrinter = [self.printerManager.listSavedPrinters objectAtIndex:indexPath.row];
+    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
     
     //set as default printer
     return [self.printerManager registerDefaultPrinter:selectedPrinter];
@@ -76,8 +73,38 @@
     [self performSegueTo:[PrinterSearchViewController class]];
 }
 
+#pragma mark - Segue
+
 - (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender
 {
+    UIViewController* sourceViewController = [sender sourceViewController];
+    
+    if ([sourceViewController isKindOfClass:[HomeViewController class]])
+    {
+        [self.mainMenuButton setEnabled:YES];
+    }
+    else if ([sourceViewController isKindOfClass:[AddPrinterViewController class]])
+    {
+        [self.addPrinterButton setEnabled:YES];
+        
+        AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self reloadData];
+    }
+    else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
+    {
+        [self.printerSearchButton setEnabled:YES];
+        
+        PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
+        if (adderScreen.hasAddedPrinters)
+            [self reloadData];
+    }
+}
+
+- (void)reloadData
+{
+    NSLog(@"[INFO][Printers] reloading data");
+    //should be implemented depending on display
 }
 
 @end
