@@ -35,6 +35,7 @@
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeight;
+@property (weak, nonatomic) IBOutlet UIView *pageNavArea;
 
 @end
 
@@ -112,8 +113,7 @@
 -(void) hidePrintPreviewControls: (BOOL) isHidden
 {
     [self.printSettingButton setHidden:isHidden];
-    [self.pageNavigationSlider setHidden:isHidden];
-    [self.pageNumberDisplay setHidden:isHidden];
+    [self.pageNavArea setHidden: isHidden];
 }
 
 //initial loading of print preview
@@ -149,9 +149,6 @@
     
     //set up the page navigation slider
     [self setUpPageNavigationSlider];
-    
-    //update the page numbers
-    [self updatePageNumberLabel];
 }
 
 
@@ -181,6 +178,10 @@
     {
         __numViewPages++;
     }
+    
+    //update slider maximum value and page number label after computation of number of pages
+    [self.pageNavigationSlider setMaximumValue: __numViewPages];
+    [self updatePageNumberLabel];
 }
 
 //initial set up of the page view controller
@@ -294,11 +295,13 @@
 //set up the slider
 -(void) setUpPageNavigationSlider
 {
+    [self.pageNavigationSlider setMinimumValue: 1];
     [self.pageNavigationSlider setValue:__currentIndex];
-    [self.pageNavigationSlider setMaximumValue: __numViewPages];
+
     [self.pageNavigationSlider setMinimumTrackImage:[UIImage imageNamed:@"SliderMinimum.png"] forState:UIControlStateNormal];
     [self.pageNavigationSlider setMaximumTrackImage:[UIImage imageNamed:@"SliderMaximum.png"] forState:UIControlStateNormal];
     [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"SliderThumb.png"] forState:UIControlStateNormal];
+    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"SliderThumb.png"] forState:UIControlStateHighlighted];
 }
 
 //update the page number label
@@ -436,18 +439,18 @@
 {
 }
 
-/*Action when slider value is changed*/
-- (IBAction)sliderChanged:(id)sender
+/*Action when slider is dragged*/
+- (IBAction)dragSliderAction:(id)sender
 {
     UISlider *slider  = (UISlider *) sender;
-    NSInteger pageIndex = slider.value;
-    __currentIndex = pageIndex;
-    [self setViewToPage: pageIndex];
+    NSInteger pageNumber = slider.value;
+    __currentIndex = pageNumber - 1;
+    [self setViewToPage: __currentIndex];
     [self updatePageNumberLabel];
 }
 
 /*Action when slider is tapped*/
-- (IBAction)tapSlider:(id)sender
+- (IBAction)tapSliderAction:(id)sender
 {
     UIGestureRecognizer *tap =  (UIGestureRecognizer *)sender;
     //get point in slider where it is tapped
@@ -455,9 +458,9 @@
     //Get how many percent of the total slider length is the distance of the tapped point from the start point of the slider
     CGFloat sliderPercentage = point.x/self.pageNavigationSlider.bounds.size.width;
     //multiply the the percentage with the total number of pages in view to get the current page index;
-    __currentIndex = __numViewPages * sliderPercentage;
+    __currentIndex = (__numViewPages * sliderPercentage)-1;;
     
-    //update page in view, page number label. slider position
+    //update page in view, page number label. slider thumb position
     [self setViewToPage:__currentIndex];
     [self updatePageNumberLabel];
     [self.pageNavigationSlider setValue:__currentIndex];
