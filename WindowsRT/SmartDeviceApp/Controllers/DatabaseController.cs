@@ -26,7 +26,8 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly DatabaseController _instance = new DatabaseController();
 
-        private const string sdaDatabase = "SmartDeviceAppDB.db";
+        private const string DATABASE_FILE_NAME = "SmartDeviceAppDB.db";
+        private const string SCRIPT_FILE_PATH = "ms-appx:///Assets/SmartDeviceAppDB.sql";
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -40,18 +41,47 @@ namespace SmartDeviceApp.Controllers
             get { return _instance; }
         }
 
+        // public async Task Initialize() // Used for create database from script
         public void Initialize()
         {
+            // await CreateDatabase();  // Used for create database from script
             CreateDatabase();
         }
 
+        // private async Task CreateDatabase() // Used for create database from script
         private void CreateDatabase()
         {
             try
             {
-                var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+                var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
+                    DATABASE_FILE_NAME);
                 using (var db = new SQLite.SQLiteConnection(dbpath))
                 {
+                    #region Create Tables Using Script File
+                    /*
+                    // Read script from Assets and create tables
+                    StorageFile file =await
+                        StorageFile.GetFileFromApplicationUriAsync(new Uri(SCRIPT_FILE_PATH));
+                    string script = await FileIO.ReadTextAsync(file);
+                        
+                    // Loop each commands
+                    string[] commands = script.Split(new char[]{';'},
+                        StringSplitOptions.RemoveEmptyEntries);
+                    foreach(string command in commands)
+                    {
+                        try
+                        {
+                            db.Execute(command.Trim());
+                        }
+                        catch (SQLiteException)
+                        {
+                            // Table already exists
+                            // Coninue execution just to create other empty tables
+                        }
+                    }
+                    */
+                    #endregion Create Create Tables Using Script File
+
                     /*
                     // DeleteAll is for testing purposes only PrintersModule
                     db.DeleteAll<Printer>();
@@ -60,6 +90,8 @@ namespace SmartDeviceApp.Controllers
                     db.DeleteAll<DefaultPrinter>();
                     db.Commit();
                     */
+
+                    #region Create Tables Using Model Classes
 
                     // Create the tables if they don't exist
 
@@ -82,12 +114,14 @@ namespace SmartDeviceApp.Controllers
                     db.Dispose();
                     db.Close();
 
-                    //insertPrinters(); //for testing PrintersModule
+                    #endregion Create Tables Using Model Classes
+
+                    // insertPrinters(); //for testing PrintersModule
                 }
             }
             catch
             {
-
+                // Error in creating tables
             }
         }
 
@@ -105,7 +139,8 @@ namespace SmartDeviceApp.Controllers
 
             DefaultPrinter dp = new DefaultPrinter(printer.Id);
 
-            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
+                DATABASE_FILE_NAME);
             using (var db = new SQLite.SQLiteConnection(dbpath))
             {
                 // Create the tables if they don't exist
@@ -127,11 +162,11 @@ namespace SmartDeviceApp.Controllers
 
 
         }
-         * */
+        */
 
         private void InsertPrinter(Printer printer)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
             using (var db = new SQLite.SQLiteConnection(dbpath))
             {
                 // Create the tables if they don't exist
@@ -150,7 +185,7 @@ namespace SmartDeviceApp.Controllers
             var printerList = new List<Printer>();
             try
             {
-                var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+                var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
 
                 var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
@@ -165,7 +200,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> SetDefaultPrinter(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             try
             {
@@ -201,7 +236,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> DeletePrinterFromDB(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
             try
@@ -233,7 +268,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<Printer> GetDefaultPrinter()
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             DefaultPrinter defaultPrinter = new DefaultPrinter();
             Printer printer = new Printer();
@@ -260,7 +295,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<PrintSetting> GetPrintSetting(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             PrintSetting printSetting = null;
 

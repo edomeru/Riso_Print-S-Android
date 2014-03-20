@@ -185,6 +185,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Resources\Dummy\RZ1070.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
