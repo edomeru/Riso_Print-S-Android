@@ -35,7 +35,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initiates loading of PDF document
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">event argument</param>
         public async static void FileActivationHandler(FileActivatedEventArgs e)
         {
             // Should handle only one file

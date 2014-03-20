@@ -63,6 +63,8 @@ namespace SmartDeviceApp.Controllers
         /// <returns>Task</returns>
         public async Task Initialize()
         {
+            await Cleanup(); // Ensure to clean up previouse
+
             _selectedPrinter = null;
             _previewPages = new Dictionary<int, PreviewPage>();
 
@@ -86,11 +88,17 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Clean up
         /// </summary>
-        public void Cleanup()
+        public async Task Cleanup()
         {
             _selectedPrinter = null;
-            _previewPages.Clear();
+            if (_previewPages != null)
+            {
+                _previewPages.Clear();
+            }
             _previewPages = null;
+
+            await StorageFileUtility.DeleteFiles(FORMAT_PREVIEW_PAGE_IMAGE_PREFIX,
+                ApplicationData.Current.TemporaryFolder);
         }
 
         /// <summary>
@@ -196,87 +204,95 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task ApplyPrintSettings(int previewPageIndex)
         {
-            BitmapImage pageImage = new BitmapImage();
-
-            string pageImageFileName = _logicalPages[0].Name; // TODO: Update for Imposition
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
-            using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
+            if (_logicalPages.Count > 0)
             {
-                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(raStream);
-
-                // Create a new stream and encoder for the new image
-                InMemoryRandomAccessStream imrasStream = new InMemoryRandomAccessStream();
-                BitmapEncoder encoder = await BitmapEncoder.CreateForTranscodingAsync(imrasStream, decoder);
-
-                // TODO: bitmap manipulations
-
-                /*
-                // convert the entire bitmap to a 100px by 100px bitmap
-                enc.BitmapTransform.ScaledHeight = 100;
-                enc.BitmapTransform.ScaledWidth = 100;
-
-                BitmapBounds bounds = new BitmapBounds();
-                bounds.Height = 50;
-                bounds.Width = 50;
-                bounds.X = 50;
-                bounds.Y = 50;
-                enc.BitmapTransform.Bounds = bounds;
-                */
-
-                // Apply Paper Size
-
-                // Apply Scale to Fit
-
-                // Apply Imposition and Imposition Order
-
-                // Apply Staple
-
-                // Apply Punch
-
-                PixelDataProvider pixelData = await decoder.GetPixelDataAsync(
-                    decoder.BitmapPixelFormat,
-                    decoder.BitmapAlphaMode,
-                    new BitmapTransform(),
-                    ExifOrientationMode.IgnoreExifOrientation,
-                    ColorManagementMode.DoNotColorManage);
-
-                byte[] pixelBytes = pixelData.DetachPixelData();
-
-                if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
+                string pageImageFileName = _logicalPages[0].Name; // TODO: Update for Imposition
+                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+                StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
+                using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
                 {
-                    pixelBytes = ApplyMonochrome(pixelBytes);
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(raStream);
 
-                    // Write out to the stream
-                    encoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
-                        decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY,
-                        pixelBytes);
-                    await encoder.FlushAsync();
+                    // Create a new stream and encoder for the new image
+                    InMemoryRandomAccessStream imrasStream = new InMemoryRandomAccessStream();
+                    BitmapEncoder encoder = await BitmapEncoder.CreateForTranscodingAsync(imrasStream, decoder);
+
+                    // TODO: bitmap manipulations
+
+                    /*
+                    // convert the entire bitmap to a 100px by 100px bitmap
+                    enc.BitmapTransform.ScaledHeight = 100;
+                    enc.BitmapTransform.ScaledWidth = 100;
+
+                    BitmapBounds bounds = new BitmapBounds();
+                    bounds.Height = 50;
+                    bounds.Width = 50;
+                    bounds.X = 50;
+                    bounds.Y = 50;
+                    enc.BitmapTransform.Bounds = bounds;
+                    */
+
+                    // Apply Paper Size
+
+                    // Apply Scale to Fit
+
+                    // Apply Imposition and Imposition Order
+
+                    // Apply Staple
+
+                    // Apply Punch
+
+                    PixelDataProvider pixelData = await decoder.GetPixelDataAsync(
+                        decoder.BitmapPixelFormat,
+                        decoder.BitmapAlphaMode,
+                        new BitmapTransform(),
+                        ExifOrientationMode.IgnoreExifOrientation,
+                        ColorManagementMode.DoNotColorManage);
+
+                    byte[] pixelBytes = pixelData.DetachPixelData();
+
+                    if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
+                    {
+                        pixelBytes = ApplyMonochrome(pixelBytes);
+
+                        // Write out to the stream
+                        encoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
+                            decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY,
+                            pixelBytes);
+                        await encoder.FlushAsync();
+                    }
+
+                    // Save PreviewPage into AppData temporary store
+                    StorageFile tempPageImage = await tempFolder.CreateFileAsync(
+                        String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
+                        CreationCollisionOption.ReplaceExisting);
+                    using (var destinationStream = await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destinationStream);
+                        newEncoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
+                            decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY, pixelBytes);
+                        await newEncoder.FlushAsync();
+                    }
+
+                    // Add to PreviewPage list
+                    PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
+                        tempPageImage.Name, new Size(decoder.PixelWidth, decoder.PixelHeight));
+                    if (_previewPages.ContainsKey(previewPageIndex))
+                    {
+                        _previewPages[previewPageIndex] = previewPage;
+                    }
+                    else
+                    {
+                        _previewPages.Add(previewPageIndex, previewPage);
+                    }
+
+                    // Open the bitmap
+                    BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+
+                    // Create message and send
+                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                        previewPage.ActualSize));
                 }
-
-                // Save PreviewPage into AppData temporary store
-                StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                    String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
-                    CreationCollisionOption.ReplaceExisting);
-                using (var destinationStream = await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
-                {
-                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destinationStream);
-                    newEncoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
-                        decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY, pixelBytes);
-                    await newEncoder.FlushAsync();
-                }
-
-                // Add to PreviewPage list
-                PreviewPage previewPage = new PreviewPage((uint) previewPageIndex,
-                    tempPageImage.Name, new Size(decoder.PixelWidth, decoder.PixelHeight));
-                _previewPages.Add(previewPageIndex, previewPage);
-
-                // Open the bitmap
-                BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
-
-                // Create message and send
-                Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                    previewPage.ActualSize));
             }
         }
 
