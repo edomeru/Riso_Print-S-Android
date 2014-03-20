@@ -1,10 +1,11 @@
 /*
  * Copyright (c) 2014 All rights reserved.
  *
- * HomePreviewFragment.java
+ * PrintPreviewFragment.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.app.FragmentManager;
@@ -15,20 +16,17 @@ import android.os.Bundle;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 
@@ -36,19 +34,19 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     public static final String TAG = "PrintPreviewFragment";
     
     public static final String KEY_CURRENT_PAGE = "current_page";
-    public final int ID_PRINT_BUTTON = 0x11000002;
+    public static final int ID_PRINT_BUTTON = 0x11000002;
     
     public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
     public static final String FRAGMENT_TAG_PRINTSETTINGS = "fragment_printsettings";
     
-    PDFFileManager mPdfManager = null;
-    PrintSettings mPrintSettings;
+    private PDFFileManager mPdfManager = null;
+    private PrintSettings mPrintSettings;
     
-    PrintPreviewView mPrintPreviewView = null;
-    ProgressBar mProgressBar = null;
-    View mOpenInView = null;
+    private PrintPreviewView mPrintPreviewView = null;
+    private ProgressBar mProgressBar = null;
+    private View mOpenInView = null;
     
-    int mCurrentPage = 0;
+    private int mCurrentPage = 0;
     
     private LruCache<String, Bitmap> mBmpCache;
     
@@ -72,7 +70,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-            
+
             /*
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             SharedPreferences.Editor edit = prefs.edit();
@@ -97,7 +95,9 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         }
         
         if (mBmpCache == null) {
-            int cacheSize = 16 * 1024 * 1024; // 16MB
+            
+            int cacheSize = AppUtils.getCacheSizeBasedOnMemoryClass(getActivity());
+            cacheSize = cacheSize >> AppConstants.APP_BMP_CACHE_PART; // 1/8
             mBmpCache = new LruCache<String, Bitmap>(cacheSize) {
                 protected int sizeOf(String key, Bitmap value) {
                     return value.getByteCount();
@@ -157,7 +157,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        
         if (mPrintPreviewView != null) {
             mCurrentPage = mPrintPreviewView.getCurrentPage();
             outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
@@ -180,22 +180,12 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         mPrintPreviewView.onPause();
     }
     
+    // ================================================================================
+    // Public functions
+    // ================================================================================
+    
     public void addPrintButton(View v) {
-        ImageButton printSettingsButton = new ImageButton(v.getContext());
-        
-        printSettingsButton.setId(ID_PRINT_BUTTON);
-        printSettingsButton.setImageResource(R.drawable.selector_actionbar_printsettings);
-        printSettingsButton.setBackgroundResource(R.color.theme_color_1);
-        printSettingsButton.setScaleType(ScaleType.FIT_CENTER);
-        
-        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
-        printSettingsButton.setPadding(padding, padding, padding, padding);
-        
-        ViewGroup rightActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
-        int width = ((BaseActivity)getActivity()).getActionBarHeight();
-        rightActionLayout.addView(printSettingsButton, width, LayoutParams.MATCH_PARENT);
-        
-        printSettingsButton.setOnClickListener(this);
+        addMenuButton(v, R.id.rightActionLayout, ID_PRINT_BUTTON, R.drawable.selector_actionbar_printsettings, this);
     }
     
     public void setPrintSettings(PrintSettings printSettings) {
@@ -216,6 +206,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 showPrintSettingsButton(v, false);
             } else {
                 mPrintPreviewView.setVisibility(View.VISIBLE);
+                mPrintPreviewView.refreshView();
                 showPrintSettingsButton(v, true);
             }
         } else {
@@ -227,17 +218,35 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     public void showPrintSettingsButton(View v, boolean show) {
         if (v.findViewById(ID_PRINT_BUTTON) != null) {
             if (show) {
-                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.VISIBLE);   
+                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.VISIBLE);
             } else {
-                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.GONE);            
+                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.GONE);
             }
         }
     }
     
     // ================================================================================
+    // Private functions
+    // ================================================================================
+    
+    private String getPdfErrorMessage(int status) {
+        switch (status) {
+            case PDFFileManager.PDF_ENCRYPTED:
+                return getResources().getString(R.string.ids_err_msg_pdf_encrypted);
+            case PDFFileManager.PDF_UNKNOWN_ENCRYPTION:
+                return getResources().getString(R.string.ids_err_msg_open_failed);
+            case PDFFileManager.PDF_DAMAGED:
+                return getResources().getString(R.string.ids_err_msg_open_failed);
+            case PDFFileManager.PDF_INVALID_PATH:
+                return getResources().getString(R.string.ids_err_msg_open_failed);
+        }
+        return null;
+    }
+    
+    // ================================================================================
     // INTERFACE - View.OnLayoutChangeListener
     // ================================================================================
-
+    
     /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
@@ -249,7 +258,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                     FragmentManager fm = getFragmentManager();
                     
                     // Always make new
-                    PrintSettingsFragment fragment = null;//(PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
+                    PrintSettingsFragment fragment = null;// (PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
                     if (fragment == null) {
                         FragmentTransaction ft = fm.beginTransaction();
                         fragment = new PrintSettingsFragment();
@@ -259,10 +268,10 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                     
                     fragment.setPrintSettings(mPrintSettings);
                     fragment.setTargetFragment(this, 0);
-
+                    
                     if (getActivity() != null && getActivity() instanceof MainActivity) {
                         MainActivity activity = (MainActivity) getActivity();
-                        activity.openDrawer(Gravity.RIGHT);
+                        activity.openDrawer(Gravity.RIGHT, true);
                     }
                 }
                 break;
@@ -283,16 +292,12 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 
                 break;
             case PDFFileManager.PDF_ENCRYPTED:
-                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-encrypted", "OK"));
-                break;
             case PDFFileManager.PDF_UNKNOWN_ENCRYPTION:
-                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-unknown encryption", "OK"));
-                break;
             case PDFFileManager.PDF_DAMAGED:
-                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-damaged", "OK"));
-                break;
             case PDFFileManager.PDF_INVALID_PATH:
-                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance("PDF-invalid path", "OK"));
+                String message = getPdfErrorMessage(status);
+                String button = getResources().getString(R.string.ids_lbl_ok);
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 break;
             default:
                 break;

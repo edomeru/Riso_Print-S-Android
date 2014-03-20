@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintSettings.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.model;
 
 import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.BookletFinish;
@@ -382,7 +390,7 @@ public class PrintSettings {
     public int getValue(String tag) {
         
         // Refresh view here
-        PrintSettingsConstants.Setting setting = PrintSettingsConstants.SETTTING_MAP.get(tag);
+        PrintSettingsConstants.Setting setting = PrintSettingsConstants.SETTING_MAP.get(tag);
         
         switch (setting) {
             case COLOR_MODE:
@@ -429,7 +437,7 @@ public class PrintSettings {
     public boolean setValue(String tag, int value) {
         
         // Refresh view here
-        PrintSettingsConstants.Setting setting = PrintSettingsConstants.SETTTING_MAP.get(tag);
+        PrintSettingsConstants.Setting setting = PrintSettingsConstants.SETTING_MAP.get(tag);
         
         switch (setting) {
             case COLOR_MODE:

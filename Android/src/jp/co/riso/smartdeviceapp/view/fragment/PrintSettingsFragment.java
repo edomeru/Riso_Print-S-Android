@@ -11,9 +11,9 @@ import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.ValueChangedListener {
     public static final String TAG = "PrintSettingsFragment";
     
-    PrintSettings mPrintSettings;
-    PrintSettingsView mPrintSettingsView;
-    Bundle printSettingsBundle = null;
+    private PrintSettings mPrintSettings;
+    private PrintSettingsView mPrintSettingsView;
+    private Bundle mPrintSettingsBundle = null;
     
     @Override
     public int getViewLayout() {
@@ -31,16 +31,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        Log.wtf(TAG, "initializeView");
-        
         mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
         
         mPrintSettingsView.setValueChangedListener(this);
         mPrintSettingsView.setPrintSettings(mPrintSettings);
         
-        if (printSettingsBundle != null) {
-            mPrintSettingsView.restoreState(printSettingsBundle);
-            printSettingsBundle = null;
+        if (mPrintSettingsBundle != null) {
+            mPrintSettingsView.restoreState(mPrintSettingsBundle);
+            mPrintSettingsBundle = null;
         }
     }
     
@@ -67,10 +65,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         super.onSaveInstanceState(outState);
         
         if (mPrintSettingsView != null) {
-            printSettingsBundle = new Bundle();
-            mPrintSettingsView.saveState(printSettingsBundle);
+            mPrintSettingsBundle = new Bundle();
+            mPrintSettingsView.saveState(mPrintSettingsBundle);
         }
     }
+    
+    // ================================================================================
+    // Public functions
+    // ================================================================================
     
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);

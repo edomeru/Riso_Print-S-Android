@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintSettingsView.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.printsettings;
 
 import java.io.IOException;
@@ -53,7 +61,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final String TAG = "PrintSettingsView";
     
     private static final String PRINT_SETTINGS_CONTENT = "printsettings.xml";
-    private ValueChangedListener mListener = null;
     
     private static final String XML_NODE_NAME = "name";
     private static final String XML_NODE_TEXT = "text";
@@ -86,19 +93,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     public static final int ID_TAG_ICON = 0x11000008;
     public static final int ID_TAG_OPTIONS = 0x11000009;
     
-    Document mPrintSettingsContent;
-    PrintSettings mPrintSettings;
+    private Document mPrintSettingsContent;
+    private PrintSettings mPrintSettings;
     
-    ScrollView mMainScrollView;
-    LinearLayout mMainLayout;
+    private ScrollView mMainScrollView;
+    private LinearLayout mMainLayout;
     
-    ScrollView mSubScrollView;
-    LinearLayout mSubLayout;
+    private ScrollView mSubScrollView;
+    private LinearLayout mSubLayout;
     
-    LinearLayout mPrintControls;
+    private LinearLayout mPrintControls;
     
-    Handler mHandler;
-    ArrayList<LinearLayout> mPrintSettingsTitles = null;
+    private Handler mHandler;
+    private ArrayList<LinearLayout> mPrintSettingsTitles = null;
+    
+    private ValueChangedListener mListener = null;
     
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -141,8 +150,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // ================================================================================
     
     public void saveState(Bundle outState) {
-        Log.wtf(TAG, "saveState");
-        
         // Create String list of collapsed headers
         ArrayList<String> selectedTitles = new ArrayList<String>();
         for (int i = 0; i < mPrintSettingsTitles.size(); i++) {
@@ -169,8 +176,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     public void restoreState(Bundle savedInstanceState) {
-        Log.wtf(TAG, "restoreState");
-        
         // Collapse the headers retrieved from the saved bundle
         String selectedTitle[] = savedInstanceState.getStringArray(KEY_SELECTED_TITLES);
         for (int i = 0; i < selectedTitle.length; i++) {
@@ -241,7 +246,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         if (mPrintSettings != null) {
             
-            Set<String> keySet = PrintSettingsConstants.SETTTING_MAP.keySet();
+            Set<String> keySet = PrintSettingsConstants.SETTING_MAP.keySet();
             
             for (String key : keySet) {
                 updateItemValue(key);
@@ -265,11 +270,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             is.setCharacterStream(new StringReader(xmlString));
             mPrintSettingsContent = db.parse(is);
         } catch (ParserConfigurationException e) {
-            Log.e("Error: ", e.getMessage());
+            Log.e(TAG, "Error: " + e.getMessage());
         } catch (SAXException e) {
-            Log.e("Error: ", e.getMessage());
+            Log.e(TAG, "Error: " + e.getMessage());
         } catch (IOException e) {
-            Log.e("Error: ", e.getMessage());
+            Log.e(TAG, "Error: " + e.getMessage());
         }
     }
     
@@ -554,8 +559,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void displayOptionsSubview(View v, boolean animate) {
-        Log.wtf(TAG, "Display item");
-        
         if (mSubLayout == null) {
             mSubLayout = new LinearLayout(getContext());
             mSubLayout.setOrientation(LinearLayout.VERTICAL);
@@ -573,7 +576,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         createSubview(v);
         
-        addView(mSubScrollView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        if (mSubScrollView.getParent() == null) {
+            addView(mSubScrollView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        }
+        
+        mMainScrollView.setClickable(false);
+        mSubScrollView.setClickable(true);
         if (animate) {
             animateDisplaySubview();
         } else {
@@ -584,7 +592,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void dismissOptionsSubview(boolean animate) {
+        mMainScrollView.setClickable(true);
         mMainScrollView.setVisibility(View.VISIBLE);
+        mSubScrollView.setClickable(false);
         if (animate) {
             animateDismissSubview();
         } else {
@@ -964,9 +974,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // Internal classes
     // ================================================================================
     
-    class EditTextWatcher implements TextWatcher {
-        String mTag;
-        boolean mEditing;
+    private class EditTextWatcher implements TextWatcher {
+        private String mTag;
+        private boolean mEditing;
         
         public EditTextWatcher(String tag) {
             mTag = tag;

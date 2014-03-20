@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * BaseFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 
 package jp.co.riso.smartdeviceapp.view.base;
 
@@ -14,8 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView.ScaleType;
+import android.widget.ImageView;
 
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
     
@@ -106,21 +112,19 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     }
     
     public void addActionMenuButton(View v) {
-        ImageButton actionMenuButton = new ImageButton(v.getContext());
-        
-        actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.selector_actionbar_mainmenu);
-        actionMenuButton.setBackgroundResource(R.color.theme_color_1);
-        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
-        
-        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
-        actionMenuButton.setPadding(padding, padding, padding, padding);
-        
-        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
-        int width = ((BaseActivity)getActivity()).getActionBarHeight();
-        leftActionLayout.addView(actionMenuButton, width, LayoutParams.MATCH_PARENT);
-        
-        actionMenuButton.setOnClickListener(this);
+        addMenuButton(v, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_mainmenu, this);
+    }
+    
+    public void addMenuButton(View v, int layoutId, int viewId, int imageResId, View.OnClickListener listener) {
+        LayoutInflater li = LayoutInflater.from(v.getContext());
+        ImageView printSettingsButton = (ImageView) li.inflate(R.layout.actionbar_button, null);
+        printSettingsButton.setId(viewId);
+        printSettingsButton.setImageResource(imageResId);
+        printSettingsButton.setOnClickListener(listener);
+
+        int width = ((BaseActivity) getActivity()).getActionBarHeight();
+        ViewGroup layout = (ViewGroup) v.findViewById(layoutId);
+        layout.addView(printSettingsButton, width, LayoutParams.MATCH_PARENT);
     }
 
     // ================================================================================

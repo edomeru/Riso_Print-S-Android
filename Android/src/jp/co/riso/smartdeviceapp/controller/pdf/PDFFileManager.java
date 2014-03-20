@@ -215,8 +215,8 @@ public class PDFFileManager {
             mDocument.Open(mSandboxPath, null);
         } else {
             // For temporary fix of bug
-            //mDocument.Close(); // This will clear the buffer
-            //mDocument.Open(mSandboxPath, null);
+            // mDocument.Close(); // This will clear the buffer
+            // mDocument.Open(mSandboxPath, null);
         }
         
         Page page = mDocument.GetPage(pageNo);

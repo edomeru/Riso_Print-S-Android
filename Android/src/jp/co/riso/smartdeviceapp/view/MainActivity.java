@@ -5,6 +5,7 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.smartdeviceapp.view;
 
 import com.radaee.pdf.Global;
@@ -24,13 +25,14 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
+import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 
 public class MainActivity extends BaseActivity {
     
     public static final String KEY_TRANSLATION = "translate";
     public static final String KEY_RIGHT_OPEN = "right_drawer_open";
     
-    private DrawerLayout mDrawerLayout;
+    private SDADrawerLayout mDrawerLayout;
     private ViewGroup mMainLayout;
     private ViewGroup mLeftLayout;
     private ViewGroup mRightLayout;
@@ -43,7 +45,7 @@ public class MainActivity extends BaseActivity {
         
         setContentView(R.layout.activity_main);
         
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        mDrawerLayout = (SDADrawerLayout) findViewById(R.id.drawerLayout);
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         
         mMainLayout = (ViewGroup) findViewById(R.id.mainLayout);
@@ -112,12 +114,18 @@ public class MainActivity extends BaseActivity {
     // ================================================================================
     // Public Functions
     // ================================================================================
-    
+
     public void openDrawer(int gravity) {
+        openDrawer(gravity, false);
+    }
+        
+    public void openDrawer(int gravity, boolean preventIntercept) {
+        mDrawerLayout.setPreventInterceptTouches(preventIntercept);
         mDrawerLayout.openDrawer(gravity);
     }
     
     public void closeDrawers() {
+        mDrawerLayout.setPreventInterceptTouches(false);
         mDrawerLayout.closeDrawers();
     }
     

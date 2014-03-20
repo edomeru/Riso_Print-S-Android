@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bg_color_splash">#FFFFFF</color>
+    <color name="bg_paper">#FFFFFF</color>
     
     <color name="theme_dark_1">#000000</color>
     <color name="theme_dark_2">#242424</color>
@@ -15,5 +16,7 @@
     <color name="theme_color_3">#F84B4B</color>
     <color name="line_color_1">#D4D4D4</color>
     <color name="theme_red_1">#F84B4B</color>
+    
+    
     
 </resources>
