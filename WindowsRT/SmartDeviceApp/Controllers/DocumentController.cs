@@ -219,6 +219,7 @@ namespace SmartDeviceApp.Controllers
             catch (Exception)
             {
                 // Error in reading PDF
+                // But usually UnauthorizedAccessException is thrown here due to CreateFileAsync
             }
 
             return logicalPage;

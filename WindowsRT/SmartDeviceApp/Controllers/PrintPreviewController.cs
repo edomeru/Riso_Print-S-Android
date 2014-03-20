@@ -30,8 +30,9 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
-        private const string FORMAT_PREVIEW_PAGE_IMAGE_PREFIX = "previewpage"; // Should be same
-        private const string FORMAT_PREVIEW_PAGE_IMAGE_FILENAME = "previewpage{0:0000}.jpg";
+        private const string FORMAT_PREVIEW_PAGE_IMAGE_PREFIX = "previewpage";
+        private const string FORMAT_PREVIEW_PAGE_IMAGE_FILENAME =
+            FORMAT_PREVIEW_PAGE_IMAGE_PREFIX + "{0:0000}.jpg";
 
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
