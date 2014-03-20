@@ -11,6 +11,7 @@
 @interface PrinterCell()
 @property BOOL isDefaultPrinterCell;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+@property (weak, nonatomic) IBOutlet UIImageView *disclosureImage;
 @end
 @implementation PrinterCell
 
@@ -69,7 +70,7 @@
     [self setBackgroundColor:bgColor];
     [self.printerName setTextColor:[UIColor whiteColor]];
     [self.deleteButton setHidden: NO];
-    [self.accessoryView setHidden: YES];
+    [self.disclosureImage setHidden: YES];
 }
 
 - (void) setCellStyleForDefaultCell
@@ -78,7 +79,7 @@
     [self setBackgroundColor:[UIColor blackColor]];
     [self.printerName setTextColor:[UIColor whiteColor]];
     [self.deleteButton setHidden: YES];
-    [self.accessoryView setHidden: NO];
+    [self.disclosureImage setHidden: NO];
 }
 
 -(void) setCellStyleForNormalCell
@@ -88,7 +89,7 @@
     [self setBackgroundColor:bgColor];
     [self.printerName setTextColor:[UIColor blackColor]];
     [self.deleteButton setHidden: YES];
-    [self.accessoryView setHidden: NO];
+    [self.disclosureImage setHidden: NO];
 }
 
 @end

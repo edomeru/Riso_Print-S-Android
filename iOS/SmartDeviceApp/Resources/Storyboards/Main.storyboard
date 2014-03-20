@@ -1535,8 +1535,8 @@
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                 <gestureRecognizers/>
                                                 <connections>
-                                                    <outlet property="accessoryView" destination="UoX-YQ-VNL" id="w2k-lb-yxx"/>
                                                     <outlet property="deleteButton" destination="jZk-UU-XZR" id="byW-aQ-ZRp"/>
+                                                    <outlet property="disclosureImage" destination="UoX-YQ-VNL" id="3WJ-pe-Vik"/>
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="rJB-WH-qpf" id="YhY-j0-8dY"/>
                                                     <outlet property="separator" destination="fGJ-hZ-slT" id="G9k-Xa-iLb"/>
