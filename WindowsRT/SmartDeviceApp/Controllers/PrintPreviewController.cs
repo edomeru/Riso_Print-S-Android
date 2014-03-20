@@ -242,7 +242,7 @@ namespace SmartDeviceApp.Controllers
 
                 byte[] pixelBytes = pixelData.DetachPixelData();
 
-                if (!_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
+                if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
                 {
                     pixelBytes = ApplyMonochrome(pixelBytes);
 
