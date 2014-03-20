@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintPreviewView.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
@@ -10,38 +17,30 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
-    
-    
-    private EditText mIpAddress = null;
-    PrinterManager mPrinterManager = null;
-    private boolean mIsSearching = false;
-    private boolean mAdded = false;
+    public static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final String KEY_SEARCH_STATE = "add_searched_state";
+    private static final InputFilter[] IP_ADDRESS_FILTER;
     
-    public final int ID_MENU_SAVE_BUTTON    = 0x11000004;
-    
-    //Interface
-    private PrinteSearchTabletInterface mPrinteSearchTabletInterface = null;
-    
-    public void setPrinteSearchTabletInterface(PrinteSearchTabletInterface printeSearchTabletInterface) {
-        mPrinteSearchTabletInterface = printeSearchTabletInterface;
-    }
+    private EditText mIpAddress = null;
+    private PrinterManager mPrinterManager = null;
+    private boolean mIsSearching = false;
+    private boolean mAdded = false;
     
     @Override
     public int getViewLayout() {
@@ -63,7 +62,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        if(isTablet()) {
+        if (isTablet()) {
             view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
         }
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -73,47 +72,26 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     }
     
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        mIpAddress.setFilters(IP_ADDRESS_FILTER);
+        return view;
+    }
+    
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mIsSearching = savedInstanceState.getBoolean(KEY_SEARCH_STATE, false);
-            if(mIsSearching) {
+            if (mIsSearching) {
                 findPrinter(mIpAddress.getText().toString());
             }
         }
-        
-        InputFilter[] ipv4Filter = new InputFilter[2];
-        //IPv4 
-        ipv4Filter[0] = new InputFilter.LengthFilter(15);
-        ipv4Filter[1] = new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                String regEx = "^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?";
-                if (end > start) {
-                    String destTxt = dest.toString();
-                    String ipv4Address = destTxt.substring(0, dstart) +
-                            source.subSequence(start, end) + destTxt.substring(dend);
-                    if (!ipv4Address.matches (regEx)) { 
-                        return "";
-                    } else {
-                        String[] splits = ipv4Address.split("\\.");
-                        for (int i=0; i < splits.length; i++) {
-                            if (Integer.valueOf(splits[i]) > 255) {
-                                return "";
-                            }
-                        }
-                    }
-                }
-                return null;
-            }
-        };
-        
-        mIpAddress.setFilters(ipv4Filter);
     }
     
     @Override
     public void addActionMenuButton(View v) {
-        int width = ((BaseActivity)getActivity()).getActionBarHeight();
+        int width = ((BaseActivity) getActivity()).getActionBarHeight();
         ImageButton actionMenuButton = new ImageButton(v.getContext());
         ImageButton saveMenuButton = new ImageButton(v.getContext());
         ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
@@ -121,7 +99,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         
         int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
         
-        //Back Button
+        // Back Button
         actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
         actionMenuButton.setImageResource(R.drawable.selector_actionbar_back);
         actionMenuButton.setBackgroundResource(R.color.theme_color_2);
@@ -129,7 +107,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         actionMenuButton.setPadding(padding, padding, padding, padding);
         actionMenuButton.setOnClickListener(this);
         
-        //Save Button
+        // Save Button
         saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
         saveMenuButton.setImageResource(R.drawable.temp_img_btn_save_printer);
         saveMenuButton.setBackgroundResource(R.color.theme_color_2);
@@ -148,10 +126,15 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     }
     
     // ================================================================================
+    // Public Methods
+    // ================================================================================
+    
+    // ================================================================================
     // Private Methods
     // ================================================================================
+    
     private void findPrinter(String ipAddress) {
-        if(ipAddress.isEmpty()) {
+        if (ipAddress.isEmpty()) {
             mIsSearching = false;
             return;
         }
@@ -160,43 +143,37 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     }
     
     private void dialogCb(Printer printer) {
-        // TODO: Get values from resources 
-        // Open Dialog box 
-        InfoDialogFragment info = InfoDialogFragment.newInstance("Printer Info", 
-                printer.getName() + " was added successfully", 
-                getResources().getString(R.string.ids_lbl_ok));
+        String title = getResources().getString(R.string.ids_lbl_printer_info);
+        InfoDialogFragment info = InfoDialogFragment.newInstance(title, printer.getName() + " Added Successfully", getResources()
+                .getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
     private void dialogErrCb(Printer printer) {
-        // TODO: Get values from resources 
-        // Open Dialog box 
-        InfoDialogFragment info = InfoDialogFragment.newInstance("Printer Info", 
-                printer.getName() + " already exsists", 
-                getResources().getString(R.string.ids_lbl_ok));
+        String title = getResources().getString(R.string.ids_lbl_printer_info);
+        String errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+        InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
     private void dialogErrCb(String ipAddress) {
-        // TODO: Get values from resources 
-        // Open Dialog box 
-        InfoDialogFragment info = InfoDialogFragment.newInstance("Printer Info", 
-                ipAddress + " Request TIMEDOUT", 
-                getResources().getString(R.string.ids_lbl_ok));
+        String title = getResources().getString(R.string.ids_lbl_printer_info);
+        String errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
+        InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
+    
     private void closeScreen() {
+        
         if (isTablet()) {
-            if (getActivity() != null && getActivity() instanceof MainActivity) {               
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            MainActivity activity = (MainActivity) getActivity();              
-                            activity.closeDrawers();        
-                            mPrinteSearchTabletInterface.refreshPrintersList();
-                        }
-                        catch(Exception e) {
+                            MainActivity activity = (MainActivity) getActivity();
+                            activity.closeDrawers();
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -211,34 +188,40 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
             }
         }
     }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
+    
     @Override
     public void onClick(View v) {
-        if(v.getId() == ID_MENU_ACTION_BUTTON) {
-            closeScreen();
-        }
-        else if (v.getId() == ID_MENU_SAVE_BUTTON) {
-            if(!mIsSearching) {
-                findPrinter(mIpAddress.getText().toString());
-            }
+        super.onClick(v);
+        switch (v.getId()) {
+            case ID_MENU_ACTION_BUTTON:
+                closeScreen();
+                break;
+            case ID_MENU_SAVE_BUTTON:
+                if (!mIsSearching) {
+                    findPrinter(mIpAddress.getText().toString());
+                }
+                break;
         }
     }
     
     // ================================================================================
     // INTERFACE - OnPrinterSearch
     // ================================================================================
+    
     @Override
     public void onPrinterAdd(Printer printer) {
-        if(!mIsSearching)
+        if (!mIsSearching) {
             return;
-        
-        if(mPrinterManager.isExists(printer)) {
-            dialogErrCb(printer);
         }
-        else {
-            if(mPrinterManager.savePrinterToDB(printer) != -1) {
+        
+        if (mPrinterManager.isExists(printer)) {
+            dialogErrCb(printer);
+        } else {
+            if (mPrinterManager.savePrinterToDB(printer) != -1) {
                 mAdded = true;
                 dialogCb(printer);
                 closeScreen();
@@ -250,11 +233,39 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     public void onSearchEnd() {
         String ipAddress = mIpAddress.getText().toString();
         mIsSearching = false;
-        if(!mAdded && !ipAddress.isEmpty()) {
+        if (!mAdded && !ipAddress.isEmpty()) {
             dialogErrCb(ipAddress);
         }
         return;
     }
     
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
     
+    private static class Ipv4Filter implements InputFilter {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            String regEx = "^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?";
+            if (end > start) {
+                String destTxt = dest.toString();
+                String ipv4Address = destTxt.substring(0, dstart) + source.subSequence(start, end) + destTxt.substring(dend);
+                if (!ipv4Address.matches(regEx)) {
+                    return "";
+                } else {
+                    String[] splits = ipv4Address.split("\\.");
+                    for (int i = 0; i < splits.length; i++) {
+                        if (Integer.valueOf(splits[i]) > 255) {
+                            return "";
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+    
+    static {
+        IP_ADDRESS_FILTER = new InputFilter[] { new InputFilter.LengthFilter(15), new Ipv4Filter() };
+    }
 }

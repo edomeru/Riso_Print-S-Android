@@ -142,17 +142,11 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
     // ================================================================================   
     private void displayPrinterSearchFragment() {
         PrinterSearchFragment fragment = new PrinterSearchFragment();
-        if(isTablet()) {
-            fragment.setPrinteSearchTabletInterface(mPrinterTabletView);
-        }
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH);
     }
     
     private void displayAddPrinterFragment() {
         AddPrinterFragment fragment = new AddPrinterFragment();
-        if(isTablet()) {
-            fragment.setPrinteSearchTabletInterface(mPrinterTabletView);
-        }
         switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
     }
     
@@ -210,11 +204,4 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         printerArrayAdapter.hideDeleteButton();
         return false;
     }
-    
-    // ================================================================================
-    // INTERFACE - OnRefreshPrintersList
-    // ================================================================================
-    public void onRefreshPrintersList() {
-        mPrinterTabletView.refreshPrintersList();        
-    }    
 }

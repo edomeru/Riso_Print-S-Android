@@ -20,7 +20,6 @@ import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.custom.PrinterSearchAdapter.PrinteSearchAdapterInterface;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -47,13 +46,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private ArrayList<Printer> mPrinter = null;
     private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
-    
-    //Interface
-    private PrinteSearchTabletInterface mPrinteSearchTabletInterface = null;
-    
-    public void setPrinteSearchTabletInterface(PrinteSearchTabletInterface printeSearchTabletInterface) {
-        mPrinteSearchTabletInterface = printeSearchTabletInterface;
-    }
     
     @Override
     public int getViewLayout() {
@@ -182,7 +174,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                         try {
                             MainActivity activity = (MainActivity) getActivity();              
                             activity.closeDrawers();        
-                            mPrinteSearchTabletInterface.refreshPrintersList();
                         }
                         catch(Exception e) {
                             e.printStackTrace();
