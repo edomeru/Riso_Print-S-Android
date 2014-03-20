@@ -19,13 +19,23 @@
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersIphoneViewController ()
+
+#pragma mark - Data Properties
+
+/** NSIndexPath of the tapped printer cell **/
+@property (strong, nonatomic) NSIndexPath *selectedPrinterIndexPath;
+
+#pragma mark - UI Properties
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+#pragma mark - Instance Methods
+
 /**
  Action when the PrinterCell is tapped to segue to the PrinterInfo screen
  */
 - (IBAction)tapPrinterCellAction:(id)sender;
 
-/** NSIndexPath of the tapped printer cell **/
-@property (strong, nonatomic) NSIndexPath *selectedPrinterIndexPath;
 @end
 
 @implementation PrintersIphoneViewController
@@ -51,8 +61,6 @@
 {
     [super didReceiveMemoryWarning];
 }
-
-#pragma mark - Header
 
 #pragma mark - TableView
 
@@ -92,7 +100,8 @@
     return cell;
 }
 
-#pragma mark - IBAction
+#pragma mark - IBActions
+
 - (IBAction)tapPrinterCellAction:(id)sender
 {
     //if a cell is in delete state, remove delete state
@@ -185,6 +194,8 @@
     }
 }
 
+#pragma mark - Reload
+
 - (void)reloadData
 {
     [super reloadData];
@@ -192,6 +203,7 @@
 }
 
 #pragma mark - private helper methods
+
 -(void) setPrinterCell:(NSIndexPath *) indexPath asDefault: (BOOL) isDefault
 {
     if(self.defaultPrinterIndexPath != nil)

@@ -2003,7 +2003,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="bXR-I6-5YP" userLabel="Separator">
-                                                            <rect key="frame" x="20" y="42" width="300" height="2"/>
+                                                            <rect key="frame" x="20" y="41" width="300" height="3"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                                         </view>
@@ -2015,7 +2015,7 @@
                                                         <constraint firstAttribute="trailing" secondItem="bXR-I6-5YP" secondAttribute="trailing" constant="-50" id="acj-1d-5j8"/>
                                                         <constraint firstItem="bXR-I6-5YP" firstAttribute="leading" secondItem="1LA-cn-0Qi" secondAttribute="leading" id="daW-a1-cq1"/>
                                                         <constraint firstAttribute="trailing" secondItem="1LA-cn-0Qi" secondAttribute="trailing" constant="53" id="kX8-yV-zHn"/>
-                                                        <constraint firstItem="bXR-I6-5YP" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" constant="11" id="xiO-qs-8u7"/>
+                                                        <constraint firstItem="bXR-I6-5YP" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" constant="10" id="xiO-qs-8u7"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>

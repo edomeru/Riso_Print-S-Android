@@ -737,8 +737,8 @@
 		3192115118C71BF5000555C7 /* TableViewCells */ = {
 			isa = PBXGroup;
 			children = (
-				3192115318C71C3D000555C7 /* PrinterCell.m */,
 				3192115218C71C3D000555C7 /* PrinterCell.h */,
+				3192115318C71C3D000555C7 /* PrinterCell.m */,
 				282DC17818D2950F00E29F9E /* SearchResultCell.h */,
 				282DC17918D2950F00E29F9E /* SearchResultCell.m */,
 			);

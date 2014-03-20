@@ -18,10 +18,17 @@
 
 @interface PrintersIpadViewController ()
 
-@property (strong, nonatomic) PrinterManager* printerManager;
+#pragma mark - Data Properties
+
+#pragma mark - UI Properties
+
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
+
+#pragma mark - Instance Methods
+
+- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath;
 
 @end
 
@@ -143,6 +150,15 @@
      }];
 }
 
+- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
+{
+    //get selected printer from list
+    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
+    
+    //set as default printer
+    return [self.printerManager registerDefaultPrinter:selectedPrinter];
+}
+
 #pragma mark - PrinterCollectioViewCellDelegate methods
 -(void) setDefaultPrinterCell:(BOOL) isDefaultOn forIndexPath:(NSIndexPath *) indexPath;
 {
@@ -171,7 +187,7 @@
     }
 }
 
-#pragma mark IBActions
+#pragma mark - IBActions
 - (IBAction)printerCellLongPressedAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.collectionView indexPathForItemAtPoint:[sender locationInView:self.collectionView]];
@@ -233,6 +249,8 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 }
+
+#pragma mark - Reload
 
 - (void)reloadData
 {

@@ -16,9 +16,21 @@
 
 @interface PrintersViewController ()
 
+#pragma mark - Data Properties
+
+#pragma mark - UI Properties
+
+@property (weak, nonatomic) IBOutlet UIButton* mainMenuButton;
+@property (weak, nonatomic) IBOutlet UIButton* addPrinterButton;
+@property (weak, nonatomic) IBOutlet UIButton* printerSearchButton;
+
+#pragma mark - Instance Methods
+
 @end
 
 @implementation PrintersViewController
+
+#pragma mark - Lifecycle
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -40,18 +52,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-#pragma mark -
-
-- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
-{
-    //get selected printer from list
-    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
-    
-    //set as default printer
-    return [self.printerManager registerDefaultPrinter:selectedPrinter];
 }
 
 #pragma mark - IBActions
@@ -101,6 +101,8 @@
             [self reloadData];
     }
 }
+
+#pragma mark - Reload
 
 - (void)reloadData
 {
