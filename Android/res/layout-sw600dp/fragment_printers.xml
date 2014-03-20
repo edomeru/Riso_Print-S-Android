@@ -2,20 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:splitMotionEvents="false" >
-
+    android:orientation="vertical" >
+    
     <include layout="@layout/actionbar_main" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <jp.co.riso.smartdeviceapp.view.custom.PrintersScreenTabletView
+        <jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView
             android:id="@+id/printerParentView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-        </jp.co.riso.smartdeviceapp.view.custom.PrintersScreenTabletView>
+        </jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView>
     </ScrollView>
-
+    
 </LinearLayout>

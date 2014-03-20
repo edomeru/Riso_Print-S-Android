@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 All rights reserved.
  *
- * PrintPreviewView.java
+ * AddPrinterFragment.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -11,13 +11,12 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -27,19 +26,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
     public static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
-    private static final String KEY_SEARCH_STATE = "add_searched_state";
     private static final InputFilter[] IP_ADDRESS_FILTER;
     
     private EditText mIpAddress = null;
     private PrinterManager mPrinterManager = null;
-    private boolean mIsSearching = false;
     private boolean mAdded = false;
     
     @Override
@@ -50,7 +45,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mAdded = false;
-        mPrinterManager = PrinterManager.sharedManager(getActivity());
+        mPrinterManager = PrinterManager.sharedManager(SmartDeviceApp.getAppContext());
         mPrinterManager.setOnPrinterSearchListener(this);
     }
     
@@ -68,7 +63,8 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
         
-        addActionMenuButton(view);
+        addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.temp_img_btn_save_printer, this);
+        addMenuButton(view, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
     @Override
@@ -78,67 +74,11 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         return view;
     }
     
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            mIsSearching = savedInstanceState.getBoolean(KEY_SEARCH_STATE, false);
-            if (mIsSearching) {
-                findPrinter(mIpAddress.getText().toString());
-            }
-        }
-    }
-    
-    @Override
-    public void addActionMenuButton(View v) {
-        int width = ((BaseActivity) getActivity()).getActionBarHeight();
-        ImageButton actionMenuButton = new ImageButton(v.getContext());
-        ImageButton saveMenuButton = new ImageButton(v.getContext());
-        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
-        ViewGroup rightActionLayout = (ViewGroup) v.findViewById(R.id.rightActionLayout);
-        
-        int padding = getResources().getDimensionPixelSize(R.dimen.actionbar_icon_padding);
-        
-        // Back Button
-        actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.selector_actionbar_back);
-        actionMenuButton.setBackgroundResource(R.color.theme_color_2);
-        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
-        actionMenuButton.setPadding(padding, padding, padding, padding);
-        actionMenuButton.setOnClickListener(this);
-        
-        // Save Button
-        saveMenuButton.setId(ID_MENU_SAVE_BUTTON);
-        saveMenuButton.setImageResource(R.drawable.temp_img_btn_save_printer);
-        saveMenuButton.setBackgroundResource(R.color.theme_color_2);
-        actionMenuButton.setScaleType(ScaleType.FIT_CENTER);
-        saveMenuButton.setPadding(padding, padding, padding, padding);
-        saveMenuButton.setOnClickListener(this);
-        
-        leftActionLayout.addView(actionMenuButton, width, LayoutParams.MATCH_PARENT);
-        rightActionLayout.addView(saveMenuButton, width, LayoutParams.MATCH_PARENT);
-    }
-    
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean(KEY_SEARCH_STATE, mIsSearching);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-    
-    // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
     // ================================================================================
     // Private Methods
     // ================================================================================
     
     private void findPrinter(String ipAddress) {
-        if (ipAddress.isEmpty()) {
-            mIsSearching = false;
-            return;
-        }
-        mIsSearching = true;
         mPrinterManager.searchPrinter(ipAddress);
     }
     
@@ -201,9 +141,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
                 closeScreen();
                 break;
             case ID_MENU_SAVE_BUTTON:
-                if (!mIsSearching) {
-                    findPrinter(mIpAddress.getText().toString());
-                }
+                findPrinter(mIpAddress.getText().toString());
                 break;
         }
     }
@@ -214,10 +152,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void onPrinterAdd(Printer printer) {
-        if (!mIsSearching) {
-            return;
-        }
-        
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(printer);
         } else {
@@ -232,7 +166,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public void onSearchEnd() {
         String ipAddress = mIpAddress.getText().toString();
-        mIsSearching = false;
         if (!mAdded && !ipAddress.isEmpty()) {
             dialogErrCb(ipAddress);
         }
