@@ -11,6 +11,7 @@
 #import "UIViewController+Segue.h"
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
+#import "PrinterInfoViewController.h"
 #import "PrinterManager.h"
 
 @interface PrintersViewController ()

@@ -7,7 +7,16 @@
 //
 
 #import "SlidingViewController.h"
+#import "PrinterStatusHelper.h"
 
-@interface PrinterInfoViewController : SlidingViewController
+@class Printer;
+@class PrinterManager;
 
+@interface PrinterInfoViewController : SlidingViewController <PrinterStatusHelperDelegate>
+/*NSIndexPath of the printer of which info was shown*/
+@property (weak, nonatomic) NSIndexPath* indexPath;
+/*Default printer indicator*/
+@property BOOL isDefaultPrinter;
+/*Online status of printer*/
+@property BOOL onlineStatus;
 @end

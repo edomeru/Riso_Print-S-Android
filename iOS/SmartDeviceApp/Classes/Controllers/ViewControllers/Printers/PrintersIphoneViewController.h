@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PrintersViewController.h"
+#import "PrinterInfoViewController.h"
 
 @interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate>
 

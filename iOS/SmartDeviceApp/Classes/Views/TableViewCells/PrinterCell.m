@@ -71,6 +71,7 @@
     [self.printerName setTextColor:[UIColor whiteColor]];
     [self.deleteButton setHidden: NO];
     [self.disclosureImage setHidden: YES];
+    [self.separator setHidden:YES];
 }
 
 - (void) setCellStyleForDefaultCell
@@ -80,6 +81,7 @@
     [self.printerName setTextColor:[UIColor whiteColor]];
     [self.deleteButton setHidden: YES];
     [self.disclosureImage setHidden: NO];
+    [self.separator setHidden:YES];
 }
 
 -(void) setCellStyleForNormalCell
@@ -90,6 +92,7 @@
     [self.printerName setTextColor:[UIColor blackColor]];
     [self.deleteButton setHidden: YES];
     [self.disclosureImage setHidden: NO];
+    [self.separator setHidden:NO];
 }
 
 @end

@@ -13,16 +13,19 @@
 #import "PrinterManager.h"
 #import "PrinterCell.h"
 #import "AlertUtils.h"
+#import "UIViewController+Segue.h"
 
+#define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersIphoneViewController ()
 /**
- Action when the PrinterCell is tapped
+ Action when the PrinterCell is tapped to segue to the PrinterInfo screen
  */
 - (IBAction)tapPrinterCellAction:(id)sender;
 
-
+/** NSIndexPath of the tapped printer cell **/
+@property (strong, nonatomic) NSIndexPath *selectedPrinterIndexPath;
 @end
 
 @implementation PrintersIphoneViewController
@@ -92,8 +95,16 @@
 #pragma mark - IBAction
 - (IBAction)tapPrinterCellAction:(id)sender
 {
-    [self removeDeleteState];
-    
+    //if a cell is in delete state, remove delete state
+    if(self.toDeleteIndexPath != nil)
+    {
+        [self removeDeleteState];
+        return;
+    }
+    //else segue to printer info screen
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
+    self.selectedPrinterIndexPath = indexPath;
+    [self performSegueTo:[PrinterInfoViewController class]];
 }
 
 - (IBAction)tapTableView:(id)sender
@@ -145,7 +156,33 @@
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{  
+    if([segue.identifier isEqualToString:SEGUE_TO_PRINTER_INFO])
+    {
+        PrinterInfoViewController *destController = [segue destinationViewController];
+        destController.indexPath = self.selectedPrinterIndexPath;
+        destController.isDefaultPrinter = NO;
+        if(self.defaultPrinterIndexPath != nil &&  self.selectedPrinterIndexPath.row == self.defaultPrinterIndexPath.row)
+        {
+            destController.isDefaultPrinter = YES;
+        }
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
+        destController.onlineStatus = cell.printerStatus.onlineStatus;
+        cell.printerStatus.statusHelper.delegate = destController;
+        
+    }
+}
+
+- (IBAction)unwindFromPrinterInfo:(UIStoryboardSegue*)unwindSegue
 {
+    if ([unwindSegue.sourceViewController isKindOfClass:[PrinterInfoViewController class]])
+    {
+        PrinterInfoViewController* printerInfoScreen = (PrinterInfoViewController*)unwindSegue.sourceViewController;
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
+        [cell.printerStatus.statusHelper startPrinterStatusPolling];
+        [self setPrinterCell:printerInfoScreen.indexPath asDefault: printerInfoScreen.isDefaultPrinter];
+        self.selectedPrinterIndexPath = nil;
+    }
 }
 
 - (void)reloadData
@@ -155,6 +192,34 @@
 }
 
 #pragma mark - private helper methods
+-(void) setPrinterCell:(NSIndexPath *) indexPath asDefault: (BOOL) isDefault
+{
+    if(self.defaultPrinterIndexPath != nil)
+    {
+        //don't do anything if cell is still the default cell
+        //or if the the cell is not the default cell and is being set to not default
+        if((self.defaultPrinterIndexPath.row == indexPath.row && isDefault == YES)
+           || (self.defaultPrinterIndexPath.row != indexPath.row && isDefault == NO))
+        {
+            return;
+        }
+        //unselect the previous default cell
+        PrinterCell *previousDefaultCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.defaultPrinterIndexPath];
+        [previousDefaultCell setCellStyleForNormalCell];
+        self.defaultPrinterIndexPath = nil;
+    }
+    
+    if(isDefault == NO)
+    {
+        return;
+    }
+
+    //set the formatting of the selected cell to the default printer cell
+    self.defaultPrinterIndexPath = indexPath;
+    PrinterCell *selectedDefaultCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    [selectedDefaultCell setCellStyleForDefaultCell];
+}
+
 -(void) removeDeleteState
 {
     if(self.toDeleteIndexPath != nil)
