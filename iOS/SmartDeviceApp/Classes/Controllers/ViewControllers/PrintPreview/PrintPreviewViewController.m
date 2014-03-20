@@ -65,7 +65,6 @@
     BOOL previewModeOn = ((RootViewController*)self.parentViewController).isPrintPreviewMode;
     if(previewModeOn == YES)
     {
-        self.previewSetting = [[PreviewSetting alloc] init];
         [self loadPrintPreview];
     }
     else
@@ -84,7 +83,7 @@
 //detect rotation
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
     //adjust position of slider and page label for phone when in landscape
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
     {
@@ -108,7 +107,6 @@
     
     [self setPageSize];
 }
-
 
 //hide controls related to preview
 -(void) hidePrintPreviewControls: (BOOL) isHidden
@@ -160,6 +158,8 @@
 //retrieval of initial settings for preview
 -(void) loadPrintPreviewSettings
 {
+     self.previewSetting = [[PreviewSetting alloc] init];
+    
     //TODO get from print settings
     self.previewSetting.duplex = DUPLEX_OFF;
     self.previewSetting.pagination = PAGINATION_OFF;
@@ -245,7 +245,7 @@
     CGFloat temp = 0;
     
     //if paper is in landscape. set the width to be the height
-    if(isLandscape)
+    if(isLandscape == YES)
     {
         temp = width / heightToWidthRatio;
         verticalMargin += (height -temp)/2;
