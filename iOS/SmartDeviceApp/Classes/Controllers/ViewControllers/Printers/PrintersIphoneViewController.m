@@ -136,7 +136,9 @@
     }
     else
     {
-        [AlertUtils displayResult:ERR_DEFAULT withTitle:ALERT_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_DEFAULT
+                        withTitle:ALERT_TITLE_PRINTERS
+                      withDetails:nil];
     }
 }
 

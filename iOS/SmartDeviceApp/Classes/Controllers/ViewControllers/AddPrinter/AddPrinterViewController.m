@@ -152,31 +152,41 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToNetwork])
     {
-        [AlertUtils displayResult:ERR_NO_NETWORK withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_NO_NETWORK
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
         return;
     }
     
     // is it still possible to add a printer
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertUtils displayResult:ERR_MAX_PRINTERS withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_MAX_PRINTERS
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
         return;
     }
     
-    // get the input IP
+    // properly format/trim the input IP
     NSString* trimmedIP = [self trimIPString:self.textIP.text];
+    NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
+    self.textIP.text = trimmedIP;
     
     // is the IP a valid IP address?
     if (![self isIPValid:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_INVALID_IP withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_INVALID_IP
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
         return;
     }
     
     // was this printer already added before?
     if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_ALREADY_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_ALREADY_ADDED
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
         return;
     }
 
@@ -199,8 +209,12 @@
 - (void)searchEnded
 {
     if (self.willEndWithoutAdd)
-        [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND withTitle:ALERT_ADD_PRINTER withDetails:nil];
-    
+    {
+        [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
+    }
+
     // hide the searching indicator
     [self.progressIndicator stopAnimating];
     
@@ -216,12 +230,16 @@
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertUtils displayResult:INFO_PRINTER_ADDED withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:INFO_PRINTER_ADDED
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
         self.hasAddedPrinters = YES;
     }
     else
     {
-        [AlertUtils displayResult:ERR_CANNOT_ADD withTitle:ALERT_ADD_PRINTER withDetails:nil];
+        [AlertUtils displayResult:ERR_CANNOT_ADD
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
     }
 }
 
@@ -262,11 +280,21 @@
 {
     if (textField.tag == TAG_TEXT_IP)
     {
+        // ignore whitespace (for iPad keyboard)
+        if ([string isEqualToString:@" "])
+        {
+            return NO;
+        }
+
         // disable the Save button if backspace will clear the IP Address text
         if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
+        {
             [self.saveButton setEnabled:NO];
+        }
         else
+        {
             [self.saveButton setEnabled:YES];
+        }
     }
     
     return YES;
@@ -276,10 +304,20 @@
 
 - (NSString*)trimIPString:(NSString*)inputIP
 {
-    //TODO: leading zeroes are disregarded
-    //TODO: spaces are automatically trimmed
+    //leading zeroes are disregarded
+    NSString* pattern = @"^0+";
     
-    return inputIP;
+    NSError* error = nil;
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                           options:0
+                                                                             error:&error];
+    NSMutableString* result = [NSMutableString stringWithString:inputIP];
+    [regex replaceMatchesInString:result
+                          options:0
+                            range:NSMakeRange(0, [inputIP length])
+                     withTemplate:@""];
+    
+    return result;
 }
 
 - (BOOL)isIPValid:(NSString*)inputIP;

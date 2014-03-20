@@ -8,9 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-#define ALERT_PRINTER           @"Printer Info"
-#define ALERT_ADD_PRINTER       @"Add Printer Info"
-#define ALERT_PRINTER_SEARCH    @"Printer Search Info"
+typedef enum
+{
+    ALERT_TITLE_PRINTERS,
+    ALERT_TITLE_PRINTERS_ADD,
+    ALERT_TITLE_PRINTERS_SEARCH,
+    
+    ALERT_TITLE_DEFAULT
+    
+} ALERT_TITLE_TYPE;
 
 typedef enum
 {
@@ -32,21 +38,26 @@ typedef enum
     // default error message
     ERR_DEFAULT
     
-} RESULT_TYPE;
+} ALERT_RESULT_TYPE;
 
 @interface AlertUtils : NSObject
 
 /**
  Displays an AlertView.
  
- @param RESULT_TYPE
-        one of pre-defined enum values
+ @param result
+        one of the defined ALERT_RESULT_TYPE values
+        (use ERR_* for error messages, INFO_* for success messages)
  @param title
-        title for the UIAlertView
+        one of the defined ALERT_TITLE_TYPE values
+        (use ALERT_TITLE_* strings)
  @param details
-        extra information needed when displaying the alert
-        (ex. specify printer IP when adding printer failed)
+        array of extra information optionally needed when displaying
+        the alert (ex. specify the printer IP when adding the printer
+        failed)
+ 
+ @see AlertUtils
  */
-+ (void)displayResult:(RESULT_TYPE)result withTitle:(NSString*)title withDetails:(NSArray*)details;
++ (void)displayResult:(ALERT_RESULT_TYPE)result withTitle:(ALERT_TITLE_TYPE)title withDetails:(NSArray*)details;
 
 @end

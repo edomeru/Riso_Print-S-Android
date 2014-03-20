@@ -17,6 +17,7 @@
 #import "PListUtils.h"
 
 static PrinterManager* sharedPrinterManager = nil;
+static NSUInteger sharedMaxPrinters = 0;
 
 @interface PrinterManager ()
 
@@ -365,8 +366,10 @@ static PrinterManager* sharedPrinterManager = nil;
 
 - (BOOL)isAtMaximumPrinters
 {
-    NSInteger maxPrinters = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
-    if ([self.listSavedPrinters count] == maxPrinters)
+    if (sharedMaxPrinters == 0)
+        sharedMaxPrinters = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
+    
+    if ([self.listSavedPrinters count] == sharedMaxPrinters)
         return YES;
     else
         return NO;
