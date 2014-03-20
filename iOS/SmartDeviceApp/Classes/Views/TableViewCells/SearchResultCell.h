@@ -10,9 +10,6 @@
 
 @interface SearchResultCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UILabel* printerName;
-@property (weak, nonatomic) IBOutlet UIView* separator;
-
 /**
  Adds a checkmark image as the accessory view of the cell.
  */

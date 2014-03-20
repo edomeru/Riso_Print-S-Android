@@ -17,6 +17,14 @@
 
 @interface PrinterSearchViewController ()
 
+#pragma mark - Data Properties
+
+/** Handler for the Printer data. */
+@property (strong, nonatomic) PrinterManager* printerManager;
+
+/** Flag that will be set to YES when at least one successful printer was added. */
+@property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
+
 /**
  A list of the names of the printers searched from the network that
  are already saved to the database ("old" printers).
@@ -44,10 +52,15 @@
  */
 @property (strong, nonatomic) NSMutableDictionary* listNewPrinterDetails;
 
-/**
- Implements the pull-to-refresh gesture.
- */
+#pragma mark - UI Properties
+
+/** Implements the pull-to-refresh gesture. */
 @property (strong, nonatomic) UIRefreshControl* refreshControl;
+
+/** UITableView for the printer search results */
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+#pragma mark - Internal Methods
 
 /**
  Called when screen loads.
@@ -65,12 +78,23 @@
  Called when the user taps on the '+' button of a new printer.
  This method attempts to add the printer to the list of saved
  printers.
- @param row 
-        UITableView row in the new printers section
+ @param plusButton
+        button that triggered the event
+ @param tapEvent
+        the tap gesture
  */
 - (void)addPrinter:(UIButton*)plusButton withEvent:(UIEvent*)tapEvent;
 
+/** 
+ Unwinds back to the Printers screen.
+ Cancels any ongoing search operation.
+ This is for the iPhone only.
+ */
+- (IBAction)onBack:(UIButton*)sender;
+
 @end
+
+#pragma mark -
 
 @implementation PrinterSearchViewController
 
@@ -108,11 +132,6 @@
     
     [self setup];
     [self refresh];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    
 }
 
 - (void)didReceiveMemoryWarning
@@ -163,42 +182,6 @@
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
-#pragma mark - Refresh
-
-- (void)refresh
-{
-    // check for network connection
-    if (![NetworkManager isConnectedToNetwork])
-    {
-        [AlertUtils displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
-        return;
-    }
-
-    // clear the lists
-    [self.listOldPrinterNames removeAllObjects];
-    [self.listNewPrinterNames removeAllObjects];
-    [self.listNewPrinterIP removeAllObjects];
-    [self.listNewPrinterDetails removeAllObjects];
-
-    // start the search
-    NSLog(@"[INFO][PrinterSearch] initiating search");
-    [self.printerManager searchForAllPrinters];
-    // callbacks for the search will be handled in delegate methods
-    
-    // if UI needs to do other things, do it here
-    
-    // show the searching indicator
-    // note: content offset code is for fixing the bug in iOS7 where the view does not appear on load
-    if (self.tableView.contentOffset.y == 0)
-        self.tableView.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
-    [self.refreshControl beginRefreshing];
-    [self.refreshControl setHidden:NO];
-}
-
-#pragma mark - Add
-
 - (void)addPrinter:(UIButton*)plusButton withEvent:(UIEvent*)tapEvent
 {
     // get the row tapped
@@ -238,6 +221,40 @@
                           withDetails:nil];
         }
     }
+}
+
+#pragma mark - Refresh
+
+- (void)refresh
+{
+    // check for network connection
+    if (![NetworkManager isConnectedToNetwork])
+    {
+        [AlertUtils displayResult:ERR_NO_NETWORK
+                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
+                      withDetails:nil];
+        return;
+    }
+
+    // clear the lists
+    [self.listOldPrinterNames removeAllObjects];
+    [self.listNewPrinterNames removeAllObjects];
+    [self.listNewPrinterIP removeAllObjects];
+    [self.listNewPrinterDetails removeAllObjects];
+
+    // start the search
+    NSLog(@"[INFO][PrinterSearch] initiating search");
+    [self.printerManager searchForAllPrinters];
+    // callbacks for the search will be handled in delegate methods
+    
+    // if UI needs to do other things, do it here
+    
+    // show the searching indicator
+    // note: content offset code is for fixing the bug in iOS7 where the view does not appear on load
+    if (self.tableView.contentOffset.y == 0)
+        self.tableView.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
+    [self.refreshControl beginRefreshing];
+    [self.refreshControl setHidden:NO];
 }
 
 #pragma mark - PrinterSearchDelegate

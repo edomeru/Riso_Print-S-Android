@@ -9,6 +9,13 @@
 #import "SearchResultCell.h"
 #import "PrinterSearchViewController.h"
 
+@interface SearchResultCell ()
+
+@property (weak, nonatomic) IBOutlet UILabel* printerName;
+@property (weak, nonatomic) IBOutlet UIView* separator;
+
+@end
+
 @implementation SearchResultCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier

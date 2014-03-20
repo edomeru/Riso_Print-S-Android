@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class Printer;
 @class PrinterDetails;
 
 @protocol PrinterSearchDelegate <NSObject>

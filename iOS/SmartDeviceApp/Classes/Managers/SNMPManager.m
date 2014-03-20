@@ -35,6 +35,8 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
 
 @implementation SNMPManager
 
+#pragma mark - Printer Search (Manual Search)
+
 + (void)searchForPrinter:(NSString*)printerIP;
 {
     isManualSearch = YES;
@@ -71,6 +73,8 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         [self end];
     }
 }
+
+#pragma mark - Printer Search (Device Discovery)
 
 + (void)searchForAvailablePrinters
 {
@@ -126,6 +130,21 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
     }
 }
 
+#pragma mark - Get Printer Status
+
++ (BOOL)getPrinterStatus:(NSString*)ipAddress
+{
+    //TODO Get status from SNMP
+    
+    //TODO remove stub code
+    //STUB Code
+    int onlineStatus = arc4random() % 2;
+    
+    return onlineStatus;
+}
+
+#pragma mark - SNMP Callback Handlers
+
 + (void)add
 {
     NSLog(@"[INFO][SNMP] received SNMP Add Printer callback %d", ++printerCount);
@@ -144,7 +163,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         if (isManualSearch)
             printerDetails.ip = searchedIP;
         else
-            printerDetails.ip = [NSString stringWithFormat:@"%d%d%d", printerCount, printerCount, printerCount];
+            printerDetails.ip = [NSString stringWithFormat:@"192.168.%d.%d", printerCount, printerCount];
         printerDetails.name = [NSString stringWithFormat:@"RISO Printer %@", printerDetails.ip];
         printerDetails.port = [NSNumber numberWithUnsignedInt:printerCount*100];
         printerDetails.enBind = NO;
@@ -174,14 +193,4 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
     });
 }
 
-+ (BOOL)getPrinterStatus:(NSString*)ipAddress
-{
-    //TODO Get status from SNMP
-    
-    //TODO remove stub code
-    //STUB Code
-    int onlineStatus = arc4random() % 2;
-    
-    return onlineStatus;
-}
 @end

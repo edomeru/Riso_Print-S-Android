@@ -11,23 +11,9 @@
 #import "PrinterSearchDelegate.h"
 #import "UIViewController+Segue.h"
 
-@class PrinterManager;
-
 @interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate, UIGestureRecognizerDelegate>
 
-/** Reference to the PrinterManager object of the Printers screen. */
-@property (strong, nonatomic) PrinterManager* printerManager;
-
 /** Flag that will be set to YES when at least one successful printer was added. */
-@property (assign, nonatomic) BOOL hasAddedPrinters;
-
-/** TableView for the Search Results */
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIView *separator;
-
-/**
- Unwinds back to the Printers screen.
- */
-- (IBAction)onBack:(UIButton*)sender;
+@property (readonly, assign, nonatomic) BOOL hasAddedPrinters;
 
 @end

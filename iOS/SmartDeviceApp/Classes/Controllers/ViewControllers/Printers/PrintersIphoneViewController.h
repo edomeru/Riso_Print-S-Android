@@ -9,9 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "PrintersViewController.h"
 
-@class Printer;
-@class PrinterManager;
-
 @interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;

@@ -12,7 +12,8 @@
 
 // This is a non-NSManagedObject version of the Printer class.
 // This is used as a temporary container for the printer info
-// and capabilities when passing it around.
+// and capabilities when passing it around (i.e. between the
+// SNMPManager and the PrinterManager).
 // ..
 // WHAT IS THIS FOR?
 // Creating a Printer object also inserts an NSManagedObject

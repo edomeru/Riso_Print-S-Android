@@ -18,16 +18,41 @@
 
 @interface AddPrinterViewController ()
 
+#pragma mark - Data Properties
+
+/** Handler for the Printer data. */
+@property (strong, nonatomic) PrinterManager* printerManager;
+
+/** Flag that will be set to YES when at least one successful printer was added. */
+@property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
+
 /**
  Flag that indicates that a printer search was initiated, but
  either the printer was not found or the search timed-out.
  */
 @property (assign, nonatomic) BOOL willEndWithoutAdd;
 
-/**
- Progress indicator that a search is ongoing.
- */
+#pragma mark - UI Properties
+
+/** Progress indicator that a search is ongoing. */
 @property (strong, nonatomic) UIActivityIndicatorView* progressIndicator;
+
+/** Input TextField for the IP Address. */
+@property (weak, nonatomic) IBOutlet UITextField *textIP;
+
+/** Input TextField for the Username. */
+@property (weak, nonatomic) IBOutlet UITextField *textUsername;
+
+/** Input TextField for the Password. */
+@property (weak, nonatomic) IBOutlet UITextField *textPassword;
+
+/** Save Button in the Header. */
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
+
+/** Reference to the entire UIView below the Header. */
+@property (weak, nonatomic) IBOutlet UIView *container;
+
+#pragma mark - Internal Methods
 
 /**
  Called when screen loads.
@@ -39,6 +64,20 @@
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
+
+/**
+ Unwinds back to the Printers screen.
+ Cancels any ongoing search operation.
+ This is for the iPhone only.
+ */
+- (IBAction)onBack:(UIButton*)sender;
+
+/**
+ The input Printer info is retrieved from the UI, then the printer
+ is searched from the network. If it is available and it is
+ supported the printer object is created and stored in the DB.
+ */
+- (IBAction)onSave:(UIButton*)sender;
 
 /**
  Removes leading zeroes and trims extra spaces from the input IP string.
