@@ -437,9 +437,8 @@
                                                 <rect key="frame" x="18" y="10" width="284" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
-                                                <color key="minimumTrackTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                 <connections>
-                                                    <action selector="sliderChanged:" destination="3J8-E3-ZCb" eventType="valueChanged" id="Tym-I0-NuR"/>
+                                                    <action selector="dragSliderAction:" destination="3J8-E3-ZCb" eventType="valueChanged" id="c0z-RH-7m9"/>
                                                     <outletCollection property="gestureRecognizers" destination="HkB-bW-YX3" appends="YES" id="R2I-1U-0vu"/>
                                                 </connections>
                                             </slider>
@@ -507,7 +506,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WGX-Mc-pLJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="HkB-bW-YX3">
                     <connections>
-                        <action selector="tapSlider:" destination="3J8-E3-ZCb" id="42o-Ac-Dpi"/>
+                        <action selector="tapSliderAction:" destination="3J8-E3-ZCb" id="Q2K-oP-yWi"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>

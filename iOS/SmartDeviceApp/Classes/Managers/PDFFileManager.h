@@ -21,10 +21,20 @@ typedef enum
 @property (strong, nonatomic) NSURL *pdfURL;
 @property  CGPDFDocumentRef pdfDocument;
 @property BOOL pdfFileAvailable;
-
+/**
+ Returns the single instance of the PDFFileManager
+ @return shared PDFFileManager instance
+ **/
 + (id)sharedManager;
-
-- (int) setUpPDF:(NSURL *)fileURL;
+/**
+ Set up the PDF for preview
+ @return T_PDF_ERROR
+ **/
+- (T_PDF_ERROR) setUpPDF:(NSURL *)fileURL;
+/**
+ Clean up PDF for preview
+ @return PDF_ERROR_NONE if no error. Error ID if there is Error
+ **/
 - (void) cleanUp;
 
 

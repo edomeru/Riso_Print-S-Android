@@ -52,16 +52,60 @@ typedef enum
     DUPLEX_LONG_EDGE
 } T_DUPLEX;
 
+/**
+ Helper function to determine if preview is in grayscale based on color mode setting value
+ 
+ @param colorMode - color mode setting value
+ 
+ @return YES if grayscale; NO otherwise
+**/
 BOOL isGrayScale(NSUInteger colorMode);
 
+/**
+ Helper function to determine spine location of page view controller based on settings affecting spine location
+ 
+ @param bind - bind setting value
+ @param duplex - duplex setting value
+ @param isBookletBind - indicate if setting for booklet bind is On
+ 
+ @return UIPageViewControllerSpineLocation
+ **/
 UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, NSUInteger duplex, BOOL isBookletBind);
 
+/**
+ Helper function to determine navigation orientation of page view controller based on bind setting
+ 
+ @param bind - bind setting value
+ 
+ @return UIPageViewControllerNavigationOrientation
+ **/
 UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bind);
 
+/**
+ Helper function to determine if paper orientation is landscape based on combination of settings
+ 
+ @param previewSetting - preview setting object containing setting values
+ 
+ @return YES if paper is landscape; NO otherwise
+ **/
 BOOL isPaperLandscape(PreviewSetting *setting);
 
+/**
+ Helper function to get ratio of paper height versus paper width based on paper size settings
+ 
+ @param paperSize - value of paper size setting
+ 
+ @return ratio of paper height versus paper width
+ **/
 float getHeightToWidthRatio(NSUInteger paperSize);
 
+/**
+ Helper function to determine number of pages in a sheet based on the pagination settings
+ 
+ @param pagination - value of paginationsetting
+ 
+ @return Number of pages per sheet
+ **/
 NSUInteger getNumberOfPagesPerSheet(NSUInteger pagination);
 
 

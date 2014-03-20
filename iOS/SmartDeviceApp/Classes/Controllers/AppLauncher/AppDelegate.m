@@ -10,20 +10,24 @@
 #import "PDFFileManager.h"
 #import "RootViewController.h"
 
-@implementation AppDelegate
+#define PREVIEW_DEBUG_MODE 0
+#define PDF_END_PROCESSING_NOTIFICATION @"jp.alink-group.smartdeviceapp.endpdfprocessing"
 
+@implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
     NSLog(@"Did Finish Launching");
     
-    /*{
+#if PREVIEW_DEBUG_MODE
+    {
         //TODO REMOVE! For testing only
         NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample.pdf" ofType:nil]];
         NSLog(@"testfile url: %@", [fileURL path]);
         [self setUpPreview:fileURL];
-    }*/
+    }
+#endif
     
     /*check if open-in*/
     if([launchOptions objectForKey: UIApplicationLaunchOptionsURLKey] != nil)
@@ -84,7 +88,7 @@
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(didEndPPDFProcessing:)
-                                                 name:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
+                                                 name:PDF_END_PROCESSING_NOTIFICATION
                                                object: nil];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         [self cleanUpPDF];
@@ -103,8 +107,8 @@
     int statusCode = [pdfFileManager setUpPDF:pdfURL];
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter]
-         postNotificationName:@"jp.alink-group.smartdeviceapp.endpdfprocessing"
-         object:[NSNumber numberWithInt:statusCode]]; //make async if necessary
+         postNotificationName:PDF_END_PROCESSING_NOTIFICATION
+         object:[NSNumber numberWithInt:statusCode]];
     });
 }
 
@@ -115,10 +119,10 @@
     [pdfFileManager cleanUp];
 }
 
--(void) didEndPPDFProcessing: (NSNotification *) _notification
+-(void) didEndPPDFProcessing: (NSNotification *) notification
 {
     NSLog(@"PDF Processing ended");
-    int statusCode = [(NSNumber *)[_notification object] integerValue];
+    int statusCode = [(NSNumber *)[notification object] integerValue];
     
     if(statusCode == PDF_ERROR_NONE)
     {

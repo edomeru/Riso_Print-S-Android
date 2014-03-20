@@ -9,6 +9,25 @@
 #import "PDFFileManager.h"
 @interface PDFFileManager()
 @property (strong, nonatomic) NSURL *previewURL;
+/**
+ Init the internal PDF URL used for preview
+ **/
+-(void) initPreviewURL;
+/**
+ Check PDF for unsupported of error case
+ @param CGPDFDocumentObjectRef pdfdocument object
+ @return T_PDF_ERROR
+ **/
+-(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument;
+/**
+ Rename PDF for preview to the internal PDF URL used for preview
+ @return YES if successfully renamed; NO otherwise
+ **/
+-(BOOL) renamePDFFileToPreviewURL;
+/**
+ Cleanup the current internal PDF file for preview
+ **/
+-(void) cleanupPreviewPDF;
 @end
 @implementation PDFFileManager
 
@@ -36,15 +55,7 @@
     return self;
 }
 
--(void) initPreviewURL
-{
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *tempString = [NSString stringWithFormat:@"%@/Inbox/SDAPreview.pdf",documentsDirectory];
-    _previewURL = [NSURL fileURLWithPath:tempString];
-}
-
-- (int) setUpPDF:(NSURL *)fileURL
+- (T_PDF_ERROR) setUpPDF:(NSURL *)fileURL
 {
     CGPDFDocumentRef pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)fileURL);
     int statusCode = [self checkPDF:pdfDocument];
@@ -84,8 +95,17 @@
     _pdfFileAvailable = NO;
 }
 
+#pragma mark - Private Class Methods
 
--(int) checkPDF:(CGPDFDocumentRef)pdfDocument
+-(void) initPreviewURL
+{
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *tempString = [NSString stringWithFormat:@"%@/Inbox/SDAPreview.pdf",documentsDirectory];
+    _previewURL = [NSURL fileURLWithPath:tempString];
+}
+
+-(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument
 {
     if(pdfDocument == nil)
     {

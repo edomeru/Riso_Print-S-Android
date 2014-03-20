@@ -9,13 +9,23 @@
 #import <UIKit/UIKit.h>
 #import "PDFPageView.h"
 
-@protocol PDFPageViewContentDelegate
+@protocol PDFPageContentViewControllerDatasource
+/**
+ Get the actual PDF Page based on the page index and the offset
+ @param pageIndex - index of the page in the page view controller
+ @param pageOffset - the Nth PDF page to show in the view
+ 
+ @return PDF page
+ **/
 -(CGPDFPageRef) getPDFPage: (NSUInteger) pageIndex withPageOffset:(NSUInteger) pageOffset;
+/**
+ Get the PreviewSetting object
+ @return PreviewSetting object
+ **/
 -(PreviewSetting *) getPreviewSetting;
 @end
 
-@interface PDFPageContentViewController : UIViewController <PDFPageViewDelegate>
-@property (strong, nonatomic) IBOutlet PDFPageView *pageView;
-@property(weak, nonatomic) id <PDFPageViewContentDelegate> delegate;
+@interface PDFPageContentViewController : UIViewController <PDFPageViewDatasource>
+@property(weak, nonatomic) id <PDFPageContentViewControllerDatasource> datasource;
 @property NSUInteger pageIndex;
 @end

@@ -15,10 +15,8 @@ struct {
     {210.0, 297.0}, //A4
     {215.9, 279.4}, //Letter
     {215.9, 355.6}, //Legal
-    {110.0, 220.0}  // Envelope
+    {110.0, 220.0}  //Envelope
 };
-
-
 
 BOOL isGrayScale(NSUInteger colorMode)
 {
@@ -41,9 +39,7 @@ UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, NSUInteger d
     }
     
     return UIPageViewControllerSpineLocationMin;
-    
 }
-
 
 UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bind)
 {
@@ -79,10 +75,8 @@ BOOL isPaperLandscape(PreviewSetting *setting)
     return NO;
 }
 
-
 float getHeightToWidthRatio(NSUInteger paperSize)
 {
-    //TODO
     float ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
     return ratio;
 }

@@ -53,7 +53,7 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    if(self.delegate == nil){
+    if(self.datasource == nil){
         NSLog(@"delegate is nil");
         return;
     }
@@ -72,9 +72,9 @@
 {
     //Get the settings needed in the drawing of view
     //Number of pages per sheet
-    NSUInteger numPagesPerSheet = [self.delegate getNumPages];
+    NSUInteger numPagesPerSheet = [self.datasource getNumPages];
     //Color mode
-    BOOL isGrayScale = [self.delegate isGrayScale];
+    BOOL isGrayScale = [self.datasource isGrayScale];
     
     //compute the width and height to be occupied by 1 page in rect based on number of pages per sheet
     CGFloat pageWidth = [self getPageWidth: rect forNumOfPages:numPagesPerSheet];
@@ -106,7 +106,12 @@
 /*Draw a PDF page in rect*/
 -(void) drawPDFPage: (CGContextRef) graphicsCtx  inRect: (CGRect) rect forPageNumber:(NSUInteger) pageNumber inGrayScale: (BOOL) isGrayScale;
 {
-    CGPDFPageRef pdfPage = [self.delegate getPage:pageNumber];
+    CGPDFPageRef pdfPage = [self.datasource getPage:pageNumber];
+    
+    if(pdfPage == nil)
+    {
+        return;
+    }
     
     //get the PDF box image
     CGRect mediaRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);

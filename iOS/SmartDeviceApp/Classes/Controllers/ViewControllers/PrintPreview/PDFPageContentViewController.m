@@ -10,13 +10,10 @@
 #import "PrintPreviewHelper.h"
 
 @interface PDFPageContentViewController ()
-
+@property (strong, nonatomic) IBOutlet PDFPageView *pageView;
 @end
 
 @implementation PDFPageContentViewController
-{
-    
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -32,7 +29,7 @@
     [super viewDidLoad];
     NSLog(@"load pdf page content view controller");
    	// Do any additional setup after loading the view.
-    self.pageView.delegate = self;
+    self.pageView.datasource = self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -41,21 +38,22 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark PDF Page View Delegate methods
+#pragma mark - PDFPageViewDatasource methods
+
 -(CGPDFPageRef) getPage:(NSUInteger)pageNum
 {
-    return [self.delegate getPDFPage:self.pageIndex withPageOffset:pageNum];
+    return [self.datasource getPDFPage:self.pageIndex withPageOffset:pageNum];
 }
 
 -(NSUInteger) getNumPages
 {
-    PreviewSetting *previewSetting = [self.delegate getPreviewSetting];
+    PreviewSetting *previewSetting = [self.datasource getPreviewSetting];
     return getNumberOfPagesPerSheet(previewSetting.pagination);
 }
 
 -(BOOL) isGrayScale
 {
-    PreviewSetting *previewSetting = [self.delegate getPreviewSetting];
+    PreviewSetting *previewSetting = [self.datasource getPreviewSetting];
     return isGrayScale(previewSetting.colorMode);
 }
 
