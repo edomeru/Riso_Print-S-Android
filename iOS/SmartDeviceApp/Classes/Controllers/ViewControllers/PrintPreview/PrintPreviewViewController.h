@@ -10,4 +10,7 @@
 
 @interface PrintPreviewViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
+@property (weak, nonatomic) IBOutlet UIButton *printSettingsButton;
+
 @end
