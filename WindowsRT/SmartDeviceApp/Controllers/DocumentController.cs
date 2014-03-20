@@ -10,12 +10,15 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Data.Pdf;
+using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
@@ -27,7 +30,7 @@ namespace SmartDeviceApp.Controllers
 
         private const int MAX_PAGES = 5;
         private const string TEMP_PDF_NAME = "tempDoc.pdf";
-        private const string FORMAT_IMAGE_FILENAME = "image{0:0000}.jpg";
+        private const string FORMAT_LOGICAL_PAGE_IMAGE_FILENAME = "logicalpage{0:0000}.jpg";
 
         private Document _document;
 
@@ -103,7 +106,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Unload()
         {
-            await DeleteTempFiles();
+            await StorageFileUtility.DeleteAllTempFiles();
             if (_document != null)
             {
                 _document = null;
@@ -188,50 +191,28 @@ namespace SmartDeviceApp.Controllers
                 using (PdfPage pdfPage = _document.PdfDocument.GetPage((uint)pageIndex))
                 {
                     await pdfPage.PreparePageAsync();
-                    StorageFile jpegFile = null;
-                    bool jpegFileExists = false;
 
-                    StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                    string fileName = String.Format(FORMAT_IMAGE_FILENAME, pageIndex);
+                    if (!_document.LogicalPages.TryGetValue(pageIndex, out logicalPage))
+                    {
+                        // Does not exist
 
-                    // Check if page image exists in AppData
-                    try
-                    {
-                        StorageFile testJpegFile = await tempFolder.GetFileAsync(fileName);
-                        jpegFileExists = true;
-                        jpegFile = testJpegFile;
-                    }
-                    catch (Exception)
-                    {
-                        // JPEG file does not exist
-                    }
+                        StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+                        string fileName = String.Format(FORMAT_LOGICAL_PAGE_IMAGE_FILENAME, pageIndex);
 
-                    if (!jpegFileExists)
-                    {
-                        try
-                        {
-                            jpegFile = await tempFolder.CreateFileAsync(fileName,
+                        BitmapDecoder decoder = null;
+                        StorageFile jpegFile = await tempFolder.CreateFileAsync(fileName,
                                 CreationCollisionOption.ReplaceExisting);
-                            using (IRandomAccessStream raStream =
-                                await jpegFile.OpenAsync(FileAccessMode.ReadWrite))
-                            {
-                                await pdfPage.RenderToStreamAsync(raStream);
-                            }
-                        }
-                        catch (Exception)
+                        using (IRandomAccessStream raStream =
+                            await jpegFile.OpenAsync(FileAccessMode.ReadWrite))
                         {
-                            // Bizzare error
+                            await pdfPage.RenderToStreamAsync(raStream);
+                            decoder = await BitmapDecoder.CreateAsync(raStream);
                         }
-                    }
 
-                    if (jpegFile != null)
-                    {
-                        logicalPage = new LogicalPage((uint)pageIndex, jpegFile.Name, pdfPage.Size,
-                            pdfPage.Rotation);
-                        if (!_document.LogicalPages.ContainsKey(pageIndex))
-                        {
-                            _document.AddLogicalPage(pageIndex, logicalPage);
-                        }
+                        // Add to LogicalPage list
+                        logicalPage = new LogicalPage((uint)pageIndex, jpegFile.Name,
+                            new Size(decoder.PixelWidth, decoder.PixelHeight), pdfPage.Rotation);
+                        _document.AddLogicalPage(pageIndex, logicalPage);
                     }
                 }
             }
@@ -243,18 +224,5 @@ namespace SmartDeviceApp.Controllers
             return logicalPage;
         }
 
-        /// <summary>
-        /// Deletes all files in AppData temporary store
-        /// </summary>
-        /// <returns>task</returns>
-        private async Task DeleteTempFiles()
-        {
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            var files = await tempFolder.GetFilesAsync();
-            foreach (var file in files)
-            {
-                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            }
-        }
     }
 }

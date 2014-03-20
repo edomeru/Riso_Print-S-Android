@@ -76,7 +76,7 @@ namespace SmartDeviceApp.ViewModels
             // Messenger.Default.Register<DummyPageMessage>(this, (pageMessage) => OnPageImageLoaded(pageMessage));
             Messenger.Default.Register<DocumentMessage>(this, (documentMessage) => OnDocumentLoaded(documentMessage));
             Messenger.Default.Register<PreviewInfoMessage>(this, (previewInfoMessage) => OnPreviewInfoUpdated(previewInfoMessage));
-            Messenger.Default.Register<PreviewPage>(this, (previewPage) => OnPageImageLoaded(previewPage));
+            Messenger.Default.Register<PreviewPageImage>(this, (previewPageImage) => OnPageImageLoaded(previewPageImage));
             Initialize();
         }
 
@@ -368,10 +368,10 @@ namespace SmartDeviceApp.ViewModels
         // TODO: Add handling for left and right pages
         // Note: For current right page only
         // private void OnPageImageLoaded(DummyPageMessage pageMessage)
-        private void OnPageImageLoaded(PreviewPage previewPage)
+        private void OnPageImageLoaded(PreviewPageImage previewPageImage)
         {
-            RightPageImage = previewPage.PageImage;
-            RightPageActualSize = previewPage.ActualSize;
+            RightPageImage = previewPageImage.PageImage;
+            RightPageActualSize = previewPageImage.ActualSize;
             InitializeGestures();
         }
 

@@ -110,6 +110,7 @@
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\PreviewViewMode.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
+    <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controls\ListItemControl.xaml.cs">
       <DependentUpon>ListItemControl.xaml</DependentUpon>

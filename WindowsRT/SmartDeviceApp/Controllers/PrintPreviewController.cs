@@ -30,13 +30,16 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
-        private const string TEMP_IMAGE_NAME = "tempPage.jpg";
+        private const string FORMAT_PREVIEW_PAGE_IMAGE_PREFIX = "previewpage"; // Should be same
+        private const string FORMAT_PREVIEW_PAGE_IMAGE_FILENAME = "previewpage{0:0000}.jpg";
 
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
-        private List<LogicalPage> _logicalPages;
+        private List<LogicalPage> _logicalPages; // LogicalPages in the requested PreviewPage
+        private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
+        private int _currPreviewPageIndex;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -60,16 +63,18 @@ namespace SmartDeviceApp.Controllers
         public async Task Initialize()
         {
             _selectedPrinter = null;
+            _previewPages = new Dictionary<int, PreviewPage>();
 
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.IsFileLoaded)
             {
                 _previewPageTotal = DocumentController.Instance.PageCount;
-                Messenger.Default.Send<DocumentMessage>(new DocumentMessage(true, DocumentController.Instance.FileName) );
+                Messenger.Default.Send<DocumentMessage>(new DocumentMessage(true,
+                    DocumentController.Instance.FileName));
 
                 // Get print settings
                 await GetPrintAndPrintSetting();
-                OnPrintSettingUpdated();
+                await OnPrintSettingUpdated();
             }
             else
             {
@@ -83,6 +88,8 @@ namespace SmartDeviceApp.Controllers
         public void Cleanup()
         {
             _selectedPrinter = null;
+            _previewPages.Clear();
+            _previewPages = null;
         }
 
         /// <summary>
@@ -115,8 +122,9 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Checks for view related print setting and notifies view model
         /// </summary>
-        private void OnPrintSettingUpdated()
+        private async Task OnPrintSettingUpdated()
         {
+            // Send UI related items
             if (_selectedPrinter.PrintSetting.Booklet)
             {
                 _pageViewMode = PageViewMode.TwoPageView;
@@ -133,6 +141,10 @@ namespace SmartDeviceApp.Controllers
                 (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
             Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
                 _pageViewMode));
+
+            // Clean-up generated PreviewPages
+            await StorageFileUtility.DeleteFiles(FORMAT_PREVIEW_PAGE_IMAGE_PREFIX,
+                ApplicationData.Current.TemporaryFolder);
         }
 
         #region Preview Page Navigation
@@ -144,42 +156,34 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task LoadPage(int targetPreviewPageIndex)
         {
+            _currPreviewPageIndex = targetPreviewPageIndex;
+
+            PreviewPage previewPage = null;
+            if (_previewPages.TryGetValue(targetPreviewPageIndex, out previewPage))
+            {
+                // Get existing file from AppData temporary store
+                StorageFile jpegFile = await StorageFileUtility.GetExistingFile(previewPage.Name,
+                    ApplicationData.Current.TemporaryFolder);
+                if (jpegFile != null)
+                {
+                    // Open the bitmap
+                    BitmapImage bitmapImage = new BitmapImage(new Uri(jpegFile.Path));
+
+                    // Create message and send
+                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                        previewPage.ActualSize));
+
+                    return;
+                }
+            }
+
+            // Else, generate pages, apply print setting and send
             int targetLogicalPageIndex = targetPreviewPageIndex * _pagesPerSheet;
             _logicalPages =
                 await DocumentController.Instance.GenerateLogicalPages(targetPreviewPageIndex,
                     _pagesPerSheet);
-            await ApplyPrintSettings();
+            await ApplyPrintSettings(targetPreviewPageIndex);
         }
-
-        /*
-        /// <summary>
-        /// Requests for LogicalPages near the next page
-        /// and then applies print settings for the target pages only
-        /// </summary>
-        /// <param name="targetPreviewPageIndex"></param>
-        /// <returns>task</returns>
-        public async Task NextPage(int targetPreviewPageIndex)
-        {
-            int targetLogicalPageIndex = _currLogicalPageIndex + _pagesPerSheet;
-            if (targetPreviewPageIndex == targetLogicalPageIndex)
-            {
-                _logicalPages = await DocumentController.Instance.GenerateLogicalPages(
-                    targetLogicalPageIndex, _pagesPerSheet);
-            }
-            await ApplyPrintSettings();
-        }
-
-        public async Task PreviousPage(int targetPreviewPageIndex)
-        {
-            int targetLogicalPageIndex = _currLogicalPageIndex - _pagesPerSheet;
-            if (targetPreviewPageIndex == targetLogicalPageIndex)
-            {
-                _logicalPages = await DocumentController.Instance.GenerateLogicalPages(
-                    targetLogicalPageIndex, _pagesPerSheet);
-            }
-            await ApplyPrintSettings();
-        }
-         * */
 
         #endregion Preview Page Navigation
 
@@ -189,7 +193,7 @@ namespace SmartDeviceApp.Controllers
         /// Applies print settings to LogicalPage(s) then creates a PreviewPage (BitmapImage)
         /// </summary>
         /// <returns>task</returns>
-        private async Task ApplyPrintSettings()
+        private async Task ApplyPrintSettings(int previewPageIndex)
         {
             BitmapImage pageImage = new BitmapImage();
 
@@ -238,7 +242,7 @@ namespace SmartDeviceApp.Controllers
 
                 byte[] pixelBytes = pixelData.DetachPixelData();
 
-                if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
+                if (!_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
                 {
                     pixelBytes = ApplyMonochrome(pixelBytes);
 
@@ -249,8 +253,9 @@ namespace SmartDeviceApp.Controllers
                     await encoder.FlushAsync();
                 }
 
-                // Save output into AppData temporary store
-                StorageFile tempPageImage = await tempFolder.CreateFileAsync(TEMP_IMAGE_NAME,
+                // Save PreviewPage into AppData temporary store
+                StorageFile tempPageImage = await tempFolder.CreateFileAsync(
+                    String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
                     CreationCollisionOption.ReplaceExisting);
                 using (var destinationStream = await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
                 {
@@ -260,11 +265,17 @@ namespace SmartDeviceApp.Controllers
                     await newEncoder.FlushAsync();
                 }
 
+                // Add to PreviewPage list
+                PreviewPage previewPage = new PreviewPage((uint) previewPageIndex,
+                    tempPageImage.Name, new Size(decoder.PixelWidth, decoder.PixelHeight));
+                _previewPages.Add(previewPageIndex, previewPage);
+
                 // Open the bitmap
                 BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
 
                 // Create message and send
-                Messenger.Default.Send<PreviewPage>(new PreviewPage(bitmapImage, _logicalPages[0].Size));  // TODO: Update size
+                Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                    previewPage.ActualSize));
             }
         }
 
@@ -322,6 +333,18 @@ namespace SmartDeviceApp.Controllers
         {
             PageTotal = pageTotal;
             PageViewMode = pageViewMode;
+        }
+    }
+
+    public sealed class PreviewPageImage
+    {
+        public BitmapImage PageImage { get; private set; }
+        public Size ActualSize { get; private set; }
+
+        public PreviewPageImage(BitmapImage pageImage, Size actualSize)
+        {
+            PageImage = pageImage;
+            ActualSize = actualSize;
         }
     }
 

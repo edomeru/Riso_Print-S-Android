@@ -23,13 +23,19 @@ namespace SmartDeviceApp.Models
 {
     public class PreviewPage
     {
-        public BitmapImage PageImage { get; private set; }
-        public Size ActualSize { get; private set; }
 
-        public PreviewPage(BitmapImage pageImage, Size actualSize)
+        public uint PageIndex { get; private set; }
+        public string Name { get; private set; }
+        public Size ActualSize { get; private set; }
+        //public PdfPageRotation Rotation { get; private set; }
+
+        public PreviewPage(uint pageIndex, string name, Size actualSize) //, PdfPageRotation rotation)
         {
-            PageImage = pageImage;
+            PageIndex = pageIndex;
+            Name = name;
             ActualSize = actualSize;
+            //Rotation = rotation;
         }
+
     }
 }
