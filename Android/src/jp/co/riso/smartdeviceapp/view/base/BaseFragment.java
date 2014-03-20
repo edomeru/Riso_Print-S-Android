@@ -117,14 +117,14 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     
     public void addMenuButton(View v, int layoutId, int viewId, int imageResId, View.OnClickListener listener) {
         LayoutInflater li = LayoutInflater.from(v.getContext());
-        ImageView printSettingsButton = (ImageView) li.inflate(R.layout.actionbar_button, null);
-        printSettingsButton.setId(viewId);
-        printSettingsButton.setImageResource(imageResId);
-        printSettingsButton.setOnClickListener(listener);
+        ImageView button = (ImageView) li.inflate(R.layout.actionbar_button, null);
+        button.setId(viewId);
+        button.setImageResource(imageResId);
+        button.setOnClickListener(listener);
 
         int width = ((BaseActivity) getActivity()).getActionBarHeight();
         ViewGroup layout = (ViewGroup) v.findViewById(layoutId);
-        layout.addView(printSettingsButton, width, LayoutParams.MATCH_PARENT);
+        layout.addView(button, width, LayoutParams.MATCH_PARENT);
     }
 
     // ================================================================================
