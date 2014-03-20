@@ -65,7 +65,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@color/theme_color_3"
+            android:background="@color/bg_delete_button"
             android:paddingLeft="@dimen/printjob_delgroupbtn_padding_side"
             android:paddingRight="@dimen/printjob_delgroupbtn_padding_side"
             android:text="@string/ids_lbl_delete_jobs"

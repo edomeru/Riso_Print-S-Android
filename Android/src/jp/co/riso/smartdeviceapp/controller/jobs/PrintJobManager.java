@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintJobManager.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.controller.jobs;
 
 import java.text.ParseException;
@@ -46,7 +54,7 @@ public class PrintJobManager {
         }
         return mInstance;
     }
-        
+    
     public static List<PrintJob> getPrintJobs() {
         List<PrintJob> printJobs = new ArrayList<PrintJob>();
         Cursor c = mManager.query(TABLE, null, null, null, null, null, C_ORDERBY_DATE);
@@ -61,17 +69,18 @@ public class PrintJobManager {
             
             printJobs.add(new PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result));
         }
+        
         c.close();
         mManager.close();
         return printJobs;
     }
     
     public static boolean deleteWithPrinterId(int prn_id) {
-        return mManager.delete(TABLE, C_WHERE_PRN_ID, new String[] { String.valueOf(prn_id) });
+        return mManager.delete(TABLE, C_WHERE_PRN_ID, String.valueOf(prn_id));
     }
     
     public static boolean deleteWithJobId(int pjb_id) {
-        return mManager.delete(TABLE, C_WHERE_PJB_ID, new String[] { String.valueOf(pjb_id) });
+        return mManager.delete(TABLE, C_WHERE_PJB_ID, String.valueOf(pjb_id));
         
     }
     
@@ -102,7 +111,6 @@ public class PrintJobManager {
         
         try {
             date = sdf.parse(strDate);
-            
         } catch (ParseException e) {
             Log.e(TAG, "convertSQLToDate parsing error.");
         }

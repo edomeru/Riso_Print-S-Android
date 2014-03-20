@@ -1,13 +1,21 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintJobsDeleteErrorDialog.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.dialog;
 
 import jp.co.riso.smartdeviceapp.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -50,6 +58,7 @@ public class PrintJobsDeleteErrorDialog extends DialogFragment implements OnClic
         return dialog;
     }
     
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         
         dialog.dismiss();

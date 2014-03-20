@@ -24,6 +24,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
+
+                <jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView
+                    android:id="@+id/printJobsColumnView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                </jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView>
+                
             </LinearLayout>
         </ScrollView>
 

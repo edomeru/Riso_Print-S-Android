@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintJobsDeleteDialog.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.dialog;
 
 import jp.co.riso.smartdeviceapp.R;
@@ -18,7 +26,7 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
     private static final String KEY_PRINTERID = "delete_jobs";
     private int mPrinterId;
     private PrintJobsDeleteDialogListener mListener;
-        
+    
     public PrintJobsDeleteDialog() {
         super();
     }
@@ -61,6 +69,7 @@ public class PrintJobsDeleteDialog extends DialogFragment implements OnClickList
         return dialog;
     }
     
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         
         if (mListener != null) {

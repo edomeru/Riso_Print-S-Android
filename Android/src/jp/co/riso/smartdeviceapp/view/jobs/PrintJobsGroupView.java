@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintJobsGroupView.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.jobs;
 
 import java.util.ArrayList;
@@ -288,6 +296,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mViewToDelete = view;
         }
         
+        @Override
         public boolean onTouch(View v, MotionEvent event) {
             mDelListener.clearButton();
             return gestureDetector.onTouchEvent(event);
