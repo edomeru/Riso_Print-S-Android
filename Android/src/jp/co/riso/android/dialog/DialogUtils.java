@@ -5,6 +5,7 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.android.dialog;
 
 import android.app.Activity;

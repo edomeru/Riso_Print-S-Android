@@ -5,6 +5,7 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.android.util;
 
 import java.io.BufferedReader;
@@ -17,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -223,5 +225,14 @@ public final class AppUtils {
         } 
         
         return id;
+    }
+    
+    public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
+        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE); 
+        
+        // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.
+        final int memClass = manager.getMemoryClass();
+        
+        return 1024 * 1024 * memClass;
     }
 }

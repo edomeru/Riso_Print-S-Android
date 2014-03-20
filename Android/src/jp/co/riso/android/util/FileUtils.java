@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * FileUtils.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 
 package jp.co.riso.android.util;
 

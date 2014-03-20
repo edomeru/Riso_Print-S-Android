@@ -1,13 +1,21 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * SDADrawerLayout.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.widget;
 
-import jp.co.riso.smartdeviceapp.R;
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 
 public class SDADrawerLayout extends DrawerLayout {
+    
+    private boolean mPreventInterceptTouches;
 
     public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -23,7 +31,7 @@ public class SDADrawerLayout extends DrawerLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (getContext().getResources().getBoolean(R.bool.is_tablet) && isDrawerOpen(Gravity.RIGHT)) {
+        if (mPreventInterceptTouches) {
             return false;
         }
         
@@ -33,6 +41,10 @@ public class SDADrawerLayout extends DrawerLayout {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         return super.onTouchEvent(ev);
+    }
+    
+    public void setPreventInterceptTouches(boolean preventInterceptTouches) {
+        mPreventInterceptTouches = preventInterceptTouches;
     }
 }
 

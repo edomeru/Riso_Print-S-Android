@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.Rect;
 import android.os.AsyncTask;
@@ -40,39 +39,38 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener {
-    public static final String TAG = "PrintPreviewView"; 
+    public static final String TAG = "PrintPreviewView";
     
-    CurlView mCurlView;
-    PDFFileManager mPdfManager = null;
-    PDFPageProvider mPdfPageProvider = new PDFPageProvider();
-    PrintSettings mPrintSettings = new PrintSettings(); // Should not be null
-    LruCache<String, Bitmap> mBmpCache = null;
+    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d-%d"; // path; page; side; duplex; imposition
+    private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
     
-    LinearLayout mPageControlLayout;
-    SeekBar mSeekBar;
-    TextView mPageLabel;
-    Bitmap stapleBmp;
-    Bitmap punchBmp;
+    private CurlView mCurlView;
+    private PDFFileManager mPdfManager = null;
+    private PDFPageProvider mPdfPageProvider = new PDFPageProvider();
+    private PrintSettings mPrintSettings = new PrintSettings(); // Should not be null
+    private LruCache<String, Bitmap> mBmpCache = null;
     
-    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d"; // path; page; side; duplex; imposition
-    
-    private static Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
+    private LinearLayout mPageControlLayout;
+    private SeekBar mSeekBar;
+    private TextView mPageLabel;
+    // private Bitmap stapleBmp;
+    // private Bitmap punchBmp;
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
+        
         initializeCurlView();
         initializePageControls();
         loadResources();
     }
-
+    
     public PrintPreviewView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
+    
     public PrintPreviewView(Context context) {
         super(context);
-
+        
         initializeCurlView();
         initializePageControls();
         loadResources();
@@ -99,13 +97,13 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     // ================================================================================
     
     public void loadResources() {
-        stapleBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
-        punchBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        // stapleBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        // punchBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
     }
     
     public void freeResources() {
-        //stapleBmp.recycle();
-        //punchBmp.recycle();
+        // stapleBmp.recycle();
+        // punchBmp.recycle();
     }
     
     public void refreshView() {
@@ -124,6 +122,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = printSettings;
+        
+        if (getCurrentPage() > mPdfPageProvider.getPageCount()) {
+            setCurrentPage(mPdfPageProvider.getPageCount());
+        }
         
         setupCurlPageView();
         setupCurlBind();
@@ -148,21 +150,21 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     protected int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
         float ratioSrc = srcWidth / srcHeight;
-        float ratioDest = (float)destWidth / destHeight;
-
+        float ratioDest = (float) destWidth / destHeight;
+        
         int newWidth = 0;
         int newHeight = 0;
         
         if (ratioDest > ratioSrc) {
             newHeight = destHeight;
-            newWidth = (int)(destHeight * ratioSrc);
+            newWidth = (int) (destHeight * ratioSrc);
             
         } else {
             newWidth = destWidth;
-            newHeight = (int)(destWidth / ratioSrc);
+            newHeight = (int) (destWidth / ratioSrc);
         }
         
-        return new int[]{newWidth, newHeight};
+        return new int[] { newWidth, newHeight };
     }
     
     protected int[] getScreenDimensions(int screenWidth, int screenHeight) {
@@ -192,7 +194,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     protected String getCacheKey(int index, int side) {
         int imposition = mPrintSettings.getImposition().ordinal();
         int duplexMode = mPrintSettings.getDuplex().ordinal();
-        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition);
+        int scaleToFit = mPrintSettings.isScaleToFit() ? 1 : 0;
+        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition, scaleToFit);
     }
     
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -218,7 +221,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     // ================================================================================
     // PDF page methods
     // ================================================================================
-
+    
     private int getPageCount() {
         if (mPdfManager == null) {
             return 0;
@@ -277,10 +280,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private void setupCurlPageView() {
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
-
+        
         if (mPrintSettings.getDuplex() != Duplex.OFF) {
             twoPage = true;
-
+            
             if (getCurrentPage() % 2 == 0) {
                 allowLastPageCurl = true;
             }
@@ -299,18 +302,9 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private void setupCurlBind() {
         int bindPosition = CurlView.BIND_LEFT;
         /*
-        switch (mPrintSettings.getBind()) {
-            case LEFT:
-                bindPosition = CurlView.BIND_LEFT;
-                break;
-            case RIGHT:
-                bindPosition = CurlView.BIND_RIGHT;
-                break;
-            case TOP:
-                bindPosition = CurlView.BIND_TOP;
-                break;
-        }
-        */
+         * switch (mPrintSettings.getBind()) { case LEFT: bindPosition = CurlView.BIND_LEFT; break; case RIGHT:
+         * bindPosition = CurlView.BIND_RIGHT; break; case TOP: bindPosition = CurlView.BIND_TOP; break; }
+         */
         
         mCurlView.setBindPosition(bindPosition);
     }
@@ -378,7 +372,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             params.gravity = Gravity.CENTER_HORIZONTAL;
             mPageControlLayout.addView(mPageLabel, params);
         }
-
+        
         FrameLayout.LayoutParams curlViewParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         curlViewParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_side);
         curlViewParams.rightMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_side);
@@ -407,8 +401,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         int currentPage = getCurrentPage();
         int pageCount = mPdfPageProvider.getPageCount();
         
-        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE
-                || getCurrentPage() == 0) {
+        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || getCurrentPage() == 0) {
             mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage + 1, pageCount));
         } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
             mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount));
@@ -431,12 +424,12 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         float lrMargin = ((w - newDimensions[0]) / (w * 2.0f));
         float tbMargin = (((h - pageControlSize) - newDimensions[1]) / (h * 2.0f));
         
-        lrMargin += (marginSize / (float)w);
-        tbMargin += (marginSize / (float)h);
+        lrMargin += (marginSize / (float) w);
+        tbMargin += (marginSize / (float) h);
         
-        mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float)h));
+        mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
-
+    
     // ================================================================================
     // INTERFACE - OnSeekBarChangeListener
     // ================================================================================
@@ -452,7 +445,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
     }
-
+    
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
@@ -470,9 +463,9 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         @Override
         public void updatePage(CurlPage page, int width, int height, int index) {
-            page.setColor(Color.argb(255, 255, 255, 255), CurlPage.SIDE_FRONT);
-            page.setColor(Color.argb(255, 255, 255, 255), CurlPage.SIDE_BACK);
-
+            page.setColor(getResources().getColor(R.color.bg_paper), CurlPage.SIDE_FRONT);
+            page.setColor(getResources().getColor(R.color.bg_paper), CurlPage.SIDE_BACK);
+            
             boolean GET_FROM_CACHE = true;
             
             Bitmap cachedPages[] = null;
@@ -482,10 +475,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 PDFRenderTask task = new PDFRenderTask(page, width, height, index, page.createNewHandler());
                 cachedPages = task.getRenderBitmaps();
             }
-
-            Bitmap bmps[] = { 
-                Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE),
-                Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE)
+            
+            Bitmap bmps[] = {
+                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE),
+                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE)
             };
             
             if (cachedPages[0] == null || cachedPages[1] == null) {
@@ -504,10 +497,9 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 page.setTexture(bmps[1], CurlPage.SIDE_BACK);
             }
         }
-
+        
         @Override
-        public void indexChanged(int index)
-        {
+        public void indexChanged(int index) {
             updateSeekBar();
             
             ((Activity) getContext()).runOnUiThread(new Runnable() {
@@ -517,15 +509,15 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             });
         }
     }
-
+    
     private class PDFRenderTask extends AsyncTask<Void, Void, Void> {
-        WeakReference<CurlPage> mCurlPageRef;
-        WeakReference<Object> mHandlerRef;
-        int mWidth;
-        int mHeight;
-        int mIndex;
+        private WeakReference<CurlPage> mCurlPageRef;
+        private WeakReference<Object> mHandlerRef;
+        private int mWidth;
+        private int mHeight;
+        private int mIndex;
         
-        Bitmap mBmps[];
+        private Bitmap mBmps[];
         
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
             mCurlPageRef = new WeakReference<CurlPage>(page);
@@ -533,23 +525,21 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             mWidth = width;
             mHeight = height;
             mIndex = index;
-
+            
             int bmpDimensions[] = getPaperDimensions(width, height);
-            mBmps = new Bitmap[]{ 
-                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
-                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE)
-            };
-            mBmps[0].eraseColor(Color.WHITE);
-            mBmps[1].eraseColor(Color.WHITE);
+            mBmps = new Bitmap[] { Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
+                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE) };
+            mBmps[0].eraseColor(getResources().getColor(R.color.bg_paper));
+            mBmps[1].eraseColor(getResources().getColor(R.color.bg_paper));
         }
-
+        
         @Override
         protected Void doInBackground(Void... params) {
             Bitmap renderBmps[] = getRenderBitmaps();
             tryDrawRenderBitmaps(renderBmps, mBmps);
             return null;
         }
-
+        
         @Override
         protected void onPostExecute(Void param) {
             if (mHandlerRef.get() != null && mCurlPageRef.get() != null) {
@@ -558,7 +548,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 mCurlPageRef.get().setTexture(mBmps[1], CurlPage.SIDE_BACK);
                 mCurlView.requestRender();
             } else {
-                Log.wtf(TAG, "Has recycle");
+                Log.w(TAG, "Will recycle");
                 mBmps[0].recycle();
                 mBmps[1].recycle();
             }
@@ -571,7 +561,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
         
         private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean flipX, boolean flipY) {
-            //get page then draw in bitmap
+            // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
             PrintSettingsConstants.Imposition pagination = mPrintSettings.getImposition();
@@ -596,7 +586,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             
             for (int i = 0; i < pagination.getPerPage(); i++) {
                 if (mHandlerRef.get() == null || mCurlPageRef.get() == null) {
-                    Log.wtf(TAG, "Cancelled process");
+                    Log.w(TAG, "Cancelled process");
                     return;
                 }
                 
@@ -604,7 +594,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 int top = curY;
                 int right = curX + width;
                 int bottom = curY + height;
-
+                
                 // Left to right
                 curX += width;
                 if (i % pagination.getCols() == pagination.getCols() - 1) {
@@ -612,18 +602,24 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                     curY += height;
                 }
                 
-                int dim[] = getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
-                int x = left + ((right - left) - dim[0]) / 2;
-                int y = top + ((bottom - top) - dim[1]) / 2;
-
-                Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                 
                 float scale = 1.0f / pagination.getPerPage();
                 
                 Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
                 
                 if (page != null) {
+                    int dim[] = getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
+                    if (mPrintSettings.isScaleToFit()) {
+                        dim[0] = right - left;
+                        dim[1] = bottom - top;
+                    }
+                    
+                    int x = left + ((right - left) - dim[0]) / 2;
+                    int y = top + ((bottom - top) - dim[1]) / 2;
+                    
+                    Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                     ImageUtils.renderBmpToCanvas(page, canvas, true, destRect);
+                    
                     page.recycle();
                 }
                 
@@ -673,4 +669,3 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
     }
 }
- 

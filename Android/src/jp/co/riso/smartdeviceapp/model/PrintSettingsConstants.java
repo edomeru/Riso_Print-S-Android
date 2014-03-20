@@ -1,13 +1,23 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintSettingsConstants.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PrintSettingsConstants {
+    
     // ================================================================================
     // Tags
     // ================================================================================
-    public static final Map<String, Setting> SETTTING_MAP;
+    
+    public static final Map<String, Setting> SETTING_MAP;
     
     public enum Setting {
         COLOR_MODE,
@@ -31,26 +41,26 @@ public class PrintSettingsConstants {
     };
 
     static {
-        SETTTING_MAP = new HashMap<String, Setting>();
+        SETTING_MAP = new HashMap<String, Setting>();
         
-        SETTTING_MAP.put("colorMode", Setting.COLOR_MODE); 
-        SETTTING_MAP.put("orientation", Setting.ORIENTATION);
-        SETTTING_MAP.put("numCopies", Setting.NUM_COPIES);
-        SETTTING_MAP.put("duplex", Setting.DUPLEX);
-        SETTTING_MAP.put("paperSize", Setting.PAPER_SIZE);
-        SETTTING_MAP.put("scaleToFit", Setting.SCALE_TO_FIT);
-        SETTTING_MAP.put("paperType", Setting.PAPER_TYPE);
-        SETTTING_MAP.put("inputTray", Setting.INPUT_TRAY);
-        SETTTING_MAP.put("imposition", Setting.IMPOSITION);
-        SETTTING_MAP.put("impositionOrder", Setting.IMPOSITION_ORDER);
-        SETTTING_MAP.put("sort", Setting.SORT);
-        SETTTING_MAP.put("booklet", Setting.BOOKLET);
-        SETTTING_MAP.put("bookletFinish", Setting.BOOKLET_FINISH);
-        SETTTING_MAP.put("bookletLayout", Setting.BOOKLET_LAYOUT);
-        SETTTING_MAP.put("finishingSide", Setting.FINISHING_SIDE);
-        SETTTING_MAP.put("staple", Setting.STAPLE);
-        SETTTING_MAP.put("punch", Setting.PUNCH);
-        SETTTING_MAP.put("outputTray", Setting.OUTPUT_TRAY);
+        SETTING_MAP.put("colorMode", Setting.COLOR_MODE); 
+        SETTING_MAP.put("orientation", Setting.ORIENTATION);
+        SETTING_MAP.put("numCopies", Setting.NUM_COPIES);
+        SETTING_MAP.put("duplex", Setting.DUPLEX);
+        SETTING_MAP.put("paperSize", Setting.PAPER_SIZE);
+        SETTING_MAP.put("scaleToFit", Setting.SCALE_TO_FIT);
+        SETTING_MAP.put("paperType", Setting.PAPER_TYPE);
+        SETTING_MAP.put("inputTray", Setting.INPUT_TRAY);
+        SETTING_MAP.put("imposition", Setting.IMPOSITION);
+        SETTING_MAP.put("impositionOrder", Setting.IMPOSITION_ORDER);
+        SETTING_MAP.put("sort", Setting.SORT);
+        SETTING_MAP.put("booklet", Setting.BOOKLET);
+        SETTING_MAP.put("bookletFinish", Setting.BOOKLET_FINISH);
+        SETTING_MAP.put("bookletLayout", Setting.BOOKLET_LAYOUT);
+        SETTING_MAP.put("finishingSide", Setting.FINISHING_SIDE);
+        SETTING_MAP.put("staple", Setting.STAPLE);
+        SETTING_MAP.put("punch", Setting.PUNCH);
+        SETTING_MAP.put("outputTray", Setting.OUTPUT_TRAY);
     }
 
     // ================================================================================
