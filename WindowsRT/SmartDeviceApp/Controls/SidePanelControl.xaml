@@ -23,12 +23,12 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-                <Button x:Name="button1" Style="{StaticResource STYLE_TitleBarLeftButton}"/>
+                <!--<Button x:Name="button1" Style="{StaticResource STYLE_TitleBarLeftButton}"/>-->
                 <TextBlock x:Name="sidePaneTitle" Grid.Column="1" Style="{StaticResource STYLE_TextBlockHeader}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-                <Button x:Name="button3" Style="{StaticResource STYLE_TitleBarRightButton}"/>
-                <Button x:Name="button2" Style="{StaticResource STYLE_TitleBarRightButton}"/>
+                <!--<Button x:Name="button3" Style="{StaticResource STYLE_TitleBarRightButton}"/>-->
+                <Button x:Name="button1" Height="40" Width="40" BorderThickness="0"/><!--Style="{StaticResource STYLE_TitleBarRightButton}"-->
             </StackPanel>
         </Grid>
         <Grid x:Name="contentGrid" Grid.Row="1">

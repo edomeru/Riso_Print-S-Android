@@ -21,6 +21,11 @@ using SmartDeviceApp.ViewModels;
 using Windows.UI;
 using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
+using Windows.UI.Popups;
+
+using SmartDeviceApp.Common.Utilities;
+using Windows.UI.Xaml.Media.Imaging;
+
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -42,6 +47,12 @@ namespace SmartDeviceApp.Views
         public PrintersPage()
         {
             Messenger.Default.Register<PrintersViewMode>(this, (printersViewMode) => OnSetPrintersView(printersViewMode));
+            
+            Messenger.Default.Register<MessageAlert>(
+             this,
+             msg => ShowDialog(msg));
+
+
             this.InitializeComponent();
         }
 
@@ -115,20 +126,30 @@ namespace SmartDeviceApp.Views
                 case PrintersViewMode.PrintersFullScreen:
                     {
                         VisualStateManager.GoToState(this, "PrintersFullScreenState", true);
+
                         break;
                     }
 
                 case PrintersViewMode.AddPrinterPaneVisible:
                     {
                         VisualStateManager.GoToState(this, "AddPrinterPaneVisibleState", true);
+
                         break;
                     }
                 case PrintersViewMode.ScanPrintersPaneVisible:
                     {
                         VisualStateManager.GoToState(this, "ScanPrintersPaneVisibleState", true);
+                        
                         break;
                     }
             }
+            
+        
+        }
+        private async void ShowDialog(MessageAlert msg)
+        {
+            MessageDialog md = new MessageDialog(msg.Content, msg.Caption);
+            await md.ShowAsync();
         }
     }
 }

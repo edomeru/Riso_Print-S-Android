@@ -109,12 +109,12 @@
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\PreviewViewMode.cs" />
     <Compile Include="Common\Enum\PrintersViewMode.cs" />
-    <Compile Include="Common\NavigationHelper.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\MainController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
+    <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controls\ListItemControl.xaml.cs">
       <DependentUpon>ListItemControl.xaml</DependentUpon>
     </Compile>
@@ -124,6 +124,7 @@
     <Compile Include="Controls\SidePanelControl.xaml.cs">
       <DependentUpon>SidePanelControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\ItemClickedConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Common\Utilities\DialogService.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Models\IDataService.cs" />
     <Compile Include="Models\LogicalPage.cs" />
     <Compile Include="Models\Printer.cs" />
+    <Compile Include="Models\PrinterSearchItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SQLiteAsync.cs" />

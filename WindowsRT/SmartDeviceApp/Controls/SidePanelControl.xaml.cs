@@ -28,9 +28,13 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("Title", typeof(string), typeof(SidePaneControl),
             new PropertyMetadata(String.Empty, new PropertyChangedCallback(SetTitle)));
 
-        public static readonly DependencyProperty Button2CommandProperty =
-            DependencyProperty.Register("Button2Command", typeof(ICommand), typeof(SidePaneControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetButton2Command)));
+        public static readonly DependencyProperty Button1CommandProperty =
+            DependencyProperty.Register("Button1Command", typeof(ICommand), typeof(SidePaneControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton1Command)));
+
+        public static readonly DependencyProperty Button1ImageProperty =
+            DependencyProperty.Register("Button1ImageSource", typeof(ImageSource), typeof(SidePaneControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton1ImageSource)));
 
         public string Title
         {
@@ -38,23 +42,36 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TitleProperty, value); }
         }
 
+        public ImageSource Button1ImageSource
+        {
+            get { return (ImageSource)GetValue(Button1ImageProperty); }
+            set { SetValue(Button1ImageProperty, value); }
+        }
+
         private static void SetTitle(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             ((SidePaneControl)obj).sidePaneTitle.Text = (string)e.NewValue;
         }
 
-        public ICommand Button2Command
+        public ICommand Button1Command
         {
-            get { return (ICommand)GetValue(Button2CommandProperty); }
-            set { SetValue(Button2CommandProperty, value); }
+            get { return (ICommand)GetValue(Button1CommandProperty); }
+            set { SetValue(Button1CommandProperty, value); }
         }
 
-        private static void SetButton2Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void SetButton1Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if ((ICommand)e.NewValue != null)
             {
-                ((SidePaneControl)obj).button2.Command = (ICommand)e.NewValue;
+                ((SidePaneControl)obj).button1.Command = (ICommand)e.NewValue;
             }
+        }
+
+        private static void SetButton1ImageSource(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = (ImageSource)e.NewValue;
+            ((SidePaneControl)obj).button1.Background = ib;
         }
     }
 }

@@ -8,13 +8,13 @@
     mc:Ignorable="d">
 
     <Grid x:Name="viewControl" Style="{StaticResource STYLE_ViewGrid}" >
-    	<VisualStateManager.VisualStateGroups>
-    		<VisualStateGroup x:Name="PreviewViewVisualStateGroup">
-    			<VisualState x:Name="MainMenuPaneVisibleState"/>
-    			<VisualState x:Name="PreviewViewFullScreenState"/>
-    			<VisualState x:Name="PrintSettingsPaneVisibleState"/>
-    		</VisualStateGroup>
-    	</VisualStateManager.VisualStateGroups>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PreviewViewVisualStateGroup">
+                <VisualState x:Name="MainMenuPaneVisibleState"/>
+                <VisualState x:Name="PreviewViewFullScreenState"/>
+                <VisualState x:Name="PrintSettingsPaneVisibleState"/>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
@@ -30,12 +30,16 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-                <Button x:Name="button1" Style="{StaticResource STYLE_TitleBarLeftButton}"/>
+                <Button x:Name="button1" Height="40" Width="40" BorderThickness="0"/><!--Style="{StaticResource STYLE_TitleBarLeftButton}"/>-->
                 <TextBlock x:Name="viewTitle" Grid.Column="1" Style="{StaticResource STYLE_TextBlockHeader}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-                <Button x:Name="button3" Style="{StaticResource STYLE_TitleBarRightButton}"/>
-                <Button x:Name="button2" Style="{StaticResource STYLE_TitleBarRightButton}"/>
+                <Button x:Name="button3" Height="40" Width="40" BorderThickness="0"/><!--Style="{StaticResource STYLE_TitleBarRightButton}"-->
+
+                <Button x:Name="button2" Height="40" Width="40" BorderThickness="0"/>
+                <!--Style="{StaticResource STYLE_TitleBarRightButton}"-->
+                <!--<Image x:Name="addNormalImage" Style="{StaticResource STYLE_AlignRight}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_add_printer_normal.png" Width="64"/>
+                <Image x:Name="addPressedImage" Style="{StaticResource STYLE_AlignRight}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_add_printer_pressed.png" Width="64"/>-->
             </StackPanel>
         </Grid>
         <Grid x:Name="contentGrid" Grid.Row="1">

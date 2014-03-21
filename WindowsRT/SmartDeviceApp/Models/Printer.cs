@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Models
 {
-    public class Printer
+    public class Printer : INotifyPropertyChanged
     {
         //class members
         private int _id;                //id in database
@@ -91,10 +91,7 @@ namespace SmartDeviceApp.Models
 
         public bool isDefaultPrinter
         {
-            get
-            {
-                return this._isDefaultPrinter;
-            }
+            get{ return this._isDefaultPrinter;}
             set
             {
                 this._isDefaultPrinter = value;
@@ -107,20 +104,21 @@ namespace SmartDeviceApp.Models
 
         public bool isOnline
         {
-            get
-            {
-                return this._isOnline;
-            }
+            get{ return this._isOnline; }
             set
             {
                 this._isOnline = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("isOnline"));
-                }
+                OnPropertyChanged("isOnline");
+                
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }

@@ -42,8 +42,6 @@ namespace SmartDeviceApp
 
             MainController.Initialize();
             db = new DatabaseController();
-            PrinterController pc = new PrinterController();
-            pc.getPrintersFromDB();
         }
 
         /// <summary>

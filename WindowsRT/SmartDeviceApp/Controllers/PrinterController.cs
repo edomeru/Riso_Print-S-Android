@@ -9,23 +9,26 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using Windows.Networking;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
 {
     public class PrinterController
     {
         ThreadPoolTimer periodicTimer;
+
         private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
         private ObservableCollection<Printer> _printerListTemp = new ObservableCollection<Printer>();
+        private ObservableCollection<PrinterSearchItem> _printerSearchList = new ObservableCollection<PrinterSearchItem>();
 
-        private ObservableCollection<Printer> _printerSearchList = new ObservableCollection<Printer>();
         private bool waitingForPrinterStatus;
+
+        SNMPController snmpController = new SNMPController();
+
         public ObservableCollection<Printer> PrinterList
         {
-            get 
-            {
-                return this._printerList;
-            }
+            get{ return this._printerList; }
             set
             {
                 _printerList = value;
@@ -34,36 +37,21 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        public ObservableCollection<Printer> PrinterSearchList
+        public ObservableCollection<PrinterSearchItem> PrinterSearchList
         {
-            get
-            {
-                return this._printerSearchList;
-            }
+            get{ return this._printerSearchList;}
             set
             {
                 _printerSearchList = value;
 
-                //PropertyChanged(this, new PropertyChangedEventArgs("_isOnline"));
+                PropertyChanged(this, new PropertyChangedEventArgs("PrinterSearchList"));
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        SNMPController snmpController = new SNMPController();
-
-
         public PrinterController()
         {
-            //_printerList.CollectionChanged += ContentCollectionChanged;
-        }
-
-        //request saved printers
-        public async void getPrintersFromDB()
-        {
-            //fetch list from DB using await
-            //printerList = await App.db.getPrinters();
-
         }
 
         public async void populatePrintersScreen()
@@ -101,32 +89,19 @@ namespace SmartDeviceApp.Controllers
                 {
                     printer.isDefaultPrinter = false;
                 }
-
                 _printerList.Add(printer);
-
             }
-
-
-
 
             if (_printerList.Count > 0)
             {
                 //sort printerlist
                 sortPrinterList(indexOfDefaultPrinter);
-                //populate printers screen TODO
-
                 _printerListTemp = _printerList;
                 //start polling TODO
                 //call snmp
-                //create callback when snmp gets the results
                 updateStatus();
                 startPolling();
             }
-
-            
-
-            //return _printerList;
-
         }
 
         public async void updateDefaultPrinter(int index)
@@ -142,8 +117,6 @@ namespace SmartDeviceApp.Controllers
 
             //update list
             sortPrinterList(index);
-
-            //update Printer Screen TODO
         }
 
         private void sortPrinterList(int index)
@@ -166,8 +139,6 @@ namespace SmartDeviceApp.Controllers
             }
 
             _printerList.RemoveAt(index);
-
-            //update Printer Screen TODO
         }
 
 
@@ -199,35 +170,6 @@ namespace SmartDeviceApp.Controllers
 
             }
         }
-
-
-        //public void ContentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.Action == NotifyCollectionChangedAction.Remove)
-        //    {
-        //        foreach (Printer item in e.OldItems)
-        //        {
-        //            //Removed items
-        //            item.PropertyChanged -= EntityViewModelPropertyChanged;
-        //        }
-        //    }
-        //    else if (e.Action == NotifyCollectionChangedAction.Add)
-        //    {
-        //        foreach (Printer item in e.NewItems)
-        //        {
-        //            //Added items
-        //            item.PropertyChanged += EntityViewModelPropertyChanged;
-        //        }
-        //    }
-        //}
-
-        //private void EntityViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        //{
-        //    //throw new NotImplementedException();
-        //    //NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-            
-        //}
-
 
         private async void handlePrinterStatus(string ip, bool isOnline)
         {
@@ -300,11 +242,12 @@ namespace SmartDeviceApp.Controllers
 
                 
             }
-            finally
+            if (printer != null)
             {
-                //error
-
+                //cannot add, printer already in list
+                return false;
             }
+
             
 
             return true;
@@ -340,7 +283,7 @@ namespace SmartDeviceApp.Controllers
             return true;
         }
 
-        public async void handleAddPrinterStatus(string ip, bool isOnline, List<string> capabilities)
+        public async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilities)
         {
             if (isOnline)
             {
@@ -349,7 +292,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     prn_ip_address = ip,
                     //Temp data
-                    prn_name = "Manually Added Printer!",
+                    prn_name = name,
                     prn_port_setting  = 1,
                     prn_enabled_lpr  = true,
                     prn_enabled_raw  = true, 
@@ -407,34 +350,38 @@ namespace SmartDeviceApp.Controllers
         public void scanPrinters()
         {
             _printerSearchList.Clear();
-            snmpController.printerControllerDiscoverCallback = new Action<Printer>(handleDeviceDiscovered);
+            snmpController.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(handleDeviceDiscovered);
             snmpController.startDiscover();
         }
 
-        private async void handleDeviceDiscovered(Printer printer)
+        private async void handleDeviceDiscovered(PrinterSearchItem printer)
         {
             Printer printerInList = null;
             
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-            try
-            {
-                printerInList = _printerSearchList.First(x => x.Ip_address == printer.Ip_address);
-            }
-            catch
-            {
-                //not in the list
-                if(printerInList == null)
-                {
-                    
-                _printerSearchList.Add(printer);
-                
-                }
-            }
+                    _printerSearchList.Add(printer);
+                    try
+                    {
+                        printerInList = _printerList.First(x => x.Ip_address == printer.Ip_address);
+                    }
+                    catch
+                    {
+                        //not in the list
+                        printer.IsInPrinterList = false;
+
+                    }
+                    finally
+                    {
+                        if (printerInList != null) { 
+                            printer.IsInPrinterList = true;
+                        }
+                    }
                 });
 
         }
+        
 
 
         /**

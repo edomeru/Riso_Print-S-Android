@@ -16,8 +16,6 @@ namespace SmartDeviceApp.Controllers
         //DefaultPrinter Table
         public class DefaultPrinter
         {
-            [MaxLength(5), PrimaryKey]
-
             public int prn_id { get; set; }
             
         }
@@ -25,6 +23,7 @@ namespace SmartDeviceApp.Controllers
         //Printer Table
         public class Printer
         {
+            [PrimaryKey]
             public int prn_id { get; set; }                //id in database
             [MaxLength(20)]
             public string prn_ip_address { get; set; }     //ip address of the printer
@@ -58,11 +57,14 @@ namespace SmartDeviceApp.Controllers
                     /**
                      * DeleteAll is for testing purposes only PrintersModule
                      * */
+                    
                     db.DeleteAll<Printer>();
                     db.Commit();
 
                     db.DeleteAll<DefaultPrinter>();
                     db.Commit();
+                     
+
                     // Create the tables if they don't exist
                     //Printer table
                     db.CreateTable<Printer>();
@@ -79,7 +81,7 @@ namespace SmartDeviceApp.Controllers
                     db.Dispose();
                     db.Close();
 
-                    insertPrinters(); //for testing PrintersModule
+                    //insertPrinters(); //for testing PrintersModule
                 }
             }
             catch
@@ -91,7 +93,7 @@ namespace SmartDeviceApp.Controllers
 
         private void insertPrinters()
         {
-            Printer printer = new Printer() { prn_id=1, prn_ip_address="192.168.0.22", prn_name="RISO_Printer1", prn_port_setting=1,
+            Printer printer = new Printer() {  prn_ip_address="192.168.0.199", prn_name="RISO_Printer1", prn_port_setting=1,
                 prn_enabled_lpr = true, prn_enabled_raw = true, prn_enabled_pagination = true, prn_enabled_duplex = true,
                                               prn_enabled_booklet_binding = true,
                                               prn_enabled_staple = true,
@@ -100,7 +102,6 @@ namespace SmartDeviceApp.Controllers
 
             Printer printer2 = new Printer()
             {
-                prn_id = 2,
                 prn_ip_address = "192.168.0.2",
                 prn_name = "RISO_Printer2",
                 prn_port_setting = 1,
@@ -114,7 +115,6 @@ namespace SmartDeviceApp.Controllers
             };
             Printer printer3 = new Printer()
             {
-                prn_id = 3,
                 prn_ip_address = "192.168.0.3",
                 prn_name = "RISO_Printer3",
                 prn_port_setting = 1,
@@ -133,14 +133,14 @@ namespace SmartDeviceApp.Controllers
             using (var db = new SQLite.SQLiteConnection(dbpath))
             {
                 // Create the tables if they don't exist
-                db.Insert(printer);
+                //db.Insert(printer);
+                //db.Commit();
+
+                db.Insert(printer2);
                 db.Commit();
 
-                //db.Insert(printer2);
-                //db.Commit();
-
-                //db.Insert(printer3);
-                //db.Commit();
+                db.Insert(printer3);
+                db.Commit();
 
                 db.Insert(dp);
                 db.Commit();
@@ -161,6 +161,10 @@ namespace SmartDeviceApp.Controllers
                 
                 var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
+                int count = await db.Table<Printer>().CountAsync();
+                if (count > 0)
+                {
+
                 printerList = await (db.Table<Printer>().ToListAsync());
 
                 //var defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
@@ -171,6 +175,7 @@ namespace SmartDeviceApp.Controllers
 
                 //    printerList.Add(sd);
                 //}
+                }
             }
             catch
             {
@@ -259,7 +264,12 @@ namespace SmartDeviceApp.Controllers
             DefaultPrinter defaultPrinter = new DefaultPrinter();
             try
             {
-                defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
+                int count = await db.Table<DefaultPrinter>().CountAsync();
+                if (count > 0)
+                {
+
+                    defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
+                }
             }
             catch
             {
@@ -268,6 +278,37 @@ namespace SmartDeviceApp.Controllers
             return defaultPrinter;
         }
 
+        public async Task<int> insertPrinter(Printer printer)
+        {
+            int id = -1;
+            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var db = new SQLite.SQLiteAsyncConnection(dbpath);
+            try
+            {
+                id = await db.InsertAsync(printer);
+            }
+            catch { }
+            return id;
+        }
+
+
+        public async Task<int> getNextPrinterID()
+        {
+            int id = 0;
+            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sdaDatabase);
+            var db = new SQLite.SQLiteAsyncConnection(dbpath);
+            DefaultPrinter defaultPrinter = new DefaultPrinter();
+            try
+            {
+                defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
+            }
+            catch
+            {
+
+            }
+
+            return id;
+        }
 
     }
 }

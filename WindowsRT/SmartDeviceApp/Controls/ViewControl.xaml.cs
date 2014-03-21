@@ -42,6 +42,18 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty Button3CommandProperty =
             DependencyProperty.Register("Button3Command", typeof(ICommand), typeof(ViewControl),
             new PropertyMetadata(null, new PropertyChangedCallback(SetButton3Command)));
+
+        public static readonly DependencyProperty Button1ImageProperty =
+            DependencyProperty.Register("Button1ImageSource", typeof(ImageSource), typeof(ViewControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton1ImageSource)));  
+
+        public static readonly DependencyProperty Button2ImageProperty =
+            DependencyProperty.Register("Button2ImageSource", typeof(ImageSource), typeof(ViewControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton2ImageSource)));        
+        
+        public static readonly DependencyProperty Button3ImageProperty =
+            DependencyProperty.Register("Button3ImageSource", typeof(ImageSource), typeof(ViewControl),
+            new PropertyMetadata(null, new PropertyChangedCallback(SetButton3ImageSource)));
         
 
         public ViewControl()
@@ -50,10 +62,31 @@ namespace SmartDeviceApp.Controls
             Children = contentGrid.Children;
         }
 
+
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
+        }
+
+        public ImageSource Button1ImageSource
+        {
+            get { return (ImageSource)GetValue(Button1ImageProperty); }
+            set { SetValue(Button1ImageProperty, value); }
+        }
+
+
+        public ImageSource Button2ImageSource
+        {
+            get { return (ImageSource)GetValue(Button2ImageProperty); }
+            set { SetValue(Button2ImageProperty, value); }
+        }
+
+
+        public ImageSource Button3ImageSource
+        {
+            get { return (ImageSource)GetValue(Button3ImageProperty); }
+            set { SetValue(Button3ImageProperty, value); }
         }
 
         public UIElementCollection Children
@@ -91,6 +124,27 @@ namespace SmartDeviceApp.Controls
         private static void SetTitle(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             ((ViewControl)obj).viewTitle.Text = (string)e.NewValue;
+        }
+
+        private static void SetButton1ImageSource(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = (ImageSource)e.NewValue;
+            ((ViewControl)obj).button1.Background = ib;
+        }
+
+        private static void SetButton2ImageSource(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = (ImageSource)e.NewValue;
+            ((ViewControl)obj).button2.Background = ib;
+        }
+
+        private static void SetButton3ImageSource(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = (ImageSource)e.NewValue;
+            ((ViewControl)obj).button3.Background = ib; 
         }
 
         //private static void SetWidth(DependencyObject obj, DependencyPropertyChangedEventArgs e)
