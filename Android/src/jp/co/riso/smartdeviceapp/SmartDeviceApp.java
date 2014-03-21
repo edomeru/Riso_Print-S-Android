@@ -14,21 +14,21 @@ import android.graphics.Typeface;
 
 public class SmartDeviceApp extends Application {
 
-    private static volatile Context mContext;
-    private static volatile Typeface mAppFont;
+    private static volatile Context sContext;
+    private static volatile Typeface sAppFont;
     
     @Override
     public void onCreate() {
-        SmartDeviceApp.mContext = getApplicationContext();
-        SmartDeviceApp.mAppFont = Typeface.createFromAsset(getResources().getAssets(),
+        SmartDeviceApp.sContext = getApplicationContext();
+        SmartDeviceApp.sAppFont = Typeface.createFromAsset(getResources().getAssets(),
                 AppConstants.APP_FONT_FILE);
     }
 
     public static Context getAppContext() {
-        return SmartDeviceApp.mContext;
+        return SmartDeviceApp.sContext;
     }
 
     public static Typeface getAppFont() {
-        return SmartDeviceApp.mAppFont;
+        return SmartDeviceApp.sAppFont;
     }
 }

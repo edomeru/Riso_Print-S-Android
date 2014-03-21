@@ -5,6 +5,7 @@
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.os.Bundle;

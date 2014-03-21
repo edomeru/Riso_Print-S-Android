@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 All rights reserved.
  *
- * SplashActivity.java
+ * BaseActivity.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */

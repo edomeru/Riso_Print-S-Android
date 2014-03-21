@@ -1,10 +1,11 @@
 /*
  * Copyright (c) 2014 All rights reserved.
  *
- * SideBarFragment.java
+ * HomeFragment.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.app.Fragment;
@@ -17,6 +18,14 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
+    
+    public static final int STATE_PRINTPREVIEW = 0;
+    public static final int STATE_PRINTERS = 1;
+    public static final int STATE_PRINTJOBS = 2;
+    public static final int STATE_SETTINGS = 3;
+    public static final int STATE_HELP = 4;
+    public static final int STATE_LEGAL = 5;
+    
     public static final String KEY_STATE = "HomeFragment_State";
     
     private static int MENU_ITEMS[] = {
@@ -37,14 +46,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         "fragment_legal"
     };
     
-    public static final int STATE_PRINTPREVIEW = 0;
-    public static final int STATE_PRINTERS = 1;
-    public static final int STATE_PRINTJOBS = 2;
-    public static final int STATE_SETTINGS = 3;
-    public static final int STATE_HELP = 4;
-    public static final int STATE_LEGAL = 5;
-    
-    public int mState = -1;
+    public int mState = STATE_PRINTPREVIEW;
     
     @Override
     public int getViewLayout() {
