@@ -63,7 +63,6 @@
  Gets a Printer object from the list of saved printers.
  @param index
         index from the list of saved printers
-        (must have called getListOfSavedPrinters: beforehand)
  @return Printer* object or nil if the index is not valid
  */
 - (Printer*)getPrinterAtIndex:(NSUInteger)index;
@@ -84,7 +83,6 @@
  
  @param index
         index from the list of saved printers
-        (must have called getListOfSavedPrinters: beforehand)
  @return YES if successful, NO otherwise.
  */
 - (BOOL)deletePrinterAtIndex:(NSUInteger)index;
