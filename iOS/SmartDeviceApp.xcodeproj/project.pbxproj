@@ -1081,7 +1081,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/seph/Projects/SmartDeviceApp/iOS/SmartDeviceAppTests/GHUnit,
+					"$(SRCROOT)/**",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
@@ -1104,7 +1104,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/seph/Projects/SmartDeviceApp/iOS/SmartDeviceAppTests/GHUnit,
+					"$(SRCROOT)/**",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";

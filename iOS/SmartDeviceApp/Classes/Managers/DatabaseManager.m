@@ -9,45 +9,21 @@
 #import "DatabaseManager.h"
 
 static NSManagedObjectContext* sharedManagedObjectContext = nil;
+static NSPersistentStoreCoordinator* sharedPersistentStoreCoordinator = nil;
+static NSManagedObjectModel* sharedManagedObjectModel = nil;
 
 @interface DatabaseManager ()
-
-/**
- Sets the shared NSManagedObjectContext object for use by DatabaseManager.
- This method should be called only once during the lifecycle of this class.
- */
-+ (void)setSharedManagedObjectContext;
 
 @end
 
 @implementation DatabaseManager
-
-#pragma mark - Context
-
-+ (void)setSharedManagedObjectContext
-{
-    // get from AppDelegate
-    id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate respondsToSelector:@selector(managedObjectContext)])
-    {
-        sharedManagedObjectContext = [delegate managedObjectContext];
-    }
-    
-    // check if NSManagedObjectContext was successfully set
-    if (sharedManagedObjectContext == nil)
-    {
-        NSLog(@"[ERROR][DBM] could not set NSManagedObjectContext");
-        
-        //TODO: to prevent possible crashes, set sharedManagedObjectContext to ??
-    }
-}
 
 #pragma mark - Fetch
 
 + (NSArray*)getObjects:(NSString*)entityName;
 {
     if (sharedManagedObjectContext == nil)
-        [self setSharedManagedObjectContext];
+        sharedManagedObjectContext = [self managedObjectContext];
     
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     NSError *error;
@@ -74,7 +50,7 @@ static NSManagedObjectContext* sharedManagedObjectContext = nil;
 + (NSManagedObject*)addObject:(NSString*)entityName
 {
     if (sharedManagedObjectContext == nil)
-        [self setSharedManagedObjectContext];
+        sharedManagedObjectContext = [self managedObjectContext];
     
     return [NSEntityDescription insertNewObjectForEntityForName:entityName
                                          inManagedObjectContext:sharedManagedObjectContext];
@@ -85,7 +61,7 @@ static NSManagedObjectContext* sharedManagedObjectContext = nil;
 + (BOOL)deleteObject:(NSManagedObject*)object
 {
     if (sharedManagedObjectContext == nil)
-        [self setSharedManagedObjectContext];
+        sharedManagedObjectContext = [self managedObjectContext];
     
     [sharedManagedObjectContext deleteObject:object];
     
@@ -97,7 +73,7 @@ static NSManagedObjectContext* sharedManagedObjectContext = nil;
 + (BOOL)saveChanges
 {
     if (sharedManagedObjectContext == nil)
-        [self setSharedManagedObjectContext];
+        sharedManagedObjectContext = [self managedObjectContext];
     
     NSError *error = nil;
     if (![sharedManagedObjectContext save:&error])
@@ -114,9 +90,87 @@ static NSManagedObjectContext* sharedManagedObjectContext = nil;
 + (void)discardChanges
 {
     if (sharedManagedObjectContext == nil)
-        [self setSharedManagedObjectContext];
+        sharedManagedObjectContext = [self managedObjectContext];
     
     [sharedManagedObjectContext rollback];
+}
+
+#pragma mark - Core Data Stack
+
+/**
+ Returns the managed object context for the application.
+ If the context doesn't already exist, it is created and bound
+ to the persistent store coordinator for the application.
+ **/
++ (NSManagedObjectContext*)managedObjectContext
+{
+    if (sharedManagedObjectContext != nil)
+    {
+        return sharedManagedObjectContext;
+    }
+    
+    NSPersistentStoreCoordinator* coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil)
+    {
+        sharedManagedObjectContext = [[NSManagedObjectContext alloc] init];
+        [sharedManagedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    
+    return sharedManagedObjectContext;
+}
+
+/**
+ Returns the persistent store coordinator for the application.
+ If the coordinator doesn't already exist, it is created and the application's store added to it.
+ */
++ (NSPersistentStoreCoordinator*)persistentStoreCoordinator
+{
+    if (sharedPersistentStoreCoordinator != nil)
+    {
+        return sharedPersistentStoreCoordinator;
+    }
+    
+    NSURL* storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"SmartDeviceApp.sqlite"];
+    
+    NSError* error = nil;
+    sharedPersistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
+                                        initWithManagedObjectModel:[self managedObjectModel]];
+    if (![sharedPersistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                                        configuration:nil
+                                                                  URL:storeURL
+                                                              options:nil
+                                                                error:&error])
+    {
+        NSLog(@"[ERROR][DBM] unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    
+    return sharedPersistentStoreCoordinator;
+}
+
+/**
+ Returns the managed object model for the application.
+ If the model doesn't already exist, it is created from the application's model.
+ */
++ (NSManagedObjectModel*)managedObjectModel
+{
+    if (sharedManagedObjectModel != nil)
+    {
+        return sharedManagedObjectModel;
+    }
+    
+    NSURL* modelURL = [[NSBundle mainBundle] URLForResource:@"SmartDeviceApp" withExtension:@"momd"];
+    sharedManagedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    return sharedManagedObjectModel;
+}
+
+#pragma mark - Application's Documents Directory
+
+/** Returns the URL to the application's Documents directory. **/
++ (NSURL*)applicationDocumentsDirectory
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory
+                                                   inDomains:NSUserDomainMask] lastObject];
 }
 
 @end
