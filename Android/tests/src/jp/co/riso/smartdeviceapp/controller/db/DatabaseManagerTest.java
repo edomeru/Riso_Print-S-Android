@@ -112,7 +112,7 @@ ActivityInstrumentationTestCase2<MainActivity> {
         initialCount = cursor.getCount();
         assertTrue(initialCount>0);
 
-        result = mDBManager.delete("PrintJob", null, new String(""));
+        result = mDBManager.delete("PrintJob", null, null);
         assertTrue(result);
 
         db = mDBManager.getReadableDatabase();

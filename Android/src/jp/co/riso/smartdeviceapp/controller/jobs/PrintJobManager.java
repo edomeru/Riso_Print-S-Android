@@ -13,12 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.TimeZone;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -43,9 +44,11 @@ public class PrintJobManager {
     
     private static DatabaseManager mManager;
     private static PrintJobManager mInstance;
+    static Context c;
     
     private PrintJobManager(Context context) {
         mManager = new DatabaseManager(context);
+        c = context;
     }
     
     public static PrintJobManager getInstance(Context context) {
@@ -95,18 +98,21 @@ public class PrintJobManager {
         pjvalues.put(C_PJB_NAME, printJob.getName());
         pjvalues.put(C_PJB_RESULT, printJob.getResult().ordinal());
         pjvalues.put(C_PJB_DATE, formatSQLDateTime(printJob.getDate()));
-        
         return mManager.insert(TABLE, null, pjvalues);
         
     }
     
+    @SuppressLint("SimpleDateFormat")
     private static String formatSQLDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(date);
     }
     
+    @SuppressLint("SimpleDateFormat")
     private static Date convertSQLToDate(String strDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date date = null;
         
         try {

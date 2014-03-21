@@ -14,7 +14,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
-    private static final String INITIALIZE_SQL = "db/initializeDB.sql"; //for testing only
+    private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
     
     private static final int DATABASE_VERSION = 1;
     private Context mContext;
@@ -35,14 +35,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
             db.execSQL(separated[i]);
         }
         
-        /*for PrintJobs testing only*/
+        /* for testing only */
         sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
         separated = sqlString.split(";");
         
         for (int i = 0; i < separated.length; i++) {
             db.execSQL(separated[i]);
         }
-        /*end of for PrintJobs testing*/
+        /* end of for testing only */
         
         Log.d(TAG, "onCreate - End");
     }
@@ -75,7 +75,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return cur;
     }
     
-    public boolean delete(String table, String whereClause, String[] whereArgs) {
+    public boolean deleteMultiple(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         rowsNum = db.delete(table, whereClause, whereArgs);
@@ -86,6 +86,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     public boolean delete(String table, String whereClause, String whereArg) {
-        return delete(table, whereClause, new String[] { whereArg });
+        String[] whereArgs = (whereArg == null || whereArg.isEmpty()) ? null : new String[] { whereArg };
+        return deleteMultiple(table, whereClause, whereArgs);
     }
 }

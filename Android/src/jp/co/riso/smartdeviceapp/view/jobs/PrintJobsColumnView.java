@@ -15,22 +15,18 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 public class PrintJobsColumnView extends LinearLayout {
-    List<PrintJobsGroupView> mprintJobsView = new ArrayList<PrintJobsGroupView>();
-    private Context mContext;
+    
+    private WeakReference<LoadingViewListener> mLoadingListenerRef;
+    private WeakReference<ReloadViewListener> mReloadListenerRef;
     private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
     private List<Printer> mPrinterIds = new ArrayList<Printer>();
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>(3);
     private PrintDeleteListener mDelListener;
-    
+    private Runnable mRunnable;
     private int mColNum = 0;
     private int mJobGroupCtr = 0;
     private int mJobCtr = 0;
-    
-    private Runnable mRunnable;
-    private WeakReference<LoadingViewListener> mLoadingListenerRef;
-    private WeakReference<ReloadViewListener> mReloadListenerRef;
-    
-    private boolean mIsLoaded;
+    private boolean mReloadFlag;
     
     public PrintJobsColumnView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -55,11 +51,12 @@ public class PrintJobsColumnView extends LinearLayout {
         this.mDelListener = delListener;
         this.mLoadingListenerRef = new WeakReference<LoadingViewListener>(loadingListener);
         this.mReloadListenerRef = new WeakReference<ReloadViewListener>(reloadListener);
-        updateColumns();
+        mJobGroupCtr = 0;
+        mJobCtr = 0;
+        reset();
     }
     
     private void init(Context context) {
-        this.mContext = context;
         if (!isInEditMode()) {
             
             LayoutInflater factory = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -73,7 +70,7 @@ public class PrintJobsColumnView extends LinearLayout {
         }
     }
     
-    private void updateColumns() {
+    private void reset() {
         
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         
@@ -149,41 +146,24 @@ public class PrintJobsColumnView extends LinearLayout {
     private void addPrintJobsGroupView(List<PrintJob> jobsList, int column, Printer printer) {
         
         PrintJobsGroupView pjView;
-        if (mColNum == 1)
-            pjView = new PrintJobsGroupView(mContext, jobsList, false, printer, mDelListener);
-        else
-            pjView = new PrintJobsGroupView(mContext, jobsList, true, printer, mDelListener);
+        if (mColNum == 1) {
+            pjView = new PrintJobsGroupView(getContext(), jobsList, false, printer, mDelListener);
+        } else {
+            pjView = new PrintJobsGroupView(getContext(), jobsList, true, printer, mDelListener);
+        }
         
         mColumns.get(column).addView(pjView);
         
     }
     
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        if (mJobGroupCtr < mPrinterIds.size() && mJobCtr < mPrintJobs.size()) {
-            addToColumns();
-            mJobGroupCtr++;
-            post(mRunnable);
-        } else {
-            mIsLoaded = true;
-        }
-        
-        if (mIsLoaded && mColNum > 0) {
-            relayoutColumns();
-        }
-    }
-    
     private void relayoutColumns() {
         
         if (checkIfNeedsRelayout()) {
+            mReloadFlag = false;
             if (mReloadListenerRef != null && mReloadListenerRef.get() != null) {
-                mIsLoaded = false;
-                mJobGroupCtr = 0;
-                mJobCtr = 0;
+                
                 for (int i = 0; i < mColNum; i++) {
                     mColumns.get(i).removeAllViews();
-                    
                 }
                 
                 mReloadListenerRef.get().reloadView();
@@ -194,28 +174,44 @@ public class PrintJobsColumnView extends LinearLayout {
     
     private boolean checkIfNeedsRelayout() {
         boolean isColumnCleared = false;
-        int childrenNum = 0;
         boolean isLeftCleared = false;
+        boolean childNumExceeds = false;
+        int childrenNum = 0;
         
         for (int i = 0; i < mColNum; i++) {
             isColumnCleared |= (mColumns.get(i).getHeight() == 0);
-            
             childrenNum += mColumns.get(i).getChildCount();
-            if (i < mColNum - 1) {
+        }
+        
+        childNumExceeds = (childrenNum >= mColNum);
+        
+        if  (!childNumExceeds) {
+            for (int i = 0; i < childrenNum; i++) {
                 isLeftCleared |= (mColumns.get(i).getHeight() == 0);
             }
-            
         }
-        return isColumnCleared && (childrenNum >= mColNum || isLeftCleared);
+        
+        return isColumnCleared && (childNumExceeds || isLeftCleared);
     }
     
-    public interface LoadingViewListener {
-        public void hideLoading();
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (mJobGroupCtr < mPrinterIds.size() && mJobCtr < mPrintJobs.size()) {
+            addToColumns();
+            mJobGroupCtr++;
+            post(mRunnable);
+        } else {
+            if (mReloadFlag && mColNum > 1) {
+                relayoutColumns();
+            }
+        }
+        
     }
     
-    public interface ReloadViewListener {
-        public void reloadView();
-    }
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
     
     // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
     private class AddViewRunnable implements Runnable {
@@ -229,8 +225,17 @@ public class PrintJobsColumnView extends LinearLayout {
                 }
                 mPrintJobs.clear();
                 mPrinterIds.clear();
+                mReloadFlag = true;
             }
         }
         
+    }
+    
+    public interface LoadingViewListener {
+        public void hideLoading();
+    }
+    
+    public interface ReloadViewListener {
+        public void reloadView();
     }
 }

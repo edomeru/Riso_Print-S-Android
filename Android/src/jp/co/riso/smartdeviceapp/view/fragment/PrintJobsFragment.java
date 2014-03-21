@@ -61,15 +61,12 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         mPrintJobContainer.setOnClickListener(this);
         mPrintJobColumnView = (PrintJobsColumnView) view.findViewById(R.id.printJobsColumnView);
         
-        PrintJobManager.getInstance(getActivity());
-        
     }
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_print_job_history);
-        
         addActionMenuButton(view);
     }
     
@@ -102,7 +99,7 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     }
     
     // ================================================================================
-    // INTERFACE - View.OnLayoutChangeListener
+    // INTERFACE - View.OnClickListener
     // ================================================================================
     
     /** {@inheritDoc} */
