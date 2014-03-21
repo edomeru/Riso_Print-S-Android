@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		280605FE18DBD03D00B19466 /* InputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 280605FD18DBD03D00B19466 /* InputUtils.m */; };
 		280E181F18D971A1009B5259 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 280E181E18D971A1009B5259 /* Reachability.m */; };
 		2825AD0218D002D6006A8C53 /* PrinterDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 2825AD0118D002D6006A8C53 /* PrinterDetails.m */; };
 		2825AD0518D04C1A006A8C53 /* AlertUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2825AD0418D04C1A006A8C53 /* AlertUtils.m */; };
@@ -74,6 +75,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		280605FC18DBD03D00B19466 /* InputUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputUtils.h; sourceTree = "<group>"; };
+		280605FD18DBD03D00B19466 /* InputUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputUtils.m; sourceTree = "<group>"; };
 		280E181D18D971A1009B5259 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		280E181E18D971A1009B5259 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2825AD0018D002D6006A8C53 /* PrinterDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterDetails.h; path = Models/PrinterDetails.h; sourceTree = "<group>"; };
@@ -350,6 +353,8 @@
 				2825AD0418D04C1A006A8C53 /* AlertUtils.m */,
 				310626E418CDAFF700E3CB19 /* PListUtils.h */,
 				310626E518CDAFF700E3CB19 /* PListUtils.m */,
+				280605FC18DBD03D00B19466 /* InputUtils.h */,
+				280605FD18DBD03D00B19466 /* InputUtils.m */,
 				319210BC18C718A5000555C7 /* PrinterStatusHelper.h */,
 				319210BD18C718A5000555C7 /* PrinterStatusHelper.m */,
 			);
@@ -896,6 +901,7 @@
 				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
 				2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */,
 				2825AD0518D04C1A006A8C53 /* AlertUtils.m in Sources */,
+				280605FE18DBD03D00B19466 /* InputUtils.m in Sources */,
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2828312718C7066B008B127C /* NetworkManager.m in Sources */,
 				282DC17A18D2950F00E29F9E /* SearchResultCell.m in Sources */,
