@@ -94,8 +94,6 @@
 
 @end
 
-#pragma mark -
-
 @implementation PrinterSearchViewController
 
 #pragma mark - Lifecycle
@@ -213,6 +211,14 @@
             [self.listNewPrinterDetails removeObjectForKey:printerIP];
             [self.listNewPrinterIP removeObjectAtIndex:indexPath.row];
             [self.tableView reloadData];
+            
+            // if this is an iPad, reload the center panel
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+            {
+                UIViewController* rootViewController = [self parentViewController];
+                UIViewController* centerPanel = [[rootViewController childViewControllers] objectAtIndex:0];
+                [centerPanel performSelector:@selector(reloadData)];
+            }
         }
         else
         {

@@ -73,9 +73,9 @@
 - (IBAction)onBack:(UIButton*)sender;
 
 /**
- The input Printer info is retrieved from the UI, then the printer
- is searched from the network. If it is available and it is
- supported the printer object is created and stored in the DB.
+ The Printer IP and other details are retrieved from the UI, then
+ the printer is searched from the network. If it is available, the
+ Printer object is created and stored in the DB.
  */
 - (IBAction)onSave:(UIButton*)sender;
 
@@ -259,6 +259,14 @@
     
     // re-enable the save button
     [self.saveButton setEnabled:YES];
+    
+    // if this is an iPad, reload the center panel
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        UIViewController* rootViewController = [self parentViewController];
+        UIViewController* centerPanel = [[rootViewController childViewControllers] objectAtIndex:0];
+        [centerPanel performSelector:@selector(reloadData)];
+    }
 }
 
 - (void)updateForNewPrinter:(PrinterDetails*)printerDetails
