@@ -11,6 +11,7 @@
 //
 
 using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
@@ -19,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -36,11 +38,12 @@ namespace SmartDeviceApp.Controllers
 
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
-        private List<LogicalPage> _logicalPages; // LogicalPages in the requested PreviewPage
+        private List<LogicalPage> _logicalPages; // LogicalPages in the requested PreviewPage, ordered list
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
         private int _currPreviewPageIndex;
+        private int _logicalDpi = (int)DisplayInformation.GetForCurrentView().LogicalDpi;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -199,107 +202,345 @@ namespace SmartDeviceApp.Controllers
         #region Apply Print Settings
 
         /// <summary>
-        /// Applies print settings to LogicalPage(s) then creates a PreviewPage (BitmapImage)
+        /// Applies print settings to LogicalPage(s) then creates a PreviewPage
         /// </summary>
+        /// <param name="previewPageIndex">target page</param>
         /// <returns>task</returns>
         private async Task ApplyPrintSettings(int previewPageIndex)
         {
             if (_logicalPages.Count > 0)
             {
-                string pageImageFileName = _logicalPages[0].Name; // TODO: Update for Imposition
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
-                using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
+
+                WriteableBitmap finalBitmap = new WriteableBitmap(1, 1);
+                List<WriteableBitmap> pageImages = new List<WriteableBitmap>(); // Ordered list
+
+                Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
+                    _selectedPrinter.PrintSetting.PaperSize);
+
+                // Loop to each LogicalPage(s) here
+                foreach (LogicalPage logicalPage in _logicalPages)
                 {
-                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(raStream);
-
-                    // Create a new stream and encoder for the new image
-                    InMemoryRandomAccessStream imrasStream = new InMemoryRandomAccessStream();
-                    BitmapEncoder encoder = await BitmapEncoder.CreateForTranscodingAsync(imrasStream, decoder);
-
-                    // TODO: bitmap manipulations
-
-                    /*
-                    // convert the entire bitmap to a 100px by 100px bitmap
-                    enc.BitmapTransform.ScaledHeight = 100;
-                    enc.BitmapTransform.ScaledWidth = 100;
-
-                    BitmapBounds bounds = new BitmapBounds();
-                    bounds.Height = 50;
-                    bounds.Width = 50;
-                    bounds.X = 50;
-                    bounds.Y = 50;
-                    enc.BitmapTransform.Bounds = bounds;
-                    */
-
-                    // Apply Paper Size
-
-                    // Apply Scale to Fit
-
-                    // Apply Imposition and Imposition Order
-
-                    // Apply Staple
-
-                    // Apply Punch
-
-                    PixelDataProvider pixelData = await decoder.GetPixelDataAsync(
-                        decoder.BitmapPixelFormat,
-                        decoder.BitmapAlphaMode,
-                        new BitmapTransform(),
-                        ExifOrientationMode.IgnoreExifOrientation,
-                        ColorManagementMode.DoNotColorManage);
-
-                    byte[] pixelBytes = pixelData.DetachPixelData();
-
-                    if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
+                    // Open PreviewPage image from AppData temporary store
+                    string pageImageFileName = logicalPage.Name;
+                    StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
+                    using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
                     {
-                        pixelBytes = ApplyMonochrome(pixelBytes);
+                        // Put LogicalPage image to a bitmap
+                        WriteableBitmap pageBitmap = await WriteableBitmapExtensions.FromStream(
+                            null, raStream);
 
-                        // Write out to the stream
-                        encoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
-                            decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY,
-                            pixelBytes);
-                        await encoder.FlushAsync();
+                        bool isPortrait =
+                            PrintSettingConverter.OrientationIntToBoolConverter.Convert(
+                            _selectedPrinter.PrintSetting.Orientation);
+                        WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
+                            isPortrait);
+
+                        ApplyPageImageToPaper(_selectedPrinter.PrintSetting.ScaleToFit,
+                            canvasBitmap, pageBitmap);
+
+                        pageImages.Add(canvasBitmap);
                     }
-
-                    // Save PreviewPage into AppData temporary store
-                    StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                        String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
-                        CreationCollisionOption.ReplaceExisting);
-                    using (var destinationStream = await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destinationStream);
-                        newEncoder.SetPixelData(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
-                            decoder.PixelWidth, decoder.PixelHeight, decoder.DpiX, decoder.DpiY, pixelBytes);
-                        await newEncoder.FlushAsync();
-                    }
-
-                    // Add to PreviewPage list
-                    PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
-                        tempPageImage.Name, new Size(decoder.PixelWidth, decoder.PixelHeight));
-                    if (_previewPages.ContainsKey(previewPageIndex))
-                    {
-                        _previewPages[previewPageIndex] = previewPage;
-                    }
-                    else
-                    {
-                        _previewPages.Add(previewPageIndex, previewPage);
-                    }
-
-                    // Open the bitmap
-                    BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
-
-                    // Create message and send
-                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                        previewPage.ActualSize));
                 }
+
+                // TODO: Imposition and Imposition Order
+                #region ApplyImposition
+                /*
+                // Check Imposition value and generated bitmaps
+                if (_pagesPerSheet > 1 && pageImages.Count > 1 && (_pagesPerSheet == pageImages.Count))
+                {
+                    // Apply imposition based on number and order
+
+                    // landscape if 2-in-1
+                    // portrait if 4-in-1
+                    bool isPortrait = _pagesPerSheet == 4;
+                    WriteableBitmap draftBitmap = ApplyPaperSizeAndOrientation(paperSize, isPortrait);
+
+                    // Row and column counters
+                    // Compute number of pages per row and column
+                    int pagesPerRow = (int)Math.Sqrt(_pagesPerSheet);
+                    int pagesPerColumn = _pagesPerSheet / pagesPerRow;
+
+                    // Compute page area size and margin
+                    double prevImageWidth = 0;
+                    double prevImageHeight = 0;
+                    double marginPaper = PrintSettingConstant.MARGIN_PAPER * _logicalDpi;
+                    double marginBetweenPages = PrintSettingConstant.MARGIN_BETWEEN_PAGES * _logicalDpi;
+                    Size pageAreaSize = ComputePageArea(pageImages[0].PixelWidth,
+                        pageImages[0].PixelHeight, pagesPerRow, pagesPerColumn,
+                        marginBetweenPages, marginPaper);
+
+                    // Compute center of page area
+                    double widthDiff = pageAreaSize.Width - pageImages[0].PixelWidth;
+                    double heightDiff = pageAreaSize.Height - pageImages[0].PixelHeight;
+                    double xOffset = 0;
+                    double yOffset = 0;
+                    if (widthDiff > 0)
+                    {
+                        xOffset = widthDiff / 2;
+                    }
+                    if (heightDiff > 0)
+                    {
+                        yOffset = heightDiff / 2;
+                    }
+
+                    // Loop each pages
+                    int impositionIndex = 0;
+                    foreach (WriteableBitmap pageBitmap in pageImages)
+                    {
+                        // Put page in center of page area
+                        double x = 0;
+                        double y = 0;
+                        x = marginPaper + prevImageWidth + xOffset;
+                        y = marginPaper + prevImageHeight + yOffset;
+
+                        // Draw border in page if needed
+                        {
+                            pageBitmap.DrawRectangle(0, 0, pageBitmap.PixelWidth,
+                                pageBitmap.PixelHeight, Windows.UI.Colors.Black);
+                        }
+
+                        // Scale image and put into canvas
+                        Rect destRect = new Rect(x, y, x + pageAreaSize.Width, y + pageAreaSize.Height);
+                        Rect srcRect = new Rect(0, 0, pageBitmap.PixelWidth, pageBitmap.PixelHeight);
+                        draftBitmap.Blit(destRect, pageBitmap, srcRect);
+
+                        // Position
+                        // Update rectangles/offset
+                        switch(_selectedPrinter.PrintSetting.ImpositionOrder)
+                        {
+                            case (int)ImpositionOrder.LeftToRight:
+                            case (int)ImpositionOrder.TopLeftToRight:
+                                prevImageWidth += marginBetweenPages + pageAreaSize.Width;
+                                if (((impositionIndex + 1) % pagesPerColumn) == 0)
+                                {
+                                    prevImageWidth = 0;
+                                    prevImageHeight += marginBetweenPages + pageAreaSize.Height;
+                                }
+                                break;
+                            case (int)ImpositionOrder.TopLeftToBottom:
+                                prevImageHeight += marginBetweenPages + pageAreaSize.Height;
+                                if (((impositionIndex + 1) % pagesPerRow) == 0)
+                                {
+                                    prevImageHeight = 0;
+                                    prevImageWidth += marginBetweenPages + pageAreaSize.Width;
+                                }
+                                break;
+                            case (int)ImpositionOrder.TopRightToBottom:
+                                break;
+                            case (int)ImpositionOrder.TopRightToLeft:
+                                break;
+                            case (int)ImpositionOrder.RightToLeft:
+                            default:
+                                break;
+
+                        }
+
+                        ++impositionIndex;
+                    }
+
+                }
+                else if (pageImages.Count == 1)
+                    */
+                #endregion ApplyImposition
+                {
+                    finalBitmap = pageImages[0];
+                }
+
+                byte[] pixelBytes = finalBitmap.ToByteArray();
+
+                if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
+                {
+                    pixelBytes = ApplyMonochrome(pixelBytes);
+
+                    // Write out to the stream
+                    WriteableBitmapExtensions.FromByteArray(finalBitmap, pixelBytes);
+                }
+
+                // Save PreviewPage into AppData temporary store
+                StorageFile tempPageImage = await tempFolder.CreateFileAsync(
+                    String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
+                    CreationCollisionOption.ReplaceExisting);
+                using (var destinationStream =
+                    await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
+                        BitmapEncoder.JpegEncoderId, destinationStream);
+                    byte[] pixels = WriteableBitmapExtensions.ToByteArray(finalBitmap);
+                    newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
+                        (uint)finalBitmap.PixelWidth, (uint)finalBitmap.PixelHeight, _logicalDpi,
+                        _logicalDpi, pixels);
+                    await newEncoder.FlushAsync();
+                }
+
+                // Add to PreviewPage list
+                PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
+                    tempPageImage.Name, new Size(finalBitmap.PixelWidth, finalBitmap.PixelHeight));
+                if (_previewPages.ContainsKey(previewPageIndex))
+                {
+                    _previewPages[previewPageIndex] = previewPage;
+                }
+                else
+                {
+                    _previewPages.Add(previewPageIndex, previewPage);
+                }
+
+                // Open the bitmap
+                BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+
+                // Create message and send
+                Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                    previewPage.ActualSize));
             }
+        }
+
+        /// <summary>
+        /// Creates a bitmap based on target paper size and orientation
+        /// </summary>
+        /// <param name="paperSize">target paper size</param>
+        /// <param name="isPortrait">orientation</param>
+        /// <returns>bitmap filled with white</returns>
+        private WriteableBitmap ApplyPaperSizeAndOrientation(Size paperSize, bool isPortrait)
+        {
+            // Get paper size and apply DPI
+            double length1 = paperSize.Width * _logicalDpi;
+            double length2 = paperSize.Height * _logicalDpi;
+
+            Size pageImageSize;
+            // Check orientation
+            if (isPortrait)
+            {
+                pageImageSize = new Size(length1, length2);
+            }
+            else
+            {
+                pageImageSize = new Size(length2, length1);
+            }
+
+            // Create canvas based on paper size and orientation
+            WriteableBitmap canvasBitmap = new WriteableBitmap((int)pageImageSize.Width,
+                (int)pageImageSize.Height);
+            // Fill all white
+            WriteableBitmapExtensions.FillRectangle(canvasBitmap, 0, 0, (int)pageImageSize.Width,
+                (int)pageImageSize.Height, Windows.UI.Colors.White);
+
+            return canvasBitmap;
+        }
+
+        /// <summary>
+        /// Puts LogicalPage image into the bitmap
+        /// </summary>
+        /// <param name="enableScaleToFit">scale to fit setting</param>
+        /// <param name="canvasBitmap">PreviewPage image</param>
+        /// <param name="pageBitmap">LogicalPage image</param>
+        private void ApplyPageImageToPaper(bool enableScaleToFit, WriteableBitmap canvasBitmap,
+            WriteableBitmap pageBitmap)
+        {
+            if (enableScaleToFit)
+            {
+                // TODO: Still has issue with scaling and center alignment
+                ApplyScaleToFit(canvasBitmap, pageBitmap);
+            }
+            else
+            {
+                ApplyImageToPaper(canvasBitmap, pageBitmap);
+            }
+        }
+
+        // TODO: Still has issue with scaling and center alignment
+        /// <summary>
+        /// Scales the LogicalPage image into the PreviewPage image
+        /// </summary>
+        /// <param name="canvasBitmap">PreviewPage image</param>
+        /// <param name="pageBitmap">LogicalPage image</param>
+        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap)
+        {
+            // Compute the ratio for scaling
+            float canvasRatio = (float)canvasBitmap.PixelWidth / canvasBitmap.PixelHeight;
+            float pageRatio = (float)pageBitmap.PixelWidth / pageBitmap.PixelHeight;
+            float newRatio = 0f;
+            if (pageRatio < canvasRatio)
+            {
+                newRatio = (float)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
+            }
+            else
+            {
+                newRatio = (float)pageBitmap.PixelHeight / canvasBitmap.PixelHeight;
+            }
+
+            // Compute scaled size
+            int scaledWidth = (int)(pageBitmap.PixelWidth * newRatio);
+            int scaledHeight = (int)(pageBitmap.PixelHeight * newRatio);
+
+            // Position
+            Rect destRect = new Rect(
+                (canvasBitmap.PixelWidth - scaledWidth) / 2,   // Puts the image to the center X
+                (canvasBitmap.PixelHeight - scaledHeight) / 2, // Puts the image to the center Y
+                scaledWidth, scaledHeight);
+            Rect srcRect = new Rect(0, 0, pageBitmap.PixelWidth, pageBitmap.PixelHeight);
+
+            // Place image into paper
+            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, pageBitmap, srcRect);
+        }
+
+        /// <summary>
+        /// Puts the LogicalPage image into PreviewPage as is (cropping the excess area)
+        /// </summary>
+        /// <param name="canvasBitmap">PreviewPage image</param>
+        /// <param name="pageBitmap">LogicalPage image</param>
+        private void ApplyImageToPaper(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap)
+        {
+            // Determine LogicalPage sizes if cropping is needed
+            // If not cropped, LogicalPage just fits into paper
+            int cropWidth = canvasBitmap.PixelWidth;
+            if (canvasBitmap.PixelWidth > pageBitmap.PixelWidth)
+            {
+                cropWidth = pageBitmap.PixelWidth;
+            }
+            int cropHeight = canvasBitmap.PixelHeight;
+            if (canvasBitmap.PixelHeight > pageBitmap.PixelHeight)
+            {
+                cropHeight = pageBitmap.PixelHeight;
+            }
+
+            // Source and destination rectangle are the same since
+            // LogicalPage is cropped using the rectangle
+            // and put as in into the paper
+            Rect rect = new Rect(0, 0, cropWidth, cropHeight);
+
+            // Place image into paper
+            WriteableBitmapExtensions.Blit(canvasBitmap, rect, pageBitmap, rect);
+        }
+
+        /// <summary>
+        /// Computes the page area for imposition
+        /// </summary>
+        /// <param name="width">PreviewPage image width</param>
+        /// <param name="height">PreviewPage image height</param>
+        /// <param name="numRows">number of rows based on imposition</param>
+        /// <param name="numColumns">number of columns based on imposition</param>
+        /// <param name="marginBetween">margin between pages (in pixels)</param>
+        /// <param name="marginOuter">margin of the PreviewPage image (in pixels)</param>
+        /// <returns>size of a page for imposition</returns>
+        private Size ComputePageArea(int width, int height, int numRows, int numColumns,
+            double marginBetween, double marginOuter)
+        {
+            Size pageAreaSize = new Size();
+            if (width > 0 && height > 0 && numRows > 0 && numColumns > 0)
+            {
+                pageAreaSize.Width = (width - (marginBetween * (numColumns - 1)) - (marginOuter * 2))
+                    / numColumns;
+                pageAreaSize.Height = (height - (marginBetween * (numRows - 1)) - (marginOuter * 2))
+                    / numRows;
+            }
+            return pageAreaSize;
         }
 
         /// <summary>
         /// Changes the bitmap to grayscale
         /// </summary>
         /// <param name="pixelBytes">pixel bytes</param>
+        /// <returns>pixel bytes with altered color to monochrome</returns>
         private byte[] ApplyMonochrome(byte[] pixelBytes)
         {
             byte[] newPixelBytes = new byte[pixelBytes.Length];

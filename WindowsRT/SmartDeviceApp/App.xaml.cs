@@ -93,7 +93,7 @@ namespace SmartDeviceApp
         /// Invoked when the application is launched by the end user thru Open With.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnFileActivated(FileActivatedEventArgs e)
+        protected override async void OnFileActivated(FileActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -126,7 +126,7 @@ namespace SmartDeviceApp
                 rootFrame.Navigate(typeof(PrintPreviewPage));
             //}
 
-            MainController.FileActivationHandler(e);
+            await MainController.FileActivationHandler(e);
 
             // Ensure the current window is active
             Window.Current.Activate();

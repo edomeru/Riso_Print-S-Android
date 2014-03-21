@@ -10,12 +10,14 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
@@ -55,6 +57,23 @@ namespace SmartDeviceApp.Converters
 
                 return convertedValue;
             }
+        }
+
+        public class OrientationIntToBoolConverter
+        {
+
+            public static bool Convert(int value)
+            {
+                bool isPortrait = true;
+
+                if ((int)Orientation.Landscape == value)
+                {
+                    isPortrait = false;
+                }
+
+                return isPortrait;
+            }
+
         }
 
         public class DuplexToIntConverter : BasePrintSettingConverter.BasePrintSettingToIntConverter
@@ -105,6 +124,54 @@ namespace SmartDeviceApp.Converters
                 }
 
                 return convertedValue;
+            }
+        }
+
+        public class PaperSizeIntToSizeConverter
+        {
+
+            public static Size Convert(int value)
+            {
+                Size paperSize;
+                switch (value)
+                {
+                    case (int)PaperSize.A3:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A3;
+                        break;
+                    case (int)PaperSize.A6:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A6;
+                        break;
+                    case (int)PaperSize.B4:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_B6;
+                        break;
+                    case (int)PaperSize.B5:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_B5;
+                        break;
+                    case (int)PaperSize.B6:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A6;
+                        break;
+                    case (int)PaperSize.Foolscap:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_FOOLSCAP;
+                        break;
+                    case (int)PaperSize.Tabloid:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_TABLOID;
+                        break;
+                    case (int)PaperSize.Legal:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_LEGAL;
+                        break;
+                    case (int)PaperSize.Letter:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_LETTER;
+                        break;
+                    case (int)PaperSize.Statement:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_STATEMENT;
+                        break;
+                    case (int)PaperSize.A4:
+                    default:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A4;
+                        break;
+                }
+
+                return paperSize;
             }
         }
 
