@@ -20,7 +20,7 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView.LoadingViewListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView.ReloadViewListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintDeleteListener;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.JobDeleteListener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,7 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class PrintJobsFragment extends BaseFragment implements PrintDeleteListener, OnClickListener, LoadingViewListener, ReloadViewListener {
+public class PrintJobsFragment extends BaseFragment implements JobDeleteListener, OnClickListener, LoadingViewListener, ReloadViewListener {
     
     private PrintJobsColumnView mPrintJobColumnView;
     private PrintJobsGroupView mPrintGroupToDelete;
@@ -93,11 +93,6 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
         mPrintJobContainer.removeView(mPrintJobColumnView);
     }
     
-    @Override
-    public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView) {
-        this.mPrintGroupToDelete = printJobsGroupView;
-    }
-    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -113,8 +108,13 @@ public class PrintJobsFragment extends BaseFragment implements PrintDeleteListen
     }
     
     // ================================================================================
-    // INTERFACE - PrintDeleteListener
+    // INTERFACE - JobDeleteListener
     // ================================================================================
+    
+    @Override
+    public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView) {
+        this.mPrintGroupToDelete = printJobsGroupView;
+    }
     
     @Override
     public void clearButton() {

@@ -47,7 +47,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
     private Printer mPrinter;
     private View mViewToDelete;
-    private PrintDeleteListener mDelListener;
+    private JobDeleteListener mDelListener;
     
     private boolean mIsMultColumn;
     private boolean mIsCollapsed = false;
@@ -57,7 +57,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private String mConfirmMsg;
     private String mCancelMsg;
     
-    public PrintJobsGroupView(Context context, List<PrintJob> printJobs, boolean isMultColumn, Printer printer, PrintDeleteListener delListener) {
+    public PrintJobsGroupView(Context context, List<PrintJob> printJobs, boolean isMultColumn, Printer printer, JobDeleteListener delListener) {
         this(context);
         
         this.mPrintJobs = printJobs;
@@ -359,7 +359,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
-    public interface PrintDeleteListener {
+    public interface JobDeleteListener {
         public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView);
         
         public void clearButton();

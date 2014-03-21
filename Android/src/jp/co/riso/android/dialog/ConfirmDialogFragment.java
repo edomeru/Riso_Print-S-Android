@@ -8,8 +8,6 @@
 
 package jp.co.riso.android.dialog;
 
-import java.lang.ref.WeakReference;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -23,7 +21,7 @@ public class ConfirmDialogFragment  extends DialogFragment {
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
     
-    private static WeakReference<OnClickListener> mListenerRef;
+    private static OnClickListener sListener;
     
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
         return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
@@ -66,8 +64,8 @@ public class ConfirmDialogFragment  extends DialogFragment {
             builder.setMessage(message);
         }
         
-        if (buttonPosTitle != null && mListenerRef!=null && mListenerRef.get()!=null) {
-            builder.setPositiveButton(buttonPosTitle, mListenerRef.get());
+        if (buttonPosTitle != null) {
+            builder.setPositiveButton(buttonPosTitle, sListener);
         }
         
         if (buttonNegTitle != null) {
@@ -81,7 +79,7 @@ public class ConfirmDialogFragment  extends DialogFragment {
     }
     
     public void setListener(OnClickListener dialogListener){
-        mListenerRef = new WeakReference<OnClickListener>(dialogListener);
+        sListener = dialogListener;
         
     }
     

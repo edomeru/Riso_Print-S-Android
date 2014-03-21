@@ -42,25 +42,23 @@ public class PrintJobManager {
     private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
     private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
     
-    private static DatabaseManager mManager;
-    private static PrintJobManager mInstance;
-    static Context c;
+    private static DatabaseManager sManager;
+    private static PrintJobManager sInstance;
     
     private PrintJobManager(Context context) {
-        mManager = new DatabaseManager(context);
-        c = context;
+        sManager = new DatabaseManager(context);
     }
     
     public static PrintJobManager getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new PrintJobManager(context);
+        if (sInstance == null) {
+            sInstance = new PrintJobManager(context);
         }
-        return mInstance;
+        return sInstance;
     }
     
     public static List<PrintJob> getPrintJobs() {
         List<PrintJob> printJobs = new ArrayList<PrintJob>();
-        Cursor c = mManager.query(TABLE, null, null, null, null, null, C_ORDERBY_DATE);
+        Cursor c = sManager.query(TABLE, null, null, null, null, null, C_ORDERBY_DATE);
         
         while (c.moveToNext()) {
             int pjb_id = c.getInt(c.getColumnIndex(C_PJB_ID));
@@ -74,16 +72,16 @@ public class PrintJobManager {
         }
         
         c.close();
-        mManager.close();
+        sManager.close();
         return printJobs;
     }
     
     public static boolean deleteWithPrinterId(int prn_id) {
-        return mManager.delete(TABLE, C_WHERE_PRN_ID, String.valueOf(prn_id));
+        return sManager.delete(TABLE, C_WHERE_PRN_ID, String.valueOf(prn_id));
     }
     
     public static boolean deleteWithJobId(int pjb_id) {
-        return mManager.delete(TABLE, C_WHERE_PJB_ID, String.valueOf(pjb_id));
+        return sManager.delete(TABLE, C_WHERE_PJB_ID, String.valueOf(pjb_id));
         
     }
     
@@ -98,7 +96,7 @@ public class PrintJobManager {
         pjvalues.put(C_PJB_NAME, printJob.getName());
         pjvalues.put(C_PJB_RESULT, printJob.getResult().ordinal());
         pjvalues.put(C_PJB_DATE, formatSQLDateTime(printJob.getDate()));
-        return mManager.insert(TABLE, null, pjvalues);
+        return sManager.insert(TABLE, null, pjvalues);
         
     }
     
@@ -126,7 +124,7 @@ public class PrintJobManager {
     public static List<Printer> getPrintersWithJobs() {
         List<Printer> printers = new ArrayList<Printer>();
         
-        Cursor c = mManager.query(TABLE_PRINTER, null, C_SEL_PRN_ID, null, null, null, C_PRN_ID);
+        Cursor c = sManager.query(TABLE_PRINTER, null, C_SEL_PRN_ID, null, null, null, C_PRN_ID);
         
         while (c.moveToNext()) {
             
@@ -135,7 +133,7 @@ public class PrintJobManager {
             printers.add(new Printer(prn_id, prn_name));
         }
         c.close();
-        mManager.close();
+        sManager.close();
         return printers;
     }
 }

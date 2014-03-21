@@ -7,11 +7,12 @@ import java.util.List;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintDeleteListener;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.JobDeleteListener;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 public class PrintJobsColumnView extends LinearLayout {
@@ -21,7 +22,7 @@ public class PrintJobsColumnView extends LinearLayout {
     private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
     private List<Printer> mPrinterIds = new ArrayList<Printer>();
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>(3);
-    private PrintDeleteListener mDelListener;
+    private JobDeleteListener mDelListener;
     private Runnable mRunnable;
     private int mColNum = 0;
     private int mJobGroupCtr = 0;
@@ -43,7 +44,7 @@ public class PrintJobsColumnView extends LinearLayout {
         init(context);
     }
     
-    public void setData(List<PrintJob> printJobs, List<Printer> printerIds, int colNum, PrintDeleteListener delListener, LoadingViewListener loadingListener,
+    public void setData(List<PrintJob> printJobs, List<Printer> printerIds, int colNum, JobDeleteListener delListener, LoadingViewListener loadingListener,
             ReloadViewListener reloadListener) {
         this.mPrintJobs = printJobs;
         this.mPrinterIds = printerIds;
@@ -81,10 +82,10 @@ public class PrintJobsColumnView extends LinearLayout {
         setLayoutParams(lp);
         
         if (mColNum < 3) {
-            mColumns.get(2).setVisibility(GONE);
+            ((ViewGroup) mColumns.get(2).getParent()).removeView(mColumns.get(2));
         }
         if (mColNum < 2) {
-            mColumns.get(1).setVisibility(GONE);
+            ((ViewGroup) mColumns.get(2).getParent()).removeView(mColumns.get(1));
         }
         
     }
