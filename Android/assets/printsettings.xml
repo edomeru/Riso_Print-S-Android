@@ -30,7 +30,7 @@
             text="ids_lbl_duplex"
             icon="temp_img_printsettings_null"
             type="list" >
-			<option>ids_lbl_duplex_off</option>
+			<option>ids_lbl_off</option>
 			<option>ids_lbl_duplex_long_edge</option>
 			<option>ids_lbl_duplex_short_edge</option>
 		</setting>

@@ -235,10 +235,10 @@ public class PullToRefreshListView extends ListView{
         image = (ImageView) header.findViewById(R.id.ptr_id_image);
         spinner = (ProgressBar) header.findViewById(R.id.ptr_id_spinner);
 
-        pullToRefreshText = getContext().getString(R.string.ptr_pull_to_refresh);
-        releaseToRefreshText = getContext().getString(R.string.ptr_release_to_refresh);
-        refreshingText = getContext().getString(R.string.ptr_refreshing);
-        lastUpdatedText = getContext().getString(R.string.ptr_last_updated);
+        pullToRefreshText = getContext().getString(R.string.ids_lbl_pull_to_refresh);
+        releaseToRefreshText = getContext().getString(R.string.ids_lbl_release_to_refresh);
+        refreshingText = getContext().getString(R.string.ids_lbl_refreshing);
+        lastUpdatedText = getContext().getString(R.string.ids_lbl_last_updated);
 
         flipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         flipAnimation.setInterpolator(new LinearInterpolator());
