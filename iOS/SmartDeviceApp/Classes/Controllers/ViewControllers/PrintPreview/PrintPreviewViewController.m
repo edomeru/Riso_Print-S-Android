@@ -20,6 +20,9 @@
 
 
 #define PREVIEW_MIN_MARGIN  10.0
+#define MAX_ZOOM_SCALE 3.0
+#define MIN_ZOOM_SCALE 1.0
+#define NORMAL_SCALE 1.0
 
 @interface PrintPreviewViewController ()
 @property (strong, nonatomic) UIPageViewController *pdfPageViewController; //the page view controller
@@ -92,6 +95,10 @@
  Action when slider is tapped
  **/
 - (IBAction)tapSliderAction:(id)sender;
+/**
+ Action when preview area is pinched
+ **/
+- (IBAction)pinchPreviewAction:(id)sender;
 @end
 
 @implementation PrintPreviewViewController
@@ -100,6 +107,7 @@
     NSUInteger __numPDFPages; // number of pages in the PDF document
     NSUInteger __currentIndex; //current view page index (not pertaining to pdf page number)
     NSUInteger __numViewPages; // number of view pages, NOT pdf pages
+    CGFloat currentScale;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -137,6 +145,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+/*Detect event before rotation*/
+-(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if(currentScale > NORMAL_SCALE | currentScale < NORMAL_SCALE)
+    {
+        /*revert to old size before rotating*/
+        self.previewArea.transform = CGAffineTransformIdentity;
+        currentScale = NORMAL_SCALE;
+    }
+}
 /*Overriden to handle device rotation*/
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
@@ -187,6 +205,7 @@
     __numPDFPages = CGPDFDocumentGetNumberOfPages(__pdfDocument);
     //Set current index to first page
     __currentIndex = 0;
+    currentScale = 1.0;
     
     //set screen title to file name of PDF
     NSString *screenTitle = [[[manager pdfURL] pathComponents] lastObject];
@@ -527,4 +546,22 @@
     [self.pageNavigationSlider setValue:__currentIndex];
 }
 
+/*Action when pinched*/
+- (IBAction)pinchPreviewAction:(id)sender
+{
+    UIPinchGestureRecognizer *pinchRecognizer = (UIPinchGestureRecognizer *) sender;
+    CGFloat actualScale = currentScale * pinchRecognizer.scale;
+    NSLog(@"Scale = %f", actualScale);
+    if(actualScale >= MIN_ZOOM_SCALE && actualScale <= MAX_ZOOM_SCALE) //up 100 to 300 percent scale only
+    {
+        self.previewArea.transform = CGAffineTransformScale(self.previewArea.transform, pinchRecognizer.scale, pinchRecognizer.scale);
+        currentScale = actualScale;
+    }
+    if(currentScale < MIN_ZOOM_SCALE)
+    {
+        self.previewArea.transform = CGAffineTransformIdentity;
+        currentScale = NORMAL_SCALE;
+    }
+    pinchRecognizer.scale = 1;
+}
 @end
