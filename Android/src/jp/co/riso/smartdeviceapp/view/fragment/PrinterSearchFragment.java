@@ -187,7 +187,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     }
     
     // ================================================================================
-    // INTERFACE - PrinteSearchAdapterInterface
+    // Internal Classes
     // ================================================================================
     
     @Override
