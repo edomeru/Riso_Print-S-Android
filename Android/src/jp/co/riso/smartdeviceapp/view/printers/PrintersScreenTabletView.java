@@ -7,14 +7,13 @@
  */
 
 package jp.co.riso.smartdeviceapp.view.printers;
-
 import java.util.ArrayList;
 import java.util.List;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrintersListRefresh;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrintersListChange;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.Activity;
@@ -37,7 +36,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrintersScreenTabletView extends LinearLayout implements OnLongClickListener, View.OnClickListener, OnTouchListener, PrinteSearchTabletInterface,
-        OnCheckedChangeListener, OnPrintersListRefresh {
+        OnCheckedChangeListener, OnPrintersListChange {
     public class ViewHolder {
         ImageView onlineIndcator;
         TextView printerName;
@@ -305,8 +304,21 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         }
     }
     
+    // ================================================================================
+    // INTERFACE - OnPrintersListChange
+    // ================================================================================
+    
     @Override
-    public void onPrintersListRefresh() {
-        // TODO: Implementation
+    public void onAddedNewPrinter(final Printer printer) {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    addToTabletPrinterScreen(printer);
+                } catch (Exception e) {
+                    // Do nothing
+                }
+            }
+        });
     }
 }

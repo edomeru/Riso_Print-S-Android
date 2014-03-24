@@ -57,12 +57,12 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        if (isTablet()) {
-            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
-        }
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
         
+        if (isTablet()) {
+            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
+        }
         addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.temp_img_btn_save_printer, this);
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_back, this);
     }
@@ -70,6 +70,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        
         mIpAddress.setFilters(IP_ADDRESS_FILTER);
         return view;
     }
@@ -122,6 +123,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         } else {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
+            
             if (fm.getBackStackEntryCount() > 0) {
                 fm.popBackStack();
                 ft.commit();
@@ -141,7 +143,11 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
                 closeScreen();
                 break;
             case ID_MENU_SAVE_BUTTON:
-                findPrinter(mIpAddress.getText().toString());
+                String ipAddress = mIpAddress.getText().toString();
+                
+                if (!mPrinterManager.isSearching() && !ipAddress.isEmpty()) {
+                    findPrinter(mIpAddress.getText().toString());
+                }
                 break;
         }
     }
@@ -166,6 +172,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public void onSearchEnd() {
         String ipAddress = mIpAddress.getText().toString();
+        
         if (!mAdded && !ipAddress.isEmpty()) {
             dialogErrCb(ipAddress);
         }
@@ -180,6 +187,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
             String regEx = "^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?";
+            
             if (end > start) {
                 String destTxt = dest.toString();
                 String ipv4Address = destTxt.substring(0, dstart) + source.subSequence(start, end) + destTxt.substring(dend);

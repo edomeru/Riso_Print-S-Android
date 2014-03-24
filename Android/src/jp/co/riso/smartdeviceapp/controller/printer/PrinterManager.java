@@ -83,6 +83,9 @@ public class PrinterManager implements OnSNMPSearch {
         }
         manager.close();
         
+        if (mOnPrintersListRefresh != null) {
+            mOnPrintersListRefresh.onAddedNewPrinter(printer);
+        }
         return 0;
     }
     
@@ -246,6 +249,11 @@ public class PrinterManager implements OnSNMPSearch {
         mSNMPManager.searchPrinter(ipAddress);
     }
     
+    public void cancelPrinterSearch() {
+        mIsSearching = false;
+        //TODO: Call SNMP cancel - mSNMPManager.stopSNMP();
+    }
+    
     public boolean isSearching() {
         return mIsSearching;
     }
@@ -256,9 +264,9 @@ public class PrinterManager implements OnSNMPSearch {
     
     @Override
     public void onSearchedPrinterAdd(String printerName, String ipAddress) {
-        mOnPrinterAdd.onPrinterAdd(new Printer(printerName, ipAddress, false, null));
-        if (mOnPrintersListRefresh != null) {
-            mOnPrintersListRefresh.onPrintersListRefresh();
+        Printer printer = new Printer(printerName, ipAddress, false, null);
+        if (isSearching()) {
+            mOnPrinterAdd.onPrinterAdd(printer);
         }
     }
     
@@ -285,16 +293,16 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     // ================================================================================
-    // Interface - OnPrintersListRefresh (Tablet View)
+    // Interface - OnPrintersListChange (Tablet View)
     // ================================================================================
     
-    private OnPrintersListRefresh mOnPrintersListRefresh = null;
+    private OnPrintersListChange mOnPrintersListRefresh = null;
     
-    public interface OnPrintersListRefresh {
-        public void onPrintersListRefresh();
+    public interface OnPrintersListChange {
+        public void onAddedNewPrinter(Printer printer);
     }
     
-    public void setOnPrintersListRefresh(OnPrintersListRefresh onPrintersListRefresh) {
+    public void setOnPrintersListRefresh(OnPrintersListChange onPrintersListRefresh) {
         mOnPrintersListRefresh = onPrintersListRefresh;
     }
 }
