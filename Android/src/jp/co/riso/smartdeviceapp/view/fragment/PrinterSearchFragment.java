@@ -68,6 +68,10 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
+        if (isTablet()) {
+            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
+        }
+        
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers);
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
@@ -137,17 +141,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         // Back Button
         if (v.getId() == ID_MENU_BACK_BUTTON) {
             if (isTablet()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            MainActivity activity = (MainActivity) getActivity();
-                            activity.closeDrawers();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                MainActivity activity = (MainActivity) getActivity();
+                activity.closeDrawers();
             } else {
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -205,7 +200,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             ret = -1;
             msg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else {
-            msg = printer.getName() + " Added Successfully";
+            msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
         }
         
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));

@@ -165,7 +165,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                         remove(printer);
                         notifyDataSetChanged();
                     } catch (Exception e) {
-                        Log.w(TAG, "Remove cause an exception");
+                        Log.w(TAG, "Remove caused an exception");
                     }
                 }
             });

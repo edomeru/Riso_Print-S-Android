@@ -155,4 +155,6 @@
     <string name="ptr_refreshing">Refreshing&#8230;</string>
     <string name="ptr_last_updated">Updated: %1$s</string>
     <string name="ids_lbl_set_default_printer">Set as Default Printer</string>
+    <string name="ids_lbl_add_successful">Added Successfully</string>
+    
 </resources>

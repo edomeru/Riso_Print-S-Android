@@ -22,9 +22,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -54,6 +52,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     public void initializeView(View view, Bundle savedInstanceState) {
         mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
+        mIpAddress.setFilters(IP_ADDRESS_FILTER);
     }
     
     @Override
@@ -68,14 +67,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        
-        mIpAddress.setFilters(IP_ADDRESS_FILTER);
-        return view;
-    }
-    
     // ================================================================================
     // Private Methods
     // ================================================================================
@@ -86,8 +77,8 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     
     private void dialogCb(Printer printer) {
         String title = getResources().getString(R.string.ids_lbl_printer_info);
-        InfoDialogFragment info = InfoDialogFragment.newInstance(title, printer.getName() + " Added Successfully", getResources()
-                .getString(R.string.ids_lbl_ok));
+        String msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+        InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
@@ -109,17 +100,8 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         
         if (isTablet()) {
             if (getActivity() != null && getActivity() instanceof MainActivity) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            MainActivity activity = (MainActivity) getActivity();
-                            activity.closeDrawers();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                MainActivity activity = (MainActivity) getActivity();
+                activity.closeDrawers();
             }
         } else {
             FragmentManager fm = getFragmentManager();
@@ -161,12 +143,10 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     public void onPrinterAdd(Printer printer) {
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(printer);
-        } else {
-            if (mPrinterManager.savePrinterToDB(printer) != -1) {
-                mAdded = true;
-                dialogCb(printer);
-                closeScreen();
-            }
+        } else if (mPrinterManager.savePrinterToDB(printer) != -1) {
+            mAdded = true;
+            dialogCb(printer);
+            closeScreen();
         }
     }
     
@@ -177,7 +157,6 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         if (!mAdded && !ipAddress.isEmpty()) {
             dialogErrCb(ipAddress);
         }
-        return;
     }
     
     // ================================================================================
