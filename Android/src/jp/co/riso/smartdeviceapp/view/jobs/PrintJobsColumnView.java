@@ -12,7 +12,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 public class PrintJobsColumnView extends LinearLayout {
@@ -30,6 +29,7 @@ public class PrintJobsColumnView extends LinearLayout {
     private boolean mReloadFlag;
     
     public PrintJobsColumnView(Context context, AttributeSet attrs, int defStyle) {
+        
         super(context, attrs, defStyle);
         init(context);
     }
@@ -63,9 +63,9 @@ public class PrintJobsColumnView extends LinearLayout {
             LayoutInflater factory = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View viewgroup_printjobs = factory.inflate(R.layout.printjobs_column, this, true);
             
-            mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column1));
-            mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column2));
-            mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.column3));
+            mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.printJobsColumn1));
+            mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.printJobsColumn2));
+            mColumns.add((LinearLayout) viewgroup_printjobs.findViewById(R.id.printJobsColumn3));
             
             mRunnable = new AddViewRunnable();
         }
@@ -82,10 +82,10 @@ public class PrintJobsColumnView extends LinearLayout {
         setLayoutParams(lp);
         
         if (mColNum < 3) {
-            ((ViewGroup) mColumns.get(2).getParent()).removeView(mColumns.get(2));
+            mColumns.get(2).setVisibility(GONE);
         }
         if (mColNum < 2) {
-            ((ViewGroup) mColumns.get(2).getParent()).removeView(mColumns.get(1));
+            mColumns.get(1).setVisibility(GONE);
         }
         
     }
@@ -224,8 +224,8 @@ public class PrintJobsColumnView extends LinearLayout {
                 if (mLoadingListenerRef != null && mLoadingListenerRef.get() != null) {
                     mLoadingListenerRef.get().hideLoading();
                 }
-                mPrintJobs.clear();
-                mPrinterIds.clear();
+                //mPrintJobs.clear();
+                //mPrinterIds.clear();
                 mReloadFlag = true;
             }
         }

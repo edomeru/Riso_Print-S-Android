@@ -24,11 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
-    public class ViewHolder {
-        ImageView addedIndicator;
-        TextView printerName;
-    }
-    
     private PrinteSearchAdapterInterface mSearchAdapterInterface = null;
     private Context mContext;
     private int layoutId;
@@ -52,21 +47,21 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             
             mHolder = new ViewHolder();
-            mHolder.printerName = (TextView) convertView.findViewById(R.id.printerText);
-            mHolder.addedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
+            mHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
+            mHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
             
-            mHolder.printerName.setText(printer.getName());
+            mHolder.mPrinterName.setText(printer.getName());
             
             if (mPrinterManager.isExists(printer)) {
-                mHolder.addedIndicator.setBackgroundResource(R.drawable.img_btn_add_printer_ok_pressed);
+                mHolder.mAddedIndicator.setBackgroundResource(R.drawable.img_btn_add_printer_ok_pressed);
             } else {
-                mHolder.addedIndicator.setBackgroundResource(R.drawable.selector_printersearch_add_printer);
+                mHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_add_printer);
             }
             
-            mHolder.addedIndicator.setTag(position);
+            mHolder.mAddedIndicator.setTag(position);
             
             // Set listener for Add Button
-            mHolder.addedIndicator.setOnClickListener(this);
+            mHolder.mAddedIndicator.setOnClickListener(this);
         } else
             mHolder = (ViewHolder) convertView.getTag();
         
@@ -89,5 +84,14 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     
     public void setSearchAdapterInterface(PrinteSearchAdapterInterface searchAdapterInterface) {
         mSearchAdapterInterface = searchAdapterInterface;
+    }
+    
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    
+    public class ViewHolder {
+        ImageView mAddedIndicator;
+        TextView mPrinterName;
     }
 }

@@ -88,7 +88,7 @@ public class SNMPManager {
             try {
                 snmpManualSearch(arg0[0]);
             } catch (Exception e) {
-                e.printStackTrace();
+                mOnPrinterAdd.onSearchEnd();
             }
             return null;
         }

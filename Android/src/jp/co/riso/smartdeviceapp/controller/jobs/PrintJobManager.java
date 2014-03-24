@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -38,7 +39,6 @@ public class PrintJobManager {
     private static final String C_WHERE_PRN_ID = C_PRN_ID + "=?";
     private static final String C_ORDERBY_DATE = C_PRN_ID + " ASC ," + C_PJB_DATE + " DESC";
     private static final String TABLE_PRINTER = "Printer";
-    private static final String C_PRN_NAME = "prn_name";
     private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
     private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
     
@@ -127,10 +127,13 @@ public class PrintJobManager {
         Cursor c = sManager.query(TABLE_PRINTER, null, C_SEL_PRN_ID, null, null, null, C_PRN_ID);
         
         while (c.moveToNext()) {
+            int prn_id = c.getInt(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_ID));
+            String prn_name = c.getString(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_NAME));
+            String prn_ip = c.getString(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_IP));
+            Printer printer = new Printer(prn_name,prn_ip,false,null);
             
-            int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
-            String prn_name = c.getString(c.getColumnIndex(C_PRN_NAME));
-            printers.add(new Printer(prn_id, prn_name));
+            printer.setId(prn_id);
+            printers.add(printer);
         }
         c.close();
         sManager.close();

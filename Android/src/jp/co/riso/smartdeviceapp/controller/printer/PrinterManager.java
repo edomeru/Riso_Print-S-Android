@@ -19,28 +19,29 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 public class PrinterManager implements OnSNMPSearch {
     private List<Printer> mPrinterList;
     private Context mContext;
     private boolean mDefaultExists = false;
     private boolean mIsSearching = false;
-    private static SNMPManager mSNMPManager = null;
-    private static PrinterManager mSharedMngr = null;
+    private static SNMPManager sSNMPManager = null;
+    private DatabaseManager mDbManager = null;
+    private static PrinterManager sSharedMngr = null;
     
     private PrinterManager(Context context) {
         mContext = context;
         mPrinterList = new ArrayList<Printer>();
-        mSNMPManager = new SNMPManager();
-        mSNMPManager.setOnPrinterSearchListener(this);
+        sSNMPManager = new SNMPManager();
+        sSNMPManager.setOnPrinterSearchListener(this);
+        mDbManager = new DatabaseManager(mContext);
     }
     
     public static PrinterManager sharedManager(Context context) {
-        if (mSharedMngr == null) {
-            mSharedMngr = new PrinterManager(context);
+        if (sSharedMngr == null) {
+            sSharedMngr = new PrinterManager(context);
         }
-        return mSharedMngr;
+        return sSharedMngr;
     }
     
     // ================================================================================
@@ -66,14 +67,8 @@ public class PrinterManager implements OnSNMPSearch {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
         
-        // Save Printer Information to Database
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        if (db == null) {
-            return -1;
-        }
-        if (db.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter) == -1) {
-            manager.close();
+        if (!mDbManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
+            mDbManager.close();
             return -1;
         }
         
@@ -81,8 +76,11 @@ public class PrinterManager implements OnSNMPSearch {
             setDefaultPrinter(printer);
             mDefaultExists = true;
         }
-        manager.close();
+        mDbManager.close();
         
+        if (mOnPrintersListRefresh != null) {
+            mOnPrintersListRefresh.onAddedNewPrinter(printer);
+        }
         return 0;
     }
     
@@ -91,16 +89,11 @@ public class PrinterManager implements OnSNMPSearch {
             return false;
         }
         
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        if (db == null) {
-            return false;
-        }
+        Cursor cursor = mDbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
+                + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
         
-        Cursor cursor = db.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and " + KeyConstants.KEY_SQL_PRINTER_IP
-                + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
         if (cursor.getCount() > 0) {
-            manager.close();
+            mDbManager.close();
             cursor.close();
             return true;
         }
@@ -109,19 +102,12 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     public List<Printer> getSavedPrintersList() {
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        
-        if (db == null) {
-            return null;
-        }
-        
-        Cursor cursor = db.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] { KeyConstants.KEY_SQL_PRINTER_ID, KeyConstants.KEY_SQL_PRINTER_NAME,
+        Cursor cursor = mDbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] { KeyConstants.KEY_SQL_PRINTER_ID, KeyConstants.KEY_SQL_PRINTER_NAME,
                 KeyConstants.KEY_SQL_PRINTER_IP }, null, null, null, null, null);
         
         mPrinterList.clear();
         if (cursor.getCount() < 1) {
-            manager.close();
+            mDbManager.close();
             cursor.close();
             mDefaultExists = false;
             return mPrinterList;
@@ -136,7 +122,7 @@ public class PrinterManager implements OnSNMPSearch {
             
         }
         mDefaultExists = true;
-        manager.close();
+        mDbManager.close();
         cursor.close();
         return mPrinterList;
     }
@@ -147,17 +133,11 @@ public class PrinterManager implements OnSNMPSearch {
             return -1;
         }
         
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        if (db == null) {
-            return -1;
-        }
-        
-        Cursor cursor = db.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and " + KeyConstants.KEY_SQL_PRINTER_IP
-                + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
+        Cursor cursor = mDbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
+                + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
         
         if (cursor.getCount() != 1) {
-            manager.close();
+            mDbManager.close();
             cursor.close();
             return -1;
         }
@@ -168,61 +148,50 @@ public class PrinterManager implements OnSNMPSearch {
             newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
             cursor.close();
         } else {
-            manager.close();
+            mDbManager.close();
             return -1;
         }
         
-        if (db.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null) == -1) {
-            manager.close();
+        if (!mDbManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null)) {
+            mDbManager.close();
             return -1;
         }
-        if (db.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter) == -1) {
-            manager.close();
+        if (!mDbManager.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter)) {
+            mDbManager.close();
             return -1;
         }
-        manager.close();
+        mDbManager.close();
         return 0;
     }
     
     public int clearDefaultPrinter() {
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        if (db == null) {
+        
+        if (!mDbManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null)) {
+            mDbManager.close();
             return -1;
         }
         
-        if (db.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null) == -1) {
-            manager.close();
-            return -1;
-        }
-        
-        manager.close();
+        mDbManager.close();
         return 0;
     }
     
     public boolean removePrinter(Printer printer) {
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        if (db == null) {
+        
+        if (printer == null) {
             return false;
         }
-        db.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] { "" + printer.getId() });
-        manager.close();
+        
+        mDbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
+        mDbManager.close();
         return true;
     }
     
     public int getDefaultPrinter() {
         int printer = -1;
-        DatabaseManager manager = new DatabaseManager(mContext);
-        SQLiteDatabase db = manager.getWritableDatabase();
-        if (db == null) {
-            return -1;
-        }
-        
-        Cursor cursor = db.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
+        Cursor cursor = mDbManager.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
         
         if (cursor.getCount() != 1) {
-            manager.close();
+            mDbManager.close();
             cursor.close();
             return -1;
         }
@@ -232,18 +201,28 @@ public class PrinterManager implements OnSNMPSearch {
         }
         
         cursor.close();
-        manager.close();
+        mDbManager.close();
         return printer;
     }
     
     public void startPrinterSearch() {
         mIsSearching = true;
-        mSNMPManager.startSNMP();
+        sSNMPManager.startSNMP();
     }
     
     public void searchPrinter(String ipAddress) {
+        
+        if (ipAddress == null) {
+            return;
+        }
+        
         mIsSearching = true;
-        mSNMPManager.searchPrinter(ipAddress);
+        sSNMPManager.searchPrinter(ipAddress);
+    }
+    
+    public void cancelPrinterSearch() {
+        mIsSearching = false;
+        // TODO: Call SNMP cancel - sSNMPManager.stopSNMP();
     }
     
     public boolean isSearching() {
@@ -256,9 +235,9 @@ public class PrinterManager implements OnSNMPSearch {
     
     @Override
     public void onSearchedPrinterAdd(String printerName, String ipAddress) {
-        mOnPrinterAdd.onPrinterAdd(new Printer(printerName, ipAddress, false, null));
-        if (mOnPrintersListRefresh != null) {
-            mOnPrintersListRefresh.onPrintersListRefresh();
+        Printer printer = new Printer(printerName, ipAddress, false, null);
+        if (isSearching()) {
+            mOnPrinterAdd.onPrinterAdd(printer);
         }
     }
     
@@ -285,16 +264,16 @@ public class PrinterManager implements OnSNMPSearch {
     }
     
     // ================================================================================
-    // Interface - OnPrintersListRefresh (Tablet View)
+    // Interface - OnPrintersListChange (Tablet View)
     // ================================================================================
     
-    private OnPrintersListRefresh mOnPrintersListRefresh = null;
+    private OnPrintersListChange mOnPrintersListRefresh = null;
     
-    public interface OnPrintersListRefresh {
-        public void onPrintersListRefresh();
+    public interface OnPrintersListChange {
+        public void onAddedNewPrinter(Printer printer);
     }
     
-    public void setOnPrintersListRefresh(OnPrintersListRefresh onPrintersListRefresh) {
+    public void setOnPrintersListRefresh(OnPrintersListChange onPrintersListRefresh) {
         mOnPrintersListRefresh = onPrintersListRefresh;
     }
 }

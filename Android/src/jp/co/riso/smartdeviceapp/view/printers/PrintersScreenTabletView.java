@@ -14,7 +14,7 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrintersListRefresh;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrintersListChange;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.Activity;
@@ -37,15 +37,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrintersScreenTabletView extends LinearLayout implements OnLongClickListener, View.OnClickListener, OnTouchListener, PrinteSearchTabletInterface,
-        OnCheckedChangeListener, OnPrintersListRefresh {
-    public class ViewHolder {
-        ImageView onlineIndcator;
-        TextView printerName;
-        ImageView deleteButton;
-        TextView ipAddress;
-        Switch defaultPrinter;
-    }
-    
+        OnCheckedChangeListener, OnPrintersListChange {
     private PrinterManager mPrinterManager = null;
     private ArrayList<ViewGroup> mPrinterViewArray = null;
     private Context mContext = null;
@@ -93,40 +85,40 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     }
     
     private void setPrinterViewToNormal(ViewHolder viewHolder) {
-        viewHolder.deleteButton.setVisibility(View.GONE);
-        ((View) viewHolder.printerName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
-        viewHolder.onlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
-        viewHolder.printerName.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
-        viewHolder.printerName.setTextColor(getResources().getColor(R.color.theme_dark_1));
-        viewHolder.deleteButton.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
-        viewHolder.defaultPrinter.setChecked(false);
+        viewHolder.mDeleteButton.setVisibility(View.GONE);
+        ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mOnlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mPrinterName.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mPrinterName.setTextColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mDeleteButton.setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mDefaultPrinter.setChecked(false);
     }
     
     private void setPrinterViewToDefault(ViewHolder viewHolder) {
         if (mDefaultViewHolder != null) {
             setPrinterViewToNormal(mDefaultViewHolder);
         }
-        viewHolder.deleteButton.setVisibility(View.GONE);
-        ((View) viewHolder.printerName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
-        viewHolder.onlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
-        viewHolder.printerName.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
-        viewHolder.printerName.setTextColor(getResources().getColor(R.color.theme_light_1));
-        viewHolder.deleteButton.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
-        viewHolder.defaultPrinter.setChecked(true);
+        viewHolder.mDeleteButton.setVisibility(View.GONE);
+        ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mOnlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mPrinterName.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mPrinterName.setTextColor(getResources().getColor(R.color.theme_light_1));
+        viewHolder.mDeleteButton.setBackgroundColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mDefaultPrinter.setChecked(true);
         mDefaultViewHolder = viewHolder;
     }
     
     private void setPrinterViewToDelete(ViewHolder viewHolder) {
-        viewHolder.deleteButton.setVisibility(View.VISIBLE);
-        ((View) viewHolder.printerName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_color_2));
-        viewHolder.onlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
-        viewHolder.printerName.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
-        viewHolder.printerName.setTextColor(getResources().getColor(R.color.theme_light_1));
-        viewHolder.deleteButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        viewHolder.mDeleteButton.setVisibility(View.VISIBLE);
+        ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        viewHolder.mOnlineIndcator.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        viewHolder.mPrinterName.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
+        viewHolder.mPrinterName.setTextColor(getResources().getColor(R.color.theme_light_1));
+        viewHolder.mDeleteButton.setBackgroundColor(getResources().getColor(R.color.theme_color_2));
     }
     
     private void setPrinterView(ViewHolder viewHolder) {
-        Printer printer = (Printer) viewHolder.deleteButton.getTag();
+        Printer printer = (Printer) viewHolder.mDeleteButton.getTag();
         
         if (mPrinterManager.getDefaultPrinter() == printer.getId()) {
             setPrinterViewToDefault(viewHolder);
@@ -206,22 +198,22 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         parentView.addView(pView, width, height);
         
         ViewHolder viewHolder = new ViewHolder();
-        viewHolder.printerName = (TextView) pView.findViewById(R.id.txt_printerName);
-        viewHolder.deleteButton = (ImageView) pView.findViewById(R.id.btn_delete);
-        viewHolder.onlineIndcator = (ImageView) pView.findViewById(R.id.img_tablet_onOff);
-        viewHolder.ipAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
-        viewHolder.defaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
+        viewHolder.mPrinterName = (TextView) pView.findViewById(R.id.txt_printerName);
+        viewHolder.mDeleteButton = (ImageView) pView.findViewById(R.id.btn_delete);
+        viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_tablet_onOff);
+        viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
+        viewHolder.mDefaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
         
-        viewHolder.printerName.setText(printer.getName());
-        viewHolder.ipAddress.setText(printer.getIpAddress());
+        viewHolder.mPrinterName.setText(printer.getName());
+        viewHolder.mIpAddress.setText(printer.getIpAddress());
         
-        viewHolder.printerName.setOnLongClickListener(this);
-        viewHolder.deleteButton.setOnClickListener(this);
-        viewHolder.defaultPrinter.setOnCheckedChangeListener(this);
+        viewHolder.mPrinterName.setOnLongClickListener(this);
+        viewHolder.mDeleteButton.setOnClickListener(this);
+        viewHolder.mDefaultPrinter.setOnCheckedChangeListener(this);
         
-        viewHolder.printerName.setTag(viewHolder);
-        viewHolder.defaultPrinter.setTag(viewHolder);
-        viewHolder.deleteButton.setTag(printer);
+        viewHolder.mPrinterName.setTag(viewHolder);
+        viewHolder.mDefaultPrinter.setTag(viewHolder);
+        viewHolder.mDeleteButton.setTag(printer);
         
         setPrinterView(viewHolder);
         
@@ -282,7 +274,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
-        Printer printer = (Printer) viewHolder.deleteButton.getTag();
+        Printer printer = (Printer) viewHolder.mDeleteButton.getTag();
         if (isChecked) {
             setPrinterViewToDefault(viewHolder);
             mPrinterManager.setDefaultPrinter(printer);
@@ -305,8 +297,34 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         }
     }
     
+    // ================================================================================
+    // INTERFACE - OnPrintersListChange
+    // ================================================================================
+    
     @Override
-    public void onPrintersListRefresh() {
-        // TODO: Implementation
+    public void onAddedNewPrinter(final Printer printer) {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    addToTabletPrinterScreen(printer);
+                } catch (Exception e) {
+                    // Do nothing
+                }
+            }
+        });
     }
+    
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    
+    public class ViewHolder {
+        ImageView mOnlineIndcator;
+        TextView mPrinterName;
+        ImageView mDeleteButton;
+        TextView mIpAddress;
+        Switch mDefaultPrinter;
+    }
+    
 }
