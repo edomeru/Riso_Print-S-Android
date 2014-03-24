@@ -71,7 +71,9 @@ namespace SmartDeviceApp.Controllers
                     {
                         try
                         {
-                            db.Execute(command.Trim());
+                            // Since each parameter in the script is in each line,
+                            // convert them into a single line statement
+                            db.Execute(command.Replace("\r\n", " ").Trim());
                         }
                         catch (SQLiteException)
                         {
