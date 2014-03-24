@@ -29,7 +29,7 @@ PDFViewer SDK v2.9.7 (2014-02-08)
 		/src/com/radaee/pdf/Page.java
 		/src/com/radaee/pdf/PageContent.java
 		/src/com/radaee/pdf/Path.java
-		/libs/com.radaee.pdfex_view.jar
+		/jni/libs/com.radaee.pdfex_view.jar
 		/jni/libs/armeabi/librdpdf.so
 		/jni/libs/armeabi-v7a/librdpdf.so
 		/jni/libs/mips/librdpdf.so
