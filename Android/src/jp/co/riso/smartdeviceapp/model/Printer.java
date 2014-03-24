@@ -35,7 +35,6 @@ public class Printer implements Parcelable {
     public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
         mName = name;
         mIpAddress = ipAddress;
-        
         mPortSetting = 0;
         mLpr = true;
         mRaw = true;

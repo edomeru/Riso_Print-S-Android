@@ -25,23 +25,23 @@ public class PrinterManager implements OnSNMPSearch {
     private Context mContext;
     private boolean mDefaultExists = false;
     private boolean mIsSearching = false;
-    private static SNMPManager mSNMPManager = null;
+    private static SNMPManager sSNMPManager = null;
     private DatabaseManager mDbManager = null;
-    private static PrinterManager mSharedMngr = null;
+    private static PrinterManager sSharedMngr = null;
     
     private PrinterManager(Context context) {
         mContext = context;
         mPrinterList = new ArrayList<Printer>();
-        mSNMPManager = new SNMPManager();
-        mSNMPManager.setOnPrinterSearchListener(this);
+        sSNMPManager = new SNMPManager();
+        sSNMPManager.setOnPrinterSearchListener(this);
         mDbManager = new DatabaseManager(mContext);
     }
     
     public static PrinterManager sharedManager(Context context) {
-        if (mSharedMngr == null) {
-            mSharedMngr = new PrinterManager(context);
+        if (sSharedMngr == null) {
+            sSharedMngr = new PrinterManager(context);
         }
-        return mSharedMngr;
+        return sSharedMngr;
     }
     
     // ================================================================================
@@ -207,7 +207,7 @@ public class PrinterManager implements OnSNMPSearch {
     
     public void startPrinterSearch() {
         mIsSearching = true;
-        mSNMPManager.startSNMP();
+        sSNMPManager.startSNMP();
     }
     
     public void searchPrinter(String ipAddress) {
@@ -217,12 +217,12 @@ public class PrinterManager implements OnSNMPSearch {
         }
         
         mIsSearching = true;
-        mSNMPManager.searchPrinter(ipAddress);
+        sSNMPManager.searchPrinter(ipAddress);
     }
     
     public void cancelPrinterSearch() {
         mIsSearching = false;
-        // TODO: Call SNMP cancel - mSNMPManager.stopSNMP();
+        // TODO: Call SNMP cancel - sSNMPManager.stopSNMP();
     }
     
     public boolean isSearching() {
