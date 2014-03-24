@@ -1,10 +1,10 @@
-INSERT INTO Printer (prn_id, prn_name) VALUES (1,"myprintername"); 
-INSERT INTO Printer (prn_id, prn_name) VALUES (2,"riso");
-INSERT INTO Printer (prn_id, prn_name) VALUES (3,"long printer nameeeee"); 
-INSERT INTO Printer (prn_id, prn_name) VALUES (4,"printer4"); 
-INSERT INTO Printer (prn_id, prn_name) VALUES (5,"5th printer"); 
-INSERT INTO Printer (prn_id, prn_name) VALUES (6,"6th printer"); 
-INSERT INTO Printer (prn_id, prn_name) VALUES (7,"new printer"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (1,"myprintername", "192.168.0.1"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (2,"riso", "192.168.0.1");
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (3,"long printer nameeeee", "192.168.0.3"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (4,"printer4", "192.168.0.4"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (5,"5th printer", "192.168.0.5"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (6,"6th printer", "192.168.0.6"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (7,"new printer","192.168.0.7"); 
 
 INSERT INTO PrintJob (pjb_id, prn_id, pjb_name, pjb_date, pjb_result) VALUES (1,1,"myfile1.pdf","2014-03-19 16:55:38",0);
 INSERT INTO PrintJob (pjb_id, prn_id, pjb_name, pjb_date, pjb_result) VALUES (2,1,"file1.pdf","2014-03-19 16:55:38",0);

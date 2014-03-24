@@ -21,7 +21,7 @@ public class ConfirmDialogFragment  extends DialogFragment {
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
     
-    private static OnClickListener sListener;
+    private OnClickListener mListener;
     
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
         return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
@@ -65,7 +65,7 @@ public class ConfirmDialogFragment  extends DialogFragment {
         }
         
         if (buttonPosTitle != null) {
-            builder.setPositiveButton(buttonPosTitle, sListener);
+            builder.setPositiveButton(buttonPosTitle, mListener);
         }
         
         if (buttonNegTitle != null) {
@@ -79,8 +79,7 @@ public class ConfirmDialogFragment  extends DialogFragment {
     }
     
     public void setListener(OnClickListener dialogListener){
-        sListener = dialogListener;
-        
+        mListener = dialogListener;
     }
     
 }

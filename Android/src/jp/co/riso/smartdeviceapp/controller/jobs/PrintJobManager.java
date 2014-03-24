@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -20,7 +21,6 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -100,16 +100,14 @@ public class PrintJobManager {
         
     }
     
-    @SuppressLint("SimpleDateFormat")
     private static String formatSQLDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(date);
     }
     
-    @SuppressLint("SimpleDateFormat")
     private static Date convertSQLToDate(String strDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date date = null;
         
@@ -130,7 +128,7 @@ public class PrintJobManager {
             int prn_id = c.getInt(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_ID));
             String prn_name = c.getString(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_NAME));
             String prn_ip = c.getString(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_IP));
-            Printer printer = new Printer(prn_name,prn_ip,false,null);
+            Printer printer = new Printer(prn_name, prn_ip, false, null);
             
             printer.setId(prn_id);
             printers.add(printer);
