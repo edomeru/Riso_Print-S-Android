@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:padding="10dp"
+                android:padding="@dimen/printers_left_editbox_padding"
                 android:textColor="@color/theme_light_1" />
         </RelativeLayout>
 
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:padding="10dp"
+                android:padding="@dimen/printers_row_left_padding"
                 android:textColor="@color/theme_light_1" />
         </RelativeLayout>
 
@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:padding="10dp"
+                android:padding="@dimen/printers_row_left_padding"
                 android:textColor="@color/theme_light_1" />
         </RelativeLayout>
 

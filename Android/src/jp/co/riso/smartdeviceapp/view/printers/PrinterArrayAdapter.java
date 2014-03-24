@@ -30,8 +30,8 @@ import android.widget.TextView;
 
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, View.OnTouchListener {
     public final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
-    
     private final Context mContext;
+    
     private int mLayoutId = 0;
     private ViewHolder mHolder = null;
     private PrinterManager mPrinterManager = null;
