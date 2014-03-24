@@ -58,7 +58,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener {
-    private static final String TAG = "PrintSettingsView";
+    public static final String TAG = "PrintSettingsView";
     
     private static final String PRINT_SETTINGS_CONTENT = "printsettings.xml";
     
@@ -72,26 +72,26 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final String KEY_SUBVIEW_DISPLAYED = "key_subview_displayed";
     private static final String KEY_SUB_SCROLL_POSITION = "key_sub_scroll_position";
     
-    public static final int MSG_COLLAPSE = 0;
-    public static final int MSG_EXPAND = 1;
-    public static final int MSG_SET_SCROLL = 2;
-    public static final int MSG_SLIDE_IN = 3;
-    public static final int MSG_SLIDE_OUT = 4;
-    public static final int MSG_SET_SUB_SCROLL = 5;
-    public static final int MSG_SHOW_SUBVIEW = 6;
+    private static final int MSG_COLLAPSE = 0;
+    private static final int MSG_EXPAND = 1;
+    private static final int MSG_SET_SCROLL = 2;
+    private static final int MSG_SLIDE_IN = 3;
+    private static final int MSG_SLIDE_OUT = 4;
+    private static final int MSG_SET_SUB_SCROLL = 5;
+    private static final int MSG_SHOW_SUBVIEW = 6;
     
-    public static final int ID_COLLAPSE_CONTAINER = 0x11000001;
-    public static final int ID_COLLAPSE_TARGET_GROUP = 0x11000002;
+    private static final int ID_COLLAPSE_CONTAINER = 0x11000001;
+    private static final int ID_COLLAPSE_TARGET_GROUP = 0x11000002;
     
-    public static final int ID_SHOW_SUBVIEW_CONTAINER = 0x11000003;
-    public static final int ID_HIDE_SUBVIEW_CONTAINER = 0x11000004;
+    private static final int ID_SHOW_SUBVIEW_CONTAINER = 0x11000003;
+    private static final int ID_HIDE_SUBVIEW_CONTAINER = 0x11000004;
     
-    public static final int ID_SUBVIEW_OPTION_ITEM = 0x11000005;
-    public static final int ID_SUBVIEW_STATUS = 0x11000006;
+    private static final int ID_SUBVIEW_OPTION_ITEM = 0x11000005;
+    private static final int ID_SUBVIEW_STATUS = 0x11000006;
     
-    public static final int ID_TAG_TEXT = 0x11000007;
-    public static final int ID_TAG_ICON = 0x11000008;
-    public static final int ID_TAG_OPTIONS = 0x11000009;
+    private static final int ID_TAG_TEXT = 0x11000007;
+    private static final int ID_TAG_ICON = 0x11000008;
+    private static final int ID_TAG_OPTIONS = 0x11000009;
     
     private Document mPrintSettingsContent;
     private PrintSettings mPrintSettings;
