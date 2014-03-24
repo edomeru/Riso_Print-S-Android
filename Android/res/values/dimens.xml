@@ -33,6 +33,7 @@
     <item name="drawer_width_percentage" type="dimen">85%</item>
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>
+    <dimen name="drawer_margin">1dp</dimen>
     
     <item name="preview_view_drop_shadow_percentage" type="dimen">2%</item>
     <dimen name="preview_view_margin">4dp</dimen>

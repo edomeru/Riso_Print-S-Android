@@ -27,23 +27,7 @@ import com.radaee.pdf.Page;
 public class PDFFileManager {
     public static final String TAG = "PDFFileManager";
     
-    // For design
-    private static boolean CONST_KEEP_DOCUMENT_CLOSED = true;
-    
-    public static String KEY_NEW_PDF_DATA = "new_pdf_data";
-    
-    private Document mDocument;
-    private String mPath;
-    private String mFileName;
-    private String mSandboxPath;
-    private WeakReference<PDFFileManagerInterface> mInterfaceRef;
-    
-    PDFInitTask mInitTask = null;
-    
-    private volatile boolean mIsInitialized;
-    private volatile int mPageCount;
-    private volatile float mPageWidth;
-    private volatile float mPageHeight;
+    public static final String KEY_NEW_PDF_DATA = "new_pdf_data";
     
     public static final int PDF_OK = 0;
     public static final int PDF_ENCRYPTED = -1;
@@ -51,6 +35,22 @@ public class PDFFileManager {
     public static final int PDF_DAMAGED = -3;
     public static final int PDF_INVALID_PATH = -10;
     public static final int UNKNOWN_ERROR = -100;
+    
+    // For design consideration
+    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = true;
+    
+    private Document mDocument;
+    private String mPath;
+    private String mFileName;
+    private String mSandboxPath;
+    private WeakReference<PDFFileManagerInterface> mInterfaceRef;
+    
+    private PDFInitTask mInitTask = null;
+    
+    private volatile boolean mIsInitialized;
+    private volatile int mPageCount;
+    private volatile float mPageWidth;
+    private volatile float mPageHeight;
     
     /**
      * Constructor
@@ -214,7 +214,7 @@ public class PDFFileManager {
         if (CONST_KEEP_DOCUMENT_CLOSED) {
             mDocument.Open(mSandboxPath, null);
         } else {
-            // For temporary fix of bug
+            // TODO: re-check: For temporary fix of bug
             // mDocument.Close(); // This will clear the buffer
             // mDocument.Open(mSandboxPath, null);
         }
@@ -283,7 +283,7 @@ public class PDFFileManager {
             closeDocument();
         }
         
-        if (mPath == null || mPath == "") {
+        if (mPath == null || mPath.length() == 0) {
             return PDF_INVALID_PATH;
         }
         
