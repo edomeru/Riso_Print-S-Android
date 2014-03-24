@@ -218,7 +218,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     // display delete print jobs dialog when clicked
     private void deleteJobGroup(View v) {
-        ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(mTitle, mMessage, mConfirmMsg, mCancelMsg, this);
+        ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(mTitle, mMessage, mConfirmMsg, mCancelMsg);
+        dialog.setListener(this);
         DialogUtils.displayDialog((Activity) getContext(), TAG, dialog);
     }
     

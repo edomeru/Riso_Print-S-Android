@@ -14,22 +14,21 @@ import android.app.DialogFragment;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 
-public class ConfirmDialogFragment extends DialogFragment {
+public class ConfirmDialogFragment  extends DialogFragment {
     
     private static final String KEY_TITLE = "title";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
     
-    private static OnClickListener sListener;
+    private OnClickListener mListener;
     
-    public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle, OnClickListener listener) {
-        return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle, listener);
+    public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
+        return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
     }
     
-    public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle, OnClickListener listener) {
+    public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {
         ConfirmDialogFragment dialog = new ConfirmDialogFragment();
-        sListener = listener;
         
         // Supply num input as an argument.
         Bundle args = new Bundle();
@@ -37,6 +36,7 @@ public class ConfirmDialogFragment extends DialogFragment {
         args.putString(KEY_MESSAGE, message);
         args.putString(KEY_POS_BUTTON, buttonPosTitle);
         args.putString(KEY_NEG_BUTTON, buttonNegTitle);
+        
         dialog.setArguments(args);
         
         return dialog;
@@ -65,7 +65,7 @@ public class ConfirmDialogFragment extends DialogFragment {
         }
         
         if (buttonPosTitle != null) {
-            builder.setPositiveButton(buttonPosTitle, sListener);
+            builder.setPositiveButton(buttonPosTitle, mListener);
         }
         
         if (buttonNegTitle != null) {
@@ -76,6 +76,10 @@ public class ConfirmDialogFragment extends DialogFragment {
         dialog = builder.create();
         
         return dialog;
+    }
+    
+    public void setListener(OnClickListener dialogListener){
+        mListener = dialogListener;
     }
     
 }
