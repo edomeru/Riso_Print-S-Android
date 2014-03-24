@@ -6,7 +6,7 @@
     android:orientation="horizontal" >
 
     <LinearLayout
-        android:id="@+id/column1"
+        android:id="@+id/printJobsColumn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -14,7 +14,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/column2"
+        android:id="@+id/printJobsColumn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -22,7 +22,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/column3"
+        android:id="@+id/printJobsColumn3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
