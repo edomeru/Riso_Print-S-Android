@@ -19,9 +19,10 @@ import android.util.Log;
 
 public class DatabaseManager extends SQLiteOpenHelper {
     public static final String TAG = "DatabaseManager";
+    public static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
-    public static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
+    private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
     
     private static final int DATABASE_VERSION = 1;
     private Context mContext;
@@ -41,6 +42,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
         for (int i = 0; i < separated.length; i++) {
             db.execSQL(separated[i]);
         }
+        
+        /* for testing only */
+        sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
+        separated = sqlString.split(";");
+        
+        for (int i = 0; i < separated.length; i++) {
+            db.execSQL(separated[i]);
+        }
+        /* end of for testing only */
         
         Log.d(TAG, "onCreate - End");
     }
@@ -63,10 +73,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         
         db.close();
-        if (rowId > -1)
-            return true;
-        else
-            return false;
+        
+        return (rowId > -1);
     }
     
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
@@ -75,15 +83,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return cur;
     }
     
-    public boolean delete(String table, String whereClause, String[] whereArgs) {
+    public boolean deleteMultiple(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         rowsNum = db.delete(table, whereClause, whereArgs);
         db.close();
-        if (rowsNum > 0)
-            return true;
-        else
-            return false;
         
+        return (rowsNum > 0);
+        
+    }
+    
+    public boolean delete(String table, String whereClause, String whereArg) {
+        String[] whereArgs = (whereArg == null || whereArg.isEmpty()) ? null : new String[] { whereArg };
+        return deleteMultiple(table, whereClause, whereArgs);
     }
 }

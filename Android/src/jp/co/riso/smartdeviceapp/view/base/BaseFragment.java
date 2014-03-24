@@ -25,7 +25,7 @@ import android.widget.ImageView;
 
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
     
-    public final int ID_MENU_ACTION_BUTTON = 0x11000001;
+    public static final int ID_MENU_ACTION_BUTTON = 0x11000001;
     
     /** {@inheritDoc} */
     @Override

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2013 alink-group. All rights reserved.
+ * Copyright (c) 2014 All rights reserved.
  *
  * Printer.java
- * SmartDevice
+ * SmartDeviceApp
  * Created by: a-LINK Group
  */
 
@@ -25,7 +25,7 @@ public class Printer implements Parcelable {
     private boolean mBookletBinding;
     private boolean mStaple;
     private boolean mBind;
-
+    
     public Printer(int id, String name) {
         super();
         mId = id;
@@ -53,13 +53,13 @@ public class Printer implements Parcelable {
             mIpAddress = source.readString();
         }
     }
-
+    
     public static final Parcelable.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
         @Override
         public Printer createFromParcel(Parcel source) {
             return new Printer(source);
         }
-
+        
         @Override
         public Printer[] newArray(int size) {
             return new Printer[size];
@@ -137,6 +137,7 @@ public class Printer implements Parcelable {
     public void setBookletBinding(boolean bookletBinding) {
         this.mBookletBinding = bookletBinding;
     }
+    
     public boolean getStaple() {
         return mStaple;
     }
@@ -144,6 +145,7 @@ public class Printer implements Parcelable {
     public void setStaple(boolean staple) {
         this.mStaple = staple;
     }
+    
     public boolean getBind() {
         return mBind;
     }
@@ -151,15 +153,15 @@ public class Printer implements Parcelable {
     public void setBind(boolean bind) {
         this.mBind = bind;
     }
-
+    
     @Override
     public int describeContents() {
         return 0;
     }
-
+    
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         return;
     }
-
+    
 }

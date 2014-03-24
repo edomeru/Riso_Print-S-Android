@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * SNMPManager.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.controller.snmp;
 
 import android.os.AsyncTask;
@@ -7,10 +15,12 @@ public class SNMPManager {
     // ================================================================================
     // Interface
     // ================================================================================
+    
     private OnSNMPSearch mOnPrinterAdd;
     
     public interface OnSNMPSearch {
         public void onSearchedPrinterAdd(String printerName, String ipAddress);
+        
         public void onSearchEnd();
     }
     
@@ -21,10 +31,11 @@ public class SNMPManager {
     // ================================================================================
     // Public Methods
     // ================================================================================
+    
     public void startSNMP() {
         new SNMPTask().execute();
     }
-
+    
     public void searchPrinter(String ipAddress) {
         new manualSearchTask().execute(ipAddress);
     }
@@ -32,17 +43,20 @@ public class SNMPManager {
     // ================================================================================
     // SNMP NDK
     // ================================================================================
+    
     private native void startSNMPDeviceDiscovery();
+    
     private native void snmpManualSearch(String ipAddress);
     
     static {
         System.loadLibrary("snmp");
         System.loadLibrary("snmpAPI");
     }
-
+    
     // ================================================================================
     // SNMP NDK Callback
     // ================================================================================
+    
     private void printerAdded(String printerName, String ipAddress) {
         mOnPrinterAdd.onSearchedPrinterAdd(printerName, ipAddress);
     }
@@ -53,19 +67,19 @@ public class SNMPManager {
     
     // ================================================================================
     // AsyncTask
-    // ================================================================================  
+    // ================================================================================
+    
     class SNMPTask extends AsyncTask<Void, Void, Void> {
         
         @Override
         protected Void doInBackground(Void... arg0) {
             try {
                 startSNMPDeviceDiscovery();
-            }
-            catch(Exception e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                mOnPrinterAdd.onSearchEnd();
             }
             return null;
-        }      
+        }
     }
     
     class manualSearchTask extends AsyncTask<String, Void, Void> {
@@ -73,12 +87,11 @@ public class SNMPManager {
         protected Void doInBackground(String... arg0) {
             try {
                 snmpManualSearch(arg0[0]);
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
-        }      
+        }
     }
-
+    
 }
