@@ -143,7 +143,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     public void onPrinterAdd(Printer printer) {
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(printer);
-        } else if (mPrinterManager.savePrinterToDB(printer) != -1) {
+        } else if (!mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
             dialogCb(printer);
             closeScreen();
