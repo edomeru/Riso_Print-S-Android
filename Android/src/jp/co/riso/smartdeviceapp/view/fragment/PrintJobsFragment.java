@@ -27,14 +27,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements JobDeleteListener, OnClickListener, LoadingViewListener, ReloadViewListener {
     
     private PrintJobsColumnView mPrintJobColumnView;
     private PrintJobsGroupView mPrintGroupToDelete;
-    private ProgressBar mPrintJobsLoadIndicator;
+    // TODO: use of loading indicator
+    // private ProgressBar mPrintJobsLoadIndicator;
     private LinearLayout mPrintJobContainer;
     private LoadPrintJobsTask mLoadPrintJobsTask;
     private List<PrintJob> mPrintJobs;
@@ -56,7 +56,8 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         setRetainInstance(true);
-        mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
+        
+        // mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
         
         view.setOnClickListener(this);
@@ -76,7 +77,7 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
     public void onResume() {
         super.onResume();
         
-        mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
+        //        mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
         mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
         mLoadPrintJobsTask.execute();
     }
@@ -135,7 +136,7 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
         
         mPrintJobColumnView.setVisibility(View.VISIBLE);
         
-        mPrintJobsLoadIndicator.setVisibility(View.GONE);
+        //        mPrintJobsLoadIndicator.setVisibility(View.GONE);
         
     }
     
@@ -185,19 +186,18 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             
-            if (mPrintJobsList.isEmpty() || isCancelled()) {
-                mPrintJobsLoadIndicator.setVisibility(View.GONE);
-            } else {
-                mPrintJobs = mPrintJobsList;
-                mPrinters = mPrintersList;
-                if (mContextRef != null && mContextRef.get() != null) {
-                    mPrintJobColumnView.setData(mPrintJobsList, mPrintersList, isTablet() ? isTabletLand() ? 3 : 2 : 1, PrintJobsFragment.this,
-                            PrintJobsFragment.this, PrintJobsFragment.this);
-                }
-                mPrintJobColumnView.setVisibility(View.INVISIBLE);
-                
-                // mPrintJobContainer.addView(mPrintJobColumnView, 0);
+            //            if (mPrintJobsList.isEmpty() || isCancelled()) {
+            //                mPrintJobsLoadIndicator.setVisibility(View.GONE);
+            //            } else {
+            mPrintJobs = mPrintJobsList;
+            mPrinters = mPrintersList;
+            if (mContextRef != null && mContextRef.get() != null) {
+                mPrintJobColumnView.setData(mPrintJobsList, mPrintersList, isTablet() ? isTabletLand() ? 3 : 2 : 1, PrintJobsFragment.this,
+                        PrintJobsFragment.this, PrintJobsFragment.this);
             }
+            //mPrintJobColumnView.setVisibility(View.INVISIBLE);
+            
+            //            }
             
         }
         
