@@ -24,3 +24,7 @@ proguard/
 
 # NDK
 obj/
+
+# Eclipse project settings
+.cproject
+.project
