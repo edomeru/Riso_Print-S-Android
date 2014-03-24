@@ -19,7 +19,7 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
-import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinteSearchAdapterInterface;
+import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -28,7 +28,7 @@ import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, PrinteSearchAdapterInterface {
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, PrinterSearchAdapterInterface {
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
