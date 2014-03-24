@@ -48,8 +48,8 @@
 {
     if(self == [super init])
     {
-        _pdfDocument = nil;
-        _pdfFileAvailable = NO;
+        self.pdfDocument = nil;
+        self.pdfFileAvailable = NO;
         [self initPreviewURL];
     }
     return self;
@@ -62,7 +62,7 @@
     CGPDFDocumentRelease(pdfDocument);
     if(statusCode == PDF_ERROR_NONE)
     {
-        _pdfURL = fileURL; //keep original url
+        self.pdfURL = fileURL; //keep original url
         /*rename the file - 
          handling for when the same file is opened in the next open-in while in background,
          The previously opened file is still in sandbox when the same file is copied automatically,
@@ -72,17 +72,17 @@
         {
             return PDF_ERROR_PROCESSING_FAILED;
         }
-        _pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)_previewURL);
+        self.pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.previewURL);
         
-        if(_pdfDocument == nil)
+        if(self.pdfDocument == nil)
         {
             return PDF_ERROR_PROCESSING_FAILED;
         }
-        _pdfFileAvailable = YES;
+        self.pdfFileAvailable = YES;
     }
     else
     {
-        _pdfFileAvailable = NO;
+        self.pdfFileAvailable = NO;
     }
 
     return statusCode;
@@ -90,17 +90,17 @@
 
 - (void) cleanUp
 {
-    if(_pdfDocument != nil)
+    if(self.pdfDocument != nil)
     {
-        CGPDFDocumentRelease(_pdfDocument);
+        CGPDFDocumentRelease(self.pdfDocument);
     }
-    NSLog(@"URL:%@", [_pdfURL path]);
-    if(_pdfURL != nil)
+    NSLog(@"URL:%@", [self.pdfURL path]);
+    if(self.pdfURL != nil)
     {
-        _pdfURL = nil;
+        self.pdfURL = nil;
     }
     [self cleanupPreviewPDF];
-    _pdfFileAvailable = NO;
+    self.pdfFileAvailable = NO;
 }
 
 #pragma mark - Private Class Methods
@@ -110,7 +110,7 @@
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *tempString = [NSString stringWithFormat:@"%@/SDAPreview.pdf",documentsDirectory];
-    _previewURL = [NSURL fileURLWithPath:tempString];
+    self.previewURL = [NSURL fileURLWithPath:tempString];
 }
 
 -(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument
@@ -140,7 +140,7 @@
 {
     NSFileManager *fileMgr = [NSFileManager defaultManager];
     NSError *error = nil;
-    if([fileMgr moveItemAtPath:[_pdfURL path] toPath:[_previewURL path] error:&error] == NO)
+    if([fileMgr moveItemAtPath:[self.pdfURL path] toPath:[self.previewURL path] error:&error] == NO)
     {
         NSLog(@"Failed to rename file");
         return NO;
@@ -151,10 +151,10 @@
 -(void) cleanupPreviewPDF
 {
     NSFileManager *fileMgr = [NSFileManager defaultManager];
-    if([fileMgr fileExistsAtPath:[_previewURL path]] == YES)
+    if([fileMgr fileExistsAtPath:[self.previewURL path]] == YES)
     {
         NSError *error = nil;
-        [fileMgr removeItemAtPath:[_previewURL path] error:&error];
+        [fileMgr removeItemAtPath:[self.previewURL path] error:&error];
     }
 }
 

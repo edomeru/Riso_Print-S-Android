@@ -201,7 +201,7 @@
     numPDFPages = CGPDFDocumentGetNumberOfPages(pdfDocument);
     //Set current index to first page
     currentIndex = 0;
-    currentScale = 1.0;
+    currentScale = NORMAL_SCALE;
     
     self.previewArea.delegate = self;
     self.previewArea.maximumZoomScale = MAX_ZOOM_SCALE;
