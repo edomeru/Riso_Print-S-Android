@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:splitMotionEvents="false"
     android:background="@color/theme_dark_1"
-    android:layout_marginRight="1dp" >
+    android:layout_marginRight="@dimen/drawer_margin" >
 
     <TextView
         android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                     style="@style/HomeMenuButtonText" />
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/separator_size"
                     android:layout_gravity="bottom"
                     android:background="@drawable/selector_home_separator" />
             </FrameLayout>

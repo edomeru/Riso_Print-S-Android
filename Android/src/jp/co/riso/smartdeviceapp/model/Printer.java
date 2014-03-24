@@ -8,7 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -24,12 +23,6 @@ public class Printer implements Parcelable {
     private boolean mBookletBinding;
     private boolean mStaple;
     private boolean mBind;
-    
-    public Printer(int id, String name) {
-        super();
-        mId = id;
-        mName = name;
-    }
     
     public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
         super();

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
@@ -28,10 +29,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.util.AndroidRuntimeException;
+import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
 
 public final class AppUtils {
+    public static final String TAG = "AppUtils"; 
     
     /**
      * Creates an activity intent launcher
@@ -203,8 +206,14 @@ public final class AppUtils {
                     methodTypeFace.invoke(v.getChildAt(i), new Object[] { font, typeFace == null ? 0 : typeFace.getStyle() });
                 }
                 // Will catch the view with no such methods (listview...)
-                catch (Exception e) {
-                    e.printStackTrace();
+                catch (NoSuchMethodException e) {
+                    Log.w(TAG, "NoSuchMethodException (setTypeface and getTypeface)");
+                } catch (IllegalAccessException e) {
+                    Log.w(TAG, "IllegalAccessException, on invoke");
+                } catch (IllegalArgumentException e) {
+                    Log.w(TAG, "IllegalArgumentException on invoke");
+                } catch (InvocationTargetException e) {
+                    Log.w(TAG, "InvocationTargetException on invoke");
                 }
             }
         }
@@ -220,8 +229,12 @@ public final class AppUtils {
         try {
             Field idField = c.getDeclaredField(variableName);
             id = idField.getInt(idField);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            Log.w(TAG, "No id on class");
+        } catch (IllegalAccessException e) {
+            Log.w(TAG, "IllegalAccessException on getInt");
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "IllegalArgumentException on getInt");
         } 
         
         return id;

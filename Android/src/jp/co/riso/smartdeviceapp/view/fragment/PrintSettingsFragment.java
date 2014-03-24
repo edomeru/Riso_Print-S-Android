@@ -1,7 +1,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
@@ -40,20 +39,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             mPrintSettingsView.restoreState(mPrintSettingsBundle);
             mPrintSettingsBundle = null;
         }
-    }
-    
-    @Override
-    public void onPause() {
-        super.onPause();
-        
-        Log.wtf(TAG, "onPause");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        
-        Log.wtf(TAG, "onResume");
     }
 
     @Override

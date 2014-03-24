@@ -144,7 +144,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
         PrintJob pj = mPrintJobs.get(index);
         
-        tempView.setTag(pj.getId());
+        tempView.setTag(pj);
         tempView.setOnTouchListener(new OnSwipeTouchListener(context, tempView));
         
         printJobName.setText(pj.getName());
@@ -218,23 +218,27 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     // display delete print jobs dialog when clicked
     private void deleteJobGroup(View v) {
-        
         ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(mTitle, mMessage, mConfirmMsg, mCancelMsg);
         dialog.setListener(this);
         DialogUtils.displayDialog((Activity) getContext(), TAG, dialog);
     }
     
     private void deletePrintJobGroupView() {
+        for (int i = 0; i < mPrintJobViews.size(); i++) {
+            mDelListener.deleteJobFromList((PrintJob) mPrintJobViews.get(i).getTag());
+        }
+        mDelListener.deletePrinterFromList(mPrinter);
         ((LinearLayout) mPrintGroupView.getParent()).removeView(mPrintGroupView);
     }
     
     // delete a print job when clicked
     private void deletePrintJob(View v) {
-        int jobId = ((PrintJob) v.getTag()).getId();
-        boolean isSuccess = PrintJobManager.deleteWithJobId(jobId);
+        PrintJob job = ((PrintJob) v.getTag());
+        boolean isSuccess = PrintJobManager.deleteWithJobId(job.getId());
         
         if (isSuccess) {
-            deletePrintJobView(mPrintGroupView.findViewWithTag(jobId));
+            mDelListener.deleteJobFromList((PrintJob) v.getTag());
+            deletePrintJobView(mPrintGroupView.findViewWithTag(job));
         } else {
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mConfirmMsg);
@@ -265,6 +269,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mViewToDelete = null;
         }
     }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -363,6 +368,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView);
         
         public void clearButton();
+        
+        public void deletePrinterFromList(Printer printer);
+        
+        public void deleteJobFromList(PrintJob printJob);
+        
     }
     
 }
