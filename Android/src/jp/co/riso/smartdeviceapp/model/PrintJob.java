@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 All rights reserved.
+ *
+ * PrintJob.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.model;
 
 import java.util.Date;
@@ -68,8 +76,8 @@ public class PrintJob {
     }
     
     public enum JobResult{
-      SUCCESSFUL,
-      ERROR
+        SUCCESSFUL,
+        ERROR
     }
     
 }
