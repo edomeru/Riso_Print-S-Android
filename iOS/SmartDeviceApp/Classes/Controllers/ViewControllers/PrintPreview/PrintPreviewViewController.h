@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "PDFPageContentViewController.h"
 
-@interface PrintPreviewViewController : UIViewController <PDFPageContentViewControllerDatasource, UIPageViewControllerDataSource, UIPageViewControllerDelegate>
+@interface PrintPreviewViewController : UIViewController <PDFPageContentViewControllerDatasource, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
 /**
  Method to invoke loading of print preview elements in the screen

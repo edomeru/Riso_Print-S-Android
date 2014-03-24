@@ -417,9 +417,6 @@
                                     <view autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bN-pFV" userLabel="Preview" customClass="UIScrollView">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="440"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <connections>
-                                            <outletCollection property="gestureRecognizers" destination="7S0-P4-mgh" appends="YES" id="ele-Ae-QFl"/>
-                                        </connections>
                                     </view>
                                     <view hidden="YES" autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XgQ-UQ-sVe" userLabel="Page Number and Slider">
                                         <rect key="frame" x="0.0" y="440" width="320" height="60"/>
@@ -501,11 +498,6 @@
                         <action selector="tapSliderAction:" destination="3J8-E3-ZCb" id="Q2K-oP-yWi"/>
                     </connections>
                 </tapGestureRecognizer>
-                <pinchGestureRecognizer id="7S0-P4-mgh">
-                    <connections>
-                        <action selector="pinchPreviewAction:" destination="3J8-E3-ZCb" id="c5d-Jm-EzJ"/>
-                    </connections>
-                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="128" y="803"/>
         </scene>

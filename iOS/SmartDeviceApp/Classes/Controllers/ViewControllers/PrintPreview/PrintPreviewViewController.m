@@ -28,7 +28,7 @@
 @property (strong, nonatomic) UIPageViewController *pdfPageViewController; //the page view controller
 @property (strong, nonatomic) PreviewSetting *previewSetting; //object to hold the preview setting values
 @property (weak, nonatomic) IBOutlet UILabel *screenTitle;  //title of the screen set to the title of the previewed pdf
-@property (weak, nonatomic) IBOutlet UIView *previewArea; //area where the preview is contained
+@property (weak, nonatomic) IBOutlet UIScrollView *previewArea; //area where the preview is contained
 @property (weak, nonatomic) IBOutlet UIView *pageNavArea; //area where the slider and page number display is shown
 @property (weak, nonatomic) IBOutlet UISlider *pageNavigationSlider; //slider used to jump or navigate to pages
 @property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay; //current page number display over total number of pages
@@ -95,19 +95,15 @@
  Action when slider is tapped
  **/
 - (IBAction)tapSliderAction:(id)sender;
-/**
- Action when preview area is pinched
- **/
-- (IBAction)pinchPreviewAction:(id)sender;
 @end
 
 @implementation PrintPreviewViewController
 {
-    CGPDFDocumentRef __pdfDocument; //PDF document object reference
-    NSUInteger __numPDFPages; // number of pages in the PDF document
-    NSUInteger __currentIndex; //current view page index (not pertaining to pdf page number)
-    NSUInteger __numViewPages; // number of view pages, NOT pdf pages
-    CGFloat currentScale;
+    CGPDFDocumentRef pdfDocument; //PDF document object reference
+    NSUInteger numPDFPages; // number of pages in the PDF document
+    NSUInteger currentIndex; //current view page index (not pertaining to pdf page number)
+    NSUInteger numViewPages; // number of view pages, NOT pdf pages
+    CGFloat currentScale; //current scale
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -116,8 +112,8 @@
     if (self)
     {
         // Custom initialization
-        __pdfDocument = nil;
-        __numPDFPages = 0;
+        pdfDocument = nil;
+        numPDFPages = 0;
     }
     return self;
 }
@@ -148,12 +144,8 @@
 /*Detect event before rotation*/
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    if(currentScale > NORMAL_SCALE | currentScale < NORMAL_SCALE)
-    {
-        /*revert to old size before rotating*/
-        self.previewArea.transform = CGAffineTransformIdentity;
-        currentScale = NORMAL_SCALE;
-    }
+    [self.previewArea setContentOffset:CGPointZero];
+    [self.previewArea setZoomScale:MIN_ZOOM_SCALE];
 }
 /*Overriden to handle device rotation*/
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -195,17 +187,22 @@
 {
     //get PDF document
     PDFFileManager *manager = [PDFFileManager sharedManager];
-    __pdfDocument = manager.pdfDocument;
-    if(__pdfDocument == nil)
+    pdfDocument = manager.pdfDocument;
+    if(pdfDocument == nil)
     {
         NSLog(@"document is nil");
         return;
     }
     //Get number of PDF pages
-    __numPDFPages = CGPDFDocumentGetNumberOfPages(__pdfDocument);
+    numPDFPages = CGPDFDocumentGetNumberOfPages(pdfDocument);
     //Set current index to first page
-    __currentIndex = 0;
+    currentIndex = 0;
     currentScale = 1.0;
+    
+    self.previewArea.delegate = self;
+    self.previewArea.maximumZoomScale = MAX_ZOOM_SCALE;
+    self.previewArea.minimumZoomScale = MIN_ZOOM_SCALE;
+    
     
     //set screen title to file name of PDF
     NSString *screenTitle = [[[manager pdfURL] pathComponents] lastObject];
@@ -246,15 +243,15 @@
 {
     //Number of view pages is number of PDF pages divided by number of pages in sheet with respect to the pagination setting
     NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
-    __numViewPages = __numPDFPages/numPagesPerSheet;
+    numViewPages = numPDFPages/numPagesPerSheet;
     
-    if((__numPDFPages % numPagesPerSheet) > 0)
+    if((numPDFPages % numPagesPerSheet) > 0)
     {
-        __numViewPages++;
+        numViewPages++;
     }
     
     //update slider maximum value and page number label after computation of number of pages
-    [self.pageNavigationSlider setMaximumValue: __numViewPages];
+    [self.pageNavigationSlider setMaximumValue: numViewPages];
     [self updatePageNumberDisplay];
 }
 
@@ -292,7 +289,7 @@
     self.pdfPageViewController.delegate =self;
     
     //set the current page of the page view controller
-    [self setViewControllerToCurrentPage:__currentIndex];
+    [self setViewControllerToCurrentPage:currentIndex];
     
     //add ui page controller to view
     [self addChildViewController:_pdfPageViewController];
@@ -369,7 +366,7 @@
 -(void) setUpPageNavigationSlider
 {
     [self.pageNavigationSlider setMinimumValue: 1];
-    [self.pageNavigationSlider setValue:__currentIndex];
+    [self.pageNavigationSlider setValue:currentIndex];
     [self.pageNavigationSlider setMinimumTrackImage:[UIImage imageNamed:@"SliderMinimum.png"] forState:UIControlStateNormal];
     [self.pageNavigationSlider setMaximumTrackImage:[UIImage imageNamed:@"SliderMaximum.png"] forState:UIControlStateNormal];
     [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"SliderThumb.png"] forState:UIControlStateNormal];
@@ -379,7 +376,7 @@
 
 -(void) updatePageNumberDisplay
 {
-    self.pageNumberDisplay.text = [NSString stringWithFormat:@"PAGE %lu/%lu", (unsigned long)(__currentIndex + 1), (unsigned long)__numViewPages];
+    self.pageNumberDisplay.text = [NSString stringWithFormat:@"PAGE %lu/%lu", (unsigned long)(currentIndex + 1), (unsigned long)numViewPages];
 }
 
 
@@ -397,6 +394,10 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
+    if(currentScale > MIN_ZOOM_SCALE)
+    {
+        return nil; // do not turn if zoomed in
+    }
     NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
     
     UIViewController * controller = nil;
@@ -414,6 +415,11 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
+    
+    if(currentScale > MIN_ZOOM_SCALE)
+    {
+        return nil; // do not turn if zoomed in
+    }
     
     NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
     UIViewController * controller = nil;
@@ -440,7 +446,7 @@
     index++;
     
     
-    if ((index + 1) > __numViewPages)
+    if ((index + 1) > numViewPages)
     {
         return nil;
     }
@@ -472,12 +478,11 @@
     {
         //if page is turned completely, update the page number label and the slider position
         PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
-        __currentIndex = viewController.pageIndex;
+        currentIndex = viewController.pageIndex;
         [self updatePageNumberDisplay];
-        [self.pageNavigationSlider setValue:__currentIndex];
+        [self.pageNavigationSlider setValue:currentIndex];
     }
 }
-
 
 #pragma mark - PDFPageViewContentControllerDatasource methods
 
@@ -487,12 +492,12 @@
     NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
     NSUInteger actualPDFPageNum = (pageIndex * numPagesPerSheet) + 1; // the actual PDF page number of the first PDF page in the sheet
     //the pageOffset is the Nth page in the sheet. To get Nth PDF page in a sheet, add the offset to the actual pdf page number of the first page in the sheet
-    if((actualPDFPageNum + pageOffset) > __numPDFPages)
+    if((actualPDFPageNum + pageOffset) > numPDFPages)
     {
         return nil;
     }
 
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(__pdfDocument, actualPDFPageNum + pageOffset);
+    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfDocument, actualPDFPageNum + pageOffset);
     return pdfPage;
 }
 
@@ -502,6 +507,16 @@
     return self.previewSetting;
 }
 
+#pragma mark
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    return [self.previewArea.subviews objectAtIndex:0];
+}
+-(void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
+{
+    currentScale = scale;
+    NSLog(@"%f scale", currentScale);
+}
 
 #pragma mark - IBActions
 
@@ -524,8 +539,8 @@
 {
     UISlider *slider  = (UISlider *) sender;
     NSInteger pageNumber = slider.value;
-    __currentIndex = pageNumber - 1;
-    [self setViewControllerToCurrentPage: __currentIndex];
+    currentIndex = pageNumber - 1;
+    [self setViewControllerToCurrentPage: currentIndex];
     [self updatePageNumberDisplay];
 }
 
@@ -538,30 +553,11 @@
     //Get how many percent of the total slider length is the distance of the tapped point from the start point of the slider
     CGFloat sliderPercentage = point.x/self.pageNavigationSlider.bounds.size.width;
     //multiply the the percentage with the total number of pages in view to get the current page index;
-    __currentIndex = (__numViewPages * sliderPercentage)-1;;
+    currentIndex = (numViewPages * sliderPercentage)-1;;
     
     //update page in view, page number label. slider thumb position
-    [self setViewControllerToCurrentPage:__currentIndex];
+    [self setViewControllerToCurrentPage:currentIndex];
     [self updatePageNumberDisplay];
-    [self.pageNavigationSlider setValue:__currentIndex];
-}
-
-/*Action when pinched*/
-- (IBAction)pinchPreviewAction:(id)sender
-{
-    UIPinchGestureRecognizer *pinchRecognizer = (UIPinchGestureRecognizer *) sender;
-    CGFloat actualScale = currentScale * pinchRecognizer.scale;
-    NSLog(@"Scale = %f", actualScale);
-    if(actualScale >= MIN_ZOOM_SCALE && actualScale <= MAX_ZOOM_SCALE) //up 100 to 300 percent scale only
-    {
-        self.previewArea.transform = CGAffineTransformScale(self.previewArea.transform, pinchRecognizer.scale, pinchRecognizer.scale);
-        currentScale = actualScale;
-    }
-    if(currentScale < MIN_ZOOM_SCALE)
-    {
-        self.previewArea.transform = CGAffineTransformIdentity;
-        currentScale = NORMAL_SCALE;
-    }
-    pinchRecognizer.scale = 1;
+    [self.pageNavigationSlider setValue:currentIndex];
 }
 @end
