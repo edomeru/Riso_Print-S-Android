@@ -3,7 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "SliderMaximum.png"
+      "filename" : "SliderMinimum.png"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x",
+      "filename" : "SliderMinimum_2x.png"
     }
   ],
   "info" : {

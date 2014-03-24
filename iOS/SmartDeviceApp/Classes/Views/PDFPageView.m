@@ -7,8 +7,11 @@
 //
 
 #import "PDFPageView.h"
+
+#define SIGNIFICANT_SIZE_RATIO_DIFFERENCE 0.09
+
 @interface PDFPageView()
-@property BOOL isFirstDraw;
+@property (nonatomic, assign) BOOL isFirstDraw;
 @end
 @implementation PDFPageView
 {
@@ -161,7 +164,7 @@
 
     /*if the difference of the ratio of the display rect dimensions with the ratio of pdf dimensions significant,
      compute new rect that has the same dimension ratio as the pdf and centered in original rect*/
-    if(fabsf(rectWidthHeightRatio - pdfWidthHeightRatio) > 0.09)
+    if(fabsf(rectWidthHeightRatio - pdfWidthHeightRatio) > SIGNIFICANT_SIZE_RATIO_DIFFERENCE)
     {
         //compute adjustment of height and width based on pdf image width-height ratio
         //retain original width first and adjust height

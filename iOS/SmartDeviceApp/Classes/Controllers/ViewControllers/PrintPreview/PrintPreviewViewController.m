@@ -34,6 +34,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay; //current page number display over total number of pages
 @property (weak, nonatomic) IBOutlet UIButton *printSettingButton; //button to navigate to the print settings screen
 
+@property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
+
+
 /*Constraints to adjust the position of slider and page number display in the page navigation area
  when in Phone landscape*/
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *sliderLeftConstraint;
@@ -160,7 +163,7 @@
             //adjust
             self.pageLabelTopConstraint.constant = 20 ;
             self.pageLabelRightConstraint.constant =  self.previewArea.frame.size.width - 100;
-            self.self.sliderLeftConstraint.constant = 120;
+            self.sliderLeftConstraint.constant = 120;
         }
         else
         {
@@ -181,6 +184,7 @@
 {
     [self.printSettingButton setHidden:isHidden];
     [self.pageNavArea setHidden: isHidden];
+    [self.previewArea setHidden: isHidden];
 }
 
 - (void) loadPrintPreview
@@ -283,7 +287,7 @@
                                   options:options];
     
     [self.pdfPageViewController.view setClipsToBounds:true];
-    
+
     //set self as delegate and datasource
     self.pdfPageViewController.dataSource = self;
     self.pdfPageViewController.delegate =self;
@@ -342,6 +346,7 @@
     }
     
     NSLog(@"Pageview controller height = %f. width = %f", height, width);
+
     //set the page controller view frame to new dimensions
     [self.pdfPageViewController.view setFrame: CGRectMake(horizontalMargin, verticalMargin, width, height)];
 }
@@ -351,7 +356,7 @@
 {
     //set initial view controllers to show
     UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:pageIndex];
-    NSMutableArray *initialViewControllers = [@[firstPageViewController] mutableCopy];
+    NSMutableArray *initialViewControllers = [NSMutableArray arrayWithObjects:firstPageViewController, nil];
     
     if(self.previewSetting.duplex > DUPLEX_OFF || self.previewSetting.isBookletBind == YES)
     {
@@ -367,10 +372,10 @@
 {
     [self.pageNavigationSlider setMinimumValue: 1];
     [self.pageNavigationSlider setValue:currentIndex];
-    [self.pageNavigationSlider setMinimumTrackImage:[UIImage imageNamed:@"SliderMinimum.png"] forState:UIControlStateNormal];
-    [self.pageNavigationSlider setMaximumTrackImage:[UIImage imageNamed:@"SliderMaximum.png"] forState:UIControlStateNormal];
-    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"SliderThumb.png"] forState:UIControlStateNormal];
-    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"SliderThumb.png"] forState:UIControlStateHighlighted];
+    [self.pageNavigationSlider setMinimumTrackImage:[UIImage imageNamed:@"img_slider_minimum"] forState:UIControlStateNormal];
+    [self.pageNavigationSlider setMaximumTrackImage:[UIImage imageNamed:@"img_slider_maximum"] forState:UIControlStateNormal];
+    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState:UIControlStateNormal];
+    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState:UIControlStateHighlighted];
 }
 
 
@@ -507,31 +512,35 @@
     return self.previewSetting;
 }
 
-#pragma mark
+#pragma mark UIScrollViewDelegateMethods
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     return [self.previewArea.subviews objectAtIndex:0];
 }
+
 -(void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     currentScale = scale;
-    NSLog(@"%f scale", currentScale);
 }
 
 #pragma mark - IBActions
 
 - (IBAction)mainMenuAction:(id)sender
 {
+    [self.mainMenuButton setEnabled:NO];
     [self performSegueTo:[HomeViewController class]];
 }
 
 - (IBAction)printSettingsAction:(id)sender
 {
+    [self.printSettingButton setEnabled:NO];
     [self performSegueTo:[PrintSettingsViewController class]];
 }
 
 - (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
 {
+    [self.mainMenuButton setEnabled:YES];
+    [self.printSettingButton setEnabled:YES];
 }
 
 /*Action when slider is dragged*/

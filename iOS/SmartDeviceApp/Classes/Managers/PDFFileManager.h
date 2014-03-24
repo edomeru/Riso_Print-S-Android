@@ -11,16 +11,17 @@
 typedef enum
 {
     PDF_ERROR_NONE,
-    PDF_ERROR_ENCRYPTED = PDF_ERROR_NONE,
+    PDF_ERROR_ENCRYPTED,
     PDF_ERROR_OPEN,
     PDF_ERROR_LOCKED,
-    PDF_ERROR_PRINTING_NOT_ALLOWED
+    PDF_ERROR_PRINTING_NOT_ALLOWED,
+    PDF_ERROR_PROCESSING_FAILED
 } T_PDF_ERROR;
 
 @interface PDFFileManager : NSObject
 @property (strong, nonatomic) NSURL *pdfURL;
-@property  CGPDFDocumentRef pdfDocument;
-@property BOOL pdfFileAvailable;
+@property (nonatomic, assign) CGPDFDocumentRef pdfDocument;
+@property (nonatomic, assign) BOOL pdfFileAvailable;
 /**
  Returns the single instance of the PDFFileManager
  @return shared PDFFileManager instance

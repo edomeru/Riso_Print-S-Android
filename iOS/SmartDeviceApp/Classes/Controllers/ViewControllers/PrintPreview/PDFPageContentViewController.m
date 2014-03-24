@@ -10,7 +10,7 @@
 #import "PrintPreviewHelper.h"
 
 @interface PDFPageContentViewController ()
-@property (strong, nonatomic) IBOutlet PDFPageView *pageView;
+@property (weak, nonatomic) IBOutlet PDFPageView *pageView;
 @end
 
 @implementation PDFPageContentViewController

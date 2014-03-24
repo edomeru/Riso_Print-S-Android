@@ -26,9 +26,10 @@
         NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample.pdf" ofType:nil]];
         NSLog(@"testfile url: %@", [fileURL path]);
         [self setUpPreview:fileURL];
+        return YES;
     }
-#endif
-    
+
+#else
     /*check if open-in*/
     if([launchOptions objectForKey: UIApplicationLaunchOptionsURLKey] != nil)
     {
@@ -45,6 +46,7 @@
     
     [self cleanUpPDF];
     return YES;
+ #endif
 }
 
 /*If from background and open-in, this method will be called not the didFinishLaunchingWithOptions*/
@@ -80,7 +82,6 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // Saves changes in the application's managed object context before the application terminates.
     [self cleanUpPDF];
 }
 

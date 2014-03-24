@@ -370,6 +370,7 @@
                                         <state key="normal" image="img_btn_main_menu_normal">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <state key="disabled" image="img_btn_main_menu_pressed"/>
                                         <state key="highlighted" image="img_btn_main_menu_pressed"/>
                                         <connections>
                                             <action selector="mainMenuAction:" destination="3J8-E3-ZCb" eventType="touchUpInside" id="sV8-Jt-GKs"/>
@@ -385,6 +386,7 @@
                                         <state key="normal" image="img_btn_print_settings_normal">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <state key="disabled" image="img_btn_print_settings_pressed"/>
                                         <state key="highlighted" image="img_btn_print_settings_pressed"/>
                                         <connections>
                                             <action selector="printSettingsAction:" destination="3J8-E3-ZCb" eventType="touchUpInside" id="xgI-Fc-bAN"/>
@@ -414,7 +416,7 @@
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <view autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bN-pFV" userLabel="Preview" customClass="UIScrollView">
+                                    <view hidden="YES" autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bN-pFV" userLabel="Preview" customClass="UIScrollView">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="440"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </view>
@@ -478,6 +480,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="mainMenuButton" destination="31J-j4-hVx" id="bkC-U2-PZp"/>
                         <outlet property="pageLabelRightConstraint" destination="14n-9I-H1I" id="3fQ-NQ-dmi"/>
                         <outlet property="pageLabelTopConstraint" destination="aB4-tR-yDi" id="nte-hJ-uij"/>
                         <outlet property="pageNavArea" destination="XgQ-UQ-sVe" id="93N-3N-cDz"/>

@@ -27,5 +27,5 @@
 
 @interface PDFPageContentViewController : UIViewController <PDFPageViewDatasource>
 @property(weak, nonatomic) id <PDFPageContentViewControllerDatasource> datasource;
-@property NSUInteger pageIndex;
+@property (nonatomic, assign) NSUInteger pageIndex;
 @end
