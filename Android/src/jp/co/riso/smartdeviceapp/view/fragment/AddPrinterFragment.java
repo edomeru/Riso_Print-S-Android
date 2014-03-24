@@ -29,7 +29,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
-    public static final int ID_MENU_SAVE_BUTTON = 0x11000004;
+    private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
+    private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final InputFilter[] IP_ADDRESS_FILTER;
     
@@ -64,7 +65,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
             view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
         }
         addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.temp_img_btn_save_printer, this);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_back, this);
+        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
     @Override
@@ -139,7 +140,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case ID_MENU_ACTION_BUTTON:
+            case ID_MENU_BACK_BUTTON:
                 closeScreen();
                 break;
             case ID_MENU_SAVE_BUTTON:

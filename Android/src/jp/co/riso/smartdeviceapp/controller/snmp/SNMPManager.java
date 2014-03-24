@@ -9,9 +9,11 @@
 package jp.co.riso.smartdeviceapp.controller.snmp;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class SNMPManager {
-    
+    private static final String TAG = "SNMPManager";
+
     // ================================================================================
     // Interface
     // ================================================================================
@@ -76,7 +78,7 @@ public class SNMPManager {
             try {
                 startSNMPDeviceDiscovery();
             } catch (Exception e) {
-                mOnPrinterAdd.onSearchEnd();
+                Log.w(TAG, "snmp end");
             }
             return null;
         }

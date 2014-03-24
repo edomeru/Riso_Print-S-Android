@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.printers;
 
 import java.util.List;
+
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -19,6 +20,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,8 +32,9 @@ import android.widget.TextView;
 
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, View.OnTouchListener {
     public final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
-    private final Context mContext;
-    
+    public final String TAG = "PrinterArrayAdapter";
+
+    private Context mContext;
     private int mLayoutId = 0;
     private ViewHolder mHolder = null;
     private PrinterManager mPrinterManager = null;
@@ -162,7 +165,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                         remove(printer);
                         notifyDataSetChanged();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.w(TAG, "Remove cause an exception");
                     }
                 }
             });
