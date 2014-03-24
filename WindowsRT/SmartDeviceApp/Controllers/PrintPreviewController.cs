@@ -24,6 +24,7 @@ using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
@@ -192,7 +193,7 @@ namespace SmartDeviceApp.Controllers
             // Else, generate pages, apply print setting and send
             int targetLogicalPageIndex = targetPreviewPageIndex * _pagesPerSheet;
             _logicalPages =
-                await DocumentController.Instance.GenerateLogicalPages(targetPreviewPageIndex,
+                await DocumentController.Instance.GenerateLogicalPages(targetLogicalPageIndex,
                     _pagesPerSheet);
             await ApplyPrintSettings(targetPreviewPageIndex);
         }
@@ -243,12 +244,11 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
-                // TODO: Imposition and Imposition Order
-                #region ApplyImposition
-                /*
                 // Check Imposition value and generated bitmaps
-                if (_pagesPerSheet > 1 && pageImages.Count > 1 && (_pagesPerSheet == pageImages.Count))
+                if (_pagesPerSheet > 1 && pageImages.Count > 1)
                 {
+                    #region ApplyImposition
+                    /*
                     // Apply imposition based on number and order
 
                     // landscape if 2-in-1
@@ -266,8 +266,12 @@ namespace SmartDeviceApp.Controllers
                     double prevImageHeight = 0;
                     double marginPaper = PrintSettingConstant.MARGIN_PAPER * _logicalDpi;
                     double marginBetweenPages = PrintSettingConstant.MARGIN_BETWEEN_PAGES * _logicalDpi;
-                    Size pageAreaSize = ComputePageArea(pageImages[0].PixelWidth,
-                        pageImages[0].PixelHeight, pagesPerRow, pagesPerColumn,
+                    if (marginPaper == 0)
+                    {
+                        marginPaper = marginBetweenPages;
+                    }
+                    Size pageAreaSize = ComputePageArea(draftBitmap.PixelWidth,
+                        draftBitmap.PixelHeight, pagesPerRow, pagesPerColumn,
                         marginBetweenPages, marginPaper);
 
                     // Compute center of page area
@@ -284,8 +288,29 @@ namespace SmartDeviceApp.Controllers
                         yOffset = heightDiff / 2;
                     }
 
-                    // Loop each pages
+                    // Loop each pages --------------------------------------------------------------
+
+                    // Initial positions
+                    double initialOffsetX = 0;
+                    double initialOffsetY = 0;
+                    switch ((int)ImpositionOrder.TopRightToLeft) //_selectedPrinter.PrintSetting.ImpositionOrder)
+                    {
+                        case (int)ImpositionOrder.LeftToRight:
+                        case (int)ImpositionOrder.TopLeftToRight:
+                        case (int)ImpositionOrder.TopLeftToBottom:
+                            initialOffsetX = 0;
+                            break;
+                        case (int)ImpositionOrder.TopRightToBottom:
+                        case (int)ImpositionOrder.TopRightToLeft:
+                        case (int)ImpositionOrder.RightToLeft:
+                        default:
+                            initialOffsetX = (marginBetweenPages * (pagesPerColumn - 1)) +
+                                (pageAreaSize.Width * (pagesPerColumn - 1));
+                            break;
+                    }
                     int impositionIndex = 0;
+                    prevImageWidth = initialOffsetX;
+                    prevImageHeight = initialOffsetY;
                     foreach (WriteableBitmap pageBitmap in pageImages)
                     {
                         // Put page in center of page area
@@ -295,26 +320,33 @@ namespace SmartDeviceApp.Controllers
                         y = marginPaper + prevImageHeight + yOffset;
 
                         // Draw border in page if needed
-                        {
-                            pageBitmap.DrawRectangle(0, 0, pageBitmap.PixelWidth,
-                                pageBitmap.PixelHeight, Windows.UI.Colors.Black);
-                        }
+                        WriteableBitmapExtensions.DrawRectangle(pageBitmap, 0, 0,
+                            pageBitmap.PixelWidth, pageBitmap.PixelHeight, Windows.UI.Colors.Black);
 
                         // Scale image and put into canvas
-                        Rect destRect = new Rect(x, y, x + pageAreaSize.Width, y + pageAreaSize.Height);
-                        Rect srcRect = new Rect(0, 0, pageBitmap.PixelWidth, pageBitmap.PixelHeight);
-                        draftBitmap.Blit(destRect, pageBitmap, srcRect);
+                        WriteableBitmap impositionPageBitmap =
+                            new WriteableBitmap((int)pageAreaSize.Width, (int)pageAreaSize.Height);
+                        WriteableBitmapExtensions.FillRectangle(impositionPageBitmap, 0, 0,
+                            impositionPageBitmap.PixelWidth, impositionPageBitmap.PixelHeight,
+                            Windows.UI.Colors.White);
+                        ApplyScaleToFit(impositionPageBitmap, pageBitmap, true);
+                        Rect destRect = new Rect(x, y, impositionPageBitmap.PixelWidth,
+                            impositionPageBitmap.PixelHeight);
+                        Rect srcRect = new Rect(0, 0, impositionPageBitmap.PixelWidth,
+                            impositionPageBitmap.PixelHeight);
+                        WriteableBitmapExtensions.Blit(draftBitmap, destRect, impositionPageBitmap,
+                            srcRect);
 
                         // Position
-                        // Update rectangles/offset
-                        switch(_selectedPrinter.PrintSetting.ImpositionOrder)
+                        // Update rectangles/offset (direction)
+                        switch ((int)ImpositionOrder.TopRightToBottom) //_selectedPrinter.PrintSetting.ImpositionOrder)
                         {
                             case (int)ImpositionOrder.LeftToRight:
                             case (int)ImpositionOrder.TopLeftToRight:
                                 prevImageWidth += marginBetweenPages + pageAreaSize.Width;
                                 if (((impositionIndex + 1) % pagesPerColumn) == 0)
                                 {
-                                    prevImageWidth = 0;
+                                    prevImageWidth = initialOffsetX;
                                     prevImageHeight += marginBetweenPages + pageAreaSize.Height;
                                 }
                                 break;
@@ -322,27 +354,39 @@ namespace SmartDeviceApp.Controllers
                                 prevImageHeight += marginBetweenPages + pageAreaSize.Height;
                                 if (((impositionIndex + 1) % pagesPerRow) == 0)
                                 {
-                                    prevImageHeight = 0;
+                                    prevImageHeight = initialOffsetY;
                                     prevImageWidth += marginBetweenPages + pageAreaSize.Width;
                                 }
                                 break;
                             case (int)ImpositionOrder.TopRightToBottom:
+                                prevImageHeight += marginBetweenPages + pageAreaSize.Height;
+                                if (((impositionIndex + 1) % pagesPerRow) == 0)
+                                {
+                                    prevImageHeight = initialOffsetY;
+                                    prevImageWidth -= marginBetweenPages + pageAreaSize.Width;
+                                }
                                 break;
                             case (int)ImpositionOrder.TopRightToLeft:
-                                break;
                             case (int)ImpositionOrder.RightToLeft:
                             default:
+                                prevImageWidth -= marginBetweenPages + pageAreaSize.Width;
+                                if (((impositionIndex + 1) % pagesPerColumn) == 0)
+                                {
+                                    prevImageWidth = initialOffsetX;
+                                    prevImageHeight += marginBetweenPages + pageAreaSize.Height;
+                                }
                                 break;
 
                         }
 
                         ++impositionIndex;
                     }
-
+                    finalBitmap = draftBitmap;
+                 * */
+                #endregion ApplyImposition
+                    finalBitmap = ApplyImpostion(paperSize, pageImages);
                 }
                 else if (pageImages.Count == 1)
-                    */
-                #endregion ApplyImposition
                 {
                     finalBitmap = pageImages[0];
                 }
@@ -438,8 +482,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (enableScaleToFit)
             {
-                // TODO: Still has issue with scaling and center alignment
-                ApplyScaleToFit(canvasBitmap, pageBitmap);
+                ApplyScaleToFit(canvasBitmap, pageBitmap, false);
             }
             else
             {
@@ -447,40 +490,38 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        // TODO: Still has issue with scaling and center alignment
         /// <summary>
         /// Scales the LogicalPage image into the PreviewPage image
         /// </summary>
-        /// <param name="canvasBitmap">PreviewPage image</param>
-        /// <param name="pageBitmap">LogicalPage image</param>
-        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap)
+        /// <param name="canvasBitmap">target page image placement</param>
+        /// <param name="pageBitmap">page image to be fitted</param>
+        /// <param name="drawBorder">flag to draw border on fitted page image</param>
+        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap,
+            bool drawBorder)
         {
-            // Compute the ratio for scaling
-            float canvasRatio = (float)canvasBitmap.PixelWidth / canvasBitmap.PixelHeight;
-            float pageRatio = (float)pageBitmap.PixelWidth / pageBitmap.PixelHeight;
-            float newRatio = 0f;
-            if (pageRatio < canvasRatio)
-            {
-                newRatio = (float)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
-            }
-            else
-            {
-                newRatio = (float)pageBitmap.PixelHeight / canvasBitmap.PixelHeight;
-            }
+            double scaleX = (double)canvasBitmap.PixelWidth / pageBitmap.PixelWidth;
+            double scaleY = (double)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
+            double targetScaleFactor = (scaleX < scaleY) ? scaleX : scaleY;
 
-            // Compute scaled size
-            int scaledWidth = (int)(pageBitmap.PixelWidth * newRatio);
-            int scaledHeight = (int)(pageBitmap.PixelHeight * newRatio);
+            // Scale the LogicalPage image
+            WriteableBitmap scaledBitmap = WriteableBitmapExtensions.Resize(pageBitmap,
+                (int)(pageBitmap.PixelWidth * targetScaleFactor),
+                (int)(pageBitmap.PixelHeight * targetScaleFactor),
+                WriteableBitmapExtensions.Interpolation.Bilinear);
 
-            // Position
+            // Compute position in PreviewPage image
+            Rect srcRect = new Rect(0, 0, scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
             Rect destRect = new Rect(
-                (canvasBitmap.PixelWidth - scaledWidth) / 2,   // Puts the image to the center X
-                (canvasBitmap.PixelHeight - scaledHeight) / 2, // Puts the image to the center Y
-                scaledWidth, scaledHeight);
-            Rect srcRect = new Rect(0, 0, pageBitmap.PixelWidth, pageBitmap.PixelHeight);
-
-            // Place image into paper
-            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, pageBitmap, srcRect);
+                (canvasBitmap.PixelWidth - scaledBitmap.PixelWidth) / 2,    // Puts the image to the center X
+                (canvasBitmap.PixelHeight - scaledBitmap.PixelHeight) / 2,  // Puts the image to the center Y
+                scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
+            if (drawBorder)
+            {
+                WriteableBitmapExtensions.DrawRectangle(scaledBitmap, 0, 0,
+                    (int)scaledBitmap.PixelWidth, (int)scaledBitmap.PixelHeight,
+                        Windows.UI.Colors.Black);
+            }
+            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
         }
 
         /// <summary>
@@ -510,6 +551,137 @@ namespace SmartDeviceApp.Controllers
 
             // Place image into paper
             WriteableBitmapExtensions.Blit(canvasBitmap, rect, pageBitmap, rect);
+        }
+
+        private WriteableBitmap ApplyImpostion(Size paperSize, List<WriteableBitmap> pageImages)
+        {
+            // Create target page image based on imposition
+            bool isPortrait = _pagesPerSheet == 4; // Portrait if 4-Up
+            WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize, isPortrait);
+
+            // Compute number of pages per row and column
+            int pagesPerRow = (int)Math.Sqrt(_pagesPerSheet);
+            int pagesPerColumn = _pagesPerSheet / pagesPerRow;
+
+            // Compute page area size and margin
+            double marginPaper = PrintSettingConstant.MARGIN_PAPER * _logicalDpi;
+            double marginBetweenPages = PrintSettingConstant.MARGIN_BETWEEN_PAGES * _logicalDpi;
+            if (marginPaper == 0)
+            {
+                marginPaper = marginBetweenPages;
+            }
+            Size impositionPageAreaSize = ComputePageArea(canvasBitmap.PixelWidth,
+                canvasBitmap.PixelHeight, pagesPerRow, pagesPerColumn,
+                marginBetweenPages, marginPaper);
+
+            /*
+            // Compute offset within imposition page area ?????????
+            double pageImageWidthDiff = impositionPageAreaSize.Width - pageImages[0].PixelWidth;
+            double pageImageHeightDiff = impositionPageAreaSize.Height - pageImages[0].PixelHeight;
+            double impositionPageAreaOffsetX = 0;
+            double impositionPageAreaOffsetY = 0;
+            if (pageImageWidthDiff > 0)
+            {
+                impositionPageAreaOffsetX = pageImageWidthDiff / 2;
+            }
+            if (pageImageHeightDiff > 0)
+            {
+                impositionPageAreaOffsetY = pageImageHeightDiff / 2;
+            }
+            */
+
+            // Set initial positions
+            double initialOffsetX = 0;
+            double initialOffsetY = 0;
+            switch (_selectedPrinter.PrintSetting.ImpositionOrder)
+            {
+                case (int)ImpositionOrder.LeftToRight:
+                case (int)ImpositionOrder.TopLeftToRight:
+                case (int)ImpositionOrder.TopLeftToBottom:
+                    initialOffsetX = 0;
+                    break;
+                case (int)ImpositionOrder.TopRightToBottom:
+                case (int)ImpositionOrder.TopRightToLeft:
+                case (int)ImpositionOrder.RightToLeft:
+                default:
+                    initialOffsetX = (marginBetweenPages * (pagesPerColumn - 1)) +
+                        (impositionPageAreaSize.Width * (pagesPerColumn - 1));
+                    break;
+            }
+
+            // Loop each imposition page
+            int impositionPageIndex = 0;
+            double pageImageOffsetX = initialOffsetX;
+            double pageImageOffsetY = initialOffsetY;
+            foreach (WriteableBitmap impositionPageBitmap in pageImages)
+            {
+                // Put page in center of page area
+                double x = 0;
+                double y = 0;
+                x = marginPaper + pageImageOffsetX; // +impositionPageAreaOffsetX;
+                y = marginPaper + pageImageOffsetY; // +impositionPageAreaOffsetY;
+
+                // Scale imposition page
+                WriteableBitmap scaledImpositionPageBitmap =
+                    new WriteableBitmap((int)impositionPageAreaSize.Width,
+                        (int)impositionPageAreaSize.Height);
+                WriteableBitmapExtensions.FillRectangle(scaledImpositionPageBitmap, 0, 0,
+                    scaledImpositionPageBitmap.PixelWidth, scaledImpositionPageBitmap.PixelHeight,
+                    Windows.UI.Colors.White);
+                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap, true); // Apply border
+
+                // Put imposition page image to target page image
+                Rect destRect = new Rect(x, y, scaledImpositionPageBitmap.PixelWidth,
+                    scaledImpositionPageBitmap.PixelHeight);
+                Rect srcRect = new Rect(0, 0, scaledImpositionPageBitmap.PixelWidth,
+                    scaledImpositionPageBitmap.PixelHeight);
+                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledImpositionPageBitmap,
+                    srcRect);
+
+                // Update offset/postion based on direction
+                switch (_selectedPrinter.PrintSetting.ImpositionOrder)
+                {
+                    case (int)ImpositionOrder.LeftToRight:
+                    case (int)ImpositionOrder.TopLeftToRight:
+                        pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
+                        if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
+                        {
+                            pageImageOffsetX = initialOffsetX;
+                            pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                        }
+                        break;
+                    case (int)ImpositionOrder.TopLeftToBottom:
+                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                        if (((impositionPageIndex + 1) % pagesPerRow) == 0)
+                        {
+                            pageImageOffsetY = initialOffsetY;
+                            pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
+                        }
+                        break;
+                    case (int)ImpositionOrder.TopRightToBottom:
+                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                        if (((impositionPageIndex + 1) % pagesPerRow) == 0)
+                        {
+                            pageImageOffsetY = initialOffsetY;
+                            pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
+                        }
+                        break;
+                    case (int)ImpositionOrder.TopRightToLeft:
+                    case (int)ImpositionOrder.RightToLeft:
+                    default:
+                        pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
+                        if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
+                        {
+                            pageImageOffsetX = initialOffsetX;
+                            pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                        }
+                        break;
+                }
+
+                ++impositionPageIndex;
+            }
+
+            return canvasBitmap;
         }
 
         /// <summary>

@@ -23,13 +23,13 @@ namespace SmartDeviceApp.Common.Constants
     public sealed class PrintSettingConstant
     {
         // In inches. The following paper sizes are in portrait mode
-        public static Size PAPER_SIZE_A3         = new Size(11.70, 16.50);
-        public static Size PAPER_SIZE_A4         = new Size( 8.30, 11.70);
+        public static Size PAPER_SIZE_A3         = new Size(11.69, 16.54);
+        public static Size PAPER_SIZE_A4         = new Size( 8.27, 11.69);
         public static Size PAPER_SIZE_A6         = new Size( 4.10,  5.80);
-        public static Size PAPER_SIZE_B4         = new Size( 9.80, 13.90);
-        public static Size PAPER_SIZE_B5         = new Size( 6.90,  9.80);
-        public static Size PAPER_SIZE_B6         = new Size( 4.90,  6.90);
-        public static Size PAPER_SIZE_FOOLSCAP   = new Size( 8.27, 13.00);
+        public static Size PAPER_SIZE_B4         = new Size(10.12, 14.33);
+        public static Size PAPER_SIZE_B5         = new Size( 7.17, 10.12);
+        public static Size PAPER_SIZE_B6         = new Size( 5.06,  7.17);
+        public static Size PAPER_SIZE_FOOLSCAP   = new Size( 8.50, 13.00);
         public static Size PAPER_SIZE_TABLOID    = new Size(11.00, 17.00);
         public static Size PAPER_SIZE_LEGAL      = new Size( 8.50, 14.00);
         public static Size PAPER_SIZE_LETTER     = new Size( 8.50, 11.00);

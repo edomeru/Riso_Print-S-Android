@@ -166,7 +166,7 @@ namespace SmartDeviceApp.Controllers
                     ++generatedPageCount;
                 }
                 ++currPageIndex;
-            } while (generatedPageCount < MAX_PAGES && currPageIndex < pageCount);
+            } while ((generatedPageCount < MAX_PAGES || numPages > 0) && currPageIndex < pageCount);
 
             return logicalPages;
         }
@@ -205,8 +205,17 @@ namespace SmartDeviceApp.Controllers
                         using (IRandomAccessStream raStream =
                             await jpegFile.OpenAsync(FileAccessMode.ReadWrite))
                         {
-                            await pdfPage.RenderToStreamAsync(raStream);
+                            raStream.Seek(0);
+                            PdfPageRenderOptions opt = new PdfPageRenderOptions();
+                            opt.DestinationWidth = (uint)pdfPage.Size.Width;
+                            opt.DestinationHeight = (uint)pdfPage.Size.Height;
+                            opt.BitmapEncoderId = BitmapEncoder.BmpEncoderId;
+                            opt.BackgroundColor = Windows.UI.Colors.White; // TODO: Check if original PDF size is A3
+                            await pdfPage.RenderToStreamAsync(raStream, opt);
+
+                            // Get actual size
                             decoder = await BitmapDecoder.CreateAsync(raStream);
+                            await raStream.FlushAsync();
                         }
 
                         // Add to LogicalPage list
