@@ -31,6 +31,7 @@ import eu.erikw.PullToRefreshListView.OnRefreshListener;
 public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, PrinteSearchAdapterInterface {
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
+    private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     // ListView parameters
     private PullToRefreshListView mListView = null;
@@ -69,7 +70,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_back, this);
+        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
     @Override
@@ -134,7 +135,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onClick(View v) {
         // Back Button
-        if (v.getId() == ID_MENU_ACTION_BUTTON) {
+        if (v.getId() == ID_MENU_BACK_BUTTON) {
             if (isTablet()) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

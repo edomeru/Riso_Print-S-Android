@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
-    public static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
+    private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
+    private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private Printer mPrinter = null;
     private TextView mPrinterName = null;
@@ -57,7 +58,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         textView.setText(R.string.ids_lbl_printer_info);
         
         addMenuButton(view, R.id.rightActionLayout, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, R.drawable.img_btn_default_print_settings, this);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_back, this);
+        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
     @Override
@@ -87,7 +88,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         switch (v.getId()) {
             case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
                 break;
-            case ID_MENU_ACTION_BUTTON:
+            case ID_MENU_BACK_BUTTON:
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 if (fm.getBackStackEntryCount() > 0) {

@@ -15,7 +15,6 @@ public class Printer implements Parcelable {
     private int mId;
     private String mName;
     private String mIpAddress;
-    
     private int mPortSetting;
     private boolean mLpr;
     private boolean mRaw;
@@ -26,6 +25,7 @@ public class Printer implements Parcelable {
     private boolean mBind;
     
     public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
+        super();
         mName = name;
         mIpAddress = ipAddress;
         mPortSetting = 0;
@@ -155,5 +155,4 @@ public class Printer implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         return;
     }
-    
 }

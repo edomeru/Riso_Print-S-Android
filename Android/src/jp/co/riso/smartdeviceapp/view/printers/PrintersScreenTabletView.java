@@ -326,5 +326,4 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         TextView mIpAddress;
         Switch mDefaultPrinter;
     }
-    
 }
