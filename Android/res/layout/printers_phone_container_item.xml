@@ -47,7 +47,7 @@
         android:layout_centerVertical="true"
         android:background="@color/theme_dark_1"
         android:paddingRight="@dimen/printers_row_right_padding"
-        android:text="@string/ids_lbl_delete_printer"
+        android:text="@string/ids_lbl_delete"
         android:textColor="@color/theme_light_1"
         android:visibility="gone" />
 

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- Android default values -->
     <string name="default_textview">&#8230;</string>
     <string name="default_content_description">Content Description</string>
-    
+
     <!-- WordingListLBL -->
     <string name="ids_app_name">SmartDeviceApp</string>
     <string name="ids_lbl_back">戻る</string>
     <string name="ids_lbl_save">保存</string>
     <string name="ids_lbl_ok">OK</string>
     <string name="ids_lbl_cancel">キャンセル</string>
-    <string name="ids_lbl_home">Home</string>
     <string name="ids_lbl_open_in_ios">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_android">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_winrt">ドキュメントを選択してください。</string>
+    <string name="ids_lbl_home"></string>
     <string name="ids_lbl_print_preview">印刷プレビュー</string>
     <string name="ids_lbl_printers">プリンター</string>
     <string name="ids_lbl_print_job_history">印刷履歴</string>
@@ -22,7 +23,18 @@
     <string name="ids_lbl_search_printers">プリンター検索</string>
     <string name="ids_lbl_saved_printers">登録プリンター</string>
     <string name="ids_lbl_default_printer">デフォルトプリンター</string>
-    <string name="ids_lbl_delete_printer">削除</string>
+    <string name="ids_lbl_delete">削除</string>
+    <string name="ids_lbl_pull_to_refresh"></string>
+    <string name="ids_lbl_release_to_refresh"></string>
+    <string name="ids_lbl_refreshing"></string>
+    <string name="ids_lbl_last_updated"></string>
+    <string name="ids_lbl_set_default_printer"></string>
+    <string name="ids_lbl_add_successful"></string>
+    <string name="ids_lbl_expand"></string>
+    <string name="ids_lbl_collapse"></string>
+    <string name="ids_lbl_delete_all"></string>
+    <string name="ids_lbl_delete_jobs_title"></string>
+    <string name="ids_lbl_delete_jobs_msg"></string>
     <string name="ids_lbl_printer_info">プリンター情報</string>
     <string name="ids_lbl_printer_name">プリンター名</string>
     <string name="ids_lbl_ip_address">IPアドレス</string>
@@ -32,24 +44,24 @@
     <string name="ids_lbl_printer_status">ステータス</string>
     <string name="ids_lbl_printer_status_online">オンライン</string>
     <string name="ids_lbl_printer_status_offline">オフライン</string>
-    <string name="ids_lbl_print_settings">印刷設定</string>
-    <string name="ids_lbl_printer">Printer</string>
     <string name="ids_lbl_default_print_settings">デフォルト印刷設定</string>
     <string name="ids_lbl_card_reader_group">カードリーダー</string>
     <string name="ids_lbl_card_id">ID</string>
     <string name="ids_lbl_printer_search_group">プリンター検索</string>
-    <string name="ids_lbl_printing">印刷中 &#8230; Tapでキャンセルします</string>
+    <string name="ids_lbl_printing">印刷中&#8230; Tapでキャンセルします</string>
+    <string name="ids_lbl_print_settings"></string>
+    <string name="ids_lbl_print"></string>
+    <string name="ids_lbl_printer"></string>
     <string name="ids_lbl_basic">基本</string>
     <string name="ids_lbl_colormode">カラーモー</string>
     <string name="ids_lbl_colormode_auto">オート</string>
     <string name="ids_lbl_colormode_fullcolor">カラー</string>
     <string name="ids_lbl_colormode_black">白黒</string>
-    <string name="ids_lbl_orientation">Orientation</string>
+    <string name="ids_lbl_orientation">向き</string>
     <string name="ids_lbl_orientation_portrait">縦</string>
     <string name="ids_lbl_orientation_landscape">横</string>
     <string name="ids_lbl_number_of_copies">印刷部数</string>
     <string name="ids_lbl_duplex">両面印刷</string>
-    <string name="ids_lbl_duplex_off">Off</string>
     <string name="ids_lbl_duplex_long_edge">長辺とじ</string>
     <string name="ids_lbl_duplex_short_edge">短辺とじ</string>
     <string name="ids_lbl_papersize">出力用紙</string>
@@ -65,7 +77,7 @@
     <string name="ids_lbl_papersize_legal">Legal</string>
     <string name="ids_lbl_papersize_letter">Letter</string>
     <string name="ids_lbl_papersize_statement">Statement</string>
-    <string name="ids_lbl_scaletofit">Scale to fit</string>
+    <string name="ids_lbl_scaletofit">用紙にフィット</string>
     <string name="ids_lbl_papertype">用紙種類</string>
     <string name="ids_lbl_papertype_any">指定しない</string>
     <string name="ids_lbl_papertype_plain">普通紙</string>
@@ -82,9 +94,9 @@
     <string name="ids_lbl_inputtray_tray3">トレイ3</string>
     <string name="ids_lbl_layout">レイアウト</string>
     <string name="ids_lbl_imposition">面付け</string>
-    <string name="ids_lbl_imposition_2up">2-up</string>
-    <string name="ids_lbl_imposition_4up">4-up</string>
-    <string name="ids_lbl_imposition_order">Imposition Order</string>
+    <string name="ids_lbl_imposition_2up">2面</string>
+    <string name="ids_lbl_imposition_4up">4面</string>
+    <string name="ids_lbl_imposition_order">面付け順</string>
     <string name="ids_lbl_imposition_order_2up_rl">右から左へ(下から上へ)</string>
     <string name="ids_lbl_imposition_order_2up_lr">左から右へ(上から下へ)</string>
     <string name="ids_lbl_imposition_order_4up_ulb">左上から下へ</string>
@@ -93,39 +105,38 @@
     <string name="ids_lbl_imposition_order_4up_url">右上から横へ</string>
     <string name="ids_lbl_finishing">仕上げ</string>
     <string name="ids_lbl_sort">ソート</string>
-    <string name="ids_lbl_sort_perpage">Per page</string>
-    <string name="ids_lbl_sort_percopy">Per copy</string>
+    <string name="ids_lbl_sort_perpage">ページごと</string>
+    <string name="ids_lbl_sort_percopy">部ごと</string>
     <string name="ids_lbl_booklet">小冊子</string>
-    <string name="ids_lbl_booklet_on">On</string>
-    <string name="ids_lbl_booklet_layout">Booklet Layout</string>
-    <string name="ids_lbl_booklet_layout_lr">Left to right</string>
-    <string name="ids_lbl_booklet_layout_rl">Right to left</string>
-    <string name="ids_lbl_booklet_layout_tb">Top to bottom</string>
-    <string name="ids_lbl_booklet_finishing">Booklet Finishing</string>
+    <string name="ids_lbl_booklet_finishing">小冊子製本</string>
     <string name="ids_lbl_booklet_finishing_fold">折り</string>
     <string name="ids_lbl_booklet_finishing_foldstaple">折り＋ステープル</string>
-    <string name="ids_lbl_finishingside">Finishing Side</string>
+    <string name="ids_lbl_booklet_layout"></string>
+    <string name="ids_lbl_booklet_layout_lr"></string>
+    <string name="ids_lbl_booklet_layout_rl"></string>
+    <string name="ids_lbl_booklet_layout_tb"></string>
+    <string name="ids_lbl_finishingside">とじ位置</string>
     <string name="ids_lbl_finishingside_left">左側</string>
     <string name="ids_lbl_finishingside_top">上側</string>
     <string name="ids_lbl_finishingside_right">右側</string>
     <string name="ids_lbl_staple">ステープル</string>
-    <string name="ids_lbl_staple_upperleft">Upper left</string>
-    <string name="ids_lbl_staple_upperright">Uppoer right</string>
-    <string name="ids_lbl_staple_2">2</string>
-    <string name="ids_lbl_staple_1">1</string>
+    <string name="ids_lbl_staple_upperleft">左1カ所</string>
+    <string name="ids_lbl_staple_upperright">右1カ所</string>
+    <string name="ids_lbl_staple_2">2か所</string>
+    <string name="ids_lbl_staple_1">1か所</string>
     <string name="ids_lbl_punch">パンチ</string>
     <string name="ids_lbl_punch_2holes">2穴</string>
     <string name="ids_lbl_punch_3holes">3穴</string>
     <string name="ids_lbl_punch_4holes">4穴</string>
     <string name="ids_lbl_outputtray">排紙先</string>
-    <string name="ids_lbl_outputtray_auto">Auto</string>
+    <string name="ids_lbl_outputtray_auto">オート</string>
     <string name="ids_lbl_outputtray_facedown">フェイスダウン排紙トレイ</string>
     <string name="ids_lbl_outputtray_faceup">フェイスアップ排紙トレイ</string>
     <string name="ids_lbl_outputtray_top">トップトレイ</string>
     <string name="ids_lbl_outputtray_stacking">スタックトレイ</string>
-    <string name="ids_lbl_authentication">Authentication</string>
-    <string name="ids_lbl_authentication_loginid">Login ID</string>
-    <string name="ids_lbl_authentication_pincode">Pin Code</string>
+    <string name="ids_lbl_authentication">認証</string>
+    <string name="ids_lbl_authentication_loginid">ログインID</string>
+    <string name="ids_lbl_authentication_pincode">PINコード</string>
     <string name="ids_lbl_off">Off</string>
     <string name="ids_lbl_help">ヘルプ</string>
     <string name="ids_lbl_legal">リーガル情報</string>
@@ -139,5 +150,7 @@
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>
     <string name="ids_err_msg_not_enough_space">デバイスの空き容量が不足しています。</string>
     <string name="ids_err_msg_pdf_encrypted">暗号化PDFには対応していません。</string>
+    <string name="ids_err_msg_delete_failed"></string>
     <string name="ids_err_msg_network_error">ネットワークに接続できません。</string>
+
 </resources>
