@@ -85,7 +85,7 @@ public class PrintJobsColumnView extends LinearLayout {
             ((ViewGroup) mColumns.get(2).getParent()).removeView(mColumns.get(2));
         }
         if (mColNum < 2) {
-            ((ViewGroup) mColumns.get(2).getParent()).removeView(mColumns.get(1));
+            ((ViewGroup) mColumns.get(1).getParent()).removeView(mColumns.get(1));
         }
         
     }
