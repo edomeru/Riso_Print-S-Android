@@ -31,14 +31,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, View.OnTouchListener {
-    public final String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
-    public final String TAG = "PrinterArrayAdapter";
+    public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
+    public final static String TAG = "PrinterArrayAdapter";
 
-    private Context mContext;
-    private int mLayoutId = 0;
-    private ViewHolder mHolder = null;
     private PrinterManager mPrinterManager = null;
+    private Context mContext;
     private View prevView = null;
+    private ViewHolder mHolder = null;
+    private ViewHolder mDeleteViewHolder = null;
+    private ViewHolder mDefaultViewHolder = null;
+    private float downX = 0;
+    private float upX = 0;
+    private float HORIZONTAL_MIN_DISTANCE = 50;
+    private int mLayoutId = 0;
     
     public PrinterArrayAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
@@ -89,12 +94,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     // ADAPTER INTERFACE - View.OnTouch
     // ================================================================================
-    
-    private float downX = 0;
-    private float upX = 0;
-    private float HORIZONTAL_MIN_DISTANCE = 50;
-    private ViewHolder mDeleteViewHolder = null;
-    private ViewHolder mDefaultViewHolder = null;
     
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -235,9 +234,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     public class ViewHolder {
-        ImageView mOnlineIndcator;
-        TextView mPrinterName;
-        Button mDeleteButton;
-        ImageView mDiscloseImage;
+        public ImageView mOnlineIndcator;
+        public TextView mPrinterName;
+        public Button mDeleteButton;
+        public ImageView mDiscloseImage;
     }
 }
