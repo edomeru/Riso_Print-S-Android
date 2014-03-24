@@ -24,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
-    private PrinteSearchAdapterInterface mSearchAdapterInterface = null;
+    private PrinterSearchAdapterInterface mSearchAdapterInterface = null;
     private Context mContext;
     private int layoutId;
     private ViewHolder mHolder;
@@ -77,12 +77,8 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             }
         }
     }
-    
-    public interface PrinteSearchAdapterInterface {
-        public int onAddPrinter(Printer printer);
-    }
-    
-    public void setSearchAdapterInterface(PrinteSearchAdapterInterface searchAdapterInterface) {
+
+    public void setSearchAdapterInterface(PrinterSearchAdapterInterface searchAdapterInterface) {
         mSearchAdapterInterface = searchAdapterInterface;
     }
     
@@ -91,7 +87,11 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // ================================================================================
     
     public class ViewHolder {
-        ImageView mAddedIndicator;
-        TextView mPrinterName;
+        public ImageView mAddedIndicator;
+        public TextView mPrinterName;
+    }
+    
+    public interface PrinterSearchAdapterInterface {
+        public int onAddPrinter(Printer printer);
     }
 }
