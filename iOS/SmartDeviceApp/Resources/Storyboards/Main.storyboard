@@ -99,6 +99,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_APP_NAME"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.32156862745098036" green="0.027450980392156862" blue="0.71372549019607845" alpha="1" colorSpace="calibratedRGB"/>
@@ -164,6 +167,7 @@
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
                                                         <color key="value" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="printersAction:" destination="v0J-sN-35H" eventType="touchUpInside" id="dB4-wR-Lmn"/>
@@ -190,6 +194,7 @@
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
                                                         <color key="value" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINT_JOB_HISTORY"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="printJobHistoryAction:" destination="v0J-sN-35H" eventType="touchUpInside" id="pBb-8q-dwj"/>
@@ -216,6 +221,7 @@
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
                                                         <color key="value" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SETTINGS"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="settingsAction:" destination="v0J-sN-35H" eventType="touchUpInside" id="N8n-Vu-bPD"/>
@@ -242,6 +248,7 @@
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
                                                         <color key="value" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_HELP"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="helpAction:" destination="v0J-sN-35H" eventType="touchUpInside" id="6xe-s1-Kiz"/>
@@ -269,6 +276,7 @@
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
                                                         <color key="value" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_LEGAL"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="legalAction:" destination="v0J-sN-35H" eventType="touchUpInside" id="ilY-GL-5Xi"/>
@@ -396,6 +404,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_APP_NAME"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.52156862745098043" green="0.25490196078431371" blue="0.84705882352941175" alpha="1" colorSpace="calibratedRGB"/>
@@ -508,6 +519,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -582,6 +596,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_ADD_PRINTER"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T09-y5-nzc">
                                         <rect key="frame" x="280" y="8" width="32" height="32"/>
@@ -677,6 +694,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_PRINTERS"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
@@ -754,6 +774,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yVZ-uL-cVj">
                                         <rect key="frame" x="560" y="8" width="32" height="32"/>
@@ -854,6 +877,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_ADD_PRINTER"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gI3-ss-jMW">
                                         <rect key="frame" x="229" y="8" width="32" height="32"/>
@@ -931,6 +957,9 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_PRINTERS"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
@@ -1054,7 +1083,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Rhv-VV-qF5"/>
+        <segue reference="Ysc-8g-iB4"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

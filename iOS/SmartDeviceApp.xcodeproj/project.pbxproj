@@ -26,6 +26,7 @@
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
 		2D0BEB2018CD54C60059C15A /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */; };
 		2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */; };
+		2D232D8318DFD45D00144935 /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D8218DFD45D00144935 /* UIView+Localization.m */; };
 		2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */; };
 		2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3518C4137000AC8AD0 /* RootViewController.m */; };
 		2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */; };
@@ -33,6 +34,7 @@
 		2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */; };
 		2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */; };
 		2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */; };
+		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D9DD41A185FFB830085AD88 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D9DD41B185FFB830085AD88 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -78,6 +80,8 @@
 		2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterSearchViewController.m; sourceTree = "<group>"; };
 		2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
 		2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
+		2D232D8118DFD45D00144935 /* UIView+Localization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Localization.h"; sourceTree = "<group>"; };
+		2D232D8218DFD45D00144935 /* UIView+Localization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Localization.m"; sourceTree = "<group>"; };
 		2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideOverSegue.h; sourceTree = "<group>"; };
 		2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideOverSegue.m; sourceTree = "<group>"; };
 		2D4B3E3418C4137000AC8AD0 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
@@ -92,6 +96,10 @@
 		2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideSegue.m; sourceTree = "<group>"; };
 		2D4B3E4718C4693200AC8AD0 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
+		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2D5FC7BC18DA7A8000459B92 /* AppStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStrings.h; sourceTree = "<group>"; };
 		2D8E525518605F33009BE88B /* GTestEventListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = GTestEventListener.h; sourceTree = "<group>"; };
 		2D9DD404185FF3200085AD88 /* CommonAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonAPI.h; sourceTree = "<group>"; };
 		2D9DD407185FF3200085AD88 /* .gitkeep */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
@@ -212,6 +220,7 @@
 			children = (
 				2D0AEC3B185FDE6C00810455 /* Controllers */,
 				2D4B3E3F18C41B9700AC8AD0 /* Views */,
+				2D5FC7BA18DA7A8000459B92 /* Helpers */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -258,6 +267,7 @@
 		2D0AEC49185FDE8100810455 /* Locales */ = {
 			isa = PBXGroup;
 			children = (
+				2D5FC7B518DA79EB00459B92 /* Localizable.strings */,
 				2D0AEC4A185FDE8100810455 /* InfoPlist.strings */,
 			);
 			path = Locales;
@@ -384,6 +394,7 @@
 		2D4B3E3F18C41B9700AC8AD0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2D5FC7BD18DA7EF900459B92 /* Extensions */,
 				2D4B3E4018C41BAD00AC8AD0 /* DefaultView.h */,
 				2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */,
 				2D00842918C6FDA2001558F7 /* MenuButton.h */,
@@ -401,6 +412,31 @@
 				2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		2D5FC7BA18DA7A8000459B92 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				2D5FC7BB18DA7A8000459B92 /* Constants */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		2D5FC7BB18DA7A8000459B92 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				2D5FC7BC18DA7A8000459B92 /* AppStrings.h */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		2D5FC7BD18DA7EF900459B92 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2D232D8118DFD45D00144935 /* UIView+Localization.h */,
+				2D232D8218DFD45D00144935 /* UIView+Localization.m */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		2D9DD402185FF3200085AD88 /* CommonAPI */ = {
@@ -593,6 +629,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = 2D0AEBF6185FDD2100810455;
 			productRefGroup = 2D0AEC00185FDD2100810455 /* Products */;
@@ -612,6 +649,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */,
+				2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
 			);
@@ -659,6 +697,7 @@
 				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
 				2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */,
 				2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */,
+				2D232D8318DFD45D00144935 /* UIView+Localization.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,6 +725,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				2D0AEC4B185FDE8100810455 /* en */,
+				2D5FC7B918DA7A6300459B92 /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -696,6 +736,15 @@
 				2D0AEC87185FE50000810455 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2D5FC7B518DA79EB00459B92 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D5FC7B618DA79EB00459B92 /* en */,
+				2D5FC7B818DA7A5900459B92 /* ja */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		2D9DD446185FFC160085AD88 /* InfoPlist.strings */ = {
