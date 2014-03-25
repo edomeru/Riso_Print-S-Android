@@ -41,20 +41,32 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark -
-#pragma mark IBActions
+#pragma mark - IBActions
+
 - (IBAction)mainMenuAction:(id)sender
 {
+    [self.mainMenuButton setEnabled:NO];
     [self performSegueTo:[HomeViewController class]];
 }
 
 - (IBAction)printSettingsAction:(id)sender
 {
+    [self.printSettingsButton setEnabled:NO];
     [self performSegueTo:[PrintSettingsViewController class]];
 }
 
 - (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
 {
+    UIViewController* sourceViewController = [segue sourceViewController];
+    
+    if ([sourceViewController isKindOfClass:[HomeViewController class]])
+    {
+        [self.mainMenuButton setEnabled:YES];
+    }
+    else if ([sourceViewController isKindOfClass:[PrintSettingsViewController class]])
+    {
+        [self.printSettingsButton setEnabled:YES];
+    }
 }
 
 @end

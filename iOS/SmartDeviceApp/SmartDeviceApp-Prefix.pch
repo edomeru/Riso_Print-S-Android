@@ -13,5 +13,10 @@
 #ifdef __OBJC__
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
+    #import <CoreData/CoreData.h>
+
+    #import "AppDebug.h"
+    #import "NotificationNames.h"
+    #import "PrintSettingNames.h"
     #import "AppStrings.h"
 #endif
