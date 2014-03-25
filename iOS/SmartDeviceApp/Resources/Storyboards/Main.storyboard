@@ -1101,7 +1101,7 @@
                                                             </state>
                                                             <state key="disabled" image="img_btn_search_printer_check"/>
                                                         </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C3R-cH-uWc" userLabel="Plus">
+                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C3R-cH-uWc" userLabel="Plus">
                                                             <rect key="frame" x="224" y="7" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
@@ -1131,8 +1131,8 @@
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
-                                                    <outlet property="checkmark" destination="z2N-M0-1dv" id="nsm-0H-kKU"/>
-                                                    <outlet property="plusButton" destination="C3R-cH-uWc" id="mFT-v9-1Hl"/>
+                                                    <outlet property="addIcon" destination="C3R-cH-uWc" id="N2z-qZ-5r8"/>
+                                                    <outlet property="oldIcon" destination="z2N-M0-1dv" id="tgY-n4-VZH"/>
                                                     <outlet property="printerName" destination="EXa-4e-Ene" id="agR-nz-LUA"/>
                                                     <outlet property="separator" destination="mVg-yV-2cB" id="Ww4-AX-Poz"/>
                                                 </connections>
@@ -2099,7 +2099,7 @@
                                                             </state>
                                                             <state key="disabled" image="img_btn_search_printer_check"/>
                                                         </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MAC-Yd-a2k" userLabel="Plus">
+                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MAC-Yd-a2k" userLabel="Plus">
                                                             <rect key="frame" x="224" y="7" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
@@ -2129,8 +2129,8 @@
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
-                                                    <outlet property="checkmark" destination="bd1-3u-b69" id="Nle-ZQ-93W"/>
-                                                    <outlet property="plusButton" destination="MAC-Yd-a2k" id="bUF-L6-pO6"/>
+                                                    <outlet property="addIcon" destination="MAC-Yd-a2k" id="sp2-mi-Iac"/>
+                                                    <outlet property="oldIcon" destination="bd1-3u-b69" id="Ypb-4L-gFZ"/>
                                                     <outlet property="printerName" destination="1LA-cn-0Qi" id="4yg-1c-ZUS"/>
                                                     <outlet property="separator" destination="bXR-I6-5YP" id="6gr-xR-HI3"/>
                                                 </connections>

@@ -11,24 +11,16 @@
 @interface SearchResultCell : UITableViewCell
 
 /**
- Adds an icon to the cell to indicate that the search result has 
- already been processed.
+ Adds an icon to the cell to indicate that the search result
+ has already been added.
  */
-- (void)setCellToAdded;
+- (void)setCellAsOldResult;
 
 /**
- Adds a button to the cell for adding the search result.
- The specified receiver should handle the button's tap gesture.
-
- @param tag
-        unique identifier for the button
- @param receiver
-        receiver of the button's tap gesture
-        (should conform to UIGestureRecognizerDelegate)
- @param action
-        method of the receiver triggered by the tap gesture
+ Adds an icon to the cell to indicate that this search result
+ can be added.
  */
-- (void)setCellToNew:(NSUInteger)tag handledBy:(id<UIGestureRecognizerDelegate>)receiver usingAction:(SEL)action;
+- (void)setCellAsNewResult;
 
 /**
  Sets the printer name as the cell's main text.

@@ -13,8 +13,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel* printerName;
 @property (weak, nonatomic) IBOutlet UIView* separator;
-@property (weak, nonatomic) IBOutlet UIButton *checkmark;
-@property (weak, nonatomic) IBOutlet UIButton *plusButton;
+@property (weak, nonatomic) IBOutlet UIButton* oldIcon;
+@property (weak, nonatomic) IBOutlet UIButton* addIcon;
 
 @end
 
@@ -34,41 +34,24 @@
     [super setSelected:selected animated:animated];
 }
 
-- (void)setCellToAdded
+- (void)setCellAsOldResult
 {
 //implementation #1 : create view programmatically
 //    self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"img_btn_search_printer_check"]];
     
 //implementation #2 : create view in storyboard, then just set hidden attribute here
-    [self.checkmark setHidden:NO];
-    [self.plusButton setHidden:YES];
+    [self.oldIcon setHidden:NO];
+    [self.addIcon setHidden:YES];
 }
 
-- (void)setCellToNew:(NSUInteger)tag handledBy:(id<UIGestureRecognizerDelegate>)receiver usingAction:(SEL)action
+- (void)setCellAsNewResult
 {
 //implementation #1 : create view programmatically
-//    UIImage* plusImage = [UIImage imageNamed:@"img_btn_search_printer_plus"];
-//    
-//    // create the button
-//    UIButton* plusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [plusButton setImage:plusImage forState:UIControlStateNormal];
-//    [plusButton setEnabled:YES];
-//    plusButton.frame = CGRectMake(0, 0, plusImage.size.width, plusImage.size.height);
-//    
-//    // set the tap gesture handler
-//    [plusButton addTarget:buttonOwner
-//                   action:actionOnTap
-//         forControlEvents:UIControlEventTouchUpInside];
-//    
-//    self.accessoryView = plusButton;
+//    self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"img_btn_search_printer_plus"]];
 
-//implementation #2 : create view in storyboard, then just set hidden attribute here    
-    [self.checkmark setHidden:YES];
-    [self.plusButton setHidden:NO];
-    [self.plusButton addTarget:receiver
-                        action:action
-              forControlEvents:UIControlEventTouchUpInside];
-    [self.plusButton setTag:tag];
+//implementation #2 : create view in storyboard, then just set hidden attribute here
+    [self.oldIcon setHidden:YES];
+    [self.addIcon setHidden:NO];
 }
 
 - (void)setContents:(NSString*)printerName

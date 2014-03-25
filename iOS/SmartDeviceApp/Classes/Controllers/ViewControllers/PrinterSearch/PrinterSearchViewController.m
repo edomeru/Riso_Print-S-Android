@@ -15,6 +15,9 @@
 
 #define SEARCHRESULTCELL    @"SearchResultCell"
 
+#define OLD_PRINTERS    0
+#define NEW_PRINTERS    1
+
 @interface PrinterSearchViewController ()
 
 #pragma mark - Data Properties
@@ -78,10 +81,10 @@
  Called when the user taps on the '+' button of a new printer.
  This method attempts to add the printer to the list of saved
  printers.
- @param addButton
-        the button that triggered this method
+ @param row
+        the selected printer to add
  */
-- (void)addPrinter:(UIButton*)addButton;
+- (void)addPrinter:(NSUInteger)row;
 
 /** 
  Unwinds back to the Printers screen.
@@ -181,7 +184,7 @@
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
-- (void)addPrinter:(UIButton*)addButton
+- (void)addPrinter:(NSUInteger)row
 {
     // check if adding printers is allowed
     if ([self.printerManager isAtMaximumPrinters])
@@ -191,9 +194,6 @@
                       withDetails:nil];
         return;
     }
-
-    // get the row tapped
-    NSUInteger row = [addButton tag];
     
     // add the printer
     NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
@@ -316,40 +316,49 @@
     return 2; // old and new printers
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0)
+    if (section == OLD_PRINTERS)
         return [self.listOldPrinterNames count];
     else
         return [self.listNewPrinterNames count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath
 {
     SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
                                                             forIndexPath:indexPath];
     BOOL isLastCell = NO;
-    if ((indexPath.section == 1) && (indexPath.row == [self.listNewPrinterNames count]-1))
+    if ((indexPath.section == NEW_PRINTERS) && (indexPath.row == [self.listNewPrinterNames count]-1))
         isLastCell = YES;
 
     // set the cell style
     [cell setStyle:isLastCell];
    
     // set the cell text
-    if (indexPath.section == 0)
+    if (indexPath.section == OLD_PRINTERS)
     {
         //this is an old printer
         [cell setContents:[self.listOldPrinterNames objectAtIndex:indexPath.row]];
-        [cell setCellToAdded];
+        [cell setCellAsOldResult];
     }
     else
     {
         //this is a new printer
         [cell setContents:[self.listNewPrinterNames objectAtIndex:indexPath.row]];
-        [cell setCellToNew:indexPath.row handledBy:self usingAction:@selector(addPrinter:)];
+        [cell setCellAsNewResult];
     }
     
     return cell;
+}
+
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    //tapping an old printer does nothing
+    
+    //tapping a new printer will add the printer
+    if (indexPath.section == NEW_PRINTERS)
+        [self addPrinter:indexPath.row];
 }
 
 @end
