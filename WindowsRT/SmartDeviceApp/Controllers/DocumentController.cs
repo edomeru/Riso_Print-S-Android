@@ -10,6 +10,7 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
@@ -136,6 +137,43 @@ namespace SmartDeviceApp.Controllers
             List<LogicalPage> logicalPages = new List<LogicalPage>();
 
             // Compute for start page index
+            int currPageIndex = basePageIndex;
+            do
+            {
+                LogicalPage logicalPage = await GenerateLogicalPage(currPageIndex);
+                if (logicalPage != null)
+                {
+                    logicalPages.Add(logicalPage);
+                    --numPages;
+                }
+                ++currPageIndex;
+            } while (numPages > 0);
+
+            return logicalPages;
+        }
+
+        /// <summary>
+        /// Generates N pages to JPEG then saves in AppData temporary store
+        /// </summary>
+        /// <param name="basePageIndex">requested page number</param>
+        /// <param name="numPages">number of pages to generate</param>
+        /// <returns>task</returns>
+        public async Task<List<LogicalPage>> GenerateNearLogicalPages(int basePageIndex, int numPages)
+        {
+            if (!IsFileLoaded)
+            {
+                return null;
+            }
+
+            int pageCount = (int)_document.PdfDocument.PageCount;
+            if (basePageIndex < 0 || basePageIndex > pageCount - 1)
+            {
+                return null;
+            }
+
+            List<LogicalPage> logicalPages = new List<LogicalPage>();
+
+            // Compute for start page index
             int midPt = MAX_PAGES / 2; // Round down to the nearest whole number
             int endPageIndex = basePageIndex + midPt;
             int startPageIndex = endPageIndex - (midPt * 2);
@@ -205,12 +243,24 @@ namespace SmartDeviceApp.Controllers
                         using (IRandomAccessStream raStream =
                             await jpegFile.OpenAsync(FileAccessMode.ReadWrite))
                         {
-                            raStream.Seek(0);
+                            // Scale to destination condering the device's DPI
                             PdfPageRenderOptions opt = new PdfPageRenderOptions();
-                            opt.DestinationWidth = (uint)pdfPage.Size.Width;
-                            opt.DestinationHeight = (uint)pdfPage.Size.Height;
-                            opt.BitmapEncoderId = BitmapEncoder.BmpEncoderId;
-                            opt.BackgroundColor = Windows.UI.Colors.White; // TODO: Check if original PDF size is A3
+                            double dpiScaleFactor = ImageConstant.DpiScaleFactor;
+                            if (dpiScaleFactor > 1.0)
+                            {
+                                opt.DestinationWidth = (uint)(pdfPage.Size.Width / dpiScaleFactor);
+                                opt.DestinationHeight = (uint)(pdfPage.Size.Height / dpiScaleFactor);
+                            }
+                            else
+                            {
+                                opt.DestinationWidth = (uint)(pdfPage.Size.Width * dpiScaleFactor);
+                                opt.DestinationHeight = (uint)(pdfPage.Size.Height * dpiScaleFactor);
+                            }
+                            opt.BitmapEncoderId = BitmapEncoder.JpegEncoderId;
+                            opt.BackgroundColor = Windows.UI.Colors.White;
+
+                            // Write to stream
+                            raStream.Seek(0);
                             await pdfPage.RenderToStreamAsync(raStream, opt);
 
                             // Get actual size
@@ -225,7 +275,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException)
             {
                 // Error in reading PDF
                 // But usually UnauthorizedAccessException is thrown here due to CreateFileAsync

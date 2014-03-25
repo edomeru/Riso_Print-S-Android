@@ -20,11 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
@@ -36,6 +34,7 @@ namespace SmartDeviceApp.Controllers
         private const string FORMAT_PREVIEW_PAGE_IMAGE_PREFIX = "previewpage";
         private const string FORMAT_PREVIEW_PAGE_IMAGE_FILENAME =
             FORMAT_PREVIEW_PAGE_IMAGE_PREFIX + "{0:0000}.jpg";
+        private const string EMPTY_IMAGE_FILENAME = FORMAT_PREVIEW_PAGE_IMAGE_PREFIX + "_empty.jpg";
 
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
@@ -44,7 +43,6 @@ namespace SmartDeviceApp.Controllers
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
         private int _currPreviewPageIndex;
-        private int _logicalDpi = (int)DisplayInformation.GetForCurrentView().LogicalDpi;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -82,6 +80,8 @@ namespace SmartDeviceApp.Controllers
                 // Get print settings
                 await GetPrintAndPrintSetting();
                 await OnPrintSettingUpdated();
+
+                await GenerateEmptyPage();
             }
             else
             {
@@ -158,6 +158,50 @@ namespace SmartDeviceApp.Controllers
             // Clean-up generated PreviewPages
             await StorageFileUtility.DeleteFiles(FORMAT_PREVIEW_PAGE_IMAGE_PREFIX,
                 ApplicationData.Current.TemporaryFolder);
+
+            // TODO: Set-up print settings for testing
+            _selectedPrinter.PrintSetting.PaperSize = (int)PaperSize.Tabloid;
+            _selectedPrinter.PrintSetting.ScaleToFit = true;
+        }
+
+        /// <summary>
+        /// Generates an empty page for the initial display of Preview Area.
+        /// This page will be displayed while the PreviePage(s) are being generated at the start.
+        /// </summary>
+        /// <returns></returns>
+        private async Task GenerateEmptyPage()
+        {
+            // Create a blank white page for Preview (temporary)
+            Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
+                _selectedPrinter.PrintSetting.PaperSize);
+            bool isPortrait =
+                        PrintSettingConverter.OrientationIntToBoolConverter.Convert(
+                        _selectedPrinter.PrintSetting.Orientation);
+            WriteableBitmap emptyBitmap = ApplyPaperSizeAndOrientation(paperSize,
+                        isPortrait);
+
+            // Save PreviewPage into AppData temporary store
+            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+            StorageFile whitePageImage = await tempFolder.CreateFileAsync(EMPTY_IMAGE_FILENAME,
+                CreationCollisionOption.ReplaceExisting);
+            using (var destinationStream =
+                await whitePageImage.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
+                    BitmapEncoder.JpegEncoderId, destinationStream);
+                byte[] pixels = WriteableBitmapExtensions.ToByteArray(emptyBitmap);
+                newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
+                    (uint)emptyBitmap.PixelWidth, (uint)emptyBitmap.PixelHeight,
+                    ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
+                await newEncoder.FlushAsync();
+            }
+
+            // Open the bitmap
+            BitmapImage bitmapImage = new BitmapImage(new Uri(whitePageImage.Path));
+
+            // Create message and send
+            Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                new Size(emptyBitmap.PixelWidth, emptyBitmap.PixelHeight)));
         }
 
         #region Preview Page Navigation
@@ -264,40 +308,47 @@ namespace SmartDeviceApp.Controllers
                     WriteableBitmapExtensions.FromByteArray(finalBitmap, pixelBytes);
                 }
 
-                // Save PreviewPage into AppData temporary store
-                StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                    String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
-                    CreationCollisionOption.ReplaceExisting);
-                using (var destinationStream =
-                    await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
+                try
                 {
-                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
-                        BitmapEncoder.JpegEncoderId, destinationStream);
-                    byte[] pixels = WriteableBitmapExtensions.ToByteArray(finalBitmap);
-                    newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                        (uint)finalBitmap.PixelWidth, (uint)finalBitmap.PixelHeight, _logicalDpi,
-                        _logicalDpi, pixels);
-                    await newEncoder.FlushAsync();
-                }
+                    // Save PreviewPage into AppData temporary store
+                    StorageFile tempPageImage = await tempFolder.CreateFileAsync(
+                        String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
+                        CreationCollisionOption.ReplaceExisting);
+                    using (var destinationStream =
+                        await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
+                            BitmapEncoder.JpegEncoderId, destinationStream);
+                        byte[] pixels = WriteableBitmapExtensions.ToByteArray(finalBitmap);
+                        newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
+                            (uint)finalBitmap.PixelWidth, (uint)finalBitmap.PixelHeight,
+                            ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
+                        await newEncoder.FlushAsync();
+                    }
 
-                // Add to PreviewPage list
-                PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
-                    tempPageImage.Name, new Size(finalBitmap.PixelWidth, finalBitmap.PixelHeight));
-                if (_previewPages.ContainsKey(previewPageIndex))
+                    // Add to PreviewPage list
+                    PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
+                        tempPageImage.Name, new Size(finalBitmap.PixelWidth, finalBitmap.PixelHeight));
+                    if (_previewPages.ContainsKey(previewPageIndex))
+                    {
+                        _previewPages[previewPageIndex] = previewPage;
+                    }
+                    else
+                    {
+                        _previewPages.Add(previewPageIndex, previewPage);
+                    }
+
+                    // Open the bitmap
+                    BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+
+                    // Create message and send
+                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                        previewPage.ActualSize));
+                }
+                catch (UnauthorizedAccessException)
                 {
-                    _previewPages[previewPageIndex] = previewPage;
+                    // Error handling
                 }
-                else
-                {
-                    _previewPages.Add(previewPageIndex, previewPage);
-                }
-
-                // Open the bitmap
-                BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
-
-                // Create message and send
-                Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                    previewPage.ActualSize));
             }
         }
 
@@ -310,8 +361,8 @@ namespace SmartDeviceApp.Controllers
         private WriteableBitmap ApplyPaperSizeAndOrientation(Size paperSize, bool isPortrait)
         {
             // Get paper size and apply DPI
-            double length1 = paperSize.Width * _logicalDpi;
-            double length2 = paperSize.Height * _logicalDpi;
+            double length1 = paperSize.Width * ImageConstant.BASE_DPI;
+            double length2 = paperSize.Height * ImageConstant.BASE_DPI;
 
             Size pageImageSize;
             // Check orientation
@@ -438,8 +489,8 @@ namespace SmartDeviceApp.Controllers
             int pagesPerColumn = _pagesPerSheet / pagesPerRow;
 
             // Compute page area size and margin
-            double marginPaper = PrintSettingConstant.MARGIN_PAPER * _logicalDpi;
-            double marginBetweenPages = PrintSettingConstant.MARGIN_BETWEEN_PAGES * _logicalDpi;
+            double marginPaper = PrintSettingConstant.MARGIN_PAPER * ImageConstant.BASE_DPI;
+            double marginBetweenPages = PrintSettingConstant.MARGIN_BETWEEN_PAGES * ImageConstant.BASE_DPI;
             if (marginPaper == 0)
             {
                 marginPaper = marginBetweenPages;
