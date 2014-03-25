@@ -1885,7 +1885,7 @@
                                     <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="PrinterCell" id="C8K-fM-PVD" userLabel="PrinterCell" customClass="PrinterCell">
                                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
@@ -2240,7 +2240,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="suq-fU-kcs"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>
