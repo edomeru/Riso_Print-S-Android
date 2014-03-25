@@ -39,7 +39,9 @@
 /*If Open-in, this method will be called */
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+#if DEBUG_LOG_PRINT_PREVIEW
     NSLog(@"Open URL:%@", [url path]);
+#endif
     [self setUpPreview:url];
     return YES;
 }
@@ -88,7 +90,9 @@
 #pragma mark  - PDF Processing methods
 - (void) processPDF:(NSURL *)pdfURL
 {
+#if DEBUG_LOG_PRINT_PREVIEW
     NSLog(@"Process PDF");
+#endif
     PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
 
     int statusCode = [pdfFileManager setUpPDF:pdfURL];
@@ -101,14 +105,18 @@
 
 - (void) cleanUpPDF
 {
+#if DEBUG_LOG_PRINT_PREVIEW
     NSLog(@"Cleanup PDF");
+#endif
     PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
     [pdfFileManager cleanUp];
 }
 
--(void) didEndPPDFProcessing: (NSNotification *) notification
+-(void) didEndPDFProcessing: (NSNotification *) notification
 {
+#if DEBUG_LOG_PRINT_PREVIEW
     NSLog(@"PDF Processing ended");
+#endif
     int statusCode = [(NSNumber *)[notification object] integerValue];
     
     if(statusCode == PDF_ERROR_NONE)
@@ -129,6 +137,9 @@
                 break;
             case PDF_ERROR_PRINTING_NOT_ALLOWED:
                 error_message = @"Unsupported PDF: PDF does not allow printing"; //replace with localizable string
+                break;
+            case PDF_ERROR_PROCESSING_FAILED:
+                error_message = @"PDF Processing Failed. "; //replace with localizable string
                 break;
         }
         UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error"

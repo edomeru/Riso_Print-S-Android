@@ -75,7 +75,6 @@
     UIViewController *currentController = [self.childViewControllers objectAtIndex:0];
     if([currentController isKindOfClass:[PrintPreviewViewController class]])
     {
-        NSLog(@"loading PDF...");
         [(PrintPreviewViewController *)currentController loadPrintPreview];
     }
 }

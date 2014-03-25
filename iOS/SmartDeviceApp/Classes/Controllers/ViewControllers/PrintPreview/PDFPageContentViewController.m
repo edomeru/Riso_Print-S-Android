@@ -27,7 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"load pdf page content view controller");
    	// Do any additional setup after loading the view.
     self.pageView.datasource = self;
 }

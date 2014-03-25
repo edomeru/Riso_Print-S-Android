@@ -94,7 +94,7 @@
     {
         CGPDFDocumentRelease(self.pdfDocument);
     }
-    NSLog(@"URL:%@", [self.pdfURL path]);
+
     if(self.pdfURL != nil)
     {
         self.pdfURL = nil;
@@ -142,7 +142,9 @@
     NSError *error = nil;
     if([fileMgr moveItemAtPath:[self.pdfURL path] toPath:[self.previewURL path] error:&error] == NO)
     {
+#if DEBUG_LOG_PRINT_PREVIEW
         NSLog(@"Failed to rename file");
+#endif
         return NO;
     }
     return YES;

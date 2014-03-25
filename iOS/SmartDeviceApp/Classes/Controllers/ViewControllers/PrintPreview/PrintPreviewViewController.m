@@ -134,6 +134,9 @@
     {
         //TODO: Show replacement image for blank home screen
         //hide UI related to preview
+#if DEBUG_LOG_PRINT_PREVIEW
+        NSLog(@"Load SDA Home");
+#endif
         [self hidePrintPreviewControls:YES];
     }
 }
@@ -189,12 +192,17 @@
 
 - (void) loadPrintPreview
 {
+#if DEBUG_LOG_PRINT_PREVIEW
+    NSLog(@"Load Print Preview");
+#endif
     //get PDF document
     PDFFileManager *manager = [PDFFileManager sharedManager];
     pdfDocument = manager.pdfDocument;
     if(pdfDocument == nil)
     {
-        NSLog(@"document is nil");
+#if DEBUG_LOG_PRINT_PREVIEW
+        NSLog(@"Document is Nil");
+#endif
         return;
     }
     //Get number of PDF pages
@@ -349,8 +357,9 @@
         }
     }
     
+#if DEBUG_LOG_PRINT_PREVIEW
     NSLog(@"Pageview controller height = %f. width = %f", height, width);
-
+#endif
     //set the page controller view frame to new dimensions
     [self.pdfPageViewController.view setFrame: CGRectMake(horizontalMargin, verticalMargin, width, height)];
 }

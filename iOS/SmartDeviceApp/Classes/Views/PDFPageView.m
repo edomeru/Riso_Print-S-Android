@@ -56,8 +56,8 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    if(self.datasource == nil){
-        NSLog(@"delegate is nil");
+    if(self.datasource == nil)
+    {
         return;
     }
     //detect first time to draw view
