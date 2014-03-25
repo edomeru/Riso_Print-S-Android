@@ -255,23 +255,26 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         switch (v.getId()) {
             case ID_PRINT_BUTTON:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    FragmentManager fm = getFragmentManager();
+                    MainActivity activity = (MainActivity) getActivity();
                     
-                    // Always make new
-                    PrintSettingsFragment fragment = null;// (PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
-                    if (fragment == null) {
-                        FragmentTransaction ft = fm.beginTransaction();
-                        fragment = new PrintSettingsFragment();
-                        ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                        ft.commit();
-                    }
-                    
-                    fragment.setPrintSettings(mPrintSettings);
-                    fragment.setTargetFragment(this, 0);
-                    
-                    if (getActivity() != null && getActivity() instanceof MainActivity) {
-                        MainActivity activity = (MainActivity) getActivity();
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        FragmentManager fm = getFragmentManager();
+                        
+                        // Always make new
+                        PrintSettingsFragment fragment = null;// (PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
+                        if (fragment == null) {
+                            FragmentTransaction ft = fm.beginTransaction();
+                            fragment = new PrintSettingsFragment();
+                            ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                            ft.commit();
+                        }
+                        
+                        fragment.setPrintSettings(mPrintSettings);
+                        fragment.setTargetFragment(this, 0);
+                        
                         activity.openDrawer(Gravity.RIGHT, true);
+                    } else {
+                        activity.closeDrawers();
                     }
                 }
                 break;

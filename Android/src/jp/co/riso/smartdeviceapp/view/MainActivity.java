@@ -116,6 +116,7 @@ public class MainActivity extends BaseActivity {
     // ================================================================================
 
     public void openDrawer(int gravity) {
+        closeDrawers();
         openDrawer(gravity, false);
     }
         
@@ -127,6 +128,10 @@ public class MainActivity extends BaseActivity {
     public void closeDrawers() {
         mDrawerLayout.setPreventInterceptTouches(false);
         mDrawerLayout.closeDrawers();
+    }
+    
+    public boolean isDrawerOpen(int gravity) {
+        return mDrawerLayout.isDrawerOpen(gravity);
     }
     
     // ================================================================================
