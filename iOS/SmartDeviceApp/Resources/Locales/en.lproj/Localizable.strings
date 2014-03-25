@@ -7,6 +7,7 @@
 "IDS_LBL_OPEN_IN_IOS" = "Open-in Document Here";
 "IDS_LBL_OPEN_IN_ANDROID" = "Open Document";
 "IDS_LBL_OPEN_IN_WINRT" = "Open Document";
+"IDS_LBL_HOME" = "Home";
 "IDS_LBL_PRINT_PREVIEW" = "Print Preview";
 "IDS_LBL_PRINTERS" = "Printers";
 "IDS_LBL_PRINT_JOB_HISTORY" = "Print Job History";
@@ -15,7 +16,18 @@
 "IDS_LBL_SEARCH_PRINTERS" = "Printer Search";
 "IDS_LBL_SAVED_PRINTERS" = "Saved Printers";
 "IDS_LBL_DEFAULT_PRINTER" = "Default Printer";
-"IDS_LBL_DELETE_PRINTER" = "Delete";
+"IDS_LBL_DELETE" = "Delete";
+"IDS_LBL_PULL_TO_REFRESH" = "Pull to refresh";
+"IDS_LBL_RELEASE_TO_REFRESH" = "Release to refresh";
+"IDS_LBL_REFRESHING" = "Refreshing…";
+"IDS_LBL_LAST_UPDATED" = "Updated: %@";
+"IDS_LBL_SET_DEFAULT_PRINTER" = "Set as Default Printer";
+"IDS_LBL_ADD_SUCCESSFUL" = "Added Successfully";
+"IDS_LBL_EXPAND" = "Expand Print Jobs Group";
+"IDS_LBL_COLLAPSE" = "Collapse Print Jobs Group";
+"IDS_LBL_DELETE_ALL" = "Delete All";
+"IDS_LBL_DELETE_JOBS_TITLE" = "Delete Print Job";
+"IDS_LBL_DELETE_JOBS_MSG" = "Are you sure you want to delete the print jobs?";
 "IDS_LBL_PRINTER_INFO" = "Printer Info";
 "IDS_LBL_PRINTER_NAME" = "Printer Name";
 "IDS_LBL_IP_ADDRESS" = "IP Address";
@@ -30,6 +42,9 @@
 "IDS_LBL_CARD_ID" = "ID";
 "IDS_LBL_PRINTER_SEARCH_GROUP" = "PRINTER SEARCH";
 "IDS_LBL_PRINTING" = "Printing… Tap to Cancel";
+"IDS_LBL_PRINT_SETTINGS" = "Print Settings";
+"IDS_LBL_PRINT" = "Print";
+"IDS_LBL_PRINTER" = "Printer";
 "IDS_LBL_BASIC" = "Basic";
 "IDS_LBL_COLORMODE" = "Color Mode";
 "IDS_LBL_COLORMODE_AUTO" = "Auto";
@@ -86,10 +101,13 @@
 "IDS_LBL_SORT_PERPAGE" = "Group";
 "IDS_LBL_SORT_PERCOPY" = "Sort";
 "IDS_LBL_BOOKLET" = "Booklet";
-"IDS_LBL_BOOKLET_ON" = "On";
 "IDS_LBL_BOOKLET_FINISHING" = "Booklet binding";
 "IDS_LBL_BOOKLET_FINISHING_FOLD" = "Paper folding";
 "IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" = "Fold + Staple";
+"IDS_LBL_BOOKLET_LAYOUT" = "Booklet Layout";
+"IDS_LBL_BOOKLET_LAYOUT_LR" = "Left to right";
+"IDS_LBL_BOOKLET_LAYOUT_RL" = "Right to left";
+"IDS_LBL_BOOKLET_LAYOUT_TB" = "Top to bottom";
 "IDS_LBL_FINISHINGSIDE" = "Binding side";
 "IDS_LBL_FINISHINGSIDE_LEFT" = "Left";
 "IDS_LBL_FINISHINGSIDE_TOP" = "Upper";
@@ -125,4 +143,6 @@
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "File size is too large";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device";
 "IDS_ERR_MSG_PDF_ENCRYPTED" = "PDF Encryption is not supported";
+"IDS_ERR_MSG_DELETE_FAILED" = "Error deleting Print Job";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";
+
