@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D00842A18C6FDA2001558F7 /* MenuButton.m */; };
+		2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0084B518C72F1A001558F7 /* MenuScrollView.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
 		2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC3E185FDE6C00810455 /* AppDelegate.m */; };
 		2D0AEC44185FDE6C00810455 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC3F185FDE6C00810455 /* main.m */; };
-		2D0AEC45185FDE6C00810455 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC42185FDE6C00810455 /* ViewController.m */; };
 		2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4A185FDE8100810455 /* InfoPlist.strings */; };
-		2D0AEC51185FDE8100810455 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4D185FDE8100810455 /* Main_iPad.storyboard */; };
-		2D0AEC52185FDE8100810455 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main_iPhone.storyboard */; };
+		2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
 		2D0AEC58185FE43200810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC59185FE43200810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC5A185FE43200810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -24,7 +24,17 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
-		2D9DD409185FF3200085AD88 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD407185FF3200085AD88 /* .gitkeep */; };
+		2D0BEB2018CD54C60059C15A /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */; };
+		2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */; };
+		2D232D8318DFD45D00144935 /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D8218DFD45D00144935 /* UIView+Localization.m */; };
+		2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */; };
+		2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3518C4137000AC8AD0 /* RootViewController.m */; };
+		2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */; };
+		2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */; };
+		2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */; };
+		2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */; };
+		2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */; };
+		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D9DD41A185FFB830085AD88 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D9DD41B185FFB830085AD88 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -33,9 +43,19 @@
 		2D9DD443185FFBCB0085AD88 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD446185FFC160085AD88 /* InfoPlist.strings */; };
 		2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD44E185FFED70085AD88 /* gtest-all.cc */; };
+		2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */; };
+		2DF90BDF18C9DE2000C80355 /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */; };
+		2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */; };
+		2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */; };
+		2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BE618C9DE4400C80355 /* PrintersViewController.m */; };
+		2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D00842918C6FDA2001558F7 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuButton.h; sourceTree = "<group>"; };
+		2D00842A18C6FDA2001558F7 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButton.m; sourceTree = "<group>"; };
+		2D0084B418C72F1A001558F7 /* MenuScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScrollView.h; sourceTree = "<group>"; };
+		2D0084B518C72F1A001558F7 /* MenuScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuScrollView.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -46,12 +66,9 @@
 		2D0AEC3D185FDE6C00810455 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2D0AEC3E185FDE6C00810455 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2D0AEC3F185FDE6C00810455 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2D0AEC41185FDE6C00810455 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		2D0AEC42185FDE6C00810455 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		2D0AEC48185FDE8100810455 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		2D0AEC4B185FDE8100810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2D0AEC4D185FDE8100810455 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = "<group>"; };
-		2D0AEC4E185FDE8100810455 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
+		2D0AEC4E185FDE8100810455 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceAppTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmartDeviceAppTests-Info.plist"; sourceTree = "<group>"; };
 		2D0AEC61185FE43200810455 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -59,6 +76,30 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D0BEB1E18CD54C60059C15A /* PrinterSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchViewController.h; sourceTree = "<group>"; };
+		2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterSearchViewController.m; sourceTree = "<group>"; };
+		2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
+		2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
+		2D232D8118DFD45D00144935 /* UIView+Localization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Localization.h"; sourceTree = "<group>"; };
+		2D232D8218DFD45D00144935 /* UIView+Localization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Localization.m"; sourceTree = "<group>"; };
+		2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideOverSegue.h; sourceTree = "<group>"; };
+		2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideOverSegue.m; sourceTree = "<group>"; };
+		2D4B3E3418C4137000AC8AD0 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		2D4B3E3518C4137000AC8AD0 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		2D4B3E3818C4165B00AC8AD0 /* PrintPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintPreviewViewController.h; sourceTree = "<group>"; };
+		2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintPreviewViewController.m; sourceTree = "<group>"; };
+		2D4B3E3C18C418A900AC8AD0 /* ReplaceSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceSegue.h; sourceTree = "<group>"; };
+		2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplaceSegue.m; sourceTree = "<group>"; };
+		2D4B3E4018C41BAD00AC8AD0 /* DefaultView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultView.h; sourceTree = "<group>"; };
+		2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultView.m; sourceTree = "<group>"; };
+		2D4B3E4318C4550800AC8AD0 /* SlideSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideSegue.h; sourceTree = "<group>"; };
+		2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideSegue.m; sourceTree = "<group>"; };
+		2D4B3E4718C4693200AC8AD0 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
+		2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
+		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2D5FC7BC18DA7A8000459B92 /* AppStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStrings.h; sourceTree = "<group>"; };
 		2D8E525518605F33009BE88B /* GTestEventListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = GTestEventListener.h; sourceTree = "<group>"; };
 		2D9DD404185FF3200085AD88 /* CommonAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonAPI.h; sourceTree = "<group>"; };
 		2D9DD407185FF3200085AD88 /* .gitkeep */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
@@ -69,6 +110,18 @@
 		2D9DD447185FFC160085AD88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D9DD44E185FFED70085AD88 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
 		2D9DD44F185FFED70085AD88 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
+		2DDACC6C18C47C6A001DEC76 /* PrintSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsViewController.h; sourceTree = "<group>"; };
+		2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsViewController.m; sourceTree = "<group>"; };
+		2DF90BDD18C9DE2000C80355 /* AddPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPrinterViewController.h; sourceTree = "<group>"; };
+		2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPrinterViewController.m; sourceTree = "<group>"; };
+		2DF90BE118C9DE4400C80355 /* PrintersIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIpadViewController.h; sourceTree = "<group>"; };
+		2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIpadViewController.m; sourceTree = "<group>"; };
+		2DF90BE318C9DE4400C80355 /* PrintersIphoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIphoneViewController.h; sourceTree = "<group>"; };
+		2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIphoneViewController.m; sourceTree = "<group>"; };
+		2DF90BE518C9DE4400C80355 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersViewController.h; sourceTree = "<group>"; };
+		2DF90BE618C9DE4400C80355 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersViewController.m; sourceTree = "<group>"; };
+		2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
+		2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +219,8 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEC3B185FDE6C00810455 /* Controllers */,
+				2D4B3E3F18C41B9700AC8AD0 /* Views */,
+				2D5FC7BA18DA7A8000459B92 /* Helpers */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -174,8 +229,8 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEC3C185FDE6C00810455 /* AppLauncher */,
-				2D9DD40B185FF4450085AD88 /* Printer */,
-				2D0AEC40185FDE6C00810455 /* ViewControllers */,
+				2D4B3E3218C4136000AC8AD0 /* ViewControllers */,
+				2D4B3E3B18C4188A00AC8AD0 /* Segues */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -188,15 +243,6 @@
 				2D0AEC3F185FDE6C00810455 /* main.m */,
 			);
 			path = AppLauncher;
-			sourceTree = "<group>";
-		};
-		2D0AEC40185FDE6C00810455 /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				2D0AEC41185FDE6C00810455 /* ViewController.h */,
-				2D0AEC42185FDE6C00810455 /* ViewController.m */,
-			);
-			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		2D0AEC46185FDE8100810455 /* Resources */ = {
@@ -221,6 +267,7 @@
 		2D0AEC49185FDE8100810455 /* Locales */ = {
 			isa = PBXGroup;
 			children = (
+				2D5FC7B518DA79EB00459B92 /* Localizable.strings */,
 				2D0AEC4A185FDE8100810455 /* InfoPlist.strings */,
 			);
 			path = Locales;
@@ -229,8 +276,7 @@
 		2D0AEC4C185FDE8100810455 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
-				2D0AEC4D185FDE8100810455 /* Main_iPad.storyboard */,
-				2D0AEC4E185FDE8100810455 /* Main_iPhone.storyboard */,
+				2D0AEC4E185FDE8100810455 /* Main.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -287,6 +333,112 @@
 			path = Locales;
 			sourceTree = "<group>";
 		};
+		2D0BEB1D18CD54B40059C15A /* PrinterSearch */ = {
+			isa = PBXGroup;
+			children = (
+				2D0BEB1E18CD54C60059C15A /* PrinterSearchViewController.h */,
+				2D0BEB1F18CD54C60059C15A /* PrinterSearchViewController.m */,
+			);
+			path = PrinterSearch;
+			sourceTree = "<group>";
+		};
+		2D4B3E3218C4136000AC8AD0 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				2D4B3E3318C4136000AC8AD0 /* General */,
+				2D4B3E4618C4691F00AC8AD0 /* Home */,
+				2D4B3E3718C4164A00AC8AD0 /* PrintPreview */,
+				2DF90BE018C9DE4400C80355 /* Printers */,
+				2DDACC6B18C47C5E001DEC76 /* PrintSettings */,
+				2DF90BDC18C9DE2000C80355 /* AddPrinter */,
+				2D0BEB1D18CD54B40059C15A /* PrinterSearch */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		2D4B3E3318C4136000AC8AD0 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				2D4B3E3418C4137000AC8AD0 /* RootViewController.h */,
+				2D4B3E3518C4137000AC8AD0 /* RootViewController.m */,
+				2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */,
+				2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */,
+				2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */,
+				2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */,
+			);
+			path = General;
+			sourceTree = "<group>";
+		};
+		2D4B3E3718C4164A00AC8AD0 /* PrintPreview */ = {
+			isa = PBXGroup;
+			children = (
+				2D4B3E3818C4165B00AC8AD0 /* PrintPreviewViewController.h */,
+				2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */,
+			);
+			path = PrintPreview;
+			sourceTree = "<group>";
+		};
+		2D4B3E3B18C4188A00AC8AD0 /* Segues */ = {
+			isa = PBXGroup;
+			children = (
+				2D4B3E3C18C418A900AC8AD0 /* ReplaceSegue.h */,
+				2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */,
+				2D4B3E4318C4550800AC8AD0 /* SlideSegue.h */,
+				2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */,
+				2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */,
+				2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */,
+			);
+			path = Segues;
+			sourceTree = "<group>";
+		};
+		2D4B3E3F18C41B9700AC8AD0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2D5FC7BD18DA7EF900459B92 /* Extensions */,
+				2D4B3E4018C41BAD00AC8AD0 /* DefaultView.h */,
+				2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */,
+				2D00842918C6FDA2001558F7 /* MenuButton.h */,
+				2D00842A18C6FDA2001558F7 /* MenuButton.m */,
+				2D0084B418C72F1A001558F7 /* MenuScrollView.h */,
+				2D0084B518C72F1A001558F7 /* MenuScrollView.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2D4B3E4618C4691F00AC8AD0 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				2D4B3E4718C4693200AC8AD0 /* HomeViewController.h */,
+				2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		2D5FC7BA18DA7A8000459B92 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				2D5FC7BB18DA7A8000459B92 /* Constants */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		2D5FC7BB18DA7A8000459B92 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				2D5FC7BC18DA7A8000459B92 /* AppStrings.h */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		2D5FC7BD18DA7EF900459B92 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2D232D8118DFD45D00144935 /* UIView+Localization.h */,
+				2D232D8218DFD45D00144935 /* UIView+Localization.m */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		2D9DD402185FF3200085AD88 /* CommonAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -311,13 +463,6 @@
 				2D9DD407185FF3200085AD88 /* .gitkeep */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		2D9DD40B185FF4450085AD88 /* Printer */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Printer;
 			sourceTree = "<group>";
 		};
 		2D9DD40F185FFA1D0085AD88 /* tests */ = {
@@ -381,6 +526,37 @@
 				2D9DD44F185FFED70085AD88 /* gtest.h */,
 			);
 			path = gtest;
+			sourceTree = "<group>";
+		};
+		2DDACC6B18C47C5E001DEC76 /* PrintSettings */ = {
+			isa = PBXGroup;
+			children = (
+				2DDACC6C18C47C6A001DEC76 /* PrintSettingsViewController.h */,
+				2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */,
+			);
+			path = PrintSettings;
+			sourceTree = "<group>";
+		};
+		2DF90BDC18C9DE2000C80355 /* AddPrinter */ = {
+			isa = PBXGroup;
+			children = (
+				2DF90BDD18C9DE2000C80355 /* AddPrinterViewController.h */,
+				2DF90BDE18C9DE2000C80355 /* AddPrinterViewController.m */,
+			);
+			path = AddPrinter;
+			sourceTree = "<group>";
+		};
+		2DF90BE018C9DE4400C80355 /* Printers */ = {
+			isa = PBXGroup;
+			children = (
+				2DF90BE118C9DE4400C80355 /* PrintersIpadViewController.h */,
+				2DF90BE218C9DE4400C80355 /* PrintersIpadViewController.m */,
+				2DF90BE318C9DE4400C80355 /* PrintersIphoneViewController.h */,
+				2DF90BE418C9DE4400C80355 /* PrintersIphoneViewController.m */,
+				2DF90BE518C9DE4400C80355 /* PrintersViewController.h */,
+				2DF90BE618C9DE4400C80355 /* PrintersViewController.m */,
+			);
+			path = Printers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -453,6 +629,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = 2D0AEBF6185FDD2100810455;
 			productRefGroup = 2D0AEC00185FDD2100810455 /* Products */;
@@ -471,9 +648,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D0AEC51185FDE8100810455 /* Main_iPad.storyboard in Resources */,
-				2D0AEC52185FDE8100810455 /* Main_iPhone.storyboard in Resources */,
-				2D9DD409185FF3200085AD88 /* .gitkeep in Resources */,
+				2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */,
+				2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
 			);
@@ -502,9 +678,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */,
+				2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */,
+				2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */,
+				2DF90BE818C9DE4400C80355 /* PrintersIphoneViewController.m in Sources */,
 				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
+				2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */,
 				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
-				2D0AEC45185FDE6C00810455 /* ViewController.m in Sources */,
+				2D0BEB2018CD54C60059C15A /* PrinterSearchViewController.m in Sources */,
+				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
+				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
+				2D3AAA9718C9B21E00D50FDA /* SlideOverSegue.m in Sources */,
+				2D4B3E3618C4137000AC8AD0 /* RootViewController.m in Sources */,
+				2DF90BE718C9DE4400C80355 /* PrintersIpadViewController.m in Sources */,
+				2DF90BDF18C9DE2000C80355 /* AddPrinterViewController.m in Sources */,
+				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
+				2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */,
+				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
+				2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */,
+				2DF90BE918C9DE4400C80355 /* PrintersViewController.m in Sources */,
+				2D232D8318DFD45D00144935 /* UIView+Localization.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,6 +725,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				2D0AEC4B185FDE8100810455 /* en */,
+				2D5FC7B918DA7A6300459B92 /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -542,6 +736,15 @@
 				2D0AEC87185FE50000810455 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2D5FC7B518DA79EB00459B92 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D5FC7B618DA79EB00459B92 /* en */,
+				2D5FC7B818DA7A5900459B92 /* ja */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		2D9DD446185FFC160085AD88 /* InfoPlist.strings */ = {
@@ -637,7 +840,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -651,7 +854,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
