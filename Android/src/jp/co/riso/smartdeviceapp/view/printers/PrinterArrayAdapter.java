@@ -10,7 +10,9 @@ package jp.co.riso.smartdeviceapp.view.printers;
 
 import java.util.List;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -61,7 +63,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             convertView = inflater.inflate(mLayoutId, parent, false);
             mHolder = new ViewHolder();
             mHolder.mPrinterName = (TextView) convertView.findViewById(R.id.txt_printerName);
+            mHolder.mIpAddress = (TextView) convertView.findViewById(R.id.txt_ipAddress);
             mHolder.mPrinterName.setText(printer.getName());
+            mHolder.mIpAddress.setText(printer.getIpAddress());
             
             mHolder.mDiscloseImage = (ImageView) convertView.findViewById(R.id.img_disclosure);
             mHolder.mDeleteButton = (Button) convertView.findViewById(R.id.btn_delete);
@@ -78,6 +82,8 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             mHolder.mDeleteButton.setOnClickListener(this);
             
             convertView.setTag(mHolder);
+            AppUtils.changeChildrenFont((ViewGroup)convertView, SmartDeviceApp.getAppFont());
+
         } else {
             mHolder = (ViewHolder) convertView.getTag();
             mHolder.mPrinterName.setText(printer.getName());
@@ -191,7 +197,8 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     
     private void setPrinterRowToNormal(ViewHolder viewHolder) {
         viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
-        ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));
+        viewHolder.mIpAddress.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
+        ((View) viewHolder.mDiscloseImage.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));
         viewHolder.mDeleteButton.setVisibility(View.GONE);
     }
     
@@ -200,14 +207,16 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             setPrinterRowToNormal(mDefaultViewHolder);
         }
         viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-        ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mIpAddress.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
+        ((View) viewHolder.mDiscloseImage.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_dark_1));
         viewHolder.mDeleteButton.setVisibility(View.GONE);
         mDefaultViewHolder = viewHolder;
     }
     
     private void setPrinterRowToDelete(ViewHolder viewHolder) {
         viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-        ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_color_2));
+        viewHolder.mIpAddress.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
+        ((View) viewHolder.mDiscloseImage.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_color_2));
         viewHolder.mDeleteButton.setVisibility(View.VISIBLE);
         viewHolder.mDeleteButton.setBackgroundColor(mContext.getResources().getColor(R.color.bg_delete_button));
         mDeleteViewHolder = viewHolder;
@@ -239,6 +248,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     public class ViewHolder {
         public ImageView mOnlineIndcator;
         public TextView mPrinterName;
+        public TextView mIpAddress;
         public Button mDeleteButton;
         public ImageView mDiscloseImage;
     }
