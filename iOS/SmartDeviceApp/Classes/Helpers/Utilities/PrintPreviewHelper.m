@@ -7,6 +7,7 @@
 //
 
 #import "PrintPreviewHelper.h"
+//Paper size reference:
 struct {
     float width;
     float height;
@@ -18,7 +19,9 @@ struct {
     {110.0, 220.0}  //Envelope
 };
 
-BOOL isGrayScale(NSUInteger colorMode)
+@implementation PrintPreviewHelper
+
++(BOOL) isGrayScaleColorForColorModeSetting : (NSUInteger) colorMode
 {
     if(colorMode == COLORMODE_MONO)
     {
@@ -27,7 +30,9 @@ BOOL isGrayScale(NSUInteger colorMode)
     return NO;
 }
 
-UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, NSUInteger duplex, BOOL isBookletBind)
++(UIPageViewControllerSpineLocation) spineLocationForBindSetting: (NSUInteger) bind
+                                    duplexSetting: (NSUInteger)  duplex
+                                    bookletBindSettingOn: (BOOL) isBookletBind
 {
     if(duplex > DUPLEX_OFF || isBookletBind == YES)
     {
@@ -39,9 +44,10 @@ UIPageViewControllerSpineLocation getSpineLocation(NSUInteger bind, NSUInteger d
     }
     
     return UIPageViewControllerSpineLocationMin;
+    
 }
 
-UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bind)
++(UIPageViewControllerNavigationOrientation) navigationOrientationForBindSetting : (NSUInteger) bind
 {
     if(bind == BIND_TOP)
     {
@@ -50,7 +56,7 @@ UIPageViewControllerNavigationOrientation getNavigationOrientation(NSUInteger bi
     return UIPageViewControllerNavigationOrientationHorizontal;
 }
 
-BOOL isPaperLandscape(PreviewSetting *setting)
++(BOOL) isPaperLandscapeForPreviewSetting:(PreviewSetting*) setting
 {
     if(setting == nil)
     {
@@ -75,13 +81,13 @@ BOOL isPaperLandscape(PreviewSetting *setting)
     return NO;
 }
 
-float getHeightToWidthRatio(NSUInteger paperSize)
++(CGFloat) heightToWidthRatioForPaperSizeSetting:(NSUInteger) paperSize
 {
-    float ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
+    CGFloat ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
     return ratio;
 }
 
-NSUInteger getNumberOfPagesPerSheet(NSUInteger pagination)
++(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) pagination
 {
     switch(pagination)
     {
@@ -98,3 +104,5 @@ NSUInteger getNumberOfPagesPerSheet(NSUInteger pagination)
     }
     return 1;
 }
+
+@end

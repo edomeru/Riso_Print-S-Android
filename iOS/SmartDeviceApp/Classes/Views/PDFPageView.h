@@ -15,12 +15,12 @@
  @param pageNum - Nth page to be drawn in the PDFPageView
  @return PDF page to be drawn
  **/
-- (CGPDFPageRef) getPage: (NSUInteger) pageNum;
+- (CGPDFPageRef) pageForPageNum: (NSUInteger) pageNum;
 /**
  Get the total number of pages to be drawn in the PDFPageView
  @return Number of pages to be drawn in the PDFPageView
  **/
-- (NSUInteger) getNumPages;
+- (NSUInteger) numberOfPagesToDraw;
 /**
 Checks if drawing in PDFPageView is in GrayScale or Monochrome
  @return YES if drawing is in Grayscale. NO otherwise

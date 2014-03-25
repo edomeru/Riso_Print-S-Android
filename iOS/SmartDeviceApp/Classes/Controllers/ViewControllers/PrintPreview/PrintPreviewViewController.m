@@ -125,8 +125,8 @@
 {
     [super viewDidLoad];
     /*If view is already in preview mode, show print preview*/
-    BOOL previewModeOn = ((RootViewController*)self.parentViewController).isPrintPreviewMode;
-    if(previewModeOn == YES)
+    BOOL isPDFForPreviewAvailable = [[PDFFileManager sharedManager] pdfFileAvailable];
+    if(isPDFForPreviewAvailable == YES)
     {
         [self loadPrintPreview];
     }
@@ -246,7 +246,7 @@
 -(void) computeNumViewPages
 {
     //Number of view pages is number of PDF pages divided by number of pages in sheet with respect to the pagination setting
-    NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
+    NSUInteger numPagesPerSheet = [PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting: self.previewSetting.pagination];
     numViewPages = numPDFPages/numPagesPerSheet;
     
     if((numPDFPages % numPagesPerSheet) > 0)
@@ -275,8 +275,12 @@
     }
     
     //consider bind setting for spine location and navigation orientation
-    UIPageViewControllerSpineLocation spineLocation = getSpineLocation(self.previewSetting.bind, self.previewSetting.duplex, self.previewSetting.isBookletBind);
-    UIPageViewControllerNavigationOrientation navigationOrientation = getNavigationOrientation(self.previewSetting.bind);
+    UIPageViewControllerSpineLocation spineLocation =
+            [PrintPreviewHelper spineLocationForBindSetting: self.previewSetting.bind
+                                              duplexSetting: self.previewSetting.duplex
+                                       bookletBindSettingOn: self.previewSetting.isBookletBind];
+    
+    UIPageViewControllerNavigationOrientation navigationOrientation = [PrintPreviewHelper navigationOrientationForBindSetting:self.previewSetting.bind];
     
     NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithInteger:spineLocation] forKey: UIPageViewControllerOptionSpineLocationKey];
     
@@ -305,10 +309,10 @@
 -(void) setPageSize
 {
     //get ratio of width and height based on paper size
-    float heightToWidthRatio = getHeightToWidthRatio(self.previewSetting.paperSize);
+    float heightToWidthRatio =[PrintPreviewHelper heightToWidthRatioForPaperSizeSetting:self.previewSetting.paperSize];
     
     //check if paper should be in landscape orientation
-    BOOL isLandscape = isPaperLandscape(self.previewSetting);
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
     
     //set margins
     CGFloat horizontalMargin = PREVIEW_MIN_MARGIN;
@@ -473,7 +477,9 @@
 /*Returns the spine location based on an orientation*/
 - (UIPageViewControllerSpineLocation) pageViewController:(UIPageViewController *)pageViewController spineLocationForInterfaceOrientation:(UIInterfaceOrientation)orientation
 {
-    return getSpineLocation(self.previewSetting.bind, self.previewSetting.duplex, self.previewSetting.isBookletBind);
+    return [PrintPreviewHelper spineLocationForBindSetting: self.previewSetting.bind
+                                             duplexSetting: self.previewSetting.duplex
+                                      bookletBindSettingOn: self.previewSetting.isBookletBind];;
 }
 
 /*Detect the page turns.*/
@@ -492,9 +498,9 @@
 #pragma mark - PDFPageViewContentControllerDatasource methods
 
 /*Returns the PDF page according to the page index of the page view controller. Takes into consideration imposition/pagination.*/
--(CGPDFPageRef) getPDFPage:(NSUInteger)pageIndex withPageOffset:(NSUInteger)pageOffset
+-(CGPDFPageRef) pdfPageForPageIndex:(NSUInteger)pageIndex withPageOffset:(NSUInteger)pageOffset
 {
-    NSUInteger numPagesPerSheet = getNumberOfPagesPerSheet(self.previewSetting.pagination);
+    NSUInteger numPagesPerSheet = [PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting:self.previewSetting.pagination];
     NSUInteger actualPDFPageNum = (pageIndex * numPagesPerSheet) + 1; // the actual PDF page number of the first PDF page in the sheet
     //the pageOffset is the Nth page in the sheet. To get Nth PDF page in a sheet, add the offset to the actual pdf page number of the first page in the sheet
     if((actualPDFPageNum + pageOffset) > numPDFPages)

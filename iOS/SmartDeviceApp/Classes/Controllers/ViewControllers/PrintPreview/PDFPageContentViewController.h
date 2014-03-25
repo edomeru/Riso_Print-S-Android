@@ -17,7 +17,7 @@
  
  @return PDF page
  **/
--(CGPDFPageRef) getPDFPage: (NSUInteger) pageIndex withPageOffset:(NSUInteger) pageOffset;
+-(CGPDFPageRef) pdfPageForPageIndex: (NSUInteger) pageIndex withPageOffset:(NSUInteger) pageOffset;
 /**
  Get the PreviewSetting object
  @return PreviewSetting object

@@ -32,7 +32,6 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.isPrintPreviewMode = [[PDFFileManager sharedManager] pdfFileAvailable];
     [self performSegueTo:[PrintPreviewViewController class]];
 }
 
@@ -68,8 +67,6 @@
 
 - (void) loadPDFView
 {
-    
-    self.isPrintPreviewMode = YES;
     if (self.childViewControllers.count == 0)
     {
         return; //pdf set-up finished first before view was loaded

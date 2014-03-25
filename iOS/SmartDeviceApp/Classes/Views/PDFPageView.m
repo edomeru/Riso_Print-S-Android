@@ -75,7 +75,7 @@
 {
     //Get the settings needed in the drawing of view
     //Number of pages per sheet
-    NSUInteger numPagesPerSheet = [self.datasource getNumPages];
+    NSUInteger numPagesPerSheet = [self.datasource numberOfPagesToDraw];
     //Color mode
     BOOL isGrayScale = [self.datasource isGrayScale];
     
@@ -109,7 +109,7 @@
 /*Draw a PDF page in rect*/
 -(void) drawPDFPage: (CGContextRef) graphicsCtx  inRect: (CGRect) rect forPageNumber:(NSUInteger) pageNumber inGrayScale: (BOOL) isGrayScale;
 {
-    CGPDFPageRef pdfPage = [self.datasource getPage:pageNumber];
+    CGPDFPageRef pdfPage = [self.datasource pageForPageNum:pageNumber];
     
     if(pdfPage == nil)
     {

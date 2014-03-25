@@ -24,7 +24,5 @@
 @property (nonatomic, weak) SlidingViewController *sideController;
 
 
-@property (nonatomic, assign) BOOL isPrintPreviewMode;
-
 - (void) loadPDFView;
 @end

@@ -18,41 +18,28 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    NSLog(@"Did Finish Launching");
-    
 #if PREVIEW_DEBUG_MODE
     {
-        //TODO REMOVE! For testing only
+        //TODO: REMOVE! For testing only
         NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"sample.pdf" ofType:nil]];
         NSLog(@"testfile url: %@", [fileURL path]);
         [self setUpPreview:fileURL];
         return YES;
     }
-
 #else
     /*check if open-in*/
-    if([launchOptions objectForKey: UIApplicationLaunchOptionsURLKey] != nil)
+    if([launchOptions objectForKey: UIApplicationLaunchOptionsURLKey] == nil)
     {
-        NSURL *url = nil;
-        url = (NSURL *)[launchOptions valueForKey: UIApplicationLaunchOptionsURLKey];
-        
-        if([url isFileURL] == true)
-        {
-            NSLog(@"Opened with URL:%@", [url path]);
-            [self setUpPreview:url];
-            return YES;
-        }
+        [self cleanUpPDF]; //Do clean-up if not open-In to clean-up if previous open-in session is not clean-up
     }
-    
-    [self cleanUpPDF];
     return YES;
  #endif
 }
 
-/*If from background and open-in, this method will be called not the didFinishLaunchingWithOptions*/
+/*If Open-in, this method will be called */
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    NSLog(@"open URL:%@", [url path]);
+    NSLog(@"Open URL:%@", [url path]);
     [self setUpPreview:url];
     return YES;
 }
@@ -95,7 +82,6 @@
         [self cleanUpPDF];
         [self processPDF:fileURL]; //make async if necessary
     });
-    NSLog(@"Set-up Preview Returned");
 }
 
 

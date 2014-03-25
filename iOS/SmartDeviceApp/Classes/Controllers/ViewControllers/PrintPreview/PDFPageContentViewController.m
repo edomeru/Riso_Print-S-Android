@@ -40,21 +40,21 @@
 
 #pragma mark - PDFPageViewDatasource methods
 
--(CGPDFPageRef) getPage:(NSUInteger)pageNum
+-(CGPDFPageRef) pageForPageNum:(NSUInteger)pageNum
 {
-    return [self.datasource getPDFPage:self.pageIndex withPageOffset:pageNum];
+    return [self.datasource pdfPageForPageIndex:self.pageIndex withPageOffset:pageNum];
 }
 
--(NSUInteger) getNumPages
+-(NSUInteger) numberOfPagesToDraw
 {
     PreviewSetting *previewSetting = [self.datasource getPreviewSetting];
-    return getNumberOfPagesPerSheet(previewSetting.pagination);
+    return [PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting:previewSetting.pagination];
 }
 
 -(BOOL) isGrayScale
 {
     PreviewSetting *previewSetting = [self.datasource getPreviewSetting];
-    return isGrayScale(previewSetting.colorMode);
+    return [PrintPreviewHelper isGrayScaleColorForColorModeSetting:previewSetting.colorMode];
 }
 
 @end
