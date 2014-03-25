@@ -29,6 +29,7 @@
 	        android:layout_gravity="center_vertical"
 	        android:layout_marginLeft="@dimen/printsettings_menu_padding"
 	        android:layout_weight="1"
+        	android:maxLines="2"
 	        android:text="@string/default_textview"
 	        android:textColor="@color/theme_dark_1"
 	        android:textSize="@dimen/home_text_size" />
