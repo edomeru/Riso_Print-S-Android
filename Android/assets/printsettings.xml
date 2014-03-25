@@ -89,7 +89,7 @@
             text="ids_lbl_imposition"
             icon="temp_img_printsettings_null"
             type="list" >
-			<option>ids_lbl_imposition_off</option>
+			<option>ids_lbl_off</option>
 			<option>ids_lbl_imposition_2up</option>
 			<option>ids_lbl_imposition_4up</option>
 		</setting>
