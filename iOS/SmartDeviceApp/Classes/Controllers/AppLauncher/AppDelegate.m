@@ -77,7 +77,7 @@
 - (void) setUpPreview:(NSURL *) fileURL
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didEndPPDFProcessing:)
+                                             selector:@selector(didEndPDFProcessing:)
                                                  name:PDF_END_PROCESSING_NOTIFICATION
                                                object: nil];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{

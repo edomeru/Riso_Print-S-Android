@@ -49,11 +49,9 @@
 		310626E918CEB11B00E3CB19 /* PDFPageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */; };
 		310626EC18CEB15000E3CB19 /* PDFPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626EB18CEB15000E3CB19 /* PDFPageView.m */; };
 		3106270018CEDDB700E3CB19 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626FF18CEDDB700E3CB19 /* PreviewSetting.m */; };
-		3106270518CF06C400E3CB19 /* sample.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3106270418CF06C400E3CB19 /* sample.pdf */; };
 		3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192AACA18C595A30000E7E7 /* PDFFileManager.m */; };
 		3193EA9A18DAF85500BAFE4C /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3193EA9918DAF85500BAFE4C /* PrinterSearchViewController.m */; };
 		319630D518CFFCA700050E6B /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 319630D418CFFCA700050E6B /* PrintPreviewHelper.m */; };
-		3196316C18D06A8D00050E6B /* sample2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3196316B18D06A8D00050E6B /* sample2.pdf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -125,14 +123,12 @@
 		310626EB18CEB15000E3CB19 /* PDFPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageView.m; sourceTree = "<group>"; };
 		310626FE18CEDDB700E3CB19 /* PreviewSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreviewSetting.h; path = Classes/Models/PreviewSetting.h; sourceTree = "<group>"; };
 		310626FF18CEDDB700E3CB19 /* PreviewSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreviewSetting.m; path = Classes/Models/PreviewSetting.m; sourceTree = "<group>"; };
-		3106270418CF06C400E3CB19 /* sample.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sample.pdf; sourceTree = "<group>"; };
 		3192AAC918C595A30000E7E7 /* PDFFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFFileManager.h; path = Managers/PDFFileManager.h; sourceTree = "<group>"; };
 		3192AACA18C595A30000E7E7 /* PDFFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDFFileManager.m; path = Managers/PDFFileManager.m; sourceTree = "<group>"; };
 		3193EA9818DAF85500BAFE4C /* PrinterSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchViewController.h; sourceTree = "<group>"; };
 		3193EA9918DAF85500BAFE4C /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterSearchViewController.m; sourceTree = "<group>"; };
 		319630D318CFFCA700050E6B /* PrintPreviewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintPreviewHelper.h; path = Helpers/Utilities/PrintPreviewHelper.h; sourceTree = "<group>"; };
 		319630D418CFFCA700050E6B /* PrintPreviewHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintPreviewHelper.m; path = Helpers/Utilities/PrintPreviewHelper.m; sourceTree = "<group>"; };
-		3196316B18D06A8D00050E6B /* sample2.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sample2.pdf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,7 +257,6 @@
 		2D0AEC46185FDE8100810455 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3106270118CF00E600E3CB19 /* Sample */,
 				2D0AEC47185FDE8100810455 /* Images */,
 				2D0AEC49185FDE8100810455 /* Locales */,
 				2D0AEC4C185FDE8100810455 /* Storyboards */,
@@ -559,15 +554,6 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		3106270118CF00E600E3CB19 /* Sample */ = {
-			isa = PBXGroup;
-			children = (
-				3196316B18D06A8D00050E6B /* sample2.pdf */,
-				3106270418CF06C400E3CB19 /* sample.pdf */,
-			);
-			name = Sample;
-			sourceTree = "<group>";
-		};
 		3192AAC818C5953B0000E7E7 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -682,10 +668,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3106270518CF06C400E3CB19 /* sample.pdf in Resources */,
 				2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
-				3196316C18D06A8D00050E6B /* sample2.pdf in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
