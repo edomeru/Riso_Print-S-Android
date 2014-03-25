@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false" >
+
+    <include layout="@layout/actionbar_sub" />
+    
+    <FrameLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <eu.erikw.PullToRefreshListView
+            android:id="@+id/printer_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@android:color/white"
+            android:cacheColorHint="@android:color/white" />
+        
+    </FrameLayout>
+
+</LinearLayout>

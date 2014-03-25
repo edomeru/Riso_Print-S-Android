@@ -1,0 +1,42 @@
+android_page_curl (2014-02-07)
+	https://github.com/harism/android_page_curl
+	https://github.com/harism/android_page_curl/blob/master/LICENSE
+		Apache License v2.0
+	
+	https://github.com/harism/android_page_curl.git
+		master: 7a2c8f152bb4f1b0de3b1aa72b3cb79e1fe8e3bd
+
+
+	Files included:
+		/src/fi/harism/curl/CurlMesh.java
+		/src/fi/harism/curl/CurlPage.java (modified)
+		/src/fi/harism/curl/CurlRenderer.java
+		/src/fi/harism/curl/CurlView.java (modified)
+
+
+PDFViewer SDK v2.9.7 (2014-02-08)
+	http://www.androidpdf.mobi/index.php
+	http://www.androidpdf.mobi/shop
+	http://www.androidpdf.mobi/download/download-android/file/68-pdfviewer-sdk-297
+
+	Files included:
+		/src/com/radaee/pdf/BMDatabase.java
+		/src/com/radaee/pdf/Document.java
+		/src/com/radaee/pdf/Global.java
+		/src/com/radaee/pdf/HWriting.java
+		/src/com/radaee/pdf/Ink.java
+		/src/com/radaee/pdf/Matrix.java
+		/src/com/radaee/pdf/Page.java
+		/src/com/radaee/pdf/PageContent.java
+		/src/com/radaee/pdf/Path.java
+		/jni/libs/com.radaee.pdfex_view.jar
+		/jni/libs/armeabi/librdpdf.so
+		/jni/libs/armeabi-v7a/librdpdf.so
+		/jni/libs/mips/librdpdf.so
+		/jni/libs/x86/librdpdf.so
+		
+PullToRefresh-ListView v1.3.0 (2013-06-07)
+	https://github.com/erikwt/PullToRefresh-ListView
+
+	Files included:
+		/libraryproject/src/eu/erikw/PullToRefreshListView.java

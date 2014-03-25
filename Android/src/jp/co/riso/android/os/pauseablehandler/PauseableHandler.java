@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 All rights reserved.
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
  * PauseableHandler.java
  * SmartDeviceApp
@@ -69,5 +69,19 @@ public class PauseableHandler extends Handler {
                 mCallBack.get().processMessage(msg);
             }
         }
+    }
+    
+    final public boolean hasStoredMessage(int what) {
+        boolean contains = hasMessages(what);
+        
+        if (!contains) {
+            for (int i = 0; i < mMessageQueueBuffer.size(); i++) {
+                if (mMessageQueueBuffer.get(i).what == what) {
+                    return true;
+                }
+            }
+        }
+        
+        return contains;
     }
 }

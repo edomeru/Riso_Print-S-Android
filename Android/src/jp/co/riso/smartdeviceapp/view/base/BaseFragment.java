@@ -1,7 +1,16 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * BaseFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 
 package jp.co.riso.smartdeviceapp.view.base;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.DialogFragment;
 import android.app.ActionBar.LayoutParams;
@@ -11,16 +20,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
     
-    public final int ID_MENU_ACTION_BUTTON = 0x11000001;
+    public static final int ID_MENU_ACTION_BUTTON = 0x11000001;
     
     /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        initializeFragment(savedInstanceState);
     }
 
     /** {@inheritDoc} */
@@ -33,15 +45,18 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
 
         View view = inflater.inflate(getViewLayout(), container, false);
         
-        initializeView(view, savedInstanceState);
-        
         if (view.findViewById(R.id.actionBarLayout) != null) {
             
             initializeCustomActionBar(view, savedInstanceState);
             
             // Add size change listener to prevent overlaps
-            view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(this);
+            if (view.findViewById(R.id.actionBarLayout) instanceof FrameLayout) {
+                view.findViewById(R.id.actionBarLayout).addOnLayoutChangeListener(this);
+            }
         }
+        
+        // Let the action bar be initialized first
+        initializeView(view, savedInstanceState);
 
         // set width and height of dialog
         if (getDialog() != null){
@@ -59,6 +74,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             }
         }
         
+        AppUtils.changeChildrenFont((ViewGroup)view, SmartDeviceApp.getAppFont());
+        
         return view;
     }
     
@@ -67,6 +84,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     // ================================================================================
     
     public abstract int getViewLayout();
+    
+    public abstract void initializeFragment(Bundle savedInstanceState);
     
     public abstract void initializeView(View view, Bundle savedInstanceState);
     
@@ -84,18 +103,28 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         return getResources().getBoolean(R.bool.is_tablet);
     }
     
+    public boolean isTabletLand() {
+        if (getActivity() == null) {
+            return false;
+        }
+        
+        return getResources().getBoolean(R.bool.is_tablet_land);
+    }
+    
     public void addActionMenuButton(View v) {
-        ImageButton actionMenuButton = new ImageButton(v.getContext());
-        
-        actionMenuButton.setId(ID_MENU_ACTION_BUTTON);
-        actionMenuButton.setImageResource(R.drawable.ic_action_menu);
-        actionMenuButton.setBackgroundResource(R.drawable.button_actionmenu_bg_selector);
-        
-        ViewGroup leftActionLayout = (ViewGroup) v.findViewById(R.id.leftActionLayout);
-        
-        leftActionLayout.addView(actionMenuButton, LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-        
-        actionMenuButton.setOnClickListener(this);
+        addMenuButton(v, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_mainmenu, this);
+    }
+    
+    public void addMenuButton(View v, int layoutId, int viewId, int imageResId, View.OnClickListener listener) {
+        LayoutInflater li = LayoutInflater.from(v.getContext());
+        ImageView button = (ImageView) li.inflate(R.layout.actionbar_button, null);
+        button.setId(viewId);
+        button.setImageResource(imageResId);
+        button.setOnClickListener(listener);
+
+        int width = ((BaseActivity) getActivity()).getActionBarHeight();
+        ViewGroup layout = (ViewGroup) v.findViewById(layoutId);
+        layout.addView(button, width, LayoutParams.MATCH_PARENT);
     }
 
     // ================================================================================

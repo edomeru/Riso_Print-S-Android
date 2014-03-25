@@ -4,20 +4,80 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
+    <dimen name="separator_size">1dp</dimen>
+    
+    <dimen name="actionbar_icon_padding">6dp</dimen>
     <dimen name="actionbar_title_text_size">18dp</dimen>
     
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
     
+    <dimen name="home_title_padding">24dp</dimen>
+    <dimen name="home_text_size">16dp</dimen>
+    <dimen name="home_menu_height">48dp</dimen>
+    
+    <dimen name="printsettings_menu_padding">10dp</dimen>
+    <dimen name="printsettings_icon_width">20dp</dimen>
+    
+    <dimen name="printsettings_separator_padding">40dp</dimen>
+    <dimen name="printsettings_input_width">80dp</dimen>
+    <dimen name="printsettings_input_padding_lr">8dp</dimen>
+    <dimen name="printsettings_input_padding_tb">6dp</dimen>
+    <dimen name="printsettings_input_text_size">16dp</dimen>
+    
+    <dimen name="printsettings_listvalue_text_size">16dp</dimen>
+    <dimen name="printsettings_disclosure_size">20dp</dimen>
+    
+    <dimen name="printsettings_icon_setting_padding">12dp</dimen>
+    
     <item name="drawer_width_percentage" type="dimen">85%</item>
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>
+    <dimen name="drawer_margin">1dp</dimen>
     
-    <!--  Temporary values -->
+    <item name="preview_view_drop_shadow_percentage" type="dimen">2%</item>
+    <dimen name="preview_view_margin">4dp</dimen>
+    <dimen name="preview_controls_text_size">16dp</dimen>
+    <dimen name="preview_controls_text_width">120dp</dimen>
+    <dimen name="preview_controls_margin_side">32dp</dimen>
+    <dimen name="preview_controls_margin_bottom">8dp</dimen>
+        
+    <dimen name="printjob_column_margin_side">16dp</dimen>
+    <dimen name="printjob_margin_side">2dp</dimen>
+    <dimen name="printjob_margin_top">4dp</dimen>
+    <dimen name="printjob_status_padding_side">10dp</dimen>
+    <dimen name="printjob_dateframe_padding_side">5dp</dimen>
+    <dimen name="printjob_delbtn_padding_side">20dp</dimen>
+    <dimen name="printjob_delbtn_margin">5dp</dimen>
+    <dimen name="printjob_expand_padding_side">10dp</dimen>
+    <dimen name="printjob_delgroupbtn_padding_side">20dp</dimen>
+    <dimen name="printjob_row_height">52dp</dimen>
+    <dimen name="printjob_icon_width">30dp</dimen>
+    <dimen name="printjob_groupicon_width">12dp</dimen>
     
-    <dimen name="temp_splash_logo_width">240dp</dimen>
-    <dimen name="temp_splash_logo_height">80dp</dimen>
-    
-    <dimen name="temp_sidebar_spacing">4dp</dimen>
+    <!-- Temporary values -->
 
+    <dimen name="temp_splash_logo_width">240dp</dimen>
+    <dimen name="temp_splash_logo_height">80dp</dimen><dimen name="printers_row_left_icon_size">30dp</dimen>
+
+    <dimen name="printers_row_left_padding">10dp</dimen>
+    <dimen name="printers_left_editbox_padding">10dp</dimen>
+
+    <dimen name="printers_edit_box_width">60dp</dimen>
+    <dimen name="addprinter_edit_box_width">200dp</dimen>
+
+    <dimen name="printers_row_height">40dp</dimen>
+    <dimen name="printers_edit_box_height">38dp</dimen>
+    <dimen name="printers_row_riso_icon_margin">40dp</dimen>
+    
+    <dimen name="printers_row_right_padding">5dp</dimen>
+    <dimen name="printers_row_right_margin">10dp</dimen>
+    <dimen name="printers_row_right_icon_padding">6dp</dimen>
+    <dimen name="printers_row_right_icon_size">30dp</dimen>
+
+    <dimen name="printers_row_default_printer_margin">2dp</dimen>
+    <dimen name="printers_name_font_size">16dp</dimen>
+    <dimen name="printers_ipaddress_font_size">12dp</dimen>
+    
+    
 </resources>
