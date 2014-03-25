@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.ArrayList;
+
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
@@ -23,12 +24,14 @@ import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearc
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, PrinterSearchAdapterInterface {
+    private static final String TAG = "PrinterSearchFragment";
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -171,7 +174,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                     mPrinter.add(printer);
                     mPrinterSearchAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.w(TAG, "onPrinterAdd");
                 }
             }
         });
