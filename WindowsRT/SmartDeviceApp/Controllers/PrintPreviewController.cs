@@ -158,10 +158,6 @@ namespace SmartDeviceApp.Controllers
             // Clean-up generated PreviewPages
             await StorageFileUtility.DeleteFiles(FORMAT_PREVIEW_PAGE_IMAGE_PREFIX,
                 ApplicationData.Current.TemporaryFolder);
-
-            // TODO: Set-up print settings for testing
-            _selectedPrinter.PrintSetting.PaperSize = (int)PaperSize.Tabloid;
-            _selectedPrinter.PrintSetting.ScaleToFit = true;
         }
 
         /// <summary>
