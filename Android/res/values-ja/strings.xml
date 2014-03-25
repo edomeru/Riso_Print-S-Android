@@ -14,7 +14,7 @@
     <string name="ids_lbl_open_in_ios">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_android">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_winrt">ドキュメントを選択してください。</string>
-    <string name="ids_lbl_home"></string>
+    <string name="ids_lbl_home">ホーム</string>
     <string name="ids_lbl_print_preview">印刷プレビュー</string>
     <string name="ids_lbl_printers">プリンター</string>
     <string name="ids_lbl_print_job_history">印刷履歴</string>
@@ -24,17 +24,17 @@
     <string name="ids_lbl_saved_printers">登録プリンター</string>
     <string name="ids_lbl_default_printer">デフォルトプリンター</string>
     <string name="ids_lbl_delete">削除</string>
-    <string name="ids_lbl_pull_to_refresh"></string>
-    <string name="ids_lbl_release_to_refresh"></string>
-    <string name="ids_lbl_refreshing"></string>
-    <string name="ids_lbl_last_updated"></string>
-    <string name="ids_lbl_set_default_printer"></string>
-    <string name="ids_lbl_add_successful"></string>
-    <string name="ids_lbl_expand"></string>
-    <string name="ids_lbl_collapse"></string>
-    <string name="ids_lbl_delete_all"></string>
-    <string name="ids_lbl_delete_jobs_title"></string>
-    <string name="ids_lbl_delete_jobs_msg"></string>
+    <string name="ids_lbl_pull_to_refresh">Pull to refresh</string>
+    <string name="ids_lbl_release_to_refresh">Release to refresh</string>
+    <string name="ids_lbl_refreshing">Refreshing&#8230;</string>
+    <string name="ids_lbl_last_updated">Updated: %s</string>
+    <string name="ids_lbl_set_default_printer">Set as Default Printer</string>
+    <string name="ids_lbl_add_successful">Added Successfully</string>
+    <string name="ids_lbl_expand">Expand Print Jobs Group</string>
+    <string name="ids_lbl_collapse">Collapse Print Jobs Group</string>
+    <string name="ids_lbl_delete_all">Delete All</string>
+    <string name="ids_lbl_delete_jobs_title">Delete Print Job</string>
+    <string name="ids_lbl_delete_jobs_msg">Are you sure you want to delete the print jobs?</string>
     <string name="ids_lbl_printer_info">プリンター情報</string>
     <string name="ids_lbl_printer_name">プリンター名</string>
     <string name="ids_lbl_ip_address">IPアドレス</string>
@@ -49,9 +49,9 @@
     <string name="ids_lbl_card_id">ID</string>
     <string name="ids_lbl_printer_search_group">プリンター検索</string>
     <string name="ids_lbl_printing">印刷中&#8230; Tapでキャンセルします</string>
-    <string name="ids_lbl_print_settings"></string>
-    <string name="ids_lbl_print"></string>
-    <string name="ids_lbl_printer"></string>
+    <string name="ids_lbl_print_settings">プリント設定</string>
+    <string name="ids_lbl_print">プリント</string>
+    <string name="ids_lbl_printer">プリンター</string>
     <string name="ids_lbl_basic">基本</string>
     <string name="ids_lbl_colormode">カラーモー</string>
     <string name="ids_lbl_colormode_auto">オート</string>
@@ -111,10 +111,10 @@
     <string name="ids_lbl_booklet_finishing">小冊子製本</string>
     <string name="ids_lbl_booklet_finishing_fold">折り</string>
     <string name="ids_lbl_booklet_finishing_foldstaple">折り＋ステープル</string>
-    <string name="ids_lbl_booklet_layout"></string>
-    <string name="ids_lbl_booklet_layout_lr"></string>
-    <string name="ids_lbl_booklet_layout_rl"></string>
-    <string name="ids_lbl_booklet_layout_tb"></string>
+    <string name="ids_lbl_booklet_layout">小冊子レイアウト</string>
+    <string name="ids_lbl_booklet_layout_lr">左から右へ</string>
+    <string name="ids_lbl_booklet_layout_rl">右から左へ</string>
+    <string name="ids_lbl_booklet_layout_tb">上下開き</string>
     <string name="ids_lbl_finishingside">とじ位置</string>
     <string name="ids_lbl_finishingside_left">左側</string>
     <string name="ids_lbl_finishingside_top">上側</string>
@@ -150,7 +150,7 @@
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>
     <string name="ids_err_msg_not_enough_space">デバイスの空き容量が不足しています。</string>
     <string name="ids_err_msg_pdf_encrypted">暗号化PDFには対応していません。</string>
-    <string name="ids_err_msg_delete_failed"></string>
+    <string name="ids_err_msg_delete_failed">Error deleting Print Job</string>
     <string name="ids_err_msg_network_error">ネットワークに接続できません。</string>
 
 </resources>
