@@ -29,6 +29,8 @@ import android.widget.TextView;
 public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchCallback {
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
+    private static final int ERR_INVALID_IP_ADDRESS = -1;
+    private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final InputFilter[] IP_ADDRESS_FILTER;
     
@@ -82,16 +84,14 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
-    private void dialogErrCb(String ipAddress) {
+    private void dialogErrCb(int err) {
         String title = getResources().getString(R.string.ids_lbl_printer_info);
-        String errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
-        InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
-        DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
-    }
-    
-    private void dialogErrCb() {
-        String title = getResources().getString(R.string.ids_lbl_printer_info);
-        String errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
+        String errMsg = null;
+        if (err == ERR_INVALID_IP_ADDRESS) {
+            errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
+        } else if (err == ERR_CAN_NOT_ADD_PRINTER) {
+            errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+        }
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
@@ -129,7 +129,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
                 String ipAddress = mIpAddress.getText().toString();
                 
                 if (mPrinterManager.isExists(ipAddress)) {
-                    dialogErrCb(ipAddress);
+                    dialogErrCb(ERR_CAN_NOT_ADD_PRINTER);
                     return;
                 }
                 if (!mPrinterManager.isSearching() && !ipAddress.isEmpty()) {
@@ -146,7 +146,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
     @Override
     public void onPrinterAdd(Printer printer) {
         if (mPrinterManager.isExists(printer)) {
-            dialogErrCb();
+            dialogErrCb(ERR_INVALID_IP_ADDRESS);
         } else if (mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
             dialogCb(printer);
@@ -159,7 +159,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
         String ipAddress = mIpAddress.getText().toString();
         
         if (!mAdded && !ipAddress.isEmpty()) {
-            dialogErrCb();
+            dialogErrCb(ERR_INVALID_IP_ADDRESS);
         }
     }
     
