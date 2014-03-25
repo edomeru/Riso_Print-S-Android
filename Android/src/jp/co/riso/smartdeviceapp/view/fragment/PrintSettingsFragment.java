@@ -1,11 +1,19 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * PrintSettingsFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.os.Bundle;
-import android.view.View;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
+import android.os.Bundle;
+import android.view.View;
 
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.ValueChangedListener {
     public static final String TAG = "PrintSettingsFragment";
@@ -40,7 +48,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             mPrintSettingsBundle = null;
         }
     }
-
+    
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
     }

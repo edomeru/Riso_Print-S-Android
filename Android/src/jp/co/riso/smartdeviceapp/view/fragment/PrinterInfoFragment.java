@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 All rights reserved.
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
  * PrinterInfoFragment.java
  * SmartDeviceApp

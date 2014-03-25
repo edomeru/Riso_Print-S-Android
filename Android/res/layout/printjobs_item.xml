@@ -78,6 +78,7 @@
                 android:paddingLeft="@dimen/printjob_delbtn_padding_side"
                 android:paddingRight="@dimen/printjob_delbtn_padding_side"
                 android:text="@string/ids_lbl_delete"
+                android:textAllCaps="true"
                 android:textColor="@color/theme_light_1"
                 android:visibility="invisible" />
         </FrameLayout>

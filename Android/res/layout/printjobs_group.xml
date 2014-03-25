@@ -68,7 +68,8 @@
             android:background="@color/bg_delete_button"
             android:paddingLeft="@dimen/printjob_delgroupbtn_padding_side"
             android:paddingRight="@dimen/printjob_delgroupbtn_padding_side"
-            android:text="@string/ids_lbl_delete"
+            android:text="@string/ids_lbl_delete_all"
+            android:textAllCaps="true"
             android:textColor="@color/theme_light_1" />
     </RelativeLayout>
 
