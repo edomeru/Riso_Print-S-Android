@@ -38,7 +38,8 @@
                 android:longClickable="false"
                 android:maxLines="1"
                 android:paddingLeft="@dimen/printers_left_editbox_padding"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <ImageView
                 android:id="@+id/btn_delete"
@@ -84,7 +85,8 @@
                         android:layout_alignParentLeft="true"
                         android:padding="@dimen/printers_row_left_padding"
                         android:text="@string/ids_lbl_ip_address"
-                        android:textColor="@color/theme_dark_1" />
+                        android:textColor="@color/theme_dark_1"
+                        android:textSize="@dimen/printers_name_font_size" />
 
                     <TextView
                         android:id="@+id/inputIpAddress"
@@ -92,7 +94,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:padding="@dimen/printers_row_left_padding"
-                        android:textColor="@color/theme_light_1" />
+                        android:textColor="@color/theme_light_1"
+                        android:textSize="@dimen/printers_name_font_size" />
                 </RelativeLayout>
 
                 <View
@@ -118,7 +121,8 @@
                         android:layout_alignParentLeft="true"
                         android:padding="@dimen/printers_row_left_padding"
                         android:text="@string/ids_lbl_port"
-                        android:textColor="@color/theme_dark_1" />
+                        android:textColor="@color/theme_dark_1"
+                        android:textSize="@dimen/printers_name_font_size" />
 
                     <TextView
                         android:id="@+id/inputPort"
@@ -126,7 +130,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:padding="@dimen/printers_row_left_padding"
-                        android:textColor="@color/theme_light_1" />
+                        android:textColor="@color/theme_light_1"
+                        android:textSize="@dimen/printers_name_font_size" />
                 </RelativeLayout>
 
                 <View
@@ -152,7 +157,8 @@
                         android:layout_alignParentLeft="true"
                         android:padding="@dimen/printers_row_left_padding"
                         android:text="@string/ids_lbl_set_default_printer"
-                        android:textColor="@color/theme_dark_1" />
+                        android:textColor="@color/theme_dark_1"
+                        android:textSize="@dimen/printers_name_font_size" />
 
                     <Switch
                         android:id="@+id/default_printer_switch"
@@ -182,7 +188,8 @@
                     android:layout_alignParentLeft="true"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_default_print_settings"
-                    android:textColor="@color/theme_dark_1" />
+                    android:textColor="@color/theme_dark_1"
+                    android:textSize="@dimen/printers_name_font_size" />
 
                 <Button
                     android:id="@+id/defaultPrintSettings"

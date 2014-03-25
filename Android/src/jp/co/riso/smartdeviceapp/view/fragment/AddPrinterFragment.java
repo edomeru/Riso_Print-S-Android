@@ -13,7 +13,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -26,7 +26,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch {
+public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchCallback {
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
@@ -45,7 +45,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     public void initializeFragment(Bundle savedInstanceState) {
         mAdded = false;
         mPrinterManager = PrinterManager.sharedManager(SmartDeviceApp.getAppContext());
-        mPrinterManager.setOnPrinterSearchListener(this);
+        mPrinterManager.setOnPrinterSearchCallback(this);
     }
     
     @Override

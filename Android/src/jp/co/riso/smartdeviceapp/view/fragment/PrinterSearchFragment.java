@@ -15,7 +15,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearch;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -24,14 +24,12 @@ import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearc
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearch, PrinterSearchAdapterInterface {
-    private static final String TAG = "PrinterSearchFragment";
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, OnPrinterSearchCallback, PrinterSearchAdapterInterface {
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -57,7 +55,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);
         mPrinterManager = PrinterManager.sharedManager(SmartDeviceApp.getAppContext());
-        mPrinterManager.setOnPrinterSearchListener(this);
+        mPrinterManager.setOnPrinterSearchCallback(this);
     }
     
     @Override
@@ -85,12 +83,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         super.onActivityCreated(savedInstanceState);
         if (mPrinterManager.isSearching()) {
             updateRefreshBar();
-            mListView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mListView.onRefreshComplete();
-                }
-            }, 500);
         }
         
         if (savedInstanceState == null) {
@@ -110,6 +102,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // ================================================================================
     
     public void updateRefreshBar() {
+        if (getActivity() == null) {
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -163,19 +158,17 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void onPrinterAdd(final Printer printer) {
-        
+        if (getActivity() == null) {
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (!mPrinterManager.isSearching()) {
-                        return;
-                    }
-                    mPrinter.add(printer);
-                    mPrinterSearchAdapter.notifyDataSetChanged();
-                } catch (Exception e) {
-                    Log.w(TAG, "onPrinterAdd");
+                if (!mPrinterManager.isSearching()) {
+                    return;
                 }
+                mPrinter.add(printer);
+                mPrinterSearchAdapter.notifyDataSetChanged();
             }
         });
     }
