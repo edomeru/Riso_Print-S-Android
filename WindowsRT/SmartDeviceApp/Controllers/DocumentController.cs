@@ -92,6 +92,8 @@ namespace SmartDeviceApp.Controllers
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
                 IsFileLoaded = true;
+
+                GenerateLogicalPages(0); // Pre-load LogicalPages
             }
             catch (FileNotFoundException)
             {
@@ -116,38 +118,36 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Generates N pages to JPEG then saves in AppData temporary store
+        /// Get generated LogicalPage(s) from the list.
+        /// If target page is not found in the list,
+        /// LogicalPage image is created then added to list.
         /// </summary>
-        /// <param name="basePageIndex">requested page number</param>
-        /// <param name="numPages">number of pages to generate</param>
-        /// <returns>task</returns>
-        public async Task<List<LogicalPage>> GenerateLogicalPages(int basePageIndex, int numPages)
+        /// <param name="basePageIndex">base page index</param>
+        /// <param name="numPages">number of pages needed (for imposition)</param>
+        /// <returns></returns>
+        public async Task<List<LogicalPage>> GetLogicalPages(int basePageIndex, int numPages)
         {
-            if (!IsFileLoaded)
-            {
-                return null;
-            }
-
-            int pageCount = (int)_document.PdfDocument.PageCount;
-            if (basePageIndex < 0 || basePageIndex > pageCount - 1)
-            {
-                return null;
-            }
-
             List<LogicalPage> logicalPages = new List<LogicalPage>();
 
-            // Compute for start page index
-            int currPageIndex = basePageIndex;
+            int offset = 0;
             do
             {
-                LogicalPage logicalPage = await GenerateLogicalPage(currPageIndex);
-                if (logicalPage != null)
+                int key = basePageIndex + offset;
+                if (_document.LogicalPages.ContainsKey(key))
                 {
-                    logicalPages.Add(logicalPage);
-                    --numPages;
+                    logicalPages.Add(_document.LogicalPages[key]);
+                    ++offset;
                 }
-                ++currPageIndex;
-            } while (numPages > 0);
+                else
+                {
+                    LogicalPage logicalPage = await GenerateLogicalPage(key);
+                    if (logicalPage != null)
+                    {
+                        logicalPages.Add(logicalPage);
+                        ++offset;
+                    }
+                }
+            } while (offset < numPages);
 
             return logicalPages;
         }
@@ -156,22 +156,18 @@ namespace SmartDeviceApp.Controllers
         /// Generates N pages to JPEG then saves in AppData temporary store
         /// </summary>
         /// <param name="basePageIndex">requested page number</param>
-        /// <param name="numPages">number of pages to generate</param>
-        /// <returns>task</returns>
-        public async Task<List<LogicalPage>> GenerateNearLogicalPages(int basePageIndex, int numPages)
+        public async void GenerateLogicalPages(int basePageIndex)
         {
             if (!IsFileLoaded)
             {
-                return null;
+                return;
             }
 
             int pageCount = (int)_document.PdfDocument.PageCount;
             if (basePageIndex < 0 || basePageIndex > pageCount - 1)
             {
-                return null;
+                return;
             }
-
-            List<LogicalPage> logicalPages = new List<LogicalPage>();
 
             // Compute for start page index
             int midPt = MAX_PAGES / 2; // Round down to the nearest whole number
@@ -192,21 +188,10 @@ namespace SmartDeviceApp.Controllers
             int currPageIndex = startPageIndex;
             do
             {
-                LogicalPage logicalPage = await GenerateLogicalPage(currPageIndex);
-                if (logicalPage != null)
-                {
-                    if (currPageIndex >= basePageIndex && numPages > 0)
-                    {
-                        // Add only to result if requested
-                        logicalPages.Add(logicalPage);
-                        --numPages;
-                    }
-                    ++generatedPageCount;
-                }
+                await GenerateLogicalPage(currPageIndex);
+                ++generatedPageCount;
                 ++currPageIndex;
-            } while ((generatedPageCount < MAX_PAGES || numPages > 0) && currPageIndex < pageCount);
-
-            return logicalPages;
+            } while ((generatedPageCount < MAX_PAGES) && currPageIndex < pageCount);
         }
 
         /// <summary>
@@ -232,8 +217,6 @@ namespace SmartDeviceApp.Controllers
 
                     if (!_document.LogicalPages.TryGetValue(pageIndex, out logicalPage))
                     {
-                        // Does not exist
-
                         StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
                         string fileName = String.Format(FORMAT_LOGICAL_PAGE_IMAGE_FILENAME, pageIndex);
 

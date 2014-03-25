@@ -81,7 +81,7 @@ namespace SmartDeviceApp.Controllers
                 await GetPrintAndPrintSetting();
                 await OnPrintSettingUpdated();
 
-                await GenerateEmptyPage();
+                await GenerateAndSendEmptyPage();
             }
             else
             {
@@ -164,8 +164,8 @@ namespace SmartDeviceApp.Controllers
         /// Generates an empty page for the initial display of Preview Area.
         /// This page will be displayed while the PreviePage(s) are being generated at the start.
         /// </summary>
-        /// <returns></returns>
-        private async Task GenerateEmptyPage()
+        /// <returns>task</returns>
+        private async Task GenerateAndSendEmptyPage()
         {
             // Create a blank white page for Preview (temporary)
             Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
@@ -200,6 +200,26 @@ namespace SmartDeviceApp.Controllers
                 new Size(emptyBitmap.PixelWidth, emptyBitmap.PixelHeight)));
         }
 
+        private async Task SendEmptyPage()
+        {
+            // Get existing file from AppData temporary store
+            StorageFile whitePageImage = await StorageFileUtility.GetExistingFile(EMPTY_IMAGE_FILENAME,
+                ApplicationData.Current.TemporaryFolder);
+            if (whitePageImage != null)
+            {
+                using (var sourceStream = await whitePageImage.OpenReadAsync())
+                {
+                    // Open the bitmap
+                    BitmapImage bitmapImage = new BitmapImage(new Uri(whitePageImage.Path));
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(sourceStream);
+
+                    // Create message and send
+                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                        new Size(decoder.PixelWidth, decoder.PixelHeight)));
+                }
+            }
+        }
+
         #region Preview Page Navigation
 
         /// <summary>
@@ -232,9 +252,14 @@ namespace SmartDeviceApp.Controllers
 
             // Else, generate pages, apply print setting and send
             int targetLogicalPageIndex = targetPreviewPageIndex * _pagesPerSheet;
-            _logicalPages =
-                await DocumentController.Instance.GenerateLogicalPages(targetLogicalPageIndex,
+            DocumentController.Instance.GenerateLogicalPages(targetLogicalPageIndex);
+            Task<List<LogicalPage>> getLogicalPagesTask =
+                DocumentController.Instance.GetLogicalPages(targetLogicalPageIndex,
                     _pagesPerSheet);
+
+            await SendEmptyPage();
+
+            _logicalPages = await getLogicalPagesTask;
             await ApplyPrintSettings(targetPreviewPageIndex);
         }
 
@@ -249,7 +274,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task ApplyPrintSettings(int previewPageIndex)
         {
-            if (_logicalPages.Count > 0)
+            if (_logicalPages != null && _logicalPages.Count > 0)
             {
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
 
