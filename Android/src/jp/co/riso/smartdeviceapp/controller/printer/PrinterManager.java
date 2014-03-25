@@ -100,6 +100,23 @@ public class PrinterManager implements OnSNMPSearch {
         return false;
     }
     
+    public boolean isExists(String ipAddress) {
+        if (ipAddress == null) {
+            return false;
+        }
+        DatabaseManager dbManager = new DatabaseManager(mContext);
+        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { ipAddress }, null,
+                null, null);
+        
+        if (cursor.getCount() > 0) {
+            dbManager.close();
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
+    }
+    
     public List<Printer> getSavedPrintersList() {
         DatabaseManager dbManager = new DatabaseManager(mContext);
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] { KeyConstants.KEY_SQL_PRINTER_ID, KeyConstants.KEY_SQL_PRINTER_NAME,

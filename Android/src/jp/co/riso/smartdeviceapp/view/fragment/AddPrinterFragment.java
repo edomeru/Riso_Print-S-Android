@@ -82,14 +82,14 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
-    private void dialogErrCb(Printer printer) {
+    private void dialogErrCb(String ipAddress) {
         String title = getResources().getString(R.string.ids_lbl_printer_info);
         String errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
-    private void dialogErrCb(String ipAddress) {
+    private void dialogErrCb() {
         String title = getResources().getString(R.string.ids_lbl_printer_info);
         String errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
@@ -128,6 +128,10 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
             case ID_MENU_SAVE_BUTTON:
                 String ipAddress = mIpAddress.getText().toString();
                 
+                if (mPrinterManager.isExists(ipAddress)) {
+                    dialogErrCb(ipAddress);
+                    return;
+                }
                 if (!mPrinterManager.isSearching() && !ipAddress.isEmpty()) {
                     findPrinter(mIpAddress.getText().toString());
                 }
@@ -142,8 +146,8 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
     @Override
     public void onPrinterAdd(Printer printer) {
         if (mPrinterManager.isExists(printer)) {
-            dialogErrCb(printer);
-        } else if (!mPrinterManager.savePrinterToDB(printer)) {
+            dialogErrCb();
+        } else if (mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
             dialogCb(printer);
             closeScreen();
@@ -155,7 +159,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearch 
         String ipAddress = mIpAddress.getText().toString();
         
         if (!mAdded && !ipAddress.isEmpty()) {
-            dialogErrCb(ipAddress);
+            dialogErrCb();
         }
     }
     
