@@ -9,19 +9,19 @@
 #import "NetworkManager.h"
 #import "Reachability.h"
 
-static Reachability* sharedReachabilityForInternet = nil;
+static Reachability* sharedReachabilityForLocalWifi = nil;
 
 @implementation NetworkManager
 
-+ (BOOL)isConnectedToNetwork
++ (BOOL)isConnectedToLocalWifi
 {
-    if (sharedReachabilityForInternet == nil)
-        sharedReachabilityForInternet = [Reachability reachabilityForInternetConnection];
+    if (sharedReachabilityForLocalWifi == nil)
+        sharedReachabilityForLocalWifi = [Reachability reachabilityForLocalWiFi];
  
     // check for internet connection
-    NetworkStatus internetStatus = [sharedReachabilityForInternet currentReachabilityStatus];
+    NetworkStatus localWifiStatus = [sharedReachabilityForLocalWifi currentReachabilityStatus];
     
-    if (internetStatus != NotReachable)
+    if (localWifiStatus != NotReachable)
         return YES;
     else
         return NO;

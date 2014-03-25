@@ -25,7 +25,7 @@
  @param printerDetails
         info and capabilities of the printer
  */
-- (void)updateForNewPrinter:(PrinterDetails*)printerDetails;
+- (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails;
 
 /**
  Notifies the delegate that an already saved printer was found.
@@ -35,6 +35,6 @@
  @param printerName
         name of the printer
  */
-- (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName;
+- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName;
 
 @end

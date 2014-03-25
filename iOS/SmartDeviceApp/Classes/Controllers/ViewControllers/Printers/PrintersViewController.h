@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HomeViewController.h"
+#import "UIViewController+Segue.h"
 
 @class PrinterManager;
 

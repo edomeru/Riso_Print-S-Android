@@ -6,15 +6,16 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "HomeViewController.h"
 #import "PrintersIpadViewController.h"
-#import "PrinterManager.h"
+#import "AddPrinterViewController.h"
+#import "PrinterSearchViewController.h"
 #import "Printer.h"
-#import "PrinterCollectionViewCell.h"
-#import "PrinterDetails.h"
+#import "PrinterManager.h"
 #import "PrinterStatusView.h"
-#import "PrinterStatusHelper.h"
 #import "AlertUtils.h"
+
+#define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
+#define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
 
 @interface PrintersIpadViewController ()
 
@@ -46,18 +47,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    
-    // For TEST data creation only
-    /*for (int i = 0; i < 5; i++)
-    {
-        PrinterDetails *printer = [[PrinterDetails alloc] init];
-        printer.name = [NSString stringWithFormat:@"Riso Printer #%d", i];
-        printer.ip = [NSString stringWithFormat:@"192.168.1.%d", 101 + i];
-        printer.port = [NSNumber numberWithInt:515];
-        [self.printerManager registerPrinter:printer];
-    }*/
-    
+   
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
    
@@ -246,8 +236,19 @@
 
 #pragma mark - Segue
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)prepareForSegue:(UIStoryboardSegue*)segue sender:(id)sender
 {
+    if ([segue.identifier isEqualToString:SEGUE_TO_ADD])
+    {
+        AddPrinterViewController* adderScreen = (AddPrinterViewController*)segue.destinationViewController;
+        adderScreen.printersViewController = self;
+    }
+    else if ([segue.identifier isEqualToString:SEGUE_TO_SEARCH])
+    {
+        PrinterSearchViewController* searchScreen = (PrinterSearchViewController*)segue.destinationViewController;
+        searchScreen.printersViewController = self;
+    }
+    
 }
 
 #pragma mark - Reload

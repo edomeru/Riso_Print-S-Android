@@ -15,7 +15,7 @@
 @property (weak, nonatomic) IBOutlet UIView* separator;
 
 
--(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
+-(void) setCellToBeDeletedState:(BOOL)isCellForDelete;
 -(void) setCellStyleForDefaultCell;
 -(void) setCellStyleForNormalCell;
 @end

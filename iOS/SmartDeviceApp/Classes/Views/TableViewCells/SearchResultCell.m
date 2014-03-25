@@ -34,7 +34,7 @@
     [super setSelected:selected animated:animated];
 }
 
-- (void)putCheckmark
+- (void)setCellToAdded
 {
 //implementation #1 : create view programmatically
 //    self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"img_btn_search_printer_check"]];
@@ -44,7 +44,7 @@
     [self.plusButton setHidden:YES];
 }
 
-- (void)putPlusButton:(id<UIGestureRecognizerDelegate>)buttonOwner tapHandler:(SEL)actionOnTap
+- (void)setCellToNew:(NSUInteger)tag handledBy:(id<UIGestureRecognizerDelegate>)receiver usingAction:(SEL)action
 {
 //implementation #1 : create view programmatically
 //    UIImage* plusImage = [UIImage imageNamed:@"img_btn_search_printer_plus"];
@@ -65,9 +65,10 @@
 //implementation #2 : create view in storyboard, then just set hidden attribute here    
     [self.checkmark setHidden:YES];
     [self.plusButton setHidden:NO];
-    [self.plusButton addTarget:buttonOwner
-                        action:actionOnTap
+    [self.plusButton addTarget:receiver
+                        action:action
               forControlEvents:UIControlEventTouchUpInside];
+    [self.plusButton setTag:tag];
 }
 
 - (void)setContents:(NSString*)printerName

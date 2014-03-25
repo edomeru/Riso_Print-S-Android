@@ -9,15 +9,12 @@
 #import "PrinterStatusHelper.h"
 #import "SNMPManager.h"
 
-#define BASE_NOTIF_NAME @"jp.alink-group_printerstatus"
-
 @interface PrinterStatusHelper ()
 
-@property NSTimer *pollingTimer;
-@property NSString *notifName;
+@property (nonatomic) NSTimer *pollingTimer;
+@property (nonatomic) NSString *notifName;
 
 -(void) getPrinterStatus;
--(void) notifyPrinterStatus:(NSNotification *)notif;
 @end
 
 @implementation PrinterStatusHelper
@@ -29,7 +26,6 @@
     if(self != nil)
     {
         self.ipAddress = [NSString stringWithString:ipAddress];
-        self.notifName = [NSString stringWithFormat:@"%@-%@", BASE_NOTIF_NAME, self.ipAddress];
     }
     
     return self;
@@ -41,14 +37,9 @@
         BOOL onlineStatus = [SNMPManager getPrinterStatus:self.ipAddress];
         //notification should be on main queue to update the UI
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:self.notifName object: [NSNumber numberWithBool:onlineStatus]];});
+            [self.delegate statusDidChange:onlineStatus];
+        });
     });
-}
-
--(void) notifyPrinterStatus:(NSNotification *)notif
-{
-    BOOL isOnline = [(NSNumber *)[notif object] boolValue];
-    [self.delegate updateStatus:isOnline];
 }
 
 -(void) startPrinterStatusPolling
@@ -56,7 +47,6 @@
     if(self.pollingTimer == nil)
     {
         self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target: self selector: @selector(getPrinterStatus) userInfo:nil repeats:YES];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyPrinterStatus:) name:self.notifName object:nil];
     }
 }
 

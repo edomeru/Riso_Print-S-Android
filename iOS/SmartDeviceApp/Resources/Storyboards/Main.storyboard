@@ -893,7 +893,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="sR4-xY-eU6" userLabel="iPad Text - IP">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="sR4-xY-eU6" userLabel="iPad Text - IP">
                                         <rect key="frame" x="109" y="11" width="149" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -917,7 +917,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="tLd-we-psB" userLabel="iPad Text - Username">
+                                    <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="tLd-we-psB" userLabel="iPad Text - Username">
                                         <rect key="frame" x="109" y="67" width="149" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -944,7 +944,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="yNu-WU-2gd" userLabel="iPad Text - Password">
+                                    <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="yNu-WU-2gd" userLabel="iPad Text - Password">
                                         <rect key="frame" x="109" y="123" width="149" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -957,12 +957,19 @@
                                             <outlet property="delegate" destination="Awv-gP-Onf" id="vHK-sG-8U2"/>
                                         </connections>
                                     </textField>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="TyO-Rg-RpP" userLabel="Progress Indicator">
+                                        <rect key="frame" x="117" y="350" width="37" height="37"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="TyO-Rg-RpP" secondAttribute="centerY" id="33O-gH-Ice"/>
                                     <constraint firstItem="sR4-xY-eU6" firstAttribute="top" secondItem="eHW-bw-Tw0" secondAttribute="top" constant="11" id="ARN-JK-svE"/>
                                     <constraint firstItem="4eZ-V3-b46" firstAttribute="leading" secondItem="mPp-0E-IVl" secondAttribute="leading" id="B7D-pn-jfl"/>
                                     <constraint firstItem="leJ-pH-Mbv" firstAttribute="top" secondItem="4eZ-V3-b46" secondAttribute="bottom" constant="16" id="C6o-fl-KEb"/>
+                                    <constraint firstAttribute="centerX" secondItem="TyO-Rg-RpP" secondAttribute="centerX" id="CsD-tb-tLO"/>
                                     <constraint firstItem="XFU-Op-cWZ" firstAttribute="top" secondItem="eHW-bw-Tw0" secondAttribute="top" constant="15" id="DjL-6A-KAC"/>
                                     <constraint firstItem="tLd-we-psB" firstAttribute="top" secondItem="eHW-bw-Tw0" secondAttribute="top" constant="67" id="GeW-I4-Fhu"/>
                                     <constraint firstItem="XFU-Op-cWZ" firstAttribute="leading" secondItem="eHW-bw-Tw0" secondAttribute="leading" constant="17" id="Hi9-sm-gxC"/>
@@ -1005,6 +1012,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="container" destination="eHW-bw-Tw0" id="LZn-Nf-KL7"/>
+                        <outlet property="progressIndicator" destination="TyO-Rg-RpP" id="Iy1-A3-Fxa"/>
                         <outlet property="saveButton" destination="kAx-cM-pCZ" id="5CN-pT-L9P"/>
                         <outlet property="textIP" destination="sR4-xY-eU6" id="Lh7-mr-tqa"/>
                         <outlet property="textPassword" destination="yNu-WU-2gd" id="aG3-u3-QWR"/>
@@ -1322,7 +1330,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Ok1-kX-gI3" userLabel="iPhone Text - IP">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Ok1-kX-gI3" userLabel="iPhone Text - IP">
                                         <rect key="frame" x="109" y="11" width="150" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1344,7 +1352,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="LAa-qc-Hdz" userLabel="iPhone Text - Username">
+                                    <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="LAa-qc-Hdz" userLabel="iPhone Text - Username">
                                         <rect key="frame" x="109" y="59" width="150" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1368,7 +1376,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="hIE-21-Qfd" userLabel="iPhone Text - Password">
+                                    <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="hIE-21-Qfd" userLabel="iPhone Text - Password">
                                         <rect key="frame" x="109" y="107" width="150" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1381,9 +1389,15 @@
                                             <outlet property="delegate" destination="vvM-i0-l3B" id="hxQ-P4-Mm9"/>
                                         </connections>
                                     </textField>
+                                    <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="g0d-xd-vqb" userLabel="Progress Indicator">
+                                        <rect key="frame" x="117" y="232" width="37" height="37"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="g0d-xd-vqb" secondAttribute="centerY" id="0ek-bP-cNn"/>
                                     <constraint firstItem="bWK-ma-UK9" firstAttribute="top" secondItem="QjV-Lm-YW6" secondAttribute="top" constant="15" id="0s6-4w-5YR"/>
                                     <constraint firstItem="Yqc-3M-lXa" firstAttribute="leading" secondItem="QjV-Lm-YW6" secondAttribute="leading" constant="17" id="1sZ-ip-dds"/>
                                     <constraint firstItem="LAa-qc-Hdz" firstAttribute="top" secondItem="5cg-Qy-vgc" secondAttribute="bottom" constant="8" symbolic="YES" id="3g0-tf-IDT"/>
@@ -1395,6 +1409,7 @@
                                     <constraint firstItem="MpM-0V-7BW" firstAttribute="top" secondItem="bWK-ma-UK9" secondAttribute="bottom" constant="27" id="K0a-dV-N1c"/>
                                     <constraint firstItem="Ok1-kX-gI3" firstAttribute="leading" secondItem="bWK-ma-UK9" secondAttribute="trailing" constant="8" id="Kbv-AP-Xk9"/>
                                     <constraint firstItem="5cg-Qy-vgc" firstAttribute="top" secondItem="QjV-Lm-YW6" secondAttribute="top" constant="50" id="PSS-k3-wu2"/>
+                                    <constraint firstAttribute="centerX" secondItem="g0d-xd-vqb" secondAttribute="centerX" id="TWK-20-8Gy"/>
                                     <constraint firstItem="LAa-qc-Hdz" firstAttribute="leading" secondItem="hIE-21-Qfd" secondAttribute="leading" id="XnN-56-Ye7"/>
                                     <constraint firstItem="LAa-qc-Hdz" firstAttribute="top" secondItem="QjV-Lm-YW6" secondAttribute="top" constant="59" id="grP-g8-xHO"/>
                                     <constraint firstItem="hIE-21-Qfd" firstAttribute="top" secondItem="QjV-Lm-YW6" secondAttribute="top" constant="107" id="lML-o3-nPp"/>
@@ -1430,6 +1445,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="container" destination="aQq-6G-YBu" id="4gL-rc-IDw"/>
+                        <outlet property="progressIndicator" destination="g0d-xd-vqb" id="DYM-Vl-dGh"/>
                         <outlet property="saveButton" destination="ydC-sb-GhE" id="YK4-g5-xR4"/>
                         <outlet property="textIP" destination="Ok1-kX-gI3" id="EM3-d6-PEG"/>
                         <outlet property="textPassword" destination="hIE-21-Qfd" id="80l-cT-jUO"/>
@@ -2188,7 +2204,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="suq-fU-kcs"/>
         <segue reference="ax2-Mn-NH0"/>
+        <segue reference="Ysc-8g-iB4"/>
     </inferredMetricsTieBreakers>
 </document>

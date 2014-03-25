@@ -17,13 +17,20 @@
 #import "PListUtils.h"
 
 static PrinterManager* sharedPrinterManager = nil;
-static NSUInteger sharedMaxPrinters = 0;
 
 @interface PrinterManager ()
 
+/** Stores the Printer objects currently existing in the DB */
 @property (strong, nonatomic) NSMutableArray* listSavedPrinters;
+
+/** Stores a reference to the DefaultPrinter object in DB */
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter;
+
+/** Number of Printer objects in the list of saved printers */
 @property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters; //redeclare to modify
+
+/** Maximum number of printers that are allowed to be added to the DB. */
+@property (assign, nonatomic) NSUInteger maxPrinterCount;
 
 /**
  Gets the list of Printers stored in DB.
@@ -51,14 +58,17 @@ static NSUInteger sharedMaxPrinters = 0;
     self = [super init];
     if (self)
     {
-        NSLog(@"[INFO][PM] setup");
-        
         self.searchDelegate = nil;
+        self.maxPrinterCount = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
         
+#if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting printers from DB");
+#endif
         [self getListOfSavedPrinters];
         
+#if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting default printer from DB");
+#endif
         [self getDefaultPrinter];
     }
     return self;
@@ -112,7 +122,9 @@ static NSUInteger sharedMaxPrinters = 0;
     // save the Printer and PrintSetting objects to DB
     if ([DatabaseManager saveChanges])
     {
+#if DEBUG_LOG_PRINTER_MODEL
         [newPrinter log];
+#endif
         [self.listSavedPrinters addObject:newPrinter];
         self.countSavedPrinters++;
         return YES;
@@ -168,10 +180,13 @@ static NSUInteger sharedMaxPrinters = 0;
 
 - (Printer*)getPrinterAtIndex:(NSUInteger)index
 {
-    NSUInteger countSavedPrinters = [self.listSavedPrinters count];
-    if (index >= countSavedPrinters)
+    //check if the index is valid
+    if (index >= self.countSavedPrinters)
     {
-        NSLog(@"[ERROR][PM] printer index=%d >= countSavedPrinters=%d", index, countSavedPrinters);
+#if DEBUG_LOG_PRINTER_MANAGER
+        NSLog(@"[ERROR][PM] printer index=%lu >= countSavedPrinters=%lu",
+              (unsigned long)index, (unsigned long)self.countSavedPrinters);
+#endif
         return nil;
     }
     else
@@ -183,7 +198,10 @@ static NSUInteger sharedMaxPrinters = 0;
     // check if the index is valid
     if (index >= self.countSavedPrinters)
     {
-        NSLog(@"[ERROR][PM] printer index=%d >= countSavedPrinters=%d", index, self.countSavedPrinters);
+#if DEBUG_LOG_PRINTER_MANAGER
+        NSLog(@"[ERROR][PM] printer index=%lu >= countSavedPrinters=%lu",
+              (unsigned long)index, (unsigned long)self.countSavedPrinters);
+#endif
         return NO;
     }
     
@@ -194,13 +212,17 @@ static NSUInteger sharedMaxPrinters = 0;
     if ([self.defaultPrinter.printer isEqual:printerToDelete])
     {
         // delete the default printer first
+#if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
+#endif
         if (![self deleteDefaultPrinter])
             return NO;
     }
     
     // delete the printer
-    NSLog(@"[INFO][PM] deleting Printer %@ at row %d",printerToDelete.name, index);
+#if DEBUG_LOG_PRINTER_MANAGER
+    NSLog(@"[INFO][PM] deleting Printer %@ at row %lu",printerToDelete.name, (unsigned long)index);
+#endif
     if ([DatabaseManager deleteObject:printerToDelete])
     {
         [self.listSavedPrinters removeObjectAtIndex:index];
@@ -261,8 +283,10 @@ static NSUInteger sharedMaxPrinters = 0;
                                                object:nil];
     
     // start the search (background thread)
+#if DEBUG_LOG_PRINTER_MANAGER
     NSLog(@"[INFO][PM] initiating search");
     NSLog(@"[INFO][PM] waiting for notifications from SNMP");
+#endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [SNMPManager searchForPrinter:printerIP];
     });
@@ -283,8 +307,10 @@ static NSUInteger sharedMaxPrinters = 0;
                                                object:nil];
     
     // start the search (background thread)
+#if DEBUG_LOG_PRINTER_MANAGER
     NSLog(@"[INFO][PM] initiating search");
     NSLog(@"[INFO][PM] waiting for notifications from SNMP");
+#endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [SNMPManager searchForAvailablePrinters];
     });
@@ -294,7 +320,9 @@ static NSUInteger sharedMaxPrinters = 0;
 
 - (void)stopSearching
 {
+#if DEBUG_LOG_PRINTER_MANAGER
     NSLog(@"[INFO][PM] stop waiting for notifications");
+#endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     //TODO: cascade the command to the SNMPManager
 }
@@ -303,7 +331,9 @@ static NSUInteger sharedMaxPrinters = 0;
 
 - (void)notifyPrinterFound:(NSNotification*)notif
 {
+#if DEBUG_LOG_PRINTER_MANAGER
     NSLog(@"[INFO][PM] received notification - printer found");
+#endif
     
     // get the printer details
     PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[notif object];
@@ -315,8 +345,8 @@ static NSUInteger sharedMaxPrinters = 0;
         // this is an old printer
         // update the UI (UI thread)
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.searchDelegate updateForOldPrinter:printerInfoCapabilities.ip
-                                          withName:printerInfoCapabilities.name];
+            [weakSelf.searchDelegate printerSearchDidFoundOldPrinter:printerInfoCapabilities.ip
+                                                            withName:printerInfoCapabilities.name];
         });
     }
     else
@@ -324,14 +354,16 @@ static NSUInteger sharedMaxPrinters = 0;
         // this is a new printer
         // update the UI (UI thread)
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.searchDelegate updateForNewPrinter:printerInfoCapabilities];
+            [weakSelf.searchDelegate printerSearchDidFoundNewPrinter:printerInfoCapabilities];
         });
     }
 }
 
 - (void)notifySearchEnded:(NSNotification*)notif
 {
+#if DEBUG_LOG_PRINTER_MANAGER
     NSLog(@"[INFO][PM] received notification - search ended");
+#endif
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
@@ -366,10 +398,7 @@ static NSUInteger sharedMaxPrinters = 0;
 
 - (BOOL)isAtMaximumPrinters
 {
-    if (sharedMaxPrinters == 0)
-        sharedMaxPrinters = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
-    
-    if ([self.listSavedPrinters count] == sharedMaxPrinters)
+    if ([self.listSavedPrinters count] == self.maxPrinterCount)
         return YES;
     else
         return NO;

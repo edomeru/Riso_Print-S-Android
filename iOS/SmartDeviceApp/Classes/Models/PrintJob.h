@@ -12,9 +12,9 @@
 
 @interface PrintJob : NSManagedObject
 
-@property (nonatomic, retain) NSDate * date;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSNumber * result;
-@property (nonatomic, retain) Printer *printer;
+@property (nonatomic, retain) NSDate* date;
+@property (nonatomic, retain) NSString* name;
+@property (nonatomic, retain) NSNumber* result;
+@property (nonatomic, retain) Printer* printer;
 
 @end

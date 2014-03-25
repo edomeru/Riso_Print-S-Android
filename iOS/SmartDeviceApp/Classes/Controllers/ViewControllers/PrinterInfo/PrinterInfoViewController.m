@@ -11,9 +11,6 @@
 #import "PrinterManager.h"
 #import "UIViewController+Segue.h"
 
-#define ONLINE_STATUS @"Online";
-#define OFFLINE_STATUS @"Offline";
-
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet UILabel *ipAddress;
@@ -83,11 +80,11 @@
     self.onlineStatus = isOnline;
     if(isOnline)
     {
-        self.printerStatus.text = ONLINE_STATUS;
+        self.printerStatus.text = @"Online";    //TODO: should use localized strings
     }
     else
     {
-        self.printerStatus.text = OFFLINE_STATUS;
+        self.printerStatus.text = @"Offline";   //TODO: should use localized strings
     }
 }
 
@@ -126,7 +123,7 @@
 
 
 #pragma mark - PrinterStatusHelper method
-- (void) updateStatus: (BOOL) isOnline
+- (void) statusDidChange: (BOOL) isOnline
 {
     if(self.onlineStatus == isOnline)
     {

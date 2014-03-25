@@ -7,8 +7,6 @@
 //
 
 #import "PrintersViewController.h"
-#import "HomeViewController.h"
-#import "UIViewController+Segue.h"
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
 #import "PrinterInfoViewController.h"
@@ -106,7 +104,9 @@
 
 - (void)reloadData
 {
+#if DEBUG_LOG_PRINTERS_SCREEN
     NSLog(@"[INFO][Printers] reloading data");
+#endif
     //should be implemented depending on display
 }
 

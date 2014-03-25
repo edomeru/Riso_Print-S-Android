@@ -29,6 +29,8 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     NSError *error;
     
     NSArray* results = [sharedManagedObjectContext executeFetchRequest:fetchRequest error:&error];
+
+#if DEBUG_LOG_DATABASE_MANAGER
     if (results == nil)
     {
         NSLog(@"[ERROR][DBM] fetch error, (%@)", [error debugDescription]);
@@ -41,6 +43,7 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     {
         NSLog(@"[INFO][DBM] fetch returned %u results", [results count]);
     }
+#endif
     
     return results;
 }
@@ -78,7 +81,9 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     NSError *error = nil;
     if (![sharedManagedObjectContext save:&error])
     {
+#if DEBUG_LOG_DATABASE_MANAGER
         NSLog(@"[ERROR][DBM] save failed, (%@)", [error debugDescription]);
+#endif
         return NO;
     }
     
@@ -141,7 +146,9 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
                                                               options:nil
                                                                 error:&error])
     {
+#if DEBUG_LOG_DATABASE_MANAGER
         NSLog(@"[ERROR][DBM] unresolved error %@, %@", error, [error userInfo]);
+#endif
         abort();
     }
     

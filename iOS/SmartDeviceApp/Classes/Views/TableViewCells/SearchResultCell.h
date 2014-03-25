@@ -11,21 +11,24 @@
 @interface SearchResultCell : UITableViewCell
 
 /**
- Adds a checkmark image as the accessory view of the cell.
+ Adds an icon to the cell to indicate that the search result has 
+ already been processed.
  */
-- (void)putCheckmark;
+- (void)setCellToAdded;
 
 /**
- Adds a plus button as the accessory view of the cell.
- The specified buttonOwner should handle the tap gesture.
- 
- @param buttonOwner
-        receiver of the button's tap action
+ Adds a button to the cell for adding the search result.
+ The specified receiver should handle the button's tap gesture.
+
+ @param tag
+        unique identifier for the button
+ @param receiver
+        receiver of the button's tap gesture
         (should conform to UIGestureRecognizerDelegate)
- @param tapHandler
-        method of the buttonOwner for handling the tap action
+ @param action
+        method of the receiver triggered by the tap gesture
  */
-- (void)putPlusButton:(id<UIGestureRecognizerDelegate>)buttonOwner tapHandler:(SEL)actionOnTap;
+- (void)setCellToNew:(NSUInteger)tag handledBy:(id<UIGestureRecognizerDelegate>)receiver usingAction:(SEL)action;
 
 /**
  Sets the printer name as the cell's main text.

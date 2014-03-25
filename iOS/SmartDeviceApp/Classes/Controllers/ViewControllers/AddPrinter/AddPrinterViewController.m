@@ -35,8 +35,7 @@
 
 #pragma mark - UI Properties
 
-/** Progress indicator that a search is ongoing. */
-@property (strong, nonatomic) UIActivityIndicatorView* progressIndicator;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* progressIndicator;
 
 /** Input TextField for the IP Address. */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
@@ -49,9 +48,6 @@
 
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
-
-/** Reference to the entire UIView below the Header. */
-@property (weak, nonatomic) IBOutlet UIView *container;
 
 #pragma mark - Internal Methods
 
@@ -135,20 +131,6 @@
     
     // setup the header buttons
     [self.saveButton setEnabled:NO];
-    
-    // setup progress indicator
-    self.progressIndicator = [[UIActivityIndicatorView alloc]
-                              initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    self.progressIndicator.frame = CGRectMake(0, 0, 40, 40);
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-        self.progressIndicator.center = self.view.center;
-    else
-        //for iPad, cannot use self.view.center because it is only partially visible (slide panel)
-        self.progressIndicator.center = CGPointMake(self.container.frame.size.width/2,
-                                                    self.container.frame.size.height/2);
-    [self.progressIndicator setColor:[UIColor whiteColor]];
-    [self.view addSubview:self.progressIndicator];
-    [self.progressIndicator bringSubviewToFront:self.view];
 }
 
 #pragma mark - Segue
@@ -159,7 +141,9 @@
     // the printer, if found, will not be added to the list of saved printers
     if ([self.progressIndicator isAnimating])
     {
+#if DEBUG_LOG_ADD_PRINTER_SCREEN
         NSLog(@"[INFO][AddPrinter] canceling search");
+#endif
         [self.printerManager stopSearching];
     }
 }
@@ -175,15 +159,6 @@
 {
     [self dismissKeypad];
     
-    // can the device connect to the network?
-    if (![NetworkManager isConnectedToNetwork])
-    {
-        [AlertUtils displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
-        return;
-    }
-    
     // is it still possible to add a printer
     if ([self.printerManager isAtMaximumPrinters])
     {
@@ -195,7 +170,9 @@
     
     // properly format/trim the input IP
     NSString* trimmedIP = [InputUtils trimIP:self.textIP.text];
+#if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
+#endif
     self.textIP.text = trimmedIP;
     
     // is the IP a valid IP address?
@@ -215,8 +192,19 @@
                       withDetails:nil];
         return;
     }
+    
+    // can the device connect to the network?
+    if (![NetworkManager isConnectedToLocalWifi])
+    {
+        [AlertUtils displayResult:ERR_NO_NETWORK
+                        withTitle:ALERT_TITLE_PRINTERS_ADD
+                      withDetails:nil];
+        return;
+    }
 
+#if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
+#endif
     self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
     [self.printerManager searchForPrinter:trimmedIP];
     // callbacks for the search will be handled in delegate methods
@@ -250,16 +238,16 @@
     // if this is an iPad, reload the center panel
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
-        UIViewController* rootViewController = [self parentViewController];
-        UIViewController* centerPanel = [[rootViewController childViewControllers] objectAtIndex:0];
-        [centerPanel performSelector:@selector(reloadData)];
+        [self.printersViewController reloadData];
     }
 }
 
-- (void)updateForNewPrinter:(PrinterDetails*)printerDetails
+- (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails
 {
+#if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] received NEW printer with IP=%@", printerDetails.ip);
     NSLog(@"[INFO][AddPrinter] updating UI");
+#endif
     self.willEndWithoutAdd = NO; //search did not timeout
     
     if ([self.printerManager registerPrinter:printerDetails])
@@ -277,7 +265,7 @@
     }
 }
 
-- (void)updateForOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
+- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
 {
     // will not be called since search will only be initiated
     // if the IP is not yet registered

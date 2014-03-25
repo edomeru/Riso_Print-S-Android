@@ -11,10 +11,10 @@
 @interface NetworkManager : NSObject
 
 /**
- Checks if the device is currently connected to the network.
+ Checks if the device is currently connected to the local Wi-Fi.
  
  @return YES if connected, NO otherwise.
  */
-+ (BOOL)isConnectedToNetwork;
++ (BOOL)isConnectedToLocalWifi;
 
 @end

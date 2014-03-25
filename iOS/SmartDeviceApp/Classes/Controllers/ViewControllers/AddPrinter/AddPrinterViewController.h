@@ -9,11 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 #import "UIViewController+Segue.h"
+#import "PrintersIpadViewController.h"
 #import "PrinterSearchDelegate.h"
 
 @interface AddPrinterViewController : SlidingViewController <UITextFieldDelegate, PrinterSearchDelegate>
 
 /** Flag that will be set to YES when at least one successful printer was added. */
 @property (readonly, assign, nonatomic) BOOL hasAddedPrinters;
+
+/** Reference to the Printers screen (for iPad only) */
+@property (weak, nonatomic) PrintersIpadViewController* printersViewController;
 
 @end

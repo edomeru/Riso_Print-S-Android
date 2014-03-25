@@ -13,9 +13,6 @@
 /**
  Logs the Printer info and capabilities.
  This is used for debugging only.
- 
- @param printer
-        the Printer object to log
  */
 - (void)log;
 

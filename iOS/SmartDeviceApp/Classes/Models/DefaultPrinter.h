@@ -12,6 +12,6 @@
 
 @interface DefaultPrinter : NSManagedObject
 
-@property (nonatomic, retain) Printer *printer;
+@property (nonatomic, retain) Printer* printer;
 
 @end

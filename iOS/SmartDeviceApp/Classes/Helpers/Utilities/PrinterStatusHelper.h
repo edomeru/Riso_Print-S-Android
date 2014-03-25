@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 @protocol PrinterStatusHelperDelegate
 
--(void) updateStatus: (BOOL)isOnline;
+-(void)statusDidChange:(BOOL)isOnline;
 
 @end
 

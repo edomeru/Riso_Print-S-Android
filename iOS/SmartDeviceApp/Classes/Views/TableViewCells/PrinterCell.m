@@ -24,26 +24,6 @@
     return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
-
--(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell
-{
-    self.isDefaultPrinterCell = isDefaultPrinterCell;
-    if(isDefaultPrinterCell == YES)
-    {
-        [self setCellStyleForDefaultCell];
-    }
-    else
-    {
-        [self setCellStyleForNormalCell];
-    }
-}
-
 -(void) setCellToBeDeletedState:(BOOL) isCellForDelete
 {
     if(isCellForDelete == YES)

@@ -6,14 +6,11 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "HomeViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "Printer.h"
-#import "DefaultPrinter.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
 #import "AlertUtils.h"
-#import "UIViewController+Segue.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define PRINTERCELL             @"PrinterCell"
@@ -165,7 +162,7 @@
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{  
+{
     if([segue.identifier isEqualToString:SEGUE_TO_PRINTER_INFO])
     {
         PrinterInfoViewController *destController = [segue destinationViewController];
@@ -178,7 +175,6 @@
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.onlineStatus = cell.printerStatus.onlineStatus;
         cell.printerStatus.statusHelper.delegate = destController;
-        
     }
 }
 

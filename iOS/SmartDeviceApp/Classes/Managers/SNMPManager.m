@@ -66,7 +66,9 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         }
         else
         {
+#if DEBUG_LOG_SNMP_MANAGER
             NSLog(@"[INFO][SNMP] search timeout");
+#endif
         }
         
         [NSThread sleepForTimeInterval:4];
@@ -147,7 +149,10 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
 
 + (void)add
 {
-    NSLog(@"[INFO][SNMP] received SNMP Add Printer callback %d", ++printerCount);
+    printerCount++;
+#if DEBUG_LOG_SNMP_MANAGER
+    NSLog(@"[INFO][SNMP] received SNMP Add Printer callback %lu", (unsigned long)printerCount);
+#endif
     
     // get/parse printer info and capabilities
     PrinterDetails* printerDetails = [[PrinterDetails alloc] init];
@@ -163,7 +168,8 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         if (isManualSearch)
             printerDetails.ip = searchedIP;
         else
-            printerDetails.ip = [NSString stringWithFormat:@"192.168.%d.%d", printerCount, printerCount];
+            printerDetails.ip = [NSString stringWithFormat:@"192.168.%lu.%lu",
+                                 (unsigned long)printerCount, (unsigned long)printerCount];
         printerDetails.name = [NSString stringWithFormat:@"RISO Printer %@", printerDetails.ip];
         printerDetails.port = [NSNumber numberWithUnsignedInt:printerCount*100];
         printerDetails.enBind = NO;
@@ -184,7 +190,9 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
 
 + (void)end
 {
+#if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMP] received SNMP End callback");
+#endif
     
     // notify observer that the search has ended (background thread)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
