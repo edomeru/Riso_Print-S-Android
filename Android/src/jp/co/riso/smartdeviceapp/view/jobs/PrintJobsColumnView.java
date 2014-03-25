@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * PrintJobsColumnView.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.jobs;
 
 import java.lang.ref.WeakReference;

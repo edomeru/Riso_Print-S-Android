@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 All rights reserved.
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
  * HelpFragment.java
  * SmartDeviceApp
@@ -8,14 +8,14 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 
 public class HelpFragment extends BaseFragment {
     public static final String TAG = "HelpFragment";
@@ -35,7 +35,7 @@ public class HelpFragment extends BaseFragment {
         try {
             PackageManager packageManager = getActivity().getPackageManager();
             String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
-
+            
             TextView textView = (TextView) view.findViewById(R.id.tempVersionLabel);
             textView.setText(versionName);
             textView.setVisibility(View.VISIBLE);
