@@ -157,6 +157,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             final Printer printer = (Printer) v.getTag();
             
             mPrinterManager.removePrinter(printer);
+            if (mContext == null) {
+                return;
+            }
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

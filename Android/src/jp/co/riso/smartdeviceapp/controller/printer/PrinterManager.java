@@ -8,31 +8,34 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager;
-import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager.OnSNMPSearch;
+import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager.SNMPSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-public class PrinterManager implements OnSNMPSearch {
+public class PrinterManager implements SNMPSearchCallback {
     private static SNMPManager sSNMPManager = null;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList;
     private Context mContext;
     private boolean mDefaultExists = false;
     private boolean mIsSearching = false;
+    private WeakReference<OnPrinterSearchCallback> mOnPrinterAddCallback = null;
+    private WeakReference<OnPrintersListChangeCallback> mOnPrintersListRefreshCallback = null;
     
     private PrinterManager(Context context) {
         mContext = context;
         mPrinterList = new ArrayList<Printer>();
         sSNMPManager = new SNMPManager();
-        sSNMPManager.setOnPrinterSearchListener(this);
+        sSNMPManager.setSNMPSearchCallback(this);
     }
     
     public static PrinterManager sharedManager(Context context) {
@@ -77,8 +80,8 @@ public class PrinterManager implements OnSNMPSearch {
         }
         dbManager.close();
         
-        if (mOnPrintersListRefresh != null) {
-            mOnPrintersListRefresh.onAddedNewPrinter(printer);
+        if (mOnPrintersListRefreshCallback != null && mOnPrintersListRefreshCallback.get() != null) {
+            mOnPrintersListRefreshCallback.get().onAddedNewPrinter(printer);
         }
         return true;
     }
@@ -243,6 +246,14 @@ public class PrinterManager implements OnSNMPSearch {
         return mIsSearching;
     }
     
+    public void setOnPrinterSearchCallback(OnPrinterSearchCallback onPrinterSearchCallback) {
+        mOnPrinterAddCallback = new WeakReference<OnPrinterSearchCallback>(onPrinterSearchCallback);
+    }
+    
+    public void setOnPrintersListRefreshCallback(OnPrintersListChangeCallback onPrintersListRefreshCallback) {
+        mOnPrintersListRefreshCallback = new WeakReference<OnPrintersListChangeCallback>(onPrintersListRefreshCallback);
+    }
+    
     // ================================================================================
     // Interface - OnSNMPSearch (SNMP Callback)
     // ================================================================================
@@ -251,43 +262,35 @@ public class PrinterManager implements OnSNMPSearch {
     public void onSearchedPrinterAdd(String printerName, String ipAddress) {
         Printer printer = new Printer(printerName, ipAddress, false, null);
         if (isSearching()) {
-            mOnPrinterAdd.onPrinterAdd(printer);
+            if (mOnPrinterAddCallback != null && mOnPrinterAddCallback.get() != null) {
+                mOnPrinterAddCallback.get().onPrinterAdd(printer);
+            }
         }
     }
     
     @Override
     public void onSearchEnd() {
         mIsSearching = false;
-        mOnPrinterAdd.onSearchEnd();
+        if (mOnPrinterAddCallback != null && mOnPrinterAddCallback.get() != null) {
+            mOnPrinterAddCallback.get().onSearchEnd();
+        }
     }
     
     // ================================================================================
     // Interface - OnPrinterSearch (SNMP)
     // ================================================================================
-    
-    private OnPrinterSearch mOnPrinterAdd = null;
-    
-    public interface OnPrinterSearch {
+
+    public interface OnPrinterSearchCallback {
         public void onPrinterAdd(Printer printer);
         
         public void onSearchEnd();
-    }
-    
-    public void setOnPrinterSearchListener(OnPrinterSearch onPrinterSearch) {
-        mOnPrinterAdd = onPrinterSearch;
     }
     
     // ================================================================================
     // Interface - OnPrintersListChange (Tablet View)
     // ================================================================================
     
-    private OnPrintersListChange mOnPrintersListRefresh = null;
-    
-    public interface OnPrintersListChange {
+    public interface OnPrintersListChangeCallback {
         public void onAddedNewPrinter(Printer printer);
-    }
-    
-    public void setOnPrintersListRefresh(OnPrintersListChange onPrintersListRefresh) {
-        mOnPrintersListRefresh = onPrintersListRefresh;
     }
 }

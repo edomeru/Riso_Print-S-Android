@@ -68,7 +68,7 @@ public class PrintersFragment extends BaseFragment implements View.OnTouchListen
         if (isTablet()) {
             mPrinterTabletView = (PrintersScreenTabletView) view.findViewById(R.id.printerParentView);
             mPrinterTabletView.refreshPrintersList();
-            mPrinterManager.setOnPrintersListRefresh(mPrinterTabletView);
+            mPrinterManager.setOnPrintersListRefreshCallback(mPrinterTabletView);
         } else {
             mListView = (ListView) view.findViewById(R.id.printer_list);
             mListView.setOnTouchListener(this);

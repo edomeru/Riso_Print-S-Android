@@ -8,51 +8,28 @@
 
 package jp.co.riso.smartdeviceapp.controller.snmp;
 
+import java.lang.ref.WeakReference;
 import android.os.AsyncTask;
 import android.util.Log;
 
 public class SNMPManager {
     private static final String TAG = "SNMPManager";
-
-    // ================================================================================
-    // Interface
-    // ================================================================================
-    
-    private OnSNMPSearch mOnPrinterAdd;
-    
-    public interface OnSNMPSearch {
-        public void onSearchedPrinterAdd(String printerName, String ipAddress);
-        
-        public void onSearchEnd();
-    }
-    
-    public void setOnPrinterSearchListener(OnSNMPSearch onSNMPSearch) {
-        mOnPrinterAdd = onSNMPSearch;
-    }
+    private WeakReference<SNMPSearchCallback> mSearchCallbackRef;
     
     // ================================================================================
     // Public Methods
     // ================================================================================
+    
+    public void setSNMPSearchCallback(SNMPSearchCallback snmpSearchCallback) {
+        mSearchCallbackRef = new WeakReference<SNMPSearchCallback>(snmpSearchCallback);
+    }
     
     public void startSNMP() {
         new SNMPTask().execute();
     }
     
     public void searchPrinter(String ipAddress) {
-        new manualSearchTask().execute(ipAddress);
-    }
-    
-    // ================================================================================
-    // SNMP NDK
-    // ================================================================================
-    
-    private native void startSNMPDeviceDiscovery();
-    
-    private native void snmpManualSearch(String ipAddress);
-    
-    static {
-        System.loadLibrary("snmp");
-        System.loadLibrary("snmpAPI");
+        new ManualSearchTask().execute(ipAddress);
     }
     
     // ================================================================================
@@ -60,11 +37,15 @@ public class SNMPManager {
     // ================================================================================
     
     private void printerAdded(String printerName, String ipAddress) {
-        mOnPrinterAdd.onSearchedPrinterAdd(printerName, ipAddress);
+        if (mSearchCallbackRef != null && mSearchCallbackRef.get() != null) {
+            mSearchCallbackRef.get().onSearchedPrinterAdd(printerName, ipAddress);
+        }
     }
     
     private void searchPrinterEnd() {
-        mOnPrinterAdd.onSearchEnd();
+        if (mSearchCallbackRef != null && mSearchCallbackRef.get() != null) {
+            mSearchCallbackRef.get().onSearchEnd();
+        }
     }
     
     // ================================================================================
@@ -84,15 +65,40 @@ public class SNMPManager {
         }
     }
     
-    class manualSearchTask extends AsyncTask<String, Void, Void> {
+    class ManualSearchTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... arg0) {
             try {
                 snmpManualSearch(arg0[0]);
             } catch (Exception e) {
-                mOnPrinterAdd.onSearchEnd();
+                if (mSearchCallbackRef != null) {
+                    mSearchCallbackRef.get().onSearchEnd();
+                }
             }
             return null;
         }
+    }
+    
+    // ================================================================================
+    // Interface
+    // ================================================================================
+    
+    public interface SNMPSearchCallback {
+        public void onSearchedPrinterAdd(String printerName, String ipAddress);
+        
+        public void onSearchEnd();
+    }
+    
+    // ================================================================================
+    // SNMP NDK
+    // ================================================================================
+    
+    private native void startSNMPDeviceDiscovery();
+    
+    private native void snmpManualSearch(String ipAddress);
+    
+    static {
+        System.loadLibrary("snmp");
+        System.loadLibrary("snmpAPI");
     }
 }

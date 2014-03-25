@@ -14,7 +14,7 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrintersListChange;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrintersListChangeCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment.PrinteSearchTabletInterface;
 import android.app.Activity;
@@ -37,7 +37,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrintersScreenTabletView extends LinearLayout implements OnLongClickListener, View.OnClickListener, OnTouchListener, PrinteSearchTabletInterface,
-        OnCheckedChangeListener, OnPrintersListChange {
+        OnCheckedChangeListener, OnPrintersListChangeCallback {
     private PrinterManager mPrinterManager = null;
     private ArrayList<ViewGroup> mPrinterViewArray = null;
     private Context mContext = null;
@@ -303,6 +303,9 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     
     @Override
     public void onAddedNewPrinter(final Printer printer) {
+        if (mContext == null) {
+            return;
+        }
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
