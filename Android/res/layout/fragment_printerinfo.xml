@@ -36,7 +36,7 @@
             android:layout_width="fill_parent"
             android:layout_height="@dimen/separator_size"
             android:layout_marginLeft="@dimen/printers_row_left_padding"
-            android:background="@color/line_color_1"
+            android:background="@color/theme_light_2"
             android:visibility="visible" />
     </LinearLayout>
 
@@ -70,7 +70,7 @@
             android:layout_width="fill_parent"
             android:layout_height="@dimen/separator_size"
             android:layout_marginLeft="@dimen/printers_row_left_padding"
-            android:background="@color/line_color_1"
+            android:background="@color/theme_light_2"
             android:visibility="visible" />
     </LinearLayout>
 
@@ -104,7 +104,7 @@
             android:layout_width="fill_parent"
             android:layout_height="@dimen/separator_size"
             android:layout_marginLeft="@dimen/printers_row_left_padding"
-            android:background="@color/line_color_1"
+            android:background="@color/theme_light_2"
             android:visibility="visible" />
     </LinearLayout>
 
@@ -138,7 +138,7 @@
             android:layout_width="fill_parent"
             android:layout_height="@dimen/separator_size"
             android:layout_marginLeft="@dimen/printers_row_left_padding"
-            android:background="@color/line_color_1"
+            android:background="@color/theme_light_2"
             android:visibility="visible" />
     </LinearLayout>
 
@@ -173,7 +173,7 @@
             android:layout_width="fill_parent"
             android:layout_height="@dimen/separator_size"
             android:layout_marginLeft="@dimen/printers_row_left_padding"
-            android:background="@color/line_color_1"
+            android:background="@color/theme_light_2"
             android:visibility="visible" />
     </LinearLayout>
 

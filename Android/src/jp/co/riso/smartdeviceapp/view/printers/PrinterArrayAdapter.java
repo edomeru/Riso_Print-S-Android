@@ -206,7 +206,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
         ((View) viewHolder.mPrinterName.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_color_2));
         viewHolder.mDeleteButton.setVisibility(View.VISIBLE);
-        viewHolder.mDeleteButton.setBackgroundColor(mContext.getResources().getColor(R.color.theme_red_1));
+        viewHolder.mDeleteButton.setBackgroundColor(mContext.getResources().getColor(R.color.bg_delete_button));
         mDeleteViewHolder = viewHolder;
     }
     
