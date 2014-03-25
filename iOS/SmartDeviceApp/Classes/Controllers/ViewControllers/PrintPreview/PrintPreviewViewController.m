@@ -179,6 +179,7 @@
     }
     //adjust the page view controller frame size
     [self setPageSize];
+    
 }
 
 #pragma mark - Class Private Methods
@@ -270,7 +271,6 @@
 -(void) loadPageViewController
 {
     [self setUpPageViewController];
-    [self setPageSize];
 }
 
 -(void) setUpPageViewController
@@ -307,12 +307,8 @@
     //set the current page of the page view controller
     [self setViewControllerToCurrentPage:currentIndex];
     
-    //add ui page controller to view
-    [self addChildViewController:_pdfPageViewController];
-    [self.previewArea addSubview:self.pdfPageViewController.view];
-    [self.pdfPageViewController didMoveToParentViewController:self];
+    [self setPageSize];
 }
-
 
 -(void) setPageSize
 {
@@ -357,11 +353,25 @@
         }
     }
     
-#if DEBUG_LOG_PRINT_PREVIEW
-    NSLog(@"Pageview controller height = %f. width = %f", height, width);
-#endif
+    //For compatibility iOS 6.1 to be able to resize frame of page view controller, must remove first from view
+    //set new frame size and add back to view
+    if(self.pdfPageViewController.view.superview != nil)
+    {
+        [self.pdfPageViewController.view removeFromSuperview];
+        [self.pdfPageViewController removeFromParentViewController];
+    }
+    
     //set the page controller view frame to new dimensions
     [self.pdfPageViewController.view setFrame: CGRectMake(horizontalMargin, verticalMargin, width, height)];
+    
+    //add page controller to preview area view
+    [self.previewArea addSubview:self.pdfPageViewController.view];
+    [self.pdfPageViewController didMoveToParentViewController:self];
+    
+    
+#if DEBUG_LOG_PRINT_PREVIEW
+    NSLog(@"Pageview controller height = %f. width = %f", self.pdfPageViewController.view.frame.size.height, self.pdfPageViewController.view.frame.size.width);
+#endif
 }
 
 

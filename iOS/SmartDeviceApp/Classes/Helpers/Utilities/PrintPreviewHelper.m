@@ -7,7 +7,7 @@
 //
 
 #import "PrintPreviewHelper.h"
-//Paper size reference:
+//Paper size reference: http://en.wikipedia.org/wiki/Paper_size
 struct {
     float width;
     float height;
