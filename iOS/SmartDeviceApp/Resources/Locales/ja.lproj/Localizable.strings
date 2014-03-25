@@ -7,7 +7,7 @@
 "IDS_LBL_OPEN_IN_IOS" = "ドキュメントを選択してください。";
 "IDS_LBL_OPEN_IN_ANDROID" = "ドキュメントを選択してください。";
 "IDS_LBL_OPEN_IN_WINRT" = "ドキュメントを選択してください。";
-"IDS_LBL_HOME" = "";
+"IDS_LBL_HOME" = "ホーム";
 "IDS_LBL_PRINT_PREVIEW" = "印刷プレビュー";
 "IDS_LBL_PRINTERS" = "プリンター";
 "IDS_LBL_PRINT_JOB_HISTORY" = "印刷履歴";

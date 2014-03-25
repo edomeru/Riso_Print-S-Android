@@ -141,6 +141,7 @@
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
                                                         <color key="value" red="0.52156862745098043" green="0.25490196078431371" blue="0.84705882352941175" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_HOME"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="homeAction:" destination="v0J-sN-35H" eventType="touchUpInside" id="lLZ-4K-xPB"/>
