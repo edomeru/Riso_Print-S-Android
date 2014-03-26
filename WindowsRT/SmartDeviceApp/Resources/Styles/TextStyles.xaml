@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Resources.Styles">
 
-    <Style x:Key="STYLE_TextBlockHeader" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+    <Style x:Key="STYLE_TextHeader" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontSize" Value="26"/>
         <Setter Property="FontWeight" Value="Light"/>
         <Setter Property="LineHeight" Value="20"/>
@@ -14,7 +14,7 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
-    <Style x:Key="STYLE_TextBlockBody" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" >
+    <Style x:Key="STYLE_TextBody" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" >
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="Light"/>
         <Setter Property="LineHeight" Value="16"/>
@@ -24,5 +24,17 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+
+    <Style x:Key="STYLE_TextKey" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >
+        <Setter Property="Foreground" Value="{StaticResource BRUSH_Gray4}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextListHeader" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
+        <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
+    </Style>
+
 
 </ResourceDictionary>

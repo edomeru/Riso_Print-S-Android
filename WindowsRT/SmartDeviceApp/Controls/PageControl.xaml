@@ -8,7 +8,24 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     
-        <Grid x:Name="pageGrid">
+    <UserControl.Resources>
+        <Style x:Key="STYLE_PageImageBorder" TargetType="Border">
+            <Style.Setters>
+                <Setter Property="BorderBrush" Value="{StaticResource BRUSH_White}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="Auto"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_PageImage" TargetType="Image" BasedOn="{StaticResource STYLE_AlignCenter}">
+            <Style.Setters>
+                <Setter Property="Stretch" Value="Uniform"/>
+                <!--<Setter Property="Visibility" Value="Collapsed"/>-->
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid x:Name="pageGrid">
         <Border x:Name="pageBorder" Style="{StaticResource STYLE_PageImageBorder}">
             <Image x:Name="pageImage" Style="{StaticResource STYLE_PageImage}" />
         </Border>        

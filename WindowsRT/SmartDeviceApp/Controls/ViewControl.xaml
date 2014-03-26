@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<UserControl x:Name="viewControl"
     x:Class="SmartDeviceApp.Controls.ViewControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,15 +7,21 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="viewControl" Style="{StaticResource STYLE_ViewGrid}" >
-    	<VisualStateManager.VisualStateGroups>
-    		<VisualStateGroup x:Name="PreviewViewVisualStateGroup">
-    			<VisualState x:Name="MainMenuPaneVisibleState"/>
-    			<VisualState x:Name="PreviewViewFullScreenState"/>
-    			<VisualState x:Name="PrintSettingsPaneVisibleState"/>
-    		</VisualStateGroup>
-    	</VisualStateManager.VisualStateGroups>
-        <Grid.ChildrenTransitions>
+    <UserControl.Resources>
+        <Style x:Key="STYLE_ViewGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="Background" Value="{StaticResource BRUSH_Gray1}"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_TitleBar" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="Background" Value="{StaticResource BRUSH_Purple1}"/>
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Style="{StaticResource STYLE_ViewGrid}" >
+    	<Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
             </TransitionCollection>
@@ -24,21 +30,20 @@
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="titleBar" Grid.Row="0" Style="{StaticResource STYLE_TitleBarView}">
+        <Grid x:Name="titleBar" Grid.Row="0" Style="{StaticResource STYLE_TitleBar}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-                <Button x:Name="button1" Style="{StaticResource STYLE_TitleBarLeftButton}"/>
-                <TextBlock x:Name="viewTitle" Grid.Column="1" Style="{StaticResource STYLE_TextBlockHeader}"/>
+                <Button x:Name="button1" Command="{Binding Button1Command, ElementName=viewControl}" Style="{StaticResource STYLE_TitleBarLeftButton}"/>
+                <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-                <Button x:Name="button3" Style="{StaticResource STYLE_TitleBarRightButton}"/>
-                <Button x:Name="button2" Style="{StaticResource STYLE_TitleBarRightButton}"/>
+                <Button x:Name="button3" Command="{Binding Button3Command, ElementName=viewControl}" Style="{StaticResource STYLE_TitleBarRightButton}"/>
+                <Button x:Name="button2" Command="{Binding Button2Command, ElementName=viewControl}" Style="{StaticResource STYLE_TitleBarRightButton}"/>
             </StackPanel>
         </Grid>
-        <Grid x:Name="contentGrid" Grid.Row="1">
-        </Grid>
+        <Grid x:Name="contentGrid" Grid.Row="1"/>
     </Grid>
 </UserControl>
