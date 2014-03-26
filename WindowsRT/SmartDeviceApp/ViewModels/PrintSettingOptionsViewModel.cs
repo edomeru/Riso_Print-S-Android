@@ -18,6 +18,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
+        private ICommand _selectPrintSettingOption;
         private ICommand _backToPrintSettings;
         private PrintSetting _printSetting;
         private PrintSettingOption _selectedPrintSettingOption;
@@ -39,6 +40,21 @@ namespace SmartDeviceApp.ViewModels
                     _printSetting = value;
                     RaisePropertyChanged("PrintSetting");
                 }
+            }
+        }
+
+        public ICommand SelectPrintSettingOption
+        {
+            get
+            {
+                if (_selectPrintSettingOption == null)
+                {
+                    _selectPrintSettingOption = new RelayCommand<PrintSettingOption>(
+                        (option) => SelectPrintSettingOptionExecute(option),
+                        (option) => true
+                    );
+                }
+                return _selectPrintSettingOption;
             }
         }
 
@@ -73,6 +89,11 @@ namespace SmartDeviceApp.ViewModels
         private void OnSelectPrintSetting(PrintSetting printSetting)
         {
             PrintSetting = printSetting;
+        }
+
+        private void SelectPrintSettingOptionExecute(PrintSettingOption option)
+        {
+            SelectedPrintSettingOption = option;
         }
 
         private void BackToPrintSettingsExecute()

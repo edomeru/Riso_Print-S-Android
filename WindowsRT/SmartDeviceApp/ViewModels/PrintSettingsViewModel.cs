@@ -126,6 +126,7 @@ namespace SmartDeviceApp.ViewModels
         {
             Messenger.Default.Send<PrintSetting>(printSetting);
             Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingOptionsVisible);
+			SelectedPrintSetting = printSetting;
         }
     }
 }

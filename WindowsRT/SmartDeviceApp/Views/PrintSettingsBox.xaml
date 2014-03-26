@@ -19,7 +19,7 @@
         <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
         <conv:PrintSettingTypeToValueContentConverter x:Key="PrintSettingTypeToValueContentConverter"/>
         <conv:PrintSettingTypeToRightButtonVisibilityConverter x:Key="PrintSettingTypeToRightButtonVisibilityConverter"/>
-        <conv:SelectedItemConverter x:Key="SelectedItemConverter"/>
+        <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     </StackPanel.Resources>
 
     <ItemsControl ItemsSource="{Binding Path=PrintSettingsList}">
@@ -28,8 +28,7 @@
                 <controls:GroupListControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}">
                     <controls:GroupListControl.Content>
                         <ListView x:Name="printSettingsListView" ItemsSource="{Binding PrintSettings}" ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-                                  IsItemClickEnabled="False" SelectionMode="Single"
-                                  SelectedItem="{Binding DataContext.SelectedPrintSetting, ElementName=printSettingsBox}" >
+                                  IsItemClickEnabled="True" SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <controls:KeyValueControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
@@ -40,8 +39,8 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                    <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}" InputConverter="{StaticResource SelectedItemConverter}"/>
+                                <Core:EventTriggerBehavior EventName="ItemClick">
+                                    <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}" InputConverter="{StaticResource ItemClickedConverter}"/>
                                 </Core:EventTriggerBehavior>
                             </Interactivity:Interaction.Behaviors>
                         </ListView>
