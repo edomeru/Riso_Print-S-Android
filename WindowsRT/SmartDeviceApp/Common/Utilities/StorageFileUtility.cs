@@ -11,19 +11,13 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Search;
 
 namespace SmartDeviceApp.Common.Utilities
 {
-    public class StorageFileUtility
+    public static class StorageFileUtility
     {
-
-        private StorageFileUtility() { }
 
         /// <summary>
         /// Retrives the file from the specified location

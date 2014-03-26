@@ -9,11 +9,11 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class DefaultsUtility
     {
-        public static PrintSetting_ CreateDefaultPrintSetting()
+        public static PagePrintSetting CreateDefaultPrintSetting()
         {
-            PrintSetting_ defaultPrintSetting = new PrintSetting_();
+            PagePrintSetting defaultPrintSetting = new PagePrintSetting();
 
-            defaultPrintSetting.ColorMode           = (int)ColorMode.Auto; ;
+            defaultPrintSetting.ColorMode           = (int)ColorMode.Auto;
             defaultPrintSetting.Orientation         = (int)Orientation.Portrait;
             defaultPrintSetting.Copies              = 1;
             defaultPrintSetting.Duplex              = (int)Duplex.Off;
@@ -22,7 +22,7 @@ namespace SmartDeviceApp.Common.Utilities
             defaultPrintSetting.PaperType           = (int)PaperType.Any;
             defaultPrintSetting.InputTray           = (int)InputTray.Auto;
             defaultPrintSetting.Imposition          = (int)Imposition.Off;
-            defaultPrintSetting.ImpositionOrder     = (int)ImpositionOrder.RightToLeft;
+            defaultPrintSetting.ImpositionOrder     = (int)ImpositionOrder.TwoUpRightToLeft;
             defaultPrintSetting.Sort                = (int)Sort.PerPage;
             defaultPrintSetting.Booklet             = false;
             defaultPrintSetting.BookletFinishing    = (int)BookletFinishing.PaperFolding;
@@ -34,5 +34,6 @@ namespace SmartDeviceApp.Common.Utilities
 
             return defaultPrintSetting;
         }
+
     }
 }

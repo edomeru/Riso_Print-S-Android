@@ -18,7 +18,11 @@ using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -31,10 +35,11 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
-        private const string FORMAT_PREVIEW_PAGE_IMAGE_PREFIX = "previewpage";
-        private const string FORMAT_PREVIEW_PAGE_IMAGE_FILENAME =
-            FORMAT_PREVIEW_PAGE_IMAGE_PREFIX + "{0:0000}.jpg";
-        private const string EMPTY_IMAGE_FILENAME = FORMAT_PREVIEW_PAGE_IMAGE_PREFIX + "_empty.jpg";
+        private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
+        private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
+            FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}.jpg";
+        private const string FILE_NAME_EMPTY_IMAGE = FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "_empty.jpg";
+        private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
 
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
@@ -70,6 +75,8 @@ namespace SmartDeviceApp.Controllers
             _selectedPrinter = null;
             _previewPages = new Dictionary<int, PreviewPage>();
 
+            LoadPrintSettingsOptions();
+
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.IsFileLoaded)
             {
@@ -103,9 +110,11 @@ namespace SmartDeviceApp.Controllers
             }
             _previewPages = null;
 
-            await StorageFileUtility.DeleteFiles(FORMAT_PREVIEW_PAGE_IMAGE_PREFIX,
+            await StorageFileUtility.DeleteFiles(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE,
                 ApplicationData.Current.TemporaryFolder);
         }
+
+        #region Database and Default Values Operations
 
         /// <summary>
         /// Retrieves printer and print settings.
@@ -134,6 +143,10 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        #endregion Database and Default Values Operations
+
+        #region Print Preview
+
         /// <summary>
         /// Checks for view related print setting and notifies view model
         /// </summary>
@@ -158,7 +171,7 @@ namespace SmartDeviceApp.Controllers
                 _pageViewMode));
 
             // Clean-up generated PreviewPages
-            await StorageFileUtility.DeleteFiles(FORMAT_PREVIEW_PAGE_IMAGE_PREFIX,
+            await StorageFileUtility.DeleteFiles(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE,
                 ApplicationData.Current.TemporaryFolder);
         }
 
@@ -187,7 +200,7 @@ namespace SmartDeviceApp.Controllers
 
             // Save PreviewPage into AppData temporary store
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile whitePageImage = await tempFolder.CreateFileAsync(EMPTY_IMAGE_FILENAME,
+            StorageFile whitePageImage = await tempFolder.CreateFileAsync(FILE_NAME_EMPTY_IMAGE,
                 CreationCollisionOption.ReplaceExisting);
             using (var destinationStream =
                 await whitePageImage.OpenAsync(FileAccessMode.ReadWrite))
@@ -205,7 +218,7 @@ namespace SmartDeviceApp.Controllers
         private async Task SendEmptyPage()
         {
             // Get existing file from AppData temporary store
-            StorageFile whitePageImage = await StorageFileUtility.GetExistingFile(EMPTY_IMAGE_FILENAME,
+            StorageFile whitePageImage = await StorageFileUtility.GetExistingFile(FILE_NAME_EMPTY_IMAGE,
                 ApplicationData.Current.TemporaryFolder);
             if (whitePageImage != null)
             {
@@ -221,6 +234,8 @@ namespace SmartDeviceApp.Controllers
                 }
             }
         }
+
+        #endregion Print Preview
 
         #region Preview Page Navigation
 
@@ -336,7 +351,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     // Save PreviewPage into AppData temporary store
                     StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                        String.Format(FORMAT_PREVIEW_PAGE_IMAGE_FILENAME, previewPageIndex),
+                        String.Format(FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE, previewPageIndex),
                         CreationCollisionOption.ReplaceExisting);
                     using (var destinationStream =
                         await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
@@ -528,14 +543,14 @@ namespace SmartDeviceApp.Controllers
             double initialOffsetY = 0;
             switch (_selectedPrinter.PrintSetting.ImpositionOrder)
             {
-                case (int)ImpositionOrder.LeftToRight:
-                case (int)ImpositionOrder.TopLeftToRight:
-                case (int)ImpositionOrder.TopLeftToBottom:
+                case (int)ImpositionOrder.TwoUpLeftToRight:
+                case (int)ImpositionOrder.FourUpUpperLeftToRight:
+                case (int)ImpositionOrder.FourUpUpperLeftToBottom:
                     initialOffsetX = 0;
                     break;
-                case (int)ImpositionOrder.TopRightToBottom:
-                case (int)ImpositionOrder.TopRightToLeft:
-                case (int)ImpositionOrder.RightToLeft:
+                case (int)ImpositionOrder.FourUpUpperRightToBottom:
+                case (int)ImpositionOrder.FourUpUpperRightToLeft:
+                case (int)ImpositionOrder.TwoUpRightToLeft:
                 default:
                     initialOffsetX = (marginBetweenPages * (pagesPerColumn - 1)) +
                         (impositionPageAreaSize.Width * (pagesPerColumn - 1));
@@ -572,8 +587,8 @@ namespace SmartDeviceApp.Controllers
                 // Update offset/postion based on direction
                 switch (_selectedPrinter.PrintSetting.ImpositionOrder)
                 {
-                    case (int)ImpositionOrder.LeftToRight:
-                    case (int)ImpositionOrder.TopLeftToRight:
+                    case (int)ImpositionOrder.TwoUpLeftToRight:
+                    case (int)ImpositionOrder.FourUpUpperLeftToRight:
                         pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
                         if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
                         {
@@ -581,7 +596,7 @@ namespace SmartDeviceApp.Controllers
                             pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
                         }
                         break;
-                    case (int)ImpositionOrder.TopLeftToBottom:
+                    case (int)ImpositionOrder.FourUpUpperLeftToBottom:
                         pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
                         if (((impositionPageIndex + 1) % pagesPerRow) == 0)
                         {
@@ -589,7 +604,7 @@ namespace SmartDeviceApp.Controllers
                             pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
                         }
                         break;
-                    case (int)ImpositionOrder.TopRightToBottom:
+                    case (int)ImpositionOrder.FourUpUpperRightToBottom:
                         pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
                         if (((impositionPageIndex + 1) % pagesPerRow) == 0)
                         {
@@ -597,8 +612,8 @@ namespace SmartDeviceApp.Controllers
                             pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
                         }
                         break;
-                    case (int)ImpositionOrder.TopRightToLeft:
-                    case (int)ImpositionOrder.RightToLeft:
+                    case (int)ImpositionOrder.FourUpUpperRightToLeft:
+                    case (int)ImpositionOrder.TwoUpRightToLeft:
                     default:
                         pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
                         if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
@@ -671,6 +686,50 @@ namespace SmartDeviceApp.Controllers
         }
 
         #endregion Apply Print Settings
+
+        #region Print Settings
+
+        private void LoadPrintSettingsOptions()
+        {
+            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
+                FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            XDocument data = XDocument.Load(xmlPath);
+
+            var printSettingsData = from groupData in data.Descendants("group")
+                                    select new PrintSettingGroup
+                                    {
+                                        Name = (string)groupData.Attribute("name"),
+                                        Text = (string)groupData.Attribute("text"),
+                                        PrintSettings =
+                                        (
+                                            from settingData in groupData.Elements("setting")
+                                            select new PrintSetting
+                                            {
+                                                Name = (string)settingData.Attribute("name"),
+                                                Text = (string)settingData.Attribute("text"),
+                                                Icon = (string)settingData.Attribute("icon"),
+                                                Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
+                                                    (string)settingData.Attribute("type")),
+                                                Options =
+                                                (
+                                                    from optionData in settingData.Elements("option")
+                                                    select new PrintSettingOption
+                                                    {
+                                                        Text = (string)optionData.Value
+                                                    }).ToList<PrintSettingOption>()
+                                            }).ToList<PrintSetting>()
+                                    };
+            
+            // Send the group to view model
+            var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
+            foreach (PrintSettingGroup group in tempList)
+            {
+                Messenger.Default.Send<PrintSettingGroup>(group);
+            }
+        }
+
+        #endregion Print Settings
+
     }
 
     public sealed class DocumentMessage

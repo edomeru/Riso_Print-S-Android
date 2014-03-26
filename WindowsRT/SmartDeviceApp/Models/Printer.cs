@@ -111,7 +111,7 @@ namespace SmartDeviceApp.Models
         /// Print settings associated to the printer
         /// </summary>
         [SQLite.Ignore]
-        public PrintSetting_ PrintSetting { get; set; }
+        public PagePrintSetting PrintSetting { get; set; }
 
         #endregion Properties
 

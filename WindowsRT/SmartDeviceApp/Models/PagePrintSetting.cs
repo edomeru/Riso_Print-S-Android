@@ -1,5 +1,5 @@
 ﻿//
-//  PrintSetting.cs
+//  PagePrintSetting.cs
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group on 2014/03/07.
@@ -43,12 +43,12 @@ namespace SmartDeviceApp.Models
 
     public enum PaperSize
     {
-        A3,
+        A3W,
         A4,
+        A5,
         A6,
         B4,
         B5,
-        B6,
         Foolscap,
         Tabloid,
         Legal,
@@ -85,12 +85,12 @@ namespace SmartDeviceApp.Models
 
     public enum ImpositionOrder
     {
-        RightToLeft,
-        LeftToRight,
-        TopLeftToBottom,
-        TopLeftToRight,
-        TopRightToBottom,
-        TopRightToLeft
+        TwoUpRightToLeft,
+        TwoUpLeftToRight,
+        FourUpUpperLeftToBottom,
+        FourUpUpperLeftToRight,
+        FourUpUpperRightToBottom,
+        FourUpUpperRightToLeft
     }
 
     public enum Sort
@@ -115,8 +115,8 @@ namespace SmartDeviceApp.Models
     public enum FinishingSide
     {
         Left,
-        Right,
-        Top
+        Top,
+        Right
     }
 
     public enum Staple
@@ -145,7 +145,8 @@ namespace SmartDeviceApp.Models
         Stacking
     }
 
-    public class PrintSetting_
+    [SQLite.Table("PrintSetting")]
+    public class PagePrintSetting
     {
 
         #region Properties
@@ -276,7 +277,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// PrintSetting default class constructor
         /// </summary>
-        public PrintSetting_()
+        public PagePrintSetting()
         {
             PrinterId = -1;
             Id = -1;
@@ -322,7 +323,7 @@ namespace SmartDeviceApp.Models
         /// <param name="staple">staple</param>
         /// <param name="punch">punch</param>
         /// <param name="outputTray">output tray</param>
-        public PrintSetting_(int printerId, int id, int colorMode, int orientation, int copies,
+        public PagePrintSetting(int printerId, int id, int colorMode, int orientation, int copies,
             int duplex, int paperSize, bool scaleToFit, int paperType, int inputTray,
             int imposition, int impositionOrder, int sort, bool booklet, int bookletFinishing,
             int bookletLayout, int finishingSide, int staple, int punch, int outputTray)

@@ -26,8 +26,8 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly DatabaseController _instance = new DatabaseController();
 
-        private const string DATABASE_FILE_NAME = "SmartDeviceAppDB.db";
-        private const string SCRIPT_FILE_PATH = "ms-appx:///Assets/SmartDeviceAppDB.sql";
+        private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
+        private const string FILE_PATH_DATABASE_SCRIPT = "Assets/SmartDeviceAppDB.sql";
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -54,14 +54,16 @@ namespace SmartDeviceApp.Controllers
             try
             {
                 var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
-                    DATABASE_FILE_NAME);
+                    FILE_NAME_DATABASE);
                 using (var db = new SQLite.SQLiteConnection(dbpath))
                 {
                     #region Create Tables Using Script File
                     /*
                     // Read script from Assets and create tables
+                    string dbScriptPath = Path.Combine(Package.Current.InstalledLocation.Path,
+                        FILE_PATH_DATABASE_SCRIPT);
                     StorageFile file =await
-                        StorageFile.GetFileFromApplicationUriAsync(new Uri(SCRIPT_FILE_PATH));
+                        StorageFile.GetFileFromApplicationUriAsync(new Uri(dbScriptPath));
                     string script = await FileIO.ReadTextAsync(file);
                         
                     // Loop each commands
@@ -106,7 +108,7 @@ namespace SmartDeviceApp.Controllers
                     db.Commit();
 
                     //PrintSettings Table
-                    db.CreateTable<PrintSetting_>();
+                    db.CreateTable<PagePrintSetting>();
                     db.Commit();
 
                     //PrintJob Table
@@ -168,7 +170,7 @@ namespace SmartDeviceApp.Controllers
 
         private void InsertPrinter(Printer printer)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             using (var db = new SQLite.SQLiteConnection(dbpath))
             {
                 // Create the tables if they don't exist
@@ -187,7 +189,7 @@ namespace SmartDeviceApp.Controllers
             var printerList = new List<Printer>();
             try
             {
-                var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
+                var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
 
                 var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
@@ -202,7 +204,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> SetDefaultPrinter(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             try
             {
@@ -238,7 +240,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> DeletePrinterFromDB(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
             try
@@ -270,7 +272,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<Printer> GetDefaultPrinter()
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
             DefaultPrinter defaultPrinter = new DefaultPrinter();
             Printer printer = new Printer();
@@ -295,15 +297,15 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSetting Table Operations
 
-        public async Task<PrintSetting_> GetPrintSetting(int printerId)
+        public async Task<PagePrintSetting> GetPrintSetting(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DATABASE_FILE_NAME);
+            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            PrintSetting_ printSetting = null;
+            PagePrintSetting printSetting = null;
 
             try
             {
-                printSetting = await db.GetAsync<PrintSetting_>(printerId);
+                printSetting = await db.GetAsync<PagePrintSetting>(printerId);
             }
             catch
             {

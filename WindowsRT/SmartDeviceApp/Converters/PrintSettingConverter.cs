@@ -135,20 +135,20 @@ namespace SmartDeviceApp.Converters
                 Size paperSize;
                 switch (value)
                 {
-                    case (int)PaperSize.A3:
-                        paperSize = PrintSettingConstant.PAPER_SIZE_A3;
+                    case (int)PaperSize.A3W:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A3W;
+                        break;
+                    case (int)PaperSize.A5:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A5;
                         break;
                     case (int)PaperSize.A6:
                         paperSize = PrintSettingConstant.PAPER_SIZE_A6;
                         break;
                     case (int)PaperSize.B4:
-                        paperSize = PrintSettingConstant.PAPER_SIZE_B6;
+                        paperSize = PrintSettingConstant.PAPER_SIZE_B4;
                         break;
                     case (int)PaperSize.B5:
                         paperSize = PrintSettingConstant.PAPER_SIZE_B5;
-                        break;
-                    case (int)PaperSize.B6:
-                        paperSize = PrintSettingConstant.PAPER_SIZE_A6;
                         break;
                     case (int)PaperSize.Foolscap:
                         paperSize = PrintSettingConstant.PAPER_SIZE_FOOLSCAP;

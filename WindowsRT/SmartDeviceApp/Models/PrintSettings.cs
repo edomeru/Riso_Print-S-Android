@@ -1,4 +1,16 @@
-﻿using System;
+﻿//
+//  PrintSettings.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/03/20.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

@@ -1,4 +1,16 @@
-﻿using System;
+﻿//
+//  PrintSettingsViewModel.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/03/20.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +53,9 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
 
-            Initialize();
+            // Initialize();
+            PrintSettingsList = new PrintSettingList();
+            Messenger.Default.Register<PrintSettingGroup>(this, (group) => OnPrintSettingGroupReceived(group));
         }
         
         public PrintSettingList PrintSettingsList
@@ -85,6 +99,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /*
         private void Initialize()
         {
             string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, "Assets/printsettings.xml");
@@ -121,12 +136,18 @@ namespace SmartDeviceApp.ViewModels
                 PrintSettingsList.Add(group);
             }
         }
+        */
+
+        private void OnPrintSettingGroupReceived(PrintSettingGroup group)
+        {
+            PrintSettingsList.Add(group);
+        }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)
         {
             Messenger.Default.Send<PrintSetting>(printSetting);
             Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingOptionsVisible);
-			SelectedPrintSetting = printSetting;
+            SelectedPrintSetting = printSetting;
         }
     }
 }
