@@ -1,16 +1,18 @@
 /*
- * Copyright (c) 2014 All rights reserved.
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
- * SplashActivity.java
+ * BaseActivity.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 
 package jp.co.riso.smartdeviceapp.view.base;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.TypedValue;
 
@@ -53,5 +55,18 @@ public abstract class BaseActivity extends Activity {
             return TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
         return -1;
+    }
+    
+    public int getDrawerWidth() {
+        Point screenSize = AppUtils.getScreenDimensions(this);
+        float drawerWidthPercentage = getResources().getFraction(R.dimen.drawer_width_percentage, 1, 1);
+        float minDrawerWidth = getResources().getDimension(R.dimen.drawer_width_min);
+        float maxDrawerWidth = getResources().getDimension(R.dimen.drawer_width_max);
+        
+        float drawerWidth = screenSize.x * drawerWidthPercentage;
+        drawerWidth = Math.max(drawerWidth, minDrawerWidth);
+        drawerWidth = Math.min(drawerWidth, maxDrawerWidth);
+        
+        return (int) drawerWidth;
     }
 }

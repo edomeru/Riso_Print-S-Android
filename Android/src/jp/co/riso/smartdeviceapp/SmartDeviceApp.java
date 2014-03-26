@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 All rights reserved.
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
  * SmartDeviceApp.java
  * SmartDeviceApp
@@ -8,23 +8,27 @@
 
 package jp.co.riso.smartdeviceapp;
 
-import jp.co.riso.android.util.Logger;
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Typeface;
 
 public class SmartDeviceApp extends Application {
 
-    private static volatile Context context;
+    private static volatile Context sContext;
+    private static volatile Typeface sAppFont;
     
     @Override
     public void onCreate() {
-        Logger.init(getApplicationContext());
-        Logger.setLogLevel(Logger.LOGLEVEL_DEBUG);
-        
-        SmartDeviceApp.context = getApplicationContext();
+        SmartDeviceApp.sContext = getApplicationContext();
+        SmartDeviceApp.sAppFont = Typeface.createFromAsset(getResources().getAssets(),
+                AppConstants.APP_FONT_FILE);
     }
 
     public static Context getAppContext() {
-        return SmartDeviceApp.context;
+        return SmartDeviceApp.sContext;
+    }
+
+    public static Typeface getAppFont() {
+        return SmartDeviceApp.sAppFont;
     }
 }
