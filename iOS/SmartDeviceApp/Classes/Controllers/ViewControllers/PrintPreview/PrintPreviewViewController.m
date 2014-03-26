@@ -139,6 +139,12 @@
     }
 }
 
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self setPageSize];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -310,6 +316,11 @@
 
 -(void) setPageSize
 {
+    if(self.pdfPageViewController == nil)
+    {
+        return;
+    }
+    
     //get ratio of width and height based on paper size
     float heightToWidthRatio =[PrintPreviewHelper heightToWidthRatioForPaperSizeSetting:self.previewSetting.paperSize];
     
@@ -538,11 +549,14 @@
 #pragma mark UIScrollViewDelegateMethods
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
-    return [self.previewArea.subviews objectAtIndex:0];
+    return self.pdfPageViewController.view;
 }
 
 -(void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
+#if DEBUG_LOG_PRINT_PREVIEW
+    NSLog(@"Scale = %f", scale);
+#endif
     currentScale = scale;
 }
 

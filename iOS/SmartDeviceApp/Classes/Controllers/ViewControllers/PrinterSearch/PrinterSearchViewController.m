@@ -156,7 +156,10 @@
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
-    [self.refreshControl setBackgroundColor:[UIColor blackColor]];
+    [self.refreshControl setBackgroundColor:[UIColor colorWithRed:36.0/255.0
+                                                            green:36.0/255.0
+                                                             blue:36.0/255.0
+                                                            alpha:1.0]];
     [self.refreshControl setTintColor:[UIColor whiteColor]];
     [self.tableView addSubview:self.refreshControl];
     [self.refreshControl setHidden:YES];
@@ -329,7 +332,14 @@
     SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:SEARCHRESULTCELL
                                                             forIndexPath:indexPath];
     BOOL isLastCell = NO;
+    
+    // if this is the last new printer cell
     if ((indexPath.section == NEW_PRINTERS) && (indexPath.row == [self.listNewPrinterNames count]-1))
+        isLastCell = YES;
+    // if there are no new printers, and this is the last old printer cell
+    else if ((indexPath.section == OLD_PRINTERS)
+             && ([self.listNewPrinterNames count] == 0)
+             && (indexPath.row == [self.listOldPrinterNames count]-1))
         isLastCell = YES;
 
     // set the cell style
