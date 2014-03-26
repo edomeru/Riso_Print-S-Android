@@ -7,29 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		280E181F18D971A1009B5259 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 280E181E18D971A1009B5259 /* Reachability.m */; };
-		2825AD0218D002D6006A8C53 /* PrinterDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 2825AD0118D002D6006A8C53 /* PrinterDetails.m */; };
-		2826DEB418CE902B00A02CA0 /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2826DEB318CE902B00A02CA0 /* Printer+Log.m */; };
-		2826DEBB18CE933900A02CA0 /* PrintSetting+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2826DEBA18CE933900A02CA0 /* PrintSetting+Log.m */; };
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
-		2828311418C7060A008B127C /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311318C7060A008B127C /* AddPrinterViewController.m */; };
-		2828311818C70636008B127C /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311718C70636008B127C /* PrintersIphoneViewController.m */; };
-		2828311C18C7064B008B127C /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311B18C7064B008B127C /* PrinterSearchViewController.m */; };
-		2828312618C7066B008B127C /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828311F18C7066B008B127C /* DatabaseManager.m */; };
-		2828312718C7066B008B127C /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312118C7066B008B127C /* NetworkManager.m */; };
-		2828312818C7066B008B127C /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312318C7066B008B127C /* PrinterManager.m */; };
-		2828312918C7066B008B127C /* SNMPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2828312518C7066B008B127C /* SNMPManager.m */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
-		282DC17A18D2950F00E29F9E /* SearchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 282DC17918D2950F00E29F9E /* SearchResultCell.m */; };
-		2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D00842A18C6FDA2001558F7 /* MenuButton.m */; };
-		2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0084B518C72F1A001558F7 /* MenuScrollView.m */; };
-		2D0380AE18D2C79A00DAE09B /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0380AD18D2C79A00DAE09B /* PrinterCollectionViewCell.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
-		2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC3E185FDE6C00810455 /* AppDelegate.m */; };
-		2D0AEC44185FDE6C00810455 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC3F185FDE6C00810455 /* main.m */; };
 		2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4A185FDE8100810455 /* InfoPlist.strings */; };
 		2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
@@ -40,18 +23,7 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
-		2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */; };
-		2D232D8318DFD45D00144935 /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D8218DFD45D00144935 /* UIView+Localization.m */; };
-		2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */; };
-		2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */; };
-		2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */; };
-		2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */; };
-		2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
-		2D74AC8018E18C05004EAB8D /* AlertUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D74AC7918E18C05004EAB8D /* AlertUtils.m */; };
-		2D74AC8118E18C05004EAB8D /* InputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D74AC7B18E18C05004EAB8D /* InputUtils.m */; };
-		2D74AC8218E18C05004EAB8D /* PListUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D74AC7D18E18C05004EAB8D /* PListUtils.m */; };
-		2D74AC8318E18C05004EAB8D /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D74AC7F18E18C05004EAB8D /* PrinterStatusHelper.m */; };
 		2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D9DD41A185FFB830085AD88 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D9DD41B185FFB830085AD88 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -60,61 +32,58 @@
 		2D9DD443185FFBCB0085AD88 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD446185FFC160085AD88 /* InfoPlist.strings */; };
 		2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD44E185FFED70085AD88 /* gtest-all.cc */; };
-		2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */; };
-		2DE9571918E1B7D000FEE165 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4B3E3518C4137000AC8AD0 /* RootViewController.m */; };
-		2DE9571A18E1B7ED00FEE165 /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */; };
-		2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */; };
-		310626E918CEB11B00E3CB19 /* PDFPageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */; };
-		310626EC18CEB15000E3CB19 /* PDFPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626EB18CEB15000E3CB19 /* PDFPageView.m */; };
-		3106270018CEDDB700E3CB19 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 310626FF18CEDDB700E3CB19 /* PreviewSetting.m */; };
-		3192115018C71BF0000555C7 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192114F18C71BF0000555C7 /* PrinterStatusView.m */; };
-		3192115418C71C3D000555C7 /* PrinterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192115318C71C3D000555C7 /* PrinterCell.m */; };
-		3192116918C72A7C000555C7 /* PrintJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116818C72A7C000555C7 /* PrintJob.m */; };
-		3192116C18C72A7C000555C7 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116B18C72A7C000555C7 /* DefaultPrinter.m */; };
-		3192116F18C72A7D000555C7 /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192116E18C72A7D000555C7 /* PrintSetting.m */; };
-		3192117218C72A7D000555C7 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192117118C72A7D000555C7 /* Printer.m */; };
-		3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3192AACA18C595A30000E7E7 /* PDFFileManager.m */; };
-		319630D518CFFCA700050E6B /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 319630D418CFFCA700050E6B /* PrintPreviewHelper.m */; };
-		31AF6CCE18CD903F00C81F09 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */; };
-		31AF6CD218CD904A00C81F09 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AF6CD118CD904A00C81F09 /* PrintersViewController.m */; };
-		31D91C9618C86FE400611C85 /* PrinterInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31D91C9518C86FE400611C85 /* PrinterInfoViewController.m */; };
+		2DA1AE3F18E2788900085F27 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADCD18E2788900085F27 /* AppDelegate.m */; };
+		2DA1AE4018E2788900085F27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADCE18E2788900085F27 /* main.m */; };
+		2DA1AE4118E2788900085F27 /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADD118E2788900085F27 /* ReplaceSegue.m */; };
+		2DA1AE4218E2788900085F27 /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADD318E2788900085F27 /* SlideOverSegue.m */; };
+		2DA1AE4318E2788900085F27 /* SlideSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADD518E2788900085F27 /* SlideSegue.m */; };
+		2DA1AE4418E2788900085F27 /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADD918E2788900085F27 /* AddPrinterViewController.m */; };
+		2DA1AE4518E2788900085F27 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADDC18E2788900085F27 /* RootViewController.m */; };
+		2DA1AE4618E2788900085F27 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADDE18E2788900085F27 /* SlidingViewController.m */; };
+		2DA1AE4718E2788900085F27 /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADE018E2788900085F27 /* UIViewController+Segue.m */; };
+		2DA1AE4818E2788900085F27 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADE318E2788900085F27 /* HomeViewController.m */; };
+		2DA1AE4918E2788900085F27 /* PrinterInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADE618E2788900085F27 /* PrinterInfoViewController.m */; };
+		2DA1AE4A18E2788900085F27 /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADE918E2788900085F27 /* PrintersIpadViewController.m */; };
+		2DA1AE4B18E2788900085F27 /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADEB18E2788900085F27 /* PrintersIphoneViewController.m */; };
+		2DA1AE4C18E2788900085F27 /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADED18E2788900085F27 /* PrintersViewController.m */; };
+		2DA1AE4D18E2788900085F27 /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADF018E2788900085F27 /* PrinterSearchViewController.m */; };
+		2DA1AE4E18E2788900085F27 /* PDFPageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADF318E2788900085F27 /* PDFPageContentViewController.m */; };
+		2DA1AE4F18E2788900085F27 /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADF518E2788900085F27 /* PrintPreviewViewController.m */; };
+		2DA1AE5018E2788900085F27 /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADF818E2788900085F27 /* PrintSettingsViewController.m */; };
+		2DA1AE5118E2788900085F27 /* AlertUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0118E2788900085F27 /* AlertUtils.m */; };
+		2DA1AE5218E2788900085F27 /* InputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0318E2788900085F27 /* InputUtils.m */; };
+		2DA1AE5318E2788900085F27 /* PListUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0518E2788900085F27 /* PListUtils.m */; };
+		2DA1AE5418E2788900085F27 /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0718E2788900085F27 /* PrinterStatusHelper.m */; };
+		2DA1AE5518E2788900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0918E2788900085F27 /* PrintPreviewHelper.m */; };
+		2DA1AE5618E2788900085F27 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0C18E2788900085F27 /* DatabaseManager.m */; };
+		2DA1AE5718E2788900085F27 /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE0E18E2788900085F27 /* NetworkManager.m */; };
+		2DA1AE5818E2788900085F27 /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1018E2788900085F27 /* PDFFileManager.m */; };
+		2DA1AE5918E2788900085F27 /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1218E2788900085F27 /* PrinterManager.m */; };
+		2DA1AE5A18E2788900085F27 /* SNMPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1418E2788900085F27 /* SNMPManager.m */; };
+		2DA1AE5B18E2788900085F27 /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1718E2788900085F27 /* Printer+Log.m */; };
+		2DA1AE5C18E2788900085F27 /* PrintSetting+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1918E2788900085F27 /* PrintSetting+Log.m */; };
+		2DA1AE5D18E2788900085F27 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1C18E2788900085F27 /* DefaultPrinter.m */; };
+		2DA1AE5E18E2788900085F27 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE1E18E2788900085F27 /* PreviewSetting.m */; };
+		2DA1AE5F18E2788900085F27 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE2018E2788900085F27 /* Printer.m */; };
+		2DA1AE6018E2788900085F27 /* PrinterDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE2218E2788900085F27 /* PrinterDetails.m */; };
+		2DA1AE6118E2788900085F27 /* PrintJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE2418E2788900085F27 /* PrintJob.m */; };
+		2DA1AE6218E2788900085F27 /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE2618E2788900085F27 /* PrintSetting.m */; };
+		2DA1AE6318E2788900085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE2C18E2788900085F27 /* PrinterStatusView.m */; };
+		2DA1AE6418E2788900085F27 /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE2E18E2788900085F27 /* DefaultView.m */; };
+		2DA1AE6518E2788900085F27 /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3118E2788900085F27 /* UIView+Localization.m */; };
+		2DA1AE6618E2788900085F27 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3318E2788900085F27 /* MenuButton.m */; };
+		2DA1AE6718E2788900085F27 /* MenuScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3518E2788900085F27 /* MenuScrollView.m */; };
+		2DA1AE6818E2788900085F27 /* PDFPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3718E2788900085F27 /* PDFPageView.m */; };
+		2DA1AE6918E2788900085F27 /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3918E2788900085F27 /* PrinterCollectionViewCell.m */; };
+		2DA1AE6A18E2788900085F27 /* PrinterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3C18E2788900085F27 /* PrinterCell.m */; };
+		2DA1AE6B18E2788900085F27 /* SearchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE3E18E2788900085F27 /* SearchResultCell.m */; };
+		2DA1AE7018E278B000085F27 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6F18E278B000085F27 /* Reachability.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		280E181D18D971A1009B5259 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		280E181E18D971A1009B5259 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		2825AD0018D002D6006A8C53 /* PrinterDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterDetails.h; path = Models/PrinterDetails.h; sourceTree = "<group>"; };
-		2825AD0118D002D6006A8C53 /* PrinterDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterDetails.m; path = Models/PrinterDetails.m; sourceTree = "<group>"; };
-		2826DEB218CE902B00A02CA0 /* Printer+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Printer+Log.h"; path = "ModelExtensions/Printer+Log.h"; sourceTree = "<group>"; };
-		2826DEB318CE902B00A02CA0 /* Printer+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Printer+Log.m"; path = "ModelExtensions/Printer+Log.m"; sourceTree = "<group>"; };
-		2826DEB918CE933900A02CA0 /* PrintSetting+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PrintSetting+Log.h"; path = "ModelExtensions/PrintSetting+Log.h"; sourceTree = "<group>"; };
-		2826DEBA18CE933900A02CA0 /* PrintSetting+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "PrintSetting+Log.m"; path = "ModelExtensions/PrintSetting+Log.m"; sourceTree = "<group>"; };
-		2826DEBC18CE9E8E00A02CA0 /* PrinterSearchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterSearchDelegate.h; path = Protocols/PrinterSearchDelegate.h; sourceTree = "<group>"; };
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		2828311218C7060A008B127C /* AddPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddPrinterViewController.h; path = AddPrinter/AddPrinterViewController.h; sourceTree = "<group>"; };
-		2828311318C7060A008B127C /* AddPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddPrinterViewController.m; path = AddPrinter/AddPrinterViewController.m; sourceTree = "<group>"; };
-		2828311618C70636008B127C /* PrintersIphoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersIphoneViewController.h; path = Printers/PrintersIphoneViewController.h; sourceTree = "<group>"; };
-		2828311718C70636008B127C /* PrintersIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersIphoneViewController.m; path = Printers/PrintersIphoneViewController.m; sourceTree = "<group>"; };
-		2828311A18C7064B008B127C /* PrinterSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterSearchViewController.h; path = PrinterSearch/PrinterSearchViewController.h; sourceTree = "<group>"; };
-		2828311B18C7064B008B127C /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterSearchViewController.m; path = PrinterSearch/PrinterSearchViewController.m; sourceTree = "<group>"; };
-		2828311E18C7066B008B127C /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseManager.h; path = Managers/DatabaseManager.h; sourceTree = "<group>"; };
-		2828311F18C7066B008B127C /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DatabaseManager.m; path = Managers/DatabaseManager.m; sourceTree = "<group>"; };
-		2828312018C7066B008B127C /* NetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkManager.h; path = Managers/NetworkManager.h; sourceTree = "<group>"; };
-		2828312118C7066B008B127C /* NetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NetworkManager.m; path = Managers/NetworkManager.m; sourceTree = "<group>"; };
-		2828312218C7066B008B127C /* PrinterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterManager.h; path = Managers/PrinterManager.h; sourceTree = "<group>"; };
-		2828312318C7066B008B127C /* PrinterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterManager.m; path = Managers/PrinterManager.m; sourceTree = "<group>"; };
-		2828312418C7066B008B127C /* SNMPManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SNMPManager.h; path = Managers/SNMPManager.h; sourceTree = "<group>"; };
-		2828312518C7066B008B127C /* SNMPManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SNMPManager.m; path = Managers/SNMPManager.m; sourceTree = "<group>"; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
-		282DC17818D2950F00E29F9E /* SearchResultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchResultCell.h; path = TableViewCells/SearchResultCell.h; sourceTree = "<group>"; };
-		282DC17918D2950F00E29F9E /* SearchResultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchResultCell.m; path = TableViewCells/SearchResultCell.m; sourceTree = "<group>"; };
-		2D00842918C6FDA2001558F7 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuButton.h; sourceTree = "<group>"; };
-		2D00842A18C6FDA2001558F7 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButton.m; sourceTree = "<group>"; };
-		2D0084B418C72F1A001558F7 /* MenuScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScrollView.h; sourceTree = "<group>"; };
-		2D0084B518C72F1A001558F7 /* MenuScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuScrollView.m; sourceTree = "<group>"; };
-		2D0380AC18D2C79A00DAE09B /* PrinterCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterCollectionViewCell.h; sourceTree = "<group>"; };
-		2D0380AD18D2C79A00DAE09B /* PrinterCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterCollectionViewCell.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -122,9 +91,6 @@
 		2D0AEC0A185FDD2100810455 /* SmartDeviceApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Info.plist"; sourceTree = "<group>"; };
 		2D0AEC10185FDD2100810455 /* SmartDeviceApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SmartDeviceApp-Prefix.pch"; sourceTree = "<group>"; };
 		2D0AEC24185FDD2100810455 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		2D0AEC3D185FDE6C00810455 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		2D0AEC3E185FDE6C00810455 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		2D0AEC3F185FDE6C00810455 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2D0AEC48185FDE8100810455 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		2D0AEC4B185FDE8100810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC4E185FDE8100810455 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -135,39 +101,9 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
-		2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
-		2D232D8118DFD45D00144935 /* UIView+Localization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Localization.h"; sourceTree = "<group>"; };
-		2D232D8218DFD45D00144935 /* UIView+Localization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Localization.m"; sourceTree = "<group>"; };
-		2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideOverSegue.h; sourceTree = "<group>"; };
-		2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideOverSegue.m; sourceTree = "<group>"; };
-		2D4B3E3418C4137000AC8AD0 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
-		2D4B3E3518C4137000AC8AD0 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
-		2D4B3E3818C4165B00AC8AD0 /* PrintPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintPreviewViewController.h; sourceTree = "<group>"; };
-		2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintPreviewViewController.m; sourceTree = "<group>"; };
-		2D4B3E3C18C418A900AC8AD0 /* ReplaceSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceSegue.h; sourceTree = "<group>"; };
-		2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplaceSegue.m; sourceTree = "<group>"; };
-		2D4B3E4018C41BAD00AC8AD0 /* DefaultView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultView.h; sourceTree = "<group>"; };
-		2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultView.m; sourceTree = "<group>"; };
-		2D4B3E4318C4550800AC8AD0 /* SlideSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideSegue.h; sourceTree = "<group>"; };
-		2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideSegue.m; sourceTree = "<group>"; };
-		2D4B3E4718C4693200AC8AD0 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
-		2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2D74AC7318E18C05004EAB8D /* AppDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDebug.h; sourceTree = "<group>"; };
-		2D74AC7418E18C05004EAB8D /* AppStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStrings.h; sourceTree = "<group>"; };
-		2D74AC7518E18C05004EAB8D /* NotificationNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationNames.h; sourceTree = "<group>"; };
-		2D74AC7618E18C05004EAB8D /* PrintSettingNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingNames.h; sourceTree = "<group>"; };
-		2D74AC7818E18C05004EAB8D /* AlertUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertUtils.h; sourceTree = "<group>"; };
-		2D74AC7918E18C05004EAB8D /* AlertUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertUtils.m; sourceTree = "<group>"; };
-		2D74AC7A18E18C05004EAB8D /* InputUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputUtils.h; sourceTree = "<group>"; };
-		2D74AC7B18E18C05004EAB8D /* InputUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputUtils.m; sourceTree = "<group>"; };
-		2D74AC7C18E18C05004EAB8D /* PListUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PListUtils.h; sourceTree = "<group>"; };
-		2D74AC7D18E18C05004EAB8D /* PListUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListUtils.m; sourceTree = "<group>"; };
-		2D74AC7E18E18C05004EAB8D /* PrinterStatusHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusHelper.h; sourceTree = "<group>"; };
-		2D74AC7F18E18C05004EAB8D /* PrinterStatusHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelper.m; sourceTree = "<group>"; };
 		2D8E525518605F33009BE88B /* GTestEventListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = GTestEventListener.h; sourceTree = "<group>"; };
 		2D9DD404185FF3200085AD88 /* CommonAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonAPI.h; sourceTree = "<group>"; };
 		2D9DD418185FFB830085AD88 /* CommonAPITests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CommonAPITests.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,38 +113,102 @@
 		2D9DD447185FFC160085AD88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D9DD44E185FFED70085AD88 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
 		2D9DD44F185FFED70085AD88 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
-		2DDACC6C18C47C6A001DEC76 /* PrintSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsViewController.h; sourceTree = "<group>"; };
-		2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsViewController.m; sourceTree = "<group>"; };
-		2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
-		2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
-		310626E718CEB11B00E3CB19 /* PDFPageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageContentViewController.h; sourceTree = "<group>"; };
-		310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageContentViewController.m; sourceTree = "<group>"; };
-		310626EA18CEB15000E3CB19 /* PDFPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageView.h; sourceTree = "<group>"; };
-		310626EB18CEB15000E3CB19 /* PDFPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageView.m; sourceTree = "<group>"; };
-		310626FE18CEDDB700E3CB19 /* PreviewSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreviewSetting.h; path = Classes/Models/PreviewSetting.h; sourceTree = "<group>"; };
-		310626FF18CEDDB700E3CB19 /* PreviewSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreviewSetting.m; path = Classes/Models/PreviewSetting.m; sourceTree = "<group>"; };
-		3192114E18C71BF0000555C7 /* PrinterStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusView.h; sourceTree = "<group>"; };
-		3192114F18C71BF0000555C7 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
-		3192115218C71C3D000555C7 /* PrinterCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterCell.h; path = TableViewCells/PrinterCell.h; sourceTree = "<group>"; };
-		3192115318C71C3D000555C7 /* PrinterCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterCell.m; path = TableViewCells/PrinterCell.m; sourceTree = "<group>"; };
-		3192116718C72A7C000555C7 /* PrintJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintJob.h; path = Models/PrintJob.h; sourceTree = "<group>"; };
-		3192116818C72A7C000555C7 /* PrintJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintJob.m; path = Models/PrintJob.m; sourceTree = "<group>"; };
-		3192116A18C72A7C000555C7 /* DefaultPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DefaultPrinter.h; path = Models/DefaultPrinter.h; sourceTree = "<group>"; };
-		3192116B18C72A7C000555C7 /* DefaultPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DefaultPrinter.m; path = Models/DefaultPrinter.m; sourceTree = "<group>"; };
-		3192116D18C72A7D000555C7 /* PrintSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintSetting.h; path = Models/PrintSetting.h; sourceTree = "<group>"; };
-		3192116E18C72A7D000555C7 /* PrintSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintSetting.m; path = Models/PrintSetting.m; sourceTree = "<group>"; };
-		3192117018C72A7D000555C7 /* Printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Printer.h; path = Models/Printer.h; sourceTree = "<group>"; };
-		3192117118C72A7D000555C7 /* Printer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Printer.m; path = Models/Printer.m; sourceTree = "<group>"; };
-		3192AAC918C595A30000E7E7 /* PDFFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFFileManager.h; path = Managers/PDFFileManager.h; sourceTree = "<group>"; };
-		3192AACA18C595A30000E7E7 /* PDFFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDFFileManager.m; path = Managers/PDFFileManager.m; sourceTree = "<group>"; };
-		319630D318CFFCA700050E6B /* PrintPreviewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintPreviewHelper.h; path = Helpers/Utilities/PrintPreviewHelper.h; sourceTree = "<group>"; };
-		319630D418CFFCA700050E6B /* PrintPreviewHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintPreviewHelper.m; path = Helpers/Utilities/PrintPreviewHelper.m; sourceTree = "<group>"; };
-		31AF6CCA18CD903F00C81F09 /* PrintersIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersIpadViewController.h; path = Printers/PrintersIpadViewController.h; sourceTree = "<group>"; };
-		31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersIpadViewController.m; path = Printers/PrintersIpadViewController.m; sourceTree = "<group>"; };
-		31AF6CD018CD904A00C81F09 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintersViewController.h; path = Printers/PrintersViewController.h; sourceTree = "<group>"; };
-		31AF6CD118CD904A00C81F09 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintersViewController.m; path = Printers/PrintersViewController.m; sourceTree = "<group>"; };
-		31D91C9418C86FE400611C85 /* PrinterInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrinterInfoViewController.h; path = PrinterInfo/PrinterInfoViewController.h; sourceTree = "<group>"; };
-		31D91C9518C86FE400611C85 /* PrinterInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrinterInfoViewController.m; path = PrinterInfo/PrinterInfoViewController.m; sourceTree = "<group>"; };
+		2DA1ADCC18E2788900085F27 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		2DA1ADCD18E2788900085F27 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		2DA1ADCE18E2788900085F27 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2DA1ADD018E2788900085F27 /* ReplaceSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceSegue.h; sourceTree = "<group>"; };
+		2DA1ADD118E2788900085F27 /* ReplaceSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplaceSegue.m; sourceTree = "<group>"; };
+		2DA1ADD218E2788900085F27 /* SlideOverSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideOverSegue.h; sourceTree = "<group>"; };
+		2DA1ADD318E2788900085F27 /* SlideOverSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideOverSegue.m; sourceTree = "<group>"; };
+		2DA1ADD418E2788900085F27 /* SlideSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideSegue.h; sourceTree = "<group>"; };
+		2DA1ADD518E2788900085F27 /* SlideSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideSegue.m; sourceTree = "<group>"; };
+		2DA1ADD818E2788900085F27 /* AddPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPrinterViewController.h; sourceTree = "<group>"; };
+		2DA1ADD918E2788900085F27 /* AddPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPrinterViewController.m; sourceTree = "<group>"; };
+		2DA1ADDB18E2788900085F27 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		2DA1ADDC18E2788900085F27 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		2DA1ADDD18E2788900085F27 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
+		2DA1ADDE18E2788900085F27 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
+		2DA1ADDF18E2788900085F27 /* UIViewController+Segue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Segue.h"; sourceTree = "<group>"; };
+		2DA1ADE018E2788900085F27 /* UIViewController+Segue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Segue.m"; sourceTree = "<group>"; };
+		2DA1ADE218E2788900085F27 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
+		2DA1ADE318E2788900085F27 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
+		2DA1ADE518E2788900085F27 /* PrinterInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterInfoViewController.h; sourceTree = "<group>"; };
+		2DA1ADE618E2788900085F27 /* PrinterInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterInfoViewController.m; sourceTree = "<group>"; };
+		2DA1ADE818E2788900085F27 /* PrintersIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIpadViewController.h; sourceTree = "<group>"; };
+		2DA1ADE918E2788900085F27 /* PrintersIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIpadViewController.m; sourceTree = "<group>"; };
+		2DA1ADEA18E2788900085F27 /* PrintersIphoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersIphoneViewController.h; sourceTree = "<group>"; };
+		2DA1ADEB18E2788900085F27 /* PrintersIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIphoneViewController.m; sourceTree = "<group>"; };
+		2DA1ADEC18E2788900085F27 /* PrintersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintersViewController.h; sourceTree = "<group>"; };
+		2DA1ADED18E2788900085F27 /* PrintersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersViewController.m; sourceTree = "<group>"; };
+		2DA1ADEF18E2788900085F27 /* PrinterSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchViewController.h; sourceTree = "<group>"; };
+		2DA1ADF018E2788900085F27 /* PrinterSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterSearchViewController.m; sourceTree = "<group>"; };
+		2DA1ADF218E2788900085F27 /* PDFPageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageContentViewController.h; sourceTree = "<group>"; };
+		2DA1ADF318E2788900085F27 /* PDFPageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageContentViewController.m; sourceTree = "<group>"; };
+		2DA1ADF418E2788900085F27 /* PrintPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintPreviewViewController.h; sourceTree = "<group>"; };
+		2DA1ADF518E2788900085F27 /* PrintPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintPreviewViewController.m; sourceTree = "<group>"; };
+		2DA1ADF718E2788900085F27 /* PrintSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsViewController.h; sourceTree = "<group>"; };
+		2DA1ADF818E2788900085F27 /* PrintSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsViewController.m; sourceTree = "<group>"; };
+		2DA1ADFB18E2788900085F27 /* AppDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDebug.h; sourceTree = "<group>"; };
+		2DA1ADFC18E2788900085F27 /* AppStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStrings.h; sourceTree = "<group>"; };
+		2DA1ADFD18E2788900085F27 /* NotificationNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationNames.h; sourceTree = "<group>"; };
+		2DA1ADFE18E2788900085F27 /* PrintSettingNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingNames.h; sourceTree = "<group>"; };
+		2DA1AE0018E2788900085F27 /* AlertUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertUtils.h; sourceTree = "<group>"; };
+		2DA1AE0118E2788900085F27 /* AlertUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertUtils.m; sourceTree = "<group>"; };
+		2DA1AE0218E2788900085F27 /* InputUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputUtils.h; sourceTree = "<group>"; };
+		2DA1AE0318E2788900085F27 /* InputUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputUtils.m; sourceTree = "<group>"; };
+		2DA1AE0418E2788900085F27 /* PListUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PListUtils.h; sourceTree = "<group>"; };
+		2DA1AE0518E2788900085F27 /* PListUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListUtils.m; sourceTree = "<group>"; };
+		2DA1AE0618E2788900085F27 /* PrinterStatusHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusHelper.h; sourceTree = "<group>"; };
+		2DA1AE0718E2788900085F27 /* PrinterStatusHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelper.m; sourceTree = "<group>"; };
+		2DA1AE0818E2788900085F27 /* PrintPreviewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintPreviewHelper.h; sourceTree = "<group>"; };
+		2DA1AE0918E2788900085F27 /* PrintPreviewHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintPreviewHelper.m; sourceTree = "<group>"; };
+		2DA1AE0B18E2788900085F27 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManager.h; sourceTree = "<group>"; };
+		2DA1AE0C18E2788900085F27 /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseManager.m; sourceTree = "<group>"; };
+		2DA1AE0D18E2788900085F27 /* NetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkManager.h; sourceTree = "<group>"; };
+		2DA1AE0E18E2788900085F27 /* NetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkManager.m; sourceTree = "<group>"; };
+		2DA1AE0F18E2788900085F27 /* PDFFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFFileManager.h; sourceTree = "<group>"; };
+		2DA1AE1018E2788900085F27 /* PDFFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFFileManager.m; sourceTree = "<group>"; };
+		2DA1AE1118E2788900085F27 /* PrinterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterManager.h; sourceTree = "<group>"; };
+		2DA1AE1218E2788900085F27 /* PrinterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManager.m; sourceTree = "<group>"; };
+		2DA1AE1318E2788900085F27 /* SNMPManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNMPManager.h; sourceTree = "<group>"; };
+		2DA1AE1418E2788900085F27 /* SNMPManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNMPManager.m; sourceTree = "<group>"; };
+		2DA1AE1618E2788900085F27 /* Printer+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Printer+Log.h"; sourceTree = "<group>"; };
+		2DA1AE1718E2788900085F27 /* Printer+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Printer+Log.m"; sourceTree = "<group>"; };
+		2DA1AE1818E2788900085F27 /* PrintSetting+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PrintSetting+Log.h"; sourceTree = "<group>"; };
+		2DA1AE1918E2788900085F27 /* PrintSetting+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PrintSetting+Log.m"; sourceTree = "<group>"; };
+		2DA1AE1B18E2788900085F27 /* DefaultPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPrinter.h; sourceTree = "<group>"; };
+		2DA1AE1C18E2788900085F27 /* DefaultPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPrinter.m; sourceTree = "<group>"; };
+		2DA1AE1D18E2788900085F27 /* PreviewSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewSetting.h; sourceTree = "<group>"; };
+		2DA1AE1E18E2788900085F27 /* PreviewSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewSetting.m; sourceTree = "<group>"; };
+		2DA1AE1F18E2788900085F27 /* Printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Printer.h; sourceTree = "<group>"; };
+		2DA1AE2018E2788900085F27 /* Printer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Printer.m; sourceTree = "<group>"; };
+		2DA1AE2118E2788900085F27 /* PrinterDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterDetails.h; sourceTree = "<group>"; };
+		2DA1AE2218E2788900085F27 /* PrinterDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterDetails.m; sourceTree = "<group>"; };
+		2DA1AE2318E2788900085F27 /* PrintJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJob.h; sourceTree = "<group>"; };
+		2DA1AE2418E2788900085F27 /* PrintJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJob.m; sourceTree = "<group>"; };
+		2DA1AE2518E2788900085F27 /* PrintSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSetting.h; sourceTree = "<group>"; };
+		2DA1AE2618E2788900085F27 /* PrintSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSetting.m; sourceTree = "<group>"; };
+		2DA1AE2818E2788900085F27 /* PrinterSearchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchDelegate.h; sourceTree = "<group>"; };
+		2DA1AE2B18E2788900085F27 /* PrinterStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusView.h; sourceTree = "<group>"; };
+		2DA1AE2C18E2788900085F27 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
+		2DA1AE2D18E2788900085F27 /* DefaultView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultView.h; sourceTree = "<group>"; };
+		2DA1AE2E18E2788900085F27 /* DefaultView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultView.m; sourceTree = "<group>"; };
+		2DA1AE3018E2788900085F27 /* UIView+Localization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Localization.h"; sourceTree = "<group>"; };
+		2DA1AE3118E2788900085F27 /* UIView+Localization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Localization.m"; sourceTree = "<group>"; };
+		2DA1AE3218E2788900085F27 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuButton.h; sourceTree = "<group>"; };
+		2DA1AE3318E2788900085F27 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButton.m; sourceTree = "<group>"; };
+		2DA1AE3418E2788900085F27 /* MenuScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScrollView.h; sourceTree = "<group>"; };
+		2DA1AE3518E2788900085F27 /* MenuScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuScrollView.m; sourceTree = "<group>"; };
+		2DA1AE3618E2788900085F27 /* PDFPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageView.h; sourceTree = "<group>"; };
+		2DA1AE3718E2788900085F27 /* PDFPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageView.m; sourceTree = "<group>"; };
+		2DA1AE3818E2788900085F27 /* PrinterCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterCollectionViewCell.h; sourceTree = "<group>"; };
+		2DA1AE3918E2788900085F27 /* PrinterCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterCollectionViewCell.m; sourceTree = "<group>"; };
+		2DA1AE3B18E2788900085F27 /* PrinterCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterCell.h; sourceTree = "<group>"; };
+		2DA1AE3C18E2788900085F27 /* PrinterCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterCell.m; sourceTree = "<group>"; };
+		2DA1AE3D18E2788900085F27 /* SearchResultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchResultCell.h; sourceTree = "<group>"; };
+		2DA1AE3E18E2788900085F27 /* SearchResultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchResultCell.m; sourceTree = "<group>"; };
+		2DA1AE6E18E278B000085F27 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		2DA1AE6F18E278B000085F27 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -250,106 +250,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		280E181B18D97115009B5259 /* OpenSource */ = {
-			isa = PBXGroup;
-			children = (
-				280E181C18D971A1009B5259 /* Reachability */,
-			);
-			name = OpenSource;
-			sourceTree = "<group>";
-		};
-		280E181C18D971A1009B5259 /* Reachability */ = {
-			isa = PBXGroup;
-			children = (
-				280E181D18D971A1009B5259 /* Reachability.h */,
-				280E181E18D971A1009B5259 /* Reachability.m */,
-			);
-			name = Reachability;
-			path = SmartDeviceApp/OpenSource/Reachability;
-			sourceTree = SOURCE_ROOT;
-		};
-		2826DEB518CE903300A02CA0 /* ModelExtensions */ = {
-			isa = PBXGroup;
-			children = (
-				2826DEB218CE902B00A02CA0 /* Printer+Log.h */,
-				2826DEB318CE902B00A02CA0 /* Printer+Log.m */,
-				2826DEB918CE933900A02CA0 /* PrintSetting+Log.h */,
-				2826DEBA18CE933900A02CA0 /* PrintSetting+Log.m */,
-			);
-			name = ModelExtensions;
-			sourceTree = "<group>";
-		};
-		2826DEBD18CE9E9200A02CA0 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				2826DEBC18CE9E8E00A02CA0 /* PrinterSearchDelegate.h */,
-			);
-			name = Protocols;
-			sourceTree = "<group>";
-		};
-		2828310418C70515008B127C /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				3192117018C72A7D000555C7 /* Printer.h */,
-				3192117118C72A7D000555C7 /* Printer.m */,
-				2825AD0018D002D6006A8C53 /* PrinterDetails.h */,
-				2825AD0118D002D6006A8C53 /* PrinterDetails.m */,
-				3192116D18C72A7D000555C7 /* PrintSetting.h */,
-				3192116E18C72A7D000555C7 /* PrintSetting.m */,
-				3192116A18C72A7C000555C7 /* DefaultPrinter.h */,
-				3192116B18C72A7C000555C7 /* DefaultPrinter.m */,
-				3192116718C72A7C000555C7 /* PrintJob.h */,
-				3192116818C72A7C000555C7 /* PrintJob.m */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
-		2828311118C705FD008B127C /* AddPrinter */ = {
-			isa = PBXGroup;
-			children = (
-				2828311218C7060A008B127C /* AddPrinterViewController.h */,
-				2828311318C7060A008B127C /* AddPrinterViewController.m */,
-			);
-			name = AddPrinter;
-			sourceTree = "<group>";
-		};
-		2828311518C7062B008B127C /* Printers */ = {
-			isa = PBXGroup;
-			children = (
-				31AF6CD018CD904A00C81F09 /* PrintersViewController.h */,
-				31AF6CD118CD904A00C81F09 /* PrintersViewController.m */,
-				31AF6CCA18CD903F00C81F09 /* PrintersIpadViewController.h */,
-				31AF6CCB18CD903F00C81F09 /* PrintersIpadViewController.m */,
-				2828311618C70636008B127C /* PrintersIphoneViewController.h */,
-				2828311718C70636008B127C /* PrintersIphoneViewController.m */,
-			);
-			name = Printers;
-			sourceTree = "<group>";
-		};
-		2828311918C7063E008B127C /* PrinterSearch */ = {
-			isa = PBXGroup;
-			children = (
-				2828311A18C7064B008B127C /* PrinterSearchViewController.h */,
-				2828311B18C7064B008B127C /* PrinterSearchViewController.m */,
-			);
-			name = PrinterSearch;
-			sourceTree = "<group>";
-		};
-		2828311D18C7065C008B127C /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				2828311E18C7066B008B127C /* DatabaseManager.h */,
-				2828311F18C7066B008B127C /* DatabaseManager.m */,
-				2828312018C7066B008B127C /* NetworkManager.h */,
-				2828312118C7066B008B127C /* NetworkManager.m */,
-				2828312218C7066B008B127C /* PrinterManager.h */,
-				2828312318C7066B008B127C /* PrinterManager.m */,
-				2828312418C7066B008B127C /* SNMPManager.h */,
-				2828312518C7066B008B127C /* SNMPManager.m */,
-			);
-			name = Managers;
-			sourceTree = "<group>";
-		};
 		2828312F18C70699008B127C /* Database */ = {
 			isa = PBXGroup;
 			children = (
@@ -405,8 +305,8 @@
 		2D0AEC08185FDD2100810455 /* SmartDeviceApp */ = {
 			isa = PBXGroup;
 			children = (
-				310626ED18CEDB5400E3CB19 /* Models */,
-				2D0AEC3A185FDE6C00810455 /* Classes */,
+				2DA1ADC918E2788900085F27 /* Classes */,
+				2DA1AE6C18E278B000085F27 /* OpenSource */,
 				2D0AEC09185FDD2100810455 /* Supporting Files */,
 			);
 			path = SmartDeviceApp;
@@ -419,43 +319,6 @@
 				2D0AEC10185FDD2100810455 /* SmartDeviceApp-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		2D0AEC3A185FDE6C00810455 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				2828310418C70515008B127C /* Models */,
-				2826DEB518CE903300A02CA0 /* ModelExtensions */,
-				319630CD18CFFABB00050E6B /* Helpers */,
-				3192AAC818C5953B0000E7E7 /* Managers */,
-				2D0AEC3B185FDE6C00810455 /* Controllers */,
-				2D4B3E3F18C41B9700AC8AD0 /* Views */,
-				2828311D18C7065C008B127C /* Managers */,
-				2D74AC7118E18C05004EAB8D /* Helpers */,
-				2826DEBD18CE9E9200A02CA0 /* Protocols */,
-				280E181B18D97115009B5259 /* OpenSource */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
-		2D0AEC3B185FDE6C00810455 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				2D0AEC3C185FDE6C00810455 /* AppLauncher */,
-				2D4B3E3218C4136000AC8AD0 /* ViewControllers */,
-				2D4B3E3B18C4188A00AC8AD0 /* Segues */,
-			);
-			path = Controllers;
-			sourceTree = "<group>";
-		};
-		2D0AEC3C185FDE6C00810455 /* AppLauncher */ = {
-			isa = PBXGroup;
-			children = (
-				2D0AEC3D185FDE6C00810455 /* AppDelegate.h */,
-				2D0AEC3E185FDE6C00810455 /* AppDelegate.m */,
-				2D0AEC3F185FDE6C00810455 /* main.m */,
-			);
-			path = AppLauncher;
 			sourceTree = "<group>";
 		};
 		2D0AEC46185FDE8100810455 /* Resources */ = {
@@ -548,131 +411,6 @@
 			path = Locales;
 			sourceTree = "<group>";
 		};
-		2D4B3E3218C4136000AC8AD0 /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				2D4B3E3318C4136000AC8AD0 /* General */,
-				2D4B3E4618C4691F00AC8AD0 /* Home */,
-				2D4B3E3718C4164A00AC8AD0 /* PrintPreview */,
-				2DDACC6B18C47C5E001DEC76 /* PrintSettings */,
-				2828311518C7062B008B127C /* Printers */,
-				31D91C9318C86EAF00611C85 /* PrinterInfo */,
-				2828311118C705FD008B127C /* AddPrinter */,
-				2828311918C7063E008B127C /* PrinterSearch */,
-			);
-			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		2D4B3E3318C4136000AC8AD0 /* General */ = {
-			isa = PBXGroup;
-			children = (
-				2D4B3E3418C4137000AC8AD0 /* RootViewController.h */,
-				2D4B3E3518C4137000AC8AD0 /* RootViewController.m */,
-				2D11A6BE18C5966B007BCB02 /* SlidingViewController.h */,
-				2D11A6BF18C5966B007BCB02 /* SlidingViewController.m */,
-				2DF90BEA18C9E1AD00C80355 /* UIViewController+Segue.h */,
-				2DF90BEB18C9E1AD00C80355 /* UIViewController+Segue.m */,
-			);
-			path = General;
-			sourceTree = "<group>";
-		};
-		2D4B3E3718C4164A00AC8AD0 /* PrintPreview */ = {
-			isa = PBXGroup;
-			children = (
-				2D4B3E3818C4165B00AC8AD0 /* PrintPreviewViewController.h */,
-				2D4B3E3918C4165B00AC8AD0 /* PrintPreviewViewController.m */,
-				310626E718CEB11B00E3CB19 /* PDFPageContentViewController.h */,
-				310626E818CEB11B00E3CB19 /* PDFPageContentViewController.m */,
-			);
-			path = PrintPreview;
-			sourceTree = "<group>";
-		};
-		2D4B3E3B18C4188A00AC8AD0 /* Segues */ = {
-			isa = PBXGroup;
-			children = (
-				2D4B3E3C18C418A900AC8AD0 /* ReplaceSegue.h */,
-				2D4B3E3D18C418A900AC8AD0 /* ReplaceSegue.m */,
-				2D4B3E4318C4550800AC8AD0 /* SlideSegue.h */,
-				2D4B3E4418C4550800AC8AD0 /* SlideSegue.m */,
-				2D3AAA9518C9B21E00D50FDA /* SlideOverSegue.h */,
-				2D3AAA9618C9B21E00D50FDA /* SlideOverSegue.m */,
-			);
-			path = Segues;
-			sourceTree = "<group>";
-		};
-		2D4B3E3F18C41B9700AC8AD0 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				3192115118C71BF5000555C7 /* TableViewCells */,
-				3192114D18C71BF0000555C7 /* CustomViews */,
-				2D5FC7BD18DA7EF900459B92 /* Extensions */,
-				2D4B3E4018C41BAD00AC8AD0 /* DefaultView.h */,
-				2D4B3E4118C41BAD00AC8AD0 /* DefaultView.m */,
-				2D00842918C6FDA2001558F7 /* MenuButton.h */,
-				2D00842A18C6FDA2001558F7 /* MenuButton.m */,
-				2D0084B418C72F1A001558F7 /* MenuScrollView.h */,
-				2D0084B518C72F1A001558F7 /* MenuScrollView.m */,
-				2D0380AC18D2C79A00DAE09B /* PrinterCollectionViewCell.h */,
-				2D0380AD18D2C79A00DAE09B /* PrinterCollectionViewCell.m */,
-				310626EA18CEB15000E3CB19 /* PDFPageView.h */,
-				310626EB18CEB15000E3CB19 /* PDFPageView.m */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		2D4B3E4618C4691F00AC8AD0 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				2D4B3E4718C4693200AC8AD0 /* HomeViewController.h */,
-				2D4B3E4818C4693200AC8AD0 /* HomeViewController.m */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		2D5FC7BD18DA7EF900459B92 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				2D232D8118DFD45D00144935 /* UIView+Localization.h */,
-				2D232D8218DFD45D00144935 /* UIView+Localization.m */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		2D74AC7118E18C05004EAB8D /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				2D74AC7218E18C05004EAB8D /* Constants */,
-				2D74AC7718E18C05004EAB8D /* Utilities */,
-			);
-			path = Helpers;
-			sourceTree = "<group>";
-		};
-		2D74AC7218E18C05004EAB8D /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				2D74AC7318E18C05004EAB8D /* AppDebug.h */,
-				2D74AC7418E18C05004EAB8D /* AppStrings.h */,
-				2D74AC7518E18C05004EAB8D /* NotificationNames.h */,
-				2D74AC7618E18C05004EAB8D /* PrintSettingNames.h */,
-			);
-			path = Constants;
-			sourceTree = "<group>";
-		};
-		2D74AC7718E18C05004EAB8D /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				2D74AC7818E18C05004EAB8D /* AlertUtils.h */,
-				2D74AC7918E18C05004EAB8D /* AlertUtils.m */,
-				2D74AC7A18E18C05004EAB8D /* InputUtils.h */,
-				2D74AC7B18E18C05004EAB8D /* InputUtils.m */,
-				2D74AC7C18E18C05004EAB8D /* PListUtils.h */,
-				2D74AC7D18E18C05004EAB8D /* PListUtils.m */,
-				2D74AC7E18E18C05004EAB8D /* PrinterStatusHelper.h */,
-				2D74AC7F18E18C05004EAB8D /* PrinterStatusHelper.m */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
 		2D9DD402185FF3200085AD88 /* CommonAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -761,77 +499,306 @@
 			path = gtest;
 			sourceTree = "<group>";
 		};
-		2DDACC6B18C47C5E001DEC76 /* PrintSettings */ = {
+		2DA1ADC918E2788900085F27 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				2DDACC6C18C47C6A001DEC76 /* PrintSettingsViewController.h */,
-				2DDACC6D18C47C6A001DEC76 /* PrintSettingsViewController.m */,
+				2DA1ADCA18E2788900085F27 /* Controllers */,
+				2DA1ADF918E2788900085F27 /* Helpers */,
+				2DA1AE0A18E2788900085F27 /* Managers */,
+				2DA1AE1518E2788900085F27 /* ModelExtensions */,
+				2DA1AE1A18E2788900085F27 /* Models */,
+				2DA1AE2718E2788900085F27 /* Protocols */,
+				2DA1AE2918E2788900085F27 /* Views */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		2DA1ADCA18E2788900085F27 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADCB18E2788900085F27 /* AppLauncher */,
+				2DA1ADCF18E2788900085F27 /* Segues */,
+				2DA1ADD618E2788900085F27 /* ViewControllers */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		2DA1ADCB18E2788900085F27 /* AppLauncher */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADCC18E2788900085F27 /* AppDelegate.h */,
+				2DA1ADCD18E2788900085F27 /* AppDelegate.m */,
+				2DA1ADCE18E2788900085F27 /* main.m */,
+			);
+			path = AppLauncher;
+			sourceTree = "<group>";
+		};
+		2DA1ADCF18E2788900085F27 /* Segues */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADD018E2788900085F27 /* ReplaceSegue.h */,
+				2DA1ADD118E2788900085F27 /* ReplaceSegue.m */,
+				2DA1ADD218E2788900085F27 /* SlideOverSegue.h */,
+				2DA1ADD318E2788900085F27 /* SlideOverSegue.m */,
+				2DA1ADD418E2788900085F27 /* SlideSegue.h */,
+				2DA1ADD518E2788900085F27 /* SlideSegue.m */,
+			);
+			path = Segues;
+			sourceTree = "<group>";
+		};
+		2DA1ADD618E2788900085F27 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADD718E2788900085F27 /* AddPrinter */,
+				2DA1ADDA18E2788900085F27 /* General */,
+				2DA1ADE118E2788900085F27 /* Home */,
+				2DA1ADE418E2788900085F27 /* PrinterInfo */,
+				2DA1ADE718E2788900085F27 /* Printers */,
+				2DA1ADEE18E2788900085F27 /* PrinterSearch */,
+				2DA1ADF118E2788900085F27 /* PrintPreview */,
+				2DA1ADF618E2788900085F27 /* PrintSettings */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		2DA1ADD718E2788900085F27 /* AddPrinter */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADD818E2788900085F27 /* AddPrinterViewController.h */,
+				2DA1ADD918E2788900085F27 /* AddPrinterViewController.m */,
+			);
+			path = AddPrinter;
+			sourceTree = "<group>";
+		};
+		2DA1ADDA18E2788900085F27 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADDB18E2788900085F27 /* RootViewController.h */,
+				2DA1ADDC18E2788900085F27 /* RootViewController.m */,
+				2DA1ADDD18E2788900085F27 /* SlidingViewController.h */,
+				2DA1ADDE18E2788900085F27 /* SlidingViewController.m */,
+				2DA1ADDF18E2788900085F27 /* UIViewController+Segue.h */,
+				2DA1ADE018E2788900085F27 /* UIViewController+Segue.m */,
+			);
+			path = General;
+			sourceTree = "<group>";
+		};
+		2DA1ADE118E2788900085F27 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADE218E2788900085F27 /* HomeViewController.h */,
+				2DA1ADE318E2788900085F27 /* HomeViewController.m */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		2DA1ADE418E2788900085F27 /* PrinterInfo */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADE518E2788900085F27 /* PrinterInfoViewController.h */,
+				2DA1ADE618E2788900085F27 /* PrinterInfoViewController.m */,
+			);
+			path = PrinterInfo;
+			sourceTree = "<group>";
+		};
+		2DA1ADE718E2788900085F27 /* Printers */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADE818E2788900085F27 /* PrintersIpadViewController.h */,
+				2DA1ADE918E2788900085F27 /* PrintersIpadViewController.m */,
+				2DA1ADEA18E2788900085F27 /* PrintersIphoneViewController.h */,
+				2DA1ADEB18E2788900085F27 /* PrintersIphoneViewController.m */,
+				2DA1ADEC18E2788900085F27 /* PrintersViewController.h */,
+				2DA1ADED18E2788900085F27 /* PrintersViewController.m */,
+			);
+			path = Printers;
+			sourceTree = "<group>";
+		};
+		2DA1ADEE18E2788900085F27 /* PrinterSearch */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADEF18E2788900085F27 /* PrinterSearchViewController.h */,
+				2DA1ADF018E2788900085F27 /* PrinterSearchViewController.m */,
+			);
+			path = PrinterSearch;
+			sourceTree = "<group>";
+		};
+		2DA1ADF118E2788900085F27 /* PrintPreview */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADF218E2788900085F27 /* PDFPageContentViewController.h */,
+				2DA1ADF318E2788900085F27 /* PDFPageContentViewController.m */,
+				2DA1ADF418E2788900085F27 /* PrintPreviewViewController.h */,
+				2DA1ADF518E2788900085F27 /* PrintPreviewViewController.m */,
+			);
+			path = PrintPreview;
+			sourceTree = "<group>";
+		};
+		2DA1ADF618E2788900085F27 /* PrintSettings */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1ADF718E2788900085F27 /* PrintSettingsViewController.h */,
+				2DA1ADF818E2788900085F27 /* PrintSettingsViewController.m */,
 			);
 			path = PrintSettings;
 			sourceTree = "<group>";
 		};
-		310626ED18CEDB5400E3CB19 /* Models */ = {
+		2DA1ADF918E2788900085F27 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				310626FE18CEDDB700E3CB19 /* PreviewSetting.h */,
-				310626FF18CEDDB700E3CB19 /* PreviewSetting.m */,
+				2DA1ADFA18E2788900085F27 /* Constants */,
+				2DA1ADFF18E2788900085F27 /* Utilities */,
 			);
-			name = Models;
+			path = Helpers;
 			sourceTree = "<group>";
 		};
-		3192114D18C71BF0000555C7 /* CustomViews */ = {
+		2DA1ADFA18E2788900085F27 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
-				3192114E18C71BF0000555C7 /* PrinterStatusView.h */,
-				3192114F18C71BF0000555C7 /* PrinterStatusView.m */,
+				2DA1ADFB18E2788900085F27 /* AppDebug.h */,
+				2DA1ADFC18E2788900085F27 /* AppStrings.h */,
+				2DA1ADFD18E2788900085F27 /* NotificationNames.h */,
+				2DA1ADFE18E2788900085F27 /* PrintSettingNames.h */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		2DA1ADFF18E2788900085F27 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE0018E2788900085F27 /* AlertUtils.h */,
+				2DA1AE0118E2788900085F27 /* AlertUtils.m */,
+				2DA1AE0218E2788900085F27 /* InputUtils.h */,
+				2DA1AE0318E2788900085F27 /* InputUtils.m */,
+				2DA1AE0418E2788900085F27 /* PListUtils.h */,
+				2DA1AE0518E2788900085F27 /* PListUtils.m */,
+				2DA1AE0618E2788900085F27 /* PrinterStatusHelper.h */,
+				2DA1AE0718E2788900085F27 /* PrinterStatusHelper.m */,
+				2DA1AE0818E2788900085F27 /* PrintPreviewHelper.h */,
+				2DA1AE0918E2788900085F27 /* PrintPreviewHelper.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		2DA1AE0A18E2788900085F27 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE0B18E2788900085F27 /* DatabaseManager.h */,
+				2DA1AE0C18E2788900085F27 /* DatabaseManager.m */,
+				2DA1AE0D18E2788900085F27 /* NetworkManager.h */,
+				2DA1AE0E18E2788900085F27 /* NetworkManager.m */,
+				2DA1AE0F18E2788900085F27 /* PDFFileManager.h */,
+				2DA1AE1018E2788900085F27 /* PDFFileManager.m */,
+				2DA1AE1118E2788900085F27 /* PrinterManager.h */,
+				2DA1AE1218E2788900085F27 /* PrinterManager.m */,
+				2DA1AE1318E2788900085F27 /* SNMPManager.h */,
+				2DA1AE1418E2788900085F27 /* SNMPManager.m */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		2DA1AE1518E2788900085F27 /* ModelExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE1618E2788900085F27 /* Printer+Log.h */,
+				2DA1AE1718E2788900085F27 /* Printer+Log.m */,
+				2DA1AE1818E2788900085F27 /* PrintSetting+Log.h */,
+				2DA1AE1918E2788900085F27 /* PrintSetting+Log.m */,
+			);
+			path = ModelExtensions;
+			sourceTree = "<group>";
+		};
+		2DA1AE1A18E2788900085F27 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE1B18E2788900085F27 /* DefaultPrinter.h */,
+				2DA1AE1C18E2788900085F27 /* DefaultPrinter.m */,
+				2DA1AE1D18E2788900085F27 /* PreviewSetting.h */,
+				2DA1AE1E18E2788900085F27 /* PreviewSetting.m */,
+				2DA1AE1F18E2788900085F27 /* Printer.h */,
+				2DA1AE2018E2788900085F27 /* Printer.m */,
+				2DA1AE2118E2788900085F27 /* PrinterDetails.h */,
+				2DA1AE2218E2788900085F27 /* PrinterDetails.m */,
+				2DA1AE2318E2788900085F27 /* PrintJob.h */,
+				2DA1AE2418E2788900085F27 /* PrintJob.m */,
+				2DA1AE2518E2788900085F27 /* PrintSetting.h */,
+				2DA1AE2618E2788900085F27 /* PrintSetting.m */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		2DA1AE2718E2788900085F27 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE2818E2788900085F27 /* PrinterSearchDelegate.h */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		2DA1AE2918E2788900085F27 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE2A18E2788900085F27 /* CustomViews */,
+				2DA1AE2D18E2788900085F27 /* DefaultView.h */,
+				2DA1AE2E18E2788900085F27 /* DefaultView.m */,
+				2DA1AE2F18E2788900085F27 /* Extensions */,
+				2DA1AE3218E2788900085F27 /* MenuButton.h */,
+				2DA1AE3318E2788900085F27 /* MenuButton.m */,
+				2DA1AE3418E2788900085F27 /* MenuScrollView.h */,
+				2DA1AE3518E2788900085F27 /* MenuScrollView.m */,
+				2DA1AE3618E2788900085F27 /* PDFPageView.h */,
+				2DA1AE3718E2788900085F27 /* PDFPageView.m */,
+				2DA1AE3818E2788900085F27 /* PrinterCollectionViewCell.h */,
+				2DA1AE3918E2788900085F27 /* PrinterCollectionViewCell.m */,
+				2DA1AE3A18E2788900085F27 /* TableViewCells */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2DA1AE2A18E2788900085F27 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				2DA1AE2B18E2788900085F27 /* PrinterStatusView.h */,
+				2DA1AE2C18E2788900085F27 /* PrinterStatusView.m */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
 		};
-		3192115118C71BF5000555C7 /* TableViewCells */ = {
+		2DA1AE2F18E2788900085F27 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				3192115218C71C3D000555C7 /* PrinterCell.h */,
-				3192115318C71C3D000555C7 /* PrinterCell.m */,
-				282DC17818D2950F00E29F9E /* SearchResultCell.h */,
-				282DC17918D2950F00E29F9E /* SearchResultCell.m */,
+				2DA1AE3018E2788900085F27 /* UIView+Localization.h */,
+				2DA1AE3118E2788900085F27 /* UIView+Localization.m */,
 			);
-			name = TableViewCells;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
-		3192AAC818C5953B0000E7E7 /* Managers */ = {
+		2DA1AE3A18E2788900085F27 /* TableViewCells */ = {
 			isa = PBXGroup;
 			children = (
-				3192AAC918C595A30000E7E7 /* PDFFileManager.h */,
-				3192AACA18C595A30000E7E7 /* PDFFileManager.m */,
+				2DA1AE3B18E2788900085F27 /* PrinterCell.h */,
+				2DA1AE3C18E2788900085F27 /* PrinterCell.m */,
+				2DA1AE3D18E2788900085F27 /* SearchResultCell.h */,
+				2DA1AE3E18E2788900085F27 /* SearchResultCell.m */,
 			);
-			name = Managers;
+			path = TableViewCells;
 			sourceTree = "<group>";
 		};
-		319630CD18CFFABB00050E6B /* Helpers */ = {
+		2DA1AE6C18E278B000085F27 /* OpenSource */ = {
 			isa = PBXGroup;
 			children = (
-				319630CE18CFFAD300050E6B /* Utilities */,
+				2DA1AE6D18E278B000085F27 /* Reachability */,
 			);
-			name = Helpers;
+			path = OpenSource;
 			sourceTree = "<group>";
 		};
-		319630CE18CFFAD300050E6B /* Utilities */ = {
+		2DA1AE6D18E278B000085F27 /* Reachability */ = {
 			isa = PBXGroup;
 			children = (
-				319630D318CFFCA700050E6B /* PrintPreviewHelper.h */,
-				319630D418CFFCA700050E6B /* PrintPreviewHelper.m */,
+				2DA1AE6E18E278B000085F27 /* Reachability.h */,
+				2DA1AE6F18E278B000085F27 /* Reachability.m */,
 			);
-			name = Utilities;
-			sourceTree = "<group>";
-		};
-		31D91C9318C86EAF00611C85 /* PrinterInfo */ = {
-			isa = PBXGroup;
-			children = (
-				31D91C9418C86FE400611C85 /* PrinterInfoViewController.h */,
-				31D91C9518C86FE400611C85 /* PrinterInfoViewController.m */,
-			);
-			name = PrinterInfo;
+			path = Reachability;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -954,53 +921,53 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D74AC8118E18C05004EAB8D /* InputUtils.m in Sources */,
-				2828311818C70636008B127C /* PrintersIphoneViewController.m in Sources */,
-				2DE9571918E1B7D000FEE165 /* RootViewController.m in Sources */,
-				2D74AC8318E18C05004EAB8D /* PrinterStatusHelper.m in Sources */,
-				319630D518CFFCA700050E6B /* PrintPreviewHelper.m in Sources */,
-				2DDACC6E18C47C6A001DEC76 /* PrintSettingsViewController.m in Sources */,
-				2D4B3E3E18C418A900AC8AD0 /* ReplaceSegue.m in Sources */,
-				2D74AC8018E18C05004EAB8D /* AlertUtils.m in Sources */,
-				2D0084B618C72F1A001558F7 /* MenuScrollView.m in Sources */,
-				31AF6CCE18CD903F00C81F09 /* PrintersIpadViewController.m in Sources */,
-				2D0AEC43185FDE6C00810455 /* AppDelegate.m in Sources */,
-				3192116918C72A7C000555C7 /* PrintJob.m in Sources */,
-				310626EC18CEB15000E3CB19 /* PDFPageView.m in Sources */,
-				3106270018CEDDB700E3CB19 /* PreviewSetting.m in Sources */,
-				2D4B3E3A18C4165B00AC8AD0 /* PrintPreviewViewController.m in Sources */,
-				2828311418C7060A008B127C /* AddPrinterViewController.m in Sources */,
-				3192115018C71BF0000555C7 /* PrinterStatusView.m in Sources */,
-				3192AACB18C595A30000E7E7 /* PDFFileManager.m in Sources */,
-				2D0AEC44185FDE6C00810455 /* main.m in Sources */,
-				2826DEBB18CE933900A02CA0 /* PrintSetting+Log.m in Sources */,
-				2D0380AE18D2C79A00DAE09B /* PrinterCollectionViewCell.m in Sources */,
-				2828311C18C7064B008B127C /* PrinterSearchViewController.m in Sources */,
-				2828312818C7066B008B127C /* PrinterManager.m in Sources */,
-				2828312618C7066B008B127C /* DatabaseManager.m in Sources */,
-				2826DEB418CE902B00A02CA0 /* Printer+Log.m in Sources */,
-				2D74AC8218E18C05004EAB8D /* PListUtils.m in Sources */,
-				3192117218C72A7D000555C7 /* Printer.m in Sources */,
-				31AF6CD218CD904A00C81F09 /* PrintersViewController.m in Sources */,
-				310626E918CEB11B00E3CB19 /* PDFPageContentViewController.m in Sources */,
-				2D4B3E4518C4550800AC8AD0 /* SlideSegue.m in Sources */,
+				2DA1AE3F18E2788900085F27 /* AppDelegate.m in Sources */,
+				2DA1AE5E18E2788900085F27 /* PreviewSetting.m in Sources */,
+				2DA1AE4D18E2788900085F27 /* PrinterSearchViewController.m in Sources */,
+				2DA1AE5918E2788900085F27 /* PrinterManager.m in Sources */,
+				2DA1AE6018E2788900085F27 /* PrinterDetails.m in Sources */,
+				2DA1AE5718E2788900085F27 /* NetworkManager.m in Sources */,
+				2DA1AE4918E2788900085F27 /* PrinterInfoViewController.m in Sources */,
+				2DA1AE4C18E2788900085F27 /* PrintersViewController.m in Sources */,
+				2DA1AE4E18E2788900085F27 /* PDFPageContentViewController.m in Sources */,
+				2DA1AE7018E278B000085F27 /* Reachability.m in Sources */,
+				2DA1AE4018E2788900085F27 /* main.m in Sources */,
+				2DA1AE5518E2788900085F27 /* PrintPreviewHelper.m in Sources */,
+				2DA1AE5318E2788900085F27 /* PListUtils.m in Sources */,
+				2DA1AE5618E2788900085F27 /* DatabaseManager.m in Sources */,
+				2DA1AE6418E2788900085F27 /* DefaultView.m in Sources */,
+				2DA1AE6118E2788900085F27 /* PrintJob.m in Sources */,
+				2DA1AE4518E2788900085F27 /* RootViewController.m in Sources */,
+				2DA1AE4B18E2788900085F27 /* PrintersIphoneViewController.m in Sources */,
+				2DA1AE5818E2788900085F27 /* PDFFileManager.m in Sources */,
+				2DA1AE4218E2788900085F27 /* SlideOverSegue.m in Sources */,
+				2DA1AE4A18E2788900085F27 /* PrintersIpadViewController.m in Sources */,
+				2DA1AE4118E2788900085F27 /* ReplaceSegue.m in Sources */,
+				2DA1AE5C18E2788900085F27 /* PrintSetting+Log.m in Sources */,
+				2DA1AE4418E2788900085F27 /* AddPrinterViewController.m in Sources */,
+				2DA1AE5118E2788900085F27 /* AlertUtils.m in Sources */,
+				2DA1AE6A18E2788900085F27 /* PrinterCell.m in Sources */,
+				2DA1AE5D18E2788900085F27 /* DefaultPrinter.m in Sources */,
+				2DA1AE5F18E2788900085F27 /* Printer.m in Sources */,
+				2DA1AE6718E2788900085F27 /* MenuScrollView.m in Sources */,
+				2DA1AE4818E2788900085F27 /* HomeViewController.m in Sources */,
+				2DA1AE4F18E2788900085F27 /* PrintPreviewViewController.m in Sources */,
+				2DA1AE5B18E2788900085F27 /* Printer+Log.m in Sources */,
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
-				2828312718C7066B008B127C /* NetworkManager.m in Sources */,
-				282DC17A18D2950F00E29F9E /* SearchResultCell.m in Sources */,
-				2D4B3E4218C41BAD00AC8AD0 /* DefaultView.m in Sources */,
-				2D4B3E4918C4693200AC8AD0 /* HomeViewController.m in Sources */,
-				2DF90BEC18C9E1AD00C80355 /* UIViewController+Segue.m in Sources */,
-				2DE9571A18E1B7ED00FEE165 /* SlideOverSegue.m in Sources */,
-				2825AD0218D002D6006A8C53 /* PrinterDetails.m in Sources */,
-				3192116F18C72A7D000555C7 /* PrintSetting.m in Sources */,
-				3192116C18C72A7C000555C7 /* DefaultPrinter.m in Sources */,
-				2D11A6C018C5966B007BCB02 /* SlidingViewController.m in Sources */,
-				280E181F18D971A1009B5259 /* Reachability.m in Sources */,
-				2D00842B18C6FDA2001558F7 /* MenuButton.m in Sources */,
-				3192115418C71C3D000555C7 /* PrinterCell.m in Sources */,
-				2828312918C7066B008B127C /* SNMPManager.m in Sources */,
-				31D91C9618C86FE400611C85 /* PrinterInfoViewController.m in Sources */,
-				2D232D8318DFD45D00144935 /* UIView+Localization.m in Sources */,
+				2DA1AE5018E2788900085F27 /* PrintSettingsViewController.m in Sources */,
+				2DA1AE4618E2788900085F27 /* SlidingViewController.m in Sources */,
+				2DA1AE6918E2788900085F27 /* PrinterCollectionViewCell.m in Sources */,
+				2DA1AE4718E2788900085F27 /* UIViewController+Segue.m in Sources */,
+				2DA1AE5218E2788900085F27 /* InputUtils.m in Sources */,
+				2DA1AE6318E2788900085F27 /* PrinterStatusView.m in Sources */,
+				2DA1AE6618E2788900085F27 /* MenuButton.m in Sources */,
+				2DA1AE6218E2788900085F27 /* PrintSetting.m in Sources */,
+				2DA1AE4318E2788900085F27 /* SlideSegue.m in Sources */,
+				2DA1AE6518E2788900085F27 /* UIView+Localization.m in Sources */,
+				2DA1AE6818E2788900085F27 /* PDFPageView.m in Sources */,
+				2DA1AE5418E2788900085F27 /* PrinterStatusHelper.m in Sources */,
+				2DA1AE6B18E2788900085F27 /* SearchResultCell.m in Sources */,
+				2DA1AE5A18E2788900085F27 /* SNMPManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
