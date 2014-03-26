@@ -93,7 +93,7 @@ namespace SmartDeviceApp.Controllers
                 FileName = file.Name;
                 IsFileLoaded = true;
 
-                GenerateLogicalPages(0); // Pre-load LogicalPages
+                GenerateLogicalPages(0, 0); // Pre-load LogicalPages
             }
             catch (FileNotFoundException)
             {
@@ -153,10 +153,13 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Generates N pages to JPEG then saves in AppData temporary store
+        /// Generates N pages to JPEG then saves in AppData temporary store.
+        /// If pages per sheet count is provided, this count is used instead of the defined max
+        /// pages.
         /// </summary>
-        /// <param name="basePageIndex">requested page number</param>
-        public async void GenerateLogicalPages(int basePageIndex)
+        /// <param name="basePageIndex">base page index</param>
+        /// <param name="numPages">number of pages needed (for imposition)</param>
+        public async void GenerateLogicalPages(int basePageIndex, int numPages)
         {
             if (!IsFileLoaded)
             {
@@ -170,7 +173,12 @@ namespace SmartDeviceApp.Controllers
             }
 
             // Compute for start page index
-            int midPt = MAX_PAGES / 2; // Round down to the nearest whole number
+            int maxPages = MAX_PAGES;
+            if (numPages > 1)
+            {
+                maxPages = (numPages * 2) + 1; // Generate on both sides plus 1 (itself)
+            }
+            int midPt = maxPages / 2; // Round down to the nearest whole number
             int endPageIndex = basePageIndex + midPt;
             int startPageIndex = endPageIndex - (midPt * 2);
             // Compute start page based on end page
@@ -191,7 +199,7 @@ namespace SmartDeviceApp.Controllers
                 await GenerateLogicalPage(currPageIndex);
                 ++generatedPageCount;
                 ++currPageIndex;
-            } while ((generatedPageCount < MAX_PAGES) && currPageIndex < pageCount);
+            } while ((generatedPageCount < maxPages) && currPageIndex < pageCount);
         }
 
         /// <summary>

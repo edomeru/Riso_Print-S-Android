@@ -81,7 +81,9 @@ namespace SmartDeviceApp.Controllers
                 await GetPrintAndPrintSetting();
                 await OnPrintSettingUpdated();
 
-                await GenerateAndSendEmptyPage();
+                // Send dummy page
+                await GenerateEmptyPage();
+                await SendEmptyPage();
             }
             else
             {
@@ -165,14 +167,21 @@ namespace SmartDeviceApp.Controllers
         /// This page will be displayed while the PreviePage(s) are being generated at the start.
         /// </summary>
         /// <returns>task</returns>
-        private async Task GenerateAndSendEmptyPage()
+        private async Task GenerateEmptyPage()
         {
             // Create a blank white page for Preview (temporary)
             Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
                 _selectedPrinter.PrintSetting.PaperSize);
-            bool isPortrait =
-                        PrintSettingConverter.OrientationIntToBoolConverter.Convert(
+            bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
                         _selectedPrinter.PrintSetting.Orientation);
+            // Override selected orientation based on imposition value
+            if (_pagesPerSheet == 4)
+            {
+                isPortrait = true;
+            } else if (_pagesPerSheet == 2)
+            {
+                isPortrait = false;
+            }
             WriteableBitmap emptyBitmap = ApplyPaperSizeAndOrientation(paperSize,
                         isPortrait);
 
@@ -191,13 +200,6 @@ namespace SmartDeviceApp.Controllers
                     ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
                 await newEncoder.FlushAsync();
             }
-
-            // Open the bitmap
-            BitmapImage bitmapImage = new BitmapImage(new Uri(whitePageImage.Path));
-
-            // Create message and send
-            Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                new Size(emptyBitmap.PixelWidth, emptyBitmap.PixelHeight)));
         }
 
         private async Task SendEmptyPage()
@@ -252,7 +254,8 @@ namespace SmartDeviceApp.Controllers
 
             // Else, generate pages, apply print setting and send
             int targetLogicalPageIndex = targetPreviewPageIndex * _pagesPerSheet;
-            DocumentController.Instance.GenerateLogicalPages(targetLogicalPageIndex);
+            DocumentController.Instance.GenerateLogicalPages(targetLogicalPageIndex,
+                _pagesPerSheet);
             Task<List<LogicalPage>> getLogicalPagesTask =
                 DocumentController.Instance.GetLogicalPages(targetLogicalPageIndex,
                     _pagesPerSheet);
