@@ -78,6 +78,7 @@
 		2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */; };
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
+		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -209,6 +210,8 @@
 		2DA1AF6C18E2F19F00085F27 /* PrinterSearchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchDelegate.h; sourceTree = "<group>"; };
 		2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusView.h; sourceTree = "<group>"; };
 		2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
+		2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Theme.h"; sourceTree = "<group>"; };
+		2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Theme.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -750,6 +753,8 @@
 				2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */,
 				2DA1AF6418E2F08900085F27 /* PrintPreviewHelper.h */,
 				2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */,
+				2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */,
+				2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -910,6 +915,7 @@
 				2DA1AF3718E2EF9C00085F27 /* SNMPManager.m in Sources */,
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
 				2DA1AEC618E2EF7D00085F27 /* PrintJob.m in Sources */,
+				2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */,
 				2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */,
 				2DA1AF1E18E2EF9600085F27 /* UIViewController+Segue.m in Sources */,
 				2DA1AF1C18E2EF9600085F27 /* RootViewController.m in Sources */,
