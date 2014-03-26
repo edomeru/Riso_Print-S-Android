@@ -16,13 +16,25 @@
 
     <!-- APP THEME CONSTANTS START -->
     <x:Double x:Key="MARGIN_Default">20</x:Double>
-    <x:Double x:Key="MARGIN_Small">10</x:Double>
-    <x:Double x:Key="MARGIN_SidePane">-400</x:Double>    
+    <x:Double x:Key="MARGIN_List">50</x:Double>
+    <x:Double x:Key="MARGIN_Medium">10</x:Double>
+    <x:Double x:Key="MARGIN_Small">5</x:Double>
+    <x:Double x:Key="MARGIN_Tiny">2</x:Double>
+    <x:Double x:Key="MARGIN_LeftSidePane">400</x:Double>
+    <x:Double x:Key="MARGIN_RightSidePane">-400</x:Double> 
     
     <GridLength x:Key="SIZE_TitleBarHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberSliderHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberTextHeight">20</GridLength>
     <x:Double x:Key="SIZE_SidePaneWidth">400</x:Double>
+    <x:Double x:Key="SIZE_ListItemHeight">60</x:Double>
+    <x:Double x:Key="SIZE_ListIconWidth">48</x:Double>
+    <x:Double x:Key="SIZE_ListIconHeight">48</x:Double>
+    <x:Double x:Key="SIZE_ListButton1Width">20</x:Double>
+    <x:Double x:Key="SIZE_ListButton1Height">20</x:Double>
+    <x:Double x:Key="SIZE_ListButton2Width">22</x:Double>
+    <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth">100</x:Double>
     <!-- APP THEME CONSTANTS END-->
 
 </ResourceDictionary>

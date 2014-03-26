@@ -145,7 +145,7 @@ namespace SmartDeviceApp.Models
         Stacking
     }
 
-    public class PrintSetting
+    public class PrintSetting_
     {
 
         #region Properties
@@ -276,7 +276,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// PrintSetting default class constructor
         /// </summary>
-        public PrintSetting()
+        public PrintSetting_()
         {
             PrinterId = -1;
             Id = -1;
@@ -322,7 +322,7 @@ namespace SmartDeviceApp.Models
         /// <param name="staple">staple</param>
         /// <param name="punch">punch</param>
         /// <param name="outputTray">output tray</param>
-        public PrintSetting(int printerId, int id, int colorMode, int orientation, int copies,
+        public PrintSetting_(int printerId, int id, int colorMode, int orientation, int copies,
             int duplex, int paperSize, bool scaleToFit, int paperType, int inputTray,
             int imposition, int impositionOrder, int sort, bool booklet, int bookletFinishing,
             int bookletLayout, int finishingSide, int staple, int punch, int outputTray)

@@ -1,0 +1,57 @@
+﻿<StackPanel x:Name="printSettingsOptionBox"
+    x:Class="SmartDeviceApp.Views.PrintSettingOptionsBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Views"
+    xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:conv="using:SmartDeviceApp.Converters"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="400"
+    DataContext="{Binding PrintSettingOptionsViewModel, Source={StaticResource Locator}}">
+    
+    <StackPanel.Resources>
+        <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
+        <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
+            <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
+                <StackPanel Style="{StaticResource STYLE_StackLeft}">
+                    <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
+                    <Image x:Name="icon"
+                           Source="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                           Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
+                           Visibility="Collapsed"/>
+                    <TextBlock x:Name="key" 
+                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}}" 
+                            Style="{StaticResource STYLE_TextListHeader}" />
+                </StackPanel>
+            </Grid>
+        </ControlTemplate>
+    </StackPanel.Resources>
+
+    <Button x:Name="header"  Content="{Binding PrintSetting.Text}" Grid.Row="0" Command="{Binding BackToPrintSettings}" Template="{StaticResource TEMPLATE_HeaderButton}"/>
+    <ListView x:Name="printSettingOptionsListView" ItemsSource="{Binding PrintSetting.Options}" ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
+                                  IsItemClickEnabled="False" SelectionMode="Single"
+                                  SelectedItem="{Binding DataContext.SelectedPrintSettingOption, ElementName=printSettingsOptionBox}" >
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <controls:KeyValueControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                                    LeftButtonVisibility="Collapsed"
+                                                                    RightButtonVisibility="Collapsed"
+                                                                    IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png">
+                    <!--<controls:KeyValueControl.ValueContent>
+                        <RadioButton Content="{Binding}"
+                    </controls:KeyValueControl.ValueContent>-->
+                </controls:KeyValueControl>
+                    
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <Interactivity:Interaction.Behaviors>
+            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}"/>
+            </Core:EventTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+    </ListView>
+</StackPanel>

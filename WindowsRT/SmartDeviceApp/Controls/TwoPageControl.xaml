@@ -6,6 +6,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    
+    <UserControl.Resources>
+        <Style x:Key="STYLE_PageAreaScrollViewer" TargetType="ScrollViewer">
+            <Style.Setters>
+                <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+                <Setter Property="ZoomMode" Value="Enabled"/>
+                <Setter Property="MinZoomFactor" Value="1.0"/>
+                <Setter Property="HorizontalScrollMode" Value="Enabled"/>
+                <Setter Property="VerticalScrollMode" Value="Enabled"/>
+
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_PageAreaGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="ManipulationMode" Value="All"/>
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}">
     <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">

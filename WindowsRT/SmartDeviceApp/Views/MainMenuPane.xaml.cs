@@ -13,13 +13,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
-namespace SmartDeviceApp.Controls
+namespace SmartDeviceApp.Views
 {
-    public sealed partial class ListItemControl : UserControl
+    public sealed partial class MainMenuPane : Grid
     {
-        public ListItemControl()
+        public MainMenuPane()
         {
             this.InitializeComponent();
         }

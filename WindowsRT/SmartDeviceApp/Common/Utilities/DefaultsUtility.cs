@@ -9,9 +9,9 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class DefaultsUtility
     {
-        public static PrintSetting CreateDefaultPrintSetting()
+        public static PrintSetting_ CreateDefaultPrintSetting()
         {
-            PrintSetting defaultPrintSetting = new PrintSetting();
+            PrintSetting_ defaultPrintSetting = new PrintSetting_();
 
             defaultPrintSetting.ColorMode           = (int)ColorMode.Auto; ;
             defaultPrintSetting.Orientation         = (int)Orientation.Portrait;

@@ -20,40 +20,31 @@ namespace SmartDeviceApp.Controls
     [ContentProperty(Name = "Children")]
     public sealed partial class ViewControl : UserControl
     {
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(ViewControl),
-            new PropertyMetadata(String.Empty, new PropertyChangedCallback(SetTitle)));
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(ViewControl), null);
 
         public static readonly DependencyProperty ChildrenProperty = DependencyProperty.Register(
             "Children", typeof(UIElementCollection), typeof(ViewControl), null);
-        
-        //public static new readonly DependencyProperty WidthProperty =
-        //    DependencyProperty.Register("Width", typeof(double), typeof(ViewControl),
-        //    new PropertyMetadata(Visibility.Visible, new PropertyChangedCallback(SetWidth)));
 
         public static readonly DependencyProperty Button1CommandProperty =
-            DependencyProperty.Register("Button1Command", typeof(ICommand), typeof(ViewControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetButton1Command)));
+            DependencyProperty.Register("Button1Command", typeof(ICommand), typeof(ViewControl), null);
 
         public static readonly DependencyProperty Button2CommandProperty =
-            DependencyProperty.Register("Button2Command", typeof(ICommand), typeof(ViewControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetButton2Command)));
+            DependencyProperty.Register("Button2Command", typeof(ICommand), typeof(ViewControl), null);
 
         public static readonly DependencyProperty Button3CommandProperty =
-            DependencyProperty.Register("Button3Command", typeof(ICommand), typeof(ViewControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetButton3Command)));
+            DependencyProperty.Register("Button3Command", typeof(ICommand), typeof(ViewControl), null);
         
-
         public ViewControl()
         {
             this.InitializeComponent();
             Children = contentGrid.Children;
         }
 
-        public string Title
+        public string Text
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
         }
 
         public UIElementCollection Children
@@ -61,12 +52,6 @@ namespace SmartDeviceApp.Controls
             get { return (UIElementCollection)GetValue(ChildrenProperty); }
             private set { SetValue(ChildrenProperty, value); }
         }
-        
-        //public new double Width
-        //{
-        //    get { return (double)GetValue(WidthProperty); }
-        //    set { SetValue(WidthProperty, value); }
-        //}
 
         public ICommand Button1Command
         {
@@ -85,43 +70,5 @@ namespace SmartDeviceApp.Controls
             get { return (ICommand)GetValue(Button3CommandProperty); }
             set { SetValue(Button3CommandProperty, value); }
         }
-
-        #region PRIVATE METHODS
-
-        private static void SetTitle(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            ((ViewControl)obj).viewTitle.Text = (string)e.NewValue;
-        }
-
-        //private static void SetWidth(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ((ViewControl)obj).viewControl.Width = (double)e.NewValue;
-        //}
-
-        private static void SetButton1Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((ICommand)e.NewValue != null)
-            {
-                ((ViewControl)obj).button1.Command = (ICommand)e.NewValue;
-            }
-        }
-
-        private static void SetButton2Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((ICommand)e.NewValue != null)
-            {
-                ((ViewControl)obj).button2.Command = (ICommand)e.NewValue;
-            }
-        }
-
-        private static void SetButton3Command(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((ICommand)e.NewValue != null)
-            {
-                ((ViewControl)obj).button3.Command = (ICommand)e.NewValue;
-            }
-        }
-
-        #endregion
     }
 }
