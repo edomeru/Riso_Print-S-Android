@@ -127,7 +127,8 @@
     <Compile Include="Converters\PrintSettingTypeToRightButtonVisibilityConverter.cs" />
     <Compile Include="Converters\PrintSettingTypeToValueContentConverter.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
-    <Compile Include="Converters\SelectedItemConverter.cs" />
+    <Compile Include="Converters\ItemClickedConverter.cs" />
+    <Compile Include="Converters\ItemSelectedConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Common\Utilities\DialogService.cs" />
     <Compile Include="Common\Utilities\DisplayOrientationsHelper.cs" />

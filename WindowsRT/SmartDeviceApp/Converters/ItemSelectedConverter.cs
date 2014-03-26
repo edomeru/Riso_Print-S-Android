@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
 {
-    public class SelectedItemConverter : IValueConverter
+    public class ItemSelectedConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
