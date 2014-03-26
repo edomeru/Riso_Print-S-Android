@@ -14,7 +14,8 @@ namespace SmartDeviceApp.Converters
         {
             var args = value as SelectionChangedEventArgs;
 
-            if (args != null)
+            if (args != null && args.AddedItems.Count > 0) // Workaround: This event is triggered also when selection is removed
+                // TODO: Change to radio button to retain selection even if control is removed from view
                 return args.AddedItems[0]; // Allow single selection only
 
             return null;
