@@ -32,7 +32,6 @@
 @property (weak, nonatomic) IBOutlet UIView *pageNavArea; //area where the slider and page number display is shown
 @property (weak, nonatomic) IBOutlet UISlider *pageNavigationSlider; //slider used to jump or navigate to pages
 @property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay; //current page number display over total number of pages
-@property (weak, nonatomic) IBOutlet UIButton *printSettingButton; //button to navigate to the print settings screen
 
 
 /*Constraints to adjust the position of slider and page number display in the page navigation area
@@ -190,7 +189,7 @@
 
 -(void) hidePrintPreviewControls: (BOOL) isHidden
 {
-    [self.printSettingButton setHidden:isHidden];
+    [self.printSettingsButton setHidden:isHidden];
     [self.pageNavArea setHidden: isHidden];
     [self.previewArea setHidden: isHidden];
 }
@@ -570,7 +569,7 @@
 
 - (IBAction)printSettingsAction:(id)sender
 {
-    [self.printSettingButton setEnabled:NO];
+    [self.printSettingsButton setEnabled:NO];
     [self performSegueTo:[PrintSettingsViewController class]];
 }
 

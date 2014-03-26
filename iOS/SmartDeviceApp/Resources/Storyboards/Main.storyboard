@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -501,7 +501,7 @@
                         <outlet property="pageNavigationSlider" destination="k35-as-6xb" id="RQS-Eo-L0Q"/>
                         <outlet property="pageNumberDisplay" destination="ZT1-SS-2ii" id="Lfv-cw-EKO"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="yV8-P0-wgE"/>
-                        <outlet property="printSettingButton" destination="ABd-RJ-eVH" id="DbM-hD-xh7"/>
+                        <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="qyX-vn-uyc"/>
                         <outlet property="screenTitle" destination="4Rb-l1-7Cb" id="vyg-Sb-PZf"/>
                         <outlet property="sliderLeftConstraint" destination="p5c-dn-zTt" id="9G4-rU-v4y"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintPreview-Home" customClass="SlideSegue" id="c8V-UF-iWe"/>
@@ -1621,7 +1621,7 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_ADD_PRINTER"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER_INFO"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
