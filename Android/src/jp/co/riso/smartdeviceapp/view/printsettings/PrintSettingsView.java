@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -21,8 +22,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants;
+import jp.co.riso.smartdeviceapp.model.Printer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -52,7 +55,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -72,6 +74,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final String KEY_SUBVIEW_DISPLAYED = "key_subview_displayed";
     private static final String KEY_SUB_SCROLL_POSITION = "key_sub_scroll_position";
     
+    private static final String KEY_TAG_PRINTER = "key_tag_printer";
+    
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
     private static final int MSG_SET_SCROLL = 2;
@@ -88,13 +92,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private static final int ID_SUBVIEW_OPTION_ITEM = 0x11000005;
     private static final int ID_SUBVIEW_STATUS = 0x11000006;
+    private static final int ID_SUBVIEW_PRINTER_ITEM = 0x11000007;
     
-    private static final int ID_TAG_TEXT = 0x11000007;
-    private static final int ID_TAG_ICON = 0x11000008;
-    private static final int ID_TAG_OPTIONS = 0x11000009;
+    private static final int ID_TAG_TEXT = 0x11000008;
+    private static final int ID_TAG_ICON = 0x11000009;
+    private static final int ID_TAG_OPTIONS = 0x1100000A;
+    
+    private static final int ID_PRINT_HEADER = 0x1100000B;
+    private static final int ID_PRINT_SELECTED_PRINTER = 0x1100000C;
     
     private Document mPrintSettingsContent;
+    
+    private boolean mShowPrintControls;
     private PrintSettings mPrintSettings;
+    private int mPrinterId;
+    private List<Printer> mPrintersList;
     
     private ScrollView mMainScrollView;
     private LinearLayout mMainLayout;
@@ -129,8 +141,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         mHandler = new Handler(this);
-        initializeMainView();
         parsePrintSettingsContent();
+        loadPrintersList();
+        
+        initializeMainView();
         initializePrinterControls();
         initializePrintSettingsControls();
     }
@@ -143,6 +157,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mMainScrollView.addView(mMainLayout, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         
         addView(mMainScrollView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    }
+    
+    private void loadPrintersList() {
+        mPrintersList = PrinterManager.sharedManager(SmartDeviceApp.getAppContext()).getSavedPrintersList();
     }
     
     // ================================================================================
@@ -192,7 +210,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         if (savedInstanceState.containsKey(KEY_SUBVIEW_DISPLAYED)) {
             // Show the subview after a delay
-            String tag = savedInstanceState.getString(KEY_SUBVIEW_DISPLAYED);
+            String tag = savedInstanceState.getString(KEY_SUBVIEW_DISPLAYED, "");
             newMessage = Message.obtain(mHandler, MSG_SHOW_SUBVIEW);
             newMessage.obj = tag;
             mHandler.sendMessage(newMessage);
@@ -208,6 +226,30 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // ================================================================================
     // Set Values
     // ================================================================================
+    
+    private void updateHighlightedPrinter(int printerId) {
+        if (mPrintControls == null) {
+            return;
+        }
+        
+        Printer targetPrinter = null;
+        if (mPrintersList != null) {
+            for (Printer printer : mPrintersList) {
+                if (printer.getId() == printerId) {
+                    targetPrinter = printer;
+                    break;
+                }
+            }
+        }
+        
+        View v = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
+        TextView disclosureTextView = (TextView)v.findViewById(R.id.listValueTextView);
+        if (targetPrinter == null) {
+            disclosureTextView.setText(R.string.ids_lbl_choose_printer);
+        } else {
+            disclosureTextView.setText(targetPrinter.getName());
+        }
+    }
     
     private void updateItemValue(String tag) {
         int value = mPrintSettings.getValue(tag);
@@ -239,6 +281,22 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     public void setValueChangedListener(ValueChangedListener listener) {
         mListener = listener;
+    }
+    
+    public void setShowPrintControls(boolean showPrintControls) {
+        mShowPrintControls = showPrintControls;
+
+        if (mShowPrintControls) {
+            mPrintControls.setVisibility(View.VISIBLE);
+        } else {
+            mPrintControls.setVisibility(View.GONE);
+        }
+    }
+    
+    public void setPrinterId(int printerId) {
+        mPrinterId = printerId;
+
+        updateHighlightedPrinter(mPrinterId);
     }
     
     public void setPrintSettings(PrintSettings printSettings) {
@@ -287,18 +345,22 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mPrintControls.setOrientation(LinearLayout.VERTICAL);
         
         // Create Header
-        LinearLayout header = createTitle(getResources().getString(R.string.ids_lbl_print), false, -1, false);
+        LinearLayout header = createTitle(getResources().getString(R.string.ids_lbl_print), false, -1, false, true);
+        header.setId(ID_PRINT_HEADER);
+        header.setOnClickListener(this);
         mPrintControls.addView(header);
         
         // Create disclosure for item
         View view = LayoutInflater.from(getContext()).inflate(R.layout.printsettings_disclosure_withvalue, null);
-        view.setOnClickListener(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         view.setLayoutParams(params);
         
         // Create item
         LinearLayout selectedPrinter = createItem(getResources().getString(R.string.ids_lbl_printer), false, -1, false, view);
+        selectedPrinter.setId(ID_PRINT_SELECTED_PRINTER);
+        selectedPrinter.setTag(KEY_TAG_PRINTER);
+        selectedPrinter.setOnClickListener(this);
         mPrintControls.addView(selectedPrinter);
         
         params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -387,7 +449,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             titleText = getResources().getString(id);
         }
         
-        LinearLayout title = createTitle(titleText, true, R.drawable.selector_printsettings_collapsible, false);
+        LinearLayout title = createTitle(titleText, true, R.drawable.selector_printsettings_collapsible, false, false);
         title.setId(ID_COLLAPSE_CONTAINER);
         title.setTag(ID_COLLAPSE_TARGET_GROUP, itemsGroup);
         title.setTag(nameStr);
@@ -491,70 +553,87 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mSubScrollView.startAnimation(animOut);
     }
     
-    private void addSubviewOptionsList(String str, int value, int id, boolean withSeparator) {
+    private void addSubviewOptionsList(String str, int value, int tagValue, boolean withSeparator, int itemId) {
+        addSubviewOptionsList(str, null, value, tagValue, withSeparator, itemId);
+    }
+    
+    private void addSubviewOptionsList(String str, String sub, int value, int tagValue, boolean withSeparator, int itemId) {
         
         // Add disclosure
         LayoutInflater li = LayoutInflater.from(getContext());
-        RadioButton radioButton = (RadioButton) li.inflate(R.layout.printsettings_radiobutton, null);
-        radioButton.setId(ID_SUBVIEW_STATUS);
-        radioButton.setClickable(false);
-        if (value == id) {
-            radioButton.setChecked(true);
+        View view = li.inflate(R.layout.printsettings_radiobutton, null);
+        view.setId(ID_SUBVIEW_STATUS);
+        if (value == tagValue) {
+            view.setSelected(true);
         }
         
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 0.0f);
+        int size = getResources().getDimensionPixelSize(R.dimen.printsettings_radiobutton_size);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         
         int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);
         params.leftMargin = margin;
         params.rightMargin = margin;
         
-        radioButton.setLayoutParams(params);
+        view.setLayoutParams(params);
         
         // TODO: iconID
-        LinearLayout item = createItem(str, true, -1, withSeparator, radioButton);
-        item.setId(ID_SUBVIEW_OPTION_ITEM);
-        item.setTag(Integer.valueOf(id));
+        LinearLayout item = createItem(str, sub, true, -1, withSeparator, view);
+        item.setId(itemId);
+        item.setTag(Integer.valueOf(tagValue));
         item.setOnClickListener(this);
         
         mSubLayout.addView(item);
     }
     
-    private void addSubviewOptionsTitle(String str, int iconId) {
-        LinearLayout title = createTitle(str, true, iconId, true);
+    private void addSubviewOptionsTitle(String str, boolean showIcon, int iconId) {
+        LinearLayout title = createTitle(str, showIcon, iconId, true, false);
         title.setId(ID_HIDE_SUBVIEW_CONTAINER);
         title.setOnClickListener(this);
-        
-        ImageView imgView = (ImageView) title.findViewById(R.id.returnButtonIndicator);
-        imgView.setRotation(180);
         
         mSubLayout.addView(title);
     }
     
     private void createSubview(View v) {
         mSubLayout.setTag(v.getTag());
-        mSubLayout.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT));
-        mSubLayout.setTag(ID_TAG_ICON, v.getTag(ID_TAG_ICON));
-        mSubLayout.setTag(ID_TAG_OPTIONS, v.getTag(ID_TAG_OPTIONS));
         
-        String name = (String) v.getTag();
-        String text = (String) v.getTag(ID_TAG_TEXT);
-        String icon = (String) v.getTag(ID_TAG_ICON);
-        
-        String titleText = "";
-        int titleId = AppUtils.getResourseId(text, R.string.class, -1);
-        if (titleId != -1) {
-            titleText = getResources().getString(titleId);
-        }
-        
-        int iconId = AppUtils.getResourseId(icon, R.drawable.class, -1);
-        
-        addSubviewOptionsTitle(titleText, iconId);
-        
-        int value = mPrintSettings.getValue(name);
-        Object[] options = (Object[]) v.getTag(ID_TAG_OPTIONS);
-        for (int i = 0; i < options.length; i++) {
-            addSubviewOptionsList(options[i].toString(), value, i, i != options.length - 1);
+        if (v.getTag().toString().equals(KEY_TAG_PRINTER)) {
+            String title = getResources().getString(R.string.ids_lbl_printer);
+            addSubviewOptionsTitle(title, false, -1);
+            
+            if (mPrintersList != null) {
+                for (int i = 0; i < mPrintersList.size(); i++) {
+                    Printer printer = mPrintersList.get(i);
+
+                    boolean showSeparator = (i != mPrintersList.size() - 1);
+                    addSubviewOptionsList(printer.getName(), printer.getIpAddress(), mPrinterId, printer.getId(), showSeparator, ID_SUBVIEW_PRINTER_ITEM);
+                }
+            }
+        } else {
+            mSubLayout.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT));
+            mSubLayout.setTag(ID_TAG_ICON, v.getTag(ID_TAG_ICON));
+            mSubLayout.setTag(ID_TAG_OPTIONS, v.getTag(ID_TAG_OPTIONS));
+            
+            String name = (String) v.getTag();
+            String text = (String) v.getTag(ID_TAG_TEXT);
+            String icon = (String) v.getTag(ID_TAG_ICON);
+            
+            String titleText = "";
+            int titleId = AppUtils.getResourseId(text, R.string.class, -1);
+            if (titleId != -1) {
+                titleText = getResources().getString(titleId);
+            }
+            
+            int iconId = AppUtils.getResourseId(icon, R.drawable.class, -1);
+            
+            addSubviewOptionsTitle(titleText, true, iconId);
+            
+            int value = mPrintSettings.getValue(name);
+            Object[] options = (Object[]) v.getTag(ID_TAG_OPTIONS);
+            for (int i = 0; i < options.length; i++) {
+                boolean showSeparator = (i != options.length - 1);
+                addSubviewOptionsList(options[i].toString(), value, i, showSeparator, ID_SUBVIEW_OPTION_ITEM);
+            }
         }
     }
     
@@ -605,28 +684,55 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private void subviewOptionsItemClicked(View v) {
         int id = (Integer) v.getTag();
         
-        if (mPrintSettings.setValue((String) mSubLayout.getTag(), id)) {
-            if (mListener != null) {
-                mListener.onPrintSettingsValueChanged(mPrintSettings);
+        if (v.getId() == ID_SUBVIEW_OPTION_ITEM) {
+            if (mPrintSettings.setValue((String) mSubLayout.getTag(), id)) {
+                if (mListener != null) {
+                    mListener.onPrintSettingsValueChanged(mPrintSettings);
+                }
+                
+                // Update UI
+                updateItemValue((String) mSubLayout.getTag());
+                
+                Object[] options = (Object[]) mSubLayout.getTag(ID_TAG_OPTIONS);
+                for (int i = 0; i < options.length; i++) {
+                    View view = mSubLayout.findViewWithTag(Integer.valueOf(i));
+                    View subView = view.findViewById(ID_SUBVIEW_STATUS);
+                    subView.setSelected(id == i);
+                }
+            }
+        } else if (v.getId() == ID_SUBVIEW_PRINTER_ITEM) {
+            if (mPrinterId != id) {
+                setPrinterId(id);
+                // TODO: get new printer settings 
+                setPrintSettings(new PrintSettings(mPrinterId));
+                
+                if (mListener != null) {
+                    mListener.onPrinterIdSelectedChanged(mPrinterId);
+                    mListener.onPrintSettingsValueChanged(mPrintSettings);
+                }
+    
+                // Update UI
+                for (int i = 0; i < mPrintersList.size(); i++) {
+                    Printer printer = mPrintersList.get(i);
+                    View view = mSubLayout.findViewWithTag(Integer.valueOf(printer.getId()));
+                    View subView = view.findViewById(ID_SUBVIEW_STATUS);
+                    subView.setSelected(id == printer.getId());
+                }
             }
             
-            // Update UI
-            updateItemValue((String) mSubLayout.getTag());
-            
-            Object[] options = (Object[]) mSubLayout.getTag(ID_TAG_OPTIONS);
-            for (int i = 0; i < options.length; i++) {
-                View view = mSubLayout.findViewWithTag(Integer.valueOf(i));
-                RadioButton radioButton = (RadioButton) view.findViewById(ID_SUBVIEW_STATUS);
-                radioButton.setChecked(id == i);
-            }
         }
+    }
+    
+    private void executePrint() {
+        // TODO: Implement print here
+        Log.wtf(TAG, "Execute Print Clicked");
     }
     
     // ================================================================================
     // Convenience methods
     // ================================================================================
     
-    private LinearLayout createTitle(String text, boolean showIcon, int iconId, boolean showBackButton) {
+    private LinearLayout createTitle(String text, boolean showIcon, int iconId, boolean showBackButton, boolean showDisclosure) {
         LayoutInflater li = LayoutInflater.from(getContext());
         LinearLayout title = (LinearLayout) li.inflate(R.layout.printsettings_container_title, null);
         
@@ -651,15 +757,34 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             imgView.setVisibility(View.VISIBLE);
         }
         
+        imgView = (ImageView) title.findViewById(R.id.disclosureView);
+        if (showDisclosure) {
+            imgView.setVisibility(View.VISIBLE);
+        }
+        
         return title;
     }
     
     private LinearLayout createItem(String text, boolean showIcon, int iconId, boolean showSeparator, View view) {
+        return createItem(text, null, showIcon, iconId, showSeparator, view);
+    }
+    
+    private LinearLayout createItem(String text, String subText, boolean showIcon, int iconId, boolean showSeparator, View view) {
         LayoutInflater li = LayoutInflater.from(getContext());
-        LinearLayout item = (LinearLayout) li.inflate(R.layout.printsettings_container_item, null);
+        
+        int layoutId = R.layout.printsettings_container_item;
+        if (subText != null) {
+            layoutId = R.layout.printsettings_container_item_with_sub;
+        }
+        LinearLayout item = (LinearLayout) li.inflate(layoutId, null);
         
         TextView textView = (TextView) item.findViewById(R.id.menuTextView);
         textView.setText(text);
+
+        if (subText != null) {
+            textView = (TextView) item.findViewById(R.id.subTextView);
+            textView.setText(subText);
+        }
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         item.setLayoutParams(params);
@@ -913,7 +1038,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 dismissOptionsSubview(true);
                 break;
             case ID_SUBVIEW_OPTION_ITEM:
+            case ID_SUBVIEW_PRINTER_ITEM:
                 subviewOptionsItemClicked(v);
+                break;
+            case ID_PRINT_SELECTED_PRINTER:
+                displayOptionsSubview(v, true);
+                break;
+            case ID_PRINT_HEADER:
+                executePrint();
                 break;
         }
     }
@@ -1015,6 +1147,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     public interface ValueChangedListener {
+        public void onPrinterIdSelectedChanged(int printerId);
         public void onPrintSettingsValueChanged(PrintSettings printSettings);
     }
 }

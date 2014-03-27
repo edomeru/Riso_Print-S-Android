@@ -23,8 +23,10 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -40,6 +42,8 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     public static final String FRAGMENT_TAG_PRINTSETTINGS = "fragment_printsettings";
     
     private PDFFileManager mPdfManager = null;
+    
+    private int mPrinterId = PrinterManager.EMPTY_ID;
     private PrintSettings mPrintSettings;
     
     private PrintPreviewView mPrintPreviewView = null;
@@ -86,6 +90,14 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 
                 // Automatically open asynchronously
                 mPdfManager.initializeAsync();
+            }
+        }
+        
+        if (mPrinterId == PrinterManager.EMPTY_ID) {
+            mPrinterId = PrinterManager.sharedManager(SmartDeviceApp.getAppContext()).getDefaultPrinter();
+            
+            if (mPrinterId != -1) {
+                mPrintSettings = new PrintSettings(mPrinterId);
             }
         }
         
@@ -188,6 +200,10 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         addMenuButton(v, R.id.rightActionLayout, ID_PRINT_BUTTON, R.drawable.selector_actionbar_printsettings, this);
     }
     
+    public void setPrintId(int printerId) {
+        mPrinterId = printerId;
+    }
+    
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
         if (mPrintPreviewView != null) {
@@ -269,7 +285,9 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                             ft.commit();
                         }
                         
+                        fragment.setPrinterId(mPrinterId);
                         fragment.setPrintSettings(mPrintSettings);
+                        fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
                         
                         activity.openDrawer(Gravity.RIGHT, true);

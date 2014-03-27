@@ -93,6 +93,11 @@ public class PrintSettings {
         mOutputTray = printSettings.mOutputTray;
     }
     
+    public PrintSettings(int printerId) {
+        // get settings from DB
+        this();
+    }
+    
     // ================================================================================
     // Getter/Setters
     // ================================================================================
