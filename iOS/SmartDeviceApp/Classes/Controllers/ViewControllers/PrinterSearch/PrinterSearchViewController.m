@@ -189,9 +189,9 @@
     // check if adding printers is allowed
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertHelper displayResult:ERR_MAX_PRINTERS
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
         return;
     }
     
@@ -200,9 +200,9 @@
     PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertHelper displayResult:INFO_PRINTER_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         self.hasAddedPrinters = YES;
         
         // change the '+' button to a checkmark
@@ -220,9 +220,9 @@
     }
     else
     {
-        [AlertHelper displayResult:ERR_CANNOT_ADD
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
     }
 }
 
@@ -233,9 +233,9 @@
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertHelper displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrNoNetwork
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
         
         if ([self.refreshControl isRefreshing])
             [self.refreshControl endRefreshing];

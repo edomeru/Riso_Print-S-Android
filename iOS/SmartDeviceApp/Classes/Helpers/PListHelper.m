@@ -57,14 +57,14 @@ static NSDictionary* sharedSettingsDict = nil;
     return [sharedSettingsDict objectForKey:@"PrintSettings_Default"];
 }
 
-+ (NSUInteger)readUint:(PL_UINT_TYPE)type
++ (NSUInteger)readUint:(kPlistUintVal)type
 {
     if (sharedSettingsDict == nil)
         [self setSharedSettingsDict];
     
     switch (type)
     {
-        case PL_UINT_MAX_PRINTERS:
+        case kPlistUintValMaxPrinters:
             return [[sharedSettingsDict objectForKey:@"Printer_MaxCount"] unsignedIntegerValue];
             
         default:
@@ -72,17 +72,17 @@ static NSDictionary* sharedSettingsDict = nil;
     }
 }
 
-+ (BOOL)readBool:(PL_BOOL_TYPE)type;
++ (BOOL)readBool:(kPlistBoolVal)type;
 {
     if (sharedSettingsDict == nil)
         [self setSharedSettingsDict];
     
     switch (type)
     {
-        case PL_BOOL_USE_SNMP:
+        case kPlistBoolValUseSNMP:
             return [[sharedSettingsDict objectForKey:@"Use_SNMPCommonLib"] boolValue];
             
-        case PL_BOOL_USE_SNMP_TIMEOUT:
+        case kPlistBoolValUseSNMPTimeout:
             return [[sharedSettingsDict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
             
         default:

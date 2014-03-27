@@ -161,9 +161,9 @@
     // is it still possible to add a printer
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertHelper displayResult:ERR_MAX_PRINTERS
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
@@ -177,27 +177,27 @@
     // is the IP a valid IP address?
     if (![InputHelper isIPValid:trimmedIP])
     {
-        [AlertHelper displayResult:ERR_INVALID_IP
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrInvalidIP
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // was this printer already added before?
     if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
     {
-        [AlertHelper displayResult:ERR_ALREADY_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterDuplicate
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertHelper displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrNoNetwork
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
 
@@ -223,9 +223,9 @@
 {
     if (self.willEndWithoutAdd)
     {
-        [AlertHelper displayResult:ERR_PRINTER_NOT_FOUND
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
     }
 
     // hide the searching indicator
@@ -251,16 +251,16 @@
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertHelper displayResult:INFO_PRINTER_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         self.hasAddedPrinters = YES;
     }
     else
     {
-        [AlertHelper displayResult:ERR_CANNOT_ADD
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
     }
 }
 

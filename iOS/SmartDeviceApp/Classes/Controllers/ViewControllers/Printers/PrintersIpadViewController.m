@@ -228,8 +228,8 @@
     }
     else
     {
-        [AlertHelper displayResult:ERR_DEFAULT
-                        withTitle:ALERT_TITLE_PRINTERS
+        [AlertHelper displayResult:kAlertResultErrDefault
+                        withTitle:kAlertTitlePrinters
                       withDetails:nil];
     }
 }

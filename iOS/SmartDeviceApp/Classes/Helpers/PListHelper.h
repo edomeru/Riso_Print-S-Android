@@ -10,16 +10,16 @@
 
 typedef enum
 {
-    PL_UINT_MAX_PRINTERS,
+    kPlistUintValMaxPrinters,
     
-} PL_UINT_TYPE;
+} kPlistUintVal;
 
 typedef enum
 {
-    PL_BOOL_USE_SNMP,
-    PL_BOOL_USE_SNMP_TIMEOUT,
+    kPlistBoolValUseSNMP,
+    kPlistBoolValUseSNMPTimeout,
     
-} PL_BOOL_TYPE;
+} kPlistBoolVal;
 
 @interface PListHelper : NSObject
 
@@ -31,16 +31,16 @@ typedef enum
 
 /**
  Wrapper for reading an unsigned int value from the property list.
- @param PL_UINT_TYPE key
+ @param kPlistUintVal key
  @return value for the specified key
  */
-+ (NSUInteger)readUint:(PL_UINT_TYPE)type;
++ (NSUInteger)readUint:(kPlistUintVal)type;
 
 /**
  Wrapper for reading a boolean value from the property list.
- @param PL_BOOL_TYPE key
+ @param kPlistBoolVal key
  @return value for the specified key
  */
-+ (BOOL)readBool:(PL_BOOL_TYPE)type;
++ (BOOL)readBool:(kPlistBoolVal)type;
 
 @end

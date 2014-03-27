@@ -10,35 +10,35 @@
 
 typedef enum
 {
-    ALERT_TITLE_PRINTERS,
-    ALERT_TITLE_PRINTERS_ADD,
-    ALERT_TITLE_PRINTERS_SEARCH,
+    kAlertTitlePrinters,
+    kAlertTitlePrintersAdd,
+    kAlertTitlePrintersSearch,
     
-    ALERT_TITLE_DEFAULT
+    kAlertTitleDefault
     
-} ALERT_TITLE_TYPE;
+} kAlertTitle;
 
 typedef enum
 {
     // success messages
-    INFO_PRINTER_ADDED,
+    kAlertResultInfoPrinterAdded,
     
     // error with network
-    ERR_NO_NETWORK,
+    kAlertResultErrNoNetwork,
     
     // error with user input
-    ERR_INVALID_IP,
+    kAlertResultErrInvalidIP,
     
     // error when adding printers
-    ERR_MAX_PRINTERS,
-    ERR_PRINTER_NOT_FOUND,
-    ERR_ALREADY_ADDED,
-    ERR_CANNOT_ADD,
+    kAlertResultErrMaxPrinters,
+    kAlertResultErrPrinterNotFound,
+    kAlertResultErrPrinterDuplicate,
+    kAlertResultErrPrinterCannotBeAdded,
     
     // default error message
-    ERR_DEFAULT
+    kAlertResultErrDefault
     
-} ALERT_RESULT_TYPE;
+} kAlertResult;
 
 @interface AlertHelper : NSObject
 
@@ -46,16 +46,16 @@ typedef enum
  Displays an AlertView.
  
  @param result
-        one of the defined ALERT_RESULT_TYPE values
-        (use ERR_* for error messages, INFO_* for success messages)
+        one of the defined kAlertResult values
+        (use kAlertResult* for error messages, kAlertInfo* for success messages)
  @param title
-        one of the defined ALERT_TITLE_TYPE values
-        (use ALERT_TITLE_* strings)
+        one of the defined kAlertTitle values
+        (use kAlertTitle*)
  @param details
         array of extra information optionally needed when displaying
         the alert (ex. specify the printer IP when adding the printer
         failed)
  */
-+ (void)displayResult:(ALERT_RESULT_TYPE)result withTitle:(ALERT_TITLE_TYPE)title withDetails:(NSArray*)details;
++ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details;
 
 @end

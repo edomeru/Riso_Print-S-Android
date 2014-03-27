@@ -14,7 +14,7 @@
 
 @implementation AlertHelper
 
-+ (void)displayResult:(ALERT_RESULT_TYPE)result withTitle:(ALERT_TITLE_TYPE)title withDetails:(NSArray*)details
++ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details
 {
     //TODO: replace messages with localizable strings
     
@@ -22,19 +22,19 @@
     NSString* alertTitle;
     switch (title)
     {
-        case ALERT_TITLE_PRINTERS:
+        case kAlertTitlePrinters:
             alertTitle = @"Printer Info";
             break;
         
-        case ALERT_TITLE_PRINTERS_ADD:
+        case kAlertTitlePrintersAdd:
             alertTitle = @"Printer Add Info";
             break;
             
-        case ALERT_TITLE_PRINTERS_SEARCH:
+        case kAlertTitlePrintersSearch:
             alertTitle = @"Printer Search Info";
             break;
         
-        case ALERT_TITLE_DEFAULT:
+        case kAlertTitleDefault:
         default:
             alertTitle = @"SmartDeviceApp";
             break;
@@ -44,36 +44,36 @@
     NSString* alertMsg;
     switch (result)
     {
-        case INFO_PRINTER_ADDED:
+        case kAlertResultInfoPrinterAdded:
             alertMsg = @"The new printer was added successfully.";
             break;
             
-        case ERR_NO_NETWORK:
+        case kAlertResultErrNoNetwork:
             alertMsg = @"The device is not connected to the network.";
             break;
             
-        case ERR_INVALID_IP:
+        case kAlertResultErrInvalidIP:
             alertMsg = @"The IP address format is invalid.";
             break;
         
-        case ERR_MAX_PRINTERS:
+        case kAlertResultErrMaxPrinters:
             alertMsg = @"The number of printers saved is already at maximum.";
             break;
             
-        case ERR_PRINTER_NOT_FOUND:
+        case kAlertResultErrPrinterNotFound:
             alertMsg = @"The printer was not found on the network.";
             break;
             
-        case ERR_ALREADY_ADDED:
+        case kAlertResultErrPrinterDuplicate:
             alertMsg = @"The printer has already been added.";
             break;
             
-        case ERR_CANNOT_ADD:
+        case kAlertResultErrPrinterCannotBeAdded:
             alertMsg = @"The printer could not be added.";
             break;
             //TODO: it would be better to explain why the printer could not be added
             
-        case ERR_DEFAULT:
+        case kAlertResultErrDefault:
         default:
             alertMsg = @"The operation could not be compeleted.";
             break;

@@ -10,10 +10,10 @@
 #import "UIColor+Theme.h"
 
 typedef enum {
-    NORMAL,
-    DEFAULT_PRINTER,
-    DELETE
-}T_CELLFORMAT;
+    kPrinterCollectionCellTypeNormal,
+    kPrinterCollectionCellTypeDefault,
+    kPrinterCollectionCellTypeDelete
+}kPrinterCollectionCellType;
 
 @interface PrinterCollectionViewCell()
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
@@ -52,27 +52,27 @@ typedef enum {
     if(isDefaultPrinterCell == YES)
     {
         self.defaultSwitch.on = YES;
-        [self setCellHeaderFormat:DEFAULT_PRINTER];
+        [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
     }
     else
     {
         self.defaultSwitch.on = NO;
-        [self setCellHeaderFormat:NORMAL];
+        [self setCellHeaderFormat:kPrinterCollectionCellTypeNormal];
 
     }
 }
 
--(void) setCellHeaderFormat:(T_CELLFORMAT) cellFormat
+-(void) setCellHeaderFormat:(kPrinterCollectionCellType) cellFormat
 {
     switch(cellFormat)
     {
-        case DEFAULT_PRINTER:
+        case kPrinterCollectionCellTypeDefault:
         {
             [self.cellHeader setBackgroundColor:[UIColor gray4ThemeColor]];
             [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
-        case DELETE:
+        case kPrinterCollectionCellTypeDelete:
         {
             UIColor *bgColor = [UIColor purple2ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
@@ -94,18 +94,18 @@ typedef enum {
     if(isCellForDelete == YES)
     {
         [self.deleteButton setHidden:NO];
-        [self setCellHeaderFormat:DELETE];
+        [self setCellHeaderFormat:kPrinterCollectionCellTypeDelete];
     }
     else
     {
         [self.deleteButton setHidden:YES];
         if(self.isDefaultPrinterCell)
         {
-            [self setCellHeaderFormat:DEFAULT_PRINTER];
+            [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
         }
         else
         {
-            [self setCellHeaderFormat:NORMAL];
+            [self setCellHeaderFormat:kPrinterCollectionCellTypeNormal];
         }
     }
 }
