@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -94,11 +95,15 @@ namespace SmartDeviceApp.ViewModels
         private void SelectPrintSettingOptionExecute(PrintSettingOption option)
         {
             SelectedPrintSettingOption = option;
+
+            // Send selected item to PrintPreviewController
+            PrintPreviewController.Instance.UpdatePrintSetting(PrintSetting,
+                SelectedPrintSettingOption);
         }
 
         private void BackToPrintSettingsExecute()
         {
-            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingsVisible);  
+            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingsVisible);
         }
     }
 

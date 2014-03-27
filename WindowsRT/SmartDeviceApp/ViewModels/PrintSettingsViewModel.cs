@@ -54,8 +54,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             // Initialize();
-            PrintSettingsList = new PrintSettingList();
-            Messenger.Default.Register<PrintSettingGroup>(this, (group) => OnPrintSettingGroupReceived(group));
         }
         
         public PrintSettingList PrintSettingsList
@@ -137,11 +135,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
         */
-
-        private void OnPrintSettingGroupReceived(PrintSettingGroup group)
-        {
-            PrintSettingsList.Add(group);
-        }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)
         {

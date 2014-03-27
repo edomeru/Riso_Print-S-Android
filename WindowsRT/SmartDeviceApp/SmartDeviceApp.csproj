@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
+    <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
     <Compile Include="Converters\PrintSettingTypeToRightButtonVisibilityConverter.cs" />
     <Compile Include="Converters\PrintSettingTypeToValueContentConverter.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />

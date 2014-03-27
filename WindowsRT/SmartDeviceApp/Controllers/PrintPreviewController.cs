@@ -16,6 +16,8 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
+using SmartDeviceApp.ViewModel;
+using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +43,8 @@ namespace SmartDeviceApp.Controllers
         private const string FILE_NAME_EMPTY_IMAGE = FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "_empty.jpg";
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
 
+        private PrintSettingOptionsViewModel _printSettingOptionsViewModel;
+        private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
         private List<LogicalPage> _logicalPages; // LogicalPages in the requested PreviewPage, ordered list
@@ -70,12 +74,11 @@ namespace SmartDeviceApp.Controllers
         /// <returns>Task</returns>
         public async Task Initialize()
         {
+            _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
             await Cleanup(); // Ensure to clean up previouse
 
             _selectedPrinter = null;
             _previewPages = new Dictionary<int, PreviewPage>();
-
-            LoadPrintSettingsOptions();
 
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.IsFileLoaded)
@@ -86,7 +89,9 @@ namespace SmartDeviceApp.Controllers
 
                 // Get print settings
                 await GetPrintAndPrintSetting();
-                await OnPrintSettingUpdated();
+                await OnPrintSettingUpdated(true);
+
+                LoadPrintSettingsOptions();
 
                 // Send dummy page
                 await GenerateEmptyPage();
@@ -99,16 +104,27 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Clean up
+        /// Clean-up
         /// </summary>
+        /// <returns>task</returns>
         public async Task Cleanup()
         {
             _selectedPrinter = null;
+            await ClearPreviewPageListAndImages();
+            _previewPages = null;
+        }
+
+        /// <summary>
+        /// Resets the generated PreviewPage(s) list and removed the page images from AppData
+        /// temporary store.
+        /// </summary>
+        /// <returns>Task</returns>
+        private async Task ClearPreviewPageListAndImages()
+        {
             if (_previewPages != null)
             {
                 _previewPages.Clear();
             }
-            _previewPages = null;
 
             await StorageFileUtility.DeleteFiles(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE,
                 ApplicationData.Current.TemporaryFolder);
@@ -148,9 +164,155 @@ namespace SmartDeviceApp.Controllers
         #region Print Preview
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="printSetting"></param>
+        /// <param name="selected"></param>
+        public async void UpdatePrintSetting(PrintSetting printSetting, PrintSettingOption selected)
+        {
+            if (printSetting == null || selected == null)
+            {
+                return;
+            }
+
+            var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
+                .Where(ps => ps.Name == printSetting.Name);
+            PrintSetting result = query.First();
+            result.Value = selected.Index;
+
+            // Manual check here what is changed
+            bool isPreviewPageAffected = false;
+            bool isPageCountAffected = false;
+            if (result.Name.Equals(PrintSettingConstant.KEY_COLOR_MODE))
+            {
+                if (_selectedPrinter.PrintSetting.ColorMode != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.ColorMode = selected.Index;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_ORIENTATION))
+            {
+                if (_selectedPrinter.PrintSetting.Orientation != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.Orientation = selected.Index;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_DUPLEX))
+            {
+                if (_selectedPrinter.PrintSetting.Duplex != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.Duplex = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_SIZE))
+            {
+                if (_selectedPrinter.PrintSetting.PaperSize != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.PaperSize = selected.Index;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_TYPE))
+            {
+                if (_selectedPrinter.PrintSetting.PaperType != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.PaperType = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_INPUT_TRAY))
+            {
+                if (_selectedPrinter.PrintSetting.InputTray != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.InputTray = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION))
+            {
+                if (_selectedPrinter.PrintSetting.Imposition != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.Imposition = selected.Index;
+                    isPreviewPageAffected = true;
+                    isPageCountAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION_ORDER))
+            {
+                if (_selectedPrinter.PrintSetting.ImpositionOrder != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.ImpositionOrder = selected.Index;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_SORT))
+            {
+                if (_selectedPrinter.PrintSetting.Sort != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.Sort = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_FINISHING))
+            {
+                if (_selectedPrinter.PrintSetting.BookletFinishing != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.BookletFinishing = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_LAYOUT))
+            {
+                if (_selectedPrinter.PrintSetting.BookletLayout != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.BookletLayout = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_FINISHING_SIDE))
+            {
+                if (_selectedPrinter.PrintSetting.FinishingSide != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.FinishingSide = selected.Index;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_STAPLE))
+            {
+                if (_selectedPrinter.PrintSetting.Staple != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.Staple = selected.Index;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_PUNCH))
+            {
+                if (_selectedPrinter.PrintSetting.Punch != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.Punch = selected.Index;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_OUTPUT_TRAY))
+            {
+                if (_selectedPrinter.PrintSetting.OutputTray != selected.Index)
+                {
+                    _selectedPrinter.PrintSetting.OutputTray = selected.Index;
+                }
+            }
+
+            // Generate PreviewPages again
+            if (isPreviewPageAffected || isPageCountAffected)
+            {
+                await OnPrintSettingUpdated(isPageCountAffected);
+                await GenerateEmptyPage();
+                await SendEmptyPage();
+                await LoadPage(_currPreviewPageIndex);
+            }
+        }
+
+        /// <summary>
         /// Checks for view related print setting and notifies view model
         /// </summary>
-        private async Task OnPrintSettingUpdated()
+        /// <param name="sendPageCountInfo">flag when page count is needed to update in view model</param>
+        /// <returns>task</returns>
+        private async Task OnPrintSettingUpdated(bool sendPageCountInfo)
         {
             // Send UI related items
             if (_selectedPrinter.PrintSetting.Booklet)
@@ -164,20 +326,21 @@ namespace SmartDeviceApp.Controllers
 
             _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
                 .Convert(_selectedPrinter.PrintSetting.Imposition);
-
-            _previewPageTotal = (uint)Math.Ceiling(
-                (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
-            Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
-                _pageViewMode));
+            if (sendPageCountInfo)
+            {
+                _previewPageTotal = (uint)Math.Ceiling(
+                    (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
+                Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
+                    _pageViewMode));
+            }
 
             // Clean-up generated PreviewPages
-            await StorageFileUtility.DeleteFiles(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE,
-                ApplicationData.Current.TemporaryFolder);
+            await ClearPreviewPageListAndImages();
         }
 
         /// <summary>
         /// Generates an empty page for the initial display of Preview Area.
-        /// This page will be displayed while the PreviePage(s) are being generated at the start.
+        /// This page will be displayed while the PreviePage(s) are being generated.
         /// </summary>
         /// <returns>task</returns>
         private async Task GenerateEmptyPage()
@@ -187,6 +350,7 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter.PrintSetting.PaperSize);
             bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
                         _selectedPrinter.PrintSetting.Orientation);
+
             // Override selected orientation based on imposition value
             if (_pagesPerSheet == 4)
             {
@@ -691,6 +855,8 @@ namespace SmartDeviceApp.Controllers
 
         private void LoadPrintSettingsOptions()
         {
+            PagePrintSettingToValueConverter valueConverter = new PagePrintSettingToValueConverter();
+
             string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
                 FILE_PATH_ASSET_PRINT_SETTINGS_XML);
             XDocument data = XDocument.Load(xmlPath);
@@ -710,22 +876,30 @@ namespace SmartDeviceApp.Controllers
                                                 Icon = (string)settingData.Attribute("icon"),
                                                 Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
                                                     (string)settingData.Attribute("type")),
+                                                Value = valueConverter.Convert(_selectedPrinter.PrintSetting,
+                                                    null, (string)settingData.Attribute("name"), null),
                                                 Options =
                                                 (
                                                     from optionData in settingData.Elements("option")
                                                     select new PrintSettingOption
                                                     {
-                                                        Text = (string)optionData.Value
+                                                        Text = (string)optionData.Value,
+                                                        Index = optionData.ElementsBeforeSelf().Count()
                                                     }).ToList<PrintSettingOption>()
                                             }).ToList<PrintSetting>()
                                     };
             
-            // Send the group to view model
+            // Construct the PrintSettingList
+            _printSettingList = new PrintSettingList();
             var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
             foreach (PrintSettingGroup group in tempList)
             {
-                Messenger.Default.Send<PrintSettingGroup>(group);
+                _printSettingList.Add(group);
             }
+
+            // Send to view model
+            var printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+            printSettingsViewModel.PrintSettingsList = _printSettingList;
         }
 
         #endregion Print Settings
