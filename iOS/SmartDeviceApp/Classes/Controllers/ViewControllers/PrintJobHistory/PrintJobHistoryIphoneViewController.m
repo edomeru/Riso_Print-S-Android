@@ -36,9 +36,17 @@
  */
 @property (strong, nonatomic) NSMutableArray* listPrintJobHistoryGroups;
 
+/**
+ Flag array use to determine whether a group is collapsed or expanded.
+ A YES value here means that the group is collapsed.
+ Initially, all groups are expanded, so all the values here will be NO.
+ */
+@property (strong, nonatomic) NSMutableArray* listCollapsedFlags;
+
 #pragma mark - Methods
 
 - (void)initData;
+- (IBAction)tappedPrinterName:(UITapGestureRecognizer*)sender;
 
 @end
 
@@ -76,7 +84,7 @@
 
 - (NSInteger)collectionView:(UICollectionView*)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 5;
+    return [self.listPrintJobHistoryGroups count];
 }
 
 - (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -98,17 +106,41 @@
     return cell;
 }
 
+- (BOOL)collectionView:(UICollectionView*)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath*)indexPath
+{
+    return NO;  //disables highlighting of the cell on tap
+                //TODO: check if there is a property or storyboard setting to just turn off highlighting
+}
+
 #pragma mark - CollectionViewFlowLayout
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     // get the group
     NSArray* printJobHistoryGroup = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
+    NSLog(@"[INFO][PrintJob] setting size for %@", [printJobHistoryGroup objectAtIndex:0]);
     
-    CGFloat printJobListHeight = ([printJobHistoryGroup count]-1) * PRINT_JOB_ITEM_ROW_HEIGHT;
-    CGFloat cellHeight = PRINTER_NAME_ROW_HEIGHT + printJobListHeight + CELL_BOTTOM_MARGIN;
+    // set the list height
+    CGFloat printJobListHeight;
+    BOOL isCollapsed = [[self.listCollapsedFlags objectAtIndex:indexPath.row] boolValue];
+    if (isCollapsed)
+    {
+        // collapsed
+        // the height occupied by the print jobs will be zero
+        printJobListHeight = 0;
+    }
+    else
+    {
+        // expanded
+        // the height occupied by the print jobs will be (number of print jobs)*(UITableView row height)
+        printJobListHeight = ([printJobHistoryGroup count]-1) * PRINT_JOB_ITEM_ROW_HEIGHT;
+        printJobListHeight += CELL_BOTTOM_MARGIN;
+    }
+    
+    // finalize the cell dimensions
+    CGFloat cellHeight = PRINTER_NAME_ROW_HEIGHT + printJobListHeight;
     CGFloat cellWidth = PRINT_JOB_ITEM_ROW_WIDTH;
-    
+    NSLog(@"[INFO][PrintJob] h=%f,w=%f", cellHeight, cellWidth);
     CGSize cellSize = CGSizeMake(cellWidth, cellHeight);
     
     return cellSize;
@@ -119,7 +151,9 @@
 - (void)initData
 {
     self.listPrintJobHistoryGroups = [NSMutableArray array];
-    
+    self.listCollapsedFlags = [NSMutableArray array];
+
+    [self.listCollapsedFlags addObject:[NSNumber numberWithBool:NO]];
     [self.listPrintJobHistoryGroups addObject:[NSArray arrayWithObjects:
                                              @"RISO Printer 1",
                                              @"Print Job A",
@@ -127,6 +161,7 @@
                                              @"Print Job C",
                                               nil]];
 
+    [self.listCollapsedFlags addObject:[NSNumber numberWithBool:NO]];
     [self.listPrintJobHistoryGroups addObject:[NSArray arrayWithObjects:
                                               @"RISO Printer 2",
                                               @"Print Job D",
@@ -135,23 +170,46 @@
                                               @"Print Job G",
                                               nil]];
     
+    [self.listCollapsedFlags addObject:[NSNumber numberWithBool:NO]];
     [self.listPrintJobHistoryGroups addObject:[NSArray arrayWithObjects:
                                               @"RISO Printer 3",
                                               @"Print Job H",
                                               @"Print Job I",
                                               nil]];
     
+    [self.listCollapsedFlags addObject:[NSNumber numberWithBool:NO]];
     [self.listPrintJobHistoryGroups addObject:[NSArray arrayWithObjects:
                                               @"RISO Printer 4",
                                               @"Print Job J",
                                               nil]];
     
+    [self.listCollapsedFlags addObject:[NSNumber numberWithBool:NO]];
     [self.listPrintJobHistoryGroups addObject:[NSArray arrayWithObjects:
                                               @"RISO Printer 5",
                                               @"Print Job K",
                                               @"Print Job L",
                                               @"Print Job M",
                                               nil]];
+}
+
+#pragma mark - Actions
+
+- (IBAction)tappedPrinterName:(UITapGestureRecognizer*)sender
+{
+    // get the cell tapped
+    NSIndexPath* index = [self.collectionView indexPathForItemAtPoint:[sender locationInView:self.collectionView]];
+    NSLog(@"[INFO][PrintJob] tapped cell=%d", index.row);
+    
+    // toggle collapsed/expanded
+    BOOL isCollapsed = [[self.listCollapsedFlags objectAtIndex:index.row] boolValue];
+    [self.listCollapsedFlags setObject:[NSNumber numberWithBool:!isCollapsed]
+                    atIndexedSubscript:index.row];
+    
+    // force redraw
+    // with animation (not smooth)
+    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+    // without animation //TODO: should have some animation
+    [self.collectionView reloadData];
 }
 
 @end
