@@ -33,7 +33,7 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 storageFile = await folderLocation.GetFileAsync(fileName);
             }
-            catch (Exception)
+            catch (System.IO.FileNotFoundException)
             {
                 // File does not exist
             }

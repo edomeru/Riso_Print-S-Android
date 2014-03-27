@@ -304,8 +304,12 @@ namespace SmartDeviceApp.Controllers
             {
                 await OnPrintSettingUpdated(isPageCountAffected);
                 await GenerateEmptyPage();
-                await SendEmptyPage();
-                await LoadPage(_currPreviewPageIndex);
+                // Page slide value changed event is expected to invoke LoadPage when page count
+                // changes so no need to load the page when page count is not affected
+                if (!isPageCountAffected)
+                {
+                    await LoadPage(_currPreviewPageIndex);
+                }
             }
         }
 
@@ -316,6 +320,9 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task OnPrintSettingUpdated(bool sendPageCountInfo)
         {
+            // Clean-up generated PreviewPages
+            await ClearPreviewPageListAndImages();
+
             // Send UI related items
             if (_selectedPrinter.PrintSetting.Booklet)
             {
@@ -335,9 +342,6 @@ namespace SmartDeviceApp.Controllers
                 Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
                     _pageViewMode));
             }
-
-            // Clean-up generated PreviewPages
-            await ClearPreviewPageListAndImages();
         }
 
         /// <summary>
@@ -364,20 +368,27 @@ namespace SmartDeviceApp.Controllers
             WriteableBitmap emptyBitmap = ApplyPaperSizeAndOrientation(paperSize,
                         isPortrait);
 
-            // Save PreviewPage into AppData temporary store
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile whitePageImage = await tempFolder.CreateFileAsync(FILE_NAME_EMPTY_IMAGE,
-                CreationCollisionOption.ReplaceExisting);
-            using (var destinationStream =
-                await whitePageImage.OpenAsync(FileAccessMode.ReadWrite))
+            try
             {
-                BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
-                    BitmapEncoder.JpegEncoderId, destinationStream);
-                byte[] pixels = WriteableBitmapExtensions.ToByteArray(emptyBitmap);
-                newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                    (uint)emptyBitmap.PixelWidth, (uint)emptyBitmap.PixelHeight,
-                    ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
-                await newEncoder.FlushAsync();
+                // Save PreviewPage into AppData temporary store
+                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+                StorageFile whitePageImage = await tempFolder.CreateFileAsync(FILE_NAME_EMPTY_IMAGE,
+                    CreationCollisionOption.ReplaceExisting);
+                using (var destinationStream =
+                    await whitePageImage.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
+                        BitmapEncoder.JpegEncoderId, destinationStream);
+                    byte[] pixels = WriteableBitmapExtensions.ToByteArray(emptyBitmap);
+                    newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
+                        (uint)emptyBitmap.PixelWidth, (uint)emptyBitmap.PixelHeight,
+                        ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
+                    await newEncoder.FlushAsync();
+                }
+            }
+            catch (Exception)
+            {
+                // Error handling (UnauthorizedAccessException)
             }
         }
 
@@ -478,23 +489,30 @@ namespace SmartDeviceApp.Controllers
                 {
                     // Open PreviewPage image from AppData temporary store
                     string pageImageFileName = logicalPage.Name;
-                    StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
-                    using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
+                    try
                     {
-                        // Put LogicalPage image to a bitmap
-                        WriteableBitmap pageBitmap = await WriteableBitmapExtensions.FromStream(
-                            null, raStream);
+                        StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
+                        using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
+                        {
+                            // Put LogicalPage image to a bitmap
+                            WriteableBitmap pageBitmap = await WriteableBitmapExtensions.FromStream(
+                                null, raStream);
 
-                        bool isPortrait =
-                            PrintSettingConverter.OrientationIntToBoolConverter.Convert(
-                            _selectedPrinter.PrintSetting.Orientation);
-                        WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
-                            isPortrait);
+                            bool isPortrait =
+                                PrintSettingConverter.OrientationIntToBoolConverter.Convert(
+                                _selectedPrinter.PrintSetting.Orientation);
+                            WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
+                                isPortrait);
 
-                        ApplyPageImageToPaper(_selectedPrinter.PrintSetting.ScaleToFit,
-                            canvasBitmap, pageBitmap);
+                            ApplyPageImageToPaper(_selectedPrinter.PrintSetting.ScaleToFit,
+                                canvasBitmap, pageBitmap);
 
-                        pageImages.Add(canvasBitmap);
+                            pageImages.Add(canvasBitmap);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Error handling (UnauthorizedAccessException)
                     }
                 }
 
@@ -548,7 +566,9 @@ namespace SmartDeviceApp.Controllers
                         _previewPages.Add(previewPageIndex, previewPage);
                     }
 
-                    if (enableSend)
+                    // Check if needs to send the page image
+                    // Don't bother to send the old requests
+                    if (enableSend && _currPreviewPageIndex == previewPageIndex)
                     {
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));

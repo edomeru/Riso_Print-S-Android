@@ -547,11 +547,12 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void PageNumberSliderValueChangeExecute()
+        private async void PageNumberSliderValueChangeExecute()
         {
             // TODO: Consider handling the event only when drag is released 
             var newValue = CurrentPageIndex; // verify 0-based
-            GoToPage(newValue); // Not awaited ?? since crashing on await
+            System.Diagnostics.Debug.WriteLine("PageNumberSliderValueChangeExecute()");
+            await GoToPage(newValue); // Not awaited ?? since crashing on await
         }
 
         #endregion
