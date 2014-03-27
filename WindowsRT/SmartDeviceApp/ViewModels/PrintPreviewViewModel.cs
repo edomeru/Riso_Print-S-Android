@@ -551,8 +551,7 @@ namespace SmartDeviceApp.ViewModels
         {
             // TODO: Consider handling the event only when drag is released 
             var newValue = CurrentPageIndex; // verify 0-based
-            System.Diagnostics.Debug.WriteLine("PageNumberSliderValueChangeExecute()");
-            await GoToPage(newValue); // Not awaited ?? since crashing on await
+            await GoToPage(newValue);
         }
 
         #endregion
