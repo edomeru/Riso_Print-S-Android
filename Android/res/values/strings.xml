@@ -52,6 +52,7 @@
     <string name="ids_lbl_print_settings">Print Settings</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
+    <string name="ids_lbl_choose_printer">Choose printer</string>
     <string name="ids_lbl_basic">Basic</string>
     <string name="ids_lbl_colormode">Color Mode</string>
     <string name="ids_lbl_colormode_auto">Auto</string>
