@@ -10,6 +10,8 @@
 #import "PrintPreviewViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "PrintersIpadViewController.h"
+#import "PrintJobHistoryIphoneViewController.h"
+#import "PrintJobHistoryIpadViewController.h"
 #import "RootViewController.h"
 #import "UIViewController+Segue.h"
 
@@ -126,6 +128,17 @@
 
 - (IBAction)printJobHistoryAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+        {
+            [self performSegueTo:[PrintJobHistoryIphoneViewController class]];
+        }
+        else
+        {
+            [self performSegueTo:[PrintJobHistoryIpadViewController class]];
+        }
+    }
 }
 
 - (IBAction)settingsAction:(id)sender

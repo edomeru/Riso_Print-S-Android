@@ -10,6 +10,9 @@
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
+		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
+		28A9173318E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */; };
+		28A9173618E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173518E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -85,6 +88,12 @@
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
+		28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryViewController.h; sourceTree = "<group>"; };
+		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
+		28A9173118E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryIphoneViewController.h; sourceTree = "<group>"; };
+		28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryIphoneViewController.m; sourceTree = "<group>"; };
+		28A9173418E3BE9200BA5232 /* PrintJobHistoryIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryIpadViewController.h; sourceTree = "<group>"; };
+		28A9173518E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryIpadViewController.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -266,6 +275,19 @@
 				2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */,
 			);
 			path = PropertyList;
+			sourceTree = "<group>";
+		};
+		28A9172D18E3BDF300BA5232 /* PrintJobHistory */ = {
+			isa = PBXGroup;
+			children = (
+				28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */,
+				28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */,
+				28A9173118E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.h */,
+				28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */,
+				28A9173418E3BE9200BA5232 /* PrintJobHistoryIpadViewController.h */,
+				28A9173518E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m */,
+			);
+			path = PrintJobHistory;
 			sourceTree = "<group>";
 		};
 		2D0AEBF6185FDD2100810455 = {
@@ -634,6 +656,7 @@
 				2DA1AF0B18E2EF9600085F27 /* PrinterSearch */,
 				2DA1AF0E18E2EF9600085F27 /* PrintPreview */,
 				2DA1AF1318E2EF9600085F27 /* PrintSettings */,
+				28A9172D18E3BDF300BA5232 /* PrintJobHistory */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -917,6 +940,7 @@
 				2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */,
 				2DA1AF1E18E2EF9600085F27 /* UIViewController+Segue.m in Sources */,
 				2DA1AF1C18E2EF9600085F27 /* RootViewController.m in Sources */,
+				28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */,
 				2DA1AF5B18E2F02A00085F27 /* PrinterCollectionViewCell.m in Sources */,
 				2DA1AF1618E2EF9600085F27 /* AppDelegate.m in Sources */,
 				2DA1AF2518E2EF9600085F27 /* PDFPageContentViewController.m in Sources */,
@@ -951,9 +975,11 @@
 				2DA1AF1918E2EF9600085F27 /* SlideOverSegue.m in Sources */,
 				2DA1AF1A18E2EF9600085F27 /* SlideSegue.m in Sources */,
 				2DA1AF1F18E2EF9600085F27 /* HomeViewController.m in Sources */,
+				28A9173318E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m in Sources */,
 				2DA1AEE318E2EF8500085F27 /* PDFPageView.m in Sources */,
 				2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */,
 				2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */,
+				28A9173618E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m in Sources */,
 				2DA1AF1D18E2EF9600085F27 /* SlidingViewController.m in Sources */,
 				2DA1AF2618E2EF9600085F27 /* PrintPreviewViewController.m in Sources */,
 			);

@@ -13,6 +13,7 @@ typedef enum
     kAlertTitlePrinters,
     kAlertTitlePrintersAdd,
     kAlertTitlePrintersSearch,
+    kAlertTitlePrintJobHistory,
     
     kAlertTitleDefault
     

@@ -24,6 +24,7 @@
 #define DEBUG_LOG_PRINTER_SEARCH_SCREEN     0
 #define DEBUG_LOG_PRINTER_INFO_SCREEN       0
 #define DEBUG_LOG_PRINT_PREVIEW_SCREEN      0
+#define DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN  1
 
 #pragma mark Managers
 #define DEBUG_LOG_PDF_MANAGER               0

@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -347,6 +347,10 @@
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="sGm-hI-lJr"/>
                         <segue destination="jTA-Cg-WoR" kind="custom" identifier="Home-PrintersIphone" customClass="ReplaceSegue" id="tJh-Ye-iSk"/>
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="rDR-Jk-2JO"/>
+                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="Home-PrintJobHistoryIphone" customClass="ReplaceSegue" id="5Tt-yI-Lo5"/>
+                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintJobHistoryIphone" unwindAction="unwindToPrintJobHistory:" id="1w4-Kz-5Ny"/>
+                        <segue destination="k93-fC-OMI" kind="custom" identifier="Home-PrintJobHistoryIpad" customClass="ReplaceSegue" id="vgT-y7-WM8"/>
+                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintJobHistoryIpad" unwindAction="unwindToPrintJobHistory:" id="FBf-cs-FLH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QfQ-io-bCa" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2293,6 +2297,168 @@
             </objects>
             <point key="canvasLocation" x="855" y="1457"/>
         </scene>
+        <!--Print Job History Iphone View Controller-->
+        <scene sceneID="qwz-Ol-TAm">
+            <objects>
+                <viewController id="FqZ-P9-QXX" customClass="PrintJobHistoryIphoneViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="HC2-7x-yGV"/>
+                        <viewControllerLayoutGuide type="bottom" id="FG3-Gk-gAO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kyz-VC-K7h" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULk-KZ-RRS" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jo5-zX-Mip" userLabel="iPhone Button - Menu">
+                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="pEr-ET-ea2"/>
+                                            <constraint firstAttribute="height" constant="32" id="v6F-pF-SEX"/>
+                                        </constraints>
+                                        <state key="normal" image="img_btn_main_menu_normal">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="img_btn_main_menu_pressed"/>
+                                        <state key="highlighted" image="img_btn_main_menu_pressed"/>
+                                        <connections>
+                                            <action selector="mainMenuAction:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="nTm-RD-gKO"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print Job History" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3K-55-hNX">
+                                        <rect key="frame" x="48" y="0.0" width="256" height="48"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="ahq-va-hah"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINT_JOB_HISTORY"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="G8y-Lt-wiy"/>
+                                    <constraint firstItem="jo5-zX-Mip" firstAttribute="leading" secondItem="ULk-KZ-RRS" secondAttribute="leading" constant="8" id="GKt-Va-Fci"/>
+                                    <constraint firstAttribute="centerY" secondItem="C3K-55-hNX" secondAttribute="centerY" id="fDO-hK-vFN"/>
+                                    <constraint firstItem="C3K-55-hNX" firstAttribute="leading" secondItem="jo5-zX-Mip" secondAttribute="trailing" constant="8" id="hHy-hu-fGa"/>
+                                    <constraint firstAttribute="centerY" secondItem="jo5-zX-Mip" secondAttribute="centerY" id="mcT-HH-7s3"/>
+                                    <constraint firstAttribute="trailing" secondItem="C3K-55-hNX" secondAttribute="trailing" constant="16" id="q5T-uL-Mbr"/>
+                                </constraints>
+                            </view>
+                            <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jMU-7N-H9H" userLabel="Content" customClass="DefaultView">
+                                <rect key="frame" x="0.0" y="48" width="320" height="500"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ULk-KZ-RRS" firstAttribute="top" secondItem="kyz-VC-K7h" secondAttribute="top" id="5qH-4B-DwM"/>
+                            <constraint firstAttribute="trailing" secondItem="jMU-7N-H9H" secondAttribute="trailing" id="6L5-A6-j5H"/>
+                            <constraint firstAttribute="bottom" secondItem="jMU-7N-H9H" secondAttribute="bottom" id="ITy-K3-2oa"/>
+                            <constraint firstItem="jMU-7N-H9H" firstAttribute="leading" secondItem="kyz-VC-K7h" secondAttribute="leading" id="YbA-gY-Q41"/>
+                            <constraint firstItem="jMU-7N-H9H" firstAttribute="top" secondItem="ULk-KZ-RRS" secondAttribute="bottom" id="ca6-Mr-cBM"/>
+                            <constraint firstAttribute="trailing" secondItem="ULk-KZ-RRS" secondAttribute="trailing" id="exr-CE-aGm"/>
+                            <constraint firstItem="ULk-KZ-RRS" firstAttribute="leading" secondItem="kyz-VC-K7h" secondAttribute="leading" id="vBe-hG-Lso"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <segue destination="v0J-sN-35H" kind="custom" identifier="PrintJobHistoryIphone-Home" customClass="SlideSegue" id="9FD-bf-FdK"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DBO-Vs-YFS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="268" y="3161"/>
+        </scene>
+        <!--Print Job History Ipad View Controller-->
+        <scene sceneID="Ghh-Yl-J0s">
+            <objects>
+                <viewController id="k93-fC-OMI" customClass="PrintJobHistoryIpadViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Nae-d8-qPs"/>
+                        <viewControllerLayoutGuide type="bottom" id="z4R-X2-0V5"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="VGI-SO-LuS" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="784"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w41-RR-Vc5" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="48"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NQw-8G-f7I" userLabel="iPad Button - Menu">
+                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="000-f2-V0t"/>
+                                            <constraint firstAttribute="height" constant="32" id="QZP-lt-yop"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="img_btn_main_menu_normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="img_btn_main_menu_pressed"/>
+                                        <state key="highlighted" image="img_btn_main_menu_pressed"/>
+                                        <connections>
+                                            <action selector="mainMenuAction:" destination="k93-fC-OMI" eventType="touchUpInside" id="SlE-bi-okh"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print Job History" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Umh-b2-fDz">
+                                        <rect key="frame" x="48" y="0.0" width="536" height="48"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="Lg1-IV-uBz"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINT_JOB_HISTORY"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="NQw-8G-f7I" firstAttribute="leading" secondItem="w41-RR-Vc5" secondAttribute="leading" constant="8" id="2Ee-zb-srO"/>
+                                    <constraint firstAttribute="height" constant="48" id="J86-DM-lPO"/>
+                                    <constraint firstAttribute="trailing" secondItem="Umh-b2-fDz" secondAttribute="trailing" constant="16" id="Lrh-kJ-bru"/>
+                                    <constraint firstAttribute="centerY" secondItem="Umh-b2-fDz" secondAttribute="centerY" id="TC5-1G-LES"/>
+                                    <constraint firstItem="Umh-b2-fDz" firstAttribute="leading" secondItem="NQw-8G-f7I" secondAttribute="trailing" constant="8" id="iSd-HH-Y5e"/>
+                                    <constraint firstAttribute="centerY" secondItem="NQw-8G-f7I" secondAttribute="centerY" id="ljX-Vc-jBN"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="w41-RR-Vc5" firstAttribute="leading" secondItem="VGI-SO-LuS" secondAttribute="leading" id="4ru-am-ACY"/>
+                            <constraint firstAttribute="trailing" secondItem="w41-RR-Vc5" secondAttribute="trailing" id="5Y1-or-gcK"/>
+                            <constraint firstItem="w41-RR-Vc5" firstAttribute="top" secondItem="VGI-SO-LuS" secondAttribute="top" id="K52-Jl-Vcg"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <segue destination="v0J-sN-35H" kind="custom" identifier="PrintJobHistoryIpad-Home" customClass="SlideSegue" id="oE4-lZ-OOf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XAW-K6-g1f" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="855" y="3161"/>
+        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -2321,7 +2487,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="c8V-UF-iWe"/>
+        <segue reference="oE4-lZ-OOf"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

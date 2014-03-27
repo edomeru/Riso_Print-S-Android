@@ -33,6 +33,10 @@
         case kAlertTitlePrintersSearch:
             alertTitle = @"Printer Search Info";
             break;
+            
+        case kAlertTitlePrintJobHistory:
+            alertTitle = @"Print Job History Info";
+            break;
         
         case kAlertTitleDefault:
         default:
