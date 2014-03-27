@@ -10,6 +10,12 @@
 
 @interface PrintJobHistoryViewController ()
 
+/** Main Menu button on the Header. */
+@property (weak, nonatomic) IBOutlet UIButton* mainMenuButton;
+
+/** Tapping the Main Menu button displays the Main Menu panel. */
+- (IBAction)mainMenuAction:(UIButton*)sender;
+
 @end
 
 @implementation PrintJobHistoryViewController
@@ -39,6 +45,7 @@
 
 - (IBAction)mainMenuAction:(UIButton*)sender
 {
+    [self.mainMenuButton setEnabled:NO];
     [self performSegueTo:[HomeViewController class]];
 }
 
@@ -46,7 +53,7 @@
 
 - (IBAction)unwindToPrintJobHistory:(UIStoryboardSegue*)sender
 {
-    
+    [self.mainMenuButton setEnabled:YES];
 }
 
 @end

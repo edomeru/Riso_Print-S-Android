@@ -12,7 +12,4 @@
 
 @interface PrintJobHistoryViewController : UIViewController
 
-/** Tapping the Main Menu button shows the Main Menu panel. */
-- (IBAction)mainMenuAction:(UIButton*)sender;
-
 @end

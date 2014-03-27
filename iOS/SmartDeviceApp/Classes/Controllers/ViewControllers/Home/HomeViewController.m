@@ -75,6 +75,10 @@
     {
         self.selectedButton = self.printersButton;
     }
+    else if (container.mainController.class == [PrintJobHistoryIphoneViewController class] || container.mainController.class == [PrintJobHistoryIpadViewController class])
+    {
+        self.selectedButton = self.printJobHistoryButton;
+    }
     
     self.selectedButton.selected = YES;
 }

@@ -13,6 +13,7 @@
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173318E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */; };
 		28A9173618E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173518E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m */; };
+		28A9173918E3D55900BA5232 /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -94,6 +95,8 @@
 		28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryIphoneViewController.m; sourceTree = "<group>"; };
 		28A9173418E3BE9200BA5232 /* PrintJobHistoryIpadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryIpadViewController.h; sourceTree = "<group>"; };
 		28A9173518E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryIpadViewController.m; sourceTree = "<group>"; };
+		28A9173718E3D55900BA5232 /* PrintJobHistoryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroup.h; sourceTree = "<group>"; };
+		28A9173818E3D55900BA5232 /* PrintJobHistoryGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroup.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -280,12 +283,12 @@
 		28A9172D18E3BDF300BA5232 /* PrintJobHistory */ = {
 			isa = PBXGroup;
 			children = (
-				28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */,
-				28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */,
-				28A9173118E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.h */,
-				28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */,
 				28A9173418E3BE9200BA5232 /* PrintJobHistoryIpadViewController.h */,
 				28A9173518E3BE9200BA5232 /* PrintJobHistoryIpadViewController.m */,
+				28A9173118E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.h */,
+				28A9173218E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m */,
+				28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */,
+				28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */,
 			);
 			path = PrintJobHistory;
 			sourceTree = "<group>";
@@ -654,9 +657,9 @@
 				2DA1AF0118E2EF9600085F27 /* PrinterInfo */,
 				2DA1AF0418E2EF9600085F27 /* Printers */,
 				2DA1AF0B18E2EF9600085F27 /* PrinterSearch */,
+				28A9172D18E3BDF300BA5232 /* PrintJobHistory */,
 				2DA1AF0E18E2EF9600085F27 /* PrintPreview */,
 				2DA1AF1318E2EF9600085F27 /* PrintSettings */,
-				28A9172D18E3BDF300BA5232 /* PrintJobHistory */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -807,6 +810,8 @@
 			children = (
 				2DA1AF5918E2F02A00085F27 /* PrinterCollectionViewCell.h */,
 				2DA1AF5A18E2F02A00085F27 /* PrinterCollectionViewCell.m */,
+				28A9173718E3D55900BA5232 /* PrintJobHistoryGroup.h */,
+				28A9173818E3D55900BA5232 /* PrintJobHistoryGroup.m */,
 			);
 			path = CollectionViewCells;
 			sourceTree = "<group>";
@@ -964,6 +969,7 @@
 				2DA1AF5318E2EFCB00085F27 /* Printer+Log.m in Sources */,
 				2DA1AF2018E2EF9600085F27 /* PrinterInfoViewController.m in Sources */,
 				2DA1AF3518E2EF9C00085F27 /* PDFFileManager.m in Sources */,
+				28A9173918E3D55900BA5232 /* PrintJobHistoryGroup.m in Sources */,
 				2DA1AF2218E2EF9600085F27 /* PrintersIphoneViewController.m in Sources */,
 				2DA1AF3418E2EF9C00085F27 /* NetworkManager.m in Sources */,
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
