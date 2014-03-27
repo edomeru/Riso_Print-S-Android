@@ -39,7 +39,7 @@
 /*If Open-in, this method will be called */
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"Open URL:%@", [url path]);
 #endif
     [self setUpPreview:url];
@@ -89,7 +89,7 @@
 #pragma mark  - PDF Processing methods
 - (void) processPDF:(NSURL *)pdfURL
 {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"Process PDF");
 #endif
     PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
@@ -104,7 +104,7 @@
 
 - (void) cleanUpPDF
 {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"Cleanup PDF");
 #endif
     PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
@@ -113,10 +113,10 @@
 
 -(void) didEndPDFProcessing: (NSNotification *) notification
 {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"PDF Processing ended");
 #endif
-    int statusCode = [(NSNumber *)[notification object] integerValue];
+    int statusCode = [(NSNumber *)[notification object] intValue];
     
     if(statusCode == PDF_ERROR_NONE)
     {

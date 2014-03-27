@@ -1,18 +1,18 @@
 //
-//  AlertUtils.m
+//  AlertHelper.m
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/12/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "AlertUtils.h"
+#import "AlertHelper.h"
 
-@interface AlertUtils ()
+@interface AlertHelper ()
 
 @end
 
-@implementation AlertUtils
+@implementation AlertHelper
 
 + (void)displayResult:(ALERT_RESULT_TYPE)result withTitle:(ALERT_TITLE_TYPE)title withDetails:(NSArray*)details
 {

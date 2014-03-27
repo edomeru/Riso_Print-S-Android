@@ -7,6 +7,7 @@
 //
 
 #import "PrinterCollectionViewCell.h"
+#import "UIColor+Theme.h"
 
 typedef enum {
     NORMAL,
@@ -67,22 +68,22 @@ typedef enum {
     {
         case DEFAULT_PRINTER:
         {
-            [self.cellHeader setBackgroundColor:[UIColor colorWithRed:36.0/255.0 green:36.0/255.0 blue:36.0/255.0 alpha:1.0]];
-            [self.nameLabel setTextColor:[UIColor whiteColor]];
+            [self.cellHeader setBackgroundColor:[UIColor gray4ThemeColor]];
+            [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
         case DELETE:
         {
-            UIColor *bgColor = [UIColor colorWithRed:82.0/255.0 green:7.0/255.0 blue:182.0/255.0 alpha:1.0];
+            UIColor *bgColor = [UIColor purple2ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
-            [self.nameLabel setTextColor:[UIColor whiteColor]];
+            [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
         default:
         {
-            UIColor *bgColor = [UIColor colorWithRed:145.0/255.0 green:145.0/255.0 blue:145.0/255.0 alpha:1.0];
+            UIColor *bgColor = [UIColor gray3ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
-            [self.nameLabel setTextColor:[UIColor blackColor]];
+            [self.nameLabel setTextColor:[UIColor blackThemeColor]];
         }
             break;
     }

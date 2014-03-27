@@ -1,5 +1,5 @@
 //
-//  InputUtils.h
+//  InputHelper.h
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/21/14.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface InputUtils : NSObject
+@interface InputHelper : NSObject
 
 #pragma mark - IP Address
 

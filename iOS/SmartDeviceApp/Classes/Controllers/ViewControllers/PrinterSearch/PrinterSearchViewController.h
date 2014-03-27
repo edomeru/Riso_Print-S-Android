@@ -10,7 +10,7 @@
 #import "SlidingViewController.h"
 #import "UIViewController+Segue.h"
 #import "PrintersIpadViewController.h"
-#import "PrinterSearchDelegate.h"
+#import "PrinterManager.h"
 
 @interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate, UIGestureRecognizerDelegate>
 

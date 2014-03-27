@@ -7,7 +7,6 @@
 //
 
 #import <CoreData/CoreData.h>
-#import "PrinterSearchDelegate.h"
 
 @interface SNMPManager : NSManagedObject
 

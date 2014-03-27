@@ -142,7 +142,7 @@
     NSError *error = nil;
     if([fileMgr moveItemAtPath:[self.pdfURL path] toPath:[self.previewURL path] error:&error] == NO)
     {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PDF_MANAGER
         NSLog(@"Failed to rename file");
 #endif
         return NO;

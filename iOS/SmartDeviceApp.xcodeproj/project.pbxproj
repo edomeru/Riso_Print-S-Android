@@ -72,9 +72,9 @@
 		2DA1AF5318E2EFCB00085F27 /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5018E2EFCB00085F27 /* Printer+Log.m */; };
 		2DA1AF5418E2EFCB00085F27 /* PrintSetting+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5218E2EFCB00085F27 /* PrintSetting+Log.m */; };
 		2DA1AF5B18E2F02A00085F27 /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5A18E2F02A00085F27 /* PrinterCollectionViewCell.m */; };
-		2DA1AF6618E2F08900085F27 /* AlertUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5D18E2F08900085F27 /* AlertUtils.m */; };
-		2DA1AF6718E2F08900085F27 /* InputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5F18E2F08900085F27 /* InputUtils.m */; };
-		2DA1AF6818E2F08900085F27 /* PListUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListUtils.m */; };
+		2DA1AF6618E2F08900085F27 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5D18E2F08900085F27 /* AlertHelper.m */; };
+		2DA1AF6718E2F08900085F27 /* InputHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5F18E2F08900085F27 /* InputHelper.m */; };
+		2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListHelper.m */; };
 		2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */; };
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
@@ -197,17 +197,16 @@
 		2DA1AF5218E2EFCB00085F27 /* PrintSetting+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PrintSetting+Log.m"; sourceTree = "<group>"; };
 		2DA1AF5918E2F02A00085F27 /* PrinterCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterCollectionViewCell.h; sourceTree = "<group>"; };
 		2DA1AF5A18E2F02A00085F27 /* PrinterCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterCollectionViewCell.m; sourceTree = "<group>"; };
-		2DA1AF5C18E2F08900085F27 /* AlertUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertUtils.h; sourceTree = "<group>"; };
-		2DA1AF5D18E2F08900085F27 /* AlertUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertUtils.m; sourceTree = "<group>"; };
-		2DA1AF5E18E2F08900085F27 /* InputUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputUtils.h; sourceTree = "<group>"; };
-		2DA1AF5F18E2F08900085F27 /* InputUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputUtils.m; sourceTree = "<group>"; };
-		2DA1AF6018E2F08900085F27 /* PListUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PListUtils.h; sourceTree = "<group>"; };
-		2DA1AF6118E2F08900085F27 /* PListUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListUtils.m; sourceTree = "<group>"; };
+		2DA1AF5C18E2F08900085F27 /* AlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertHelper.h; sourceTree = "<group>"; };
+		2DA1AF5D18E2F08900085F27 /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
+		2DA1AF5E18E2F08900085F27 /* InputHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputHelper.h; sourceTree = "<group>"; };
+		2DA1AF5F18E2F08900085F27 /* InputHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputHelper.m; sourceTree = "<group>"; };
+		2DA1AF6018E2F08900085F27 /* PListHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PListHelper.h; sourceTree = "<group>"; };
+		2DA1AF6118E2F08900085F27 /* PListHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListHelper.m; sourceTree = "<group>"; };
 		2DA1AF6218E2F08900085F27 /* PrinterStatusHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusHelper.h; sourceTree = "<group>"; };
 		2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelper.m; sourceTree = "<group>"; };
 		2DA1AF6418E2F08900085F27 /* PrintPreviewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintPreviewHelper.h; sourceTree = "<group>"; };
 		2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintPreviewHelper.m; sourceTree = "<group>"; };
-		2DA1AF6C18E2F19F00085F27 /* PrinterSearchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterSearchDelegate.h; sourceTree = "<group>"; };
 		2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterStatusView.h; sourceTree = "<group>"; };
 		2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
 		2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Theme.h"; sourceTree = "<group>"; };
@@ -732,7 +731,6 @@
 				2DA1AF2E18E2EF9C00085F27 /* PDFFileManager.m */,
 				2DA1AF2F18E2EF9C00085F27 /* PrinterManager.h */,
 				2DA1AF3018E2EF9C00085F27 /* PrinterManager.m */,
-				2DA1AF6C18E2F19F00085F27 /* PrinterSearchDelegate.h */,
 				2DA1AF3118E2EF9C00085F27 /* SNMPManager.h */,
 				2DA1AF3218E2EF9C00085F27 /* SNMPManager.m */,
 			);
@@ -743,12 +741,12 @@
 			isa = PBXGroup;
 			children = (
 				2DA1AF3918E2EFA400085F27 /* Constants */,
-				2DA1AF5C18E2F08900085F27 /* AlertUtils.h */,
-				2DA1AF5D18E2F08900085F27 /* AlertUtils.m */,
-				2DA1AF5E18E2F08900085F27 /* InputUtils.h */,
-				2DA1AF5F18E2F08900085F27 /* InputUtils.m */,
-				2DA1AF6018E2F08900085F27 /* PListUtils.h */,
-				2DA1AF6118E2F08900085F27 /* PListUtils.m */,
+				2DA1AF5C18E2F08900085F27 /* AlertHelper.h */,
+				2DA1AF5D18E2F08900085F27 /* AlertHelper.m */,
+				2DA1AF5E18E2F08900085F27 /* InputHelper.h */,
+				2DA1AF5F18E2F08900085F27 /* InputHelper.m */,
+				2DA1AF6018E2F08900085F27 /* PListHelper.h */,
+				2DA1AF6118E2F08900085F27 /* PListHelper.m */,
 				2DA1AF6218E2F08900085F27 /* PrinterStatusHelper.h */,
 				2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */,
 				2DA1AF6418E2F08900085F27 /* PrintPreviewHelper.h */,
@@ -910,7 +908,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DA1AF6718E2F08900085F27 /* InputUtils.m in Sources */,
+				2DA1AF6718E2F08900085F27 /* InputHelper.m in Sources */,
 				2DA1AE7018E278B000085F27 /* Reachability.m in Sources */,
 				2DA1AF3718E2EF9C00085F27 /* SNMPManager.m in Sources */,
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
@@ -946,7 +944,7 @@
 				2DA1AF3418E2EF9C00085F27 /* NetworkManager.m in Sources */,
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
 				2DA1AF3618E2EF9C00085F27 /* PrinterManager.m in Sources */,
-				2DA1AF6618E2F08900085F27 /* AlertUtils.m in Sources */,
+				2DA1AF6618E2F08900085F27 /* AlertHelper.m in Sources */,
 				2DA1AEE018E2EF8500085F27 /* UIView+Localization.m in Sources */,
 				2DA1AF1B18E2EF9600085F27 /* AddPrinterViewController.m in Sources */,
 				2DA1AF3318E2EF9C00085F27 /* DatabaseManager.m in Sources */,
@@ -954,7 +952,7 @@
 				2DA1AF1A18E2EF9600085F27 /* SlideSegue.m in Sources */,
 				2DA1AF1F18E2EF9600085F27 /* HomeViewController.m in Sources */,
 				2DA1AEE318E2EF8500085F27 /* PDFPageView.m in Sources */,
-				2DA1AF6818E2F08900085F27 /* PListUtils.m in Sources */,
+				2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */,
 				2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */,
 				2DA1AF1D18E2EF9600085F27 /* SlidingViewController.m in Sources */,
 				2DA1AF2618E2EF9600085F27 /* PrintPreviewViewController.m in Sources */,

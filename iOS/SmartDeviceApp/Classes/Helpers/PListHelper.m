@@ -1,18 +1,18 @@
 //
-//  PListUtils.m
+//  PListHelper.m
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/10/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PListUtils.h"
+#import "PListHelper.h"
 
 #define SDA_PROP_LIST   @"SmartDeviceApp-Settings"
 
 static NSDictionary* sharedSettingsDict = nil;
 
-@interface PListUtils ()
+@interface PListHelper ()
 
 /**
  Sets the shared NSDictionary for the SmartDeviceApp Settings property list.
@@ -22,7 +22,7 @@ static NSDictionary* sharedSettingsDict = nil;
 
 @end
 
-@implementation PListUtils
+@implementation PListHelper
 
 #pragma mark - Initializer
 

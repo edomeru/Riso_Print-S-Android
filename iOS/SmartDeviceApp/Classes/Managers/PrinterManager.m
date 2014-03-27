@@ -14,7 +14,9 @@
 #import "DefaultPrinter.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
-#import "PListUtils.h"
+#import "PListHelper.h"
+#import "NotificationNames.h"
+#import "PrintSettingNames.h"
 
 static PrinterManager* sharedPrinterManager = nil;
 
@@ -59,7 +61,7 @@ static PrinterManager* sharedPrinterManager = nil;
     if (self)
     {
         self.searchDelegate = nil;
-        self.maxPrinterCount = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
+        self.maxPrinterCount = [PListHelper readUint:PL_UINT_MAX_PRINTERS];
         
 #if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting printers from DB");
@@ -377,7 +379,7 @@ static PrinterManager* sharedPrinterManager = nil;
 
 - (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
 {
-    NSDictionary* defaultPrintSettings = [PListUtils readDefaultPrintSettings];
+    NSDictionary* defaultPrintSettings = [PListHelper readDefaultPrintSettings];
     (*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
     (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
     (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];

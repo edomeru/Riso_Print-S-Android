@@ -1,5 +1,5 @@
 //
-//  AlertUtils.h
+//  AlertHelper.h
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/12/14.
@@ -40,7 +40,7 @@ typedef enum
     
 } ALERT_RESULT_TYPE;
 
-@interface AlertUtils : NSObject
+@interface AlertHelper : NSObject
 
 /**
  Displays an AlertView.
@@ -55,8 +55,6 @@ typedef enum
         array of extra information optionally needed when displaying
         the alert (ex. specify the printer IP when adding the printer
         failed)
- 
- @see AlertUtils
  */
 + (void)displayResult:(ALERT_RESULT_TYPE)result withTitle:(ALERT_TITLE_TYPE)title withDetails:(NSArray*)details;
 

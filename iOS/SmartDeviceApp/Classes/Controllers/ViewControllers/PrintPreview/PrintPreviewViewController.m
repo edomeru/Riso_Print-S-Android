@@ -131,7 +131,7 @@
     {
         //TODO: Show replacement image for blank home screen
         //hide UI related to preview
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
         NSLog(@"Load SDA Home");
 #endif
         [self hidePrintPreviewControls:YES];
@@ -196,7 +196,7 @@
 
 - (void) loadPrintPreview
 {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"Load Print Preview");
 #endif
     //get PDF document
@@ -204,7 +204,7 @@
     pdfDocument = manager.pdfDocument;
     if(pdfDocument == nil)
     {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
         NSLog(@"Document is Nil");
 #endif
         return;
@@ -377,7 +377,7 @@
     [self.pdfPageViewController didMoveToParentViewController:self];
     
     
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"Pageview controller height = %f. width = %f", self.pdfPageViewController.view.frame.size.height, self.pdfPageViewController.view.frame.size.width);
 #endif
 }
@@ -553,7 +553,7 @@
 
 -(void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
-#if DEBUG_LOG_PRINT_PREVIEW
+#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
     NSLog(@"Scale = %f", scale);
 #endif
     currentScale = scale;

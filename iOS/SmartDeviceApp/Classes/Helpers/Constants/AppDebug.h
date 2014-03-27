@@ -23,8 +23,10 @@
 #define DEBUG_LOG_ADD_PRINTER_SCREEN        0
 #define DEBUG_LOG_PRINTER_SEARCH_SCREEN     0
 #define DEBUG_LOG_PRINTER_INFO_SCREEN       0
+#define DEBUG_LOG_PRINT_PREVIEW_SCREEN      0
 
 #pragma mark Managers
+#define DEBUG_LOG_PDF_MANAGER               0
 #define DEBUG_LOG_DATABASE_MANAGER          0
 #define DEBUG_LOG_PRINTER_MANAGER           0
 #define DEBUG_LOG_SNMP_MANAGER              0

@@ -1,5 +1,5 @@
 //
-//  PListUtils.h
+//  PListHelper.h
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/10/14.
@@ -21,7 +21,7 @@ typedef enum
     
 } PL_BOOL_TYPE;
 
-@interface PListUtils : NSObject
+@interface PListHelper : NSObject
 
 /**
  Wrapper for reading the default print settings for a new printer.

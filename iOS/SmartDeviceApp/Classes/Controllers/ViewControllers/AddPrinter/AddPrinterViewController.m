@@ -8,10 +8,9 @@
 
 #import "AddPrinterViewController.h"
 #import "PrinterDetails.h"
-#import "PrinterManager.h"
 #import "NetworkManager.h"
-#import "AlertUtils.h"
-#import "InputUtils.h"
+#import "AlertHelper.h"
+#import "InputHelper.h"
 
 #define TAG_TEXT_IP         0
 #define TAG_TEXT_USERNAME   1
@@ -162,23 +161,23 @@
     // is it still possible to add a printer
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertUtils displayResult:ERR_MAX_PRINTERS
+        [AlertHelper displayResult:ERR_MAX_PRINTERS
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
         return;
     }
     
     // properly format/trim the input IP
-    NSString* trimmedIP = [InputUtils trimIP:self.textIP.text];
+    NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
 #endif
     self.textIP.text = trimmedIP;
     
     // is the IP a valid IP address?
-    if (![InputUtils isIPValid:trimmedIP])
+    if (![InputHelper isIPValid:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_INVALID_IP
+        [AlertHelper displayResult:ERR_INVALID_IP
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
         return;
@@ -187,7 +186,7 @@
     // was this printer already added before?
     if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_ALREADY_ADDED
+        [AlertHelper displayResult:ERR_ALREADY_ADDED
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
         return;
@@ -196,7 +195,7 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertUtils displayResult:ERR_NO_NETWORK
+        [AlertHelper displayResult:ERR_NO_NETWORK
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
         return;
@@ -224,7 +223,7 @@
 {
     if (self.willEndWithoutAdd)
     {
-        [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND
+        [AlertHelper displayResult:ERR_PRINTER_NOT_FOUND
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
     }
@@ -252,14 +251,14 @@
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertUtils displayResult:INFO_PRINTER_ADDED
+        [AlertHelper displayResult:INFO_PRINTER_ADDED
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
         self.hasAddedPrinters = YES;
     }
     else
     {
-        [AlertUtils displayResult:ERR_CANNOT_ADD
+        [AlertHelper displayResult:ERR_CANNOT_ADD
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
     }
