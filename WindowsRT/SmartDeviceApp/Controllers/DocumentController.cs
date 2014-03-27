@@ -124,7 +124,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="basePageIndex">base page index</param>
         /// <param name="numPages">number of pages needed (for imposition)</param>
-        /// <returns></returns>
+        /// <returns>task with generated LogicalPage(s)</returns>
         public async Task<List<LogicalPage>> GetLogicalPages(int basePageIndex, int numPages)
         {
             List<LogicalPage> logicalPages = new List<LogicalPage>();
@@ -133,6 +133,14 @@ namespace SmartDeviceApp.Controllers
             do
             {
                 int key = basePageIndex + offset;
+
+                // Check page bounds
+                int pageCount = (int)_document.PdfDocument.PageCount;
+                if (key < 0 || key > pageCount - 1)
+                {
+                    break;
+                }
+
                 if (_document.LogicalPages.ContainsKey(key))
                 {
                     logicalPages.Add(_document.LogicalPages[key]);

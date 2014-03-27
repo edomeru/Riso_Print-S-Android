@@ -47,7 +47,6 @@ namespace SmartDeviceApp.Controllers
         private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
-        private List<LogicalPage> _logicalPages; // LogicalPages in the requested PreviewPage, ordered list
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
@@ -242,7 +241,10 @@ namespace SmartDeviceApp.Controllers
                 if (_selectedPrinter.PrintSetting.ImpositionOrder != selected.Index)
                 {
                     _selectedPrinter.PrintSetting.ImpositionOrder = selected.Index;
-                    isPreviewPageAffected = true;
+                    if (_pagesPerSheet > 1) // Matters only if pages per sheet is more than 1
+                    {
+                        isPreviewPageAffected = true;
+                    }
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_SORT))
@@ -427,6 +429,8 @@ namespace SmartDeviceApp.Controllers
                     Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
                         previewPage.ActualSize));
 
+                    GenerateNearPreviewPages();
+
                     return;
                 }
             }
@@ -441,8 +445,10 @@ namespace SmartDeviceApp.Controllers
 
             await SendEmptyPage();
 
-            _logicalPages = await getLogicalPagesTask;
-            await ApplyPrintSettings(targetPreviewPageIndex);
+            List<LogicalPage> logicalPages = await getLogicalPagesTask;
+            await ApplyPrintSettings(logicalPages, targetPreviewPageIndex, true);
+
+            GenerateNearPreviewPages();
         }
 
         #endregion Preview Page Navigation
@@ -454,9 +460,10 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="previewPageIndex">target page</param>
         /// <returns>task</returns>
-        private async Task ApplyPrintSettings(int previewPageIndex)
+        private async Task ApplyPrintSettings(List<LogicalPage> logicalPages, int previewPageIndex,
+            bool enableSend)
         {
-            if (_logicalPages != null && _logicalPages.Count > 0)
+            if (logicalPages != null && logicalPages.Count > 0)
             {
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
 
@@ -467,7 +474,7 @@ namespace SmartDeviceApp.Controllers
                     _selectedPrinter.PrintSetting.PaperSize);
 
                 // Loop to each LogicalPage(s) to selected paper size and orientation
-                foreach (LogicalPage logicalPage in _logicalPages)
+                foreach (LogicalPage logicalPage in logicalPages)
                 {
                     // Open PreviewPage image from AppData temporary store
                     string pageImageFileName = logicalPage.Name;
@@ -541,12 +548,15 @@ namespace SmartDeviceApp.Controllers
                         _previewPages.Add(previewPageIndex, previewPage);
                     }
 
-                    // Open the bitmap
-                    BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+                    if (enableSend)
+                    {
+                        // Open the bitmap
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
 
-                    // Create message and send
-                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                        previewPage.ActualSize));
+                        // Create message and send
+                        Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                            previewPage.ActualSize));
+                    }
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -900,6 +910,38 @@ namespace SmartDeviceApp.Controllers
             // Send to view model
             var printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             printSettingsViewModel.PrintSettingsList = _printSettingList;
+        }
+
+        /// <summary>
+        /// Generates next and previous PreviewPage images if not exists.
+        /// It is assumed here that required LogicalPage images are are already done
+        /// by DocumentController.
+        /// </summary>
+        private async void GenerateNearPreviewPages()
+        {
+            PreviewPage previewPage = null;
+            if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))
+            {
+                int nextLogicalPageIndex = ((_currPreviewPageIndex + 1) * _pagesPerSheet);
+                List<LogicalPage> nextLogicalPages =
+                    await DocumentController.Instance.GetLogicalPages(nextLogicalPageIndex,
+                    _pagesPerSheet);
+
+                // Next page
+                await ApplyPrintSettings(nextLogicalPages, _currPreviewPageIndex + 1, false);
+            }
+
+            if (!_previewPages.TryGetValue(_currPreviewPageIndex - 1, out previewPage))
+            {
+                int prevLogicalPageIndex = ((_currPreviewPageIndex - 1) * _pagesPerSheet);
+                List<LogicalPage> prevLogicalPages =
+                    await DocumentController.Instance.GetLogicalPages(prevLogicalPageIndex,
+                    _pagesPerSheet);
+
+                // Previous page
+                await ApplyPrintSettings(prevLogicalPages, _currPreviewPageIndex - 1, false);
+            }
+
         }
 
         #endregion Print Settings
