@@ -10,6 +10,7 @@ namespace SmartDeviceApp.Common.Enum
     {
         numeric,
         boolean,
-        list
+        list,
+        unknown
     }
 }

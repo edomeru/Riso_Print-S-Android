@@ -4,8 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:controls="using:SmartDeviceApp.Controls"
-    xmlns:conv="using:SmartDeviceApp.Converters"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:sel="using:SmartDeviceApp.Selectors"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,12 +13,30 @@
     d:DesignWidth="400"
     d:DesignHeight="1000"
     DataContext="{Binding PrintSettingsViewModel, Source={StaticResource Locator}}">
-
+    
     <StackPanel.Resources>
-        <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
-        <conv:PrintSettingTypeToValueContentConverter x:Key="PrintSettingTypeToValueContentConverter"/>
-        <conv:PrintSettingTypeToRightButtonVisibilityConverter x:Key="PrintSettingTypeToRightButtonVisibilityConverter"/>
-        <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
+        <DataTemplate x:Key="TEMPLATE_ListViewItemToggleSwitch">
+            <controls:KeyToggleSwitchControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                             LeftButtonVisibility="Collapsed"
+                                             RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
+                                             IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_ListViewItemTextBox">
+            <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                        LeftButtonVisibility="Collapsed"
+                                        RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
+                                        IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_ListViewItemList">
+            <controls:KeyValueControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                             LeftButtonVisibility="Collapsed"
+                                             RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
+                                             IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+        </DataTemplate>
+        <sel:PrintSettingsListTemplateSelector x:Key="PrintSettingsListTemplateSelector"
+                                               ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"
+                                               ListViewItemTextBoxTemplate="{StaticResource TEMPLATE_ListViewItemTextBox}"
+                                               ListViewItemListTemplate="{StaticResource TEMPLATE_ListViewItemList}"/>
     </StackPanel.Resources>
 
     <ItemsControl ItemsSource="{Binding Path=PrintSettingsList}">
@@ -27,17 +44,12 @@
             <DataTemplate>
                 <controls:GroupListControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}">
                     <controls:GroupListControl.Content>
-                        <ListView x:Name="printSettingsListView" ItemsSource="{Binding PrintSettings}" ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-                                  IsItemClickEnabled="True" SelectionMode="None">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <controls:KeyValueControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                                              LeftButtonVisibility="Collapsed"
-                                                              RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToRightButtonVisibilityConverter}}"
-                                                              IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                                                              ValueContent="{Binding Type, Converter={StaticResource PrintSettingTypeToValueContentConverter}}"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
+                        <ListView x:Name="printSettingsListView" 
+                                  ItemsSource="{Binding PrintSettings}" 
+                                  ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
+                                  ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
+                                  IsItemClickEnabled="True" 
+                                  SelectionMode="None">
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="ItemClick">
                                     <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}" InputConverter="{StaticResource ItemClickedConverter}"/>

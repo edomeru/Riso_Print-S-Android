@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:SmartDeviceApp.Resources.Styles">
+    xmlns:local="using:SmartDeviceApp.Resources.Styles"
+    xmlns:conv="using:SmartDeviceApp.Converters">
 
     <!-- APP THEME BRUSHES START -->
     <SolidColorBrush x:Key="BRUSH_Gray1" Color="#CDCDCD" />
@@ -36,5 +37,17 @@
     <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
     <x:Double x:Key="SIZE_ListValue_TextboxWidth">100</x:Double>
     <!-- APP THEME CONSTANTS END-->
+
+    <!-- APP CONVERTERS START -->
+    <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
+    <conv:ItemCheckedConverter x:Key="ItemCheckedConverter"/>
+    <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
+    <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
+    <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
+    <conv:PrintSettingTypeToVisibilityConverter x:Key="PrintSettingTypeToVisibilityConverter"/>
+    <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
+    <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
+    <!-- APP CONVERTERS END -->
 
 </ResourceDictionary>

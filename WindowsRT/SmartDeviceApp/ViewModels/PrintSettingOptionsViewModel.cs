@@ -22,7 +22,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _selectPrintSettingOption;
         private ICommand _backToPrintSettings;
         private PrintSetting _printSetting;
-        private PrintSettingOption _selectedPrintSettingOption;
+        private int _selectedIndex;
 
         public PrintSettingOptionsViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -39,6 +39,7 @@ namespace SmartDeviceApp.ViewModels
                 if (_printSetting != value)
                 {
                     _printSetting = value;
+                    SelectedIndex = (int)_printSetting.Value;
                     RaisePropertyChanged("PrintSetting");
                 }
             }
@@ -59,15 +60,15 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public PrintSettingOption SelectedPrintSettingOption
+        public int SelectedIndex
         {
-            get { return _selectedPrintSettingOption; }
+            get { return _selectedIndex; }
             set
             {
-                if (_selectedPrintSettingOption != value)
+                if (_selectedIndex != value)
                 {
-                    _selectedPrintSettingOption = value;
-                    RaisePropertyChanged("SelectedPrintSettingOption");
+                    _selectedIndex = value;
+                    RaisePropertyChanged("SelectedIndex");
                 }
             }
         }
@@ -94,16 +95,16 @@ namespace SmartDeviceApp.ViewModels
 
         private void SelectPrintSettingOptionExecute(PrintSettingOption option)
         {
-            SelectedPrintSettingOption = option;
+            SelectedIndex = option.Index;
 
-            // Send selected item to PrintPreviewController
-            PrintPreviewController.Instance.UpdatePrintSetting(PrintSetting,
-                SelectedPrintSettingOption);
+            // TODO: Send selected item to PrintPreviewController
+            //PrintPreviewController.Instance.UpdatePrintSetting(PrintSetting,
+            //    SelectedPrintSettingOption);
         }
 
         private void BackToPrintSettingsExecute()
         {
-            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingsVisible);
+            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingsVisible);  
         }
     }
 
