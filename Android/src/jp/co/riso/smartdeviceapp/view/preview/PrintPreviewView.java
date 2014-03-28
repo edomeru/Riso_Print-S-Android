@@ -20,7 +20,6 @@ import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.ColorMode;
 import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Duplex;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -41,8 +40,9 @@ import android.widget.TextView;
 public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener {
     public static final String TAG = "PrintPreviewView";
     
-    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d-%d"; // path; page; side; duplex; imposition
+    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d-%d-%d"; // path; page; side; duplex; imposition; color
     private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
+    private static final int SMALL_BMP_SIZE = 64;
     
     private CurlView mCurlView;
     private PDFFileManager mPdfManager = null;
@@ -195,7 +195,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         int imposition = mPrintSettings.getImposition().ordinal();
         int duplexMode = mPrintSettings.getDuplex().ordinal();
         int scaleToFit = mPrintSettings.isScaleToFit() ? 1 : 0;
-        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition, scaleToFit);
+        int isColored = shouldDisplayColor() ? 1 : 0;
+        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition, scaleToFit, isColored);
     }
     
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -476,25 +477,16 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 cachedPages = task.getRenderBitmaps();
             }
             
-            Bitmap bmps[] = {
-                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE),
-                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE)
-            };
-            
             if (cachedPages[0] == null || cachedPages[1] == null) {
-                page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
-                page.setTexture(bmps[1], CurlPage.SIDE_BACK);
+                Bitmap front = Bitmap.createBitmap(SMALL_BMP_SIZE, SMALL_BMP_SIZE, BMP_CONFIG_TEXTURE);
+                Bitmap back = Bitmap.createBitmap(SMALL_BMP_SIZE, SMALL_BMP_SIZE, BMP_CONFIG_TEXTURE);
+                page.setTexture(front, CurlPage.SIDE_FRONT);
+                page.setTexture(back, CurlPage.SIDE_BACK);
                 
                 new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
             } else {
-                for (int i = 0; i < cachedPages.length; i++) {
-                    if (cachedPages[i] != null) {
-                        ImageUtils.renderBmpToCanvas(cachedPages[i], new Canvas(bmps[i]), shouldDisplayColor());
-                    }
-                }
-                
-                page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
-                page.setTexture(bmps[1], CurlPage.SIDE_BACK);
+                page.setTexture(Bitmap.createBitmap(cachedPages[0]), CurlPage.SIDE_FRONT);
+                page.setTexture(Bitmap.createBitmap(cachedPages[1]), CurlPage.SIDE_BACK);
             }
         }
         
@@ -502,7 +494,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         public void indexChanged(int index) {
             updateSeekBar();
             
-            ((Activity) getContext()).runOnUiThread(new Runnable() {
+            ((android.app.Activity) getContext()).runOnUiThread(new Runnable() {
                 public void run() {
                     updatePageLabel();
                 }
@@ -516,8 +508,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         private int mWidth;
         private int mHeight;
         private int mIndex;
-        
-        private Bitmap mBmps[];
+        Bitmap renderBmps[];
         
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
             mCurlPageRef = new WeakReference<CurlPage>(page);
@@ -525,18 +516,21 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             mWidth = width;
             mHeight = height;
             mIndex = index;
-            
-            int bmpDimensions[] = getPaperDimensions(width, height);
-            mBmps = new Bitmap[] { Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
-                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE) };
-            mBmps[0].eraseColor(getResources().getColor(R.color.bg_paper));
-            mBmps[1].eraseColor(getResources().getColor(R.color.bg_paper));
         }
         
         @Override
         protected Void doInBackground(Void... params) {
-            Bitmap renderBmps[] = getRenderBitmaps();
-            tryDrawRenderBitmaps(renderBmps, mBmps);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Log.w(TAG, "Thread exception received");
+            }
+            
+            if (mHandlerRef.get() == null || mCurlPageRef.get() == null) {
+                Log.w(TAG, "Cancelled process");
+                return null;
+            }
+            renderBmps = getRenderBitmaps();
             return null;
         }
         
@@ -544,13 +538,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         protected void onPostExecute(Void param) {
             if (mHandlerRef.get() != null && mCurlPageRef.get() != null) {
                 mCurlPageRef.get().reset();
-                mCurlPageRef.get().setTexture(mBmps[0], CurlPage.SIDE_FRONT);
-                mCurlPageRef.get().setTexture(mBmps[1], CurlPage.SIDE_BACK);
+                mCurlPageRef.get().setTexture(Bitmap.createBitmap(renderBmps[0]), CurlPage.SIDE_FRONT);
+                mCurlPageRef.get().setTexture(Bitmap.createBitmap(renderBmps[1]), CurlPage.SIDE_BACK);
                 mCurlView.requestRender();
             } else {
                 Log.w(TAG, "Will recycle");
-                mBmps[0].recycle();
-                mBmps[1].recycle();
             }
         }
         
@@ -602,7 +594,6 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                     curY += height;
                 }
                 
-                
                 float scale = 1.0f / pagination.getPerPage();
                 
                 Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
@@ -618,7 +609,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                     int y = top + ((bottom - top) - dim[1]) / 2;
                     
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
-                    ImageUtils.renderBmpToCanvas(page, canvas, true, destRect);
+                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
                     
                     page.recycle();
                 }
@@ -658,14 +649,6 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             }
             
             return new Bitmap[] { front, back };
-        }
-        
-        private void tryDrawRenderBitmaps(Bitmap renderBmps[], Bitmap destBmps[]) {
-            for (int i = 0; i < renderBmps.length; i++) {
-                if (renderBmps[i] != null) {
-                    ImageUtils.renderBmpToCanvas(renderBmps[i], new Canvas(destBmps[i]), shouldDisplayColor());
-                }
-            }
         }
     }
 }
