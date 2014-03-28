@@ -11,6 +11,7 @@
         android:layout_height="@dimen/home_menu_height"
         android:orientation="horizontal"
     	android:background="@drawable/selector_printsettings_item"
+    	android:duplicateParentState="true"
         android:paddingLeft="@dimen/printsettings_icon_setting_padding" >
 
 	    <ImageView
@@ -30,6 +31,7 @@
 	        android:layout_marginLeft="@dimen/printsettings_menu_padding"
 	        android:layout_weight="1"
         	android:maxLines="2"
+	        android:duplicateParentState="true"
 	        android:text="@string/default_textview"
 	        android:textColor="@color/theme_dark_1"
 	        android:textSize="@dimen/home_text_size" />
