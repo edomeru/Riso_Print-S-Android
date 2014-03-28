@@ -43,16 +43,4 @@ typedef enum
  */
 + (BOOL)readBool:(kPlistBoolVal)type;
 
-/**
- Wrapper for reading the Generic Settings of the Application
- @return NSDictionary*
- */
-+ (NSDictionary*)readApplicationSettings;
-
-/**
- Wrapper for setting the new values for the Application Settings
- @param settings dictionary
-
- */
-+(void) setApplicationSettings:(NSDictionary *) appSettingsDict;
 @end
