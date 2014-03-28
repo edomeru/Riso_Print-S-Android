@@ -97,50 +97,24 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        /*
-        private void Initialize()
-        {
-            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, "Assets/printsettings.xml");
-            XDocument data = XDocument.Load(xmlPath);
-            
-            var printSettingsData = from groupData in data.Descendants("group")
-                select new PrintSettingGroup
-                {
-                    Name = (string)groupData.Attribute("name"),
-                    Text = (string)groupData.Attribute("text"),
-                    PrintSettings = 
-                    (
-                        from settingData in groupData.Elements("setting")
-                            select new PrintSetting
-                            {
-                                Name = (string)settingData.Attribute("name"),
-                                Text = (string)settingData.Attribute("text"),
-                                Icon = (string)settingData.Attribute("icon"),
-                                Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType), (string)settingData.Attribute("type")),
-                                Options = 
-                                (
-                                    from optionData in settingData.Elements("option")
-                                        select new PrintSettingOption
-                                        {
-                                            Text = (string)optionData.Value
-                                        }).ToList<PrintSettingOption>()
-                            }).ToList<PrintSetting>()
-                };
-
-            PrintSettingsList = new PrintSettingList();
-            var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            foreach (PrintSettingGroup group in tempList)
-            {
-                PrintSettingsList.Add(group);
-            }
-        }
-        */
-
         private void SelectPrintSettingExecute(PrintSetting printSetting)
         {
-            Messenger.Default.Send<PrintSetting>(printSetting);
-            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingOptionsVisible);
-            SelectedPrintSetting = printSetting;
+            switch (printSetting.Type)
+            {
+                case PrintSettingType.boolean:
+
+                    break;
+                case PrintSettingType.numeric:
+                    break;
+
+                case PrintSettingType.list:
+                    Messenger.Default.Send<PrintSetting>(printSetting);
+                    Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingOptionsVisible);
+                    SelectedPrintSetting = printSetting;
+                    break;
+                case PrintSettingType.unknown:
+                    break;
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ using SmartDeviceApp.Models;
 
 namespace SmartDeviceApp.Converters
 {
-    public class PrintSettingTypeToRightButtonVisibilityConverter : IValueConverter
+    public class PrintSettingTypeToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -27,6 +27,8 @@ namespace SmartDeviceApp.Converters
                         return Visibility.Collapsed;
                     case PrintSettingType.list:
                         return Visibility.Visible;
+                    case PrintSettingType.unknown:
+                        return Visibility.Collapsed;
                 }
             }
             return Visibility.Collapsed;

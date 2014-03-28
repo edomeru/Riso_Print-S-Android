@@ -14,8 +14,6 @@
     DataContext="{Binding PrintSettingOptionsViewModel, Source={StaticResource Locator}}">
     
     <StackPanel.Resources>
-        <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
-        <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
         <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
@@ -33,26 +31,25 @@
     </StackPanel.Resources>
 
     <Button x:Name="header"  Content="{Binding PrintSetting.Text}" Grid.Row="0" Command="{Binding BackToPrintSettings}" Template="{StaticResource TEMPLATE_HeaderButton}"/>
-    <ListView x:Name="printSettingOptionsListView" ItemsSource="{Binding PrintSetting.Options}" ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-                                  IsItemClickEnabled="False" SelectionMode="Single">
-                                  <!--SelectedItem="{Binding SelectedPrintSettingOption, ElementName=printSettingOptionsBox, Mode=TwoWay}" >-->
+    <ListView x:Name="printSettingOptionsListView" 
+              ItemsSource="{Binding PrintSetting.Options}" 
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
+              IsItemClickEnabled="False" SelectionMode="Single">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <controls:KeyValueControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                                                    LeftButtonVisibility="Collapsed"
-                                                                    RightButtonVisibility="Collapsed"
-                                                                    IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png">
-                    <!--<controls:KeyValueControl.ValueContent>
-                        <RadioButton Content="{Binding}"
-                    </controls:KeyValueControl.ValueContent>-->
-                </controls:KeyValueControl>
-                    
+                <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
+                                                GroupName="printSettingOptionsGroup"
+                                                Index="{Binding Index}"
+                                                Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                                IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="Checked">
+                            <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}" InputConverter="{StaticResource ItemCheckedConverter}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </controls:KeyRadioButtonControl>
             </DataTemplate>
         </ListView.ItemTemplate>
-        <Interactivity:Interaction.Behaviors>
-            <Core:EventTriggerBehavior EventName="SelectionChanged">
-                <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}" InputConverter="{StaticResource ItemSelectedConverter}"/>
-            </Core:EventTriggerBehavior>
-        </Interactivity:Interaction.Behaviors>
     </ListView>
 </StackPanel>

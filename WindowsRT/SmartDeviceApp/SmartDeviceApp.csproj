@@ -116,6 +116,15 @@
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
+      <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyTextBoxControl.xaml.cs">
+      <DependentUpon>KeyTextBoxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyToggleSwitchControl.xaml.cs">
+      <DependentUpon>KeyToggleSwitchControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\KeyValueControl.xaml.cs">
       <DependentUpon>KeyValueControl.xaml</DependentUpon>
     </Compile>
@@ -123,10 +132,12 @@
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\ItemCheckedConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
+    <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
-    <Compile Include="Converters\PrintSettingTypeToRightButtonVisibilityConverter.cs" />
-    <Compile Include="Converters\PrintSettingTypeToValueContentConverter.cs" />
+    <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
+    <Compile Include="Converters\PrintSettingTypeToVisibilityConverter.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
     <Compile Include="Converters\ItemClickedConverter.cs" />
     <Compile Include="Converters\ItemSelectedConverter.cs" />
@@ -311,6 +322,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\KeyRadioButtonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyTextBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyToggleSwitchControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\KeyValueControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -5,7 +5,6 @@
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:base="using:SmartDeviceApp.Common.Base"
     xmlns:controls="using:SmartDeviceApp.Controls"
-    xmlns:conv="using:SmartDeviceApp.Converters"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,8 +14,6 @@
     NavigationCacheMode="Enabled">
     
     <Page.Resources>
-        <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
-        <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
         <Style x:Key="STYLE_MainMenuPaneGrid" TargetType="Grid">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -489,7 +486,11 @@
                         <RowDefinition Height="{StaticResource SIZE_PageNumberTextHeight}"/>
                     </Grid.RowDefinitions>
                     <controls:TwoPageControl Grid.Row="0" RightPageImage="{Binding Path=RightPageImage}" LeftPageImage="{Binding Path=LeftPageImage}" PageViewMode="{Binding Path=PageViewMode}" Loaded="OnPageAreaLoaded"/>
-                    <Slider x:Name="pageNumberSlider" Grid.Row="1" Style="{StaticResource STYLE_PageNumberSlider}" IsEnabled="{Binding Path=IsPageNumberSliderEnabled}" Maximum="{Binding Path=PageTotal, Mode=TwoWay}" Value="{Binding Path=CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}">
+                    <Slider x:Name="pageNumberSlider" Grid.Row="1" 
+                            IsEnabled="{Binding Path=IsPageNumberSliderEnabled}" 
+                            Maximum="{Binding Path=PageTotal, Mode=TwoWay}" 
+                            Value="{Binding Path=CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}"
+                            Style="{StaticResource STYLE_PageNumberSlider}" >
                         <Interactivity:Interaction.Behaviors>
                             <Core:EventTriggerBehavior EventName="ValueChanged">
                                 <Core:InvokeCommandAction Command="{Binding Path=PageNumberSliderValueChange}" CommandParameter="{Binding ElementName=pageNumberSlider, Path=Value}"/>

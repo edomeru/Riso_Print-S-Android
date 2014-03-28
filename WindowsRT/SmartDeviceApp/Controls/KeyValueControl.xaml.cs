@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class KeyValueControl : UserControl
+    public partial class KeyValueControl : UserControl
     {
         public KeyValueControl()
         {

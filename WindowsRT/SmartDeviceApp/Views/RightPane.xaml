@@ -5,7 +5,6 @@
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:models="using:SmartDeviceApp.Models"
     xmlns:controls="using:SmartDeviceApp.Controls"
-    xmlns:conv="using:SmartDeviceApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="400">
