@@ -10,6 +10,9 @@
 #import "HomeViewController.h"
 #import "UIViewController+Segue.h"
 
-@interface PrintJobHistoryViewController : UIViewController
+@interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+
+/** The UI responsible for displaying the list of print job history items. */
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 @end

@@ -8,6 +8,6 @@
 
 #import "PrintJobHistoryViewController.h"
 
-@interface PrintJobHistoryIphoneViewController : PrintJobHistoryViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+@interface PrintJobHistoryIphoneViewController : PrintJobHistoryViewController 
 
 @end

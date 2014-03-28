@@ -81,6 +81,9 @@
         cell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
     cell.detailTextLabel.text = [NSString stringWithFormat:@"2014/3/27 12:3%ld", (long)indexPath.row];
     
+    //fix for the bugged always-white cell in iPad iOS7
+    cell.backgroundColor = [UIColor clearColor];
+    
     return cell;
 }
 
