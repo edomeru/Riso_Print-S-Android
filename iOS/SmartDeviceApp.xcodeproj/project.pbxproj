@@ -80,6 +80,9 @@
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
 		3197B70C18E3D7D500C804FE /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3197B70B18E3D7D500C804FE /* SettingsViewController.m */; };
+		31A24B8C18E54B1F00CF3AF2 /* SettingsValidationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */; };
+		31A24B9018E5531A00CF3AF2 /* SettingsValidationHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */; };
+		31A24B9118E5575500CF3AF2 /* SettingsValidationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -214,6 +217,9 @@
 		2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Theme.m"; sourceTree = "<group>"; };
 		3197B70A18E3D7D500C804FE /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		3197B70B18E3D7D500C804FE /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		31A24B8A18E54B1F00CF3AF2 /* SettingsValidationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsValidationHelper.h; sourceTree = "<group>"; };
+		31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsValidationHelper.m; sourceTree = "<group>"; };
+		31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsValidationHelperTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -388,6 +394,7 @@
 		2D0AEC81185FE50000810455 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				31A24B8D18E552F900CF3AF2 /* Helpers */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -757,6 +764,8 @@
 				2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */,
 				2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */,
 				2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */,
+				31A24B8A18E54B1F00CF3AF2 /* SettingsValidationHelper.h */,
+				31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -799,6 +808,14 @@
 				3197B70B18E3D7D500C804FE /* SettingsViewController.m */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		31A24B8D18E552F900CF3AF2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -944,6 +961,7 @@
 				2DA1AF1718E2EF9600085F27 /* main.m in Sources */,
 				2DA1AEC718E2EF7D00085F27 /* PrintSetting.m in Sources */,
 				2DA1AF1818E2EF9600085F27 /* ReplaceSegue.m in Sources */,
+				31A24B8C18E54B1F00CF3AF2 /* SettingsValidationHelper.m in Sources */,
 				2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */,
 				2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */,
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
@@ -977,7 +995,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31A24B9118E5575500CF3AF2 /* SettingsValidationHelper.m in Sources */,
 				2D0AEC62185FE43200810455 /* main.m in Sources */,
+				31A24B9018E5531A00CF3AF2 /* SettingsValidationHelperTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

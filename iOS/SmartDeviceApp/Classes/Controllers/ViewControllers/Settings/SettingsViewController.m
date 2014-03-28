@@ -11,21 +11,11 @@
 #import "UIViewController+Segue.h"
 #import "DefaultView.h"
 #import "PListHelper.h"
+#import "SettingsValidationHelper.h"
+
 
 #define KEY_SETTINGS_CARD_READER_ID     @"CardReaderID"
 #define KEY_SETTINGS_COMMUNITY_NAME     @"CommunityName"
-
-/**
- An enumeration to identify input error in settings screen
- */
-typedef enum _kSettingsInputError
-{
-    kSettingsInputErrorNone, /**<  No Error*/
-    kSettingsInputErrorInvalidCardID, /**<  Invalid Card ID input error*/
-    kSettingsInputErrorCommunityNameNoLength, /**<  No Community Name input error */
-    kSettingsInputErrorCommunityNameInvalidChars /**<  Invalid characters in Community Name input error*/
-} kSettingsInputError;
-
 
 @interface SettingsViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *cardId; /**< Reference outlet to Card ID input textfield*/
@@ -36,44 +26,19 @@ typedef enum _kSettingsInputError
 @property (weak, nonatomic) IBOutlet UIView *communityNameView;  /**< Reference outlet to view that contains the community view input field*/
 @property (strong, nonatomic) NSDictionary* settings;  /**< Dictionary that contains the values of the settings*/
 
-/**
- Checks if cardId textfield should accept the updated string input
- @param inputString The updated input string in cardId text field
- @return YES if accepted; NO otherwise
- */
-- (BOOL)shouldAcceptCardIDInput:(NSString *)inputString;
 
 /**
- Checks if communityName textfield should accept the updated string input
- @param inputString The updated input string in community name textfield
- @return YES if accepted; NO otherwise
- */
-- (BOOL)shouldAcceptCommunityNameInput:(NSString *)inputString;
-
-/**
- Checks if the current string in the cardId textfield is valid
+ Processes the cardId textfield input after editing
  @param inputString The current string in the cardId textfield
  @return YES if valid; NO otherwise
  */
-- (BOOL)isValidCardIDInput:(NSString *)inputString;
+- (void) cardIDDidEndEditing:(NSString *)inputString;
 
 /**
- Checks if the current string in the communityName textfield is valid
+ Processes the communityName textfield input after editing
  @param inputString The current string in the communityName textfield
- @return YES if valid; NO otherwise
  */
-- (BOOL)isValidCommunityNameInput:(NSString *)inputString;
-
-/**
- Validates the current string in the cardId textfield
- @param inputString The current string in the cardId textfield
- @return kSettingsInputError
- */
-- (kSettingsInputError)validateCardIDInput: (NSString *) inputString;
-
-/**
- */
-- (kSettingsInputError)validateCommunityNameInput:(NSString *)inputString;
+- (void) communityNameDidEndEditing:(NSString *)inputString;
 
 /**
  Validates the current string in the communityName textfield
@@ -189,35 +154,30 @@ typedef enum _kSettingsInputError
 }
 
 #pragma mark - UITextFieldDelegate methods
+/*Checks the keyboard input if should be accepted in textfield*/
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if([textField isEqual:self.communityName])
     {
-        return [self shouldAcceptCommunityNameInput:string];
+        return [SettingsValidationHelper shouldAcceptCommunityNameInput:string];
     }
-    return[self shouldAcceptCardIDInput:string];
+    return[SettingsValidationHelper shouldAcceptCardIDInput:string];
 }
 
+/*Called when editing in a textfield ends*/
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     //auto save after user finished editing text field
     if([textField isEqual:self.communityName])
     {
-        if([self isValidCommunityNameInput:textField.text] == YES)
-        {
-            [self.settings setValue:self.communityName.text forKey:KEY_SETTINGS_COMMUNITY_NAME];
-            [PListHelper setApplicationSettings:self.settings];
-        }
+        [self communityNameDidEndEditing:textField.text];
         return;
     }
 
-    if([self isValidCardIDInput:textField.text] == YES)
-    {
-        [self.settings setValue:self.cardId.text forKey:KEY_SETTINGS_CARD_READER_ID];
-        [PListHelper setApplicationSettings:self.settings];
-    }
+    [self cardIDDidEndEditing:textField.text];
 }
 
+/*Called when the Done button is pressed in keyboard*/
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     //if view is currently offset due to keyboard covering textfield, remove view offset when keyboard is removed from view
@@ -233,100 +193,40 @@ typedef enum _kSettingsInputError
 }
 
 #pragma mark  Class Methods
-- (BOOL)shouldAcceptCardIDInput: (NSString *)inputString
+- (void)communityNameDidEndEditing:(NSString *)inputString
 {
-    if(inputString.length > 128)
+    kSettingsInputError validationError = [SettingsValidationHelper validateCommunityNameInput:inputString];
+    if(validationError == kSettingsInputErrorNone)
     {
-        return NO;
+        [self.settings setValue:self.communityName.text forKey:KEY_SETTINGS_COMMUNITY_NAME];
+        [PListHelper setApplicationSettings:self.settings];
     }
-    
-    return YES;
+    else
+    {
+        self.communityName.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_COMMUNITY_NAME];
+        [self showValidationError:validationError];
+    }
 }
 
-- (BOOL) shouldAcceptCommunityNameInput:(NSString *)inputString
+- (void)cardIDDidEndEditing:(NSString *)inputString;
 {
-    if(inputString.length > 15)
+    kSettingsInputError validationError = [SettingsValidationHelper validateCardIDInput:inputString];
+    if(validationError == kSettingsInputErrorNone)
     {
-        return NO;
+        [self.settings setValue:self.cardId.text forKey:KEY_SETTINGS_CARD_READER_ID];
+        [PListHelper setApplicationSettings:self.settings];
     }
-    
-    return YES;
-}
-
-- (BOOL)isValidCardIDInput:(NSString*) inputString
-{
-    kSettingsInputError validationError = [self validateCardIDInput:inputString];
-    if(validationError != kSettingsInputErrorNone)
+    else
     {
         self.cardId.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_CARD_READER_ID];
-        self.communityName.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_COMMUNITY_NAME];
         [self showValidationError:validationError];
-        return NO;
     }
-    
-    return YES;
-}
-
-- (BOOL)isValidCommunityNameInput:(NSString *)inputString
-{
-    kSettingsInputError validationError = [self validateCommunityNameInput:inputString];
-    if(validationError != kSettingsInputErrorNone)
-    {
-        self.communityName.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_COMMUNITY_NAME];
-        [self showValidationError:validationError];
-        return NO;
-    }
-    
-    return YES;
-}
-
-- (kSettingsInputError)validateCardIDInput:(NSString *)inputString
-{
-    NSCharacterSet* validSet = [NSCharacterSet alphanumericCharacterSet];
-    
-    if([[inputString stringByTrimmingCharactersInSet:validSet] length] > 0)
-    {
-        return kSettingsInputErrorInvalidCardID;
-    }
-    
-    return kSettingsInputErrorNone;
-}
-
-- (kSettingsInputError)validateCommunityNameInput:(NSString *)inputString
-{
-    if(inputString.length == 0)
-    {
-        return kSettingsInputErrorCommunityNameNoLength;
-    }
-    
-    NSCharacterSet* invalidSet = [NSCharacterSet characterSetWithCharactersInString:@" \\'\"#"];
-    NSRange range = [inputString rangeOfCharacterFromSet:invalidSet];
-    
-    if(range.length > 0)
-    {
-        return kSettingsInputErrorCommunityNameInvalidChars;
-    }
-    
-    return kSettingsInputErrorNone;
 }
 
 - (void)showValidationError:(kSettingsInputError)error
 {
-    NSString *message = @"Invalid Input";
-    switch(error)
-    {
-        case kSettingsInputErrorInvalidCardID:
-            message = @"Card ID should be alphanumeric only";
-            break;
-        case kSettingsInputErrorCommunityNameInvalidChars:
-            message = @"Community Name should not contain:\n\\'\"#";
-            break;
-        case kSettingsInputErrorCommunityNameNoLength:
-            message = @"Input required for community name";
-            break;
-        default:
-            break;
-    }
+    NSString *message = [SettingsValidationHelper errorMessageForSettingsInputError:error];
+    
     UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error"
                                                          message:message
                                                         delegate:nil
