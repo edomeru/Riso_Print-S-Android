@@ -11,7 +11,7 @@
 #define GROUPCELL   @"PrintJobHistoryGroup"
 #define ITEMCELL    @"PrintJobHistoryItem"
 
-@interface PrintJobHistoryGroup : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
+@interface PrintJobHistoryGroupCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
 
 - (void)setCellTag:(NSInteger)tag;
 - (void)setCellGroupName:(NSString*)name;

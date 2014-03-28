@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PrintJobHistoryGroup.h"
+#import "PrintJobHistoryGroupCell.h"
 
 #define TEXT_GROUP_COLLAPSED    @"+"
 #define TEXT_GROUP_EXPANDED     @"-"
@@ -14,7 +14,7 @@
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
 
-@interface PrintJobHistoryGroup ()
+@interface PrintJobHistoryGroupCell ()
 
 #pragma mark - UI Properties
 
@@ -31,7 +31,7 @@
 
 @end
 
-@implementation PrintJobHistoryGroup
+@implementation PrintJobHistoryGroupCell
 
 #pragma mark - Lifecycle
 
@@ -72,6 +72,8 @@
     
     // get print job details
     NSString* printJobName = [self.listPrintJobs objectAtIndex:indexPath.row];
+    //TODO: the object should be an actual PrintJob object, not just a NSString
+    //TODO: the object will have a name, timestamp, and result
     
     // set cell contents
     cell.textLabel.text = [NSString stringWithFormat:@"%@", printJobName];
