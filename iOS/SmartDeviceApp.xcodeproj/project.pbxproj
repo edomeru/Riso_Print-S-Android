@@ -79,6 +79,7 @@
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
+		3197B70C18E3D7D500C804FE /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3197B70B18E3D7D500C804FE /* SettingsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -211,6 +212,8 @@
 		2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
 		2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Theme.h"; sourceTree = "<group>"; };
 		2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Theme.m"; sourceTree = "<group>"; };
+		3197B70A18E3D7D500C804FE /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		3197B70B18E3D7D500C804FE /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -626,6 +629,7 @@
 		2DA1AEF318E2EF9600085F27 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				3197B70918E3D79E00C804FE /* Settings */,
 				2DA1AEF418E2EF9600085F27 /* AddPrinter */,
 				2DA1AEF718E2EF9600085F27 /* General */,
 				2DA1AEFE18E2EF9600085F27 /* Home */,
@@ -788,6 +792,15 @@
 			path = CollectionViewCells;
 			sourceTree = "<group>";
 		};
+		3197B70918E3D79E00C804FE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3197B70A18E3D7D500C804FE /* SettingsViewController.h */,
+				3197B70B18E3D7D500C804FE /* SettingsViewController.m */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -942,6 +955,7 @@
 				2DA1AF3518E2EF9C00085F27 /* PDFFileManager.m in Sources */,
 				2DA1AF2218E2EF9600085F27 /* PrintersIphoneViewController.m in Sources */,
 				2DA1AF3418E2EF9C00085F27 /* NetworkManager.m in Sources */,
+				3197B70C18E3D7D500C804FE /* SettingsViewController.m in Sources */,
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
 				2DA1AF3618E2EF9C00085F27 /* PrinterManager.m in Sources */,
 				2DA1AF6618E2F08900085F27 /* AlertHelper.m in Sources */,
