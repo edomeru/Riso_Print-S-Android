@@ -272,7 +272,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setTargetFragment(this, 0);
                         
-                        activity.openDrawer(Gravity.RIGHT, true);
+                        activity.openDrawer(Gravity.RIGHT, isTablet());
                     } else {
                         activity.closeDrawers();
                     }
