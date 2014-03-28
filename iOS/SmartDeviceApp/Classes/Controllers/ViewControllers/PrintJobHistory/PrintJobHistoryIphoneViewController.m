@@ -10,10 +10,10 @@
 #import "PrintJobHistoryGroup.h"
 
 //TODO: check if values can be retrieved programmatically
-#define PRINTER_NAME_ROW_HEIGHT     45.0f  //should match the value in storyboard
-#define PRINT_JOB_ITEM_ROW_HEIGHT   45.0f  //should match the value in storyboard
-#define PRINT_JOB_ITEM_ROW_WIDTH    320.f  //should match the value in storyboard
-#define CELL_BOTTOM_MARGIN          -5.0f  //TODO: how to properly set margin (iOS7 != iOS6)
+const float GROUP_HEADER_HEIGHT     = 45.0f;  //should match the value in storyboard
+const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyboard
+const float PRINT_JOB_ITEM_WIDTH    = 320.f;  //should match the value in storyboard
+const float GROUP_MARGIN_BOTTOM     = -5.0f;  //TODO: how to properly set margin (iOS7 != iOS6)
 
 @interface PrintJobHistoryIphoneViewController ()
 
@@ -46,7 +46,8 @@
 #pragma mark - Methods
 
 - (void)initData;
-- (IBAction)tappedPrinterName:(UITapGestureRecognizer*)sender;
+- (IBAction)tappedPrinterHeader:(UIButton*)sender;
+- (IBAction)tappedDeleteAllButton:(UIButton*)sender;
 
 @end
 
@@ -92,11 +93,18 @@
     PrintJobHistoryGroup* cell = [collectionView dequeueReusableCellWithReuseIdentifier:GROUPCELL
                                                                            forIndexPath:indexPath];
     
+    NSInteger cellTag = indexPath.row;
+    
     // get the group
-    NSArray* printJobHistoryGroup = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
+    NSArray* printJobHistoryGroup = [self.listPrintJobHistoryGroups objectAtIndex:cellTag];
+    
+    // check if the group is collapsed/expanded
+    BOOL isCollapsed = [[self.listCollapsedFlags objectAtIndex:cellTag] boolValue];
     
     // set cell contents
+    [cell setCellTag:cellTag];
     [cell setCellGroupName:[NSString stringWithFormat:@"%@", [printJobHistoryGroup objectAtIndex:0]]];
+    [cell setCellIndicator:isCollapsed];
     [cell setCellPrintJobs:[printJobHistoryGroup subarrayWithRange:
                             NSMakeRange(1, [printJobHistoryGroup count]-1)]];
     
@@ -119,6 +127,7 @@
     // get the group
     NSArray* printJobHistoryGroup = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
     NSLog(@"[INFO][PrintJob] setting size for %@", [printJobHistoryGroup objectAtIndex:0]);
+    NSLog(@"[INFO][PrintJob] num print jobs = %ld", (long)[printJobHistoryGroup count]-1);
     
     // set the list height
     CGFloat printJobListHeight;
@@ -132,14 +141,14 @@
     else
     {
         // expanded
-        // the height occupied by the print jobs will be (number of print jobs)*(UITableView row height)
-        printJobListHeight = ([printJobHistoryGroup count]-1) * PRINT_JOB_ITEM_ROW_HEIGHT;
-        printJobListHeight += CELL_BOTTOM_MARGIN;
+        // the height occupied by the print jobs will be (number of print jobs)*(height for each print job)
+        printJobListHeight = ([printJobHistoryGroup count]-1) * PRINT_JOB_ITEM_HEIGHT;
+        printJobListHeight += GROUP_MARGIN_BOTTOM;
     }
     
     // finalize the cell dimensions
-    CGFloat cellHeight = PRINTER_NAME_ROW_HEIGHT + printJobListHeight;
-    CGFloat cellWidth = PRINT_JOB_ITEM_ROW_WIDTH;
+    CGFloat cellHeight = GROUP_HEADER_HEIGHT + printJobListHeight;
+    CGFloat cellWidth = PRINT_JOB_ITEM_WIDTH;
     NSLog(@"[INFO][PrintJob] h=%f,w=%f", cellHeight, cellWidth);
     CGSize cellSize = CGSizeMake(cellWidth, cellHeight);
     
@@ -194,16 +203,34 @@
 
 #pragma mark - Actions
 
-- (IBAction)tappedPrinterName:(UITapGestureRecognizer*)sender
+
+- (IBAction)tappedPrinterHeader:(UIButton*)sender
 {
     // get the cell tapped
-    NSIndexPath* index = [self.collectionView indexPathForItemAtPoint:[sender locationInView:self.collectionView]];
-    NSLog(@"[INFO][PrintJob] tapped cell=%d", index.row);
+    NSInteger cellIndex = [sender tag];
+    NSLog(@"[INFO][PrintJob] tapped cell=%ld", (long)cellIndex);
     
     // toggle collapsed/expanded
-    BOOL isCollapsed = [[self.listCollapsedFlags objectAtIndex:index.row] boolValue];
+    BOOL isCollapsed = [[self.listCollapsedFlags objectAtIndex:cellIndex] boolValue];
     [self.listCollapsedFlags setObject:[NSNumber numberWithBool:!isCollapsed]
-                    atIndexedSubscript:index.row];
+                    atIndexedSubscript:cellIndex];
+    
+    // force redraw
+    // with animation (not smooth)
+    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+    // without animation //TODO: should have some animation
+    [self.collectionView reloadData];
+}
+
+- (IBAction)tappedDeleteAllButton:(UIButton*)sender
+{
+    // get the cell tapped
+    NSInteger cellIndex = [sender tag];
+    NSLog(@"[INFO][PrintJob] tapped cell=%ld", (long)cellIndex);
+    
+    // remove the group
+    [self.listPrintJobHistoryGroups removeObjectAtIndex:cellIndex];
+    [self.listCollapsedFlags removeObjectAtIndex:cellIndex];
     
     // force redraw
     // with animation (not smooth)

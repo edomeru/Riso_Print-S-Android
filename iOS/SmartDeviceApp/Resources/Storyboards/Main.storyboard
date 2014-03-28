@@ -2364,28 +2364,13 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" reuseIdentifier="PrintJobHistoryGroup" id="KTT-2M-GyJ" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroup">
+                                    <collectionViewCell autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="KTT-2M-GyJ" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroup">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" contentMode="left" verticalHuggingPriority="251" text="RISO Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jBm-cj-PFM" userLabel="Printer Name">
-                                                    <rect key="frame" x="40" y="0.0" width="177" height="45"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <gestureRecognizers/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="45" id="Ou3-ad-nWD"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                    <connections>
-                                                        <outletCollection property="gestureRecognizers" destination="byT-kH-UGr" appends="YES" id="Yd6-o0-YiX"/>
-                                                    </connections>
-                                                </label>
                                                 <tableView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dPu-Ft-Q41" userLabel="TableView">
                                                     <rect key="frame" x="0.0" y="45" width="320" height="45"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2399,8 +2384,8 @@
                                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Print Job" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="S41-4Y-pYh" userLabel="Name">
-                                                                        <rect key="frame" x="54" y="12" width="70" height="21"/>
+                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="S41-4Y-pYh" userLabel="Name">
+                                                                        <rect key="frame" x="54" y="12" width="86" height="21"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -2427,49 +2412,76 @@
                                                         <outlet property="delegate" destination="KTT-2M-GyJ" id="3It-ct-XS2"/>
                                                     </connections>
                                                 </tableView>
-                                                <label autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yO3-6g-wzq" userLabel="Indicator">
+                                                <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xec-Wp-7rm" userLabel="Printer Name">
+                                                    <rect key="frame" x="40" y="0.0" width="180" height="45"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="180" id="WtY-Fk-u46"/>
+                                                        <constraint firstAttribute="height" constant="45" id="hGM-YV-Pky"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <state key="normal" title="RISO Printer 1">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="tappedPrinterHeader:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="mnj-fN-sxb"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MOS-FF-ZOf" userLabel="Indicator">
                                                     <rect key="frame" x="0.0" y="0.0" width="40" height="45"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="40" id="dAz-Xk-L11"/>
+                                                        <constraint firstAttribute="width" constant="40" id="2tS-F6-i4d"/>
+                                                        <constraint firstAttribute="height" constant="45" id="ylc-wa-r9L"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Delete All" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q6T-SY-ilh" userLabel="Delete All">
-                                                    <rect key="frame" x="210" y="0.0" width="110" height="45"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <state key="normal" title="-">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="tappedPrinterHeader:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="Gkw-Hk-SX5"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uJ1-uS-srn" userLabel="Delete All">
+                                                    <rect key="frame" x="220" y="0.0" width="100" height="45"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.97254901960784312" green="0.29411764705882354" blue="0.29411764705882354" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="110" id="yJA-gY-bBF"/>
+                                                        <constraint firstAttribute="height" constant="45" id="GYg-E5-pSg"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <state key="normal" title="Delete All">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="tappedDeleteAllButton:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="Yne-4j-DAi"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="jBm-cj-PFM" secondAttribute="bottom" id="2yV-mf-xtE"/>
-                                            <constraint firstItem="jBm-cj-PFM" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="4OI-VM-sdG"/>
-                                            <constraint firstItem="q6T-SY-ilh" firstAttribute="leading" secondItem="jBm-cj-PFM" secondAttribute="trailing" constant="-7" id="4Yl-Vd-Unj"/>
+                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="Xec-Wp-7rm" secondAttribute="bottom" id="2En-p0-nSk"/>
+                                            <constraint firstItem="MOS-FF-ZOf" firstAttribute="leading" secondItem="dPu-Ft-Q41" secondAttribute="leading" id="8aV-CH-F8L"/>
                                             <constraint firstItem="dPu-Ft-Q41" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="BOA-jT-Nhn"/>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="q6T-SY-ilh" secondAttribute="bottom" id="BmC-WK-j9n"/>
-                                            <constraint firstItem="yO3-6g-wzq" firstAttribute="leading" secondItem="dPu-Ft-Q41" secondAttribute="leading" id="QAY-5U-5ai"/>
+                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="uJ1-uS-srn" secondAttribute="bottom" id="E1k-MR-srk"/>
+                                            <constraint firstItem="Xec-Wp-7rm" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="F9T-Fz-aGn"/>
                                             <constraint firstAttribute="bottom" secondItem="dPu-Ft-Q41" secondAttribute="bottom" id="S25-v6-cHP"/>
-                                            <constraint firstItem="jBm-cj-PFM" firstAttribute="leading" secondItem="yO3-6g-wzq" secondAttribute="trailing" id="aKc-Xv-0RL"/>
-                                            <constraint firstItem="q6T-SY-ilh" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="dgn-pB-9JN"/>
+                                            <constraint firstAttribute="trailing" secondItem="uJ1-uS-srn" secondAttribute="trailing" id="Wo3-V1-HRl"/>
+                                            <constraint firstItem="MOS-FF-ZOf" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="Xeu-78-wDt"/>
                                             <constraint firstAttribute="trailing" secondItem="dPu-Ft-Q41" secondAttribute="trailing" id="fFZ-7q-fyY"/>
-                                            <constraint firstItem="yO3-6g-wzq" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="mjj-m2-zg6"/>
-                                            <constraint firstAttribute="trailing" secondItem="q6T-SY-ilh" secondAttribute="trailing" id="mtz-Ai-w56"/>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="yO3-6g-wzq" secondAttribute="bottom" id="tQW-0a-5dF"/>
+                                            <constraint firstItem="Xec-Wp-7rm" firstAttribute="leading" secondItem="MOS-FF-ZOf" secondAttribute="trailing" id="g7g-Pw-0cu"/>
+                                            <constraint firstItem="MOS-FF-ZOf" firstAttribute="baseline" secondItem="uJ1-uS-srn" secondAttribute="baseline" id="n41-dt-mz2"/>
+                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="Xec-Wp-7rm" secondAttribute="trailing" id="yoM-F0-dUL"/>
                                         </constraints>
                                         <size key="customSize" width="320" height="90"/>
                                         <connections>
-                                            <outlet property="groupName" destination="jBm-cj-PFM" id="uOC-ZS-Txr"/>
+                                            <outlet property="deleteAllButton" destination="uJ1-uS-srn" id="zGN-SC-AcD"/>
+                                            <outlet property="groupIndicator" destination="MOS-FF-ZOf" id="cWb-yX-ALG"/>
+                                            <outlet property="groupName" destination="Xec-Wp-7rm" id="A0Y-i5-wjO"/>
                                             <outlet property="tableView" destination="dPu-Ft-Q41" id="SfU-m2-rHq"/>
                                         </connections>
                                     </collectionViewCell>
@@ -2502,11 +2514,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DBO-Vs-YFS" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="byT-kH-UGr">
-                    <connections>
-                        <action selector="tappedPrinterName:" destination="FqZ-P9-QXX" id="Ee8-4M-rXH"/>
-                    </connections>
-                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="268" y="3161"/>
         </scene>

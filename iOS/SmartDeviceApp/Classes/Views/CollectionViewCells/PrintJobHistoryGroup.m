@@ -8,11 +8,19 @@
 
 #import "PrintJobHistoryGroup.h"
 
+#define TEXT_GROUP_COLLAPSED    @"+"
+#define TEXT_GROUP_EXPANDED     @"-"
+
+#define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
+#define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
+
 @interface PrintJobHistoryGroup ()
 
 #pragma mark - UI Properties
 
-@property (weak, nonatomic) IBOutlet UILabel* groupName;
+@property (weak, nonatomic) IBOutlet UIButton* groupName;
+@property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
+@property (weak, nonatomic) IBOutlet UIButton* deleteAllButton;
 @property (weak, nonatomic) IBOutlet UITableView* tableView;
 
 #pragma mark - Data Properties
@@ -68,19 +76,34 @@
     // set cell contents
     cell.textLabel.text = [NSString stringWithFormat:@"%@", printJobName];
     if (indexPath.row%2 == 0)
-        cell.imageView.image = [UIImage imageNamed:@"img_btn_job_status_ng"];
+        cell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
     else
-        cell.imageView.image = [UIImage imageNamed:@"img_btn_job_status_ok"];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"2014/3/27 12:3%d", indexPath.row];
+        cell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"2014/3/27 12:3%ld", (long)indexPath.row];
     
     return cell;
 }
 
 #pragma mark - Cell Contents
 
+- (void)setCellTag:(NSInteger)tag
+{
+    self.groupName.tag = tag;
+    self.groupIndicator.tag = tag;
+    self.deleteAllButton.tag = tag;
+}
+
 - (void)setCellGroupName:(NSString*)name
 {
-    self.groupName.text = name;
+    [self.groupName setTitle:name forState:UIControlStateNormal];
+}
+
+- (void)setCellIndicator:(BOOL)isCollapsed
+{
+    if (isCollapsed)
+        [self.groupIndicator setTitle:TEXT_GROUP_COLLAPSED forState:UIControlStateNormal];
+    else
+        [self.groupIndicator setTitle:TEXT_GROUP_EXPANDED forState:UIControlStateNormal];
 }
 
 - (void)setCellPrintJobs:(NSArray*)printJobs

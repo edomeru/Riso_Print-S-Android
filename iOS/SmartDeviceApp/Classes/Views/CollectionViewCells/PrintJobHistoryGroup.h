@@ -13,7 +13,9 @@
 
 @interface PrintJobHistoryGroup : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
 
+- (void)setCellTag:(NSInteger)tag;
 - (void)setCellGroupName:(NSString*)name;
+- (void)setCellIndicator:(BOOL)isCollapsed;
 - (void)setCellPrintJobs:(NSArray*)printJobs;
 - (void)reloadContents;
 
