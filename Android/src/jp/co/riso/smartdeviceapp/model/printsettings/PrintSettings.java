@@ -161,20 +161,6 @@ public class PrintSettings {
     }
     
     /**
-     * @return the mPaperType
-     */
-    public PaperType getPaperType() {
-        return PaperType.values()[mSettingValues.get("paperType")];
-    }
-    
-    /**
-     * @return the mInputTray
-     */
-    public InputTray getInputTray() {
-        return InputTray.values()[mSettingValues.get("inputTray")];
-    }
-    
-    /**
      * @return the mImposition
      */
     public Imposition getImposition() {
@@ -236,14 +222,6 @@ public class PrintSettings {
         return Punch.values()[mSettingValues.get("punch")];
     }
     
-    /**
-     * @return the mOutputTray
-     */
-    public OutputTray getOutputTray() {
-        return OutputTray.values()[mSettingValues.get("outputTray")];
-    }
-    
-
     public enum ColorMode {
         AUTO, FULL_COLOR, MONOCHROME;
     }
@@ -285,14 +263,6 @@ public class PrintSettings {
         public float getHeight() {
             return mHeight;
         }
-    }
-    
-    public enum PaperType {
-        ANY, PLAIN, IJ_PAPER, MATTE, HIGH_QUALITY, CARD_IJ, LW_PAPER;
-    }
-    
-    public enum InputTray {
-        AUTO, STANDARD, TRAY_1, TRAY_2, TRAY_3;
     }
     
     public enum Imposition {
@@ -350,15 +320,44 @@ public class PrintSettings {
     }
     
     public enum Staple {
-        OFF, UL, UR, SIDE_2, SIDE_1;
+        OFF (0, false),
+        UL (1, true),
+        UR (1, true),
+        SIDE_2 (2, false),
+        SIDE_1 (1, false);
+        
+        private final int mCount;
+        private final boolean mCorner;
+
+        Staple(int count, boolean corner) {
+            mCount = count;
+            mCorner = corner;
+        }
+        
+        public int getCount() {
+            return mCount;
+        }
+        
+        public boolean isCorner() {
+            return mCorner;
+        }
     }
     
     public enum Punch {
-        OFF, HOLES_2, HOLES_3, HOLES_4;
-    }
-    
-    public enum OutputTray {
-        AUTO, FACEDOWN, FACEUP, TOP, STACKING;
+        OFF (0),
+        HOLES_2 (2),
+        HOLES_3 (3),
+        HOLES_4 (4);
+        
+        private final int mCount;
+
+        Punch(int count) {
+            mCount = count;
+        }
+        
+        public int getCount() {
+            return mCount;
+        }
     }
     
     static {

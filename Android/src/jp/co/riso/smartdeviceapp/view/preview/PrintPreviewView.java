@@ -23,6 +23,7 @@ import fi.harism.curl.CurlView;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
 import android.graphics.Rect;
@@ -40,9 +41,18 @@ import android.widget.TextView;
 public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener {
     public static final String TAG = "PrintPreviewView";
     
-    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d-%d-%d"; // path; page; side; duplex; imposition; color
-    private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
+    private static final float DEFAULT_MARGIN_IN_MM = 0;
+    
+    private static final float PUNCH_DIAMETER_IN_MM = 12;
+    private static final float PUNCH_POS_SIDE_IN_MM = 8;
+    
+    private static final float STAPLE_LENGTH_IN_MM = 12;
+    
+    private static final float STAPLE_POS_CORNER_IN_MM = 6;
+    private static final float STAPLE_POS_SIDE_IN_MM = 4;
+    
     private static final int SMALL_BMP_SIZE = 64;
+    private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
     
     private CurlView mCurlView;
     private PDFFileManager mPdfManager = null;
@@ -53,13 +63,13 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private LinearLayout mPageControlLayout;
     private SeekBar mSeekBar;
     private TextView mPageLabel;
-    // private Bitmap stapleBmp;
-    // private Bitmap punchBmp;
+    private Bitmap mStapleBmp;
+    private Bitmap mPunchBmp;
     
-    private int mMarginLeft = 0;
-    private int mMarginRight = 0;
-    private int mMarginTop = 0;
-    private int mMarginBottom = 0;
+    private float mMarginLeft = 0;
+    private float mMarginRight = 0;
+    private float mMarginTop = 0;
+    private float mMarginBottom = 0;
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -102,13 +112,13 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     // ================================================================================
     
     public void loadResources() {
-        // stapleBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
-        // punchBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        mStapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        mPunchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_punch);
     }
     
     public void freeResources() {
-        // stapleBmp.recycle();
-        // punchBmp.recycle();
+        mStapleBmp.recycle();
+        mPunchBmp.recycle();
     }
     
     public void refreshView() {
@@ -150,25 +160,25 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     }
     
     public void setDefaultMargins() {
-        setMarginLeft(0);
-        setMarginRight(0);
-        setMarginTop(0);
-        setMarginBottom(0);
+        setMarginLeftInCm(DEFAULT_MARGIN_IN_MM);
+        setMarginRightInCm(DEFAULT_MARGIN_IN_MM);
+        setMarginTopInCm(DEFAULT_MARGIN_IN_MM);
+        setMarginBottomInCm(DEFAULT_MARGIN_IN_MM);
     }
     
-    public void setMarginLeft(int marginLeft) {
+    public void setMarginLeftInCm(float marginLeft) {
         mMarginLeft = marginLeft;
     }
     
-    public void setMarginRight(int marginRight) {
+    public void setMarginRightInCm(float marginRight) {
         mMarginRight = marginRight;
     }
     
-    public void setMarginTop(int marginTop) {
+    public void setMarginTopInCm(float marginTop) {
         mMarginTop = marginTop;
     }
     
-    public void setMarginBottom(int marginBottom) {
+    public void setMarginBottomInCm(float marginBottom) {
         mMarginBottom = marginBottom;
     }
     
@@ -220,11 +230,19 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     }
     
     protected String getCacheKey(int index, int side) {
-        int imposition = mPrintSettings.getImposition().ordinal();
-        int duplexMode = mPrintSettings.getDuplex().ordinal();
-        int scaleToFit = mPrintSettings.isScaleToFit() ? 1 : 0;
-        int isColored = shouldDisplayColor() ? 1 : 0;
-        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition, scaleToFit, isColored);
+        // path; page; side; duplex; imposition; color; staple; punch
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(mPdfManager.getPath());
+        buffer.append(index);
+        buffer.append(side);
+        buffer.append(mPrintSettings.getImposition().ordinal());
+        buffer.append(mPrintSettings.getDuplex().ordinal());
+        buffer.append(mPrintSettings.isScaleToFit());
+        buffer.append(shouldDisplayColor());
+        buffer.append(mPrintSettings.getStaple().ordinal());
+        buffer.append(mPrintSettings.getPunch().ordinal());
+        
+        return buffer.toString();
     }
     
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -247,20 +265,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return new Bitmap[] { front, back };
     }
     
-    protected int getMarginLeft(int bmpWidth) {
-        return (int)((mMarginLeft / (float) mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
-    }
-    
-    protected int getMarginRight(int bmpWidth) {
-        return (int)((mMarginRight / (float) mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
-    }
-    
-    protected int getMarginTop(int bmpHeight) {
-        return (int)((mMarginTop / (float) mPrintSettings.getPaperSize().getHeight()) * bmpHeight);
-    }
-    
-    protected int getMarginBottom(int bmpHeight) {
-        return (int)((mMarginBottom / (float) mPrintSettings.getPaperSize().getHeight()) * bmpHeight);
+    protected int convertDimension(float dimension, int bmpWidth) {
+        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
     }
     
     // ================================================================================
@@ -346,10 +352,6 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     private void setupCurlBind() {
         int bindPosition = CurlView.BIND_LEFT;
-        /*
-         * switch (mPrintSettings.getBind()) { case LEFT: bindPosition = CurlView.BIND_LEFT; break; case RIGHT:
-         * bindPosition = CurlView.BIND_RIGHT; break; case TOP: bindPosition = CurlView.BIND_TOP; break; }
-         */
         
         mCurlView.setBindPosition(bindPosition);
     }
@@ -596,9 +598,72 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
         
         private void drawStapleImages(Canvas canvas) {
+            int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
+            float scale = stapleLength / (float) mStapleBmp.getWidth();
+            
+            boolean corner = mPrintSettings.getStaple().isCorner();
+            int count = mPrintSettings.getStaple().getCount();
+            
+            // CORNER
+            if (corner) {
+                int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth());
+                
+                int x = staplePos;
+                int y = staplePos;
+                float rotate = -45.0f;
+                
+                if (mCurlView.getBindPosition() == CurlView.BIND_RIGHT) {
+                    x = canvas.getWidth() - staplePos;
+                    rotate = -rotate;
+                }
+                
+                ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);                
+            } else {
+                int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth());
+                
+                for (int i = 0; i < count; i++) {
+                    int x = staplePos;
+                    int y = staplePos;
+                    float rotate = -90.0f;
+                    
+                    if (mCurlView.getBindPosition() == CurlView.BIND_LEFT) {
+                        y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                    } else if (mCurlView.getBindPosition() == CurlView.BIND_RIGHT) {
+                        x = (canvas.getWidth() - staplePos);
+                        y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                        rotate = -rotate;
+                    } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
+                        x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                        rotate = 0.0f;
+                    }
+                    
+                    ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);
+                }
+            }
         }
         
         private void drawPunchImages(Canvas canvas) {
+            int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
+            float scale = punchDiameter / (float) mPunchBmp.getWidth();
+
+            int count = mPrintSettings.getPunch().getCount();
+            int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth());
+            
+            for (int i = 0; i < count; i++) {
+                int x = punchPos;
+                int y = punchPos;
+                
+                if (mCurlView.getBindPosition() == CurlView.BIND_LEFT) {
+                    y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                } else if (mCurlView.getBindPosition() == CurlView.BIND_RIGHT) {
+                    x = (canvas.getWidth() - punchPos);
+                    y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
+                    x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                }
+                
+                ImageUtils.renderBmpToCanvas(mPunchBmp, canvas, shouldDisplayColor(), x, y, 0, scale);
+            }
         }
         
         private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean flipX, boolean flipY) {
@@ -611,11 +676,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             int paperHeight = bmp.getHeight();
             
             // adjust paperWidth and paperHeight based on margins
-            paperWidth -= getMarginLeft(bmp.getWidth());
-            paperWidth -= getMarginRight(bmp.getWidth());
+            paperWidth -= convertDimension(mMarginLeft, bmp.getWidth());
+            paperWidth -= convertDimension(mMarginRight, bmp.getWidth());
             
-            paperHeight -= getMarginTop(bmp.getHeight());
-            paperHeight -= getMarginBottom(bmp.getHeight());
+            paperHeight -= convertDimension(mMarginTop, bmp.getWidth());
+            paperHeight -= convertDimension(mMarginBottom, bmp.getWidth());
             
             int pdfPageWidth = paperWidth / pagination.getCols();
             int pdfPageHeight = paperHeight / pagination.getRows();
@@ -633,8 +698,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             }
             
             // adjust beginX and beginY based on margins
-            beginX += getMarginLeft(bmp.getWidth());
-            beginY += getMarginRight(bmp.getWidth());
+            beginX += convertDimension(mMarginLeft, bmp.getWidth());
+            beginY += convertDimension(mMarginTop, bmp.getWidth());
             
             int curX = beginX;
             int curY = beginY;
