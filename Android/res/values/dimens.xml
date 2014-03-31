@@ -16,6 +16,9 @@
     <dimen name="home_text_size">16dp</dimen>
     <dimen name="home_menu_height">48dp</dimen>
     
+    <dimen name="printsettings_option_with_sub_text_size">14dp</dimen>
+    <dimen name="printsettings_option_with_sub_height">56dp</dimen>
+    
     <dimen name="printsettings_menu_padding">10dp</dimen>
     <dimen name="printsettings_icon_width">20dp</dimen>
     
@@ -27,6 +30,7 @@
     
     <dimen name="printsettings_listvalue_text_size">16dp</dimen>
     <dimen name="printsettings_disclosure_size">20dp</dimen>
+    <dimen name="printsettings_radiobutton_size">32dp</dimen>
     
     <dimen name="printsettings_icon_setting_padding">12dp</dimen>
     

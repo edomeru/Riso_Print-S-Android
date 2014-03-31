@@ -19,7 +19,6 @@ import android.util.Log;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.model.Printer;
 
 public class PrintSettings {
     public static final String TAG = "PrintSettings";
@@ -50,7 +49,7 @@ public class PrintSettings {
         }
     }
     
-    public PrintSettings(Printer printer) {
+    public PrintSettings(int printerId) {
         this();
     }
     

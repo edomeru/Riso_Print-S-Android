@@ -8,6 +8,7 @@
     android:splitMotionEvents="false" >
 
     <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/theme_color_2"
