@@ -35,6 +35,7 @@ namespace SmartDeviceApp.Models
         public string Icon { get; set; }
         public PrintSettingType Type { get; set; }
         public object Value { get; set; }
+        public object Default { get; set; }
         public List<PrintSettingOption> Options { get; set; }
     }
 

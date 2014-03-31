@@ -45,26 +45,33 @@ namespace SmartDeviceApp.Converters
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || String.IsNullOrEmpty(value.ToString()))
+            string printSettingName = (string)parameter;
+            if (value == null || parameter == null || string.IsNullOrEmpty(value.ToString()) ||
+                string.IsNullOrEmpty(printSettingName.ToString()))
             {
                 return null;
             }
 
-            PagePrintSetting pagePrintSettings = value as PagePrintSetting;
-            string printSettingName = (string)parameter;
+            //PagePrintSetting pagePrintSettings = value as PagePrintSetting;
+
+            int intValue;
+            bool boolValue;
+
+            int.TryParse((string)value, out intValue);
+            bool.TryParse((string)value, out boolValue);
 
             // Convert to native type values
             if (printSettingName.Equals(PrintSettingConstant.KEY_COPIES))
             {
-                return pagePrintSettings.Copies;
+                return intValue;
             }
             else if (printSettingName.Equals(PrintSettingConstant.KEY_SCALE_TO_FIT))
             {
-                return pagePrintSettings.ScaleToFit;
+                return boolValue;
             }
             else if (printSettingName.Equals(PrintSettingConstant.KEY_BOOKLET))
             {
-                return pagePrintSettings.Booklet;
+                return boolValue;
             }
 
             // Convert to enum values
@@ -74,63 +81,63 @@ namespace SmartDeviceApp.Converters
             {
                 if (type.Equals(typeof(ColorMode)))
                 {
-                    return (int)pagePrintSettings.ColorMode;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(Orientation)))
                 {
-                    return (int)pagePrintSettings.Orientation;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(Duplex)))
                 {
-                    return (int)pagePrintSettings.Duplex;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(PaperSize)))
                 {
-                    return (int)pagePrintSettings.PaperSize;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(PaperType)))
                 {
-                    return (int)pagePrintSettings.PaperType;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(InputTray)))
                 {
-                    return (int)pagePrintSettings.InputTray;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(Imposition)))
                 {
-                    return (int)pagePrintSettings.Imposition;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(ImpositionOrder)))
                 {
-                    return (int)pagePrintSettings.ImpositionOrder;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(Sort)))
                 {
-                    return (int)pagePrintSettings.Sort;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(BookletFinishing)))
                 {
-                    return (int)pagePrintSettings.BookletFinishing;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(BookletLayout)))
                 {
-                    return (int)pagePrintSettings.BookletLayout;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(FinishingSide)))
                 {
-                    return (int)pagePrintSettings.FinishingSide;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(Staple)))
                 {
-                    return (int)pagePrintSettings.Staple;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(Punch)))
                 {
-                    return (int)pagePrintSettings.Punch;
+                    return intValue;
                 }
                 else if (type.Equals(typeof(OutputTray)))
                 {
-                    return (int)pagePrintSettings.OutputTray;
+                    return intValue;
                 }
             }
 

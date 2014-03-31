@@ -81,7 +81,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Initialize()
         {
             _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
-            _selectedPrintOptionEventHandler = new SelectedPrintSettingOptionEventHandler(UpdatePrintSetting);
+            _selectedPrintOptionEventHandler = new SelectedPrintSettingOptionEventHandler(UpdateSelectedPrintSettingOption);
 
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
@@ -97,10 +97,9 @@ namespace SmartDeviceApp.Controllers
                 _previewPageTotal = DocumentController.Instance.PageCount;
 
                 // Get print settings
-                await GetPrintAndPrintSetting();
-                await UpdatePreviewInfo(true);
-
                 LoadPrintSettingsOptions();
+                await GetPrintAndPrintSetting();
+                await UpdatePreviewInfo(true, true, true);
 
                 InitializeGestures();
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
@@ -160,7 +159,7 @@ namespace SmartDeviceApp.Controllers
             if (_selectedPrinter.Id < 0 || !_selectedPrinter.IsDefault)
             {
                 // No default printer
-                _selectedPrinter.PrintSetting = DefaultsUtility.CreateDefaultPrintSetting();
+                _selectedPrinter.PrintSetting = DefaultsUtility.GetDefaultPrintSetting(_printSettingList);
             }
             else
             {
@@ -169,7 +168,7 @@ namespace SmartDeviceApp.Controllers
                     await DatabaseController.Instance.GetPrintSetting(_selectedPrinter.Id);
                 if (_selectedPrinter.PrintSetting == null)
                 {
-                    _selectedPrinter.PrintSetting = DefaultsUtility.CreateDefaultPrintSetting();
+                    _selectedPrinter.PrintSetting = DefaultsUtility.GetDefaultPrintSetting(_printSettingList);
                 }
             }
         }
@@ -194,7 +193,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="printSetting"></param>
         /// <param name="selected"></param>
-        public async void UpdatePrintSetting(PrintSetting printSetting, int selectedIndex)
+        private async void UpdateSelectedPrintSettingOption(PrintSetting printSetting, int selectedIndex)
         {
             if (printSetting == null)
             {
@@ -335,18 +334,46 @@ namespace SmartDeviceApp.Controllers
             // Generate PreviewPages again
             if (isPreviewPageAffected || isPageCountAffected)
             {
-                await UpdatePreviewInfo(isPageCountAffected);
+                await UpdatePreviewInfo(false, false, isPageCountAffected);
                 //InitializeGestures();
                 _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
             }
         }
 
+        private async void UpdatePrintSettingState(PrintSetting printSetting, bool state)
+        {
+            var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
+                .Where(ps => ps.Name == printSetting.Name);
+            PrintSetting result = query.First();
+            result.Value = state;
+
+            bool isPreviewPageAffected = false;
+            if (result.Name.Equals(PrintSettingConstant.KEY_SCALE_TO_FIT))
+            {
+                if (_selectedPrinter.PrintSetting.ScaleToFit != state)
+                {
+                    _selectedPrinter.PrintSetting.ScaleToFit = state;
+                    isPreviewPageAffected = true;
+                }
+            }
+            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET))
+            {
+                if (_selectedPrinter.PrintSetting.Booklet != state)
+                {
+                    _selectedPrinter.PrintSetting.Booklet = state;
+                    isPreviewPageAffected = true;
+                }
+            }
+
+            await UpdatePreviewInfo(isPreviewPageAffected, false, false);
+        }
+
         /// <summary>
         /// Checks for view related print setting and notifies view model
         /// </summary>
-        /// <param name="sendPageCountInfo">flag when page count is needed to update in view model</param>
+        /// <param name="updatePageCount">flag when page count is needed to update in view model</param>
         /// <returns>task</returns>
-        private async Task UpdatePreviewInfo(bool sendPageCountInfo)
+        private async Task UpdatePreviewInfo(bool updatePageBind, bool updateDuplex, bool updatePageCount)
         {
             // Clean-up generated PreviewPages
             await ClearPreviewPageListAndImages();
@@ -368,12 +395,17 @@ namespace SmartDeviceApp.Controllers
 
             _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
                 .Convert(_selectedPrinter.PrintSetting.Imposition);
-            if (sendPageCountInfo)
+
+            if (updatePageBind)
+            {
+                _printPreviewViewModel.PageViewMode = _pageViewMode;
+
+            }
+            if (updatePageCount)
             {
                 _previewPageTotal = (uint)Math.Ceiling(
                     (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
                 _printPreviewViewModel.PageTotal = _previewPageTotal;
-                _printPreviewViewModel.PageViewMode = _pageViewMode;
             }
         }
 
@@ -880,7 +912,11 @@ namespace SmartDeviceApp.Controllers
                                                 Icon = (string)settingData.Attribute("icon"),
                                                 Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
                                                     (string)settingData.Attribute("type")),
-                                                Value = valueConverter.Convert(_selectedPrinter.PrintSetting,
+                                                Value = valueConverter.Convert(
+                                                    (string)settingData.Attribute("default"),
+                                                    null, (string)settingData.Attribute("name"), null),
+                                                Default = valueConverter.Convert(
+                                                    (string)settingData.Attribute("default"),
                                                     null, (string)settingData.Attribute("name"), null),
                                                 Options =
                                                 (
