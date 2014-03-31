@@ -15,6 +15,7 @@
 #import "PreviewSetting.h"
 #import "PDFPageContentViewController.h"
 #import "PrintSettingsHelper.h"
+#import "PrintPreviewHelper.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -114,7 +115,11 @@
     // *Assume portrait
     
     // Get aspect ratio
-    CGFloat aspectRatio = 8.5f / 11.0f;
+    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:self.printDocument.previewSetting.paperSize];
+    if (self.printDocument.previewSetting.orientation == 0)
+    {
+        aspectRatio = 1.0f / aspectRatio;
+    }
     
     self.previewView.hidden = NO;
     self.previewView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -205,6 +210,18 @@
 
 - (void)previewSettingDidChange
 {
+    // Recompute aspect ratio
+    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:self.printDocument.previewSetting.paperSize];
+    if (self.printDocument.previewSetting.orientation == 0)
+    {
+        aspectRatio = 1.0f / aspectRatio;
+    }
+    NSLayoutConstraint *aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.previewView attribute:NSLayoutAttributeHeight multiplier:aspectRatio constant:0.0f];
+    [aspectRatioConstraint setPriority:UILayoutPriorityRequired];
+    [self.previewView removeConstraint:self.aspectRatioConstraint];
+    [self.previewView addConstraint:aspectRatioConstraint];
+    self.aspectRatioConstraint = aspectRatioConstraint;
+    
     PDFPageContentViewController *current = [self viewControllerAtIndex:self.currentPage];
     [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
