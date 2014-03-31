@@ -25,8 +25,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;  /**< Reference outlet to the width constraint of the contentView*/
 @property (weak, nonatomic) IBOutlet UIView *communityNameView;  /**< Reference outlet to view that contains the community view input field*/
 @property (strong, nonatomic) NSDictionary* settings;  /**< Dictionary that contains the values of the settings*/
-
-
+@property (strong, nonatomic) UIAlertView *errorAlert; /**< Alert to use when to notify error in settings input*/
 /**
  Processes the cardId textfield input after editing
  @param inputString The current string in the cardId textfield
@@ -91,6 +90,12 @@
     self.cardId.delegate = self;
     self.communityName.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_COMMUNITY_NAME];
     self.communityName.delegate =self;
+    
+    self.errorAlert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                            message:@""
+                                           delegate:nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil];
     
     isContentOffset = NO;//set flag to indicate that content view is offset
     
@@ -198,7 +203,7 @@
     kSettingsInputError validationError = [SettingsValidationHelper validateCommunityNameInput:inputString];
     if(validationError == kSettingsInputErrorNone)
     {
-        [self.settings setValue:self.communityName.text forKey:KEY_SETTINGS_COMMUNITY_NAME];
+        [self.settings setValue:inputString forKey:KEY_SETTINGS_COMMUNITY_NAME];
         [PListHelper setApplicationSettings:self.settings];
     }
     else
@@ -208,12 +213,12 @@
     }
 }
 
-- (void)cardIDDidEndEditing:(NSString *)inputString;
+- (void)cardIDDidEndEditing:(NSString *)inputString
 {
     kSettingsInputError validationError = [SettingsValidationHelper validateCardIDInput:inputString];
     if(validationError == kSettingsInputErrorNone)
     {
-        [self.settings setValue:self.cardId.text forKey:KEY_SETTINGS_CARD_READER_ID];
+        [self.settings setValue:inputString forKey:KEY_SETTINGS_CARD_READER_ID];
         [PListHelper setApplicationSettings:self.settings];
     }
     else
@@ -225,15 +230,8 @@
 
 - (void)showValidationError:(kSettingsInputError)error
 {
-    NSString *message = [SettingsValidationHelper errorMessageForSettingsInputError:error];
-    
-    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                         message:message
-                                                        delegate:nil
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil];
-    
-    [errorAlert show];
+    self.errorAlert.message = [SettingsValidationHelper errorMessageForSettingsInputError:error];
+    [self.errorAlert show];
 }
 
 @end
