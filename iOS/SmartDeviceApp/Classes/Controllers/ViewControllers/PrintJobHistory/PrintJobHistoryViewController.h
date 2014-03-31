@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "HomeViewController.h"
 #import "UIViewController+Segue.h"
+#import "PrintJobHistoryGroupCell.h"
 
-@interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+@interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, PrintJobHistoryGroupCellDelegate>
 
 /** The UI responsible for displaying the list of print job history items. */
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;

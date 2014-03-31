@@ -55,7 +55,7 @@
 {
     if (index >= self.countPrintJobs)
     {
-        NSLog(@"[ERROR][PrintJob] index=%lu >= count=%lu",
+        NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
               (unsigned long)index, (unsigned long)self.countPrintJobs);
         return;
     }
@@ -70,7 +70,7 @@
 {
     if (index >= self.countPrintJobs)
     {
-        NSLog(@"[ERROR][PrintJob] index=%lu >= count=%lu",
+        NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
               (unsigned long)index, (unsigned long)self.countPrintJobs);
         return @"";
     }

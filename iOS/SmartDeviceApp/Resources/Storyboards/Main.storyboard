@@ -2358,50 +2358,50 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="DPb-ZR-kIw">
-                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="itemSize" width="320" height="500"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="KTT-2M-GyJ" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dPu-Ft-Q41" userLabel="iPhone - TableView">
-                                                    <rect key="frame" x="0.0" y="45" width="320" height="45"/>
+                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dPu-Ft-Q41" userLabel="iPhone - TableView">
+                                                    <rect key="frame" x="0.0" y="45" width="320" height="455"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <prototypes>
-                                                        <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobHistoryItem" textLabel="S41-4Y-pYh" detailTextLabel="bSf-Ag-oyx" imageView="dQ2-fO-ufv" rowHeight="45" style="IBUITableViewCellStyleValue1" id="cnq-2K-jWB" userLabel="PrintJobHistoryItem">
+                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobHistoryItem" textLabel="jOI-uA-LVi" detailTextLabel="SMv-yv-mrb" imageView="s58-ns-R2z" rowHeight="45" style="IBUITableViewCellStyleValue1" id="cnq-2K-jWB" userLabel="PrintJobHistoryItem">
                                                             <rect key="frame" x="0.0" y="22" width="320" height="45"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cnq-2K-jWB" id="vvl-VO-Pci">
                                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="S41-4Y-pYh" userLabel="Name">
+                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jOI-uA-LVi" userLabel="Name">
                                                                         <rect key="frame" x="54" y="12" width="86" height="21"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" id="bSf-Ag-oyx" userLabel="Date">
+                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="img_btn_job_status_ok" id="s58-ns-R2z" userLabel="Result">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                    </imageView>
+                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SMv-yv-mrb" userLabel="Timestamp">
                                                                         <rect key="frame" x="266" y="12" width="44" height="21"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
-                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="img_btn_job_status_ok" id="dQ2-fO-ufv">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                    </imageView>
                                                                 </subviews>
                                                             </tableViewCellContentView>
                                                             <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -2452,8 +2452,8 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="45" id="GYg-E5-pSg"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <state key="normal" title="Delete All">
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <state key="normal" title="DELETE ALL">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
@@ -2477,7 +2477,7 @@
                                             <constraint firstItem="MOS-FF-ZOf" firstAttribute="baseline" secondItem="uJ1-uS-srn" secondAttribute="baseline" id="n41-dt-mz2"/>
                                             <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="Xec-Wp-7rm" secondAttribute="trailing" id="yoM-F0-dUL"/>
                                         </constraints>
-                                        <size key="customSize" width="320" height="90"/>
+                                        <size key="customSize" width="320" height="500"/>
                                         <connections>
                                             <outlet property="deleteAllButton" destination="uJ1-uS-srn" id="zGN-SC-AcD"/>
                                             <outlet property="groupIndicator" destination="MOS-FF-ZOf" id="cWb-yX-ALG"/>
@@ -2579,26 +2579,26 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="U8g-IA-yCe">
-                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="itemSize" width="320" height="736"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="PlD-vX-hdR" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
-                                        <rect key="frame" x="140" y="0.0" width="320" height="90"/>
+                                        <rect key="frame" x="140" y="0.0" width="320" height="736"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="736"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="QLA-jj-dA8" userLabel="iPad - TableView">
-                                                    <rect key="frame" x="0.0" y="45" width="320" height="45"/>
+                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="QLA-jj-dA8" userLabel="iPad - TableView">
+                                                    <rect key="frame" x="0.0" y="45" width="320" height="691"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <prototypes>
-                                                        <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobHistoryItem" textLabel="UCm-MV-Qm5" detailTextLabel="ehT-9p-C2q" imageView="Tth-mL-Hff" rowHeight="45" style="IBUITableViewCellStyleValue1" id="aGA-NI-k55" userLabel="PrintJobHistoryItem">
+                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobHistoryItem" textLabel="UCm-MV-Qm5" detailTextLabel="ehT-9p-C2q" imageView="Tth-mL-Hff" rowHeight="45" style="IBUITableViewCellStyleValue1" id="aGA-NI-k55" userLabel="PrintJobHistoryItem">
                                                             <rect key="frame" x="0.0" y="22" width="320" height="45"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aGA-NI-k55" id="y9x-zh-hd8">
@@ -2698,7 +2698,7 @@
                                             <constraint firstItem="LVv-VU-mNA" firstAttribute="baseline" secondItem="RPP-IB-0ns" secondAttribute="baseline" id="uWj-DW-Ehh"/>
                                             <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="Jg3-qz-mnm" secondAttribute="trailing" id="yhY-dP-Ud5"/>
                                         </constraints>
-                                        <size key="customSize" width="320" height="90"/>
+                                        <size key="customSize" width="320" height="736"/>
                                         <connections>
                                             <outlet property="deleteAllButton" destination="RPP-IB-0ns" id="LmF-2I-MFs"/>
                                             <outlet property="groupIndicator" destination="LVv-VU-mNA" id="L3e-3C-LxN"/>
@@ -2738,6 +2738,23 @@
             </objects>
             <point key="canvasLocation" x="855" y="3161"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="K6a-TZ-o8l">
+            <objects>
+                <viewController id="hPO-tb-vzG" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="xOd-Tv-lP5"/>
+                        <viewControllerLayoutGuide type="bottom" id="Vx0-ui-Sp6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="o4E-xu-0m8">
+                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="J5A-SB-3Mi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -2767,7 +2784,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="suq-fU-kcs"/>
-        <segue reference="ax2-Mn-NH0"/>
+        <segue reference="uoe-Al-ug4"/>
+        <segue reference="oE4-lZ-OOf"/>
     </inferredMetricsTieBreakers>
 </document>

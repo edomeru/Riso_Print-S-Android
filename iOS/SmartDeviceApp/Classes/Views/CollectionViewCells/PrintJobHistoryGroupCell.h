@@ -11,6 +11,12 @@
 #define GROUPCELL   @"PrintJobHistoryGroup"
 #define ITEMCELL    @"PrintJobHistoryItem"
 
+#define TAG_FACTOR  1000
+
+@protocol PrintJobHistoryGroupCellDelegate <NSObject>
+
+@end
+
 @interface PrintJobHistoryGroupCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
 
 /**
@@ -45,6 +51,24 @@
         the date and time
  */
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp;
+
+/**
+ Adds a "DELETE" button to the row.
+ @param gesture
+        the swipe gesture where the user expects the delete button to appear
+ @param receiver
+        receiver for the "DELETE" button's tap action
+ @param actionOnTap
+        method of the receiver that will be triggered when the "DELETE" button is tapped
+ */
+- (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap;
+
+/**
+ Removes the print job item at the specified index.
+ @param indexPath
+        indexPath for the row to be deleted
+ */
+- (void)removePrintJob:(NSIndexPath*)indexPath;
 
 /**
  Forces the cell to update its current view.

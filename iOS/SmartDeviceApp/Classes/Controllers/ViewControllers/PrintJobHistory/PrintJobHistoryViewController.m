@@ -7,7 +7,6 @@
 //
 
 #import "PrintJobHistoryViewController.h"
-#import "PrintJobHistoryGroupCell.h"
 #import "PrintJobHistoryGroup.h"
 #import "PListHelper.h"
 
@@ -44,6 +43,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (void)setupData;
 - (IBAction)tappedPrinterHeader:(UIButton*)sender;
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender;
+- (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer;
 
 @end
 
@@ -65,6 +65,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     [super viewDidLoad];
     
     [self setupData];
+    [self setupView];
 }
 
 - (void)didReceiveMemoryWarning
@@ -81,6 +82,15 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 }
 
 #pragma mark - CollectionView
+
+- (void)setupView
+{
+    // put the swipe-to-delete gesture handler
+    UISwipeGestureRecognizer* swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(swipedLeft:)];
+    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.collectionView addGestureRecognizer:swipeLeft];
+}
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -145,8 +155,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     // get the group
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
-    NSLog(@"[INFO][PrintJob] setting size for %@", group.groupName);
-    NSLog(@"[INFO][PrintJob] num print jobs = %lu", (unsigned long)group.countPrintJobs);
+    NSLog(@"[INFO][PrintJobCtrl] setting size for %@", group.groupName);
+    NSLog(@"[INFO][PrintJobCtrl] num print jobs = %lu", (unsigned long)group.countPrintJobs);
     
     // set the list height
     CGFloat heightPrintJobsList;
@@ -167,7 +177,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     // finalize the cell dimensions
     CGFloat cellHeight = GROUP_HEADER_HEIGHT + heightPrintJobsList;
     CGFloat cellWidth = GROUP_FRAME_WIDTH;
-    NSLog(@"[INFO][PrintJob] h=%f,w=%f", cellHeight, cellWidth);
+    NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", cellHeight, cellWidth);
     CGSize cellSize = CGSizeMake(cellWidth, cellHeight);
     
     return cellSize;
@@ -231,7 +241,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     // get the cell tapped
     NSInteger cellIndex = [sender tag];
-    NSLog(@"[INFO][PrintJob] tapped cell=%ld", (long)cellIndex);
+    NSLog(@"[INFO][PrintJobCtrl] tapped cell=%ld", (long)cellIndex);
     
     // toggle collapsed/expanded
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:cellIndex];
@@ -248,10 +258,44 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     // get the cell tapped
     NSInteger cellIndex = [sender tag];
-    NSLog(@"[INFO][PrintJob] tapped cell=%ld", (long)cellIndex);
+    NSLog(@"[INFO][PrintJobCtrl] tapped cell=%ld", (long)cellIndex);
     
     // remove the group
     [self.listPrintJobHistoryGroups removeObjectAtIndex:cellIndex];
+    
+    // force redraw
+    // with animation (not smooth)
+    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+    // without animation //TODO: should have some animation
+    [self.collectionView reloadData];
+}
+
+- (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
+{
+    // get the group swiped
+    CGPoint swipedArea = [gestureRecognizer locationInView:self.collectionView];
+    NSIndexPath* cellIndexPath = [self.collectionView indexPathForItemAtPoint:swipedArea];
+    NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)cellIndexPath.row);
+    
+    // add a delete button to the specific row swiped
+    PrintJobHistoryGroupCell* cell = (PrintJobHistoryGroupCell*)[self.collectionView
+                                                                 cellForItemAtIndexPath:cellIndexPath];
+    [cell putDeleteButton:gestureRecognizer handledBy:self usingActionOnTap:@selector(tappedDeleteOneButton:)];
+}
+
+- (void)tappedDeleteOneButton:(UIButton*)button
+{
+    NSInteger tag = [button tag];
+    NSUInteger groupTag = tag/TAG_FACTOR;
+    NSUInteger itemTag = tag%TAG_FACTOR;
+    NSLog(@"[INFO][PrintJobCtrl] will delete {group=%ld, item=%ld}",
+          (unsigned long)groupTag, (unsigned long)itemTag);
+    
+    // delete the item from the model
+    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
+    [group deletePrintJobAtIndex:itemTag];
+    if ([group countPrintJobs] == 0)
+        [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
     
     // force redraw
     // with animation (not smooth)

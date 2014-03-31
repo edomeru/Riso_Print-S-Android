@@ -7,6 +7,7 @@
 //
 
 #import "PrintJobHistoryGroupCell.h"
+#import "UIColor+Theme.h"
 
 #define TEXT_GROUP_COLLAPSED    @"+"
 #define TEXT_GROUP_EXPANDED     @"-"
@@ -95,21 +96,26 @@
     [timestampFormat setDateFormat:FORMAT_DATE_TIME];
     [timestampFormat setTimeZone:[NSTimeZone timeZoneWithName:FORMAT_ZONE]]; //TODO: should depend on localization?
     cell.detailTextLabel.text = [timestampFormat stringFromDate:printJob[IDX_TIMESTAMP]];
+    cell.detailTextLabel.hidden = NO;
+    cell.accessoryView = nil;
     
-    //fix for the bugged always-white cell in iPad iOS7
+    // fix for the bugged always-white cell in iPad iOS7
     cell.backgroundColor = [UIColor clearColor];
     
     return cell;
 }
 
-#pragma mark - Cell Contents
+#pragma mark - Cell Data
 
 - (void)initWithTag:(NSInteger)tag
 {
+    // set cell tags
     self.groupName.tag = tag;
     self.groupIndicator.tag = tag;
     self.deleteAllButton.tag = tag;
+    self.tableView.tag = tag;
     
+    // prepare container for print jobs list
     self.listPrintJobs = [NSMutableArray array];
 }
 
@@ -139,7 +145,48 @@
     [self.listPrintJobs addObject:printJob];
 }
 
-#pragma mark - Cell Actions
+- (void)removePrintJob:(NSIndexPath*)indexPath
+{
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self reloadContents];
+}
+
+#pragma mark - Cell UI
+
+- (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap
+{
+    // get the row swiped
+    CGPoint swipedItem = [gesture locationInView:self.tableView];
+    NSIndexPath* itemIndexPath = [self.tableView indexPathForRowAtPoint:swipedItem];
+    if (itemIndexPath != nil)
+    {
+        NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)itemIndexPath.row);
+        
+        UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:itemIndexPath];
+        UIButton* deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [deleteButton setTitle:@"DELETE" forState:UIControlStateNormal];
+        [deleteButton setTitleEdgeInsets:UIEdgeInsetsMake(10.0f, 15.0f, 10.0f, 15.0f)];
+        [deleteButton setBackgroundColor:[UIColor redThemeColor]];
+        [deleteButton setUserInteractionEnabled:YES];
+        deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
+        deleteButton.tag = (self.tableView.tag * TAG_FACTOR) + itemIndexPath.row; //<group>00<row>
+        deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x,
+                                        0,
+                                        self.deleteAllButton.frame.size.width-15.0f,
+                                        cell.frame.size.height-10.0f);
+        [deleteButton addTarget:receiver
+                         action:actionOnTap
+               forControlEvents:UIControlEventTouchUpInside];
+        cell.accessoryView = deleteButton;
+        cell.detailTextLabel.hidden = YES;
+    }
+    else
+    {
+        // swiped outside of the UITableView
+        NSLog(@"[INFO][PrintJobCell] swiped left outside of table");
+        return;
+    }
+}
 
 - (void)reloadContents
 {
