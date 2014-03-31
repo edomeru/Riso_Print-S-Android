@@ -405,7 +405,11 @@ namespace SmartDeviceApp.ViewModels
             //DummyProvider.Instance.LoadPageImage(index);
             _rightPageIndex = index;
             SetPageIndexes();
-            GoToPageEventHandler((int)index);
+
+            if (GoToPageEventHandler != null)
+            {
+                GoToPageEventHandler((int)index);
+            }
         }
 
         

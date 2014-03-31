@@ -36,7 +36,9 @@ namespace SmartDeviceApp.Controllers
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
         public delegate Task GoToPageEventHandler(int pageIndex);
+        public delegate void SelectedPrintSettingOptionEventHandler(PrintSetting printSetting, int selectedIndex);
         private GoToPageEventHandler _goToPageEventHandler;
+        private SelectedPrintSettingOptionEventHandler _selectedPrintOptionEventHandler;
 
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
@@ -76,6 +78,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Initialize()
         {
             _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
+            _selectedPrintOptionEventHandler = new SelectedPrintSettingOptionEventHandler(UpdatePrintSetting);
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
             await Cleanup(); // Ensure to clean up previous
@@ -90,7 +93,7 @@ namespace SmartDeviceApp.Controllers
 
                 // Get print settings
                 await GetPrintAndPrintSetting();
-                await OnPrintSettingUpdated(true);
+                await UpdatePreviewInfo(true);
 
                 LoadPrintSettingsOptions();
 
@@ -98,6 +101,8 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
+
+                _printSettingOptionsViewModel.SelectedPrintSettingOptionEventHandler += _selectedPrintOptionEventHandler;
                 await LoadPage(0);
             }
             else
@@ -113,6 +118,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Cleanup()
         {
             _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+            _printSettingOptionsViewModel.SelectedPrintSettingOptionEventHandler -= _selectedPrintOptionEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
             _previewPages = null;
@@ -183,9 +189,9 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="printSetting"></param>
         /// <param name="selected"></param>
-        public async void UpdatePrintSetting(PrintSetting printSetting, PrintSettingOption selected)
+        public async void UpdatePrintSetting(PrintSetting printSetting, int selectedIndex)
         {
-            if (printSetting == null || selected == null)
+            if (printSetting == null)
             {
                 return;
             }
@@ -193,70 +199,70 @@ namespace SmartDeviceApp.Controllers
             var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
                 .Where(ps => ps.Name == printSetting.Name);
             PrintSetting result = query.First();
-            result.Value = selected.Index;
+            result.Value = selectedIndex;
 
             // Manual check here what is changed
             bool isPreviewPageAffected = false;
             bool isPageCountAffected = false;
             if (result.Name.Equals(PrintSettingConstant.KEY_COLOR_MODE))
             {
-                if (_selectedPrinter.PrintSetting.ColorMode != selected.Index)
+                if (_selectedPrinter.PrintSetting.ColorMode != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.ColorMode = selected.Index;
+                    _selectedPrinter.PrintSetting.ColorMode = selectedIndex;
                     isPreviewPageAffected = true;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_ORIENTATION))
             {
-                if (_selectedPrinter.PrintSetting.Orientation != selected.Index)
+                if (_selectedPrinter.PrintSetting.Orientation != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.Orientation = selected.Index;
+                    _selectedPrinter.PrintSetting.Orientation = selectedIndex;
                     isPreviewPageAffected = true;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_DUPLEX))
             {
-                if (_selectedPrinter.PrintSetting.Duplex != selected.Index)
+                if (_selectedPrinter.PrintSetting.Duplex != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.Duplex = selected.Index;
+                    _selectedPrinter.PrintSetting.Duplex = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_SIZE))
             {
-                if (_selectedPrinter.PrintSetting.PaperSize != selected.Index)
+                if (_selectedPrinter.PrintSetting.PaperSize != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.PaperSize = selected.Index;
+                    _selectedPrinter.PrintSetting.PaperSize = selectedIndex;
                     isPreviewPageAffected = true;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_TYPE))
             {
-                if (_selectedPrinter.PrintSetting.PaperType != selected.Index)
+                if (_selectedPrinter.PrintSetting.PaperType != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.PaperType = selected.Index;
+                    _selectedPrinter.PrintSetting.PaperType = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_INPUT_TRAY))
             {
-                if (_selectedPrinter.PrintSetting.InputTray != selected.Index)
+                if (_selectedPrinter.PrintSetting.InputTray != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.InputTray = selected.Index;
+                    _selectedPrinter.PrintSetting.InputTray = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION))
             {
-                if (_selectedPrinter.PrintSetting.Imposition != selected.Index)
+                if (_selectedPrinter.PrintSetting.Imposition != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.Imposition = selected.Index;
+                    _selectedPrinter.PrintSetting.Imposition = selectedIndex;
                     isPreviewPageAffected = true;
                     isPageCountAffected = true;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION_ORDER))
             {
-                if (_selectedPrinter.PrintSetting.ImpositionOrder != selected.Index)
+                if (_selectedPrinter.PrintSetting.ImpositionOrder != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.ImpositionOrder = selected.Index;
+                    _selectedPrinter.PrintSetting.ImpositionOrder = selectedIndex;
                     if (_pagesPerSheet > 1) // Matters only if pages per sheet is more than 1
                     {
                         isPreviewPageAffected = true;
@@ -265,62 +271,62 @@ namespace SmartDeviceApp.Controllers
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_SORT))
             {
-                if (_selectedPrinter.PrintSetting.Sort != selected.Index)
+                if (_selectedPrinter.PrintSetting.Sort != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.Sort = selected.Index;
+                    _selectedPrinter.PrintSetting.Sort = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_FINISHING))
             {
-                if (_selectedPrinter.PrintSetting.BookletFinishing != selected.Index)
+                if (_selectedPrinter.PrintSetting.BookletFinishing != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.BookletFinishing = selected.Index;
+                    _selectedPrinter.PrintSetting.BookletFinishing = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_LAYOUT))
             {
-                if (_selectedPrinter.PrintSetting.BookletLayout != selected.Index)
+                if (_selectedPrinter.PrintSetting.BookletLayout != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.BookletLayout = selected.Index;
+                    _selectedPrinter.PrintSetting.BookletLayout = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_FINISHING_SIDE))
             {
-                if (_selectedPrinter.PrintSetting.FinishingSide != selected.Index)
+                if (_selectedPrinter.PrintSetting.FinishingSide != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.FinishingSide = selected.Index;
+                    _selectedPrinter.PrintSetting.FinishingSide = selectedIndex;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_STAPLE))
             {
-                if (_selectedPrinter.PrintSetting.Staple != selected.Index)
+                if (_selectedPrinter.PrintSetting.Staple != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.Staple = selected.Index;
+                    _selectedPrinter.PrintSetting.Staple = selectedIndex;
                     isPreviewPageAffected = true;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_PUNCH))
             {
-                if (_selectedPrinter.PrintSetting.Punch != selected.Index)
+                if (_selectedPrinter.PrintSetting.Punch != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.Punch = selected.Index;
+                    _selectedPrinter.PrintSetting.Punch = selectedIndex;
                     isPreviewPageAffected = true;
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_OUTPUT_TRAY))
             {
-                if (_selectedPrinter.PrintSetting.OutputTray != selected.Index)
+                if (_selectedPrinter.PrintSetting.OutputTray != selectedIndex)
                 {
-                    _selectedPrinter.PrintSetting.OutputTray = selected.Index;
+                    _selectedPrinter.PrintSetting.OutputTray = selectedIndex;
                 }
             }
 
             // Generate PreviewPages again
             if (isPreviewPageAffected || isPageCountAffected)
             {
-                await OnPrintSettingUpdated(isPageCountAffected);
-                // InitializePreview();
-                // await GenerateEmptyPage();
+                _printPreviewViewModel.RightPageImage = null;
+                await UpdatePreviewInfo(isPageCountAffected);
+                //InitializeGestures();
                 // Page slide value changed event is expected to invoke LoadPage when page count
                 // changes so no need to load the page when page count is not affected
                 if (!isPageCountAffected)
@@ -335,7 +341,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="sendPageCountInfo">flag when page count is needed to update in view model</param>
         /// <returns>task</returns>
-        private async Task OnPrintSettingUpdated(bool sendPageCountInfo)
+        private async Task UpdatePreviewInfo(bool sendPageCountInfo)
         {
             // Clean-up generated PreviewPages
             await ClearPreviewPageListAndImages();
@@ -356,8 +362,6 @@ namespace SmartDeviceApp.Controllers
             {
                 _previewPageTotal = (uint)Math.Ceiling(
                     (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
-                //Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
-                //    _pageViewMode));
                 _printPreviewViewModel.PageTotal = _previewPageTotal;
                 _printPreviewViewModel.PageViewMode = _pageViewMode;
             }
@@ -387,9 +391,6 @@ namespace SmartDeviceApp.Controllers
                     // Open the bitmap
                     BitmapImage bitmapImage = new BitmapImage(new Uri(jpegFile.Path));
 
-                    // Create message and send
-                    //Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                    //    previewPage.ActualSize));
                     _printPreviewViewModel.RightPageImage = bitmapImage;
                     _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
 
@@ -526,9 +527,6 @@ namespace SmartDeviceApp.Controllers
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
 
-                        // Create message and send
-                        //Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                        //    previewPage.ActualSize));
                         _printPreviewViewModel.RightPageImage = bitmapImage;
                         _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
                     }

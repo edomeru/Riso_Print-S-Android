@@ -16,6 +16,8 @@ namespace SmartDeviceApp.ViewModels
 {
     public class PrintSettingOptionsViewModel : ViewModelBase
     {
+        public event SmartDeviceApp.Controllers.PrintPreviewController.SelectedPrintSettingOptionEventHandler SelectedPrintSettingOptionEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -97,9 +99,11 @@ namespace SmartDeviceApp.ViewModels
         {
             SelectedIndex = option.Index;
 
-            // TODO: Send selected item to PrintPreviewController
-            //PrintPreviewController.Instance.UpdatePrintSetting(PrintSetting,
-            //    SelectedPrintSettingOption);
+            // Send selected index to PrintPreviewController
+            if (SelectedPrintSettingOptionEventHandler != null)
+            {
+                SelectedPrintSettingOptionEventHandler(PrintSetting, SelectedIndex);
+            }
         }
 
         private void BackToPrintSettingsExecute()
