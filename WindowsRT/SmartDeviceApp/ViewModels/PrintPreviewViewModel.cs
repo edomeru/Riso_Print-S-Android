@@ -403,21 +403,20 @@ namespace SmartDeviceApp.ViewModels
         public void GoToPage(uint index)
         {
             //DummyProvider.Instance.LoadPageImage(index);
-            _rightPageIndex = index;
-            SetPageIndexes();
-
             if (GoToPageEventHandler != null)
             {
                 GoToPageEventHandler((int)index);
             }
+            _rightPageIndex = index;
+            SetPageIndexes();
         }
 
         
         // TODO: Two-page view
-        private async void GoToPreviousPageExecute()
+        private void GoToPreviousPageExecute()
         {
             // DummyProvider.Instance.LoadPageImage(--_rightPageIndex);
-            await PrintPreviewController.Instance.LoadPage((int)--_rightPageIndex);
+            --_rightPageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
@@ -429,10 +428,10 @@ namespace SmartDeviceApp.ViewModels
         }
 
         // TODO: Two-page view
-        private async void GoToNextPageExecute()
+        private void GoToNextPageExecute()
         {
             // DummyProvider.Instance.LoadPageImage(++_rightPageIndex);
-            await PrintPreviewController.Instance.LoadPage((int)++_rightPageIndex);
+            ++_rightPageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 

@@ -324,15 +324,10 @@ namespace SmartDeviceApp.Controllers
             // Generate PreviewPages again
             if (isPreviewPageAffected || isPageCountAffected)
             {
-                _printPreviewViewModel.RightPageImage = null;
+                _printPreviewViewModel.RightPageImage = new BitmapImage(); // TODO: Temporary only
                 await UpdatePreviewInfo(isPageCountAffected);
                 //InitializeGestures();
-                // Page slide value changed event is expected to invoke LoadPage when page count
-                // changes so no need to load the page when page count is not affected
-                if (!isPageCountAffected)
-                {
-                    await LoadPage(_currPreviewPageIndex);
-                }
+                _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
             }
         }
 
