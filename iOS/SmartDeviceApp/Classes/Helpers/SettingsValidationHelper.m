@@ -47,7 +47,7 @@
     {
         return kSettingsInputErrorCommunityNameNoLength;
     }
-    
+    //Check for prohibitted characters
     NSCharacterSet* invalidSet = [NSCharacterSet characterSetWithCharactersInString:@" \\'\"#"];
     NSRange range = [inputString rangeOfCharacterFromSet:invalidSet];
     
@@ -73,6 +73,8 @@
         case kSettingsInputErrorCommunityNameNoLength:
             message = @"Input required for community name";
             break;
+        case kSettingsInputErrorNone:
+            message = @"";
         default:
             break;
     }

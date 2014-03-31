@@ -1511,7 +1511,7 @@
                                                             <constraint firstAttribute="height" constant="30" id="Vfu-cH-KT2"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                        <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                                        <textInputTraits key="textInputTraits" keyboardType="alphabet" returnKeyType="done"/>
                                                     </textField>
                                                 </subviews>
                                                 <constraints>
