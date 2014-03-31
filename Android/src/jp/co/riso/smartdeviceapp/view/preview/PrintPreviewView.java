@@ -112,8 +112,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     // ================================================================================
     
     public void loadResources() {
-        mStapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
-        mPunchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_punch);
+        mStapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_staple);
+        mPunchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_punch);
     }
     
     public void freeResources() {
