@@ -20,15 +20,16 @@
 {
     if (localizationId != nil)
     {
+        NSString *upperCased = [localizationId uppercaseString];
         if([self isKindOfClass:UILabel.class])
         {
             UILabel *label = (UILabel *)self;
-            [label setText:NSLocalizedString(localizationId, @"")];
+            [label setText:NSLocalizedString(upperCased, @"")];
         }
         else if ([self isKindOfClass:UIButton.class])
         {
             UIButton *button = (UIButton *)self;
-            [button setTitle:NSLocalizedString(localizationId, @"") forState:UIControlStateNormal];
+            [button setTitle:NSLocalizedString(upperCased, @"") forState:UIControlStateNormal];
         }
     }
 }

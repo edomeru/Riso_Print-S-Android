@@ -12,6 +12,28 @@
 #define DEBUG_LOG_PRINT_PREVIEW 0 //TODO: transfer to AppDebug.h on merge
 
 typedef enum {
+    kColorModeAuto,
+    kColorModeFullColor,
+    kColorModeBlack
+} kColorMode;
+
+typedef enum {
+    kPaperSizeA3W,
+    kPaperSizeA3,
+    kPaperSizeA4,
+    kPaperSizeA5,
+    kPaperSizeA6,
+    kPaperSizeB4,
+    kPaperSizeB5,
+    kPaperSizeB6,
+    kPaperSizeFoolscap,
+    kPaperSizeTabloid,
+    kPaperSizeLegal,
+    kPaperSizeLetter,
+    kPaperSizeStatement
+} kPaperSize;
+
+typedef enum {
     PAGINATION_OFF,
     PAGINATION_2IN1,
     PAGINATION_4IN1,
@@ -20,25 +42,11 @@ typedef enum {
     PAGINATION_16IN1
 }T_PAGINATION;
 
-typedef enum {
-    PAPERSIZE_A3,
-    PAPERSIZE_A4,
-    PAPERSIZE_LETTER,
-    PAPERSIZE_LEGAL,
-    PAPERSIZE_ENVELOPE
-}T_PAPERSIZE;
-
 typedef enum  {
     BIND_LEFT,
     BIND_RIGHT,
     BIND_TOP
 } T_BIND;
-
-typedef enum{
-    COLORMODE_AUTO,
-    COLORMODE_COLOR,
-    COLORMODE_MONO
-}T_COLORMODE;
 
 typedef enum
 {
@@ -57,12 +65,17 @@ typedef enum
 @interface PrintPreviewHelper : NSObject
 /**
  Helper function to determine if preview is in grayscale based on color mode setting value
- 
  @param colorMode - color mode setting value
- 
  @return YES if grayscale; NO otherwise
- **/
-+(BOOL) isGrayScaleColorForColorModeSetting : (NSUInteger) colorMode;
+ */
++(BOOL) isGrayScaleColorForColorModeSetting : (kColorMode) colorMode;
+
+/**
+ Helper function to determine the aspect ration of the paper
+ @param paperSize - paper size
+ @return aspect ratio (height / width)
+ */
++(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize;
 
 /**
  Helper function to determine spine location of page view controller based on settings affecting spine location

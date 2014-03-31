@@ -7,28 +7,18 @@
 //
 
 #import "PDFFileManager.h"
+#import "PrintDocument.h"
+#import "XMLParser.h"
+#import "PrintSettingsHelper.h"
+
 @interface PDFFileManager()
-@property (strong, nonatomic) NSURL *previewURL;
-/**
- Init the internal PDF URL used for preview
- **/
--(void) initPreviewURL;
-/**
- Check PDF for unsupported of error case
- @param CGPDFDocumentObjectRef pdfdocument object
- @return T_PDF_ERROR
- **/
--(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument;
-/**
- Rename PDF for preview to the internal PDF URL used for preview
- @return YES if successfully renamed; NO otherwise
- **/
--(BOOL) renamePDFFileToPreviewURL;
-/**
- Cleanup the current internal PDF file for preview
- **/
--(void) cleanupPreviewPDF;
+
+@property (nonatomic) BOOL fileAvailableForPreview;
+@property (nonatomic, strong) NSURL *documentURL;
+@property (nonatomic, strong) PrintDocument *printDocument;
+
 @end
+
 @implementation PDFFileManager
 
 +(id) sharedManager
@@ -46,118 +36,79 @@
 
 -(id) init
 {
-    if(self == [super init])
+    self = [super init];
+    if(self)
     {
-        self.pdfDocument = nil;
-        self.pdfFileAvailable = NO;
-        [self initPreviewURL];
+        _fileAvailableForLoad = NO;
+        _fileAvailableForPreview = NO;
+        _printDocument = [[PrintDocument alloc] init];
+        _printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
     }
     return self;
 }
 
-- (T_PDF_ERROR) setUpPDF:(NSURL *)fileURL
+- (NSString *)fileName
 {
-    CGPDFDocumentRef pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)fileURL);
-    int statusCode = [self checkPDF:pdfDocument];
-    CGPDFDocumentRelease(pdfDocument);
-    if(statusCode == PDF_ERROR_NONE)
-    {
-        self.pdfURL = fileURL; //keep original url
-        /*rename the file - 
-         handling for when the same file is opened in the next open-in while in background,
-         The previously opened file is still in sandbox when the same file is copied automatically,
-         to sandbox by the system, The systems renames the new file to <file name> - 1. pdf because the previous file has the same file name
-         To prevent this, always rename the file for preview to a temp file for preview so when the same file is opened for preview*/
-        if([self renamePDFFileToPreviewURL] == NO)
-        {
-            return PDF_ERROR_PROCESSING_FAILED;
-        }
-        self.pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.previewURL);
-        
-        if(self.pdfDocument == nil)
-        {
-            return PDF_ERROR_PROCESSING_FAILED;
-        }
-        self.pdfFileAvailable = YES;
-    }
-    else
-    {
-        self.pdfFileAvailable = NO;
-    }
-
-    return statusCode;
+    return [[NSFileManager defaultManager] displayNameAtPath:[self.fileURL path]];
 }
 
-- (void) cleanUp
-{
-    if(self.pdfDocument != nil)
-    {
-        CGPDFDocumentRelease(self.pdfDocument);
-    }
-
-    if(self.pdfURL != nil)
-    {
-        self.pdfURL = nil;
-    }
-    [self cleanupPreviewPDF];
-    self.pdfFileAvailable = NO;
-}
-
-#pragma mark - Private Class Methods
-
--(void) initPreviewURL
+- (BOOL)moveFileToDocuments
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *tempString = [NSString stringWithFormat:@"%@/SDAPreview.pdf",documentsDirectory];
-    self.previewURL = [NSURL fileURLWithPath:tempString];
-}
-
--(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument
-{
-    if(pdfDocument == nil)
+    NSString *newPath = [NSString stringWithFormat:@"%@/SDAPreview.pdf", documentsDirectory];
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtPath:newPath error:&error];
+    if ([[NSFileManager defaultManager] moveItemAtPath:[self.fileURL path] toPath:newPath error:&error] == NO)
     {
-        return PDF_ERROR_OPEN; //error opening
-    }
-    
-    if(CGPDFDocumentIsUnlocked(pdfDocument) == false)
-    {
-        return PDF_ERROR_LOCKED; //unsupported, password protected
-    }
-    
-    if(CGPDFDocumentIsEncrypted(pdfDocument) == true)
-    {
-        if(CGPDFDocumentAllowsPrinting(pdfDocument) == false)
-        {
-            return PDF_ERROR_PRINTING_NOT_ALLOWED; // does not allow printing
-        }
-    }
-
-    return PDF_ERROR_NONE;
-}
-
--(BOOL) renamePDFFileToPreviewURL
-{
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSError *error = nil;
-    if([fileMgr moveItemAtPath:[self.pdfURL path] toPath:[self.previewURL path] error:&error] == NO)
-    {
-#if DEBUG_LOG_PRINT_PREVIEW
-        NSLog(@"Failed to rename file");
-#endif
+        self.documentURL = nil;
         return NO;
     }
+    
+    self.documentURL = [NSURL fileURLWithPath:newPath];
     return YES;
 }
 
--(void) cleanupPreviewPDF
+- (T_PDF_ERROR)verifyDocument
 {
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    if([fileMgr fileExistsAtPath:[self.previewURL path]] == YES)
+    // Check if loaded
+    if (self.printDocument.pdfDocument == nil)
     {
-        NSError *error = nil;
-        [fileMgr removeItemAtPath:[self.previewURL path] error:&error];
+        return PDF_ERROR_OPEN;
     }
+    
+    if (CGPDFDocumentIsUnlocked(self.printDocument.pdfDocument) == false)
+    {
+        return PDF_ERROR_LOCKED;
+    }
+    
+    if (CGPDFDocumentIsEncrypted(self.printDocument.pdfDocument) == true)
+    {
+        if (CGPDFDocumentAllowsPrinting(self.printDocument.pdfDocument) == false)
+        {
+            return PDF_ERROR_PRINTING_NOT_ALLOWED;
+        }
+    }
+    
+    return PDF_ERROR_NONE;
+}
+
+- (T_PDF_ERROR)loadFile
+{
+    if (![self moveFileToDocuments])
+    {
+        return PDF_ERROR_PROCESSING_FAILED;
+    }
+   
+    self.printDocument = [[PrintDocument alloc] initWithURL:self.documentURL];
+    T_PDF_ERROR result = [self verifyDocument];
+    if (result == PDF_ERROR_NONE)
+    {
+        self.fileAvailableForPreview = YES;
+        self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
+    }
+    
+    return result;
 }
 
 @end

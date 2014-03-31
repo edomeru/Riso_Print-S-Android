@@ -18,25 +18,22 @@ typedef enum
     PDF_ERROR_PROCESSING_FAILED
 } T_PDF_ERROR;
 
+@class PrintDocument;
+
 @interface PDFFileManager : NSObject
-@property (strong, nonatomic) NSURL *pdfURL;
-@property (nonatomic, assign) CGPDFDocumentRef pdfDocument;
-@property (nonatomic, assign) BOOL pdfFileAvailable;
+
+@property (nonatomic) BOOL fileAvailableForLoad;
+@property (nonatomic, readonly) BOOL fileAvailableForPreview;
+@property (nonatomic, strong) NSURL *fileURL;
+@property (nonatomic, weak, readonly) NSString *fileName;
+@property (nonatomic, strong, readonly) PrintDocument *printDocument;
+
 /**
  Returns the single instance of the PDFFileManager
  @return shared PDFFileManager instance
  **/
 + (id)sharedManager;
-/**
- Set up the PDF for preview
- @return T_PDF_ERROR
- **/
-- (T_PDF_ERROR) setUpPDF:(NSURL *)fileURL;
-/**
- Clean up PDF for preview
- @return PDF_ERROR_NONE if no error. Error ID if there is Error
- **/
-- (void) cleanUp;
 
+- (T_PDF_ERROR)loadFile;
 
 @end

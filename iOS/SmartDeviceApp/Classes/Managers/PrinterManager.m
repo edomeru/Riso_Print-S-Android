@@ -378,7 +378,7 @@ static PrinterManager* sharedPrinterManager = nil;
 - (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
 {
     NSDictionary* defaultPrintSettings = [PListUtils readDefaultPrintSettings];
-    (*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
+    /*(*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
     (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
     (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];
     (*printSetting).catch_tray = [defaultPrintSettings objectForKey:PS_CATCH_TRAY];
@@ -393,7 +393,7 @@ static PrinterManager* sharedPrinterManager = nil;
     (*printSetting).sort = [defaultPrintSettings objectForKey:PS_SORT];
     (*printSetting).staple = [defaultPrintSettings objectForKey:PS_STAPLE];
     (*printSetting).zoom = [defaultPrintSettings objectForKey:PS_ZOOM];
-    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];
+    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];*/
 }
 
 - (BOOL)isAtMaximumPrinters

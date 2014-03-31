@@ -7,13 +7,14 @@
 //
 
 #import "PrintSetting+Log.h"
+#import "PrintSettingsHelper.h"
 
 @implementation PrintSetting (Log)
 
 - (void)log
 {
     NSMutableString* msg = [NSMutableString stringWithString:@"  Print Settings:"];
-    [msg appendFormat:@"\n   %@=%ld", PS_BIND, (long)[self.bind integerValue]];
+    /*[msg appendFormat:@"\n   %@=%ld", PS_BIND, (long)[self.bind integerValue]];
     [msg appendFormat:@"\n   %@=%ld", PS_BOOKLET_BINDING, (long)[self.booklet_binding integerValue]];
     [msg appendFormat:@"\n   %@=%ld", PS_BOOKLET_TRAY, (long)[self.booklet_tray integerValue]];
     [msg appendFormat:@"\n   %@=%ld", PS_CATCH_TRAY, (long)[self.catch_tray integerValue]];
@@ -28,7 +29,20 @@
     [msg appendFormat:@"\n   %@=%ld", PS_SORT, (long)[self.sort integerValue]];
     [msg appendFormat:@"\n   %@=%ld", PS_STAPLE, (long)[self.staple integerValue]];
     [msg appendFormat:@"\n   %@=%ld", PS_ZOOM, (long)[self.zoom integerValue]];
-    [msg appendFormat:@"\n   %@=%ld", PS_ZOOM_RATE, (long)[self.zoom_rate integerValue]];
+    [msg appendFormat:@"\n   %@=%ld", PS_ZOOM_RATE, (long)[self.zoom_rate integerValue]];*/
+    NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [printSettingsTree objectForKey:@"group"];
+    for (NSDictionary *group in groups)
+    {
+        NSArray *settings = [group objectForKey:@"setting"];
+        for (NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"key"];
+            NSString *text = [setting objectForKey:@"text"];
+            [msg appendFormat:@"\n   %@=%ld", NSLocalizedString([text uppercaseString], @""), (long)[[self valueForKey:key] integerValue]];
+        }
+    }
+    
     NSLog(@"[INFO][PrintSetting]\n%@\n", msg);
 }
 

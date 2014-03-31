@@ -9,14 +9,22 @@
 #import <Foundation/Foundation.h>
 
 @interface PreviewSetting : NSObject
-@property NSUInteger colorMode;
-@property NSUInteger duplex;
-@property NSUInteger paperSize;
-@property NSUInteger pagination;
-@property NSUInteger bind;
-@property NSUInteger staple;
-@property NSUInteger punch;
-@property NSUInteger orientation;
-@property BOOL isBookletBind;
-@property BOOL isScaleToFit;
+@property (nonatomic) NSInteger colorMode;
+@property (nonatomic) NSInteger orientation;
+@property (nonatomic) NSInteger copies;
+@property (nonatomic) NSInteger duplex;
+@property (nonatomic) NSInteger paperSize;
+@property (nonatomic) BOOL scaleToFit;
+@property (nonatomic) NSInteger paperType;
+@property (nonatomic) NSInteger inputTray;
+@property (nonatomic) NSInteger imposition;
+@property (nonatomic) NSInteger impositionOrder;
+@property (nonatomic) NSInteger sort;
+@property (nonatomic) BOOL booklet;
+@property (nonatomic) NSInteger bookletFinish;
+@property (nonatomic) NSInteger bookletLayout;
+@property (nonatomic) NSInteger finishingSide;
+@property (nonatomic) NSInteger staple;
+@property (nonatomic) NSInteger punch;
+@property (nonatomic) NSInteger outputTray;
 @end

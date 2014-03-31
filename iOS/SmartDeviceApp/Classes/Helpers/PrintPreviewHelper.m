@@ -7,27 +7,41 @@
 //
 
 #import "PrintPreviewHelper.h"
-//Paper size reference: http://en.wikipedia.org/wiki/Paper_size
+
 struct {
     float width;
     float height;
 } paperDimensionsMM[] = {
-    {297.0, 420.0}, //A3
-    {210.0, 297.0}, //A4
-    {215.9, 279.4}, //Letter
-    {215.9, 355.6}, //Legal
-    {110.0, 220.0}  //Envelope
+    {306.0f, 460.0f}, // A3W
+    {297.0f, 420.0f}, // A3
+    {210.0f, 297.0f}, // A4
+    {148.0f, 210.0f}, // A5
+    {105.0f, 148.0f}, // A6
+    {257.0f, 364.0f}, // B4
+    {182.0f, 257.0f}, // B5
+    {128.0f, 182.0f}, // B6
+    {216.0f, 340.0f}, // Foolscap
+    {280.0f, 432.0f}, // Tabloid
+    {216.0f, 356.0f}, // Legal
+    {216.0f, 280.0f}, // Letter
+    {140.0f, 216.0f}, // Statement
 };
 
 @implementation PrintPreviewHelper
 
-+(BOOL) isGrayScaleColorForColorModeSetting : (NSUInteger) colorMode
++(BOOL) isGrayScaleColorForColorModeSetting : (kColorMode) colorMode
 {
-    if(colorMode == COLORMODE_MONO)
+    if(colorMode == kColorModeBlack)
     {
         return YES;
     }
     return NO;
+}
+
++(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize
+{
+    CGFloat ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
+    return ratio;
 }
 
 +(UIPageViewControllerSpineLocation) spineLocationForBindSetting: (NSUInteger) bind
@@ -63,12 +77,12 @@ struct {
         return NO;
     }
     
-    if(setting.isBookletBind == YES && setting.bind != BIND_TOP)
+    //if(setting.isBookletBind == YES && setting.bind != BIND_TOP)
     {
         return YES;
     }
     
-    if(setting.pagination == PAGINATION_2IN1 || setting.pagination == PAGINATION_6IN1)
+    //if(setting.pagination == PAGINATION_2IN1 || setting.pagination == PAGINATION_6IN1)
     {
         return YES;
     }
