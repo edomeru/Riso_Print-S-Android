@@ -14,6 +14,13 @@
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
 
+#define IDX_NAME                0
+#define IDX_RESULT              1
+#define IDX_TIMESTAMP           2
+
+#define FORMAT_DATE_TIME        @"yyyy/MM/dd HH:mm"
+#define FORMAT_ZONE             @"GMT"
+
 @interface PrintJobHistoryGroupCell ()
 
 #pragma mark - UI Properties
@@ -25,7 +32,7 @@
 
 #pragma mark - Data Properties
 
-@property (strong, nonatomic) NSArray* listPrintJobs;
+@property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 #pragma mark - Methods
 
@@ -70,18 +77,24 @@
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:ITEMCELL
                                                             forIndexPath:indexPath];
     
-    // get print job details
-    NSString* printJobName = [self.listPrintJobs objectAtIndex:indexPath.row];
-    //TODO: the object should be an actual PrintJob object, not just a NSString
-    //TODO: the object will have a name, timestamp, and result
+    // get print job details (name, result, timestamp)
+    NSArray* printJob = [self.listPrintJobs objectAtIndex:indexPath.row];
     
-    // set cell contents
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", printJobName];
-    if (indexPath.row%2 == 0)
-        cell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
-    else
+    // print job name
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", printJob[IDX_NAME]];
+    
+    // print job result
+    BOOL result = [printJob[IDX_RESULT] boolValue];
+    if (result)
         cell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"2014/3/27 12:3%ld", (long)indexPath.row];
+    else
+        cell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
+    
+    // print job timestamp
+    NSDateFormatter* timestampFormat = [[NSDateFormatter alloc] init];
+    [timestampFormat setDateFormat:FORMAT_DATE_TIME];
+    [timestampFormat setTimeZone:[NSTimeZone timeZoneWithName:FORMAT_ZONE]]; //TODO: should depend on localization?
+    cell.detailTextLabel.text = [timestampFormat stringFromDate:printJob[IDX_TIMESTAMP]];
     
     //fix for the bugged always-white cell in iPad iOS7
     cell.backgroundColor = [UIColor clearColor];
@@ -91,19 +104,21 @@
 
 #pragma mark - Cell Contents
 
-- (void)setCellTag:(NSInteger)tag
+- (void)initWithTag:(NSInteger)tag
 {
     self.groupName.tag = tag;
     self.groupIndicator.tag = tag;
     self.deleteAllButton.tag = tag;
+    
+    self.listPrintJobs = [NSMutableArray array];
 }
 
-- (void)setCellGroupName:(NSString*)name
+- (void)putGroupName:(NSString*)name
 {
     [self.groupName setTitle:name forState:UIControlStateNormal];
 }
 
-- (void)setCellIndicator:(BOOL)isCollapsed
+- (void)putIndicator:(BOOL)isCollapsed
 {
     if (isCollapsed)
         [self.groupIndicator setTitle:TEXT_GROUP_COLLAPSED forState:UIControlStateNormal];
@@ -111,9 +126,17 @@
         [self.groupIndicator setTitle:TEXT_GROUP_EXPANDED forState:UIControlStateNormal];
 }
 
-- (void)setCellPrintJobs:(NSArray*)printJobs
+- (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp
 {
-    self.listPrintJobs = printJobs;
+    // store the print job details in a ordered array
+    // [0] print job name
+    // [1] print job result
+    // [2] print job timestamp
+    NSArray* printJob = [NSArray arrayWithObjects:name,
+                                                  [NSNumber numberWithInt:(result ? 1 : 0)],
+                                                  timestamp,
+                                                  nil];
+    [self.listPrintJobs addObject:printJob];
 }
 
 #pragma mark - Cell Actions

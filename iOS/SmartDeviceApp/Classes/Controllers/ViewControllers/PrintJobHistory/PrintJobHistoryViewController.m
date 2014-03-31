@@ -9,11 +9,12 @@
 #import "PrintJobHistoryViewController.h"
 #import "PrintJobHistoryGroupCell.h"
 #import "PrintJobHistoryGroup.h"
+#import "PListHelper.h"
 
 //TODO: check if values can be retrieved programmatically
 const float GROUP_HEADER_HEIGHT     = 45.0f;  //should match the value in storyboard
 const float GROUP_FRAME_WIDTH       = 320.f;  //should match the value in storyboard
-const float GROUP_MARGIN_BOTTOM     = -5.0f;  //TODO: how to properly set margin (iOS7 != iOS6)
+const float GROUP_MARGIN_BOTTOM     = 0.0f;   //TODO: how to properly set margin (iOS7 != iOS6)
 const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyboard
 
 @interface PrintJobHistoryViewController ()
@@ -93,19 +94,38 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    // get the view
     PrintJobHistoryGroupCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:GROUPCELL
-                                                                           forIndexPath:indexPath];
+                                                                               forIndexPath:indexPath];
     
-    // get the group
+    // get the model
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
     
-    //TODO: no need to populate cell contents if the group is collapsed
-    
-    // set cell contents
-    [cell setCellTag:indexPath.row];
-    [cell setCellGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
-    [cell setCellIndicator:group.isCollapsed];
-    [cell setCellPrintJobs:group.listPrintJobs];
+    // put the model contents into the view
+    [cell initWithTag:indexPath.row];
+    [cell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
+    [cell putIndicator:group.isCollapsed];
+    if (!group.isCollapsed)
+    {
+        // put the print jobs
+        for (int i = 0; i < group.countPrintJobs; i++)
+        {
+            //TODO: the method getPrintJobAtIndex: should return a PrintJob object, not just a NSString
+            //TODO: timestamp should be retrieved from the PrintJob object
+            //TODO: result should be retrieved from the PrintJob object
+            NSString* name = [group getPrintJobAtIndex:i];
+            NSDateComponents* date = [[NSDateComponents alloc] init];
+            NSCalendar* calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+            [date setDay:31];
+            [date setMonth:3];
+            [date setYear:2014];
+            [date setHour:8];
+            [date setMinute:indexPath.row+i];
+            [cell putPrintJob:name
+                   withResult:((i % 2) ? YES : NO)
+                withTimestamp:[calendar dateFromComponents:date]];
+        }
+    }
     
     // since we are using reusable cells, handle scrolling by forcing redraw of the cell
     [cell reloadContents];
@@ -159,46 +179,53 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     self.listPrintJobHistoryGroups = [NSMutableArray array];
     
-    //TODO: the print job history items should be from DB
     //TODO: addPrintJob should add a PrintJob object, not just a NSString
-    //TODO: the name should be retrieved from the PrintJob.Printer.name property
+    //TODO: the group name should be retrieved from the PrintJob.Printer.name property
+    //TODO: retain the test data for debugging, add result and timestamp
     
-    PrintJobHistoryGroup* group1 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 1"];
-    [group1 addPrintJob:@"Print Job A"];
-    [group1 addPrintJob:@"Print Job B"];
-    [group1 addPrintJob:@"Print Job C"];
-    [group1 collapse:NO];
-    [self.listPrintJobHistoryGroups addObject:group1];
-    
-    PrintJobHistoryGroup* group2 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 2"];
-    [group2 addPrintJob:@"Print Job D"];
-    [group2 addPrintJob:@"Print Job E"];
-    [group2 addPrintJob:@"Print Job F"];
-    [group2 addPrintJob:@"Print Job G"];
-    [group2 collapse:NO];
-    [self.listPrintJobHistoryGroups addObject:group2];
-    
-    PrintJobHistoryGroup* group3 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 3"];
-    [group3 addPrintJob:@"Print Job H"];
-    [group3 addPrintJob:@"Print Job I"];
-    [group3 collapse:NO];
-    [self.listPrintJobHistoryGroups addObject:group3];
-    
-    PrintJobHistoryGroup* group4 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 4"];
-    [group4 addPrintJob:@"Print Job J"];
-    [group4 collapse:NO];
-    [self.listPrintJobHistoryGroups addObject:group4];
+    BOOL usePrintJobTestData = [PListHelper readBool:kPlistBoolValUsePrintJobTestData];
+    if (!usePrintJobTestData)
+    {
+        //TODO: get the print job history items from DB
+    }
+    else
+    {
+        PrintJobHistoryGroup* group1 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 1"];
+        [group1 addPrintJob:@"Print Job A"];
+        [group1 addPrintJob:@"Print Job B"];
+        [group1 addPrintJob:@"Print Job C"];
+        [group1 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group1];
         
-    PrintJobHistoryGroup* group5 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 5"];
-    [group5 addPrintJob:@"Print Job K"];
-    [group5 addPrintJob:@"Print Job L"];
-    [group5 addPrintJob:@"Print Job M"];
-    [group5 collapse:NO];
-    [self.listPrintJobHistoryGroups addObject:group5];
+        PrintJobHistoryGroup* group2 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 2"];
+        [group2 addPrintJob:@"Print Job D"];
+        [group2 addPrintJob:@"Print Job E"];
+        [group2 addPrintJob:@"Print Job F"];
+        [group2 addPrintJob:@"Print Job G"];
+        [group2 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group2];
+        
+        PrintJobHistoryGroup* group3 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 3"];
+        [group3 addPrintJob:@"Print Job H"];
+        [group3 addPrintJob:@"Print Job I"];
+        [group3 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group3];
+        
+        PrintJobHistoryGroup* group4 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 4"];
+        [group4 addPrintJob:@"Print Job J"];
+        [group4 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group4];
+        
+        PrintJobHistoryGroup* group5 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 5"];
+        [group5 addPrintJob:@"Print Job K"];
+        [group5 addPrintJob:@"Print Job L"];
+        [group5 addPrintJob:@"Print Job M"];
+        [group5 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group5];
+    }
 }
 
 #pragma mark - Actions
-
 
 - (IBAction)tappedPrinterHeader:(UIButton*)sender
 {
@@ -227,7 +254,9 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     [self.listPrintJobHistoryGroups removeObjectAtIndex:cellIndex];
     
     // force redraw
-    //TODO: add animation
+    // with animation (not smooth)
+    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+    // without animation //TODO: should have some animation
     [self.collectionView reloadData];
 }
 

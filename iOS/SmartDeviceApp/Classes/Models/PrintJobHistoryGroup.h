@@ -19,11 +19,6 @@
 @property (readonly, strong, nonatomic) NSString* groupName;
 
 /**
- List of PrintJob objects.
- */
-@property (readonly, strong, nonatomic) NSMutableArray* listPrintJobs;
-
-/**
  Stores the number of PrintJob objects.
  */
 @property (readonly, assign, nonatomic) NSUInteger countPrintJobs;
@@ -54,8 +49,16 @@
 
 /**
  Removes a PrintJob object from the list of print jobs.
+ @param index
  */
 - (void)deletePrintJobAtIndex:(NSUInteger)index;
+
+/**
+ Retrieves a PrintJob object from the list of print jobs.
+ @param index
+ */
+//TODO: this should return a PrintJob object, not just a NSString
+- (NSString*)getPrintJobAtIndex:(NSUInteger)index;
 
 /**
  Sets whether the group is displayed as collapsed or expanded.

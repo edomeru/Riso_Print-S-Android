@@ -6,6 +6,8 @@
 	<false/>
 	<key>Use_SNMPUnicastTimeout</key>
 	<false/>
+	<key>Use_PrintJobHistoryTestData</key>
+	<true/>
 	<key>Printer_MaxCount</key>
 	<integer>20</integer>
 	<key>PrintSettings_Default</key>

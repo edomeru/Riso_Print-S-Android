@@ -85,6 +85,9 @@ static NSDictionary* sharedSettingsDict = nil;
         case kPlistBoolValUseSNMPTimeout:
             return [[sharedSettingsDict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
             
+        case kPlistBoolValUsePrintJobTestData:
+            return [[sharedSettingsDict objectForKey:@"Use_PrintJobHistoryTestData"] boolValue];
+            
         default:
             return NO;
     }

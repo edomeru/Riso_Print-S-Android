@@ -11,9 +11,11 @@
 @interface PrintJobHistoryGroup ()
 
 @property (readwrite, strong, nonatomic) NSString* groupName;
-@property (readwrite, strong, nonatomic) NSMutableArray* listPrintJobs;
 @property (readwrite, assign, nonatomic) NSUInteger countPrintJobs;
 @property (readwrite, assign, nonatomic) BOOL isCollapsed;
+
+//TODO: this should contain actual PrintJob objects, not just NSString's
+@property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 @end
 
@@ -51,8 +53,29 @@
 
 - (void)deletePrintJobAtIndex:(NSUInteger)index
 {
+    if (index >= self.countPrintJobs)
+    {
+        NSLog(@"[ERROR][PrintJob] index=%lu >= count=%lu",
+              (unsigned long)index, (unsigned long)self.countPrintJobs);
+        return;
+    }
+    
     [self.listPrintJobs removeObjectAtIndex:index];
     self.countPrintJobs--;
+}
+
+#pragma mark - Get
+
+- (NSString*)getPrintJobAtIndex:(NSUInteger)index
+{
+    if (index >= self.countPrintJobs)
+    {
+        NSLog(@"[ERROR][PrintJob] index=%lu >= count=%lu",
+              (unsigned long)index, (unsigned long)self.countPrintJobs);
+        return @"";
+    }
+    
+    return [self.listPrintJobs objectAtIndex:index];
 }
 
 #pragma mark - Collapse/Expand
