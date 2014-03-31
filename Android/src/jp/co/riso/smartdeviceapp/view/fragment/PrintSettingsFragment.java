@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
 import android.os.Bundle;

@@ -14,10 +14,10 @@ import java.util.Locale;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.ColorMode;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Duplex;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings.ColorMode;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings.Duplex;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings.Imposition;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 import android.content.Context;
@@ -55,6 +55,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private TextView mPageLabel;
     // private Bitmap stapleBmp;
     // private Bitmap punchBmp;
+    
+    private int mMarginLeft = 0;
+    private int mMarginRight = 0;
+    private int mMarginTop = 0;
+    private int mMarginBottom = 0;
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -144,6 +149,29 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         mCurlView.setCurrentIndex(page);
     }
     
+    public void setDefaultMargins() {
+        setMarginLeft(0);
+        setMarginRight(0);
+        setMarginTop(0);
+        setMarginBottom(0);
+    }
+    
+    public void setMarginLeft(int marginLeft) {
+        mMarginLeft = marginLeft;
+    }
+    
+    public void setMarginRight(int marginRight) {
+        mMarginRight = marginRight;
+    }
+    
+    public void setMarginTop(int marginTop) {
+        mMarginTop = marginTop;
+    }
+    
+    public void setMarginBottom(int marginBottom) {
+        mMarginBottom = marginBottom;
+    }
+    
     // ================================================================================
     // Protected methods
     // ================================================================================
@@ -219,6 +247,22 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return new Bitmap[] { front, back };
     }
     
+    protected int getMarginLeft(int bmpWidth) {
+        return (int)((mMarginLeft / (float) mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
+    }
+    
+    protected int getMarginRight(int bmpWidth) {
+        return (int)((mMarginRight / (float) mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
+    }
+    
+    protected int getMarginTop(int bmpHeight) {
+        return (int)((mMarginTop / (float) mPrintSettings.getPaperSize().getHeight()) * bmpHeight);
+    }
+    
+    protected int getMarginBottom(int bmpHeight) {
+        return (int)((mMarginBottom / (float) mPrintSettings.getPaperSize().getHeight()) * bmpHeight);
+    }
+    
     // ================================================================================
     // PDF page methods
     // ================================================================================
@@ -231,7 +275,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         // will depend on PDF and pagination, always false for now
         int count = mPdfManager.getPageCount();
         
-        if (mPrintSettings.getDuplex() != Duplex.OFF) {
+        if (isTwoPageDisplayed()) {
             count = (int) Math.ceil(count / 2.0f);
         }
         
@@ -282,7 +326,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
         
-        if (mPrintSettings.getDuplex() != Duplex.OFF) {
+        if (isTwoPageDisplayed()) {
             twoPage = true;
             
             if (getCurrentPage() % 2 == 0) {
@@ -314,19 +358,24 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return (mPrintSettings.getColorMode() != ColorMode.MONOCHROME);
     }
     
+    private boolean isTwoPageDisplayed() {
+        return (mPrintSettings.getDuplex() != Duplex.OFF);
+    }
+    
     // ================================================================================
     // View-related methods
     // ================================================================================
     
     private void initializeCurlView() {
         mCurlView = new CurlView(getContext());
-        mCurlView.setMargins(0, 0, 0, 0);
+        mCurlView.setMargins(80, 0, 0, 0);
         mCurlView.setPageProvider(mPdfPageProvider);
         mCurlView.setBindPosition(CurlView.BIND_LEFT);
         mCurlView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         
         setupCurlPageView();
         setupCurlBind();
+        setDefaultMargins();
         
         if (!isInEditMode()) {
             float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
@@ -556,22 +605,36 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
-            PrintSettingsConstants.Imposition pagination = mPrintSettings.getImposition();
+            Imposition pagination = mPrintSettings.getImposition();
             
-            int width = bmp.getWidth() / pagination.getCols();
-            int height = bmp.getHeight() / pagination.getRows();
+            int paperWidth = bmp.getWidth();
+            int paperHeight = bmp.getHeight();
+            
+            // adjust paperWidth and paperHeight based on margins
+            paperWidth -= getMarginLeft(bmp.getWidth());
+            paperWidth -= getMarginRight(bmp.getWidth());
+            
+            paperHeight -= getMarginTop(bmp.getHeight());
+            paperHeight -= getMarginBottom(bmp.getHeight());
+            
+            int pdfPageWidth = paperWidth / pagination.getCols();
+            int pdfPageHeight = paperHeight / pagination.getRows();
             
             int beginX = 0;
             int beginY = 0;
             
             switch (mCurlView.getBindPosition()) {
                 case CurlView.BIND_LEFT:
-                    beginX = bmp.getWidth() - (pagination.getCols() * width);
+                    beginX = paperWidth - (pagination.getCols() * pdfPageWidth);
                     break;
                 case CurlView.BIND_TOP:
-                    beginY = bmp.getHeight() - (pagination.getRows() * height);
+                    beginY = paperHeight - (pagination.getRows() * pdfPageHeight);
                     break;
             }
+            
+            // adjust beginX and beginY based on margins
+            beginX += getMarginLeft(bmp.getWidth());
+            beginY += getMarginRight(bmp.getWidth());
             
             int curX = beginX;
             int curY = beginY;
@@ -584,14 +647,14 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 
                 int left = curX;
                 int top = curY;
-                int right = curX + width;
-                int bottom = curY + height;
+                int right = curX + pdfPageWidth;
+                int bottom = curY + pdfPageHeight;
                 
                 // Left to right
-                curX += width;
+                curX += pdfPageWidth;
                 if (i % pagination.getCols() == pagination.getCols() - 1) {
                     curX = beginX;
-                    curY += height;
+                    curY += pdfPageHeight;
                 }
                 
                 float scale = 1.0f / pagination.getPerPage();
@@ -652,3 +715,4 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
     }
 }
+ 

@@ -8,28 +8,18 @@
 
 package jp.co.riso.smartdeviceapp.view.printsettings;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import jp.co.riso.smartdeviceapp.model.printsettings.Group;
+import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -39,7 +29,6 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,13 +48,6 @@ import android.widget.TextView;
 
 public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener {
     public static final String TAG = "PrintSettingsView";
-    
-    private static final String PRINT_SETTINGS_CONTENT = "printsettings.xml";
-    
-    private static final String XML_NODE_NAME = "name";
-    private static final String XML_NODE_TEXT = "text";
-    private static final String XML_NODE_ICON = "icon";
-    private static final String XML_NODE_TYPE = "type";
     
     private static final String KEY_SELECTED_TITLES = "key_selected_titles";
     private static final String KEY_SCROLL_POSITION = "key_scroll_position";
@@ -93,7 +75,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final int ID_TAG_ICON = 0x11000008;
     private static final int ID_TAG_OPTIONS = 0x11000009;
     
-    private Document mPrintSettingsContent;
     private PrintSettings mPrintSettings;
     
     private ScrollView mMainScrollView;
@@ -130,7 +111,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         mHandler = new Handler(this);
         initializeMainView();
-        parsePrintSettingsContent();
         initializePrinterControls();
         initializePrintSettingsControls();
     }
@@ -246,35 +226,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         if (mPrintSettings != null) {
             
-            Set<String> keySet = PrintSettingsConstants.SETTING_MAP.keySet();
+            Set<String> keySet = PrintSettings.sSettingMap.keySet();
             
             for (String key : keySet) {
                 updateItemValue(key);
             }
-        }
-    }
-    
-    // ================================================================================
-    // Parse Settings
-    // ================================================================================
-    
-    private void parsePrintSettingsContent() {
-        String xmlString = AppUtils.getFileContentsFromAssets(getContext(), PRINT_SETTINGS_CONTENT);
-        
-        mPrintSettingsContent = null;
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            
-            InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(xmlString));
-            mPrintSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
         }
     }
     
@@ -309,38 +265,28 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // Print settings controls functions
     // ================================================================================
     
-    private Object[] getSettingsOptions(Node node) {
-        ArrayList<String> options = new ArrayList<String>();
+    private Object[] getOptionsStrings(List<Option> options) {
+        ArrayList<String> optionsStrings = new ArrayList<String>();
         
-        NodeList optionsList = node.getChildNodes();
-        for (int i = 1; i < optionsList.getLength(); i += 2) {
-            
-            int id = AppUtils.getResourseId(optionsList.item(i).getTextContent(), R.string.class, -1);
+        for (Option option : options) {
+            String value = option.getTextContent();
+
+            int id = AppUtils.getResourseId(value, R.string.class, -1);
             if (id != -1) {
-                options.add(getResources().getString(id));
+                optionsStrings.add(getResources().getString(id));
             } else {
-                options.add(Integer.toString(i));
+                optionsStrings.add(Integer.toString(id));
             }
-            
-        }
-        return options.toArray();
-    }
-    
-    private String getNamedItemValue(NamedNodeMap namedNodeMap, String key) {
-        if (namedNodeMap.getNamedItem(key) == null) {
-            return "";
         }
         
-        return namedNodeMap.getNamedItem(key).getNodeValue();
+        return optionsStrings.toArray();
     }
     
-    private void addSettingsItemView(LinearLayout ll, Node setting, boolean withSeparator) {
-        NamedNodeMap attrs = setting.getAttributes();
-        
-        String name = getNamedItemValue(attrs, XML_NODE_NAME);
-        String icon = getNamedItemValue(attrs, XML_NODE_ICON);
-        String text = getNamedItemValue(attrs, XML_NODE_TEXT);
-        String type = getNamedItemValue(attrs, XML_NODE_TYPE);
+    private void addSettingsItemView(LinearLayout ll, Setting setting, boolean withSeparator) {
+        String name = setting.getAttributeValue("name");
+        String icon = setting.getAttributeValue("icon");
+        String text = setting.getAttributeValue("text");
+        String type = setting.getAttributeValue("type");
         
         String titleText = "";
         int titleId = AppUtils.getResourseId(text, R.string.class, -1);
@@ -359,25 +305,25 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             item.setTag(name);
             item.setTag(ID_TAG_ICON, icon);
             item.setTag(ID_TAG_TEXT, text);
-            item.setTag(ID_TAG_OPTIONS, getSettingsOptions(setting));
+            item.setTag(ID_TAG_OPTIONS, getOptionsStrings(setting.getOptions()));
             item.setOnClickListener(this);
         }
         
         ll.addView(item);
     }
     
-    private void addSettingsTitleView(Node node) {
-        NamedNodeMap attrs = node.getAttributes();
-        
-        String nameStr = getNamedItemValue(attrs, XML_NODE_NAME);
-        String textStr = getNamedItemValue(attrs, XML_NODE_TEXT);
+    private void addSettingsTitleView(Group group) {
+        String nameStr = group.getAttributeValue("name");
+        String textStr = group.getAttributeValue("text");
         
         LinearLayout itemsGroup = new LinearLayout(getContext());
         itemsGroup.setOrientation(LinearLayout.VERTICAL);
         
-        NodeList settingList = node.getChildNodes();
-        for (int i = 1; i < settingList.getLength(); i += 2) {
-            addSettingsItemView(itemsGroup, settingList.item(i), i < settingList.getLength() - 2);
+        for (Setting setting : group.getSettings()) {
+            int index = group.getSettings().indexOf(setting);
+            int size = group.getSettings().size();
+            
+            addSettingsItemView(itemsGroup, setting, index != size - 1);
         }
         
         // Create Header
@@ -405,12 +351,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private void initializePrintSettingsControls() {
         mPrintSettingsTitles = new ArrayList<LinearLayout>();
         
-        if (mPrintSettingsContent != null) {
-            NodeList groupList = mPrintSettingsContent.getElementsByTagName("group");
-            
-            // looping through all item nodes <item>
-            for (int i = 0; i < groupList.getLength(); i++) {
-                addSettingsTitleView(groupList.item(i));
+        if (PrintSettings.sGroupList != null) {
+            for (Group group : PrintSettings.sGroupList) {
+                addSettingsTitleView(group);
             }
         }
     }
