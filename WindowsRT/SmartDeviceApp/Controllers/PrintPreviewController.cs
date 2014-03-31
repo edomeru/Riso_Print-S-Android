@@ -10,13 +10,11 @@
 //  ----------------------------------------------------------------------
 //
 
-using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
-using SmartDeviceApp.ViewModel;
 using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -37,12 +35,16 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
+        public delegate Task GoToPageEventHandler(int pageIndex);
+        private GoToPageEventHandler _goToPageEventHandler;
+
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
             FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}.jpg";
         private const string FILE_NAME_EMPTY_IMAGE = FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "_empty.jpg";
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
 
+        private PrintPreviewViewModel _printPreviewViewModel;
         private PrintSettingOptionsViewModel _printSettingOptionsViewModel;
         private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
@@ -73,8 +75,10 @@ namespace SmartDeviceApp.Controllers
         /// <returns>Task</returns>
         public async Task Initialize()
         {
+            _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
+            _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
-            await Cleanup(); // Ensure to clean up previouse
+            await Cleanup(); // Ensure to clean up previous
 
             _selectedPrinter = null;
             _previewPages = new Dictionary<int, PreviewPage>();
@@ -83,8 +87,6 @@ namespace SmartDeviceApp.Controllers
             if (DocumentController.Instance.IsFileLoaded)
             {
                 _previewPageTotal = DocumentController.Instance.PageCount;
-                Messenger.Default.Send<DocumentMessage>(new DocumentMessage(true,
-                    DocumentController.Instance.FileName));
 
                 // Get print settings
                 await GetPrintAndPrintSetting();
@@ -92,9 +94,11 @@ namespace SmartDeviceApp.Controllers
 
                 LoadPrintSettingsOptions();
 
-                // Send dummy page
-                await GenerateEmptyPage();
-                await SendEmptyPage();
+                InitializeGestures();
+                _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
+                _printPreviewViewModel.SetInitialPageIndex(0);
+                _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
+                await LoadPage(0);
             }
             else
             {
@@ -108,6 +112,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Cleanup()
         {
+            _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
             _previewPages = null;
@@ -161,6 +166,17 @@ namespace SmartDeviceApp.Controllers
         #endregion Database and Default Values Operations
 
         #region Print Preview
+
+        private void InitializeGestures()
+        {
+            Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
+                _selectedPrinter.PrintSetting.PaperSize);
+            bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
+                        _selectedPrinter.PrintSetting.Orientation);
+
+            _printPreviewViewModel.RightPageActualSize = GetPreviewPageImageSize(paperSize, isPortrait);
+            _printPreviewViewModel.InitializeGestures();
+        }
 
         /// <summary>
         /// 
@@ -303,7 +319,8 @@ namespace SmartDeviceApp.Controllers
             if (isPreviewPageAffected || isPageCountAffected)
             {
                 await OnPrintSettingUpdated(isPageCountAffected);
-                await GenerateEmptyPage();
+                // InitializePreview();
+                // await GenerateEmptyPage();
                 // Page slide value changed event is expected to invoke LoadPage when page count
                 // changes so no need to load the page when page count is not affected
                 if (!isPageCountAffected)
@@ -339,76 +356,10 @@ namespace SmartDeviceApp.Controllers
             {
                 _previewPageTotal = (uint)Math.Ceiling(
                     (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
-                Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
-                    _pageViewMode));
-            }
-        }
-
-        /// <summary>
-        /// Generates an empty page for the initial display of Preview Area.
-        /// This page will be displayed while the PreviePage(s) are being generated.
-        /// </summary>
-        /// <returns>task</returns>
-        private async Task GenerateEmptyPage()
-        {
-            // Create a blank white page for Preview (temporary)
-            Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
-                _selectedPrinter.PrintSetting.PaperSize);
-            bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
-                        _selectedPrinter.PrintSetting.Orientation);
-
-            // Override selected orientation based on imposition value
-            if (_pagesPerSheet == 4)
-            {
-                isPortrait = true;
-            } else if (_pagesPerSheet == 2)
-            {
-                isPortrait = false;
-            }
-            WriteableBitmap emptyBitmap = ApplyPaperSizeAndOrientation(paperSize,
-                        isPortrait);
-
-            try
-            {
-                // Save PreviewPage into AppData temporary store
-                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                StorageFile whitePageImage = await tempFolder.CreateFileAsync(FILE_NAME_EMPTY_IMAGE,
-                    CreationCollisionOption.ReplaceExisting);
-                using (var destinationStream =
-                    await whitePageImage.OpenAsync(FileAccessMode.ReadWrite))
-                {
-                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
-                        BitmapEncoder.JpegEncoderId, destinationStream);
-                    byte[] pixels = WriteableBitmapExtensions.ToByteArray(emptyBitmap);
-                    newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                        (uint)emptyBitmap.PixelWidth, (uint)emptyBitmap.PixelHeight,
-                        ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
-                    await newEncoder.FlushAsync();
-                }
-            }
-            catch (Exception)
-            {
-                // Error handling (UnauthorizedAccessException)
-            }
-        }
-
-        private async Task SendEmptyPage()
-        {
-            // Get existing file from AppData temporary store
-            StorageFile whitePageImage = await StorageFileUtility.GetExistingFile(FILE_NAME_EMPTY_IMAGE,
-                ApplicationData.Current.TemporaryFolder);
-            if (whitePageImage != null)
-            {
-                using (var sourceStream = await whitePageImage.OpenReadAsync())
-                {
-                    // Open the bitmap
-                    BitmapImage bitmapImage = new BitmapImage(new Uri(whitePageImage.Path));
-                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(sourceStream);
-
-                    // Create message and send
-                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                        new Size(decoder.PixelWidth, decoder.PixelHeight)));
-                }
+                //Messenger.Default.Send<PreviewInfoMessage>(new PreviewInfoMessage(_previewPageTotal,
+                //    _pageViewMode));
+                _printPreviewViewModel.PageTotal = _previewPageTotal;
+                _printPreviewViewModel.PageViewMode = _pageViewMode;
             }
         }
 
@@ -437,8 +388,10 @@ namespace SmartDeviceApp.Controllers
                     BitmapImage bitmapImage = new BitmapImage(new Uri(jpegFile.Path));
 
                     // Create message and send
-                    Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                        previewPage.ActualSize));
+                    //Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                    //    previewPage.ActualSize));
+                    _printPreviewViewModel.RightPageImage = bitmapImage;
+                    _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
 
                     GenerateNearPreviewPages();
 
@@ -454,7 +407,7 @@ namespace SmartDeviceApp.Controllers
                 DocumentController.Instance.GetLogicalPages(targetLogicalPageIndex,
                     _pagesPerSheet);
 
-            await SendEmptyPage();
+            // await SendEmptyPage();
 
             List<LogicalPage> logicalPages = await getLogicalPagesTask;
             await ApplyPrintSettings(logicalPages, targetPreviewPageIndex, true);
@@ -574,8 +527,10 @@ namespace SmartDeviceApp.Controllers
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
 
                         // Create message and send
-                        Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
-                            previewPage.ActualSize));
+                        //Messenger.Default.Send<PreviewPageImage>(new PreviewPageImage(bitmapImage,
+                        //    previewPage.ActualSize));
+                        _printPreviewViewModel.RightPageImage = bitmapImage;
+                        _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -593,20 +548,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>bitmap filled with white</returns>
         private WriteableBitmap ApplyPaperSizeAndOrientation(Size paperSize, bool isPortrait)
         {
-            // Get paper size and apply DPI
-            double length1 = paperSize.Width * ImageConstant.BASE_DPI;
-            double length2 = paperSize.Height * ImageConstant.BASE_DPI;
-
-            Size pageImageSize;
-            // Check orientation
-            if (isPortrait)
-            {
-                pageImageSize = new Size(length1, length2);
-            }
-            else
-            {
-                pageImageSize = new Size(length2, length1);
-            }
+            Size pageImageSize = GetPreviewPageImageSize(paperSize, isPortrait);
 
             // Create canvas based on paper size and orientation
             WriteableBitmap canvasBitmap = new WriteableBitmap((int)pageImageSize.Width,
@@ -616,6 +558,28 @@ namespace SmartDeviceApp.Controllers
                 (int)pageImageSize.Height, Windows.UI.Colors.White);
 
             return canvasBitmap;
+        }
+
+        private Size GetPreviewPageImageSize(Size paperSize, bool isPortrait)
+        {
+            // Get paper size and apply DPI
+            double length1 = paperSize.Width * ImageConstant.BASE_DPI;
+            double length2 = paperSize.Height * ImageConstant.BASE_DPI;
+
+            Size pageImageSize = new Size();
+            // Check orientation
+            if (isPortrait)
+            {
+                pageImageSize.Width = length1;
+                pageImageSize.Height = length2;
+            }
+            else
+            {
+                pageImageSize.Width = length2;
+                pageImageSize.Height = length1;
+            }
+
+            return pageImageSize;
         }
 
         /// <summary>
@@ -966,42 +930,6 @@ namespace SmartDeviceApp.Controllers
 
         #endregion Print Settings
 
-    }
-
-    public sealed class DocumentMessage
-    {
-        public bool IsLoaded { get; private set; }
-        public string DocTitle { get; private set; }
-
-        public DocumentMessage(bool isPdfLoaded, string docTitle)
-        {
-            IsLoaded = isPdfLoaded;
-            DocTitle = docTitle;
-        }
-    }
-
-    public sealed class PreviewInfoMessage
-    {
-        public uint PageTotal { get; private set; }
-        public PageViewMode PageViewMode { get; private set; }
-
-        public PreviewInfoMessage(uint pageTotal, PageViewMode pageViewMode)
-        {
-            PageTotal = pageTotal;
-            PageViewMode = pageViewMode;
-        }
-    }
-
-    public sealed class PreviewPageImage
-    {
-        public BitmapImage PageImage { get; private set; }
-        public Size ActualSize { get; private set; }
-
-        public PreviewPageImage(BitmapImage pageImage, Size actualSize)
-        {
-            PageImage = pageImage;
-            ActualSize = actualSize;
-        }
     }
 
 }

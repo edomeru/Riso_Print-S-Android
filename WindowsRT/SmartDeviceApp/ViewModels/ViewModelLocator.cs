@@ -17,9 +17,8 @@ using Microsoft.Practices.ServiceLocation;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Design;
 using SmartDeviceApp.Models;
-using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceApp.ViewModel
+namespace SmartDeviceApp.ViewModels
 {
     /// <summary>
     /// This class contains static references to all the view models in the

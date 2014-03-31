@@ -111,7 +111,7 @@
     <Compile Include="Common\Enum\PreviewViewMode.cs" />
     <Compile Include="Common\Enum\ListValueType.cs" />
     <Compile Include="Common\Enum\PrintSettingType.cs" />
-    <Compile Include="Common\Enum\RightPaneMode.cs" />  
+    <Compile Include="Common\Enum\RightPaneMode.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />

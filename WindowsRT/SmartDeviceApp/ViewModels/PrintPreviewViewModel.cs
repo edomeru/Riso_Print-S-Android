@@ -38,6 +38,8 @@ namespace SmartDeviceApp.ViewModels
         private const double SIDE_PANE_RATIO = 2;
         private const double PREVIEW_VIEW_RATIO = 5;
 
+        public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -49,7 +51,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _goToNextPage;
         private ICommand _pageNumberSliderValueChange;
         private ObservableCollection<PreviewPageViewModel> _previewPages;
-        private uint _pageTotal;        
+        private uint _pageTotal;
         private uint _currentPageIndex;
         private uint _rightPageIndex;
         private uint _leftPageIndex;
@@ -74,9 +76,6 @@ namespace SmartDeviceApp.ViewModels
 
             _rightPageIndex = 0;
             // Messenger.Default.Register<DummyPageMessage>(this, (pageMessage) => OnPageImageLoaded(pageMessage));
-            Messenger.Default.Register<DocumentMessage>(this, (documentMessage) => OnDocumentLoaded(documentMessage));
-            Messenger.Default.Register<PreviewInfoMessage>(this, (previewInfoMessage) => OnPreviewInfoUpdated(previewInfoMessage));
-            Messenger.Default.Register<PreviewPageImage>(this, (previewPageImage) => OnPageImageLoaded(previewPageImage));
             Initialize();
         }
 
@@ -347,35 +346,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private async void OnPreviewInfoUpdated(PreviewInfoMessage printSettingMessage)
-        {
-            PageTotal = printSettingMessage.PageTotal;
-            PageViewMode = printSettingMessage.PageViewMode;
-            await GoToPage(0); // Go to first page
-        }
-
-        private void OnDocumentLoaded(DocumentMessage pdfStatusMessage)
-        {
-            if (pdfStatusMessage.IsLoaded)
-            {
-                DocumentTitleText = pdfStatusMessage.DocTitle;
-            }
-            else
-            {
-                // Signal error
-            }
-        }
-
-        // TODO: Add handling for left and right pages
-        // Note: For current right page only
-        // private void OnPageImageLoaded(DummyPageMessage pageMessage)
-        private void OnPageImageLoaded(PreviewPageImage previewPageImage)
-        {
-            RightPageImage = previewPageImage.PageImage;
-            RightPageActualSize = previewPageImage.ActualSize;
-            InitializeGestures();
-        }
-
         #endregion
 
         #region SINGLE-PAGE NAVIGATION
@@ -422,17 +392,22 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
-
-        // TODO: Two-page view
-        private async Task GoToPage(uint index)
+        
+        public void SetInitialPageIndex(uint index)
         {
-            //DummyProvider.Instance.LoadPageImage(index);
-            Task task = PrintPreviewController.Instance.LoadPage((int)index);
             _rightPageIndex = index;
             SetPageIndexes();
-
-            await task;
         }
+
+        // TODO: Two-page view
+        public void GoToPage(uint index)
+        {
+            //DummyProvider.Instance.LoadPageImage(index);
+            _rightPageIndex = index;
+            SetPageIndexes();
+            GoToPageEventHandler((int)index);
+        }
+
         
         // TODO: Two-page view
         private async void GoToPreviousPageExecute()
@@ -547,11 +522,11 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private async void PageNumberSliderValueChangeExecute()
+        private void PageNumberSliderValueChangeExecute()
         {
             // TODO: Consider handling the event only when drag is released 
             var newValue = CurrentPageIndex; // verify 0-based
-            await GoToPage(newValue);
+            GoToPage(newValue);
         }
 
         #endregion

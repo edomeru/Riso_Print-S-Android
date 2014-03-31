@@ -17,7 +17,6 @@ using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
 using Windows.UI.Xaml;
-using SmartDeviceApp.ViewModel;
 using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Converters
