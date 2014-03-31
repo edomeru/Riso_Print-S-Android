@@ -93,6 +93,18 @@ namespace SmartDeviceApp.Converters
             }
         }
 
+        public class DuplexIntToBoolConverter
+        {
+
+            public static bool Convert(int value)
+            {
+                bool convertedValue = (value == (int)Duplex.Off) ? false : true;
+
+                return convertedValue;
+            }
+
+        }
+
         public class PaperSizeToIntConverter : BasePrintSettingConverter.BasePrintSettingToIntConverter
         {
 

@@ -36,13 +36,14 @@ namespace SmartDeviceApp.Controllers
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
         public delegate Task GoToPageEventHandler(int pageIndex);
-        public delegate void SelectedPrintSettingOptionEventHandler(PrintSetting printSetting, int selectedIndex);
+        public delegate void SelectedPrintSettingOptionEventHandler(PrintSetting printSetting,
+            int selectedIndex);
         private GoToPageEventHandler _goToPageEventHandler;
         private SelectedPrintSettingOptionEventHandler _selectedPrintOptionEventHandler;
 
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
-            FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}.jpg";
+            FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}-{1:yyyyMMddHHmmssffff}.jpg";
         private const string FILE_NAME_EMPTY_IMAGE = FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "_empty.jpg";
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
 
@@ -51,6 +52,8 @@ namespace SmartDeviceApp.Controllers
         private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
+        private bool _isDuplex = false;
+        private bool _isBooklet = false;
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
@@ -79,8 +82,10 @@ namespace SmartDeviceApp.Controllers
         {
             _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
             _selectedPrintOptionEventHandler = new SelectedPrintSettingOptionEventHandler(UpdatePrintSetting);
+
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
+
             await Cleanup(); // Ensure to clean up previous
 
             _selectedPrinter = null;
@@ -206,10 +211,16 @@ namespace SmartDeviceApp.Controllers
             bool isPageCountAffected = false;
             if (result.Name.Equals(PrintSettingConstant.KEY_COLOR_MODE))
             {
+                int prevColorMode = _selectedPrinter.PrintSetting.ColorMode;
                 if (_selectedPrinter.PrintSetting.ColorMode != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.ColorMode = selectedIndex;
-                    isPreviewPageAffected = true;
+                    // Matters only if changed to/from Black
+                    if (prevColorMode == (int)ColorMode.Mono ||
+                        selectedIndex == (int)ColorMode.Mono)
+                    {
+                        isPreviewPageAffected = true;
+                    }
                 }
             }
             else if (result.Name.Equals(PrintSettingConstant.KEY_ORIENTATION))
@@ -324,7 +335,6 @@ namespace SmartDeviceApp.Controllers
             // Generate PreviewPages again
             if (isPreviewPageAffected || isPageCountAffected)
             {
-                _printPreviewViewModel.RightPageImage = new BitmapImage(); // TODO: Temporary only
                 await UpdatePreviewInfo(isPageCountAffected);
                 //InitializeGestures();
                 _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
@@ -344,12 +354,17 @@ namespace SmartDeviceApp.Controllers
             // Send UI related items
             if (_selectedPrinter.PrintSetting.Booklet)
             {
+                _isBooklet = true;
                 _pageViewMode = PageViewMode.TwoPageView;
             }
             else
             {
+                _isBooklet = false;
                 _pageViewMode = PageViewMode.SinglePageView;
             }
+
+            _isDuplex = PrintSettingConverter.DuplexIntToBoolConverter.Convert(
+                _selectedPrinter.PrintSetting.Duplex);
 
             _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
                 .Convert(_selectedPrinter.PrintSetting.Imposition);
@@ -386,6 +401,7 @@ namespace SmartDeviceApp.Controllers
                     // Open the bitmap
                     BitmapImage bitmapImage = new BitmapImage(new Uri(jpegFile.Path));
 
+                    // TODO: Duplex and Booklet print settings
                     _printPreviewViewModel.RightPageImage = bitmapImage;
                     _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
 
@@ -489,7 +505,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     // Save PreviewPage into AppData temporary store
                     StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                        String.Format(FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE, previewPageIndex),
+                        String.Format(FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE, previewPageIndex, DateTime.UtcNow),
                         CreationCollisionOption.ReplaceExisting);
                     using (var destinationStream =
                         await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
@@ -522,6 +538,7 @@ namespace SmartDeviceApp.Controllers
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
 
+                        // TODO: Duplex and Booklet print settings
                         _printPreviewViewModel.RightPageImage = bitmapImage;
                         _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
                     }
