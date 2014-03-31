@@ -63,7 +63,7 @@ public abstract class BaseActivity extends Activity {
         float minDrawerWidth = getResources().getDimension(R.dimen.drawer_width_min);
         float maxDrawerWidth = getResources().getDimension(R.dimen.drawer_width_max);
         
-        float drawerWidth = screenSize.x * drawerWidthPercentage;
+        float drawerWidth = Math.min(screenSize.x, screenSize.y) * drawerWidthPercentage;
         drawerWidth = Math.max(drawerWidth, minDrawerWidth);
         drawerWidth = Math.min(drawerWidth, maxDrawerWidth);
         
