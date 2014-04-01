@@ -11,5 +11,7 @@
 @interface PDFPageContentViewController : UIViewController
 
 @property (nonatomic) NSInteger pageIndex;
+@property (nonatomic) UIImage *image;
+
 
 @end

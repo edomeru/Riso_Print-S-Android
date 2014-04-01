@@ -8,10 +8,7 @@
 
 #import "PrintPreviewHelper.h"
 
-struct {
-    float width;
-    float height;
-} paperDimensionsMM[] = {
+CGSize paperDimensionsMM[] = {
     {306.0f, 460.0f}, // A3W
     {297.0f, 420.0f}, // A3
     {210.0f, 297.0f}, // A4
@@ -60,6 +57,12 @@ struct {
     return UIPageViewControllerSpineLocationMin;
     
 }
+
++ (CGSize) getPaperDimensions:(kPaperSize)paperSize
+{
+    return paperDimensionsMM[paperSize];
+}
+
 
 +(UIPageViewControllerNavigationOrientation) navigationOrientationForBindSetting : (NSUInteger) bind
 {

@@ -33,27 +33,29 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
     
-    self.printDocument = [[PDFFileManager sharedManager] printDocument];
-    CGSize size = self.imageView.frame.size;
-    CGRect rect = CGRectMake(0.0f, 0.0f, size.width, size.height);
-    [self.activityIndicatorView startAnimating];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    // Show activity indicator
+    if (self.image == nil)
     {
-        UIImage *image = [self.printDocument imageForPage:self.pageIndex + 1 withRect:rect];
-        dispatch_async(dispatch_get_main_queue(), ^
-        {
-            [self.activityIndicatorView stopAnimating];
-            self.imageView.image = image;
-        });
-    });
+        [self.activityIndicatorView startAnimating];
+    }
+    else
+    {
+        self.imageView.image = self.image;
+    }
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)setImage:(UIImage *)image
+{
+    [self.activityIndicatorView stopAnimating];
+    _image = image;
+    self.imageView.image = image;
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "PrintSettingsHelper.h"
 #import "XMLParser.h"
 #import "PreviewSetting.h"
+#import "PrintSetting.h"
 
 @implementation PrintSettingsHelper
 
@@ -37,7 +38,7 @@
         NSArray *settings = [group objectForKey:@"setting"];
         for (NSDictionary *setting in settings)
         {
-            NSString *key = [setting objectForKey:@"key"];
+            NSString *key = [setting objectForKey:@"name"];
             NSString *type = [setting objectForKey:@"type"];
             NSString *defaultValue = [setting objectForKey:@"default"];
             
@@ -58,6 +59,36 @@
     }
     
     return defaultPreviewSetting;
+}
+
++ (void)copyDefaultPrintSettings:(PrintSetting **)printSetting
+{
+    NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [printSettingsTree objectForKey:@"group"];
+    for (NSDictionary *group in groups)
+    {
+        NSArray *settings = [group objectForKey:@"setting"];
+        for (NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            NSString *type = [setting objectForKey:@"type"];
+            NSString *defaultValue = [setting objectForKey:@"default"];
+            
+            if ([(*printSetting) respondsToSelector:NSSelectorFromString(key)] == NO)
+            {
+                continue;
+            }
+            
+            if ([type isEqualToString:@"list"] || [type isEqualToString:@"numeric"])
+            {
+                [(*printSetting) setValue:[NSNumber numberWithInteger:[defaultValue integerValue]] forKey:key];
+            }
+            else
+            {
+                [(*printSetting) setValue:[NSNumber numberWithBool:[defaultValue boolValue]] forKey:key];
+            }
+        }
+    }
 }
 
 @end

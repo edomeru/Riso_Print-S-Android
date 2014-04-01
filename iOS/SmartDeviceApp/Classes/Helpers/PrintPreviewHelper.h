@@ -77,6 +77,9 @@ typedef enum
  */
 +(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize;
 
+
++ (CGSize) getPaperDimensions:(kPaperSize)paperSize;
+
 /**
  Helper function to determine spine location of page view controller based on settings affecting spine location
  

@@ -195,7 +195,7 @@
             NSDictionary *setting = [settings objectAtIndex:row - 1];
             
             NSString *type = [setting objectForKey:@"type"];
-            NSString *key = [setting objectForKey:@"key"];
+            NSString *key = [setting objectForKey:@"name"];
             if ([type isEqualToString:@"list"])
             {
                 PrintSettingsItemOptionCell *itemOptionCell = [tableView dequeueReusableCellWithIdentifier:SETTING_ITEM_OPTION_CELL forIndexPath:indexPath];

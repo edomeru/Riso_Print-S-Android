@@ -11,7 +11,6 @@
 #import "HomeViewController.h"
 #import "PrintSettingsViewController.h"
 #import "PDFFileManager.h"
-#import "PrintDocument.h"
 #import "PreviewSetting.h"
 #import "PDFPageContentViewController.h"
 #import "PrintSettingsHelper.h"
@@ -40,6 +39,12 @@
 
 // Display
 @property (nonatomic) NSInteger currentPage;
+@property (nonatomic) BOOL pageIsAnimating;
+
+// Operations
+@property (atomic, strong) NSOperationQueue *renderQueue;
+@property (atomic, strong) NSMutableDictionary *renderOperations;
+@property (atomic, strong) NSMutableDictionary *renderedViewControllers;
 
 - (void)loadPDF;
 - (void)setupPreview;
@@ -62,8 +67,16 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    self.printSettingsButton.hidden = NO;
+    self.printSettingsButton.hidden = YES;
     self.previewView.hidden = YES;
+    self.pageIsAnimating = NO;
+    
+    NSOperationQueue *renderQueue = [[NSOperationQueue alloc] init];
+    renderQueue.maxConcurrentOperationCount = 1;
+    renderQueue.name = @"RenderQueue";
+    self.renderQueue = renderQueue;
+    self.renderOperations = [[NSMutableDictionary alloc] init];
+    self.renderedViewControllers = [[NSMutableDictionary alloc] init];
     
     if ([[PDFFileManager sharedManager] fileAvailableForLoad])
     {
@@ -115,7 +128,7 @@
     // *Assume portrait
     
     // Get aspect ratio
-    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:self.printDocument.previewSetting.paperSize];
+    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
     if (self.printDocument.previewSetting.orientation == 0)
     {
         aspectRatio = 1.0f / aspectRatio;
@@ -167,6 +180,7 @@
     [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
     [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
     pageViewController.dataSource = self;
+    pageViewController.delegate = self;
     
     self.currentPage = 0;
     PDFPageContentViewController *initial = [self viewControllerAtIndex:self.currentPage];
@@ -180,7 +194,7 @@
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
     NSInteger index = ((PDFPageContentViewController *) viewController).pageIndex;
-    if (index == 0 || index == NSNotFound)
+    if (self.pageIsAnimating || index == 0 || index == NSNotFound)
     {
         return nil;
     }
@@ -191,7 +205,7 @@
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
     NSInteger index = ((PDFPageContentViewController *) viewController).pageIndex;
-    if (index == self.printDocument.pageCount - 1 || index == NSNotFound)
+    if (self.pageIsAnimating || index == self.printDocument.pageCount - 1 || index == NSNotFound)
     {
         return nil;
     }
@@ -201,9 +215,55 @@
 
 - (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index
 {
-    PDFPageContentViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
-    viewController.pageIndex = index;
+    NSNumber *pageIndexKey = [NSNumber numberWithInteger:index];
+    
+    // Check if page needs to be created
+    PDFPageContentViewController *viewController = [self.renderedViewControllers objectForKey:pageIndexKey];
+    if (viewController == nil)
+    {
+        viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+        viewController.pageIndex = index;
+        
+        // TODO: add buffer size limit
+        [self.renderedViewControllers setObject:viewController forKey:pageIndexKey];
+    }
+    
+    // Do not create a render operation if one is already started
+    PDFRenderOperation *existingRenderOperation = [self.renderOperations objectForKey:pageIndexKey];
+    if (existingRenderOperation != nil)
+    {
+        return viewController;
+    }
+    
+    // Create render option
+    CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize];
+    PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndex:index size:size delegate:self];
+    [self.renderOperations setObject:renderOperation forKey:pageIndexKey];
+    [self.renderQueue addOperation:renderOperation];
+    
     return viewController;
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
+{
+    self.pageIsAnimating = YES;
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
+{
+    if (completed || finished)
+    {
+        self.pageIsAnimating = NO;
+    }
+}
+
+#pragma mark -
+- (void)renderDidDFinish:(PDFRenderOperation *)pdfRenderOperation
+{
+    NSNumber *pageIndexKey = [NSNumber numberWithInteger:pdfRenderOperation.pageIndex];
+    [self.renderOperations removeObjectForKey:pageIndexKey];
+    PDFPageContentViewController *viewController = [self.renderedViewControllers objectForKey:pageIndexKey];
+    [viewController setImage:pdfRenderOperation.image];
 }
 
 #pragma mark -
@@ -211,7 +271,7 @@
 - (void)previewSettingDidChange
 {
     // Recompute aspect ratio
-    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:self.printDocument.previewSetting.paperSize];
+    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
     if (self.printDocument.previewSetting.orientation == 0)
     {
         aspectRatio = 1.0f / aspectRatio;

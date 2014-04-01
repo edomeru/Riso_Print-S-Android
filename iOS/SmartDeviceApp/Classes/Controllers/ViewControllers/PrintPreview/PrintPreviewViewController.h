@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PDFRenderOperation.h"
 #import "PrintDocument.h"
 
-@interface PrintPreviewViewController : UIViewController<UIPageViewControllerDataSource, PrintDocumentDelegate>
+@interface PrintPreviewViewController : UIViewController<UIPageViewControllerDataSource, UIPageViewControllerDelegate, PrintDocumentDelegate, PDFRenderOperationDelegate>
 
 @end

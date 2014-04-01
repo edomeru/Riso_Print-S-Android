@@ -47,7 +47,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
-    self.key = [self.setting objectForKey:@"key"];
+    self.key = [self.setting objectForKey:@"name"];
     self.selectedIndex = [[self.printDocument.previewSetting valueForKey:self.key] integerValue];
     
     // Add empty footer

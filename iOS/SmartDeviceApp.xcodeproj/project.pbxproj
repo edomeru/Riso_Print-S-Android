@@ -10,6 +10,7 @@
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
+		2D0A630318EA588F00794CC8 /* PDFRenderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A630218EA588F00794CC8 /* PDFRenderOperation.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -99,6 +100,8 @@
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
+		2D0A630118EA588F00794CC8 /* PDFRenderOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFRenderOperation.h; sourceTree = "<group>"; };
+		2D0A630218EA588F00794CC8 /* PDFRenderOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFRenderOperation.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -819,6 +822,8 @@
 				2DA1AF5D18E2F08900085F27 /* AlertUtils.m */,
 				2DA1AF5E18E2F08900085F27 /* InputUtils.h */,
 				2DA1AF5F18E2F08900085F27 /* InputUtils.m */,
+				2D0A630118EA588F00794CC8 /* PDFRenderOperation.h */,
+				2D0A630218EA588F00794CC8 /* PDFRenderOperation.m */,
 				2DA1AF6018E2F08900085F27 /* PListUtils.h */,
 				2DA1AF6118E2F08900085F27 /* PListUtils.m */,
 				2DA1AF6218E2F08900085F27 /* PrinterStatusHelper.h */,
@@ -1019,6 +1024,7 @@
 				2D232D7518E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m in Sources */,
 				2DA1AF1818E2EF9600085F27 /* ReplaceSegue.m in Sources */,
 				2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */,
+				2D0A630318EA588F00794CC8 /* PDFRenderOperation.m in Sources */,
 				2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */,
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
 				2DA1AF2418E2EF9600085F27 /* PrinterSearchViewController.m in Sources */,

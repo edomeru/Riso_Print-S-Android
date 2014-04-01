@@ -28,6 +28,5 @@
 // Add selected printer
 
 - (id)initWithURL:(NSURL *)url;
-- (UIImage *)imageForPage:(NSUInteger)page withRect:(CGRect)rect;
 
 @end

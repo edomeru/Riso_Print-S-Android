@@ -13,11 +13,13 @@
 
 #define MAX_PAGE_CACHE 5
 
+static NSString *previewSettingContext = @"PreviewSettingContext";
+
 @interface PrintDocument()
 
 @property (nonatomic) CGPDFDocumentRef pdfDocument;
-@property (nonatomic, strong) NSMutableDictionary *pageCache;
-@property (nonatomic, strong) NSMutableArray *pageCacheIndex;
+@property (strong) NSMutableDictionary *pageCache;
+@property (strong) NSMutableArray *pageCacheIndex;
 
 - (void)addObservers;
 - (void)removeObservers;
@@ -54,8 +56,8 @@
         NSArray *settings = [group objectForKey:@"setting"];
         for (NSDictionary *setting in settings)
         {
-            NSString *key = [setting objectForKey:@"key"];
-            [self.previewSetting addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+            NSString *key = [setting objectForKey:@"name"];
+            [self.previewSetting addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&previewSettingContext];
         }
     }
 }
@@ -69,14 +71,33 @@
         NSArray *settings = [group objectForKey:@"setting"];
         for (NSDictionary *setting in settings)
         {
-            NSString *key = [setting objectForKey:@"key"];
-            [self.previewSetting removeObserver:self forKeyPath:key context:nil];
+            NSString *key = [setting objectForKey:@"name"];
+            [self.previewSetting removeObserver:self forKeyPath:key context:&previewSettingContext];
         }
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if (context != &previewSettingContext)
+    {
+        return;
+    }
+    
+    int changeKind = [[change objectForKey:NSKeyValueChangeKindKey] intValue];
+    if (changeKind != NSKeyValueChangeSetting)
+    {
+        return;
+    }
+    
+    // Compare if value is changed
+    NSNumber *old = [change objectForKey:NSKeyValueChangeOldKey];
+    NSNumber *new = [change objectForKey:NSKeyValueChangeNewKey];
+    if ([old isEqualToNumber:new])
+    {
+        return;
+    }
+    
     NSLog(@"Settings changed");
     [self.pageCache removeAllObjects];
     [self.delegate previewSettingDidChange];
@@ -97,67 +118,6 @@
     }
     
     return CGPDFDocumentGetNumberOfPages(self.pdfDocument);
-}
-
-- (UIImage *)imageForPage:(NSUInteger)page withRect:(CGRect)rect
-{
-    UIImage *cachedImage = [self.pageCache objectForKey:[NSNumber numberWithInt:page]];
-    if (cachedImage != nil)
-    {
-        return cachedImage;
-    }
-    
-    NSDate *start = [NSDate date];
-    CGSize size = rect.size;
-    CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.pdfDocument, page);
-    
-    CGColorSpaceRef colorSpaceRef;
-    CGBitmapInfo bitmapInfo;
-    if ([PrintPreviewHelper isGrayScaleColorForColorModeSetting:self.previewSetting.colorMode])
-    {
-        colorSpaceRef = CGColorSpaceCreateDeviceGray();
-        bitmapInfo = (CGBitmapInfo)kCGImageAlphaNone;
-    }
-    else
-    {
-        colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-        bitmapInfo = (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
-    }
-    
-    CGContextRef contextRef = CGBitmapContextCreate(nil, size.width, size.height, 8, 0, colorSpaceRef, bitmapInfo);
-    CGColorSpaceRelease(colorSpaceRef);
-    
-    CGContextSetRGBFillColor(contextRef, 1.0f, 1.0f, 1.0f, 1.0f);
-    CGContextFillRect(contextRef, rect);
-    
-    CGContextSaveGState(contextRef);
-    
-    CGContextTranslateCTM(contextRef, 0.0f, size.height);
-    CGContextScaleCTM(contextRef, 1.0f, -1.0f);
-    CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
-    CGContextDrawPDFPage(contextRef, pageRef);
-    
-    CGContextRestoreGState(contextRef);
-    CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
-    UIImage *image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:UIImageOrientationDownMirrored];
-    CGImageRelease(imageRef);
-    CGContextRelease(contextRef);
-    
-    NSTimeInterval elapsed = [start timeIntervalSinceNow];
-    NSLog(@"Load time: %f", elapsed);
-    
-    if ([self.pageCache count] == MAX_PAGE_CACHE)
-    {
-        NSNumber *index = [self.pageCacheIndex firstObject];
-        [self.pageCache removeObjectForKey:index];
-        [self.pageCacheIndex removeObjectAtIndex:[index integerValue]];
-    }
-    
-    NSNumber *index = [NSNumber numberWithUnsignedInteger:page];
-    [self.pageCacheIndex addObject:index];
-    [self.pageCache setObject:image forKey:index];
-    
-    return image;
 }
 
 @end

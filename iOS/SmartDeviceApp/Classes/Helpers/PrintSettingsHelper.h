@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @class PreviewSetting;
+@class PrintSetting;
 @interface PrintSettingsHelper : NSObject
 
 + (NSDictionary *)sharedPrintSettingsTree;
 + (PreviewSetting *)defaultPreviewSetting;
++ (void)copyDefaultPrintSettings:(PrintSetting **)printSetting;
 
 @end

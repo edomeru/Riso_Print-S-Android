@@ -15,6 +15,7 @@
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
 #import "PListUtils.h"
+#import "PrintSettingsHelper.h"
 
 static PrinterManager* sharedPrinterManager = nil;
 
@@ -92,7 +93,7 @@ static PrinterManager* sharedPrinterManager = nil;
     PrintSetting* defaultPrintSettings = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
     if (defaultPrintSettings == nil)
         return NO;
-    [self copyDefaultPrintSettings:&defaultPrintSettings];
+    [PrintSettingsHelper copyDefaultPrintSettings:&defaultPrintSettings];
     
     // create a Printer object
     Printer* newPrinter = (Printer*)[DatabaseManager addObject:E_PRINTER];
@@ -374,27 +375,6 @@ static PrinterManager* sharedPrinterManager = nil;
 }
 
 #pragma mark - Printer Utilities
-
-- (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
-{
-    NSDictionary* defaultPrintSettings = [PListUtils readDefaultPrintSettings];
-    /*(*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
-    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
-    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];
-    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:PS_CATCH_TRAY];
-    (*printSetting).color_mode = [defaultPrintSettings objectForKey:PS_COLOR_MODE];
-    (*printSetting).copies = [defaultPrintSettings objectForKey:PS_COPIES];
-    (*printSetting).duplex = [defaultPrintSettings objectForKey:PS_DUPLEX];
-    (*printSetting).image_quality = [defaultPrintSettings objectForKey:PS_IMAGE_QUALITY];
-    (*printSetting).pagination = [defaultPrintSettings objectForKey:PS_PAGINATION];
-    (*printSetting).paper_size = [defaultPrintSettings objectForKey:PS_PAPER_SIZE];
-    (*printSetting).paper_type = [defaultPrintSettings objectForKey:PS_PAPER_TYPE];
-    (*printSetting).punch = [defaultPrintSettings objectForKey:PS_PUNCH];
-    (*printSetting).sort = [defaultPrintSettings objectForKey:PS_SORT];
-    (*printSetting).staple = [defaultPrintSettings objectForKey:PS_STAPLE];
-    (*printSetting).zoom = [defaultPrintSettings objectForKey:PS_ZOOM];
-    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];*/
-}
 
 - (BOOL)isAtMaximumPrinters
 {
