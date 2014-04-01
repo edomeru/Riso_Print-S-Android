@@ -19,9 +19,35 @@ import android.util.Log;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 
 public class PrintSettings {
     public static final String TAG = "PrintSettings";
+
+    public static final String TAG_COLOR_MODE = "colorMode";
+    public static final String TAG_ORIENTATION = "orientation";
+    public static final String TAG_DUPLEX = "duplex";
+    public static final String TAG_SCALE_TO_FIT = "scaleToFit";
+    public static final String TAG_IMPOSITION = "imposition";
+    public static final String TAG_IMPOSITION_ORDER = "impositionOrder";
+    public static final String TAG_SORT = "sort";
+    public static final String TAG_BOOKLET = "booklet";
+    public static final String TAG_BOOKLET_FINISH = "bookletFinish";
+    public static final String TAG_BOOKLET_LAYOUT = "bookletLayout";
+    public static final String TAG_FINISHING_SIDE = "finishingSide";
+    public static final String TAG_STAPLE = "staple";
+    public static final String TAG_PUNCH = "punch";
     
     public static List<Group> sGroupList;
     public static HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
@@ -122,243 +148,99 @@ public class PrintSettings {
      * @return the ColorMode
      */
     public ColorMode getColorMode() {
-        return ColorMode.values()[mSettingValues.get("colorMode")];
+        return ColorMode.values()[mSettingValues.get(TAG_COLOR_MODE)];
     }
     
     /**
      * @return the Orientation
      */
     public Orientation getOrientation() {
-        return Orientation.values()[mSettingValues.get("orientation")];
-    }
-    
-    /**
-     * @return the mCopies
-     */
-    public int getCopies() {
-        return mSettingValues.get("numCopies");
+        return Orientation.values()[mSettingValues.get(TAG_ORIENTATION)];
     }
     
     /**
      * @return the mDuplex
      */
     public Duplex getDuplex() {
-        return Duplex.values()[mSettingValues.get("duplex")];
+        return Duplex.values()[mSettingValues.get(TAG_DUPLEX)];
     }
     
     /**
      * @return the mPaperSize
      */
     public PaperSize getPaperSize() {
-        return PaperSize.values()[mSettingValues.get("paperSize")];
+        return PaperSize.values()[mSettingValues.get(TAG_DUPLEX)];
     }
     
     /**
      * @return the mScaleToFit
      */
     public boolean isScaleToFit() {
-        return (mSettingValues.get("scaleToFit") == 1) ? true : false;
+        return (mSettingValues.get(TAG_SCALE_TO_FIT) == 1) ? true : false;
     }
     
     /**
      * @return the mImposition
      */
     public Imposition getImposition() {
-        return Imposition.values()[mSettingValues.get("imposition")];
+        return Imposition.values()[mSettingValues.get(TAG_IMPOSITION)];
     }
     
     /**
      * @return the mImpositionOrder
      */
     public ImpositionOrder getImpositionOrder() {
-        return ImpositionOrder.values()[mSettingValues.get("impositionOrder")];
+        return ImpositionOrder.values()[mSettingValues.get(TAG_IMPOSITION_ORDER)];
     }
     
     /**
      * @return the mSort
      */
     public Sort getSort() {
-        return Sort.values()[mSettingValues.get("ids_lbl_sort")];
+        return Sort.values()[mSettingValues.get(TAG_SORT)];
     }
     /**
      * @return the mBooklet
      */
     public boolean isBooklet() {
-        return (mSettingValues.get("booklet") == 1) ? true : false;
+        return (mSettingValues.get(TAG_BOOKLET) == 1) ? true : false;
     }
     
     /**
      * @return the mBookletFinish
      */
     public BookletFinish getBookletFinish() {
-        return BookletFinish.values()[mSettingValues.get("bookletFinish")];
+        return BookletFinish.values()[mSettingValues.get(TAG_BOOKLET_FINISH)];
     }
     
     /**
      * @return the mBookletLayout
      */
     public BookletLayout getBookletLayout() {
-        return BookletLayout.values()[mSettingValues.get("bookletLayout")];
+        return BookletLayout.values()[mSettingValues.get(TAG_BOOKLET_LAYOUT)];
     }
     
     /**
      * @return the mFinishingSide
      */
     public FinishingSide getFinishingSide() {
-        return FinishingSide.values()[mSettingValues.get("finishingSide")];
+        return FinishingSide.values()[mSettingValues.get(TAG_FINISHING_SIDE)];
     }
     
     /**
      * @return the mStaple
      */
     public Staple getStaple() {
-        return Staple.values()[mSettingValues.get("staple")];
+        return Staple.values()[mSettingValues.get(TAG_STAPLE)];
     }
     
     /**
      * @return the mPunch
      */
     public Punch getPunch() {
-        return Punch.values()[mSettingValues.get("punch")];
+        return Punch.values()[mSettingValues.get(TAG_PUNCH)];
     }
     
-    public enum ColorMode {
-        AUTO, FULL_COLOR, MONOCHROME;
-    }
-    
-    public enum Orientation {
-        PORTRAIT, LANDSCAPE;
-    }
-    
-    public enum Duplex {
-        OFF, LONG_EDGE, SHORT_EDGE;
-    }
-    
-    // sizes from http://en.wikipedia.org/wiki/Paper_size
-    public enum PaperSize {
-        A3W(297.0f, 420.0f),
-        A4(210.0f, 297.0f),
-        A5(300.0f, 400.0f),
-        A6(300.0f, 400.0f),
-        B4(300.0f, 400.0f),
-        B5(300.0f, 400.0f),
-        FOOLSCAP(300.0f, 400.0f),
-        TABLOID(300.0f, 400.0f),
-        LEGAL(215.9f, 355.6f),
-        LETTER(215.9f, 279.4f),
-        STATEMENT(300.0f, 400.0f);
-        
-        private final float mWidth;
-        private final float mHeight;
-        
-        PaperSize(float width, float height) {
-            mWidth = width;
-            mHeight = height;
-        }
-        
-        public float getWidth() {
-            return mWidth;
-        }
-        
-        public float getHeight() {
-            return mHeight;
-        }
-    }
-    
-    public enum Imposition {
-        OFF (1, 1, 1, false),
-        TWO_UP (2, 2, 1, true),
-        FOUR_UP (4, 2, 2, false);
-        
-        private final int mPerPage;
-        private final int mRows;
-        private final int mCols;
-        private final boolean mFlipLandscape;
-        
-        Imposition(int perPage, int x, int y, boolean flipLandscape) {
-            mPerPage = perPage;
-            mCols = x;
-            mRows = y;
-            mFlipLandscape = flipLandscape;
-        }
-        
-        public int getPerPage() {
-            return mPerPage;
-        }
-        
-        public int getRows() {
-            return mRows;
-        }
-        
-        public int getCols() {
-            return mCols;
-        }
-        
-        public boolean isFlipLandscape() {
-            return mFlipLandscape;
-        }
-    }
-    
-    public enum ImpositionOrder {
-        R_L, L_R, TL_B, TL_R, TR_B, TR_L;
-    }
-    
-    public enum Sort {
-        PER_PAGE, PER_COPY;
-    }
-    
-    public enum BookletFinish {
-        PAPER_FOLDING, FOLD_AND_STAPLE;
-    }
-    
-    public enum BookletLayout {
-        L_R, R_L, T_B;
-    }
-    
-    public enum FinishingSide {
-        LEFT, RIGHT, TOP;
-    }
-    
-    public enum Staple {
-        OFF (0, false),
-        UL (1, true),
-        UR (1, true),
-        SIDE_2 (2, false),
-        SIDE_1 (1, false);
-        
-        private final int mCount;
-        private final boolean mCorner;
-
-        Staple(int count, boolean corner) {
-            mCount = count;
-            mCorner = corner;
-        }
-        
-        public int getCount() {
-            return mCount;
-        }
-        
-        public boolean isCorner() {
-            return mCorner;
-        }
-    }
-    
-    public enum Punch {
-        OFF (0),
-        HOLES_2 (2),
-        HOLES_3 (3),
-        HOLES_4 (4);
-        
-        private final int mCount;
-
-        Punch(int count) {
-            mCount = count;
-        }
-        
-        public int getCount() {
-            return mCount;
-        }
-    }
     
     static {
         initializeStaticObjects();

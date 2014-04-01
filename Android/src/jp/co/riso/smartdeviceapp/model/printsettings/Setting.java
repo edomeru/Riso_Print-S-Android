@@ -53,7 +53,7 @@ public class Setting extends XmlNode{
             case TYPE_NUMERIC:
                 return Integer.parseInt(value);
             case TYPE_BOOLEAN:
-                return Boolean.parseBoolean(value) ? 0 : 1;
+                return Boolean.parseBoolean(value) ? 1 : 0;
         }
         
         return -1;

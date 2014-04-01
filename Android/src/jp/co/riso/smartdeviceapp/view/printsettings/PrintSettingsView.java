@@ -19,6 +19,10 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -79,9 +83,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final int ID_TAG_TEXT = 0x11000008;
     private static final int ID_TAG_ICON = 0x11000009;
     private static final int ID_TAG_OPTIONS = 0x1100000A;
+    private static final int ID_TAG_TARGET_VIEW = 0x1100000B;
     
-    private static final int ID_PRINT_HEADER = 0x1100000B;
-    private static final int ID_PRINT_SELECTED_PRINTER = 0x1100000C;
+    private static final int ID_PRINT_HEADER = 0x1100000C;
+    private static final int ID_PRINT_SELECTED_PRINTER = 0x1100000D;
     
     private boolean mShowPrintControls;
     private PrintSettings mPrintSettings;
@@ -203,6 +208,125 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     // ================================================================================
+    // Set Constraints
+    // ================================================================================
+    
+    private boolean shouldHideOptionFromConstraints(String tag, int value) {
+        if (tag.equals(PrintSettings.TAG_STAPLE)) {
+            boolean isTop = (mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE) == FinishingSide.TOP.ordinal());
+            switch (Staple.values()[value]) {
+                case ONE_UL:
+                case ONE_UR:
+                    return isTop;
+                case ONE:
+                    return !isTop;
+                case TWO:
+                case OFF:
+                default:
+                    return true;
+            }
+        }
+        
+        return true;
+    }
+    
+    private int getDefaultValueWithConstraints(String tag) {
+        if (PrintSettings.sSettingMap.get(tag) == null) {
+            return -1;
+        }
+        
+        int defaultValue = PrintSettings.sSettingMap.get(tag).getDefaultValue();
+        
+        if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
+            if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
+                defaultValue = FinishingSide.TOP.ordinal();
+            }
+        }
+        
+        return defaultValue;
+    }
+    
+    private void setViewEnabledWithConstraints(String tag, boolean enabled) {
+        if (mMainLayout != null) {
+            if (mMainLayout.findViewWithTag(tag) != null) {
+                mMainLayout.findViewWithTag(tag).setEnabled(enabled);
+                View targetView = (View) mMainLayout.findViewWithTag(tag).getTag(ID_TAG_TARGET_VIEW);
+                if (targetView != null) {
+                    targetView.setActivated(enabled);
+                }
+            }
+        }
+    }
+    
+    private void updateValueWithConstraints(String tag, int value) {
+        mPrintSettings.setValue(tag, value);
+        updateDisplayedValue(tag);
+    }
+    
+    private void applyConstraints(String tag, int prevValue) {
+        int value = mPrintSettings.getValue(tag);
+        
+        if (tag.equals(PrintSettings.TAG_BOOKLET)) {
+            boolean enabled = (value == 0);
+            setViewEnabledWithConstraints(PrintSettings.TAG_DUPLEX, enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_FINISHING_SIDE, enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_STAPLE, enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_PUNCH, enabled);
+            
+            updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE,
+                    getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE));
+            updateValueWithConstraints(PrintSettings.TAG_STAPLE,
+                    getDefaultValueWithConstraints(PrintSettings.TAG_STAPLE));
+            updateValueWithConstraints(PrintSettings.TAG_PUNCH,
+                    getDefaultValueWithConstraints(PrintSettings.TAG_PUNCH));
+            
+            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled);
+        }
+
+        if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
+            int stapleValue = mPrintSettings.getValue(PrintSettings.TAG_STAPLE);
+            if (value == FinishingSide.TOP.ordinal()) {
+                if (stapleValue == Staple.ONE.ordinal()) {
+                    if (prevValue == FinishingSide.LEFT.ordinal()) {
+                        updateValueWithConstraints(PrintSettings.TAG_STAPLE, Staple.ONE_UL.ordinal());
+                    } else {
+                        updateValueWithConstraints(PrintSettings.TAG_STAPLE, Staple.ONE_UR.ordinal());
+                    }
+                }
+            } else {
+                if (stapleValue == Staple.ONE_UL.ordinal() || stapleValue == Staple.ONE_UR.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_STAPLE, Staple.ONE.ordinal());
+                }
+            }
+        }
+
+        if (tag.equals(PrintSettings.TAG_ORIENTATION) || tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
+            int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE);
+            int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
+            if (mPrintSettings.getValue(PrintSettings.TAG_PUNCH) == Punch.HOLES_4.ordinal()) {
+                if (finishValue != finishDefault) {
+                    if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
+                        updateValueWithConstraints(PrintSettings.TAG_PUNCH, Punch.OFF.ordinal());
+                    }
+                }
+            }
+        }
+
+        if (tag.equals(PrintSettings.TAG_PUNCH)) {
+            if (value == Punch.HOLES_4.ordinal()) {
+                int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE); 
+                int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
+                if (finishValue != finishDefault) {
+                    if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
+                        updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE, finishDefault);
+                    }
+                }
+            }
+        }
+    }
+    
+    // ================================================================================
     // Set Values
     // ================================================================================
     
@@ -230,7 +354,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
-    private void updateItemValue(String tag) {
+    private boolean updateValue(String tag, int newValue) {
+        int prevValue = mPrintSettings.getValue(tag);
+        if (mPrintSettings.setValue(tag, newValue)) {
+            applyConstraints(tag, prevValue);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private void updateDisplayedValue(String tag) {
         int value = mPrintSettings.getValue(tag);
         View view = mMainLayout.findViewWithTag(tag);
         
@@ -256,6 +390,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 ((Switch) view).setChecked(value == 1);
             }
         }
+        
+        applyConstraints(tag, -1);
     }
     
     public void setValueChangedListener(ValueChangedListener listener) {
@@ -286,7 +422,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             Set<String> keySet = PrintSettings.sSettingMap.keySet();
             
             for (String key : keySet) {
-                updateItemValue(key);
+                updateDisplayedValue(key);
             }
         }
     }
@@ -307,6 +443,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         // Create disclosure for item
         View view = LayoutInflater.from(getContext()).inflate(R.layout.printsettings_disclosure_withvalue, null);
+        view.setActivated(true);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         view.setLayoutParams(params);
@@ -367,7 +504,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             item.setTag(ID_TAG_ICON, icon);
             item.setTag(ID_TAG_TEXT, text);
             item.setTag(ID_TAG_OPTIONS, getOptionsStrings(setting.getOptions()));
+            item.setTag(ID_TAG_TARGET_VIEW, item);
             item.setOnClickListener(this);
+        } else {
+            view.setTag(ID_TAG_TARGET_VIEW, item);
         }
         
         ll.addView(item);
@@ -572,10 +712,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             
             int value = mPrintSettings.getValue(name);
             Object[] options = (Object[]) v.getTag(ID_TAG_OPTIONS);
+            
+            int lastIdx = -1;
             for (int i = 0; i < options.length; i++) {
-                boolean showSeparator = (i != options.length - 1);
-                addSubviewOptionsList(options[i].toString(), value, i, showSeparator, ID_SUBVIEW_OPTION_ITEM);
+                if (shouldHideOptionFromConstraints(name, i)) {
+                    addSubviewOptionsList(options[i].toString(), value, i, true, ID_SUBVIEW_OPTION_ITEM);
+                    lastIdx = i;
+                }
             }
+            
+            // hide the separator of the last item added
+            if (mSubLayout.findViewWithTag((Integer) lastIdx) != null) {
+                View container = mSubLayout.findViewWithTag((Integer) lastIdx);
+                container.findViewById(R.id.menuSeparator).setVisibility(View.GONE);
+            }
+                    
         }
     }
     
@@ -601,8 +752,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             addView(mSubScrollView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
         
-        mMainScrollView.setClickable(false);
-        mSubScrollView.setClickable(true);
+        mMainScrollView.setEnabled(false);
+        mSubScrollView.setEnabled(true);
         if (animate) {
             animateDisplaySubview();
         } else {
@@ -613,9 +764,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void dismissOptionsSubview(boolean animate) {
-        mMainScrollView.setClickable(true);
+        mMainScrollView.setEnabled(true);
         mMainScrollView.setVisibility(View.VISIBLE);
-        mSubScrollView.setClickable(false);
+        mSubScrollView.setEnabled(false);
         if (animate) {
             animateDismissSubview();
         } else {
@@ -627,19 +778,22 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         int id = (Integer) v.getTag();
         
         if (v.getId() == ID_SUBVIEW_OPTION_ITEM) {
-            if (mPrintSettings.setValue((String) mSubLayout.getTag(), id)) {
+            if (updateValue((String) mSubLayout.getTag(), id)) {
                 if (mListener != null) {
                     mListener.onPrintSettingsValueChanged(mPrintSettings);
                 }
                 
                 // Update UI
-                updateItemValue((String) mSubLayout.getTag());
+                updateDisplayedValue((String) mSubLayout.getTag());
                 
                 Object[] options = (Object[]) mSubLayout.getTag(ID_TAG_OPTIONS);
                 for (int i = 0; i < options.length; i++) {
                     View view = mSubLayout.findViewWithTag(Integer.valueOf(i));
-                    View subView = view.findViewById(ID_SUBVIEW_STATUS);
-                    subView.setSelected(id == i);
+                    // Some views may be hidden
+                    if (view != null) {
+                        View subView = view.findViewById(ID_SUBVIEW_STATUS);
+                        subView.setSelected(id == i);
+                    }
                 }
             }
         } else if (v.getId() == ID_SUBVIEW_PRINTER_ITEM) {
@@ -719,6 +873,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             layoutId = R.layout.printsettings_container_item_with_sub;
         }
         LinearLayout item = (LinearLayout) li.inflate(layoutId, null);
+        item.setActivated(true);
         
         TextView textView = (TextView) item.findViewById(R.id.menuTextView);
         textView.setText(text);
@@ -785,7 +940,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             params.height = LayoutParams.MATCH_PARENT;
             
             View view = li.inflate(R.layout.printsettings_disclosure_withvalue, null);
-            
+            view.setActivated(true);
             view.setLayoutParams(params);
             return view;
         }
@@ -974,10 +1129,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 toggleCollapse(v);
                 break;
             case ID_SHOW_SUBVIEW_CONTAINER:
-                displayOptionsSubview(v, true);
+                if (mMainScrollView.isEnabled()) {
+                    displayOptionsSubview(v, true);
+                }
                 break;
             case ID_HIDE_SUBVIEW_CONTAINER:
-                dismissOptionsSubview(true);
+                if (mSubScrollView.isEnabled()) {
+                    dismissOptionsSubview(true);
+                }
                 break;
             case ID_SUBVIEW_OPTION_ITEM:
             case ID_SUBVIEW_PRINTER_ITEM:
@@ -1035,7 +1194,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (mPrintSettings.setValue(buttonView.getTag().toString(), isChecked ? 1 : 0)) {
+        if (updateValue(buttonView.getTag().toString(), isChecked ? 1 : 0)) {
             if (mListener != null) {
                 mListener.onPrintSettingsValueChanged(mPrintSettings);
             }
@@ -1070,7 +1229,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     s.replace(0, s.length(), "0");
                 }
                 
-                if (mPrintSettings.setValue(mTag, Integer.parseInt(s.toString()))) {
+                if (updateValue(mTag, Integer.parseInt(s.toString()))) {
                     if (mListener != null) {
                         mListener.onPrintSettingsValueChanged(mPrintSettings);
                     }
