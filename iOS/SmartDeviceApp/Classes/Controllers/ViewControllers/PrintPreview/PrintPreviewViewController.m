@@ -270,6 +270,13 @@
 
 - (void)previewSettingDidChange
 {
+    // Destroy cache
+    [self.renderedViewControllers removeAllObjects];
+    
+    // Cancel all operations
+    [self.renderQueue cancelAllOperations];
+    [self.renderOperations removeAllObjects];
+    
     // Recompute aspect ratio
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
     if (self.printDocument.previewSetting.orientation == 0)

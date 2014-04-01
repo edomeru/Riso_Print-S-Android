@@ -18,8 +18,6 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 @interface PrintDocument()
 
 @property (nonatomic) CGPDFDocumentRef pdfDocument;
-@property (strong) NSMutableDictionary *pageCache;
-@property (strong) NSMutableArray *pageCacheIndex;
 
 - (void)addObservers;
 - (void)removeObservers;
@@ -34,8 +32,6 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     if (self)
     {
         _pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)url);
-        _pageCache = [[NSMutableDictionary alloc] init];
-        _pageCacheIndex = [[NSMutableArray alloc] init];
         
     }
     return self;
@@ -99,7 +95,6 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     }
     
     NSLog(@"Settings changed");
-    [self.pageCache removeAllObjects];
     [self.delegate previewSettingDidChange];
 }
 

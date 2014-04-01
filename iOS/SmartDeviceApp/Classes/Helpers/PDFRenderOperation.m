@@ -41,6 +41,13 @@
     {
         CGRect rect = CGRectMake(0.0f, 0.0f, self.size.width, self.size.height);
         CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.printDocument.pdfDocument, self.pageIndex + 1);
+       
+        // Cancel check
+        if (self.isCancelled)
+        {
+            return;
+        }
+        
         CGColorSpaceRef colorSpaceRef;
         CGBitmapInfo bitmapInfo;
         if ([PrintPreviewHelper isGrayScaleColorForColorModeSetting:(kColorMode)self.printDocument.previewSetting.colorMode])
@@ -54,8 +61,21 @@
             bitmapInfo = (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
         }
         
+        // Cancel check
+        if (self.isCancelled)
+        {
+            CGColorSpaceRelease(colorSpaceRef);
+            return;
+        }
+        
         CGContextRef contextRef = CGBitmapContextCreate(nil, self.size.width, self.size.height, 8, 0, colorSpaceRef, bitmapInfo);
         CGColorSpaceRelease(colorSpaceRef);
+        
+        if (self.isCancelled)
+        {
+            CGContextRelease(contextRef);
+            return;
+        }
         
         CGContextSetRGBFillColor(contextRef, 1.0f, 1.0f, 1.0f, 1.0f);
         CGContextFillRect(contextRef, rect);
@@ -68,6 +88,14 @@
         CGContextDrawPDFPage(contextRef, pageRef);
         
         CGContextRestoreGState(contextRef);
+        
+        // Cancel check
+        if (self.isCancelled)
+        {
+            CGContextRelease(contextRef);
+            return;
+        }
+        
         CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
         self.image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:UIImageOrientationDownMirrored];
         CGImageRelease(imageRef);
