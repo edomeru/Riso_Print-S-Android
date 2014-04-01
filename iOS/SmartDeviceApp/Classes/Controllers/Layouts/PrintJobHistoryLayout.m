@@ -1,5 +1,5 @@
 //
-//  PrintJobHistoryIpadLayout.m
+//  PrintJobHistoryLayout.m
 //  SmartDeviceApp
 //
 //  Reference:
@@ -9,26 +9,9 @@
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PrintJobHistoryIpadLayout.h"
+#import "PrintJobHistoryLayout.h"
 
-const float EDGE_INSET_LAND_T = 25.0f;
-const float EDGE_INSET_LAND_B = 15.0f;
-const float EDGE_INSET_LAND_L = 25.0f;
-const float EDGE_INSET_LAND_R = 25.0f;
-
-const float EDGE_INSET_PORT_T = 25.0f;
-const float EDGE_INSET_PORT_B = 15.0f;
-const float EDGE_INSET_PORT_L = 55.0f;
-const float EDGE_INSET_PORT_R = 55.0f;
-
-const float GROUP_SPACING_LAND_X = 10.0f;
-const float GROUP_SPACING_PORT_X = 25.0f;
-const float GROUP_SPACING_Y = 10.0f;
-
-const unsigned int NUM_COLUMNS_LAND = 3;
-const unsigned int NUM_COLUMNS_PORT = 2;
-
-@interface PrintJobHistoryIpadLayout ()
+@interface PrintJobHistoryLayout ()
 
 /** Spacing between a group and the UICollectionView edges. */
 @property (assign, nonatomic) UIEdgeInsets groupInsets;
@@ -67,7 +50,7 @@ const unsigned int NUM_COLUMNS_PORT = 2;
 
 @end
 
-@implementation PrintJobHistoryIpadLayout
+@implementation PrintJobHistoryLayout
 
 #pragma mark - Lifecycle
 
@@ -76,7 +59,8 @@ const unsigned int NUM_COLUMNS_PORT = 2;
     self = [super init];
     if (self)
     {
-        [self setupForOrientation:UIInterfaceOrientationPortrait];
+        [self setupForOrientation:UIInterfaceOrientationPortrait
+                        forDevice:UIUserInterfaceIdiomPhone];
     }
     return self;
 }
@@ -86,40 +70,62 @@ const unsigned int NUM_COLUMNS_PORT = 2;
     self = [super init];
     if (self)
     {
-        [self setupForOrientation:UIInterfaceOrientationPortrait];
+        [self setupForOrientation:UIInterfaceOrientationPortrait
+                        forDevice:UIUserInterfaceIdiomPhone];
     }
     return self;
 }
 
 #pragma mark - Setup
 
-- (void)setupForOrientation:(UIInterfaceOrientation)orientation
+- (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom
 {
-    self.interGroupSpacingY = GROUP_SPACING_Y;
-    
-    if (UIInterfaceOrientationIsLandscape(orientation))
+    if (idiom == UIUserInterfaceIdiomPad)
     {
-        self.numberOfColumns = NUM_COLUMNS_LAND;
-        self.groupInsets = UIEdgeInsetsMake(EDGE_INSET_LAND_T,
-                                            EDGE_INSET_LAND_L,
-                                            EDGE_INSET_LAND_B,
-                                            EDGE_INSET_LAND_R);
-        self.interGroupSpacingX = GROUP_SPACING_LAND_X;
+        //iPad
+        
+        self.interGroupSpacingY = 10.0f;
+        
+        if (UIInterfaceOrientationIsLandscape(orientation))
+        {
+            self.interGroupSpacingX = 10.0f;
+            self.numberOfColumns = 3;
+            self.groupInsets = UIEdgeInsetsMake(25.0f,  //T
+                                                25.0f,  //L
+                                                15.0f,  //B
+                                                25.0f); //R
+
+        }
+        else
+        {
+            self.interGroupSpacingX = 25.0f;
+            self.numberOfColumns = 2;
+            self.groupInsets = UIEdgeInsetsMake(25.0f,  //T
+                                                55.0f,  //L
+                                                15.0f,  //B
+                                                55.0f); //R
+        }
     }
     else
     {
-        self.numberOfColumns = NUM_COLUMNS_PORT;
-        self.groupInsets = UIEdgeInsetsMake(EDGE_INSET_PORT_T,
-                                            EDGE_INSET_PORT_L,
-                                            EDGE_INSET_PORT_B,
-                                            EDGE_INSET_PORT_R);
-        self.interGroupSpacingX = GROUP_SPACING_PORT_X;
+        //iPhone
+        
+        self.interGroupSpacingY = 5.0f;
+        self.interGroupSpacingX = 0.0f;
+        self.numberOfColumns = 1;
+        self.groupInsets = UIEdgeInsetsMake(0.0f,  //T
+                                            0.0f,  //L
+                                            0.0f,  //B
+                                            0.0f); //R
     }
     
+    // reset tracker for column heights
     self.columnHeight = [NSMutableDictionary dictionary];
-    [self.columnHeight setValue:[NSNumber numberWithFloat:0.0f] forKey:@"0"];
-    [self.columnHeight setValue:[NSNumber numberWithFloat:0.0f] forKey:@"1"];
-    [self.columnHeight setValue:[NSNumber numberWithFloat:0.0f] forKey:@"2"];
+    for (int col = 0; col < self.numberOfColumns; col++)
+    {
+        [self.columnHeight setValue:[NSNumber numberWithFloat:0.0f]
+                             forKey:[NSString stringWithFormat:@"%d", col]];
+    }
     
     [self invalidateLayout];
 }

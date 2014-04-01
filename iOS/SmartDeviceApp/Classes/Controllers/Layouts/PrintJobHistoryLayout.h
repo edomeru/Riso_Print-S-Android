@@ -1,5 +1,5 @@
 //
-//  PrintJobHistoryIpadLayout.h
+//  PrintJobHistoryLayout.h
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 4/1/14.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol PrintJobHistoryIpadLayoutDelegate <NSObject>
+@protocol PrintJobHistoryLayoutDelegate <NSObject>
 
 /** 
  Requests the data source for the size of the current group
@@ -20,16 +20,17 @@
 
 @end
 
-@interface PrintJobHistoryIpadLayout : UICollectionViewLayout
+@interface PrintJobHistoryLayout : UICollectionViewLayout
 
 /** Reference to the ViewController containing the UICollectionView */
-@property (weak, nonatomic) id<PrintJobHistoryIpadLayoutDelegate> delegate;
+@property (weak, nonatomic) id<PrintJobHistoryLayoutDelegate> delegate;
 
 /**
  Initializes the properties containing the constant layout measurements
- depending on the specified orientation.
+ depending on the specified orientation and device type.
  @param orientation
+ @param device
  */
-- (void)setupForOrientation:(UIInterfaceOrientation)orientation;
+- (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
 
 @end

@@ -10,8 +10,7 @@
 #import "PrintPreviewViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "PrintersIpadViewController.h"
-#import "PrintJobHistoryIphoneViewController.h"
-#import "PrintJobHistoryIpadViewController.h"
+#import "PrintJobHistoryViewController.h"
 #import "RootViewController.h"
 #import "UIViewController+Segue.h"
 
@@ -75,7 +74,7 @@
     {
         self.selectedButton = self.printersButton;
     }
-    else if (container.mainController.class == [PrintJobHistoryIphoneViewController class] || container.mainController.class == [PrintJobHistoryIpadViewController class])
+    else if (container.mainController.class == [PrintJobHistoryViewController class])
     {
         self.selectedButton = self.printJobHistoryButton;
     }
@@ -134,14 +133,7 @@
 {
     if ([self selectButton:sender])
     {
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-        {
-            [self performSegueTo:[PrintJobHistoryIphoneViewController class]];
-        }
-        else
-        {
-            [self performSegueTo:[PrintJobHistoryIpadViewController class]];
-        }
+        [self performSegueTo:[PrintJobHistoryViewController class]];
     }
 }
 

@@ -22,6 +22,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 /** Main Menu button on the Header. */
 @property (weak, nonatomic) IBOutlet UIButton* mainMenuButton;
 
+@property (weak, nonatomic) IBOutlet PrintJobHistoryLayout* groupsViewLayout;
+
 #pragma mark - Data Properties
 
 /**
@@ -69,6 +71,18 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.groupsViewLayout.delegate = self;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
+                                         forDevice:UIUserInterfaceIdiomPad];
+    }
+    else
+    {
+        [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
+                                         forDevice:UIUserInterfaceIdiomPhone];
+    }
     
     [self setupData];
     [self setupView];
@@ -178,9 +192,9 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     //TODO: check if there is a property or storyboard setting to just turn off highlighting
 }
 
-#pragma mark - UICollectionViewLayout
+#pragma mark - PrintJobHistoryLayoutDelegate
 
-- (CGSize)computeSizeForGroupAtIndexPath:(NSIndexPath*)indexPath
+- (CGSize)sizeForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
     // get the group
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
@@ -395,6 +409,22 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (IBAction)unwindToPrintJobHistory:(UIStoryboardSegue*)sender
 {
     [self.mainMenuButton setEnabled:YES];
+}
+
+#pragma mark - Rotation
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
+                                         forDevice:UIUserInterfaceIdiomPad];
+    }
+    else
+    {
+        [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
+                                         forDevice:UIUserInterfaceIdiomPhone];
+    }
 }
 
 @end
