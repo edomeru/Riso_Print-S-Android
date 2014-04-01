@@ -208,7 +208,7 @@ namespace SmartDeviceApp.Controllers
             // Manual check here what is changed
             bool isPreviewPageAffected = false;
             bool isPageCountAffected = false;
-            if (result.Name.Equals(PrintSettingConstant.KEY_COLOR_MODE))
+            if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_COLOR_MODE))
             {
                 int prevColorMode = _selectedPrinter.PrintSetting.ColorMode;
                 if (_selectedPrinter.PrintSetting.ColorMode != selectedIndex)
@@ -222,7 +222,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_ORIENTATION))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_ORIENTATION))
             {
                 if (_selectedPrinter.PrintSetting.Orientation != selectedIndex)
                 {
@@ -230,14 +230,14 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_DUPLEX))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
             {
                 if (_selectedPrinter.PrintSetting.Duplex != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Duplex = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_SIZE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
             {
                 if (_selectedPrinter.PrintSetting.PaperSize != selectedIndex)
                 {
@@ -245,21 +245,21 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_TYPE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
             {
                 if (_selectedPrinter.PrintSetting.PaperType != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.PaperType = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_INPUT_TRAY))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_INPUT_TRAY))
             {
                 if (_selectedPrinter.PrintSetting.InputTray != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.InputTray = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
             {
                 if (_selectedPrinter.PrintSetting.Imposition != selectedIndex)
                 {
@@ -268,7 +268,7 @@ namespace SmartDeviceApp.Controllers
                     isPageCountAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION_ORDER))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
             {
                 if (_selectedPrinter.PrintSetting.ImpositionOrder != selectedIndex)
                 {
@@ -279,35 +279,35 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_SORT))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_SORT))
             {
                 if (_selectedPrinter.PrintSetting.Sort != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Sort = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_FINISHING))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING))
             {
                 if (_selectedPrinter.PrintSetting.BookletFinishing != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.BookletFinishing = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_LAYOUT))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
                 if (_selectedPrinter.PrintSetting.BookletLayout != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.BookletLayout = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_FINISHING_SIDE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
             {
                 if (_selectedPrinter.PrintSetting.FinishingSide != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.FinishingSide = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_STAPLE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
             {
                 if (_selectedPrinter.PrintSetting.Staple != selectedIndex)
                 {
@@ -315,7 +315,7 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_PUNCH))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
             {
                 if (_selectedPrinter.PrintSetting.Punch != selectedIndex)
                 {
@@ -323,7 +323,7 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_OUTPUT_TRAY))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
             {
                 if (_selectedPrinter.PrintSetting.OutputTray != selectedIndex)
                 {
@@ -348,7 +348,7 @@ namespace SmartDeviceApp.Controllers
             result.Value = state;
 
             bool isPreviewPageAffected = false;
-            if (result.Name.Equals(PrintSettingConstant.KEY_SCALE_TO_FIT))
+            if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT))
             {
                 if (_selectedPrinter.PrintSetting.ScaleToFit != state)
                 {
@@ -356,7 +356,7 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 if (_selectedPrinter.PrintSetting.Booklet != state)
                 {
@@ -513,12 +513,12 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
-                // Check imposition value and generated bitmaps
-                if (_pagesPerSheet > 1 && pageImages.Count > 1)
+                // Check imposition value
+                if (_pagesPerSheet > 1)
                 {
                     finalBitmap = ApplyImposition(paperSize, pageImages);
                 }
-                else if (pageImages.Count == 1)
+                else
                 {
                     finalBitmap = pageImages[0];
                 }
@@ -670,11 +670,25 @@ namespace SmartDeviceApp.Controllers
                 scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
             if (drawBorder)
             {
-                WriteableBitmapExtensions.DrawRectangle(scaledBitmap, 0, 0,
-                    (int)scaledBitmap.PixelWidth, (int)scaledBitmap.PixelHeight,
-                        Windows.UI.Colors.Black);
+                ApplyBorder(scaledBitmap, 0, 0, (int)scaledBitmap.PixelWidth,
+                    (int)scaledBitmap.PixelHeight);
             }
             WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
+        }
+
+        /// <summary>
+        /// Applies border to the image
+        /// </summary>
+        /// <param name="canvasBitmap">bitmap image</param>
+        /// <param name="xOrigin">starting position</param>
+        /// <param name="yOrigin">starting position</param>
+        /// <param name="width">length</param>
+        /// <param name="height">length</param>
+        private void ApplyBorder(WriteableBitmap canvasBitmap, int xOrigin, int yOrigin, int width,
+            int height)
+        {
+            WriteableBitmapExtensions.DrawRectangle(canvasBitmap, xOrigin, xOrigin,
+                    width, height, Windows.UI.Colors.Black);
         }
 
         /// <summary>
@@ -897,37 +911,39 @@ namespace SmartDeviceApp.Controllers
                 FILE_PATH_ASSET_PRINT_SETTINGS_XML);
             XDocument data = XDocument.Load(xmlPath);
 
-            var printSettingsData = from groupData in data.Descendants("group")
-                                    select new PrintSettingGroup
-                                    {
-                                        Name = (string)groupData.Attribute("name"),
-                                        Text = (string)groupData.Attribute("text"),
-                                        PrintSettings =
-                                        (
-                                            from settingData in groupData.Elements("setting")
-                                            select new PrintSetting
-                                            {
-                                                Name = (string)settingData.Attribute("name"),
-                                                Text = (string)settingData.Attribute("text"),
-                                                Icon = (string)settingData.Attribute("icon"),
-                                                Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
-                                                    (string)settingData.Attribute("type")),
-                                                Value = valueConverter.Convert(
-                                                    (string)settingData.Attribute("default"),
-                                                    null, (string)settingData.Attribute("name"), null),
-                                                Default = valueConverter.Convert(
-                                                    (string)settingData.Attribute("default"),
-                                                    null, (string)settingData.Attribute("name"), null),
-                                                Options =
-                                                (
-                                                    from optionData in settingData.Elements("option")
-                                                    select new PrintSettingOption
-                                                    {
-                                                        Text = (string)optionData.Value,
-                                                        Index = optionData.ElementsBeforeSelf().Count()
-                                                    }).ToList<PrintSettingOption>()
-                                            }).ToList<PrintSetting>()
-                                    };
+            var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
+                select new PrintSettingGroup
+                {
+                    Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
+                    Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
+                    PrintSettings =
+                    (
+                        from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
+                        select new PrintSetting
+                        {
+                            Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                            Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
+                            Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
+                            Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
+                            Value = valueConverter.Convert(
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                null),
+                            Default = valueConverter.Convert(
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                null),
+                            Options =
+                            (
+                                from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
+                                select new PrintSettingOption
+                                {
+                                    Text = (string)optionData.Value,
+                                    Index = optionData.ElementsBeforeSelf().Count()
+                                }).ToList<PrintSettingOption>()
+                        }).ToList<PrintSetting>()
+                };
             
             // Construct the PrintSettingList
             _printSettingList = new PrintSettingList();
