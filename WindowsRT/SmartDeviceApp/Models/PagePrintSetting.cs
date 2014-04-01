@@ -44,6 +44,7 @@ namespace SmartDeviceApp.Models
     public enum PaperSize
     {
         A3W,
+        A3,
         A4,
         A5,
         A6,
