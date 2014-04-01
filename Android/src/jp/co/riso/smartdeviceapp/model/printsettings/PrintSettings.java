@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * PrintSettings.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
 import java.io.IOException;

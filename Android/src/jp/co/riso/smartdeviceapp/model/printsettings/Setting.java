@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * Setting.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
 import java.util.ArrayList;
@@ -6,7 +14,7 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Setting extends XmlNode{
+public class Setting extends XmlNode {
     public static final String TAG = "Setting";
 
     public static final int TYPE_INVALID = -1;
