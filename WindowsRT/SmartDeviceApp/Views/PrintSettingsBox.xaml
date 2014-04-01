@@ -32,7 +32,7 @@
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">
             <controls:KeyValueControl x:Name="listViewItemList"
                                       Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                      ValueText="{Binding Converter={StaticResource PrintSettingValueToTextConverter}}"
+                                      ValueText="{Binding Path=SelectedOption.Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                       LeftButtonVisibility="Collapsed"
                                       RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
                                       IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>

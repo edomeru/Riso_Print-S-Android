@@ -47,7 +47,6 @@
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
     <conv:PrintSettingTypeToVisibilityConverter x:Key="PrintSettingTypeToVisibilityConverter"/>
-    <conv:PrintSettingValueToTextConverter x:Key="PrintSettingValueToTextConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <!-- APP CONVERTERS END -->
 
