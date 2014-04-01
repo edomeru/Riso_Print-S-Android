@@ -12,6 +12,7 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Enum;
 using System.Diagnostics;
 using Windows.Foundation;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.DummyControllers
 {
@@ -59,7 +60,7 @@ namespace SmartDeviceApp.DummyControllers
 
             String output = String.Format("Installed Location: {0}", installedLocation.Path);
 
-            StorageFile samplePdf = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Resources/Dummy/RZ1070.pdf"));
+            StorageFile samplePdf = await StorageFileUtility.GetFileFromAppResource("Resources/Dummy/RZ1070.pdf");
             return samplePdf;
         }
     }

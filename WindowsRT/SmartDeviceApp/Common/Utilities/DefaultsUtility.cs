@@ -106,11 +106,18 @@ namespace SmartDeviceApp.Common.Utilities
         /// <returns>"default" value</returns>
         private static object GetDefault(PrintSettingList printSettingList, string printSettingName)
         {
+            object defaultValue = 0; // TODO: To update proper error handling
+
             var query = printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
                 .Where(ps => ps.Name == printSettingName);
-            PrintSetting result = query.First();
 
-            return result.Default;
+            if (query != null && query.Count() > 0)
+            {
+                PrintSetting result = query.First();
+                defaultValue = result.Default;
+            }
+
+            return defaultValue;
         }
 
         #endregion Print Settings

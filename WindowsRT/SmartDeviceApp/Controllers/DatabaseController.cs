@@ -62,8 +62,7 @@ namespace SmartDeviceApp.Controllers
                     // Read script from Assets and create tables
                     string dbScriptPath = Path.Combine(Package.Current.InstalledLocation.Path,
                         FILE_PATH_DATABASE_SCRIPT);
-                    StorageFile file =await
-                        StorageFile.GetFileFromApplicationUriAsync(new Uri(dbScriptPath));
+                    StorageFile file =await StorageFileUtility.GetFileFromAppResource(dbScriptPath);
                     string script = await FileIO.ReadTextAsync(file);
                         
                     // Loop each commands

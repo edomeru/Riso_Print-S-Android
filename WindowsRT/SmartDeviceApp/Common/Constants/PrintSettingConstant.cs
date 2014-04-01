@@ -30,7 +30,7 @@ namespace SmartDeviceApp.Common.Constants
         // printsettings.xml Name values
         public const string NAME_VALUE_COLOR_MODE        = "colorMode";
         public const string NAME_VALUE_ORIENTATION       = "orientation";
-        public const string NAME_VALUE_COPIES            = "numCopies";
+        public const string NAME_VALUE_COPIES            = "copies";
         public const string NAME_VALUE_DUPLEX            = "duplex";
         public const string NAME_VALUE_PAPER_SIZE        = "paperSize";
         public const string NAME_VALUE_SCALE_TO_FIT      = "scaleToFit";
@@ -64,6 +64,10 @@ namespace SmartDeviceApp.Common.Constants
         // Margin; in inches
         public static double MARGIN_PAPER         = 0;
         public static double MARGIN_BETWEEN_PAGES = 0.5;
+        public static double MARGIN_STAPLE        = 0.25;
+
+        // Staple size; in inches
+        public static double STAPLE_CROWN_LENGTH = 0.47;
 
     }
 }

@@ -73,5 +73,16 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Retrieves the file from the installation path
+        /// </summary>
+        /// <param name="filePath">relative file path</param>
+        /// <returns>resource file</returns>
+        public async static Task<StorageFile> GetFileFromAppResource(string filePath)
+        {
+            Uri uri = new Uri("ms-appx:///" + filePath);
+            return await StorageFile.GetFileFromApplicationUriAsync(uri);
+        }
+
     }
 }
