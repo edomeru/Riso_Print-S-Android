@@ -2482,7 +2482,7 @@
                                             <outlet property="deleteAllButton" destination="uJ1-uS-srn" id="zGN-SC-AcD"/>
                                             <outlet property="groupIndicator" destination="MOS-FF-ZOf" id="cWb-yX-ALG"/>
                                             <outlet property="groupName" destination="Xec-Wp-7rm" id="A0Y-i5-wjO"/>
-                                            <outlet property="tableView" destination="dPu-Ft-Q41" id="SfU-m2-rHq"/>
+                                            <outlet property="itemsView" destination="dPu-Ft-Q41" id="Ivh-Ij-VaJ"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -2508,7 +2508,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="collectionView" destination="Rfc-0d-bR1" id="lJd-kz-GF4"/>
+                        <outlet property="groupsView" destination="Rfc-0d-bR1" id="qW8-0i-7IZ"/>
                         <outlet property="mainMenuButton" destination="jo5-zX-Mip" id="0y3-Qz-ovy"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintJobHistoryIphone-Home" customClass="SlideSegue" id="9FD-bf-FdK"/>
                     </connections>
@@ -2612,7 +2612,7 @@
                                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" id="ehT-9p-C2q" userLabel="Date">
+                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" id="ehT-9p-C2q" userLabel="Timestamp">
                                                                         <rect key="frame" x="266" y="12" width="44" height="21"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
@@ -2703,7 +2703,7 @@
                                             <outlet property="deleteAllButton" destination="RPP-IB-0ns" id="LmF-2I-MFs"/>
                                             <outlet property="groupIndicator" destination="LVv-VU-mNA" id="L3e-3C-LxN"/>
                                             <outlet property="groupName" destination="Jg3-qz-mnm" id="qFL-Lb-oLO"/>
-                                            <outlet property="tableView" destination="QLA-jj-dA8" id="nDf-aC-SnG"/>
+                                            <outlet property="itemsView" destination="QLA-jj-dA8" id="fj3-8H-pxT"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -2729,7 +2729,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="collectionView" destination="rMa-FV-gDr" id="q6n-aq-pCd"/>
+                        <outlet property="groupsView" destination="rMa-FV-gDr" id="GAe-vx-3Oe"/>
                         <outlet property="mainMenuButton" destination="NQw-8G-f7I" id="hHp-CO-rUD"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintJobHistoryIpad-Home" customClass="SlideSegue" id="oE4-lZ-OOf"/>
                     </connections>
@@ -2784,7 +2784,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="uoe-Al-ug4"/>
         <segue reference="oE4-lZ-OOf"/>
+        <segue reference="uoe-Al-ug4"/>
     </inferredMetricsTieBreakers>
 </document>

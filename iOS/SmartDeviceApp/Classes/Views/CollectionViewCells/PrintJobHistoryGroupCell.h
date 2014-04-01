@@ -53,7 +53,7 @@
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp;
 
 /**
- Adds a "DELETE" button to the row.
+ Adds a "DELETE" button to an item.
  @param gesture
         the swipe gesture where the user expects the delete button to appear
  @param receiver
@@ -62,6 +62,11 @@
         method of the receiver that will be triggered when the "DELETE" button is tapped
  */
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap;
+
+/**
+ Removes an existing "DELETE" button from an item.
+ */
+- (void)removeDeleteButton;
 
 /**
  Removes the print job item at the specified index.

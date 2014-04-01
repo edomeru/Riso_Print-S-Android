@@ -14,6 +14,6 @@
 @interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, PrintJobHistoryGroupCellDelegate>
 
 /** The UI responsible for displaying the list of print job history items. */
-@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (weak, nonatomic) IBOutlet UICollectionView* groupsView;
 
 @end

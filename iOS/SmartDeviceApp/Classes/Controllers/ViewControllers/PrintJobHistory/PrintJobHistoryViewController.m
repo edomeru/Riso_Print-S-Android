@@ -35,6 +35,9 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
  */
 @property (strong, nonatomic) NSMutableArray* listPrintJobHistoryGroups;
 
+/** Keeps track of the index of the group that has the delete button. */
+@property (strong, nonatomic) NSIndexPath* deleteGroup;
+
 #pragma mark - Methods
 
 /** Tapping the Main Menu button displays the Main Menu panel. */
@@ -43,7 +46,11 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (void)setupData;
 - (IBAction)tappedPrinterHeader:(UIButton*)sender;
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender;
+- (void)tappedDeleteOneButton:(UIButton*)button;
 - (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer;
+- (void)swipedRight:(UIGestureRecognizer*)gestureRecognizer;
+- (void)tappedGroup:(UIGestureRecognizer*)gestureRecognizer;
+- (void)removeDeleteButton;
 
 @end
 
@@ -85,11 +92,26 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (void)setupView
 {
-    // put the swipe-to-delete gesture handler
+    self.deleteGroup = nil;
+    
+    // put the swipe-left-to-delete gesture handler
     UISwipeGestureRecognizer* swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(swipedLeft:)];
     swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-    [self.collectionView addGestureRecognizer:swipeLeft];
+    [self.groupsView addGestureRecognizer:swipeLeft];
+    
+    // put the swipe-right-to-cancel-delete gesture handler
+    UISwipeGestureRecognizer* swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                     action:@selector(swipedRight:)];
+    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.groupsView addGestureRecognizer:swipeRight];
+    
+    // put the tap-anywhere-to-cancel-delete gesture handler
+    UITapGestureRecognizer* tapCollection = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(tappedGroup:)];
+    tapCollection.numberOfTapsRequired = 1;
+    tapCollection.numberOfTouchesRequired = 1;
+    [self.groupsView addGestureRecognizer:tapCollection];
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -105,16 +127,16 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     // get the view
-    PrintJobHistoryGroupCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:GROUPCELL
-                                                                               forIndexPath:indexPath];
+    PrintJobHistoryGroupCell* groupCell = [collectionView dequeueReusableCellWithReuseIdentifier:GROUPCELL
+                                                                                    forIndexPath:indexPath];
     
     // get the model
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
     
     // put the model contents into the view
-    [cell initWithTag:indexPath.row];
-    [cell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
-    [cell putIndicator:group.isCollapsed];
+    [groupCell initWithTag:indexPath.row];
+    [groupCell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
+    [groupCell putIndicator:group.isCollapsed];
     if (!group.isCollapsed)
     {
         // put the print jobs
@@ -131,16 +153,22 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
             [date setYear:2014];
             [date setHour:8];
             [date setMinute:indexPath.row+i];
-            [cell putPrintJob:name
-                   withResult:((i % 2) ? YES : NO)
-                withTimestamp:[calendar dateFromComponents:date]];
+            [groupCell putPrintJob:name
+                        withResult:((i % 2) ? YES : NO)
+                     withTimestamp:[calendar dateFromComponents:date]];
         }
     }
     
     // since we are using reusable cells, handle scrolling by forcing redraw of the cell
-    [cell reloadContents];
+    [groupCell reloadContents];
     
-    return cell;
+    // check if a delete button was present while scrolling
+    // (fixes bug when swiping-left on the top/bottom edges of the list then scrolling)
+    if (self.deleteGroup != nil)
+        [self removeDeleteButton];
+    self.deleteGroup = nil;
+    
+    return groupCell;
 }
 
 - (BOOL)collectionView:(UICollectionView*)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath*)indexPath
@@ -174,13 +202,13 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
         heightPrintJobsList += GROUP_MARGIN_BOTTOM;
     }
     
-    // finalize the cell dimensions
-    CGFloat cellHeight = GROUP_HEADER_HEIGHT + heightPrintJobsList;
-    CGFloat cellWidth = GROUP_FRAME_WIDTH;
-    NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", cellHeight, cellWidth);
-    CGSize cellSize = CGSizeMake(cellWidth, cellHeight);
+    // finalize the group dimensions
+    CGFloat groupCellHeight = GROUP_HEADER_HEIGHT + heightPrintJobsList;
+    CGFloat groupCellWidth = GROUP_FRAME_WIDTH;
+    NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", groupCellHeight, groupCellWidth);
+    CGSize groupCellSize = CGSizeMake(groupCellWidth, groupCellHeight);
     
-    return cellSize;
+    return groupCellSize;
 }
 
 #pragma mark - Data
@@ -239,48 +267,35 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (IBAction)tappedPrinterHeader:(UIButton*)sender
 {
-    // get the cell tapped
-    NSInteger cellIndex = [sender tag];
-    NSLog(@"[INFO][PrintJobCtrl] tapped cell=%ld", (long)cellIndex);
+    // get the group tapped
+    NSInteger groupIndex = [sender tag];
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
     
     // toggle collapsed/expanded
-    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:cellIndex];
+    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
     [group collapse:!group.isCollapsed];
     
     // force redraw
     // with animation (not smooth)
     //[self.collectionView reloadItemsAtIndexPaths:@[index]];
     // without animation //TODO: should have some animation
-    [self.collectionView reloadData];
+    [self.groupsView reloadData];
 }
 
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender
 {
-    // get the cell tapped
-    NSInteger cellIndex = [sender tag];
-    NSLog(@"[INFO][PrintJobCtrl] tapped cell=%ld", (long)cellIndex);
+    // get the group tapped
+    NSInteger groupIndex = [sender tag];
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
     
     // remove the group
-    [self.listPrintJobHistoryGroups removeObjectAtIndex:cellIndex];
+    [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
     
     // force redraw
     // with animation (not smooth)
     //[self.collectionView reloadItemsAtIndexPaths:@[index]];
     // without animation //TODO: should have some animation
-    [self.collectionView reloadData];
-}
-
-- (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
-{
-    // get the group swiped
-    CGPoint swipedArea = [gestureRecognizer locationInView:self.collectionView];
-    NSIndexPath* cellIndexPath = [self.collectionView indexPathForItemAtPoint:swipedArea];
-    NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)cellIndexPath.row);
-    
-    // add a delete button to the specific row swiped
-    PrintJobHistoryGroupCell* cell = (PrintJobHistoryGroupCell*)[self.collectionView
-                                                                 cellForItemAtIndexPath:cellIndexPath];
-    [cell putDeleteButton:gestureRecognizer handledBy:self usingActionOnTap:@selector(tappedDeleteOneButton:)];
+    [self.groupsView reloadData];
 }
 
 - (void)tappedDeleteOneButton:(UIButton*)button
@@ -301,7 +316,61 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     // with animation (not smooth)
     //[self.collectionView reloadItemsAtIndexPaths:@[index]];
     // without animation //TODO: should have some animation
-    [self.collectionView reloadData];
+    [self.groupsView reloadData];
+}
+
+- (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
+{
+    // get the group swiped
+    CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
+    NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
+    NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)groupIndexPath.row);
+    
+    // check if another group has a delete button
+    if ((self.deleteGroup != nil) && (self.deleteGroup != groupIndexPath))
+        [self removeDeleteButton];
+
+    self.deleteGroup = groupIndexPath;
+    
+    // add a delete button to the swiped group
+    PrintJobHistoryGroupCell* groupCell = (PrintJobHistoryGroupCell*)[self.groupsView
+                                                                      cellForItemAtIndexPath:groupIndexPath];
+    [groupCell putDeleteButton:gestureRecognizer
+                     handledBy:self
+              usingActionOnTap:@selector(tappedDeleteOneButton:)];
+}
+
+- (void)swipedRight:(UIGestureRecognizer*)gestureRecognizer
+{
+    // get the group swiped
+    CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
+    NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
+    NSLog(@"[INFO][PrintJobCtrl] swiped right on group=%ld", (long)groupIndexPath.row);
+    
+    // check if a delete button is present in any group
+    if (self.deleteGroup != nil)
+        [self removeDeleteButton];
+}
+
+- (void)tappedGroup:(UIGestureRecognizer*)gestureRecognizer
+{
+    // get the group tapped
+    CGPoint tappedArea = [gestureRecognizer locationInView:self.groupsView];
+    NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:tappedArea];
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndexPath.row);
+    
+    // check if a delete button is present in any group
+    if (self.deleteGroup != nil)
+        [self removeDeleteButton];
+}
+
+- (void)removeDeleteButton
+{
+    NSLog(@"[INFO][PrintJobCtrl] canceling delete button for group=%ld", (long)self.deleteGroup.row);
+    PrintJobHistoryGroupCell* groupCell = (PrintJobHistoryGroupCell*)[self.groupsView
+                                                                      cellForItemAtIndexPath:self.deleteGroup];
+    [groupCell removeDeleteButton];
+    self.deleteGroup = nil;
 }
 
 #pragma mark - Segue
