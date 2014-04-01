@@ -35,4 +35,11 @@
     [super didReceiveMemoryWarning];
 }
 
+#pragma mark - UICollectionViewFlowLayout
+
+- (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath*)indexPath
+{
+    return [super computeSizeForGroupAtIndexPath:indexPath];
+}
+
 @end

@@ -10,7 +10,6 @@
 #import "PrintJobHistoryGroup.h"
 #import "PListHelper.h"
 
-//TODO: check if values can be retrieved programmatically
 const float GROUP_HEADER_HEIGHT     = 45.0f;  //should match the value in storyboard
 const float GROUP_FRAME_WIDTH       = 320.f;  //should match the value in storyboard
 const float GROUP_MARGIN_BOTTOM     = 0.0f;   //TODO: how to properly set margin (iOS7 != iOS6)
@@ -27,9 +26,9 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 /**
  The data source for the list of print job history items.
- All items are arranged by group, wherein each group corresponds to one 
- printer (as specified by the printer name) and each item in the group 
- represents one print job (as specified by the print job name). 
+ All items are arranged by group, wherein each group corresponds to one
+ printer (as specified by the printer name) and each item in the group
+ represents one print job (as specified by the print job name).
  Other details of the print job include the status and the
  date of creation (which is used to sort each item in the group).
  */
@@ -88,7 +87,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     [self performSegueTo:[HomeViewController class]];
 }
 
-#pragma mark - CollectionView
+#pragma mark - UICollectionView
 
 - (void)setupView
 {
@@ -113,6 +112,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     tapCollection.numberOfTouchesRequired = 1;
     [self.groupsView addGestureRecognizer:tapCollection];
 }
+
+#pragma mark - UICollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -177,9 +178,9 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     //TODO: check if there is a property or storyboard setting to just turn off highlighting
 }
 
-#pragma mark - CollectionViewFlowLayout
+#pragma mark - UICollectionViewLayout
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+- (CGSize)computeSizeForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
     // get the group
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
@@ -215,7 +216,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (void)setupData
 {
-    self.listPrintJobHistoryGroups = [NSMutableArray array];
+    self.listPrintJobHistoryGroups = [NSMutableArray arrayWithCapacity:7]; //TODO: capacity=DBcontents
     
     //TODO: addPrintJob should add a PrintJob object, not just a NSString
     //TODO: the group name should be retrieved from the PrintJob.Printer.name property
@@ -260,6 +261,22 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
         [group5 addPrintJob:@"Print Job M"];
         [group5 collapse:NO];
         [self.listPrintJobHistoryGroups addObject:group5];
+        
+        PrintJobHistoryGroup* group6 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 6"];
+        [group6 addPrintJob:@"Print Job N"];
+        [group6 addPrintJob:@"Print Job O"];
+        [group6 addPrintJob:@"Print Job P"];
+        [group6 addPrintJob:@"Print Job Q"];
+        [group6 addPrintJob:@"Print Job R"];
+        [group6 addPrintJob:@"Print Job S"];
+        [group6 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group6];
+        
+        PrintJobHistoryGroup* group7 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 7"];
+        [group7 addPrintJob:@"Print Job T"];
+        [group7 addPrintJob:@"Print Job U"];
+        [group7 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group7];
     }
 }
 

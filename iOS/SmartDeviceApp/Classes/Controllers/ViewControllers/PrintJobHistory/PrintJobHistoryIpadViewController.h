@@ -7,7 +7,8 @@
 //
 
 #import "PrintJobHistoryViewController.h"
+#import "PrintJobHistoryIpadLayout.h"
 
-@interface PrintJobHistoryIpadViewController : PrintJobHistoryViewController
+@interface PrintJobHistoryIpadViewController : PrintJobHistoryViewController <PrintJobHistoryIpadLayoutDelegate>
 
 @end

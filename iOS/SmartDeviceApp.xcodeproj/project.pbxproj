@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2801621118EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2801621018EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.m */; };
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
@@ -87,6 +88,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryIpadLayout.h; sourceTree = "<group>"; };
+		2801621018EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryIpadLayout.m; sourceTree = "<group>"; };
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
@@ -267,6 +270,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2801620E18EAB06000DFFE5E /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				2801620F18EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.h */,
+				2801621018EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.m */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
 		2828312F18C70699008B127C /* Database */ = {
 			isa = PBXGroup;
 			children = (
@@ -624,6 +636,7 @@
 			isa = PBXGroup;
 			children = (
 				2DA1AEE818E2EF9600085F27 /* AppLauncher */,
+				2801620E18EAB06000DFFE5E /* Layouts */,
 				2DA1AEEC18E2EF9600085F27 /* Segues */,
 				2DA1AEF318E2EF9600085F27 /* ViewControllers */,
 			);
@@ -985,6 +998,7 @@
 				2DA1AF1B18E2EF9600085F27 /* AddPrinterViewController.m in Sources */,
 				2DA1AF3318E2EF9C00085F27 /* DatabaseManager.m in Sources */,
 				2DA1AF1918E2EF9600085F27 /* SlideOverSegue.m in Sources */,
+				2801621118EAB0AA00DFFE5E /* PrintJobHistoryIpadLayout.m in Sources */,
 				2DA1AF1A18E2EF9600085F27 /* SlideSegue.m in Sources */,
 				2DA1AF1F18E2EF9600085F27 /* HomeViewController.m in Sources */,
 				28A9173318E3BE7B00BA5232 /* PrintJobHistoryIphoneViewController.m in Sources */,
