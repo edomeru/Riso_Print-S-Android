@@ -1,4 +1,4 @@
-﻿<StackPanel x:Name="printSettingsBox"
+﻿<Grid x:Name="printSettingsBox"
     x:Class="SmartDeviceApp.Views.PrintSettingsBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,37 +14,42 @@
     d:DesignHeight="1000"
     DataContext="{Binding PrintSettingsViewModel, Source={StaticResource Locator}}">
     
-    <StackPanel.Resources>
+    <Grid.Resources>
         <DataTemplate x:Key="TEMPLATE_ListViewItemToggleSwitch">
             <controls:KeyToggleSwitchControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                              LeftButtonVisibility="Collapsed"
                                              RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
+                                             ValueVisibility="Collapsed"
                                              IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemTextBox">
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                         LeftButtonVisibility="Collapsed"
                                         RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
+                                        ValueVisibility="Collapsed"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">
-            <controls:KeyValueControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                             LeftButtonVisibility="Collapsed"
-                                             RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
-                                             IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+            <controls:KeyValueControl x:Name="listViewItemList"
+                                      Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                      ValueText="{Binding Converter={StaticResource PrintSettingValueToTextConverter}}"
+                                      LeftButtonVisibility="Collapsed"
+                                      RightButtonVisibility="{Binding Type, Converter={StaticResource PrintSettingTypeToVisibilityConverter}}"
+                                      IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
         </DataTemplate>
         <sel:PrintSettingsListTemplateSelector x:Key="PrintSettingsListTemplateSelector"
                                                ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"
                                                ListViewItemTextBoxTemplate="{StaticResource TEMPLATE_ListViewItemTextBox}"
                                                ListViewItemListTemplate="{StaticResource TEMPLATE_ListViewItemList}"/>
-    </StackPanel.Resources>
+    </Grid.Resources>
 
-    <ItemsControl ItemsSource="{Binding Path=PrintSettingsList}">
-        <ItemsControl.ItemTemplate>
+    <ListView ItemsSource="{Binding Path=PrintSettingsList}"
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+        <ListView.ItemTemplate>
             <DataTemplate>
                 <controls:GroupListControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}">
                     <controls:GroupListControl.Content>
-                        <ListView x:Name="printSettingsListView" 
+                        <ListView x:Name="printSettingGroupListView" 
                                   ItemsSource="{Binding PrintSettings}" 
                                   ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
                                   ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
@@ -59,6 +64,6 @@
                     </controls:GroupListControl.Content>
                 </controls:GroupListControl>
             </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
-</StackPanel>
+        </ListView.ItemTemplate>
+    </ListView>
+</Grid>

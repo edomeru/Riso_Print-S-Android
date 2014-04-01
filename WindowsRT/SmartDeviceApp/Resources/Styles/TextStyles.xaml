@@ -26,10 +26,16 @@
     </Style>
 
     <Style x:Key="STYLE_TextKey" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >
-        <Setter Property="Foreground" Value="{StaticResource BRUSH_Gray4}"/>
         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValue" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
     </Style>
 
     <Style x:Key="STYLE_TextListHeader" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >

@@ -45,8 +45,9 @@
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
-    <conv:PrintSettingTypeToVisibilityConverter x:Key="PrintSettingTypeToVisibilityConverter"/>
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
+    <conv:PrintSettingTypeToVisibilityConverter x:Key="PrintSettingTypeToVisibilityConverter"/>
+    <conv:PrintSettingValueToTextConverter x:Key="PrintSettingValueToTextConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <!-- APP CONVERTERS END -->
 

@@ -59,7 +59,7 @@
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
-            <RowDefinition/>
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid x:Name="titleBar" Grid.Row="0" Style="{StaticResource STYLE_TitleBarSidePane}">
             <Grid.ColumnDefinitions>

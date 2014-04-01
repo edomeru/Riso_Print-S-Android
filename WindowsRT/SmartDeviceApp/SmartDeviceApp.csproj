@@ -131,6 +131,7 @@
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\PrintSettingValueToTextConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemCheckedConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />

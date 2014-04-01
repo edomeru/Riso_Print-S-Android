@@ -25,6 +25,10 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
         }
 
+        // TODO: REMOVE IF UNUSED
+        public static readonly DependencyProperty IndexProperty =
+            DependencyProperty.Register("Index", typeof(int), typeof(KeyValueControl), null);
+
         public static readonly DependencyProperty LeftButtonVisibilityProperty =
             DependencyProperty.Register("LeftButtonVisibility", typeof(Visibility), typeof(KeyValueControl), null);
 
@@ -34,6 +38,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IconVisibilityProperty =
             DependencyProperty.Register("IconVisibility", typeof(Visibility), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty ValueVisibilityProperty =
+            DependencyProperty.Register("ValueVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+
         public static readonly DependencyProperty ValueContentProperty = 
             DependencyProperty.Register("ValueContent", typeof(object), typeof(KeyValueControl), null);
 
@@ -42,6 +49,15 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty ValueTextProperty =
+            DependencyProperty.Register("ValueText", typeof(string), typeof(KeyValueControl), null);
+        
+        public int Index
+        {
+            get { return (int)GetValue(IndexProperty); }
+            set { SetValue(IndexProperty, value); }
+        }
 
         public string LeftButtonVisibility
         {
@@ -61,6 +77,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(IconVisibilityProperty, value); }
         }
 
+        public string ValueVisibility
+        {
+            get { return (string)GetValue(ValueVisibilityProperty); }
+            set { SetValue(ValueVisibilityProperty, value); }
+        }
+
         public object ValueContent
         {
             get { return (object)GetValue(ValueContentProperty); }
@@ -77,6 +99,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
+        }
+
+        public string ValueText
+        {
+            get { return (string)GetValue(ValueTextProperty); }
+            set { SetValue(ValueTextProperty, value); }
         }
     }
 }
