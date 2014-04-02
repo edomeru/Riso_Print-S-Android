@@ -772,13 +772,9 @@ namespace SmartDeviceApp.Controllers
             int pagesPerColumn = _pagesPerSheet / pagesPerRow;
 
             // Compute page area size and margin
-            double marginPaper = PrintSettingConstant.MARGIN_PAPER * ImageConstant.BASE_DPI;
-            double marginBetweenPages = PrintSettingConstant.MARGIN_BETWEEN_PAGES * ImageConstant.BASE_DPI;
-            if (marginPaper == 0)
-            {
-                marginPaper = marginBetweenPages;
-            }
-            Size impositionPageAreaSize = ComputePageArea(canvasBitmap.PixelWidth,
+            double marginPaper = PrintSettingConstant.MARGIN_IMPOSITION_EDGE * ImageConstant.BASE_DPI;
+            double marginBetweenPages = PrintSettingConstant.MARGIN_IMPOSITION_BETWEEN_PAGES * ImageConstant.BASE_DPI;
+            Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasBitmap.PixelWidth,
                 canvasBitmap.PixelHeight, pagesPerRow, pagesPerColumn,
                 marginBetweenPages, marginPaper);
 
@@ -884,7 +880,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="marginBetween">margin between pages (in pixels)</param>
         /// <param name="marginOuter">margin of the PreviewPage image (in pixels)</param>
         /// <returns>size of a page for imposition</returns>
-        private Size ComputePageArea(int width, int height, int numRows, int numColumns,
+        private Size GetImpositionSinglePageAreaSize(int width, int height, int numRows, int numColumns,
             double marginBetween, double marginOuter)
         {
             Size pageAreaSize = new Size();
@@ -968,8 +964,10 @@ namespace SmartDeviceApp.Controllers
                 }
                 else if (stapleType == (int)Staple.Two)
                 {
-                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 0, false, false);
-                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 0, true, false);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
+                        canvasBitmap.PixelWidth, true, 0.25);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
+                        canvasBitmap.PixelWidth, true, 0.75);
                 }
             }
             else if (finishingSide == (int)FinishingSide.Left)
@@ -980,8 +978,10 @@ namespace SmartDeviceApp.Controllers
                 }
                 else if (stapleType == (int)Staple.Two)
                 {
-                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, false, false);
-                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, false, true);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
+                        canvasBitmap.PixelHeight, false, 0.25);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
+                        canvasBitmap.PixelHeight, false, 0.75);
                 }
             }
             else if (finishingSide == (int)FinishingSide.Right)
@@ -992,8 +992,10 @@ namespace SmartDeviceApp.Controllers
                 }
                 else if (stapleType == (int)Staple.Two)
                 {
-                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, true, false);
-                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, true, true);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
+                        canvasBitmap.PixelHeight, false, 0.25);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 270, true, true,
+                        canvasBitmap.PixelHeight, false, 0.75);
                 }
             }
 
@@ -1010,6 +1012,24 @@ namespace SmartDeviceApp.Controllers
         private void ApplyStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd)
         {
+            ApplyStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0);
+        }
+
+        /// <summary>
+        /// Adds a staple image. Requires that the staple image is already scaled.
+        /// </summary>
+        /// <param name="canvasBitmap">destination image</param>
+        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
+        /// <param name="angle">angle for rotation</param>
+        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
+        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
+        /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
+        /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
+        /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
+        private void ApplyStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
+            int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
+            double positionPercentage)
+        {
             // Rotate
             WriteableBitmap rotatedStapleBitmap = stapleBitmap;
             if (angle > 0)
@@ -1019,10 +1039,27 @@ namespace SmartDeviceApp.Controllers
 
             // Put into position
             double marginStaple = PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI;
-            double destXOrigin = (isXEnd) ? canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple : marginStaple;
-            double destYOrigin = (isYEnd) ? canvasBitmap.PixelHeight - rotatedStapleBitmap.PixelHeight - marginStaple : marginStaple;
+            double destXOrigin = marginStaple;
+            if (positionPercentage > 0 && isAlongXAxis)
+            {
+                destXOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelWidth / 2);
+            }
+            else if (isXEnd)
+            {
+                destXOrigin = canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple;
+            }
+            double destYOrigin = marginStaple;
+            if (positionPercentage > 0 && !isAlongXAxis)
+            {
+                destYOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelHeight / 2);
+            }
+            else if (isYEnd)
+            {
+                destYOrigin = canvasBitmap.PixelHeight;
+            }
 
-            Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
+            Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth,
+                rotatedStapleBitmap.PixelHeight);
             Rect srcRect = new Rect(0, 0, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
             WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStapleBitmap, srcRect);
         }
@@ -1085,17 +1122,17 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Computes the starting position of the punch hole image
         /// </summary>
-        /// <param name="length">length of page image edge where punch will be placed</param>
+        /// <param name="edgeLength">length of page image edge where punch will be placed</param>
         /// <param name="isAlongXAxis">direction of punch holes</param>
         /// <param name="holeCount">number of punch holes</param>
         /// <param name="diameterPunch">size of punch hole</param>
         /// <param name="marginPunch">margin of punch hole against edge of page image</param>
         /// <param name="distanceBetweenHoles">distance between punch holes</param>
         /// <returns>starting position of the first punch hole</returns>
-        private double GetPunchStartPosition(double length, bool isAlongXAxis, int holeCount,
+        private double GetPunchStartPosition(double edgeLength, bool isAlongXAxis, int holeCount,
             double diameterPunch, double marginPunch, double distanceBetweenHoles)
         {
-            double startPos = (length - (holeCount * diameterPunch) -
+            double startPos = (edgeLength - (holeCount * diameterPunch) -
                                 ((holeCount - 1) * distanceBetweenHoles)) / 2;
             return startPos;
         }

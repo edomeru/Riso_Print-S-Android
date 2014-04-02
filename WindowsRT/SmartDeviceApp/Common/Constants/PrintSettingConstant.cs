@@ -62,10 +62,10 @@ namespace SmartDeviceApp.Common.Constants
         public static Size PAPER_SIZE_STATEMENT  = new Size( 5.50,  8.50);
 
         // Margin; in inches
-        public static double MARGIN_PAPER         = 0;
-        public static double MARGIN_BETWEEN_PAGES = 0.5;
-        public static double MARGIN_STAPLE        = 0.25;
-        public static double MARGIN_PUNCH         = 0.25;
+        public static double MARGIN_IMPOSITION_EDGE          = 0.5;
+        public static double MARGIN_IMPOSITION_BETWEEN_PAGES = 0.25;
+        public static double MARGIN_STAPLE                   = 0.25;
+        public static double MARGIN_PUNCH                    = 0.25;
 
         // Staple size; in inches
         public static double STAPLE_CROWN_LENGTH = 0.47;
