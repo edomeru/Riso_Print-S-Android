@@ -20,6 +20,28 @@ namespace SmartDeviceApp.Controls
         public KeyTextBoxControl()
         {
             this.InitializeComponent();
+            KeyTextBoxControl context = this;
+            textBox.TextChanged += (sender, e) => TextChanged(sender, context);
+        }
+
+        public new static readonly DependencyProperty ValueTextProperty =
+            DependencyProperty.Register("ValueText", typeof(string), typeof(KeyTextBoxControl), new PropertyMetadata(false, SetValueText));
+
+        public new string ValueText
+        {
+            get { return (string)GetValue(ValueTextProperty); }
+            set { SetValue(ValueTextProperty, value); }
+        }
+
+        // Updates the value source binding every time the text is changed
+        private static void TextChanged(object sender, KeyTextBoxControl control)
+        {
+            control.SetValue(ValueTextProperty, ((TextBox)sender).Text);
+        }  
+
+        private static void SetValueText(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ((KeyTextBoxControl)obj).textBox.Text = e.NewValue.ToString();
         }
     }
 }

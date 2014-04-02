@@ -51,11 +51,13 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
+        // Should be used only if PrintSettingType = list
         public PrintSettingOption SelectedOption
         {
             get 
             {
-                _selectedOption = Options[(int)Value];
+                if ((int)Value < Options.Count) _selectedOption = Options[(int)Value];
+                else _selectedOption = null;
                 return _selectedOption;
             }
             set

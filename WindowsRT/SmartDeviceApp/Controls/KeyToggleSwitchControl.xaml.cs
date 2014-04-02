@@ -20,6 +20,33 @@ namespace SmartDeviceApp.Controls
         public KeyToggleSwitchControl()
         {
             this.InitializeComponent();
+            KeyToggleSwitchControl context = this;
+            toggleSwitch.Toggled += (sender, e) => Toggled(sender, context);
         }
+
+        private static bool _isToggled;
+
+        public static readonly DependencyProperty IsOnProperty =
+            DependencyProperty.Register("IsOn", typeof(string), typeof(KeyToggleSwitchControl), new PropertyMetadata(false, SetIsOn));
+
+        public bool IsOn
+        {
+            get { return (bool)GetValue(IsOnProperty); }
+            set { SetValue(IsOnProperty, value); }
+        }
+
+        private static void SetIsOn(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            _isToggled = false; // Set this value so that Toggled hanlder will not be called by the next line
+            ((KeyToggleSwitchControl)obj).toggleSwitch.IsOn = bool.Parse(e.NewValue.ToString());
+            _isToggled = true;
+        }
+
+        // Updates the value source binding every time the switch is toggled
+        private static void Toggled(object sender, KeyToggleSwitchControl control)
+        {
+            if (!_isToggled) return;
+            control.SetValue(IsOnProperty, ((ToggleSwitch)sender).IsOn);
+        }  
     }
 }
