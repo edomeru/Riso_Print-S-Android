@@ -46,6 +46,7 @@ public class PrintSettings {
     public static final String TAG_COLOR_MODE = "colorMode";
     public static final String TAG_ORIENTATION = "orientation";
     public static final String TAG_DUPLEX = "duplex";
+    public static final String TAG_PAPER_SIZE = "paperSize";
     public static final String TAG_SCALE_TO_FIT = "scaleToFit";
     public static final String TAG_IMPOSITION = "imposition";
     public static final String TAG_IMPOSITION_ORDER = "impositionOrder";
@@ -177,7 +178,7 @@ public class PrintSettings {
      * @return the mPaperSize
      */
     public PaperSize getPaperSize() {
-        return PaperSize.values()[mSettingValues.get(TAG_DUPLEX)];
+        return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
     }
     
     /**

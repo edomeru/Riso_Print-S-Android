@@ -23,8 +23,8 @@ public class Preview {
     
     // sizes from IS1000CJ
     public enum PaperSize {
-        A3W(316.0f, 460.0f),
         A3(297.0f, 420.0f),
+        A3W(316.0f, 460.0f),
         A4(210.0f, 297.0f),
         A5(148.0f, 210.0f),
         A6(105.0f, 148.0f),
@@ -112,26 +112,20 @@ public class Preview {
     }
     
     public enum Staple {
-        OFF (0, false),
-        ONE_UL (1, true),
-        ONE_UR (1, true),
-        ONE (1, false),
-        TWO (2, false);
+        OFF (0),
+        ONE_UL (1),
+        ONE_UR (1),
+        ONE (1),
+        TWO (2);
         
         private final int mCount;
-        private final boolean mCorner;
 
-        Staple(int count, boolean corner) {
+        Staple(int count) {
             mCount = count;
-            mCorner = corner;
         }
         
         public int getCount() {
             return mCount;
-        }
-        
-        public boolean isCorner() {
-            return mCorner;
         }
     }
     

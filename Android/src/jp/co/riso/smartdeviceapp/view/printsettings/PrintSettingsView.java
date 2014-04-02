@@ -272,6 +272,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             setViewEnabledWithConstraints(PrintSettings.TAG_FINISHING_SIDE, enabled);
             setViewEnabledWithConstraints(PrintSettings.TAG_STAPLE, enabled);
             setViewEnabledWithConstraints(PrintSettings.TAG_PUNCH, enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION, enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
             
             updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE,
                     getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE));
@@ -282,6 +284,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             
             setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled);
             setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled);
+        }
+        if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
+            boolean enabled = (value != 0);
+            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
         }
 
         if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
