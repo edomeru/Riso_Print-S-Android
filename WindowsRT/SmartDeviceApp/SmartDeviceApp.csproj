@@ -312,6 +312,8 @@
     <Content Include="Resources\Images\img_btn_submenu_back.scale-100.png" />
     <Content Include="Resources\Images\img_btn_submenu_back.scale-140.png" />
     <Content Include="Resources\Images\img_btn_submenu_back.scale-180.png" />
+    <Content Include="Resources\Images\img_punch.png" />
+    <Content Include="Resources\Images\img_staple.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
     <Content Include="Resources\Images\SplashScreen.scale-100.png" />

@@ -46,6 +46,8 @@ namespace SmartDeviceApp.Controllers
             FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}-{1:yyyyMMddHHmmssffff}.jpg";
         private const string FILE_NAME_EMPTY_IMAGE = FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "_empty.jpg";
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
+        private const string FILE_PATH_RES_IMAGE_STAPLE = "Resources/Images/img_staple.png";
+        private const string FILE_PATH_RES_IMAGE_PUNCH = "Resources/Images/img_punch.png";
 
         private PrintPreviewViewModel _printPreviewViewModel;
         private PrintSettingOptionsViewModel _printSettingOptionsViewModel;
@@ -208,7 +210,7 @@ namespace SmartDeviceApp.Controllers
             // Manual check here what is changed
             bool isPreviewPageAffected = false;
             bool isPageCountAffected = false;
-            if (result.Name.Equals(PrintSettingConstant.KEY_COLOR_MODE))
+            if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_COLOR_MODE))
             {
                 int prevColorMode = _selectedPrinter.PrintSetting.ColorMode;
                 if (_selectedPrinter.PrintSetting.ColorMode != selectedIndex)
@@ -222,7 +224,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_ORIENTATION))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_ORIENTATION))
             {
                 if (_selectedPrinter.PrintSetting.Orientation != selectedIndex)
                 {
@@ -230,14 +232,14 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_DUPLEX))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
             {
                 if (_selectedPrinter.PrintSetting.Duplex != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Duplex = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_SIZE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
             {
                 if (_selectedPrinter.PrintSetting.PaperSize != selectedIndex)
                 {
@@ -245,21 +247,21 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_PAPER_TYPE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
             {
                 if (_selectedPrinter.PrintSetting.PaperType != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.PaperType = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_INPUT_TRAY))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_INPUT_TRAY))
             {
                 if (_selectedPrinter.PrintSetting.InputTray != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.InputTray = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
             {
                 if (_selectedPrinter.PrintSetting.Imposition != selectedIndex)
                 {
@@ -268,7 +270,7 @@ namespace SmartDeviceApp.Controllers
                     isPageCountAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_IMPOSITION_ORDER))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
             {
                 if (_selectedPrinter.PrintSetting.ImpositionOrder != selectedIndex)
                 {
@@ -279,43 +281,54 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_SORT))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_SORT))
             {
                 if (_selectedPrinter.PrintSetting.Sort != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Sort = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_FINISHING))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING))
             {
                 if (_selectedPrinter.PrintSetting.BookletFinishing != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.BookletFinishing = selectedIndex;
+                    // Matters only when staple is ON
+                    if (_selectedPrinter.PrintSetting.Staple != (int)Staple.Off)
+                    {
+                        isPreviewPageAffected = true;
+                    }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET_LAYOUT))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
                 if (_selectedPrinter.PrintSetting.BookletLayout != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.BookletLayout = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_FINISHING_SIDE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
             {
                 if (_selectedPrinter.PrintSetting.FinishingSide != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.FinishingSide = selectedIndex;
+                    // Matters only when staple is ON
+                    if (_selectedPrinter.PrintSetting.Staple != (int)Staple.Off)
+                    {
+                        isPreviewPageAffected = true;
+                    }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_STAPLE))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
             {
                 if (_selectedPrinter.PrintSetting.Staple != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Staple = selectedIndex;
+                    // Matters only when binding is for staple
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_PUNCH))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
             {
                 if (_selectedPrinter.PrintSetting.Punch != selectedIndex)
                 {
@@ -323,7 +336,7 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_OUTPUT_TRAY))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
             {
                 if (_selectedPrinter.PrintSetting.OutputTray != selectedIndex)
                 {
@@ -348,7 +361,7 @@ namespace SmartDeviceApp.Controllers
             result.Value = state;
 
             bool isPreviewPageAffected = false;
-            if (result.Name.Equals(PrintSettingConstant.KEY_SCALE_TO_FIT))
+            if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT))
             {
                 if (_selectedPrinter.PrintSetting.ScaleToFit != state)
                 {
@@ -356,7 +369,7 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.KEY_BOOKLET))
+            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 if (_selectedPrinter.PrintSetting.Booklet != state)
                 {
@@ -382,7 +395,7 @@ namespace SmartDeviceApp.Controllers
             if (_selectedPrinter.PrintSetting.Booklet)
             {
                 _isBooklet = true;
-                _pageViewMode = PageViewMode.TwoPageView;
+                //_pageViewMode = PageViewMode.TwoPageView;
             }
             else
             {
@@ -513,12 +526,12 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
-                // Check imposition value and generated bitmaps
-                if (_pagesPerSheet > 1 && pageImages.Count > 1)
+                // Check imposition value
+                if (_pagesPerSheet > 1)
                 {
                     finalBitmap = ApplyImposition(paperSize, pageImages);
                 }
-                else if (pageImages.Count == 1)
+                else
                 {
                     finalBitmap = pageImages[0];
                 }
@@ -531,6 +544,15 @@ namespace SmartDeviceApp.Controllers
 
                     // Write out to the stream
                     WriteableBitmapExtensions.FromByteArray(finalBitmap, pixelBytes);
+                }
+
+                // Apply staple
+                if ((_selectedPrinter.PrintSetting.Booklet &&
+                    _selectedPrinter.PrintSetting.BookletFinishing == (int)BookletFinishing.FoldAndStaple) ||
+                    _selectedPrinter.PrintSetting.Staple != (int)Staple.Off)
+                {
+                    await ApplyStaple(finalBitmap, _selectedPrinter.PrintSetting.Staple,
+                        _selectedPrinter.PrintSetting.FinishingSide);
                 }
 
                 try
@@ -670,11 +692,25 @@ namespace SmartDeviceApp.Controllers
                 scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
             if (drawBorder)
             {
-                WriteableBitmapExtensions.DrawRectangle(scaledBitmap, 0, 0,
-                    (int)scaledBitmap.PixelWidth, (int)scaledBitmap.PixelHeight,
-                        Windows.UI.Colors.Black);
+                ApplyBorder(scaledBitmap, 0, 0, (int)scaledBitmap.PixelWidth,
+                    (int)scaledBitmap.PixelHeight);
             }
             WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
+        }
+
+        /// <summary>
+        /// Applies border to the image
+        /// </summary>
+        /// <param name="canvasBitmap">bitmap image</param>
+        /// <param name="xOrigin">starting position</param>
+        /// <param name="yOrigin">starting position</param>
+        /// <param name="width">length</param>
+        /// <param name="height">length</param>
+        private void ApplyBorder(WriteableBitmap canvasBitmap, int xOrigin, int yOrigin, int width,
+            int height)
+        {
+            WriteableBitmapExtensions.DrawRectangle(canvasBitmap, xOrigin, xOrigin,
+                    width, height, Windows.UI.Colors.Black);
         }
 
         /// <summary>
@@ -885,6 +921,160 @@ namespace SmartDeviceApp.Controllers
             return newPixelBytes;
         }
 
+        /// <summary>
+        /// Adds staple wire image into target page image
+        /// </summary>
+        /// <param name="canvasBitmap">destination image</param>
+        /// <param name="stapleType">type indicating number of staple</param>
+        /// <param name="finishingSide">position of staple</param>
+        private async Task ApplyStaple(WriteableBitmap canvasBitmap, int stapleType, int finishingSide)
+        {
+            // Get staple image
+            WriteableBitmap stapleBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
+            StorageFile stapleFile = await StorageFileUtility.GetFileFromAppResource(FILE_PATH_RES_IMAGE_STAPLE);
+            using (IRandomAccessStream raStream = await stapleFile.OpenReadAsync())
+            {
+                // Put staple image to a bitmap
+                stapleBitmap = await WriteableBitmapExtensions.FromStream(null, raStream);
+            }
+            double targetScaleFactor =
+                (double)(PrintSettingConstant.STAPLE_CROWN_LENGTH * ImageConstant.BASE_DPI)
+                / stapleBitmap.PixelWidth;
+            // Scale the staple image
+            WriteableBitmap scaledStapleBitmap = WriteableBitmapExtensions.Resize(stapleBitmap,
+                (int)(stapleBitmap.PixelWidth * targetScaleFactor),
+                (int)(stapleBitmap.PixelHeight * targetScaleFactor),
+                WriteableBitmapExtensions.Interpolation.Bilinear);
+
+            // Determine finishing side
+            if (finishingSide == (int)FinishingSide.Top)
+            {
+                if (stapleType == (int)Staple.OneUpperLeft)
+                {
+                    // Rotate
+                    WriteableBitmap rotatedStaple =
+                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 135, false);
+
+                    // Put into position
+                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                }
+                else if (stapleType == (int)Staple.OneUpperRight)
+                {
+                    // Rotate
+                    WriteableBitmap rotatedStaple =
+                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 45, false);
+
+                    // Put into position
+                    Rect destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                }
+                else if (stapleType == (int)Staple.Two)
+                {
+                    // Put into positions
+                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        scaledStapleBitmap.PixelWidth, scaledStapleBitmap.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, scaledStapleBitmap.PixelWidth, scaledStapleBitmap.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledStapleBitmap, srcRect);
+
+                    // Put into position
+                    destRect = new Rect(canvasBitmap.PixelWidth - scaledStapleBitmap.PixelWidth -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        scaledStapleBitmap.PixelWidth, scaledStapleBitmap.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledStapleBitmap, srcRect);
+                }
+            }
+            else if (finishingSide == (int)FinishingSide.Left)
+            {
+                if (stapleType == (int)Staple.One)
+                {
+                    /// SAME AS CASE WITH TOP + UPPER LEFT
+
+                    // Rotate
+                    WriteableBitmap rotatedStaple =
+                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 135, false);
+
+                    // Put into position
+                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                }
+                else if (stapleType == (int)Staple.Two)
+                {
+                    // Rotate
+                    WriteableBitmap rotatedStaple =
+                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 90, false);
+
+                    // Put into position
+                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+
+                    // Put into position
+                    destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        canvasBitmap.PixelHeight - rotatedStaple.PixelHeight -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                }
+            }
+            else if (finishingSide == (int)FinishingSide.Right)
+            {
+                if (stapleType == (int)Staple.One)
+                {
+                    /// SAME AS CASE WITH TOP + UPPER RIGHT
+
+                    // Rotate
+                    WriteableBitmap rotatedStaple =
+                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 45, false);
+
+                    // Put into position
+                    Rect destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                }
+                else if (stapleType == (int)Staple.Two)
+                {
+                    // Rotate
+                    WriteableBitmap rotatedStaple =
+                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 90, false);
+
+                    // Put into position
+                    Rect destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+
+                    // Put into position
+                    destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        canvasBitmap.PixelHeight - rotatedStaple.PixelHeight -
+                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
+                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
+                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                }
+            }
+
+        }
+
         #endregion Apply Print Settings
 
         #region Print Settings
@@ -897,37 +1087,39 @@ namespace SmartDeviceApp.Controllers
                 FILE_PATH_ASSET_PRINT_SETTINGS_XML);
             XDocument data = XDocument.Load(xmlPath);
 
-            var printSettingsData = from groupData in data.Descendants("group")
-                                    select new PrintSettingGroup
-                                    {
-                                        Name = (string)groupData.Attribute("name"),
-                                        Text = (string)groupData.Attribute("text"),
-                                        PrintSettings =
-                                        (
-                                            from settingData in groupData.Elements("setting")
-                                            select new PrintSetting
-                                            {
-                                                Name = (string)settingData.Attribute("name"),
-                                                Text = (string)settingData.Attribute("text"),
-                                                Icon = (string)settingData.Attribute("icon"),
-                                                Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
-                                                    (string)settingData.Attribute("type")),
-                                                Value = valueConverter.Convert(
-                                                    (string)settingData.Attribute("default"),
-                                                    null, (string)settingData.Attribute("name"), null),
-                                                Default = valueConverter.Convert(
-                                                    (string)settingData.Attribute("default"),
-                                                    null, (string)settingData.Attribute("name"), null),
-                                                Options =
-                                                (
-                                                    from optionData in settingData.Elements("option")
-                                                    select new PrintSettingOption
-                                                    {
-                                                        Text = (string)optionData.Value,
-                                                        Index = optionData.ElementsBeforeSelf().Count()
-                                                    }).ToList<PrintSettingOption>()
-                                            }).ToList<PrintSetting>()
-                                    };
+            var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
+                select new PrintSettingGroup
+                {
+                    Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
+                    Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
+                    PrintSettings =
+                    (
+                        from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
+                        select new PrintSetting
+                        {
+                            Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                            Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
+                            Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
+                            Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
+                            Value = valueConverter.Convert(
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                null),
+                            Default = valueConverter.Convert(
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                null),
+                            Options =
+                            (
+                                from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
+                                select new PrintSettingOption
+                                {
+                                    Text = (string)optionData.Value,
+                                    Index = optionData.ElementsBeforeSelf().Count()
+                                }).ToList<PrintSettingOption>()
+                        }).ToList<PrintSetting>()
+                };
             
             // Construct the PrintSettingList
             _printSettingList = new PrintSettingList();
