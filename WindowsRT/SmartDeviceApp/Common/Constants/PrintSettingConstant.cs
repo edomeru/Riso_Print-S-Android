@@ -50,7 +50,7 @@ namespace SmartDeviceApp.Common.Constants
         // Paper sizes in portrait mode; in inches
         public static Size PAPER_SIZE_A3W        = new Size(13.00, 19.00);
         public static Size PAPER_SIZE_A3         = new Size(11.69, 16.54);
-        public static Size PAPER_SIZE_A4         = new Size(8.27, 11.69);
+        public static Size PAPER_SIZE_A4         = new Size( 8.27, 11.69);
         public static Size PAPER_SIZE_A5         = new Size( 5.83,  8.27);
         public static Size PAPER_SIZE_A6         = new Size( 4.13,  5.83);
         public static Size PAPER_SIZE_B4         = new Size(10.12, 14.33);
@@ -65,9 +65,16 @@ namespace SmartDeviceApp.Common.Constants
         public static double MARGIN_PAPER         = 0;
         public static double MARGIN_BETWEEN_PAGES = 0.5;
         public static double MARGIN_STAPLE        = 0.25;
+        public static double MARGIN_PUNCH         = 0.25;
 
         // Staple size; in inches
         public static double STAPLE_CROWN_LENGTH = 0.47;
+
+        // Punch size; in inches
+        public static double PUNCH_HOLE_DIAMETER                = 0.26;
+        public static double PUNCH_BETWEEN_TWO_HOLES_DISTANCE   = 2.91;
+        public static double PUNCH_BETWEEN_THREE_HOLES_DISTANCE = 4.00;
+        public static double PUNCH_BETWEEN_FOUR_HOLES_DISTANCE  = 3.25;
 
     }
 }

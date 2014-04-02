@@ -312,8 +312,9 @@ namespace SmartDeviceApp.Controllers
                 if (_selectedPrinter.PrintSetting.FinishingSide != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.FinishingSide = selectedIndex;
-                    // Matters only when staple is ON
-                    if (_selectedPrinter.PrintSetting.Staple != (int)Staple.Off)
+                    // Matters only when staple or punch is ON
+                    if (_selectedPrinter.PrintSetting.Staple != (int)Staple.Off ||
+                        _selectedPrinter.PrintSetting.Punch != (int)Punch.Off)
                     {
                         isPreviewPageAffected = true;
                     }
@@ -324,7 +325,6 @@ namespace SmartDeviceApp.Controllers
                 if (_selectedPrinter.PrintSetting.Staple != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Staple = selectedIndex;
-                    // Matters only when binding is for staple
                     isPreviewPageAffected = true;
                 }
             }
@@ -544,6 +544,14 @@ namespace SmartDeviceApp.Controllers
 
                     // Write out to the stream
                     WriteableBitmapExtensions.FromByteArray(finalBitmap, pixelBytes);
+                }
+
+                // Apply punch
+                int holeCount = PrintSettingConverter.PunchIntToNumberOfHolesConverter.Convert(
+                        _selectedPrinter.PrintSetting.Punch);
+                if (holeCount > 0)
+                {
+                    await ApplyPunch(finalBitmap, holeCount, _selectedPrinter.PrintSetting.FinishingSide);
                 }
 
                 // Apply staple
@@ -927,6 +935,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="canvasBitmap">destination image</param>
         /// <param name="stapleType">type indicating number of staple</param>
         /// <param name="finishingSide">position of staple</param>
+        /// <returns>task</returns>
         private async Task ApplyStaple(WriteableBitmap canvasBitmap, int stapleType, int finishingSide)
         {
             // Get staple image
@@ -1016,6 +1025,115 @@ namespace SmartDeviceApp.Controllers
             Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
             Rect srcRect = new Rect(0, 0, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
             WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStapleBitmap, srcRect);
+        }
+
+        /// <summary>
+        /// Adds punch hole image into page image
+        /// </summary>
+        /// <param name="canvasBitmap">destination image</param>
+        /// <param name="holeCount">number of punch holes</param>
+        /// <param name="finishingSide">postion/edge of punch</param>
+        /// <returns>task</returns>
+        private async Task ApplyPunch(WriteableBitmap canvasBitmap, int holeCount, int finishingSide)
+        {
+            // Get punch image
+            WriteableBitmap punchBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
+            StorageFile stapleFile = await StorageFileUtility.GetFileFromAppResource(FILE_PATH_RES_IMAGE_PUNCH);
+            using (IRandomAccessStream raStream = await stapleFile.OpenReadAsync())
+            {
+                // Put staple image to a bitmap
+                punchBitmap = await WriteableBitmapExtensions.FromStream(null, raStream);
+            }
+            double targetScaleFactor =
+                (double)(PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI)
+                / punchBitmap.PixelWidth;
+            // Scale the staple image
+            WriteableBitmap scaledPunchBitmap = WriteableBitmapExtensions.Resize(punchBitmap,
+                (int)(punchBitmap.PixelWidth * targetScaleFactor),
+                (int)(punchBitmap.PixelHeight * targetScaleFactor),
+                WriteableBitmapExtensions.Interpolation.Bilinear);
+
+            // Determine punch
+            double diameterPunch = PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI;
+            double marginPunch = PrintSettingConstant.MARGIN_PUNCH * ImageConstant.BASE_DPI;
+            double distanceBetweenHoles =
+                PrintSettingConverter.PunchIntToDistanceBetweenHolesConverter.Convert(
+                _selectedPrinter.PrintSetting.Punch);
+            if (finishingSide == (int)FinishingSide.Top)
+            {
+                double startPos = GetPunchStartPosition(canvasBitmap.PixelWidth, true, holeCount,
+                    diameterPunch, marginPunch, distanceBetweenHoles);
+                ApplyPunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, false, true,
+                    diameterPunch, marginPunch, distanceBetweenHoles);
+            }
+            else if (finishingSide == (int)FinishingSide.Left)
+            {
+                double startPos = GetPunchStartPosition(canvasBitmap.PixelHeight, false, holeCount,
+                    diameterPunch, marginPunch, distanceBetweenHoles);
+                ApplyPunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, false, false,
+                    diameterPunch, marginPunch, distanceBetweenHoles);
+            }
+            else if (finishingSide == (int)FinishingSide.Right)
+            {
+                double startPos = GetPunchStartPosition(canvasBitmap.PixelHeight, false, holeCount,
+                    diameterPunch, marginPunch, distanceBetweenHoles);
+                ApplyPunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, true, false,
+                    diameterPunch, marginPunch, distanceBetweenHoles);
+            }
+        }
+
+        /// <summary>
+        /// Computes the starting position of the punch hole image
+        /// </summary>
+        /// <param name="length">length of page image edge where punch will be placed</param>
+        /// <param name="isAlongXAxis">direction of punch holes</param>
+        /// <param name="holeCount">number of punch holes</param>
+        /// <param name="diameterPunch">size of punch hole</param>
+        /// <param name="marginPunch">margin of punch hole against edge of page image</param>
+        /// <param name="distanceBetweenHoles">distance between punch holes</param>
+        /// <returns>starting position of the first punch hole</returns>
+        private double GetPunchStartPosition(double length, bool isAlongXAxis, int holeCount,
+            double diameterPunch, double marginPunch, double distanceBetweenHoles)
+        {
+            double startPos = (length - (holeCount * diameterPunch) -
+                                ((holeCount - 1) * distanceBetweenHoles)) / 2;
+            return startPos;
+        }
+
+        /// <summary>
+        /// Adds punch hole images
+        /// </summary>
+        /// <param name="canvasBitmap">destination image</param>
+        /// <param name="punchBitmap">punch hole image</param>
+        /// <param name="holeCount">number of punch holes</param>
+        /// <param name="startPos">starting position</param>
+        /// <param name="isXEnd">true when punch holes are to be placed near the end along X-axis</param>
+        /// <param name="isAlongXAxis">true when punch holes are to be placed horizontally</param>
+        /// <param name="diameterPunch">size of punch hole</param>
+        /// <param name="marginPunch">margin of punch hole against edge of page image</param>
+        /// <param name="distanceBetweenHoles">distance between punch holes</param>
+        private void ApplyPunch(WriteableBitmap canvasBitmap, WriteableBitmap punchBitmap,
+            int holeCount, double startPos, bool isXEnd, bool isAlongXAxis, double diameterPunch,
+            double marginPunch, double distanceBetweenHoles)
+        {
+            double endMarginPunch = (isXEnd) ? canvasBitmap.PixelWidth - diameterPunch - marginPunch : marginPunch;
+
+            double currPos = startPos;
+            for (int index = 0; index < holeCount; ++index, currPos += diameterPunch + distanceBetweenHoles)
+            {
+                if (currPos < 0 || (isAlongXAxis && currPos > canvasBitmap.PixelWidth) ||
+                    (!isAlongXAxis && currPos > canvasBitmap.PixelHeight))
+                {
+                    continue;
+                }
+
+                double destXOrigin = (isAlongXAxis) ? currPos : endMarginPunch;
+                double destYOrigin = (isAlongXAxis) ? marginPunch : currPos;
+                Rect destRect = new Rect(destXOrigin, destYOrigin, punchBitmap.PixelWidth,
+                    punchBitmap.PixelHeight);
+                Rect srcRect = new Rect(0, 0, punchBitmap.PixelWidth, punchBitmap.PixelHeight);
+                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, punchBitmap, srcRect);
+            }
         }
 
         #endregion Apply Print Settings

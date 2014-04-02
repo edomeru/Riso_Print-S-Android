@@ -240,7 +240,7 @@ namespace SmartDeviceApp.Converters
                         break;
                     case (int)Imposition.Off:
                     default:
-                        pagesPerSheet = 1;
+                        // Do nothing
                         break;
                 }
 
@@ -366,6 +366,62 @@ namespace SmartDeviceApp.Converters
 
                 return convertedValue;
             }
+        }
+
+        public class PunchIntToNumberOfHolesConverter
+        {
+
+            public static int Convert(int value)
+            {
+                int numberOfHoles = 0;
+                switch (value)
+                {
+                    case (int)Punch.TwoHoles:
+                        numberOfHoles = 2;
+                        break;
+                    case (int)Punch.ThreeHoles:
+                        numberOfHoles = 3;
+                        break;
+                    case (int)Punch.FourHoles:
+                        numberOfHoles = 4;
+                        break;
+                    case (int)Punch.Off:
+                    default:
+                        // Do nothing
+                        break;
+                }
+
+                return numberOfHoles;
+            }
+
+        }
+
+        public class PunchIntToDistanceBetweenHolesConverter
+        {
+
+            public static double Convert(int value)
+            {
+                double distance = 0;
+                switch (value)
+                {
+                    case (int)Punch.TwoHoles:
+                        distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
+                        break;
+                    case (int)Punch.ThreeHoles:
+                        distance = PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;
+                        break;
+                    case (int)Punch.FourHoles:
+                        distance = PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE;
+                        break;
+                    case (int)Punch.Off:
+                    default:
+                        // Do nothing
+                        break;
+                }
+
+                return distance * ImageConstant.BASE_DPI;
+            }
+
         }
 
         public class OutputTrayToIntConverter : BasePrintSettingConverter.BasePrintSettingToIntConverter
