@@ -219,11 +219,16 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender
 {
     // get the group tapped
-    NSInteger groupIndex = [sender tag];
-    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
+    NSInteger groupTag = [sender tag];
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupTag);
     
     // remove the group
-    [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
+    for (int jobIdx = 0; jobIdx < group.countPrintJobs; jobIdx++)
+        [PrintJobHistoryManager deletePrintJob:[group getPrintJobAtIndex:jobIdx]];
+    while (group.countPrintJobs != 0)
+        [group deletePrintJobAtIndex:0];
+    [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
     
     // force redraw
     // with animation (not smooth)
@@ -236,13 +241,14 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     NSInteger tag = [button tag];
     NSUInteger groupTag = tag/TAG_FACTOR;
-    NSUInteger itemTag = tag%TAG_FACTOR;
-    NSLog(@"[INFO][PrintJobCtrl] will delete {group=%ld, item=%ld}",
-          (unsigned long)groupTag, (unsigned long)itemTag);
+    NSUInteger jobTag = tag%TAG_FACTOR;
+    NSLog(@"[INFO][PrintJobCtrl] will delete {group=%ld, job=%ld}",
+          (unsigned long)groupTag, (unsigned long)jobTag);
     
-    // delete the item from the model
+    // delete the jobs from the model
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
-    [group deletePrintJobAtIndex:itemTag];
+    [PrintJobHistoryManager deletePrintJob:[group getPrintJobAtIndex:jobTag]];
+    [group deletePrintJobAtIndex:jobTag];
     if ([group countPrintJobs] == 0)
         [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
     

@@ -21,6 +21,8 @@
 + (NSMutableArray*)retrievePrintJobHistoryGroups;
 
 /**
+ Removes a PrintJob object from the database.
+ @param printJob
  */
 + (void)deletePrintJob:(PrintJob*)printJob;
 

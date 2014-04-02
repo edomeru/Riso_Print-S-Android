@@ -8,6 +8,7 @@
 
 #import "PrintJobHistoryGroup.h"
 #import "PrintJob.h"
+#import "PrintJobHistoryManager.h"
 
 @interface PrintJobHistoryGroup ()
 

@@ -115,6 +115,7 @@
 
 + (void)deletePrintJob:(PrintJob*)printJob
 {
+    [DatabaseManager deleteObject:printJob];
 }
 
 + (void)populateWithTestData
