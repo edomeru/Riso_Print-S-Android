@@ -35,18 +35,18 @@
     <x:Double x:Key="SIZE_ListButton1Height">20</x:Double>
     <x:Double x:Key="SIZE_ListButton2Width">22</x:Double>
     <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
-    <x:Double x:Key="SIZE_ListValue_TextboxWidth">100</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth">50</x:Double>
     <!-- APP THEME CONSTANTS END-->
 
     <!-- APP CONVERTERS START -->
     <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <conv:IntToStringConverter x:Key="IntToStringConverter"/>
     <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
     <conv:ItemCheckedConverter x:Key="ItemCheckedConverter"/>
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
-    <conv:PrintSettingTypeToVisibilityConverter x:Key="PrintSettingTypeToVisibilityConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <!-- APP CONVERTERS END -->
 

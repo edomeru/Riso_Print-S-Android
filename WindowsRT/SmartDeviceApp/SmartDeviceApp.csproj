@@ -131,13 +131,13 @@
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\IntToStringConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemCheckedConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
-    <Compile Include="Converters\PrintSettingTypeToVisibilityConverter.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
     <Compile Include="Converters\ItemClickedConverter.cs" />
     <Compile Include="Converters\ItemSelectedConverter.cs" />

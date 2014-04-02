@@ -326,11 +326,111 @@
                         Bottom="{StaticResource MARGIN_Medium}"></Thickness>
             </Setter.Value>
         </Setter>
-    </Style>
-    <Style x:Key="STYLE_ListValue_ToggleSwitch" TargetType="ToggleSwitch">
-        <Setter Property="Width" Value="{StaticResource SIZE_ListValue_TextboxWidth}"/>
+        <Setter Property="IsReadOnly" Value="False"/>
+        <Setter Property="TextAlignment" Value="Right"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="AcceptsReturn" Value="False"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Padding" Value="6"/>
+        <Setter Property="InputScope" Value="Number"/>
     </Style>
     
+    <Style x:Key="STYLE_ListValue_ToggleSwitch" TargetType="ToggleSwitch">
+        <Setter Property="Width" Value="{StaticResource SIZE_ListValue_TextboxWidth}"/>
+        <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchForegroundThemeBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="MinWidth" Value="70"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleSwitch">
+                    <Grid Background="Transparent" ManipulationMode="None" Width="70" Height="50" >
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="SwitchKnob">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleSwitchThumbDisabledBackgroundThemeBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke" Storyboard.TargetName="SwitchKnob">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleSwitchThumbDisabledBorderThemeBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ToggleStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition x:Name="DraggingToOnTransition" From="Dragging" To="On" GeneratedDuration="0">
+                                        <Storyboard>
+                                            <!--<RepositionThemeAnimation TargetName="SwitchKnob" FromHorizontalOffset="0" />-->
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition x:Name="DraggingToOffTransition" From="Dragging" To="Off" GeneratedDuration="0">
+                                        <Storyboard>
+                                            <!--<RepositionThemeAnimation TargetName="SwitchKnob" FromHorizontalOffset="0" />-->
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition x:Name="OnToOffTransition" From="On" To="Off" GeneratedDuration="0">
+                                        <Storyboard>
+                                            <!--<RepositionThemeAnimation TargetName="SwitchKnob" FromHorizontalOffset="20" />-->
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition x:Name="OffToOnTransition" From="Off" To="On" GeneratedDuration="0">
+                                        <Storyboard>
+                                            <!--<RepositionThemeAnimation TargetName="SwitchKnob" FromHorizontalOffset="0" />-->
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Dragging" />
+                                <VisualState x:Name="Off">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill)" Storyboard.TargetName="OuterBounds">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Gray4}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="On">
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0" To="20" Storyboard.TargetProperty="X" Storyboard.TargetName="KnobTranslateTransform"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ContentStates">
+                                <VisualState x:Name="OffContent"/>
+                                <VisualState x:Name="OnContent"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Focused"/>
+                                <VisualState x:Name="Unfocused"/>
+                                <VisualState x:Name="PointerFocused"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="SwitchKnobBounds" Margin="10" Width="50" Height="30">
+                            <Rectangle x:Name="OuterBounds" Fill="{StaticResource BRUSH_Purple2}" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="50" RadiusY="15" RadiusX="15"/>
+                            <Ellipse x:Name="SwitchKnob" Fill="{StaticResource BRUSH_White}" HorizontalAlignment="Left" Width="24" Height="24" Margin="3,0,0,0">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform x:Name="KnobTranslateTransform"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
+                        <Thumb x:Name="SwitchThumb" AutomationProperties.AccessibilityView="Raw" Width="70" HorizontalAlignment="Left" Height="50">
+                            <Thumb.Template>
+                                <ControlTemplate TargetType="Thumb">
+                                    <Rectangle Fill="Transparent"/>
+                                </ControlTemplate>
+                            </Thumb.Template>
+                        </Thumb>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="STYLE_ListHeaderGrid" TargetType="Grid">
         <Style.Setters>
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray4}"/>
