@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class PrintJob;
+
 @interface PrintJobHistoryGroup : NSObject
 
 #pragma mark - Properties
@@ -44,8 +46,7 @@
 /**
  Adds a PrintJob object to the list of print jobs.
  */
-//TODO: this should add a PrintJob object, not just a NSString
-- (void)addPrintJob:(NSString*)printJob;
+- (void)addPrintJob:(PrintJob*)printJob;
 
 /**
  Removes a PrintJob object from the list of print jobs.
@@ -57,8 +58,7 @@
  Retrieves a PrintJob object from the list of print jobs.
  @param index
  */
-//TODO: this should return a PrintJob object, not just a NSString
-- (NSString*)getPrintJobAtIndex:(NSUInteger)index;
+- (PrintJob*)getPrintJobAtIndex:(NSUInteger)index;
 
 /**
  Sets whether the group is displayed as collapsed or expanded.

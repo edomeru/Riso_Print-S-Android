@@ -7,6 +7,7 @@
 //
 
 #import "PrintJobHistoryGroup.h"
+#import "PrintJob.h"
 
 @interface PrintJobHistoryGroup ()
 
@@ -14,7 +15,6 @@
 @property (readwrite, assign, nonatomic) NSUInteger countPrintJobs;
 @property (readwrite, assign, nonatomic) BOOL isCollapsed;
 
-//TODO: this should contain actual PrintJob objects, not just NSString's
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 @end
@@ -43,7 +43,7 @@
 
 #pragma mark - Add
 
-- (void)addPrintJob:(NSString*)printJob
+- (void)addPrintJob:(PrintJob*)printJob
 {
     [self.listPrintJobs addObject:printJob];
     self.countPrintJobs++;
@@ -66,13 +66,13 @@
 
 #pragma mark - Get
 
-- (NSString*)getPrintJobAtIndex:(NSUInteger)index
+- (PrintJob*)getPrintJobAtIndex:(NSUInteger)index
 {
     if (index >= self.countPrintJobs)
     {
         NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
               (unsigned long)index, (unsigned long)self.countPrintJobs);
-        return @"";
+        return nil;
     }
     
     return [self.listPrintJobs objectAtIndex:index];
