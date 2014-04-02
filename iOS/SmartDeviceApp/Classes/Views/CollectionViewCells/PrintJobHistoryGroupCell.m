@@ -1,5 +1,5 @@
 //
-//  PrintJobHistoryItemCell.m
+//  PrintJobHistoryGroupCell.m
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/27/14.
@@ -29,7 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIButton* groupName;
 @property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
 @property (weak, nonatomic) IBOutlet UIButton* deleteAllButton;
-@property (weak, nonatomic) IBOutlet UITableView* itemsView;
+@property (weak, nonatomic) IBOutlet UITableView* printJobsView;
 
 /** Keeps trach of the index of an item that has the delete button. */
 @property (strong, nonatomic) NSIndexPath* deleteItem;
@@ -78,37 +78,46 @@
 
 - (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath
 {
-    UITableViewCell* itemCell = [tableView dequeueReusableCellWithIdentifier:ITEMCELL
+    UITableViewCell* printJobCell = [tableView dequeueReusableCellWithIdentifier:PRINTJOBCELL
                                                                 forIndexPath:indexPath];
     
     // get print job details (name, result, timestamp)
     NSArray* printJob = [self.listPrintJobs objectAtIndex:indexPath.row];
     
     // print job name
-    itemCell.textLabel.text = [NSString stringWithFormat:@"%@", printJob[IDX_NAME]];
+    printJobCell.textLabel.text = [NSString stringWithFormat:@"%@", printJob[IDX_NAME]];
     
     // print job result
     BOOL result = [printJob[IDX_RESULT] boolValue];
     if (result)
-        itemCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
+        printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
     else
-        itemCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
+        printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
     
     // print job timestamp
     NSDateFormatter* timestampFormat = [[NSDateFormatter alloc] init];
     [timestampFormat setDateFormat:FORMAT_DATE_TIME];
     [timestampFormat setTimeZone:[NSTimeZone timeZoneWithName:FORMAT_ZONE]]; //TODO: should depend on localization?
-    itemCell.detailTextLabel.text = [timestampFormat stringFromDate:printJob[IDX_TIMESTAMP]];
-    itemCell.detailTextLabel.hidden = NO;
-    itemCell.accessoryView = nil;
-    
-    // fix for the bugged always-white cell in iPad iOS7
-    itemCell.backgroundColor = [UIColor clearColor];
+    printJobCell.detailTextLabel.text = [timestampFormat stringFromDate:printJob[IDX_TIMESTAMP]];
+    printJobCell.detailTextLabel.hidden = NO;
+    printJobCell.accessoryView = nil;
     
     // clear tracker for the delete button
     self.deleteItem = nil;
     
-    return itemCell;
+    return printJobCell;
+}
+
+- (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    // unified version-independent fix for the buggy UITableViewCell background color
+    // for iOS6 (always clear) and iOS7 (always white) on iPad
+    // colors set to default in storyboard, set programmatically here instead
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        [cell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
+    else
+        [cell setBackgroundColor:[UIColor gray1ThemeColor]];
 }
 
 #pragma mark - Cell Data
@@ -119,7 +128,7 @@
     self.groupName.tag = tag;
     self.groupIndicator.tag = tag;
     self.deleteAllButton.tag = tag;
-    self.itemsView.tag = tag;
+    self.printJobsView.tag = tag;
     
     // prepare container for print jobs list
     self.listPrintJobs = [NSMutableArray array];
@@ -153,7 +162,7 @@
 
 - (void)removePrintJob:(NSIndexPath*)indexPath
 {
-    [self.itemsView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self.printJobsView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     [self reloadContents];
 }
 
@@ -162,8 +171,8 @@
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap
 {
     // get the specific item swiped
-    CGPoint swipedItem = [gesture locationInView:self.itemsView];
-    NSIndexPath* itemIndexPath = [self.itemsView indexPathForRowAtPoint:swipedItem];
+    CGPoint swipedItem = [gesture locationInView:self.printJobsView];
+    NSIndexPath* itemIndexPath = [self.printJobsView indexPathForRowAtPoint:swipedItem];
     if (itemIndexPath != nil)
     {
         NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)itemIndexPath.row);
@@ -172,15 +181,15 @@
         if ((self.deleteItem != nil) && (self.deleteItem.row != itemIndexPath.row))
         {
             NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.deleteItem.row);
-            UITableViewCell* itemCell = [self.itemsView cellForRowAtIndexPath:self.deleteItem];
-            itemCell.accessoryView = nil;
-            itemCell.detailTextLabel.hidden = NO;
+            UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.deleteItem];
+            printJobCell.accessoryView = nil;
+            printJobCell.detailTextLabel.hidden = NO;
         }
         self.deleteItem = itemIndexPath;
         
         // check if this item already has a delete button
-        UITableViewCell* itemCell = [self.itemsView cellForRowAtIndexPath:itemIndexPath];
-        if (itemCell.accessoryView != nil)
+        UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:itemIndexPath];
+        if (printJobCell.accessoryView != nil)
         {
             NSLog(@"[INFO][PrintJobCell] already has delete button, ignore");
             return;
@@ -193,11 +202,11 @@
         [deleteButton setBackgroundColor:[UIColor redThemeColor]];
         [deleteButton setUserInteractionEnabled:YES];
         deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
-        deleteButton.tag = (self.itemsView.tag * TAG_FACTOR) + itemIndexPath.row; //<group>00<row>
+        deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + itemIndexPath.row; //<group>00<row>
         deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x,
                                         0,
                                         self.deleteAllButton.frame.size.width-15.0f,
-                                        itemCell.frame.size.height-10.0f);
+                                        printJobCell.frame.size.height-10.0f);
         
         // set the handler for the tap action
         [deleteButton addTarget:receiver
@@ -205,8 +214,8 @@
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        itemCell.accessoryView = deleteButton;
-        itemCell.detailTextLabel.hidden = YES;
+        printJobCell.accessoryView = deleteButton;
+        printJobCell.detailTextLabel.hidden = YES;
     }
     else
     {
@@ -220,15 +229,15 @@
 {
     NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.deleteItem.row);
     
-    UITableViewCell* itemCell = [self.itemsView cellForRowAtIndexPath:self.deleteItem];
-    itemCell.accessoryView = nil;
-    itemCell.detailTextLabel.hidden = NO;
+    UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.deleteItem];
+    printJobCell.accessoryView = nil;
+    printJobCell.detailTextLabel.hidden = NO;
     self.deleteItem = nil;
 }
 
 - (void)reloadContents
 {
-    [self.itemsView reloadData];
+    [self.printJobsView reloadData];
 }
 
 @end

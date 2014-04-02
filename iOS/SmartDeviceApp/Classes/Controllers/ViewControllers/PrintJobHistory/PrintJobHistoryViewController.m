@@ -48,9 +48,9 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 - (IBAction)tappedPrinterHeader:(UIButton*)sender;
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender;
 - (void)tappedDeleteOneButton:(UIButton*)button;
-- (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer;
-- (void)swipedRight:(UIGestureRecognizer*)gestureRecognizer;
-- (void)tappedGroup:(UIGestureRecognizer*)gestureRecognizer;
+- (IBAction)swipedLeft:(UIGestureRecognizer*)gestureRecognizer;
+- (IBAction)swipedRight:(UIGestureRecognizer*)gestureRecognizer;
+- (IBAction)tappedGroup:(UIGestureRecognizer*)gestureRecognizer;
 - (void)removeDeleteButton;
 
 @end
@@ -72,6 +72,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     [super viewDidLoad];
     
+    [self setupData];
+    
     self.groupsViewLayout.delegate = self;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
@@ -84,8 +86,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
                                          forDevice:UIUserInterfaceIdiomPhone];
     }
     
-    [self setupData];
-    [self setupView];
+    self.deleteGroup = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -99,32 +100,6 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     [self.mainMenuButton setEnabled:NO];
     [self performSegueTo:[HomeViewController class]];
-}
-
-#pragma mark - UICollectionView
-
-- (void)setupView
-{
-    self.deleteGroup = nil;
-    
-    // put the swipe-left-to-delete gesture handler
-    UISwipeGestureRecognizer* swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                                                    action:@selector(swipedLeft:)];
-    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-    [self.groupsView addGestureRecognizer:swipeLeft];
-    
-    // put the swipe-right-to-cancel-delete gesture handler
-    UISwipeGestureRecognizer* swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                                                     action:@selector(swipedRight:)];
-    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
-    [self.groupsView addGestureRecognizer:swipeRight];
-    
-    // put the tap-anywhere-to-cancel-delete gesture handler
-    UITapGestureRecognizer* tapCollection = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                    action:@selector(tappedGroup:)];
-    tapCollection.numberOfTapsRequired = 1;
-    tapCollection.numberOfTouchesRequired = 1;
-    [self.groupsView addGestureRecognizer:tapCollection];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -230,8 +205,6 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (void)setupData
 {
-    self.listPrintJobHistoryGroups = [NSMutableArray arrayWithCapacity:7]; //TODO: capacity=DBcontents
-    
     //TODO: addPrintJob should add a PrintJob object, not just a NSString
     //TODO: the group name should be retrieved from the PrintJob.Printer.name property
     //TODO: retain the test data for debugging, add result and timestamp
@@ -243,6 +216,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     }
     else
     {
+        self.listPrintJobHistoryGroups = [NSMutableArray arrayWithCapacity:8]; //TODO: capacity=DBcontents
+        
         PrintJobHistoryGroup* group1 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 1"];
         [group1 addPrintJob:@"Print Job A"];
         [group1 addPrintJob:@"Print Job B"];
@@ -291,6 +266,14 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
         [group7 addPrintJob:@"Print Job U"];
         [group7 collapse:NO];
         [self.listPrintJobHistoryGroups addObject:group7];
+        
+        PrintJobHistoryGroup* group8 = [PrintJobHistoryGroup initWithGroupName:@"RISO Printer 8"];
+        [group8 addPrintJob:@"Print Job V"];
+        [group8 addPrintJob:@"Print Job X"];
+        [group8 addPrintJob:@"Print Job Y"];
+        [group8 addPrintJob:@"Print Job Z"];
+        [group8 collapse:NO];
+        [self.listPrintJobHistoryGroups addObject:group8];
     }
 }
 

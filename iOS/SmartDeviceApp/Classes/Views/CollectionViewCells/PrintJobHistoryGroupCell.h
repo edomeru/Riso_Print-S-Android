@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-#define GROUPCELL   @"PrintJobHistoryGroup"
-#define ITEMCELL    @"PrintJobHistoryItem"
+#define GROUPCELL       @"PrintJobHistoryGroup"
+#define PRINTJOBCELL    @"PrintJobHistoryItem"
 
 #define TAG_FACTOR  1000
 

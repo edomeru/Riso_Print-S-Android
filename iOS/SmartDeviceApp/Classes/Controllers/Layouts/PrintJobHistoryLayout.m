@@ -13,6 +13,8 @@
 
 @interface PrintJobHistoryLayout ()
 
+#pragma mark - Properties
+
 /** Spacing between a group and the UICollectionView edges. */
 @property (assign, nonatomic) UIEdgeInsets groupInsets;
 
@@ -31,15 +33,18 @@
 
 /** 
  Stores the layout attributes for each group.
+ This is required for custom UICollectionViewLayout classes.
  The group's index path is used as the key.
  */
 @property (strong, nonatomic) NSDictionary* groupLayoutInfo;
 
 /**
  Stores the current height of each column.
- The column number is used as the key and the height is the value.
+ The column number is used as the key.
  */
-@property (strong, nonatomic) NSMutableDictionary* columnHeight;
+@property (strong, nonatomic) NSMutableDictionary* columnHeights;
+
+#pragma mark - Methods
 
 /**
  Calculates the (x,y) origin and the (height,width) size of
@@ -47,6 +52,21 @@
  @param indexPath
  */
 - (CGRect)frameForGroupAtIndexPath:(NSIndexPath*)indexPath;
+
+/**
+ Determines which of the existing columns has the shortest
+ height so far. This is used when populating the layout, as
+ the groups are placed depending on which column has the 
+ most space available.
+ */
+- (NSString*)keyForShortestColumn;
+
+/**
+ Determines which of the existing columns has the longest
+ height so far. This is used when determining the overall
+ collection view content size.
+ */
+- (NSString*)keyForTallestColumn;
 
 @end
 
@@ -84,10 +104,9 @@
     {
         //iPad
         
-        self.interGroupSpacingY = 10.0f;
-        
         if (UIInterfaceOrientationIsLandscape(orientation))
         {
+            self.interGroupSpacingY = 10.0f;
             self.interGroupSpacingX = 10.0f;
             self.numberOfColumns = 3;
             self.groupInsets = UIEdgeInsetsMake(25.0f,  //T
@@ -98,6 +117,7 @@
         }
         else
         {
+            self.interGroupSpacingY = 10.0f;
             self.interGroupSpacingX = 25.0f;
             self.numberOfColumns = 2;
             self.groupInsets = UIEdgeInsetsMake(25.0f,  //T
@@ -109,6 +129,7 @@
     else
     {
         //iPhone
+        //will only support portrait
         
         self.interGroupSpacingY = 5.0f;
         self.interGroupSpacingX = 0.0f;
@@ -120,10 +141,10 @@
     }
     
     // reset tracker for column heights
-    self.columnHeight = [NSMutableDictionary dictionary];
+    self.columnHeights = [NSMutableDictionary dictionaryWithCapacity:self.numberOfColumns];
     for (int col = 0; col < self.numberOfColumns; col++)
     {
-        [self.columnHeight setValue:[NSNumber numberWithFloat:0.0f]
+        [self.columnHeights setValue:[NSNumber numberWithFloat:0.0f]
                              forKey:[NSString stringWithFormat:@"%d", col]];
     }
     
@@ -137,23 +158,23 @@
     NSMutableDictionary* groupLayoutInfo = [NSMutableDictionary dictionary];
     
     NSInteger section = 0; //expecting only one section for all the groups
-    NSInteger itemCount = [self.collectionView numberOfItemsInSection:section];
-    NSLog(@"[INFO][PrintJobLayout] sectionCount=%ld, itemCount=%ld", (long)section+1, (long)itemCount);
+    NSInteger groupCount = [self.collectionView numberOfItemsInSection:section];
+    NSLog(@"[INFO][PrintJobLayout] sectionCount=%ld, groupCount=%ld", (long)section+1, (long)groupCount);
     
     // for each group in the section
-    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:section];
-    for (NSInteger item = 0; item < itemCount; item++)
+    NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
+    for (NSInteger group = 0; group < groupCount; group++)
     {
         // create UICollectionViewLayoutAttributes for the group
-        indexPath = [NSIndexPath indexPathForItem:item inSection:section];
-        UICollectionViewLayoutAttributes* itemAttributes =
-            [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+        groupIndexPath = [NSIndexPath indexPathForItem:group inSection:section];
+        UICollectionViewLayoutAttributes* groupAttributes =
+            [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:groupIndexPath];
         
         // set the frame (origin and position) for the group
-        itemAttributes.frame = [self frameForGroupAtIndexPath:indexPath];
+        groupAttributes.frame = [self frameForGroupAtIndexPath:groupIndexPath];
         
         // add this group's attributes to the dictionary
-        groupLayoutInfo[indexPath] = itemAttributes;
+        groupLayoutInfo[groupIndexPath] = groupAttributes;
     }
     
     self.groupLayoutInfo = groupLayoutInfo;
@@ -161,10 +182,13 @@
 
 - (CGRect)frameForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
-    // determine the correct row and column for the item
+    // determine the correct row
     NSInteger row = indexPath.item / self.numberOfColumns;
+
+    // determine the correct column
     NSInteger col = indexPath.item % self.numberOfColumns;
     NSString* colKey = [NSString stringWithFormat:@"%ld", (long)col];
+    
     NSLog(@"[INFO][PrintJobLayout] row=%ld, col=%ld, colKey=%@", (long)row, (long)col, colKey);
     
     // request for the size of the group from the data source
@@ -176,7 +200,7 @@
     
     // set the y-origin pt.
     CGFloat originY = 0.0f;
-    CGFloat currentColumnHeight = [[self.columnHeight valueForKey:colKey] floatValue];
+    CGFloat currentColumnHeight = [[self.columnHeights valueForKey:colKey] floatValue];
     if (row == 0)
     {
         // this is the first row
@@ -193,7 +217,7 @@
 
     // save the new column height
     currentColumnHeight = originY + groupSize.height;
-    [self.columnHeight setValue:[NSNumber numberWithFloat:currentColumnHeight] forKey:colKey];
+    [self.columnHeights setValue:[NSNumber numberWithFloat:currentColumnHeight] forKey:colKey];
     
     // return the (x-origin, y-origin, width, height) for the group
     return CGRectMake(originX, originY, groupSize.width, groupSize.height);
@@ -226,20 +250,55 @@
 - (CGSize)collectionViewContentSize
 {
     // height is based on the tallest column
-    __block CGFloat maxHeight = 0.0f;
-    [self.columnHeight enumerateKeysAndObjectsUsingBlock:^(NSString* key,
-                                                           NSNumber* value,
-                                                           BOOL* stop)
-    {
-        CGFloat columnHeight = [value floatValue];
-        if (columnHeight > maxHeight)
-            maxHeight = columnHeight;
-    }];
+    NSString* maxColumnKey = [self keyForTallestColumn];
+    CGFloat height = [[self.columnHeights valueForKey:maxColumnKey] floatValue];
     
     // width is simply the width of the collection view itself
     CGFloat width = self.collectionView.bounds.size.width;
     
-    return CGSizeMake(width, maxHeight);
+    return CGSizeMake(width, height);
+}
+
+#pragma mark - Utilities
+
+- (NSString*)keyForShortestColumn
+{
+    __block NSString* minColumnKey = @"0"; //by default, place in first column
+    __block CGFloat minColumnHeight = MAXFLOAT;
+    
+    [self.columnHeights enumerateKeysAndObjectsUsingBlock:^(NSString* columnKey,
+                                                            NSNumber* height,
+                                                            BOOL* stop)
+     {
+         CGFloat columnHeight = [height floatValue];
+         if (columnHeight < minColumnHeight)
+         {
+             minColumnHeight = columnHeight;
+             minColumnKey = columnKey;
+         }
+     }];
+    
+    return minColumnKey;
+}
+
+- (NSString*)keyForTallestColumn
+{
+    __block NSString* maxColumnKey = @"0"; //by default, use first column
+    __block CGFloat maxColumnHeight = 0.0f;
+    
+    [self.columnHeights enumerateKeysAndObjectsUsingBlock:^(NSString* columnKey,
+                                                            NSNumber* height,
+                                                            BOOL* stop)
+     {
+         CGFloat columnHeight = [height floatValue];
+         if (columnHeight > maxColumnHeight)
+         {
+             maxColumnHeight = columnHeight;
+             maxColumnKey = columnKey;
+         }
+     }];
+    
+    return maxColumnKey;
 }
 
 @end
