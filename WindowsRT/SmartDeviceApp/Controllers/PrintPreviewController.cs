@@ -951,128 +951,71 @@ namespace SmartDeviceApp.Controllers
             {
                 if (stapleType == (int)Staple.OneUpperLeft)
                 {
-                    // Rotate
-                    WriteableBitmap rotatedStaple =
-                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 135, false);
-
-                    // Put into position
-                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 135, false, false);
                 }
                 else if (stapleType == (int)Staple.OneUpperRight)
                 {
-                    // Rotate
-                    WriteableBitmap rotatedStaple =
-                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 45, false);
-
-                    // Put into position
-                    Rect destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 45, true, false);
                 }
                 else if (stapleType == (int)Staple.Two)
                 {
-                    // Put into positions
-                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        scaledStapleBitmap.PixelWidth, scaledStapleBitmap.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, scaledStapleBitmap.PixelWidth, scaledStapleBitmap.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledStapleBitmap, srcRect);
-
-                    // Put into position
-                    destRect = new Rect(canvasBitmap.PixelWidth - scaledStapleBitmap.PixelWidth -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        scaledStapleBitmap.PixelWidth, scaledStapleBitmap.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledStapleBitmap, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 0, false, false);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 0, true, false);
                 }
             }
             else if (finishingSide == (int)FinishingSide.Left)
             {
                 if (stapleType == (int)Staple.One)
                 {
-                    /// SAME AS CASE WITH TOP + UPPER LEFT
-
-                    // Rotate
-                    WriteableBitmap rotatedStaple =
-                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 135, false);
-
-                    // Put into position
-                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 135, false, false);
                 }
                 else if (stapleType == (int)Staple.Two)
                 {
-                    // Rotate
-                    WriteableBitmap rotatedStaple =
-                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 90, false);
-
-                    // Put into position
-                    Rect destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
-
-                    // Put into position
-                    destRect = new Rect(PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        canvasBitmap.PixelHeight - rotatedStaple.PixelHeight -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, false, false);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, false, true);
                 }
             }
             else if (finishingSide == (int)FinishingSide.Right)
             {
                 if (stapleType == (int)Staple.One)
                 {
-                    /// SAME AS CASE WITH TOP + UPPER RIGHT
-
-                    // Rotate
-                    WriteableBitmap rotatedStaple =
-                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 45, false);
-
-                    // Put into position
-                    Rect destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 45, true, false);
                 }
                 else if (stapleType == (int)Staple.Two)
                 {
-                    // Rotate
-                    WriteableBitmap rotatedStaple =
-                        WriteableBitmapExtensions.RotateFree(scaledStapleBitmap, 90, false);
-
-                    // Put into position
-                    Rect destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI,
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    Rect srcRect = new Rect(0, 0, rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
-
-                    // Put into position
-                    destRect = new Rect(canvasBitmap.PixelWidth - rotatedStaple.PixelWidth -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        canvasBitmap.PixelHeight - rotatedStaple.PixelHeight -
-                        (PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI),
-                        rotatedStaple.PixelWidth, rotatedStaple.PixelHeight);
-                    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStaple, srcRect);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, true, false);
+                    ApplyStaple(canvasBitmap, scaledStapleBitmap, 90, true, true);
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Adds a staple image. Requires that the staple image is already scaled.
+        /// </summary>
+        /// <param name="canvasBitmap">destination image</param>
+        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
+        /// <param name="angle">angle for rotation</param>
+        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
+        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
+        private void ApplyStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
+            int angle, bool isXEnd, bool isYEnd)
+        {
+            // Rotate
+            WriteableBitmap rotatedStapleBitmap = stapleBitmap;
+            if (angle > 0)
+            {
+                rotatedStapleBitmap = WriteableBitmapExtensions.RotateFree(stapleBitmap, angle, false);
+            }
+
+            // Put into position
+            double marginStaple = PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI;
+            double destXOrigin = (isXEnd) ? canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple : marginStaple;
+            double destYOrigin = (isYEnd) ? canvasBitmap.PixelHeight - rotatedStapleBitmap.PixelHeight - marginStaple : marginStaple;
+
+            Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
+            Rect srcRect = new Rect(0, 0, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
+            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStapleBitmap, srcRect);
         }
 
         #endregion Apply Print Settings
