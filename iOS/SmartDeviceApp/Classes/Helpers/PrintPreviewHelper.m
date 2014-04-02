@@ -8,6 +8,9 @@
 
 #import "PrintPreviewHelper.h"
 
+#define POINTS_PER_INCH 72.0f
+#define MM_PER_INCH 25.4f
+
 CGSize paperDimensionsMM[] = {
     {306.0f, 460.0f}, // A3W
     {297.0f, 420.0f}, // A3
@@ -23,6 +26,7 @@ CGSize paperDimensionsMM[] = {
     {216.0f, 280.0f}, // Letter
     {140.0f, 216.0f}, // Statement
 };
+
 
 @implementation PrintPreviewHelper
 
@@ -58,9 +62,18 @@ CGSize paperDimensionsMM[] = {
     
 }
 
-+ (CGSize) getPaperDimensions:(kPaperSize)paperSize
++ (CGSize)getPaperDimensions:(kPaperSize)paperSize forOrientation:(kOrientation)paperOrientation
 {
-    return paperDimensionsMM[paperSize];
+    CGSize size = paperDimensionsMM[paperSize];
+    size.width = (size.width/MM_PER_INCH) * POINTS_PER_INCH;
+    size.height = (size.height/MM_PER_INCH) * POINTS_PER_INCH;
+    if(paperOrientation == kOrientationLandscape)
+    {
+        CGFloat temp = size.width;
+        size.width = size.height;
+        size.height = temp;
+    }
+    return size;
 }
 
 
@@ -104,20 +117,16 @@ CGSize paperDimensionsMM[] = {
     return ratio;
 }
 
-+(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) pagination
++(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) imposition
 {
-    switch(pagination)
+    switch(imposition)
     {
-        case PAGINATION_2IN1:
+        case kImposition2Pages:
             return 2;
-        case PAGINATION_4IN1:
+        case kImposition4pages:
             return 4;
-        case PAGINATION_6IN1:
-            return 6;
-        case PAGINATION_9IN1 :
-            return 9;
-        case PAGINATION_16IN1:
-            return 16;
+        default:
+            break;
     }
     return 1;
 }

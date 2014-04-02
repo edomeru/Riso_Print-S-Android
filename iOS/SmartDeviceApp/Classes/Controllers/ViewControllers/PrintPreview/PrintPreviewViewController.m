@@ -236,7 +236,7 @@
     }
     
     // Create render option
-    CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize];
+    CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize forOrientation:(kOrientation)self.printDocument.previewSetting.orientation];
     PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndex:index size:size delegate:self];
     [self.renderOperations setObject:renderOperation forKey:pageIndexKey];
     [self.renderQueue addOperation:renderOperation];

@@ -34,13 +34,24 @@ typedef enum {
 } kPaperSize;
 
 typedef enum {
-    PAGINATION_OFF,
-    PAGINATION_2IN1,
-    PAGINATION_4IN1,
-    PAGINATION_6IN1,
-    PAGINATION_9IN1,
-    PAGINATION_16IN1
-}T_PAGINATION;
+    kImpositionOff,
+    kImposition2Pages,
+    kImposition4pages
+}kImposition;
+
+typedef enum {
+    kImpositionOrderRightToLeft,
+    kImpositionOrderLeftToRight,
+    kImpositionOrderUpperLeftToBottom,
+    kImpositionOrderUpperLeftToRight,
+    kImpositionOrderUpperRightToBottom,
+    kImpositionOrderUpperRightToLeft,
+}kImpositionOrder;
+
+typedef enum {
+    kOrientationPortrait,
+    kOrientationLandscape
+}kOrientation;
 
 typedef enum  {
     BIND_LEFT,
@@ -78,7 +89,7 @@ typedef enum
 +(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize;
 
 
-+ (CGSize) getPaperDimensions:(kPaperSize)paperSize;
++ (CGSize)getPaperDimensions:(kPaperSize)paperSize forOrientation:(kOrientation)paperOrientation;
 
 /**
  Helper function to determine spine location of page view controller based on settings affecting spine location
@@ -127,7 +138,7 @@ typedef enum
  
  @return Number of pages per sheet
  **/
-+(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) pagination;
++(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) imposition;
 
 @end
 
