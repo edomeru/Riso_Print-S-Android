@@ -107,6 +107,12 @@
         
         [self drawFinishing:contextRef];
         
+        if (self.isCancelled)
+        {
+            CGContextRelease(contextRef);
+            return;
+        }
+        
         CGContextSaveGState(contextRef);
         
         CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
