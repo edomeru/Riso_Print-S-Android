@@ -15,13 +15,13 @@
 #pragma mark - Properties
 
 /**
- Name of the Printer object under which all the PrintJob objects belong to.
- This will be displayed in the group header.
+ Name of the Printer object under which all the PrintJob objects this group
+ holds belong to. This will be displayed in the group header.
  */
 @property (readonly, strong, nonatomic) NSString* groupName;
 
 /**
- Stores the number of PrintJob objects.
+ Stores the number of PrintJob objects held by this group.
  */
 @property (readonly, assign, nonatomic) NSUInteger countPrintJobs;
 
@@ -44,19 +44,29 @@
 + (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name;
 
 /**
- Adds a PrintJob object to the list of print jobs.
+ Adds a PrintJob object to the list of print jobs held by
+ this group. The PrintJob object should already have been
+ added to the DB beforehand.
+ @param printJob
+        a valid PrintJob object
  */
 - (void)addPrintJob:(PrintJob*)printJob;
 
 /**
- Removes a PrintJob object from the list of print jobs.
+ Removes a PrintJob object from the list of print jobs held by
+ this group. The print job is also removed from the database.
  @param index
+        if this index is invalid, this method simply returns
+ @return YES if successful, NO otherwise
  */
-- (void)deletePrintJobAtIndex:(NSUInteger)index;
+- (BOOL)removePrintJobAtIndex:(NSUInteger)index;
 
 /**
- Retrieves a PrintJob object from the list of print jobs.
+ Retrieves the PrintJob object from the list of print jobs
+ held by this group, specified by the index.
  @param index
+        if this index is invalid, this method simply returns
+ @return the PrintJob object if successful, nil otherwise
  */
 - (PrintJob*)getPrintJobAtIndex:(NSUInteger)index;
 

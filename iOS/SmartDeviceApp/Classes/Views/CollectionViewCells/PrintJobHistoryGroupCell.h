@@ -64,19 +64,12 @@
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap;
 
 /**
- Removes an existing "DELETE" button from an item.
+ Removes an existing "DELETE" button from its items.
  */
 - (void)removeDeleteButton;
 
 /**
- Removes the print job item at the specified index.
- @param indexPath
-        indexPath for the row to be deleted
- */
-- (void)removePrintJob:(NSIndexPath*)indexPath;
-
-/**
- Forces the cell to update its current view.
+ Forces the cell to update its current layout and views.
  */
 - (void)reloadContents;
 

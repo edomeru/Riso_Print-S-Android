@@ -16,6 +16,11 @@
 @property (readwrite, assign, nonatomic) NSUInteger countPrintJobs;
 @property (readwrite, assign, nonatomic) BOOL isCollapsed;
 
+/** 
+ Container for the list of PrintJob objects. 
+ This container should be abstracted from the view and the controller,
+ and all operations/handling on it should be done inside this class.
+ */
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 @end
@@ -52,22 +57,28 @@
 
 #pragma mark - Delete
 
-- (void)deletePrintJobAtIndex:(NSUInteger)index
+- (BOOL)removePrintJobAtIndex:(NSUInteger)index
 {
     if (index >= self.countPrintJobs)
     {
         NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
               (unsigned long)index, (unsigned long)self.countPrintJobs);
-        return;
+        return NO;
     }
     
     // if the PrintJob object is not anymore held by this group,
     // then the user chose to not remove it from display, so it
     // should also be removed from DB
-    [DatabaseManager deleteObject:[self.listPrintJobs objectAtIndex:index]];
+    if (![DatabaseManager deleteObject:[self.listPrintJobs objectAtIndex:index]])
+    {
+        NSLog(@"[ERROR][PrintJobGroup] could not delete PrintJob at index=%lu", (unsigned long)index);
+        return NO;
+    }
     
     [self.listPrintJobs removeObjectAtIndex:index];
     self.countPrintJobs--;
+    
+    return YES;
 }
 
 #pragma mark - Get

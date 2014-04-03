@@ -16,6 +16,6 @@
  sorted according to timestamp (most recent first).
  @return array of PrintJobHistoryGroups
  */
-+ (NSMutableArray*)retrievePrintJobHistoryGroups;
++ (NSMutableArray*)preparePrintJobHistoryGroups;
 
 @end

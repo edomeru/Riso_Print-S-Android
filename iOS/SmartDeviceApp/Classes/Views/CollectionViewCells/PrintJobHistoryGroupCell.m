@@ -31,8 +31,8 @@
 @property (weak, nonatomic) IBOutlet UIButton* deleteAllButton;
 @property (weak, nonatomic) IBOutlet UITableView* printJobsView;
 
-/** Keeps trach of the index of an item that has the delete button. */
-@property (strong, nonatomic) NSIndexPath* deleteItem;
+/** Keeps track of the index of the print job that has the delete button. */
+@property (strong, nonatomic) NSIndexPath* jobWithDelete;
 
 #pragma mark - Data Properties
 
@@ -103,7 +103,7 @@
     printJobCell.accessoryView = nil;
     
     // clear tracker for the delete button
-    self.deleteItem = nil;
+    self.jobWithDelete = nil;
     
     return printJobCell;
 }
@@ -160,12 +160,6 @@
     [self.listPrintJobs addObject:printJob];
 }
 
-- (void)removePrintJob:(NSIndexPath*)indexPath
-{
-    [self.printJobsView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [self reloadContents];
-}
-
 #pragma mark - Cell UI
 
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap
@@ -178,14 +172,14 @@
         NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)itemIndexPath.row);
         
         // check if there is already an item with a delete button
-        if ((self.deleteItem != nil) && (self.deleteItem.row != itemIndexPath.row))
+        if ((self.jobWithDelete != nil) && (self.jobWithDelete.row != itemIndexPath.row))
         {
-            NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.deleteItem.row);
-            UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.deleteItem];
+            NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.jobWithDelete.row);
+            UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
             printJobCell.accessoryView = nil;
             printJobCell.detailTextLabel.hidden = NO;
         }
-        self.deleteItem = itemIndexPath;
+        self.jobWithDelete = itemIndexPath;
         
         // check if this item already has a delete button
         UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:itemIndexPath];
@@ -227,12 +221,12 @@
 
 - (void)removeDeleteButton
 {
-    NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.deleteItem.row);
+    NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.jobWithDelete.row);
     
-    UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.deleteItem];
+    UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
     printJobCell.accessoryView = nil;
     printJobCell.detailTextLabel.hidden = NO;
-    self.deleteItem = nil;
+    self.jobWithDelete = nil;
 }
 
 - (void)reloadContents

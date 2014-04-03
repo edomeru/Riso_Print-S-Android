@@ -29,7 +29,9 @@
  Initializes the properties containing the constant layout measurements
  depending on the specified orientation and device type.
  @param orientation
+        landscape or portrait
  @param device
+        iPhone or iPad
  */
 - (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
 

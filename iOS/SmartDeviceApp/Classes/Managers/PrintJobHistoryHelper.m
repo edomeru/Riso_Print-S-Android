@@ -31,7 +31,7 @@
 
 @implementation PrintJobHistoryHelper
 
-+ (NSMutableArray*)retrievePrintJobHistoryGroups
++ (NSMutableArray*)preparePrintJobHistoryGroups
 {
     NSMutableArray* listPrintJobHistoryGroups = [NSMutableArray array];
     
@@ -116,23 +116,37 @@
 + (void)populateWithTestData
 {
     // TEST DATA CONSTANTS
-    const NSUInteger TEST_NUM_PRINTERS = 9;
-    const NSUInteger TEST_NUM_JOBS[9] = {3, 4, 2, 1, 3, 6, 2, 4};
+    const NSUInteger TEST_NUM_PRINTERS = 8;
+    const NSUInteger TEST_NUM_JOBS[8] = {3, 4, 2, 1, 3, 6, 2, 4};
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     
     // delete first all existing printers
     while (pm.countSavedPrinters != 0)
-        [pm deletePrinterAtIndex:0];
+    {
+        if (![pm deletePrinterAtIndex:0])
+            break;
+    }
+    if (pm.countSavedPrinters != 0)
+    {
+        NSLog(@"[ERROR][PrintJobManager] unable to delete all printers from DB");
+        return;
+    }
     
     // replace with test printers
-    for (int i = 1; i < TEST_NUM_PRINTERS; i++)
+    for (int i = 0; i < TEST_NUM_PRINTERS; i++)
     {
         PrinterDetails* testPrinterDetails = [[PrinterDetails alloc] init];
-        testPrinterDetails.name = [NSString stringWithFormat:@"Test Printer %d", i];
-        testPrinterDetails.ip = [NSString stringWithFormat:@"999.99.9.%d", i];
-        testPrinterDetails.port = [NSNumber numberWithUnsignedInt:i*100];
-        [pm registerPrinter:testPrinterDetails];
+        testPrinterDetails.name = [NSString stringWithFormat:@"Test Printer %d", i+1];
+        testPrinterDetails.ip = [NSString stringWithFormat:@"999.99.9.%d", i+1];
+        testPrinterDetails.port = [NSNumber numberWithUnsignedInt:(i+1)*100];
+        if (![pm registerPrinter:testPrinterDetails])
+            break;
+    }
+    if (pm.countSavedPrinters != TEST_NUM_PRINTERS)
+    {
+        NSLog(@"[ERROR][PrintJobManager] unable to add test printers to DB");
+        return;
     }
     
     // create print jobs and attach to the test printers
@@ -142,6 +156,11 @@
         for (int jobIdx = 0; jobIdx < TEST_NUM_JOBS[printerIdx]; jobIdx++)
         {
             PrintJob* newPrintJob = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
+            if (newPrintJob == nil)
+            {
+                NSLog(@"[ERROR][PrintJobManager] unable to add print job %d-%d to DB", printerIdx, jobIdx);
+                break;
+            }
             newPrintJob.name = [NSString stringWithFormat:@"Test Job %d-%d", printerIdx+1, jobIdx+1];
             newPrintJob.result = [NSNumber numberWithInt:jobIdx%2]; //alternate OK and NG
             newPrintJob.date = [NSDate dateWithTimeIntervalSinceNow:(arc4random()%60)*1000]; //random times
@@ -149,7 +168,9 @@
             [newPrintJob log];
         }
     }
-    [DatabaseManager saveChanges];
+    
+    if (![DatabaseManager saveChanges])
+        NSLog(@"[ERROR][PrintJobManager] unable to add test print jobs to DB");
 }
 
 @end
