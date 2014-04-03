@@ -11,6 +11,7 @@
 //
 
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
@@ -379,11 +380,8 @@ namespace SmartDeviceApp.Converters
                     case (int)Punch.TwoHoles:
                         numberOfHoles = 2;
                         break;
-                    case (int)Punch.ThreeHoles:
-                        numberOfHoles = 3;
-                        break;
                     case (int)Punch.FourHoles:
-                        numberOfHoles = 4;
+                        numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
                         break;
                     case (int)Punch.Off:
                     default:
@@ -407,11 +405,10 @@ namespace SmartDeviceApp.Converters
                     case (int)Punch.TwoHoles:
                         distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
                         break;
-                    case (int)Punch.ThreeHoles:
-                        distance = PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;
-                        break;
                     case (int)Punch.FourHoles:
-                        distance = PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE;
+                        distance = (GlobalizationUtility.IsJapaneseLocale()) ?
+                            PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE :
+                            PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE;
                         break;
                     case (int)Punch.Off:
                     default:

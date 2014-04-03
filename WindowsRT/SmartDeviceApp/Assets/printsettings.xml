@@ -44,8 +44,8 @@
             icon="temp_img_printsettings_papersize"
             type="list"
             default="2" >
-            <option>ids_lbl_papersize_a3w</option>
             <option>ids_lbl_papersize_a3</option>
+            <option>ids_lbl_papersize_a3w</option>
             <option>ids_lbl_papersize_a4</option>
             <option>ids_lbl_papersize_a5</option>
             <option>ids_lbl_papersize_a6</option>
@@ -173,8 +173,8 @@
             <option>ids_lbl_off</option>
             <option>ids_lbl_staple_upperleft</option>
             <option>ids_lbl_staple_upperright</option>
-            <option>ids_lbl_staple_2</option>
             <option>ids_lbl_staple_1</option>
+            <option>ids_lbl_staple_2</option>
         </setting>
         <setting
             name="punch"
@@ -184,7 +184,6 @@
             default="0" >
             <option>ids_lbl_off</option>
             <option>ids_lbl_punch_2holes</option>
-            <option>ids_lbl_punch_3holes</option>
             <option>ids_lbl_punch_4holes</option>
         </setting>
         <setting

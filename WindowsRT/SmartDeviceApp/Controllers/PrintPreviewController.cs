@@ -1233,8 +1233,8 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Generates next and previous PreviewPage images if not exists.
-        /// It is assumed here that required LogicalPage images are are already done
+        /// Generates next and previous PreviewPage images if not exist.
+        /// It is assumed here that required LogicalPage images are already done
         /// by DocumentController.
         /// </summary>
         private async void GenerateNearPreviewPages()

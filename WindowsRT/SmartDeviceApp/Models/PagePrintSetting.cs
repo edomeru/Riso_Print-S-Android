@@ -43,8 +43,8 @@ namespace SmartDeviceApp.Models
 
     public enum PaperSize
     {
-        A3W,
         A3,
+        A3W,
         A4,
         A5,
         A6,
@@ -125,15 +125,14 @@ namespace SmartDeviceApp.Models
         Off,
         OneUpperLeft,
         OneUpperRight,
-        Two,
-        One
+        One,
+        Two
     }
 
     public enum Punch
     {
         Off,
         TwoHoles,
-        ThreeHoles,
         FourHoles
     }
 

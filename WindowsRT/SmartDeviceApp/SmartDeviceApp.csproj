@@ -114,6 +114,7 @@
     <Compile Include="Common\Enum\RightPaneMode.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
+    <Compile Include="Common\Utilities\GlobalizationUtility.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">

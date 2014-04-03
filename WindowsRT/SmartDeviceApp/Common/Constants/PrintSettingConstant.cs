@@ -48,8 +48,8 @@ namespace SmartDeviceApp.Common.Constants
         public const string NAME_VALUE_OUTPUT_TRAY       = "outputTray";
 
         // Paper sizes in portrait mode; in inches
-        public static Size PAPER_SIZE_A3W        = new Size(13.00, 19.00);
         public static Size PAPER_SIZE_A3         = new Size(11.69, 16.54);
+        public static Size PAPER_SIZE_A3W        = new Size(13.00, 19.00);
         public static Size PAPER_SIZE_A4         = new Size( 8.27, 11.69);
         public static Size PAPER_SIZE_A5         = new Size( 5.83,  8.27);
         public static Size PAPER_SIZE_A6         = new Size( 4.13,  5.83);
