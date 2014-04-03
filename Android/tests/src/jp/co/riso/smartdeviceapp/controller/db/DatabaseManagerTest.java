@@ -82,7 +82,6 @@ ActivityInstrumentationTestCase2<MainActivity> {
             c2 = mDBManager.query("PrintJob", null, null, null, null, null,
                     null);
             assertTrue(c1.getCount() == c2.getCount());
-
             c1 = db.query("PrintSetting", null, null, null, null, null, null);
             c2 = mDBManager.query("PrintSetting", null, null, null, null, null,
                     null);
@@ -103,20 +102,27 @@ ActivityInstrumentationTestCase2<MainActivity> {
     }
 
     public void testDelete() {
-        SQLiteDatabase db = mDBManager.getWritableDatabase();
+
         int initialCount = 0;
         Cursor cursor = null;
         boolean result = false;
 
-        cursor = db.query("PrintJob", null, null, null, null, null, null);
+        ContentValues values = new ContentValues();
+        values.put("prn_name", "Printer name");
+
+        result = mDBManager.insert("Printer", null, values);
+        assertTrue(result);
+
+        SQLiteDatabase db = mDBManager.getWritableDatabase();
+        cursor = db.query("Printer", null, null, null, null, null, null);
         initialCount = cursor.getCount();
         assertTrue(initialCount>0);
 
-        result = mDBManager.delete("PrintJob", null, null);
+        result = mDBManager.delete("Printer", null, null);
         assertTrue(result);
 
         db = mDBManager.getReadableDatabase();
-        cursor = db.query("PrintJob", null, null, null, null, null, null);
+        cursor = db.query("Printer", null, null, null, null, null, null);
         assertNotNull(cursor);
         assertEquals(0, cursor.getCount());
         cursor.close();

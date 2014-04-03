@@ -8,7 +8,7 @@
         android:id="@+id/printJobsGroupLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/printjob_row_height"
-        android:background="@color/theme_dark_2"
+        android:background="@drawable/selector_jobs_groupheader"
         android:gravity="center_vertical" >
 
         <FrameLayout
@@ -23,21 +23,12 @@
             android:paddingRight="@dimen/printjob_expand_padding_side" >
 
             <ImageView
-                android:id="@+id/printJobGroupExpand"
-                android:layout_width="@dimen/printjob_groupicon_width"
-                android:layout_height="@dimen/printjob_groupicon_width"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/ids_lbl_expand"
-                android:src="@drawable/img_btn_expand"
-                android:visibility="invisible" />
-
-            <ImageView
                 android:id="@+id/printJobGroupCollapse"
                 android:layout_width="@dimen/printjob_groupicon_width"
                 android:layout_height="@dimen/printjob_icon_width"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="@string/ids_lbl_collapse"
-                android:src="@drawable/img_btn_collapse" />
+                android:contentDescription="@string/default_content_description"
+                android:src="@drawable/selector_jobs_collapsible" />
         </FrameLayout>
 
         <TextView
@@ -65,7 +56,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@color/bg_delete_button"
+            android:background="@drawable/selector_jobs_deleteallbutton"
             android:paddingLeft="@dimen/printjob_delgroupbtn_padding_side"
             android:paddingRight="@dimen/printjob_delgroupbtn_padding_side"
             android:text="@string/ids_lbl_delete_all"

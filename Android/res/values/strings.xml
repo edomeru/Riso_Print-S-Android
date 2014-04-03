@@ -30,8 +30,6 @@
     <string name="ids_lbl_last_updated">Updated: %s</string>
     <string name="ids_lbl_set_default_printer">Set as Default Printer</string>
     <string name="ids_lbl_add_successful">Added Successfully</string>
-    <string name="ids_lbl_expand">Expand Print Jobs Group</string>
-    <string name="ids_lbl_collapse">Collapse Print Jobs Group</string>
     <string name="ids_lbl_delete_all">Delete All</string>
     <string name="ids_lbl_delete_jobs_title">Delete Print Job</string>
     <string name="ids_lbl_delete_jobs_msg">Are you sure you want to delete the print jobs?</string>

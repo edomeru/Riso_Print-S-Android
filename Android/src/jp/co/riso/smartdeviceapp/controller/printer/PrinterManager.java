@@ -14,6 +14,7 @@ import java.util.List;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager;
 import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager.SNMPSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -68,7 +69,7 @@ public class PrinterManager implements SNMPSearchCallback {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
         DatabaseManager dbManager = new DatabaseManager(mContext);
-
+        
         if (!dbManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
             dbManager.close();
             return false;
@@ -175,7 +176,7 @@ public class PrinterManager implements SNMPSearchCallback {
         }
         
         dbManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null);
-         
+        
         if (!dbManager.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter)) {
             dbManager.close();
             return;
@@ -196,15 +197,21 @@ public class PrinterManager implements SNMPSearchCallback {
             return;
         }
         DatabaseManager dbManager = new DatabaseManager(mContext);
-
-        dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
+        
+        boolean result = dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
+        
+        // reload Print Job History if a Printer is deleted
+        if (result){
+            PrintJobManager.getInstance(mContext).setRefreshFlag(true);
+        }
+        
         dbManager.close();
     }
     
     public int getDefaultPrinter() {
         int printer = -1;
         DatabaseManager dbManager = new DatabaseManager(mContext);
-
+        
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
         
         if (cursor.getCount() != 1) {
@@ -279,7 +286,7 @@ public class PrinterManager implements SNMPSearchCallback {
     // ================================================================================
     // Interface - OnPrinterSearch (SNMP)
     // ================================================================================
-
+    
     public interface OnPrinterSearchCallback {
         public void onPrinterAdd(Printer printer);
         

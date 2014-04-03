@@ -33,6 +33,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     @Override
+    public void onOpen(SQLiteDatabase db) {
+        // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
+        db.execSQL("PRAGMA foreign_keys = ON;");
+    }
+    
+    @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate - Begin");
         
@@ -83,18 +89,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return cur;
     }
     
-    public boolean deleteMultiple(String table, String whereClause, String[] whereArgs) {
+    public boolean delete(String table, String whereClause, String whereArg) {
+        String[] whereArgs = (whereArg == null || whereArg.isEmpty()) ? null : new String[] { whereArg };
+        return delete(table, whereClause, whereArgs);
+    }
+    
+    private boolean delete(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         rowsNum = db.delete(table, whereClause, whereArgs);
         db.close();
         
         return (rowsNum > 0);
-        
-    }
-    
-    public boolean delete(String table, String whereClause, String whereArg) {
-        String[] whereArgs = (whereArg == null || whereArg.isEmpty()) ? null : new String[] { whereArg };
-        return deleteMultiple(table, whereClause, whereArgs);
     }
 }
