@@ -115,12 +115,16 @@
         return;
     }
     
-    self.selectedIndex = indexPath.row - 1;
+    int index = indexPath.row - 1;
+    if (index != self.selectedIndex)
+    {
+        self.selectedIndex = index;
+        [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:self.selectedIndex] forKey:self.key];
+    }
 }
 
 - (IBAction)backButtonAction:(id)sender
 {
-    [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:self.selectedIndex] forKey:self.key];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 

@@ -94,7 +94,6 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         return;
     }
     
-    NSLog(@"Settings changed");
     [self.delegate previewSettingDidChange];
 }
 
