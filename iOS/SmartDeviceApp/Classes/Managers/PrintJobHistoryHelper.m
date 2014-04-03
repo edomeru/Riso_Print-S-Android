@@ -40,15 +40,15 @@
     if (listPrintJobs != nil) // DB access did not fail
     {
         NSUInteger countPrintJobs = [listPrintJobs count];
-        NSLog(@"[INFO][PrintJobManager] listPrintJobs=%lu", (unsigned long)countPrintJobs);
-        
         if (countPrintJobs == 0)
         {
             // DB has no data
 
             // check if will use test data
             BOOL usePrintJobTestData = [PListHelper readBool:kPlistBoolValUsePrintJobTestData];
-            NSLog(@"[INFO][PrintJobManager] usePrintJobTestData=%@", (usePrintJobTestData ? @"YES" : @"NO"));
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+            NSLog(@"[INFO][PrintJobHelper] usePrintJobTestData=%@", (usePrintJobTestData ? @"YES" : @"NO"));
+#endif
             if (usePrintJobTestData)
             {
                 // populate the DB
@@ -57,15 +57,20 @@
                 // retrieve from DB again
                 listPrintJobs = [DatabaseManager getObjects:E_PRINTJOB];
                 countPrintJobs = [listPrintJobs count];
-                NSLog(@"[INFO][PrintJobManager] listPrintJobs=%lu", (unsigned long)countPrintJobs);
             }
         }
+        
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"[INFO][PrintJobHelper] listPrintJobs=%lu", (unsigned long)countPrintJobs);
+#endif
      
         // sort the print jobs according to printer
         NSMutableDictionary* dictPrintJobHistoryGroups = [NSMutableDictionary dictionary];
         for (PrintJob* job in listPrintJobs)
         {
-            NSLog(@"[INFO][PrintJobManager] job=%@", job.name);
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+            NSLog(@"[INFO][PrintJobHelper] job=%@", job.name);
+#endif
             
             // get the printer
             NSString* printerName = job.printer.name;
@@ -77,7 +82,9 @@
                 // group does not exist yet
                 
                 // create a group for this printer
-                NSLog(@"[INFO][PrintJobManager] create group for printer=%@", printerName);
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+                NSLog(@"[INFO][PrintJobHelper] create group for printer=%@", printerName);
+#endif
                 PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName];
                 [newGroup collapse:NO];
                 
@@ -92,7 +99,9 @@
                 // group already exists
                 
                 // add the current job to the group
-                NSLog(@"[INFO][PrintJobManager] update group for printer=%@", printerName);
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+                NSLog(@"[INFO][PrintJobHelper] update group for printer=%@", printerName);
+#endif
                 [group addPrintJob:job];
             }
         }
@@ -103,7 +112,9 @@
                                                                        PrintJobHistoryGroup* group,
                                                                        BOOL* stop)
         {
-            NSLog(@"[INFO][PrintJobManager] sorting jobs for group=%@", printerName);
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+            NSLog(@"[INFO][PrintJobHelper] sorting jobs for group=%@", printerName);
+#endif
             [group sortPrintJobs];
             
             [listPrintJobHistoryGroups addObject:group];
@@ -129,7 +140,9 @@
     }
     if (pm.countSavedPrinters != 0)
     {
-        NSLog(@"[ERROR][PrintJobManager] unable to delete all printers from DB");
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"[ERROR][PrintJobHelper] unable to delete all printers from DB");
+#endif
         return;
     }
     
@@ -145,7 +158,9 @@
     }
     if (pm.countSavedPrinters != TEST_NUM_PRINTERS)
     {
-        NSLog(@"[ERROR][PrintJobManager] unable to add test printers to DB");
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"[ERROR][PrintJobHelper] unable to add test printers to DB");
+#endif
         return;
     }
     
@@ -158,19 +173,27 @@
             PrintJob* newPrintJob = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
             if (newPrintJob == nil)
             {
-                NSLog(@"[ERROR][PrintJobManager] unable to add print job %d-%d to DB", printerIdx, jobIdx);
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+                NSLog(@"[ERROR][PrintJobHelper] unable to add print job %d-%d to DB", printerIdx, jobIdx);
+#endif
                 break;
             }
             newPrintJob.name = [NSString stringWithFormat:@"Test Job %d-%d", printerIdx+1, jobIdx+1];
             newPrintJob.result = [NSNumber numberWithInt:jobIdx%2]; //alternate OK and NG
             newPrintJob.date = [NSDate dateWithTimeIntervalSinceNow:(arc4random()%60)*1000]; //random times
             newPrintJob.printer = testPrinter;
+#if DEBUG_LOG_PRINT_JOB_MODEL
             [newPrintJob log];
+#endif
         }
     }
     
     if (![DatabaseManager saveChanges])
-        NSLog(@"[ERROR][PrintJobManager] unable to add test print jobs to DB");
+    {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"[ERROR][PrintJobHelper] unable to add test print jobs to DB");
+#endif
+    }
 }
 
 @end

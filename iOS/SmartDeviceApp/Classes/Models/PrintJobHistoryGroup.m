@@ -23,6 +23,9 @@
  */
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
+/** Checks if the specified index will not cause an out-of-bounds access. */
+- (BOOL)isIndexValid:(NSUInteger)index;
+
 @end
 
 @implementation PrintJobHistoryGroup
@@ -59,19 +62,17 @@
 
 - (BOOL)removePrintJobAtIndex:(NSUInteger)index
 {
-    if (index >= self.countPrintJobs)
-    {
-        NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
-              (unsigned long)index, (unsigned long)self.countPrintJobs);
+    if (![self isIndexValid:index])
         return NO;
-    }
     
     // if the PrintJob object is not anymore held by this group,
     // then the user chose to not remove it from display, so it
     // should also be removed from DB
     if (![DatabaseManager deleteObject:[self.listPrintJobs objectAtIndex:index]])
     {
+#if DEBUG_LOG_PRINT_JOB_GROUP_MODEL
         NSLog(@"[ERROR][PrintJobGroup] could not delete PrintJob at index=%lu", (unsigned long)index);
+#endif
         return NO;
     }
     
@@ -85,12 +86,8 @@
 
 - (PrintJob*)getPrintJobAtIndex:(NSUInteger)index
 {
-    if (index >= self.countPrintJobs)
-    {
-        NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
-              (unsigned long)index, (unsigned long)self.countPrintJobs);
+    if (![self isIndexValid:index])
         return nil;
-    }
     
     return [self.listPrintJobs objectAtIndex:index];
 }
@@ -106,7 +103,37 @@
 
 - (void)sortPrintJobs
 {
-    //TODO: sort by date, most recent first
+    [self.listPrintJobs sortUsingComparator:^NSComparisonResult(PrintJob* job1, PrintJob* job2)
+    {
+        NSComparisonResult result = [job1.date compare:job2.date];
+        
+        //// sort by oldest first (default behavior)
+        //return result;
+        
+        // sort by most recent first (reverse behavior)
+        if (result == NSOrderedAscending)
+            return NSOrderedDescending;
+        else if (result == NSOrderedDescending)
+            return NSOrderedAscending;
+        else
+            return NSOrderedSame;
+    }];
+}
+
+#pragma mark - Utilities
+
+- (BOOL)isIndexValid:(NSUInteger)index
+{
+    if (index >= self.countPrintJobs)
+    {
+#if DEBUG_LOG_PRINT_JOB_GROUP_MODEL
+        NSLog(@"[ERROR][PrintJobGroup] index=%lu >= count=%lu",
+              (unsigned long)index, (unsigned long)self.countPrintJobs);
+#endif
+        return NO;
+    }
+    
+    return YES;
 }
 
 @end

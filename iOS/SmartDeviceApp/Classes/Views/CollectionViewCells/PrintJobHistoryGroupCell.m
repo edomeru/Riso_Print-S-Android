@@ -28,9 +28,22 @@
 
 #pragma mark - UI Properties
 
+/** 
+ Displays the name of the group (printer name) and acts as
+ the toggle switch for collapsing/expanding the group.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* groupName;
+
+/**
+ Displays collapsed/expanded state of the group and acts as
+ the toggle switch for collapsing/expanding the group.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
+
+/** Removes the entire group. */
 @property (weak, nonatomic) IBOutlet UIButton* deleteAllButton;
+
+/** The UI for displaying the list of print jobs. */
 @property (weak, nonatomic) IBOutlet UITableView* printJobsView;
 
 /** Keeps track of the index of the print job that has the delete button. */
@@ -102,7 +115,6 @@
     [timestampFormat setTimeZone:[NSTimeZone timeZoneWithName:FORMAT_ZONE]]; //TODO: should depend on localization?
     printJobCell.detailTextLabel.text = [timestampFormat stringFromDate:printJob[IDX_TIMESTAMP]];
     printJobCell.detailTextLabel.hidden = NO;
-    printJobCell.accessoryView = nil;
     
     // clear tracker for the delete button
     self.jobWithDelete = nil;
@@ -173,27 +185,36 @@
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap
 {
     // get the specific item swiped
-    CGPoint swipedItem = [gesture locationInView:self.printJobsView];
-    NSIndexPath* itemIndexPath = [self.printJobsView indexPathForRowAtPoint:swipedItem];
-    if (itemIndexPath != nil)
+    CGPoint swipedJob = [gesture locationInView:self.printJobsView];
+    NSIndexPath* jobIndexPath = [self.printJobsView indexPathForRowAtPoint:swipedJob];
+    if (jobIndexPath == nil)
     {
-        NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)itemIndexPath.row);
+        // swiped outside of the UITableView
+#if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
+        NSLog(@"[INFO][PrintJobCell] swiped left outside of table");
+#endif
+        return;
+    }
+    else
+    {
+#if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
+        NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)jobIndexPath.row);
+#endif
         
-        // check if there is already an item with a delete button
-        if ((self.jobWithDelete != nil) && (self.jobWithDelete.row != itemIndexPath.row))
+        // check if there is already a job with a delete button
+        if ((self.jobWithDelete != nil) && (self.jobWithDelete.row != jobIndexPath.row))
         {
-            NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.jobWithDelete.row);
-            UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
-            printJobCell.accessoryView = nil;
-            printJobCell.detailTextLabel.hidden = NO;
+            [self removeDeleteButton];
         }
-        self.jobWithDelete = itemIndexPath;
+        self.jobWithDelete = jobIndexPath;
         
         // check if this item already has a delete button
-        UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:itemIndexPath];
-        if (printJobCell.accessoryView != nil)
+        UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:jobIndexPath];
+        if ([[printJobCell.contentView subviews] count] == 5) //has an extra delete button
         {
-            NSLog(@"[INFO][PrintJobCell] already has delete button, ignore");
+#if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
+            NSLog(@"[INFO][PrintJobCell] already has delete button, ignoring swipe");
+#endif
             return;
         }
         
@@ -204,9 +225,9 @@
         [deleteButton setBackgroundColor:[UIColor redThemeColor]];
         [deleteButton setUserInteractionEnabled:YES];
         deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
-        deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + itemIndexPath.row; //<group>00<row>
-        deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x,
-                                        0,
+        deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
+        deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f,
+                                        5.0f,
                                         self.deleteAllButton.frame.size.width-15.0f,
                                         printJobCell.frame.size.height-10.0f);
         
@@ -216,29 +237,33 @@
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        printJobCell.accessoryView = deleteButton;
+        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end
         printJobCell.detailTextLabel.hidden = YES;
-    }
-    else
-    {
-        // swiped outside of the UITableView
-        NSLog(@"[INFO][PrintJobCell] swiped left outside of table");
-        return;
     }
 }
 
 - (void)removeDeleteButton
 {
+#if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
     NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.jobWithDelete.row);
-    
+#endif
+
+    // get the delete button
     UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
-    printJobCell.accessoryView = nil;
+    UIButton* deleteButton = (UIButton*)[[printJobCell.contentView subviews] lastObject];
+    [deleteButton removeFromSuperview];
+    
     printJobCell.detailTextLabel.hidden = NO;
     self.jobWithDelete = nil;
 }
 
 - (void)reloadContents
 {
+    // if there is a DELETE button displayed, cancel it first
+    // (to avoid the DELETE button appearing on another cell, since the cells are reusable)
+    if (self.jobWithDelete != nil)
+        [self removeDeleteButton];
+    
     [self.printJobsView reloadData];
 }
 

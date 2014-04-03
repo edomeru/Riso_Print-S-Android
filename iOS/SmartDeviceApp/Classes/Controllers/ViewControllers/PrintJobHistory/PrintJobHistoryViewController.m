@@ -187,8 +187,10 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     // get the group
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] setting size for %@", group.groupName);
     NSLog(@"[INFO][PrintJobCtrl] num print jobs = %lu", (unsigned long)group.countPrintJobs);
+#endif
     
     // set the list height
     CGFloat heightPrintJobsList;
@@ -209,7 +211,11 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     // finalize the group dimensions
     CGFloat groupCellHeight = GROUP_HEADER_HEIGHT + heightPrintJobsList;
     CGFloat groupCellWidth = GROUP_FRAME_WIDTH;
+    
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", groupCellHeight, groupCellWidth);
+#endif
+    
     CGSize groupCellSize = CGSizeMake(groupCellWidth, groupCellHeight);
     
     return groupCellSize;
@@ -221,7 +227,10 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     // get the group tapped
     NSInteger groupIndex = [sender tag];
+    
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
+#endif
     
     // toggle collapsed/expanded
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
@@ -238,7 +247,10 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     // get the group tapped
     NSInteger groupTag = [sender tag];
+    
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupTag);
+#endif
     
     // remove the group (and all its print jobs)
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
@@ -272,8 +284,11 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     NSInteger tag = [button tag];
     NSUInteger groupTag = tag/TAG_FACTOR;
     NSUInteger jobTag = tag%TAG_FACTOR;
+    
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] will delete {group=%ld, job=%ld}",
           (unsigned long)groupTag, (unsigned long)jobTag);
+#endif
     
     // remove the print job
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
@@ -302,7 +317,10 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     // get the group swiped
     CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
     NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
+    
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)groupIndexPath.row);
+#endif
     
     // check if another group has a delete button
     if ((self.groupWithDelete != nil) && (self.groupWithDelete != groupIndexPath))
@@ -320,10 +338,12 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (void)swipedRight:(UIGestureRecognizer*)gestureRecognizer
 {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     // get the group swiped
     CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
     NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
     NSLog(@"[INFO][PrintJobCtrl] swiped right on group=%ld", (long)groupIndexPath.row);
+#endif
     
     // check if a delete button is present in any group
     if (self.groupWithDelete != nil)
@@ -332,10 +352,12 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (void)tappedGroup:(UIGestureRecognizer*)gestureRecognizer
 {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     // get the group tapped
     CGPoint tappedArea = [gestureRecognizer locationInView:self.groupsView];
     NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:tappedArea];
     NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndexPath.row);
+#endif
     
     // check if a delete button is present in any group
     if (self.groupWithDelete != nil)
@@ -344,7 +366,10 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 - (void)removeDeleteButton
 {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] canceling delete button for group=%ld", (long)self.groupWithDelete.row);
+#endif
+    
     PrintJobHistoryGroupCell* groupCell = (PrintJobHistoryGroupCell*)[self.groupsView
                                                                       cellForItemAtIndexPath:self.groupWithDelete];
     [groupCell removeDeleteButton];
