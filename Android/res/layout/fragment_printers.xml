@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+
     <include layout="@layout/actionbar_main" />
-    
-    <ListView
+
+    <jp.co.riso.smartdeviceapp.view.printers.PrintersListView
         android:id="@+id/printer_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </ListView>
-   
+        android:layout_height="fill_parent" >
+    </jp.co.riso.smartdeviceapp.view.printers.PrintersListView>
+
 </LinearLayout>

@@ -22,14 +22,12 @@
 
 void on_discovery_ended(int result);
 void on_printer_added(snmp_device *device);
-void snmp_device_discovery_cancel();
-
 
 JNIEnv* m_env;
 jobject m_jobj;
 
 JNIEXPORT void
-Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_snmpManualSearch( JNIEnv* env,
+Java_jp_co_riso_smartdeviceapp_controller_snmp_SnmpManager_snmpManualSearch( JNIEnv* env,
                                                   jobject this, jstring ipaddress)
 {
 	m_env = env;
@@ -41,7 +39,7 @@ Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_snmpManualSearch( JNI
 }
 
 JNIEXPORT void
-Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_startSNMPDeviceDiscovery( JNIEnv* env,
+Java_jp_co_riso_smartdeviceapp_controller_snmp_SnmpManager_startSnmpDeviceDiscovery( JNIEnv* env,
                                                   jobject this)
 {
 	m_env = env;
@@ -50,12 +48,27 @@ Java_jp_co_riso_smartdeviceapp_controller_snmp_SNMPManager_startSNMPDeviceDiscov
 }
 
 JNIEXPORT void
-Java_jp_co_riso_smartdeviceapp_view_fragment_PrinterSearchFragment_snmpDeviceDiscoveryCancel( JNIEnv* env,
+Java_jp_co_riso_smartdeviceapp_controller_snmp_SnmpManager_snmpDeviceDiscoveryCancel( JNIEnv* env,
                                                   jobject this)
 {
+	LOGI("Cancelling snmp...");
+	snmp_device_discovery_cancel();
+}
+
+JNIEXPORT int
+Java_jp_co_riso_smartdeviceapp_controller_snmp_SnmpManager_snmpCheckDeviceStatus( JNIEnv* env,
+                                                  jobject this, jstring ipaddress)
+{
+	int ret = 0;
 	m_env = env;
 	m_jobj = this;
-	snmp_device_discovery_cancel();
+	const char *nativeString = (*env)->GetStringUTFChars(env, ipaddress, 0);
+
+	ret = snmp_device_checkstatus(nativeString);
+	(*env)->ReleaseStringUTFChars(env, ipaddress, nativeString);
+	LOGI("snmpCheckDeviceStatus returned: %d", ret);
+
+	return ret;
 }
 
 void on_discovery_ended(int result)

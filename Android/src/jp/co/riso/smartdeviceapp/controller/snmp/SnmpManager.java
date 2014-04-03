@@ -9,27 +9,39 @@
 package jp.co.riso.smartdeviceapp.controller.snmp;
 
 import java.lang.ref.WeakReference;
-import android.os.AsyncTask;
-import android.util.Log;
 
-public class SNMPManager {
+import android.os.AsyncTask;
+
+public class SnmpManager {
     private static final String TAG = "SNMPManager";
-    private WeakReference<SNMPSearchCallback> mSearchCallbackRef;
+    private WeakReference<SnmpSearchCallback> mSearchCallbackRef;
     
     // ================================================================================
     // Public Methods
     // ================================================================================
     
-    public void setSNMPSearchCallback(SNMPSearchCallback snmpSearchCallback) {
-        mSearchCallbackRef = new WeakReference<SNMPSearchCallback>(snmpSearchCallback);
+    public void setSnmpSearchCallback(SnmpSearchCallback snmpSearchCallback) {
+        mSearchCallbackRef = new WeakReference<SnmpSearchCallback>(snmpSearchCallback);
     }
     
-    public void startSNMP() {
-        new SNMPTask().execute();
+    public void startSnmp() {
+        new DeviceDiscoveryTask().execute();
     }
     
     public void searchPrinter(String ipAddress) {
         new ManualSearchTask().execute(ipAddress);
+    }
+    
+    public boolean isOnline(String ipAddress) {
+        try {
+            return (snmpCheckDeviceStatus(ipAddress) > 0);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    public void stopSnmpSearch() {
+        snmpDeviceDiscoveryCancel();
     }
     
     // ================================================================================
@@ -49,17 +61,18 @@ public class SNMPManager {
     }
     
     // ================================================================================
-    // AsyncTask
+    // Internal Classes
     // ================================================================================
     
-    class SNMPTask extends AsyncTask<Void, Void, Void> {
-        
+    class DeviceDiscoveryTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... arg0) {
             try {
-                startSNMPDeviceDiscovery();
+                startSnmpDeviceDiscovery();
             } catch (Exception e) {
-                Log.w(TAG, "snmp end");
+                if (mSearchCallbackRef != null && mSearchCallbackRef.get() != null) {
+                    mSearchCallbackRef.get().onSearchEnd();
+                }
             }
             return null;
         }
@@ -71,7 +84,7 @@ public class SNMPManager {
             try {
                 snmpManualSearch(arg0[0]);
             } catch (Exception e) {
-                if (mSearchCallbackRef != null) {
+                if (mSearchCallbackRef != null && mSearchCallbackRef.get() != null) {
                     mSearchCallbackRef.get().onSearchEnd();
                 }
             }
@@ -83,7 +96,7 @@ public class SNMPManager {
     // Interface
     // ================================================================================
     
-    public interface SNMPSearchCallback {
+    public interface SnmpSearchCallback {
         public void onSearchedPrinterAdd(String printerName, String ipAddress);
         
         public void onSearchEnd();
@@ -93,9 +106,13 @@ public class SNMPManager {
     // SNMP NDK
     // ================================================================================
     
-    private native void startSNMPDeviceDiscovery();
+    private native void startSnmpDeviceDiscovery();
     
     private native void snmpManualSearch(String ipAddress);
+    
+    private native void snmpDeviceDiscoveryCancel();
+    
+    private native int snmpCheckDeviceStatus(String ipAddress);
     
     static {
         System.loadLibrary("snmp");

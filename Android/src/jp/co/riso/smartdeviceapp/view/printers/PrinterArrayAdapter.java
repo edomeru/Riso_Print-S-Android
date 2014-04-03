@@ -22,9 +22,10 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,152 +33,79 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, View.OnTouchListener {
+public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, Callback {
     public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
-    public final static String TAG = "PrinterArrayAdapter";
-
+    private static final int MSG_REMOVE_PRINTER = 0x01;
+    
     private PrinterManager mPrinterManager = null;
-    private Context mContext;
-    private View prevView = null;
-    private ViewHolder mHolder = null;
     private ViewHolder mDeleteViewHolder = null;
     private ViewHolder mDefaultViewHolder = null;
-    private float downX = 0;
-    private float upX = 0;
-    private float HORIZONTAL_MIN_DISTANCE = 50;
     private int mLayoutId = 0;
+    private Handler mHandler = null;
     
     public PrinterArrayAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
-        this.mContext = context;
         this.mLayoutId = resource;
-        mPrinterManager = PrinterManager.sharedManager(context);
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mDeleteViewHolder = null;
+        mDefaultViewHolder = null;
+        mHandler = new Handler(this);
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ViewHolder viewHolder = null;
         Printer printer = getItem(position);
         
         if (convertView == null) {
             convertView = inflater.inflate(mLayoutId, parent, false);
-            mHolder = new ViewHolder();
-            mHolder.mPrinterName = (TextView) convertView.findViewById(R.id.txt_printerName);
-            mHolder.mIpAddress = (TextView) convertView.findViewById(R.id.txt_ipAddress);
-            mHolder.mPrinterName.setText(printer.getName());
-            mHolder.mIpAddress.setText(printer.getIpAddress());
+            viewHolder = new ViewHolder();
+            viewHolder.mOnlineIndcator = (ImageView) convertView.findViewById(R.id.img_onOff);
+            viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.txt_printerName);
+            viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.txt_ipAddress);
+            viewHolder.mPrinterName.setText(printer.getName());
+            viewHolder.mIpAddress.setText(printer.getIpAddress());
             
-            mHolder.mDiscloseImage = (ImageView) convertView.findViewById(R.id.img_disclosure);
-            mHolder.mDeleteButton = (Button) convertView.findViewById(R.id.btn_delete);
+            viewHolder.mDiscloseImage = (ImageView) convertView.findViewById(R.id.img_disclosure);
+            viewHolder.mDeleteButton = (Button) convertView.findViewById(R.id.btn_delete);
             
             // Set listener for disclosure icon
-            mHolder.mDiscloseImage.setOnClickListener(this);
+            viewHolder.mDiscloseImage.setOnClickListener(this);
             
-            mHolder.mDiscloseImage.setTag(printer);
-            mHolder.mPrinterName.setTag(printer);
-            mHolder.mDeleteButton.setTag(printer);
+            viewHolder.mDiscloseImage.setTag(printer);
+            viewHolder.mPrinterName.setTag(printer);
+            viewHolder.mDeleteButton.setTag(printer);
             
             convertView.setOnClickListener(this);
-            convertView.setOnTouchListener(this);
-            mHolder.mDeleteButton.setOnClickListener(this);
+            viewHolder.mDeleteButton.setOnClickListener(this);
             
-            convertView.setTag(mHolder);
-            AppUtils.changeChildrenFont((ViewGroup)convertView, SmartDeviceApp.getAppFont());
-
+            convertView.setTag(viewHolder);
+            
+            AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
+            
         } else {
-            mHolder = (ViewHolder) convertView.getTag();
-            mHolder.mPrinterName.setText(printer.getName());
-            mHolder.mDeleteButton.setVisibility(View.GONE);
-            mHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
-            convertView.setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));
+            PrintersContainer printerItem = (PrintersContainer) convertView;
+           
+            viewHolder = (ViewHolder) convertView.getTag();
+            viewHolder.mPrinterName.setText(printer.getName());
+            viewHolder.mIpAddress.setText(printer.getIpAddress());
+            if (printerItem.getDefault()) {
+                printerItem.setDefault(false);
+            }
+            if (printerItem.getDelete()) {
+                viewHolder.mDeleteButton.setVisibility(View.INVISIBLE);
+                printerItem.setDelete(false);
+            }
+            viewHolder.mDiscloseImage.setTag(printer);
+            viewHolder.mPrinterName.setTag(printer);
+            viewHolder.mDeleteButton.setTag(printer);
         }
         
-        setPrinterRow(mHolder);
-        
+        setPrinterRow(viewHolder);
+        mPrinterManager.updateOnlineStatus(printer.getIpAddress(), viewHolder.mOnlineIndcator);
+
         return convertView;
-    }
-    
-    // ================================================================================
-    // ADAPTER INTERFACE - View.OnTouch
-    // ================================================================================
-    
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                downX = 0;
-                upX = 0;
-                
-                downX = event.getX();
-                return false;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                upX = event.getX();
-                float deltaX = downX - upX;
-                
-                // horizontal swipe detection
-                if (deltaX > HORIZONTAL_MIN_DISTANCE) {
-                    if (v.getId() == R.id.printerListRow) {
-                        hideDeleteButton();
-                        setPrinterRowToDelete((ViewHolder) v.getTag());
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    
-    // ================================================================================
-    // ADAPTER INTERFACE - View.OnClick
-    // ================================================================================
-    
-    @Override
-    public void onClick(View v) {
-        
-        if (v.getId() == R.id.img_disclosure) {
-            Printer printer = (Printer) v.getTag();
-            hideDeleteButton();
-            
-            Intent intent = ((Activity) mContext).getIntent();
-            intent.putExtra(PrinterInfoFragment.KEY_PRINTER_INFO, printer);
-            ((Activity) mContext).setIntent(intent);
-            
-            BaseFragment fragment = new PrinterInfoFragment();
-            switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
-        } else if (v.getId() == R.id.printerListRow) {
-            ViewHolder viewHolder = (ViewHolder) v.getTag();
-            Printer printer = (Printer) viewHolder.mDiscloseImage.getTag();
-            hideDeleteButton();
-            
-            setPrinterRowToDefault(viewHolder);
-            
-            mPrinterManager.setDefaultPrinter(printer);
-            if (prevView == null)
-                prevView = v;
-            else if (prevView != v) {
-                setPrinterRowToNormal((ViewHolder) prevView.getTag());
-                prevView = v;
-            }
-        } else if (v.getId() == R.id.btn_delete) {
-            final Printer printer = (Printer) v.getTag();
-            
-            mPrinterManager.removePrinter(printer);
-            if (mContext == null) {
-                return;
-            }
-            ((Activity) mContext).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        remove(printer);
-                        notifyDataSetChanged();
-                    } catch (Exception e) {
-                        Log.w(TAG, "Remove caused an exception");
-                    }
-                }
-            });
-        }
     }
     
     // ================================================================================
@@ -188,7 +116,34 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         if (mDeleteViewHolder != null) {
             setPrinterRow(mDeleteViewHolder);
         }
-        mDeleteViewHolder = null;
+    }
+    
+    public void setPrinterRowToDelete(View convertView) {
+        if (convertView == null) {
+            return;
+        }
+        PrintersContainer printerItem = (PrintersContainer) convertView;
+        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+        
+        if (printerItem.getDelete()) {
+            return;
+        }
+        if (mDeleteViewHolder != null) {
+            setPrinterRowToNormal(mDeleteViewHolder);
+        }
+        printerItem.setDelete(true);
+        mDeleteViewHolder = viewHolder;
+    }
+    
+    public void setPrinterRow(View convertView) {
+        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+        Printer printer = (Printer) viewHolder.mPrinterName.getTag();
+        
+        if (printer.getId() == mPrinterManager.getDefaultPrinter()) {
+            setPrinterRowToDefault(viewHolder);
+        } else {
+            setPrinterRowToNormal(viewHolder);
+        }
     }
     
     // ================================================================================
@@ -196,34 +151,45 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     private void setPrinterRowToNormal(ViewHolder viewHolder) {
-        viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
-        viewHolder.mIpAddress.setTextColor(mContext.getResources().getColor(R.color.theme_dark_1));
-        ((View) viewHolder.mDiscloseImage.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_light_2));
-        viewHolder.mDeleteButton.setVisibility(View.GONE);
+        if (viewHolder == null) {
+            return;
+        }
+        PrintersContainer printerItem = (PrintersContainer) viewHolder.mDeleteButton.getParent();
+        
+        if (printerItem.getDefault()) {
+            printerItem.setDefault(false);
+            mDefaultViewHolder = null;
+        }
+        if (printerItem.getDelete()) {            
+            printerItem.setDelete(false);
+            mDeleteViewHolder = null;
+        }
     }
     
     private void setPrinterRowToDefault(ViewHolder viewHolder) {
+        if (viewHolder == null) {
+            return;
+        }
+        PrintersContainer printerItem = (PrintersContainer) viewHolder.mDeleteButton.getParent();
+        
+        if (printerItem.getDelete()) {
+            printerItem.setDelete(false);
+            mDeleteViewHolder = null;
+        }
+        if (printerItem.getDefault()) {
+            return;
+        }
         if (mDefaultViewHolder != null) {
             setPrinterRowToNormal(mDefaultViewHolder);
+            mDefaultViewHolder = null;
         }
-        viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-        viewHolder.mIpAddress.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-        ((View) viewHolder.mDiscloseImage.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_dark_1));
-        viewHolder.mDeleteButton.setVisibility(View.GONE);
+        printerItem.setDefault(true);
         mDefaultViewHolder = viewHolder;
-    }
-    
-    private void setPrinterRowToDelete(ViewHolder viewHolder) {
-        viewHolder.mPrinterName.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-        viewHolder.mIpAddress.setTextColor(mContext.getResources().getColor(R.color.theme_light_1));
-        ((View) viewHolder.mDiscloseImage.getParent()).setBackgroundColor(mContext.getResources().getColor(R.color.theme_color_2));
-        viewHolder.mDeleteButton.setVisibility(View.VISIBLE);
-        viewHolder.mDeleteButton.setBackgroundColor(mContext.getResources().getColor(R.color.bg_delete_button));
-        mDeleteViewHolder = viewHolder;
     }
     
     private void setPrinterRow(ViewHolder viewHolder) {
         Printer printer = (Printer) viewHolder.mPrinterName.getTag();
+        
         if (printer.getId() == mPrinterManager.getDefaultPrinter()) {
             setPrinterRowToDefault(viewHolder);
         } else {
@@ -232,13 +198,69 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     }
     
     private void switchToFragment(BaseFragment fragment, String tag) {
-        FragmentManager fm = ((Activity) mContext).getFragmentManager();
+        FragmentManager fm = ((Activity) getContext()).getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         
         // TODO Add Animation: Must Slide
         ft.addToBackStack(null);
         ft.replace(R.id.mainLayout, fragment, tag);
         ft.commit();
+    }
+    
+    // ================================================================================
+    // INTERFACE - View.OnClick
+    // ================================================================================
+    
+    @Override
+    public void onClick(View v) {
+        Printer printer = null;
+        
+        switch (v.getId()) {
+            case R.id.img_disclosure:
+                Activity activity = (Activity) getContext();
+
+                printer = (Printer) v.getTag();
+                Intent intent = activity.getIntent();
+                intent.putExtra(PrinterInfoFragment.KEY_PRINTER_INFO, printer);
+                activity.setIntent(intent);
+                
+                BaseFragment fragment = new PrinterInfoFragment();
+                switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
+                break;
+            case R.id.printerListRow:
+                if(mDeleteViewHolder != null) {
+                    return;
+                }
+                ViewHolder viewHolder = (ViewHolder) v.getTag();
+                printer = (Printer) viewHolder.mDiscloseImage.getTag();
+                
+                setPrinterRowToDefault(viewHolder);
+                mPrinterManager.setDefaultPrinter(printer);
+                break;
+            case R.id.btn_delete:
+                printer = (Printer) v.getTag();
+                Message newMessage = Message.obtain(mHandler, MSG_REMOVE_PRINTER);
+                newMessage.obj = printer;
+                mHandler.sendMessage(newMessage);
+                break;
+        }
+    }
+    
+    // ================================================================================
+    // Interface Callback
+    // ================================================================================
+    
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+            case MSG_REMOVE_PRINTER:
+                Printer printer = (Printer) msg.obj;
+                mPrinterManager.removePrinter(printer);
+                remove(printer);
+                notifyDataSetChanged();
+                return true;
+        }
+        return false;
     }
     
     // ================================================================================

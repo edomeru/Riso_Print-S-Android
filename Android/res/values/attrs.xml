@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="custom_state">
+        <attr name="state_delete" format="boolean" />
+        <attr name="state_default" format="boolean" />
+    </declare-styleable>
+
+</resources>

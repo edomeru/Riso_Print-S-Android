@@ -20,7 +20,6 @@
         android:layout_height="@dimen/printers_row_right_icon_size"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@color/theme_light_3"
         android:contentDescription="@string/default_content_description"
         android:layout_marginRight="@dimen/printers_row_right_margin" />
 

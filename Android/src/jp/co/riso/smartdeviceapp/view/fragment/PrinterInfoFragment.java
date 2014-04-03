@@ -30,6 +30,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private Printer mPrinter = null;
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
+    private Switch mDefaultPrinter = null;
+    
     private PrinterManager mPrinterManager = null;
     
     @Override
@@ -39,15 +41,14 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        mPrinterManager = PrinterManager.sharedManager(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        Switch sw = (Switch) view.findViewById(R.id.default_printer_switch);
-        sw.setOnCheckedChangeListener(this);
+        mDefaultPrinter = (Switch) view.findViewById(R.id.default_printer_switch);
+        mDefaultPrinter.setOnCheckedChangeListener(this);
         
-        view.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
     }
@@ -64,10 +65,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
-        if (savedInstanceState != null) {
-            
-        }
+
         Bundle extras = getArguments();
         if (extras == null) {
             extras = getActivity().getIntent().getExtras();
@@ -76,6 +74,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
+        if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
+            mDefaultPrinter.setChecked(true);
+        }
         
     }
     
@@ -105,6 +106,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mPrinterManager.setDefaultPrinter(mPrinter);
+        if (isChecked) {
+            mPrinterManager.setDefaultPrinter(mPrinter);
+        } else {
+            mPrinterManager.clearDefaultPrinter();
+        }
     }
 }

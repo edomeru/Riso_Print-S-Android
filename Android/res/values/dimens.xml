@@ -78,6 +78,6 @@
     <dimen name="printers_row_default_printer_margin">2dp</dimen>
     <dimen name="printers_name_font_size">16dp</dimen>
     <dimen name="printers_ipaddress_font_size">12dp</dimen>
-    
+    <dimen name="printers_view_tablet_padding">5dp</dimen>    
     
 </resources>

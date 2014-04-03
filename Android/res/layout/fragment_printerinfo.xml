@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/theme_light_3"
     android:orientation="vertical" >
 
     <include layout="@layout/actionbar_sub" />
@@ -11,26 +12,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:padding="@dimen/printers_row_left_padding"
                 android:text="@string/ids_lbl_printer_name"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <TextView
                 android:id="@+id/inputPrinterName"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:gravity="right"
                 android:padding="@dimen/printers_left_editbox_padding"
                 android:textColor="@color/theme_light_1" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -38,33 +40,29 @@
             android:layout_marginLeft="@dimen/printers_row_left_padding"
             android:background="@color/theme_light_2"
             android:visibility="visible" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:padding="@dimen/printers_row_left_padding"
                 android:text="@string/ids_lbl_ip_address"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <TextView
                 android:id="@+id/inputIpAddress"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:gravity="right"
                 android:padding="@dimen/printers_row_left_padding"
-                android:textColor="@color/theme_light_1" />
-        </RelativeLayout>
+                android:textColor="@color/theme_light_1"
+                android:textSize="@dimen/printers_name_font_size" />
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -72,33 +70,28 @@
             android:layout_marginLeft="@dimen/printers_row_left_padding"
             android:background="@color/theme_light_2"
             android:visibility="visible" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:padding="@dimen/printers_row_left_padding"
                 android:text="@string/ids_lbl_port"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <TextView
                 android:id="@+id/inputPort"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:padding="@dimen/printers_row_left_padding"
-                android:textColor="@color/theme_light_1" />
-        </RelativeLayout>
+                android:textColor="@color/theme_light_1"
+                android:textSize="@dimen/printers_name_font_size" />
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -106,33 +99,28 @@
             android:layout_marginLeft="@dimen/printers_row_left_padding"
             android:background="@color/theme_light_2"
             android:visibility="visible" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:padding="@dimen/printers_row_left_padding"
                 android:text="@string/ids_lbl_printer_status"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <TextView
                 android:id="@+id/inputStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:padding="@dimen/printers_row_left_padding"
-                android:textColor="@color/theme_light_1" />
-        </RelativeLayout>
+                android:textColor="@color/theme_light_1"
+                android:textSize="@dimen/printers_name_font_size" />
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -140,34 +128,28 @@
             android:layout_marginLeft="@dimen/printers_row_left_padding"
             android:background="@color/theme_light_2"
             android:visibility="visible" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_weight="1"
                 android:padding="@dimen/printers_row_left_padding"
                 android:text="@string/ids_lbl_set_default_printer"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <Switch
                 android:id="@+id/default_printer_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:gravity="center_horizontal"
+                android:layout_weight="0"
                 android:thumb="@drawable/widgettheme_switch_inner_holo_dark" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"

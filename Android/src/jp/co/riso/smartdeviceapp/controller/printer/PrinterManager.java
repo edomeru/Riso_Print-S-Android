@@ -14,31 +14,33 @@ import java.util.List;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
-import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager;
-import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager.SNMPSearchCallback;
+import jp.co.riso.smartdeviceapp.controller.snmp.SnmpManager;
+import jp.co.riso.smartdeviceapp.controller.snmp.SnmpManager.SnmpSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.view.View;
 
-public class PrinterManager implements SNMPSearchCallback {
-    private static SNMPManager sSNMPManager = null;
+public class PrinterManager implements SnmpSearchCallback {
     private static PrinterManager sSharedMngr = null;
-    private List<Printer> mPrinterList;
-    private Context mContext;
+    private List<Printer> mPrinterList = null;
+    private Context mContext = null;
     private boolean mDefaultExists = false;
     private boolean mIsSearching = false;
-    private WeakReference<OnPrinterSearchCallback> mOnPrinterAddCallback = null;
-    private WeakReference<OnPrintersListChangeCallback> mOnPrintersListRefreshCallback = null;
+    private SnmpManager mSNMPManager = null;
+    private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
+    private WeakReference<PrintersCallback> mPrintersCallback = null;
     
     private PrinterManager(Context context) {
         mContext = context;
         mPrinterList = new ArrayList<Printer>();
-        sSNMPManager = new SNMPManager();
-        sSNMPManager.setSNMPSearchCallback(this);
+        mSNMPManager = new SnmpManager();
+        mSNMPManager.setSnmpSearchCallback(this);
     }
     
-    public static PrinterManager sharedManager(Context context) {
+    public static PrinterManager getInstance(Context context) {
         if (sSharedMngr == null) {
             sSharedMngr = new PrinterManager(context);
         }
@@ -46,7 +48,7 @@ public class PrinterManager implements SNMPSearchCallback {
     }
     
     // ================================================================================
-    // DataBase
+    // Public Methods
     // ================================================================================
     
     public boolean savePrinterToDB(Printer printer) {
@@ -68,7 +70,7 @@ public class PrinterManager implements SNMPSearchCallback {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
         DatabaseManager dbManager = new DatabaseManager(mContext);
-
+        
         if (!dbManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
             dbManager.close();
             return false;
@@ -80,12 +82,20 @@ public class PrinterManager implements SNMPSearchCallback {
         }
         dbManager.close();
         
-        if (mOnPrintersListRefreshCallback != null && mOnPrintersListRefreshCallback.get() != null) {
-            mOnPrintersListRefreshCallback.get().onAddedNewPrinter(printer);
+        if (mPrintersCallback != null && mPrintersCallback.get() != null) {
+            mPrintersCallback.get().onAddedNewPrinter(printer);
         }
         return true;
     }
     
+    /**
+     * Check Printer Existence
+     * <p>
+     * Determines if the Printer exists in the Saved Printer List
+     * 
+     * @param printer
+     *            Printer object that must contain the IP address and Printer Name.
+     */
     public boolean isExists(Printer printer) {
         if (printer == null) {
             return false;
@@ -103,6 +113,14 @@ public class PrinterManager implements SNMPSearchCallback {
         return false;
     }
     
+    /**
+     * Check Printer Existence
+     * <p>
+     * Determines if the Printer exists in the Saved Printer List
+     * 
+     * @param ipAddress
+     *            IP address of the Printer.
+     */
     public boolean isExists(String ipAddress) {
         if (ipAddress == null) {
             return false;
@@ -152,6 +170,7 @@ public class PrinterManager implements SNMPSearchCallback {
         if (printer == null) {
             return;
         }
+        clearDefaultPrinter();
         
         DatabaseManager dbManager = new DatabaseManager(mContext);
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
@@ -174,8 +193,6 @@ public class PrinterManager implements SNMPSearchCallback {
             return;
         }
         
-        dbManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null);
-         
         if (!dbManager.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter)) {
             dbManager.close();
             return;
@@ -196,7 +213,7 @@ public class PrinterManager implements SNMPSearchCallback {
             return;
         }
         DatabaseManager dbManager = new DatabaseManager(mContext);
-
+        
         dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
         dbManager.close();
     }
@@ -204,7 +221,7 @@ public class PrinterManager implements SNMPSearchCallback {
     public int getDefaultPrinter() {
         int printer = -1;
         DatabaseManager dbManager = new DatabaseManager(mContext);
-
+        
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
         
         if (cursor.getCount() != 1) {
@@ -222,11 +239,27 @@ public class PrinterManager implements SNMPSearchCallback {
         return printer;
     }
     
+    /**
+     * Search for Printer Device
+     * <p>
+     * Search for the Printer Devices using Device Discovery/Auto Search.
+     * 
+     * @param ipAddress
+     *            The IP Address of the Printer
+     */
     public void startPrinterSearch() {
         mIsSearching = true;
-        sSNMPManager.startSNMP();
+        mSNMPManager.startSnmp();
     }
     
+    /**
+     * Search for Printer Device
+     * <p>
+     * Search for the Printer Device using Manual Search.
+     * 
+     * @param ipAddress
+     *            The IP Address of the Printer
+     */
     public void searchPrinter(String ipAddress) {
         
         if (ipAddress == null) {
@@ -234,36 +267,69 @@ public class PrinterManager implements SNMPSearchCallback {
         }
         
         mIsSearching = true;
-        sSNMPManager.searchPrinter(ipAddress);
+        mSNMPManager.searchPrinter(ipAddress);
     }
     
+    /**
+     * Cancel Printer Search
+     * <p>
+     * Stops Device Discovery/Manual Search.
+     */
     public void cancelPrinterSearch() {
         mIsSearching = false;
-        // TODO: Call SNMP cancel - sSNMPManager.stopSNMP();
+        mSNMPManager.stopSnmpSearch();
     }
     
+    /**
+     * <p>
+     * Checks if there is an ongoing printer search.
+     */
     public boolean isSearching() {
         return mIsSearching;
     }
     
-    public void setOnPrinterSearchCallback(OnPrinterSearchCallback onPrinterSearchCallback) {
-        mOnPrinterAddCallback = new WeakReference<OnPrinterSearchCallback>(onPrinterSearchCallback);
+    /**
+     * <p>
+     * Updates the Online Status of the specified printer view
+     * 
+     * @param ipAddress
+     *            IP Address of the printer
+     * @param view
+     *            View of the online indicator
+     */
+    public void updateOnlineStatus(String ipAddress, View view) {
+        // TODO: update implementation
+        new UpdateOnlineStatusTask().execute(ipAddress, view);
     }
     
-    public void setOnPrintersListRefreshCallback(OnPrintersListChangeCallback onPrintersListRefreshCallback) {
-        mOnPrintersListRefreshCallback = new WeakReference<OnPrintersListChangeCallback>(onPrintersListRefreshCallback);
+    /**
+     * Set Printer Search Screen Callback
+     * <p>
+     * Set the Callback for Adding Printer to the Searched Printer List during Device Discovery/Manual search.
+     */
+    public void setPrinterSearchCallback(PrinterSearchCallback printerSearchCallback) {
+        mPrinterSearchCallback = new WeakReference<PrinterSearchCallback>(printerSearchCallback);
+    }
+    
+    /**
+     * Set Printer Screen Callback
+     * <p>
+     * Sets the Saved Printer List/View Callback for adding printers.
+     */
+    public void setPrintersCallback(PrintersCallback printersCallback) {
+        mPrintersCallback = new WeakReference<PrintersCallback>(printersCallback);
     }
     
     // ================================================================================
-    // Interface - OnSNMPSearch (SNMP Callback)
+    // Interface - SnmpSearchCallback
     // ================================================================================
     
     @Override
     public void onSearchedPrinterAdd(String printerName, String ipAddress) {
         Printer printer = new Printer(printerName, ipAddress, false, null);
         if (isSearching()) {
-            if (mOnPrinterAddCallback != null && mOnPrinterAddCallback.get() != null) {
-                mOnPrinterAddCallback.get().onPrinterAdd(printer);
+            if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
+                mPrinterSearchCallback.get().onPrinterAdd(printer);
             }
         }
     }
@@ -271,26 +337,55 @@ public class PrinterManager implements SNMPSearchCallback {
     @Override
     public void onSearchEnd() {
         mIsSearching = false;
-        if (mOnPrinterAddCallback != null && mOnPrinterAddCallback.get() != null) {
-            mOnPrinterAddCallback.get().onSearchEnd();
+        if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
+            mPrinterSearchCallback.get().onSearchEnd();
         }
     }
     
     // ================================================================================
-    // Interface - OnPrinterSearch (SNMP)
+    // Interface - PrinterSearchCallback
     // ================================================================================
-
-    public interface OnPrinterSearchCallback {
+    
+    public interface PrinterSearchCallback {
         public void onPrinterAdd(Printer printer);
         
         public void onSearchEnd();
     }
     
     // ================================================================================
-    // Interface - OnPrintersListChange (Tablet View)
+    // Interface - PrintersCallback
     // ================================================================================
     
-    public interface OnPrintersListChangeCallback {
+    public interface PrintersCallback {
         public void onAddedNewPrinter(Printer printer);
+    }
+    
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    
+    class UpdateOnlineStatusTask extends AsyncTask<Object, View, Void> {
+        private WeakReference<View> mView = null;
+        private WeakReference<String> mipAddress = null;
+        
+        @Override
+        protected Void doInBackground(Object... arg) {
+            mipAddress = new WeakReference<String>((String) arg[0]);
+            mView = new WeakReference<View>((View) arg[1]);
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (mView != null && mView.get() != null && mipAddress != null && mipAddress.get() != null) {
+                if (mSNMPManager.isOnline(mipAddress.get())) {
+                    mView.get().setActivated(true);
+                } else {
+                    mView.get().setActivated(false);
+                }
+            }
+        }
+        
     }
 }
