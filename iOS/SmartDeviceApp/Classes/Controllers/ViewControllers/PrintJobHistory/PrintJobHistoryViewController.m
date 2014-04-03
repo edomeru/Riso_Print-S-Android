@@ -7,7 +7,7 @@
 //
 
 #import "PrintJobHistoryViewController.h"
-#import "PrintJobHistoryManager.h"
+#import "PrintJobHistoryHelper.h"
 #import "PrintJobHistoryGroup.h"
 #import "PrintJob.h"
 #import "PListHelper.h"
@@ -77,7 +77,7 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 {
     [super viewDidLoad];
     
-    self.listPrintJobHistoryGroups = [PrintJobHistoryManager retrievePrintJobHistoryGroups];
+    self.listPrintJobHistoryGroups = [PrintJobHistoryHelper retrievePrintJobHistoryGroups];
     
     self.groupsViewLayout.delegate = self;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -129,13 +129,15 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
     
     // put the model contents into the view
-    // (avoid passing the actual PrintJob object into the view)
+    // avoid passing the actual PrintJob object into the view
+    //  -- if the view changes, only controller->view needs to update
+    //  -- if the model changes, only the controller<-model needs to update
     [groupCell initWithTag:indexPath.row];
     [groupCell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
     [groupCell putIndicator:group.isCollapsed];
     if (!group.isCollapsed)
     {
-        // put the print jobs
+        // put the print jobs one-by-one
         for (int i = 0; i < group.countPrintJobs; i++)
         {
             PrintJob* job = [group getPrintJobAtIndex:i];
@@ -222,10 +224,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     NSInteger groupTag = [sender tag];
     NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupTag);
     
-    // remove the group
+    // remove the group (and all its print jobs)
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
-    for (int jobIdx = 0; jobIdx < group.countPrintJobs; jobIdx++)
-        [PrintJobHistoryManager deletePrintJob:[group getPrintJobAtIndex:jobIdx]];
     while (group.countPrintJobs != 0)
         [group deletePrintJobAtIndex:0];
     [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
@@ -245,9 +245,8 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     NSLog(@"[INFO][PrintJobCtrl] will delete {group=%ld, job=%ld}",
           (unsigned long)groupTag, (unsigned long)jobTag);
     
-    // delete the jobs from the model
+    // remove the print job
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
-    [PrintJobHistoryManager deletePrintJob:[group getPrintJobAtIndex:jobTag]];
     [group deletePrintJobAtIndex:jobTag];
     if ([group countPrintJobs] == 0)
         [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];

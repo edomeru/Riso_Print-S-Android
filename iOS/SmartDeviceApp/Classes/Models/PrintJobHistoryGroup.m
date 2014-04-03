@@ -8,7 +8,7 @@
 
 #import "PrintJobHistoryGroup.h"
 #import "PrintJob.h"
-#import "PrintJobHistoryManager.h"
+#import "DatabaseManager.h"
 
 @interface PrintJobHistoryGroup ()
 
@@ -60,6 +60,11 @@
               (unsigned long)index, (unsigned long)self.countPrintJobs);
         return;
     }
+    
+    // if the PrintJob object is not anymore held by this group,
+    // then the user chose to not remove it from display, so it
+    // should also be removed from DB
+    [DatabaseManager deleteObject:[self.listPrintJobs objectAtIndex:index]];
     
     [self.listPrintJobs removeObjectAtIndex:index];
     self.countPrintJobs--;

@@ -1,5 +1,5 @@
 //
-//  PrintJobHistoryManager.h
+//  PrintJobHistoryHelper.h
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 4/2/14.
@@ -8,9 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class PrintJob;
-
-@interface PrintJobHistoryManager : NSObject
+@interface PrintJobHistoryHelper : NSObject
 
 /**
  Returns a list of PrintJob objects from the database
@@ -19,11 +17,5 @@
  @return array of PrintJobHistoryGroups
  */
 + (NSMutableArray*)retrievePrintJobHistoryGroups;
-
-/**
- Removes a PrintJob object from the database.
- @param printJob
- */
-+ (void)deletePrintJob:(PrintJob*)printJob;
 
 @end

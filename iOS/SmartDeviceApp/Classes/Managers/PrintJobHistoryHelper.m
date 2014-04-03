@@ -1,12 +1,12 @@
 //
-//  PrintJobHistoryManager.m
+//  PrintJobHistoryHelper.m
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 4/2/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PrintJobHistoryManager.h"
+#import "PrintJobHistoryHelper.h"
 #import "PrinterManager.h"
 #import "DatabaseManager.h"
 #import "Printer.h"
@@ -16,7 +16,7 @@
 #import "PrintJobHistoryGroup.h"
 #import "PListHelper.h"
 
-@interface PrintJobHistoryManager ()
+@interface PrintJobHistoryHelper ()
 
 /**
  Fills the database with PrintJob objects.
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation PrintJobHistoryManager
+@implementation PrintJobHistoryHelper
 
 + (NSMutableArray*)retrievePrintJobHistoryGroups
 {
@@ -113,16 +113,11 @@
     return listPrintJobHistoryGroups;
 }
 
-+ (void)deletePrintJob:(PrintJob*)printJob
-{
-    [DatabaseManager deleteObject:printJob];
-}
-
 + (void)populateWithTestData
 {
     // TEST DATA CONSTANTS
-    static const NSUInteger TEST_NUM_PRINTERS = 9;
-    static const NSUInteger TEST_NUM_JOBS[9] = {3, 4, 2, 1, 3, 6, 2, 4};
+    const NSUInteger TEST_NUM_PRINTERS = 9;
+    const NSUInteger TEST_NUM_JOBS[9] = {3, 4, 2, 1, 3, 6, 2, 4};
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     
@@ -149,7 +144,7 @@
             PrintJob* newPrintJob = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
             newPrintJob.name = [NSString stringWithFormat:@"Test Job %d-%d", printerIdx+1, jobIdx+1];
             newPrintJob.result = [NSNumber numberWithInt:jobIdx%2]; //alternate OK and NG
-            newPrintJob.date = [NSDate dateWithTimeIntervalSinceNow:(arc4random()%60)*1000]; //2min intervals
+            newPrintJob.date = [NSDate dateWithTimeIntervalSinceNow:(arc4random()%60)*1000]; //random times
             newPrintJob.printer = testPrinter;
             [newPrintJob log];
         }

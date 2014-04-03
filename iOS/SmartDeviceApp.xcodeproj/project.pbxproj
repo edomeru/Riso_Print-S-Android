@@ -11,7 +11,7 @@
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
-		28738EB618EBCE19004ABDAD /* PrintJobHistoryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryManager.m */; };
+		28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
@@ -93,8 +93,8 @@
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
-		28738EB418EBCE19004ABDAD /* PrintJobHistoryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryManager.h; sourceTree = "<group>"; };
-		28738EB518EBCE19004ABDAD /* PrintJobHistoryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryManager.m; sourceTree = "<group>"; };
+		28738EB418EBCE19004ABDAD /* PrintJobHistoryHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintJobHistoryHelper.h; path = ../Managers/PrintJobHistoryHelper.h; sourceTree = "<group>"; };
+		28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PrintJobHistoryHelper.m; path = ../Managers/PrintJobHistoryHelper.m; sourceTree = "<group>"; };
 		28738EBA18EC01C4004ABDAD /* PrintJob+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PrintJob+Log.h"; sourceTree = "<group>"; };
 		28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PrintJob+Log.m"; sourceTree = "<group>"; };
 		28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryViewController.h; sourceTree = "<group>"; };
@@ -771,8 +771,6 @@
 				2DA1AF2E18E2EF9C00085F27 /* PDFFileManager.m */,
 				2DA1AF2F18E2EF9C00085F27 /* PrinterManager.h */,
 				2DA1AF3018E2EF9C00085F27 /* PrinterManager.m */,
-				28738EB418EBCE19004ABDAD /* PrintJobHistoryManager.h */,
-				28738EB518EBCE19004ABDAD /* PrintJobHistoryManager.m */,
 				2DA1AF3118E2EF9C00085F27 /* SNMPManager.h */,
 				2DA1AF3218E2EF9C00085F27 /* SNMPManager.m */,
 			);
@@ -791,6 +789,8 @@
 				2DA1AF6118E2F08900085F27 /* PListHelper.m */,
 				2DA1AF6218E2F08900085F27 /* PrinterStatusHelper.h */,
 				2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */,
+				28738EB418EBCE19004ABDAD /* PrintJobHistoryHelper.h */,
+				28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */,
 				2DA1AF6418E2F08900085F27 /* PrintPreviewHelper.h */,
 				2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */,
 				2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */,
@@ -980,7 +980,7 @@
 				2DA1AF1818E2EF9600085F27 /* ReplaceSegue.m in Sources */,
 				2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */,
 				2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */,
-				28738EB618EBCE19004ABDAD /* PrintJobHistoryManager.m in Sources */,
+				28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */,
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
 				2DA1AF2418E2EF9600085F27 /* PrinterSearchViewController.m in Sources */,
 				2DA1AEE118E2EF8500085F27 /* MenuButton.m in Sources */,
