@@ -8,8 +8,8 @@
 
 #import "PrintPreviewHelper.h"
 
-#define POINTS_PER_INCH 72.0f
-#define MM_PER_INCH 25.4f
+#define POINTS_PER_INCH 72.0f //PDF API converts PDF dimensions from actual size to points at 72 ppi
+#define MM_PER_INCH 25.4f //1 inch == ~25.4 mm
 
 CGSize paperDimensionsMM[] = {
     {306.0f, 460.0f}, // A3W
@@ -19,7 +19,7 @@ CGSize paperDimensionsMM[] = {
     {105.0f, 148.0f}, // A6
     {257.0f, 364.0f}, // B4
     {182.0f, 257.0f}, // B5
-    {128.0f, 182.0f}, // B6
+    //{128.0f, 182.0f}, // B6
     {216.0f, 340.0f}, // Foolscap
     {280.0f, 432.0f}, // Tabloid
     {216.0f, 356.0f}, // Legal
@@ -41,7 +41,8 @@ CGSize paperDimensionsMM[] = {
 
 +(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize
 {
-    CGFloat ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
+    //return ratio for portrait
+    CGFloat ratio = paperDimensionsMM[paperSize].width / paperDimensionsMM[paperSize].height ;
     return ratio;
 }
 
@@ -62,12 +63,14 @@ CGSize paperDimensionsMM[] = {
     
 }
 
-+ (CGSize)getPaperDimensions:(kPaperSize)paperSize forOrientation:(kOrientation)paperOrientation
++ (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape: (BOOL) isLandscape
 {
     CGSize size = paperDimensionsMM[paperSize];
+    //To have paper size in actual proportion to size of PDF in points, convert paper mm dimensions to points at 72 PPI
     size.width = (size.width/MM_PER_INCH) * POINTS_PER_INCH;
     size.height = (size.height/MM_PER_INCH) * POINTS_PER_INCH;
-    if(paperOrientation == kOrientationLandscape)
+    //Sizes are in portrait, for Landscape, interchange height and width
+    if(isLandscape == YES)
     {
         CGFloat temp = size.width;
         size.width = size.height;
@@ -93,17 +96,17 @@ CGSize paperDimensionsMM[] = {
         return NO;
     }
     
-    //if(setting.isBookletBind == YES && setting.bind != BIND_TOP)
+    if(setting.imposition == kImposition2Pages && setting.orientation == kOrientationPortrait)
     {
         return YES;
     }
     
-    //if(setting.pagination == PAGINATION_2IN1 || setting.pagination == PAGINATION_6IN1)
+    if(setting.imposition == kImposition2Pages && setting.orientation == kOrientationLandscape)
     {
-        return YES;
+        return NO;
     }
     
-    if(setting.orientation == ORIENTATION_LANDSCAPE)
+    if(setting.orientation == kOrientationLandscape)
     {
         return YES;
     }

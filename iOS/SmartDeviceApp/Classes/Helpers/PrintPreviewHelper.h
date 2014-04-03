@@ -25,7 +25,7 @@ typedef enum {
     kPaperSizeA6,
     kPaperSizeB4,
     kPaperSizeB5,
-    kPaperSizeB6,
+    //kPaperSizeB6,
     kPaperSizeFoolscap,
     kPaperSizeTabloid,
     kPaperSizeLegal,
@@ -52,6 +52,27 @@ typedef enum {
     kOrientationPortrait,
     kOrientationLandscape
 }kOrientation;
+
+typedef enum{
+    kStapleTypeNone,
+    kStapleTypeUpperLeft,
+    kStapleTypeUpperRight,
+    kStapleType2Pos,
+    kStapleType1Pos
+}kStapleType;
+
+typedef enum{
+    kFinishingSideLeft,
+    kFinishingSideTop,
+    kFinishingSideRight
+}kFinishingSide;
+
+typedef enum{
+    kPunchTypeNone,
+    kPunchType2Holes,
+    kPunchType3Holes,
+    kPunchType4Holes
+}kPunchType;
 
 typedef enum  {
     BIND_LEFT,
@@ -89,7 +110,7 @@ typedef enum
 +(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize;
 
 
-+ (CGSize)getPaperDimensions:(kPaperSize)paperSize forOrientation:(kOrientation)paperOrientation;
++ (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape: (BOOL) isLandscape;
 
 /**
  Helper function to determine spine location of page view controller based on settings affecting spine location

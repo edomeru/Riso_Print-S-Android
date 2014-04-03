@@ -128,8 +128,11 @@
     // *Assume portrait
     
     // Get aspect ratio
+
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
-    if (self.printDocument.previewSetting.orientation == 0)
+
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    if(isLandscape == YES)
     {
         aspectRatio = 1.0f / aspectRatio;
     }
@@ -235,8 +238,9 @@
         return viewController;
     }
     
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
     // Create render option
-    CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize forOrientation:(kOrientation)self.printDocument.previewSetting.orientation];
+    CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize isLandscape:isLandscape];
     PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndex:index size:size delegate:self];
     [self.renderOperations setObject:renderOperation forKey:pageIndexKey];
     [self.renderQueue addOperation:renderOperation];
@@ -279,10 +283,12 @@
     
     // Recompute aspect ratio
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
-    if (self.printDocument.previewSetting.orientation == 0)
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    if(isLandscape == YES)
     {
         aspectRatio = 1.0f / aspectRatio;
     }
+    
     NSLayoutConstraint *aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.previewView attribute:NSLayoutAttributeHeight multiplier:aspectRatio constant:0.0f];
     [aspectRatioConstraint setPriority:UILayoutPriorityRequired];
     [self.previewView removeConstraint:self.aspectRatioConstraint];
