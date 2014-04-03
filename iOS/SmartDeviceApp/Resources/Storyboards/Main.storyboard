@@ -455,12 +455,12 @@
                                         <rect key="frame" x="0.0" y="440" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
+                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
                                                 <rect key="frame" x="18" y="10" width="284" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
                                                 <connections>
-                                                    <action selector="dragPageScrollAction:" destination="3J8-E3-ZCb" eventType="valueChanged" id="VlY-KG-tht"/>
+                                                    <action selector="dragSliderAction:" destination="3J8-E3-ZCb" eventType="valueChanged" id="c0z-RH-7m9"/>
                                                     <outletCollection property="gestureRecognizers" destination="HkB-bW-YX3" appends="YES" id="R2I-1U-0vu"/>
                                                 </connections>
                                             </slider>
@@ -515,9 +515,6 @@
                     <connections>
                         <outlet property="activityIndicator" destination="Tfn-V2-BUp" id="COZ-vn-opT"/>
                         <outlet property="mainMenuButton" destination="31J-j4-hVx" id="bkC-U2-PZp"/>
-                        <outlet property="pageLabel" destination="ZT1-SS-2ii" id="Wa5-ha-FVz"/>
-                        <outlet property="pageNavArea" destination="XgQ-UQ-sVe" id="T70-W8-Oqa"/>
-                        <outlet property="pageScroll" destination="k35-as-6xb" id="415-cb-7Tb"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="TCH-Tx-hm1"/>
                         <outlet property="previewView" destination="GCh-6b-axd" id="WCl-Ct-mpT"/>
                         <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="mj6-GY-FhA"/>
@@ -529,7 +526,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WGX-Mc-pLJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="HkB-bW-YX3">
                     <connections>
-                        <action selector="tapPageScrollAction:" destination="3J8-E3-ZCb" id="23f-4n-sYI"/>
+                        <action selector="tapSliderAction:" destination="3J8-E3-ZCb" id="Q2K-oP-yWi"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
