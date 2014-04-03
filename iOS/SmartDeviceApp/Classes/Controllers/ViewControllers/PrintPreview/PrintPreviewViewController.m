@@ -26,6 +26,9 @@
 @property (nonatomic, weak) IBOutlet UIButton *printSettingsButton;
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (nonatomic, weak) IBOutlet UIView *previewArea;
+@property (weak, nonatomic) IBOutlet UIView *pageNavArea;
+@property (weak, nonatomic) IBOutlet UISlider *pageScroll;
+@property (weak, nonatomic) IBOutlet UILabel *pageLabel;
 
 // Preview View
 @property (nonatomic, weak) IBOutlet UIView *previewView;
@@ -40,6 +43,8 @@
 // Display
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) BOOL pageIsAnimating;
+@property (nonatomic) NSInteger totalPageNum;
+@property (nonatomic) NSInteger numPDFPagesPerPage;
 
 // Operations
 @property (atomic, strong) NSOperationQueue *renderQueue;
@@ -48,7 +53,9 @@
 
 - (void)loadPDF;
 - (void)setupPreview;
-
+- (void)computeTotalPageNum;
+- (void)setupPageScroll;
+- (void)setupPageLabel;
 @end
 
 @implementation PrintPreviewViewController
@@ -115,10 +122,15 @@
             self.printDocument = [[PDFFileManager sharedManager] printDocument];
             self.printDocument.delegate = self;
             self.currentPage = 0;
+            self.numPDFPagesPerPage = 1;
             self.titleLabel.text = [[PDFFileManager sharedManager] fileName];
             self.printSettingsButton.hidden = NO;
             self.previewView.hidden = NO;
+            self.pageNavArea.hidden = NO;
             [self setupPreview];
+            [self computeTotalPageNum];
+            [self setupPageLabel];
+            [self setupPageScroll];
         });
     });
 }
@@ -192,6 +204,37 @@
     self.pageViewController = pageViewController;
 }
 
+- (void)computeTotalPageNum
+{
+    NSUInteger numPagesPerSheet =[PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting:self.printDocument.previewSetting.imposition];
+    self.totalPageNum = self.printDocument.pageCount/numPagesPerSheet;
+    if((self.printDocument.pageCount % numPagesPerSheet) > 0)
+    {
+        self.totalPageNum++;
+    }
+    if(numPagesPerSheet != self.numPDFPagesPerPage)
+    {
+        self.currentPage = 0;
+    }
+    self.numPDFPagesPerPage = numPagesPerSheet;
+}
+
+- (void)setupPageScroll
+{
+    [self.pageScroll setMaximumTrackImage:[[UIImage imageNamed:@"img_slider_maximum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 5)]forState: UIControlStateNormal];
+    [self.pageScroll setMinimumTrackImage:[[UIImage imageNamed:@"img_slider_minimum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 5, 0, 0) ] forState: UIControlStateNormal];
+    [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateNormal];
+    [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateHighlighted];
+    [self.pageScroll setMinimumValue:1];
+    [self.pageScroll setMaximumValue:self.totalPageNum];
+}
+
+- (void)setupPageLabel
+{
+    NSString *pageString = @"PAGE";
+    self.pageLabel.text = [NSString stringWithFormat:@"%@ %d/%d", pageString, self.currentPage + 1, self.totalPageNum];
+}
+
 #pragma mark - UIPageViewControllerDataSource
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
@@ -259,6 +302,14 @@
     {
         self.pageIsAnimating = NO;
     }
+    
+    if(completed == YES)
+    {
+        PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
+        self.currentPage = viewController.pageIndex;
+        [self setupPageLabel];
+        [self.pageScroll setValue:self.currentPage + 1];
+    }
 }
 
 #pragma mark -
@@ -295,7 +346,17 @@
     [self.previewView addConstraint:aspectRatioConstraint];
     self.aspectRatioConstraint = aspectRatioConstraint;
     
+    [self computeTotalPageNum];
+    [self setupPageLabel];
+    [self.pageScroll setValue:self.currentPage + 1];
+    
     PDFPageContentViewController *current = [self viewControllerAtIndex:self.currentPage];
+    [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+}
+
+-(void) goToPage:(NSInteger) pageNum
+{
+    PDFPageContentViewController *current = [self viewControllerAtIndex:pageNum];
     [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
@@ -325,6 +386,46 @@
     {
         [self.printSettingsButton setEnabled:YES];
     }
+}
+
+/*Action when slider is dragged*/
+- (IBAction)dragPageScrollAction:(id)sender
+{
+    UISlider *slider  = (UISlider *) sender;
+    NSInteger pageNumber = slider.value;
+    self.currentPage = pageNumber - 1;
+    [self goToPage:self.currentPage];
+    [self setupPageLabel];
+}
+
+/*Action when slider is tapped*/
+- (IBAction)tapPageScrollAction:(id)sender
+{
+    UIGestureRecognizer *tap =  (UIGestureRecognizer *)sender;
+    //get point in slider where it is tapped
+    CGPoint point = [tap locationInView:self.pageScroll];
+    //Get how many percent of the total slider length is the distance of the tapped point from the start point of the slider
+    CGFloat scrollPercentage = point.x/self.pageScroll.bounds.size.width;
+    
+    //multiply the the percentage with the total number of pages in view to get the current page index;
+    NSInteger pageNumber = (self.totalPageNum * scrollPercentage);
+    if(pageNumber <= 0)
+    {
+        self.currentPage = 0;
+    }
+    else if(pageNumber > self.totalPageNum)
+    {
+        self.currentPage = self.totalPageNum - 1;
+    }
+    else
+    {
+        self.currentPage = pageNumber - 1;
+    }
+    
+    //update page in view, page number label. slider thumb position
+    [self goToPage:self.currentPage];
+    [self setupPageLabel];
+    [self.pageScroll setValue:self.currentPage+1];
 }
 
 @end
