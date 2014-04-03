@@ -7,11 +7,11 @@
 //
 
 #import "PrinterSearchViewController.h"
-#import "PrinterManager.h"
 #import "PrinterDetails.h"
 #import "SearchResultCell.h"
 #import "NetworkManager.h"
-#import "AlertUtils.h"
+#import "AlertHelper.h"
+#import "UIColor+Theme.h"
 
 #define SEARCHRESULTCELL    @"SearchResultCell"
 
@@ -156,11 +156,8 @@
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
-    [self.refreshControl setBackgroundColor:[UIColor colorWithRed:36.0/255.0
-                                                            green:36.0/255.0
-                                                             blue:36.0/255.0
-                                                            alpha:1.0]];
-    [self.refreshControl setTintColor:[UIColor whiteColor]];
+    [self.refreshControl setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self.refreshControl setTintColor:[UIColor whiteThemeColor]];
     [self.tableView addSubview:self.refreshControl];
     [self.refreshControl setHidden:YES];
 }
@@ -192,9 +189,9 @@
     // check if adding printers is allowed
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertUtils displayResult:ERR_MAX_PRINTERS
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
         return;
     }
     
@@ -203,9 +200,9 @@
     PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertUtils displayResult:INFO_PRINTER_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         self.hasAddedPrinters = YES;
         
         // change the '+' button to a checkmark
@@ -223,9 +220,9 @@
     }
     else
     {
-        [AlertUtils displayResult:ERR_CANNOT_ADD
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
     }
 }
 
@@ -236,9 +233,9 @@
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertUtils displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_SEARCH
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrNoNetwork
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
         
         if ([self.refreshControl isRefreshing])
             [self.refreshControl endRefreshing];

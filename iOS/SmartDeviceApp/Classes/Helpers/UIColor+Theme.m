@@ -32,7 +32,7 @@
 
 + (UIColor *)whiteThemeColor
 {
-    return [UIColor whiteThemeColor];
+    return [UIColor whiteColor];
 }
 
 + (UIColor *)gray1ThemeColor

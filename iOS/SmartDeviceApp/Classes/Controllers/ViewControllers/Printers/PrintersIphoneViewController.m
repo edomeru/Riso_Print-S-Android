@@ -10,7 +10,7 @@
 #import "Printer.h"
 #import "PrinterManager.h"
 #import "PrinterCell.h"
-#import "AlertUtils.h"
+#import "AlertHelper.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define PRINTERCELL             @"PrinterCell"
@@ -153,9 +153,9 @@
     }
     else
     {
-        [AlertUtils displayResult:ERR_DEFAULT
-                        withTitle:ALERT_TITLE_PRINTERS
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrDefault
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil];
     }
 }
 

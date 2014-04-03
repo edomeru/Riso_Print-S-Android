@@ -7,8 +7,9 @@
 //
 
 #import "SNMPManager.h"
-#import "PListUtils.h"
+#import "PListHelper.h"
 #import "PrinterDetails.h"
+#import "NotificationNames.h"
 
 static BOOL useSNMPCommonLib;       /** if YES, use real SNMP lib. if NO, use "fake" SNMP implementation. */
 static BOOL useSNMPUnicastTimeout;  /** (for "fake" SNMP) if YES, will cause the manual search to timeout. */
@@ -42,7 +43,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
     isManualSearch = YES;
     searchedIP = printerIP;
     
-    useSNMPCommonLib = [PListUtils readBool:PL_BOOL_USE_SNMP];
+    useSNMPCommonLib = [PListHelper readBool:kPlistBoolValUseSNMP];
     if (useSNMPCommonLib)
     {
         //TODO: initiate SNMP Manual Search
@@ -53,7 +54,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
         // 1. receive "SNMP Add Printer Callback" after 2 seconds
         // 2. the SNMP Common Library returns after 4 seconds
         // 3. if timeout is enabled, the "SNMP Add Printer Callback" will never be received
-        useSNMPUnicastTimeout = [PListUtils readBool:PL_BOOL_USE_SNMP_TIMEOUT];
+        useSNMPUnicastTimeout = [PListHelper readBool:kPlistBoolValUseSNMPTimeout];
         if (!useSNMPUnicastTimeout)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -83,7 +84,7 @@ static NSString* searchedIP;        /** stores the manually searched printer IP 
     isManualSearch = NO;
     searchedIP = nil;
     
-    useSNMPCommonLib = [PListUtils readBool:PL_BOOL_USE_SNMP];
+    useSNMPCommonLib = [PListHelper readBool:kPlistBoolValUseSNMP];
     if (useSNMPCommonLib)
     {
         //TODO: initiate SNMP Device Discovery

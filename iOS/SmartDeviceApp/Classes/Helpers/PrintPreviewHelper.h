@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "PreviewSetting.h"
 
-#define DEBUG_LOG_PRINT_PREVIEW 0 //TODO: transfer to AppDebug.h on merge
-
 typedef enum {
     kColorModeAuto,
     kColorModeFullColor,

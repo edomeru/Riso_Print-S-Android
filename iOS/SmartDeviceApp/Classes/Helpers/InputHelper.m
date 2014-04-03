@@ -1,14 +1,14 @@
 //
-//  InputUtils.m
+//  InputHelper.h
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/21/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "InputUtils.h"
+#import "InputHelper.h"
 
-@implementation InputUtils
+@implementation InputHelper
 
 #pragma mark - IP Address
 

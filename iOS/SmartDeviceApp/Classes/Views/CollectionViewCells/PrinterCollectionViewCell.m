@@ -7,12 +7,13 @@
 //
 
 #import "PrinterCollectionViewCell.h"
+#import "UIColor+Theme.h"
 
 typedef enum {
-    NORMAL,
-    DEFAULT_PRINTER,
-    DELETE
-}T_CELLFORMAT;
+    kPrinterCollectionCellTypeNormal,
+    kPrinterCollectionCellTypeDefault,
+    kPrinterCollectionCellTypeDelete
+}kPrinterCollectionCellType;
 
 @interface PrinterCollectionViewCell()
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
@@ -51,38 +52,38 @@ typedef enum {
     if(isDefaultPrinterCell == YES)
     {
         self.defaultSwitch.on = YES;
-        [self setCellHeaderFormat:DEFAULT_PRINTER];
+        [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
     }
     else
     {
         self.defaultSwitch.on = NO;
-        [self setCellHeaderFormat:NORMAL];
+        [self setCellHeaderFormat:kPrinterCollectionCellTypeNormal];
 
     }
 }
 
--(void) setCellHeaderFormat:(T_CELLFORMAT) cellFormat
+-(void) setCellHeaderFormat:(kPrinterCollectionCellType) cellFormat
 {
     switch(cellFormat)
     {
-        case DEFAULT_PRINTER:
+        case kPrinterCollectionCellTypeDefault:
         {
-            [self.cellHeader setBackgroundColor:[UIColor colorWithRed:36.0/255.0 green:36.0/255.0 blue:36.0/255.0 alpha:1.0]];
-            [self.nameLabel setTextColor:[UIColor whiteColor]];
+            [self.cellHeader setBackgroundColor:[UIColor gray4ThemeColor]];
+            [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
-        case DELETE:
+        case kPrinterCollectionCellTypeDelete:
         {
-            UIColor *bgColor = [UIColor colorWithRed:82.0/255.0 green:7.0/255.0 blue:182.0/255.0 alpha:1.0];
+            UIColor *bgColor = [UIColor purple2ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
-            [self.nameLabel setTextColor:[UIColor whiteColor]];
+            [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
         default:
         {
-            UIColor *bgColor = [UIColor colorWithRed:145.0/255.0 green:145.0/255.0 blue:145.0/255.0 alpha:1.0];
+            UIColor *bgColor = [UIColor gray3ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
-            [self.nameLabel setTextColor:[UIColor blackColor]];
+            [self.nameLabel setTextColor:[UIColor blackThemeColor]];
         }
             break;
     }
@@ -93,18 +94,18 @@ typedef enum {
     if(isCellForDelete == YES)
     {
         [self.deleteButton setHidden:NO];
-        [self setCellHeaderFormat:DELETE];
+        [self setCellHeaderFormat:kPrinterCollectionCellTypeDelete];
     }
     else
     {
         [self.deleteButton setHidden:YES];
         if(self.isDefaultPrinterCell)
         {
-            [self setCellHeaderFormat:DEFAULT_PRINTER];
+            [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
         }
         else
         {
-            [self setCellHeaderFormat:NORMAL];
+            [self setCellHeaderFormat:kPrinterCollectionCellTypeNormal];
         }
     }
 }

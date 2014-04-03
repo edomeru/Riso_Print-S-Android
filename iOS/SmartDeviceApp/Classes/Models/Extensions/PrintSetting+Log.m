@@ -8,6 +8,7 @@
 
 #import "PrintSetting+Log.h"
 #import "PrintSettingsHelper.h"
+#import "PrintSettingNames.h"
 
 @implementation PrintSetting (Log)
 

@@ -12,7 +12,7 @@
 #import "Printer.h"
 #import "PrinterManager.h"
 #import "PrinterStatusView.h"
-#import "AlertUtils.h"
+#import "AlertHelper.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -228,8 +228,8 @@
     }
     else
     {
-        [AlertUtils displayResult:ERR_DEFAULT
-                        withTitle:ALERT_TITLE_PRINTERS
+        [AlertHelper displayResult:kAlertResultErrDefault
+                        withTitle:kAlertTitlePrinters
                       withDetails:nil];
     }
 }

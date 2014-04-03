@@ -1,18 +1,18 @@
 //
-//  PListUtils.m
+//  PListHelper.m
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 3/10/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
-#import "PListUtils.h"
+#import "PListHelper.h"
 
 #define SDA_PROP_LIST   @"SmartDeviceApp-Settings"
 
 static NSDictionary* sharedSettingsDict = nil;
 
-@interface PListUtils ()
+@interface PListHelper ()
 
 /**
  Sets the shared NSDictionary for the SmartDeviceApp Settings property list.
@@ -22,7 +22,7 @@ static NSDictionary* sharedSettingsDict = nil;
 
 @end
 
-@implementation PListUtils
+@implementation PListHelper
 
 #pragma mark - Initializer
 
@@ -57,14 +57,14 @@ static NSDictionary* sharedSettingsDict = nil;
     return [sharedSettingsDict objectForKey:@"PrintSettings_Default"];
 }
 
-+ (NSUInteger)readUint:(PL_UINT_TYPE)type
++ (NSUInteger)readUint:(kPlistUintVal)type
 {
     if (sharedSettingsDict == nil)
         [self setSharedSettingsDict];
     
     switch (type)
     {
-        case PL_UINT_MAX_PRINTERS:
+        case kPlistUintValMaxPrinters:
             return [[sharedSettingsDict objectForKey:@"Printer_MaxCount"] unsignedIntegerValue];
             
         default:
@@ -72,17 +72,17 @@ static NSDictionary* sharedSettingsDict = nil;
     }
 }
 
-+ (BOOL)readBool:(PL_BOOL_TYPE)type;
++ (BOOL)readBool:(kPlistBoolVal)type;
 {
     if (sharedSettingsDict == nil)
         [self setSharedSettingsDict];
     
     switch (type)
     {
-        case PL_BOOL_USE_SNMP:
+        case kPlistBoolValUseSNMP:
             return [[sharedSettingsDict objectForKey:@"Use_SNMPCommonLib"] boolValue];
             
-        case PL_BOOL_USE_SNMP_TIMEOUT:
+        case kPlistBoolValUseSNMPTimeout:
             return [[sharedSettingsDict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
             
         default:
