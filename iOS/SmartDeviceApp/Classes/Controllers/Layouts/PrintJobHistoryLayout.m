@@ -40,9 +40,8 @@
 
 /**
  Stores the current height of each column.
- The column number is used as the key.
  */
-@property (strong, nonatomic) NSMutableDictionary* columnHeights;
+@property (strong, nonatomic) NSMutableArray* columnHeights;
 
 #pragma mark - Methods
 
@@ -52,21 +51,6 @@
  @param indexPath
  */
 - (CGRect)frameForGroupAtIndexPath:(NSIndexPath*)indexPath;
-
-/**
- Determines which of the existing columns has the shortest
- height so far. This is used when populating the layout, as
- the groups are placed depending on which column has the 
- most space available.
- */
-- (NSString*)keyForShortestColumn;
-
-/**
- Determines which of the existing columns has the longest
- height so far. This is used when determining the overall
- collection view content size.
- */
-- (NSString*)keyForTallestColumn;
 
 @end
 
@@ -141,11 +125,11 @@
     }
     
     // reset tracker for column heights
-    self.columnHeights = [NSMutableDictionary dictionaryWithCapacity:self.numberOfColumns];
+    self.columnHeights = [NSMutableArray arrayWithCapacity:self.numberOfColumns];
     for (int col = 0; col < self.numberOfColumns; col++)
     {
-        [self.columnHeights setValue:[NSNumber numberWithFloat:0.0f]
-                             forKey:[NSString stringWithFormat:@"%d", col]];
+        [self.columnHeights insertObject:[NSNumber numberWithFloat:0.0f]
+                                 atIndex:col];
     }
     
     [self invalidateLayout];
@@ -183,13 +167,12 @@
 - (CGRect)frameForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
     // determine the correct row
-    NSInteger row = indexPath.item / self.numberOfColumns;
+    NSUInteger row = indexPath.item / self.numberOfColumns;
 
     // determine the correct column
-    NSInteger col = indexPath.item % self.numberOfColumns;
-    NSString* colKey = [NSString stringWithFormat:@"%ld", (long)col];
+    NSUInteger col = indexPath.item % self.numberOfColumns;
     
-    NSLog(@"[INFO][PrintJobLayout] row=%ld, col=%ld, colKey=%@", (long)row, (long)col, colKey);
+    NSLog(@"[INFO][PrintJobLayout] row=%lu, col=%lu", (unsigned long)row, (unsigned long)col);
     
     // request for the size of the group from the data source
     CGSize groupSize = [self.delegate sizeForGroupAtIndexPath:indexPath];
@@ -200,7 +183,7 @@
     
     // set the y-origin pt.
     CGFloat originY = 0.0f;
-    CGFloat currentColumnHeight = [[self.columnHeights valueForKey:colKey] floatValue];
+    CGFloat currentColumnHeight = [[self.columnHeights objectAtIndex:col] floatValue];
     if (row == 0)
     {
         // this is the first row
@@ -217,7 +200,7 @@
 
     // save the new column height
     currentColumnHeight = originY + groupSize.height;
-    [self.columnHeights setValue:[NSNumber numberWithFloat:currentColumnHeight] forKey:colKey];
+    [self.columnHeights replaceObjectAtIndex:col withObject:[NSNumber numberWithFloat:currentColumnHeight]];
     
     // return the (x-origin, y-origin, width, height) for the group
     return CGRectMake(originX, originY, groupSize.width, groupSize.height);
@@ -250,55 +233,13 @@
 - (CGSize)collectionViewContentSize
 {
     // height is based on the tallest column
-    NSString* maxColumnKey = [self keyForTallestColumn];
-    CGFloat height = [[self.columnHeights valueForKey:maxColumnKey] floatValue];
+    NSNumber* maxColumnHeight = [self.columnHeights valueForKeyPath:@"@max.self"]; //KVO-style
+    CGFloat height = [maxColumnHeight floatValue];
     
     // width is simply the width of the collection view itself
     CGFloat width = self.collectionView.bounds.size.width;
     
     return CGSizeMake(width, height);
-}
-
-#pragma mark - Utilities
-
-- (NSString*)keyForShortestColumn
-{
-    __block NSString* minColumnKey = @"0"; //by default, place in first column
-    __block CGFloat minColumnHeight = MAXFLOAT;
-    
-    [self.columnHeights enumerateKeysAndObjectsUsingBlock:^(NSString* columnKey,
-                                                            NSNumber* height,
-                                                            BOOL* stop)
-     {
-         CGFloat columnHeight = [height floatValue];
-         if (columnHeight < minColumnHeight)
-         {
-             minColumnHeight = columnHeight;
-             minColumnKey = columnKey;
-         }
-     }];
-    
-    return minColumnKey;
-}
-
-- (NSString*)keyForTallestColumn
-{
-    __block NSString* maxColumnKey = @"0"; //by default, use first column
-    __block CGFloat maxColumnHeight = 0.0f;
-    
-    [self.columnHeights enumerateKeysAndObjectsUsingBlock:^(NSString* columnKey,
-                                                            NSNumber* height,
-                                                            BOOL* stop)
-     {
-         CGFloat columnHeight = [height floatValue];
-         if (columnHeight > maxColumnHeight)
-         {
-             maxColumnHeight = columnHeight;
-             maxColumnKey = columnKey;
-         }
-     }];
-    
-    return maxColumnKey;
 }
 
 @end

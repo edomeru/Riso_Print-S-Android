@@ -19,6 +19,8 @@
 #define IDX_RESULT              1
 #define IDX_TIMESTAMP           2
 
+#define TAG_SEPARATOR           5
+
 #define FORMAT_DATE_TIME        @"yyyy/MM/dd HH:mm"
 #define FORMAT_ZONE             @"GMT"
 
@@ -111,13 +113,19 @@
 - (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)indexPath
 {
     // unified version-independent fix for the buggy UITableViewCell background color
-    // for iOS6 (always clear) and iOS7 (always white) on iPad
+    //  -- for iOS6 (always clear)
+    //  -- for iOS7 (always white) 
     // colors set to default in storyboard, set programmatically here instead
-    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         [cell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
     else
         [cell setBackgroundColor:[UIColor gray1ThemeColor]];
+    
+    // if this is the last cell, hide the separator
+    if (indexPath.row == [self.listPrintJobs count]-1)
+        [[cell.contentView viewWithTag:TAG_SEPARATOR] setHidden:YES];
+    else
+        [[cell.contentView viewWithTag:TAG_SEPARATOR] setHidden:NO];
 }
 
 #pragma mark - Cell Data
