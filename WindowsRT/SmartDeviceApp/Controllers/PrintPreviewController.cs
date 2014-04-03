@@ -494,6 +494,9 @@ namespace SmartDeviceApp.Controllers
                 Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
                     _selectedPrinter.PrintSetting.PaperSize);
 
+                bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
+                    _selectedPrinter.PrintSetting.Orientation);
+
                 // Loop to each LogicalPage(s) to selected paper size and orientation
                 foreach (LogicalPage logicalPage in logicalPages)
                 {
@@ -508,14 +511,18 @@ namespace SmartDeviceApp.Controllers
                             WriteableBitmap pageBitmap = await WriteableBitmapExtensions.FromStream(
                                 null, raStream);
 
-                            bool isPortrait =
-                                PrintSettingConverter.OrientationIntToBoolConverter.Convert(
-                                _selectedPrinter.PrintSetting.Orientation);
                             WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
                                 isPortrait);
 
-                            ApplyPageImageToPaper(_selectedPrinter.PrintSetting.ScaleToFit,
-                                canvasBitmap, pageBitmap);
+                            if (_pagesPerSheet > 1)
+                            {
+                                ApplyPageImageToPaper(true, canvasBitmap, pageBitmap);
+                            }
+                            else
+                            {
+                                ApplyPageImageToPaper(_selectedPrinter.PrintSetting.ScaleToFit,
+                                    canvasBitmap, pageBitmap);
+                            }
 
                             pageImages.Add(canvasBitmap);
                         }
@@ -529,7 +536,8 @@ namespace SmartDeviceApp.Controllers
                 // Check imposition value
                 if (_pagesPerSheet > 1)
                 {
-                    finalBitmap = ApplyImposition(paperSize, pageImages);
+                    finalBitmap = ApplyImposition(paperSize, pageImages, isPortrait,
+                        _selectedPrinter.PrintSetting.ImpositionOrder);
                 }
                 else
                 {
@@ -665,7 +673,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (enableScaleToFit)
             {
-                ApplyScaleToFit(canvasBitmap, pageBitmap, false);
+                ApplyScaleToFit(canvasBitmap, pageBitmap);
             }
             else
             {
@@ -678,9 +686,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="canvasBitmap">target page image placement</param>
         /// <param name="pageBitmap">page image to be fitted</param>
-        /// <param name="drawBorder">flag to draw border on fitted page image</param>
-        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap,
-            bool drawBorder)
+        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap)
         {
             double scaleX = (double)canvasBitmap.PixelWidth / pageBitmap.PixelWidth;
             double scaleY = (double)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
@@ -698,14 +704,10 @@ namespace SmartDeviceApp.Controllers
                 (canvasBitmap.PixelWidth - scaledBitmap.PixelWidth) / 2,    // Puts the image to the center X
                 (canvasBitmap.PixelHeight - scaledBitmap.PixelHeight) / 2,  // Puts the image to the center Y
                 scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
-            if (drawBorder)
-            {
-                ApplyBorder(scaledBitmap, 0, 0, (int)scaledBitmap.PixelWidth,
-                    (int)scaledBitmap.PixelHeight);
-            }
             WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
         }
 
+        /*
         /// <summary>
         /// Applies border to the image
         /// </summary>
@@ -720,6 +722,7 @@ namespace SmartDeviceApp.Controllers
             WriteableBitmapExtensions.DrawRectangle(canvasBitmap, xOrigin, xOrigin,
                     width, height, Windows.UI.Colors.Black);
         }
+         * */
 
         /// <summary>
         /// Puts the LogicalPage image into PreviewPage as is (cropping the excess area)
@@ -757,19 +760,34 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="paperSize">selected paper size used in scaling the imposition page images</param>
         /// <param name="pageImages">imposition page images</param>
+        /// <param name="isPortrait">selected orientation; true if portrait, false otherwise</param>
+        /// <param name="impositionOrder">direction of imposition</param>
         /// <returns>page image with applied imposition value
         /// Final output page image is
         /// * portrait when imposition value is 4-up
         /// * otherwise landscape</returns>
-        private WriteableBitmap ApplyImposition(Size paperSize, List<WriteableBitmap> pageImages)
+        private WriteableBitmap ApplyImposition(Size paperSize, List<WriteableBitmap> pageImages,
+            bool isPortrait, int impositionOrder)
         {
+            // Determine final orientation based on imposition
+            bool isPagesPerSheetPerfectSquare = (Math.Sqrt(_pagesPerSheet) % 1) == 0;
+            bool isImpositionPortrait = (isPagesPerSheetPerfectSquare) ? isPortrait : !isPortrait;
             // Create target page image based on imposition
-            bool isPortrait = _pagesPerSheet == 4; // Portrait if 4-Up
-            WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize, isPortrait);
+            WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize, isImpositionPortrait);
 
             // Compute number of pages per row and column
-            int pagesPerRow = (int)Math.Sqrt(_pagesPerSheet);
-            int pagesPerColumn = _pagesPerSheet / pagesPerRow;
+            int pagesPerRow = 0;
+            int pagesPerColumn = 0;
+            if (isImpositionPortrait)
+            {
+                pagesPerColumn = (int)Math.Sqrt(_pagesPerSheet);
+                pagesPerRow = _pagesPerSheet / pagesPerColumn;
+            }
+            else
+            {
+                pagesPerRow = (int)Math.Sqrt(_pagesPerSheet);
+                pagesPerColumn = _pagesPerSheet / pagesPerRow;
+            }
 
             // Compute page area size and margin
             double marginPaper = PrintSettingConstant.MARGIN_IMPOSITION_EDGE * ImageConstant.BASE_DPI;
@@ -781,20 +799,18 @@ namespace SmartDeviceApp.Controllers
             // Set initial positions
             double initialOffsetX = 0;
             double initialOffsetY = 0;
-            switch (_selectedPrinter.PrintSetting.ImpositionOrder)
+            if (impositionOrder == (int)ImpositionOrder.FourUpUpperRightToBottom ||
+                impositionOrder == (int)ImpositionOrder.FourUpUpperRightToLeft ||
+                impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft)
             {
-                case (int)ImpositionOrder.TwoUpLeftToRight:
-                case (int)ImpositionOrder.FourUpUpperLeftToRight:
-                case (int)ImpositionOrder.FourUpUpperLeftToBottom:
-                    initialOffsetX = 0;
-                    break;
-                case (int)ImpositionOrder.FourUpUpperRightToBottom:
-                case (int)ImpositionOrder.FourUpUpperRightToLeft:
-                case (int)ImpositionOrder.TwoUpRightToLeft:
-                default:
-                    initialOffsetX = (marginBetweenPages * (pagesPerColumn - 1)) +
-                        (impositionPageAreaSize.Width * (pagesPerColumn - 1));
-                    break;
+                initialOffsetX = (marginBetweenPages * (pagesPerColumn - 1)) +
+                    (impositionPageAreaSize.Width * (pagesPerColumn - 1));
+            }
+            if (impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft &&
+                isImpositionPortrait)
+            {
+                initialOffsetY = (marginBetweenPages * (pagesPerRow - 1)) +
+                    (impositionPageAreaSize.Height * (pagesPerRow - 1));
             }
 
             // Loop each imposition page
@@ -814,7 +830,7 @@ namespace SmartDeviceApp.Controllers
                 WriteableBitmapExtensions.FillRectangle(scaledImpositionPageBitmap, 0, 0,
                     scaledImpositionPageBitmap.PixelWidth, scaledImpositionPageBitmap.PixelHeight,
                     Windows.UI.Colors.White);
-                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap, true); // Apply border
+                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap);
 
                 // Put imposition page image to target page image
                 Rect destRect = new Rect(x, y, scaledImpositionPageBitmap.PixelWidth,
@@ -825,43 +841,60 @@ namespace SmartDeviceApp.Controllers
                     srcRect);
 
                 // Update offset/postion based on direction
-                switch (_selectedPrinter.PrintSetting.ImpositionOrder)
+
+
+                if (impositionOrder == (int)ImpositionOrder.TwoUpLeftToRight ||
+                    impositionOrder == (int)ImpositionOrder.FourUpUpperLeftToRight)
                 {
-                    case (int)ImpositionOrder.TwoUpLeftToRight:
-                    case (int)ImpositionOrder.FourUpUpperLeftToRight:
+                    // Upper left to right
+                    pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
+                    if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
+                    {
+                        pageImageOffsetX = initialOffsetX;
+                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                    }
+                }
+                else if (impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft &&
+                    isImpositionPortrait)
+                {
+                    // Lower left to right
+                    pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
+                    if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
+                    {
+                        pageImageOffsetX = initialOffsetX;
+                        pageImageOffsetY -= marginBetweenPages + impositionPageAreaSize.Height;
+                    }
+                }
+                else if (impositionOrder == (int)ImpositionOrder.FourUpUpperLeftToBottom)
+                {
+                    // Upper left to bottom
+                    pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                    if (((impositionPageIndex + 1) % pagesPerRow) == 0)
+                    {
+                        pageImageOffsetY = initialOffsetY;
                         pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
-                        if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
-                        {
-                            pageImageOffsetX = initialOffsetX;
-                            pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                        }
-                        break;
-                    case (int)ImpositionOrder.FourUpUpperLeftToBottom:
-                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                        if (((impositionPageIndex + 1) % pagesPerRow) == 0)
-                        {
-                            pageImageOffsetY = initialOffsetY;
-                            pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
-                        }
-                        break;
-                    case (int)ImpositionOrder.FourUpUpperRightToBottom:
-                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                        if (((impositionPageIndex + 1) % pagesPerRow) == 0)
-                        {
-                            pageImageOffsetY = initialOffsetY;
-                            pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
-                        }
-                        break;
-                    case (int)ImpositionOrder.FourUpUpperRightToLeft:
-                    case (int)ImpositionOrder.TwoUpRightToLeft:
-                    default:
+                    }
+                }
+                else if (impositionOrder == (int)ImpositionOrder.FourUpUpperRightToBottom)
+                {
+                    // Upper right to bottom
+                    pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                    if (((impositionPageIndex + 1) % pagesPerRow) == 0)
+                    {
+                        pageImageOffsetY = initialOffsetY;
                         pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
-                        if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
-                        {
-                            pageImageOffsetX = initialOffsetX;
-                            pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                        }
-                        break;
+                    }
+                }
+                else if ((impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft && !isImpositionPortrait) ||
+                    impositionOrder == (int)ImpositionOrder.FourUpUpperRightToLeft)
+                {
+                    // Upper right to left
+                    pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
+                    if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
+                    {
+                        pageImageOffsetX = initialOffsetX;
+                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
+                    }
                 }
 
                 ++impositionPageIndex;
