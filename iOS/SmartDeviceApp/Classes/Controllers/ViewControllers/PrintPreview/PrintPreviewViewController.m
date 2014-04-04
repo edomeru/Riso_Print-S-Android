@@ -56,6 +56,8 @@
 - (void)computeTotalPageNum;
 - (void)setupPageScroll;
 - (void)setupPageLabel;
+- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation) spineLocation navigationOrientation: (UIPageViewControllerNavigationOrientation) navigationOrientation;
+-(BOOL) applyBindSetting;
 @end
 
 @implementation PrintPreviewViewController
@@ -140,9 +142,7 @@
 - (void)setupPreview
 {
     // *Assume portrait
-    
     // Get aspect ratio
-
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
 
     BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
@@ -174,6 +174,30 @@
     self.pageViewController = pageViewController;
 }
 
+- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation) spineLocation navigationOrientation: (UIPageViewControllerNavigationOrientation) navigationOrientation
+{
+    if(self.pageViewController != nil && self.pageViewController.view.superview != nil)
+    {
+        [self.pageViewController.view removeFromSuperview];
+        [self.pageViewController removeFromParentViewController];
+    }
+    
+    UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:navigationOrientation options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:spineLocation]}];
+    pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addChildViewController:pageViewController];
+    [self.previewView.contentView addSubview:pageViewController.view];
+    
+    NSDictionary *views = @{@"pageView": pageViewController.view};
+    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
+    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
+    pageViewController.dataSource = self;
+    pageViewController.delegate = self;
+    
+    [self goToPage:self.currentPage];
+    
+    self.pageViewController = pageViewController;
+}
+
 - (void)computeTotalPageNum
 {
     NSUInteger numPagesPerSheet =[PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting:self.printDocument.previewSetting.imposition];
@@ -197,12 +221,36 @@
     [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateHighlighted];
     [self.pageScroll setMinimumValue:1];
     [self.pageScroll setMaximumValue:self.totalPageNum];
+    [self.pageScroll setContinuous:NO];
 }
 
 - (void)setupPageLabel
 {
     NSString *pageString = @"PAGE";
-    self.pageLabel.text = [NSString stringWithFormat:@"%@ %d/%d", pageString, self.currentPage + 1, self.totalPageNum];
+    self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)self.currentPage + 1, (long)self.totalPageNum];
+}
+
+- (BOOL)applyBindSetting
+{
+    UIPageViewControllerSpineLocation spineLocation = UIPageViewControllerSpineLocationMin;
+    UIPageViewControllerNavigationOrientation navOrientation = UIPageViewControllerNavigationOrientationHorizontal;
+    if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight)
+    {
+        spineLocation = UIPageViewControllerSpineLocationMax;
+    }
+    else if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+    {
+        navOrientation = UIPageViewControllerNavigationOrientationVertical;
+    }
+    
+    if(self.pageViewController!= nil && self.pageViewController.spineLocation == spineLocation && self.pageViewController.navigationOrientation == navOrientation)
+    {
+        //don't resetup page view controller if spine location and navigationOrientation are still the same
+        return NO;
+    }
+    
+    [self setupPageviewControllerWithSpineLocation:spineLocation navigationOrientation:navOrientation];
+    return YES;
 }
 
 #pragma mark - UIPageViewControllerDataSource
@@ -210,22 +258,48 @@
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
     NSInteger index = ((PDFPageContentViewController *) viewController).pageIndex;
-    if (self.pageIsAnimating || index == 0 || index == NSNotFound)
+    if (self.pageIsAnimating || index == NSNotFound )
     {
         return nil;
     }
-    index--;
-    return [self viewControllerAtIndex:index];
+    if(pageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    {
+        return [self nextViewController:index];
+    }
+    return [self previousViewController:index];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
     NSInteger index = ((PDFPageContentViewController *) viewController).pageIndex;
-    if (self.pageIsAnimating || index == self.printDocument.pageCount - 1 || index == NSNotFound)
+    if (self.pageIsAnimating || index == NSNotFound )
+    {
+        return nil;
+    }
+    if(pageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    {
+        return [self previousViewController:index];
+    }
+    return [self nextViewController:index];
+}
+
+- (UIViewController *)nextViewController:(NSInteger)index
+{
+    if((self.totalPageNum - 1) == index)
     {
         return nil;
     }
     index++;
+    return [self viewControllerAtIndex:index];
+}
+
+- (UIViewController *)previousViewController:(NSInteger)index
+{
+    if(index == 0)
+    {
+        return nil;
+    }
+    index--;
     return [self viewControllerAtIndex:index];
 }
 
@@ -323,11 +397,12 @@
     [self setupPageLabel];
     [self.pageScroll setValue:self.currentPage + 1];
     
-    PDFPageContentViewController *current = [self viewControllerAtIndex:self.currentPage];
-    [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    [self applyBindSetting];
+    
+    [self goToPage:self.currentPage];
 }
 
--(void) goToPage:(NSInteger) pageNum
+- (void)goToPage:(NSInteger)pageNum
 {
     PDFPageContentViewController *current = [self viewControllerAtIndex:pageNum];
     [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];

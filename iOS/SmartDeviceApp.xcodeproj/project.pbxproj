@@ -59,7 +59,6 @@
 		2DA1AEE018E2EF8500085F27 /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED018E2EF8500085F27 /* UIView+Localization.m */; };
 		2DA1AEE118E2EF8500085F27 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED218E2EF8500085F27 /* MenuButton.m */; };
 		2DA1AEE218E2EF8500085F27 /* MenuScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED418E2EF8500085F27 /* MenuScrollView.m */; };
-		2DA1AEE318E2EF8500085F27 /* PDFPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED618E2EF8500085F27 /* PDFPageView.m */; };
 		2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEDB18E2EF8500085F27 /* PrinterCell.m */; };
 		2DA1AEE618E2EF8500085F27 /* SearchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEDD18E2EF8500085F27 /* SearchResultCell.m */; };
 		2DA1AF1618E2EF9600085F27 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEA18E2EF9600085F27 /* AppDelegate.m */; };
@@ -183,8 +182,6 @@
 		2DA1AED218E2EF8500085F27 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButton.m; sourceTree = "<group>"; };
 		2DA1AED318E2EF8500085F27 /* MenuScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuScrollView.h; sourceTree = "<group>"; };
 		2DA1AED418E2EF8500085F27 /* MenuScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuScrollView.m; sourceTree = "<group>"; };
-		2DA1AED518E2EF8500085F27 /* PDFPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPageView.h; sourceTree = "<group>"; };
-		2DA1AED618E2EF8500085F27 /* PDFPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageView.m; sourceTree = "<group>"; };
 		2DA1AEDA18E2EF8500085F27 /* PrinterCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterCell.h; sourceTree = "<group>"; };
 		2DA1AEDB18E2EF8500085F27 /* PrinterCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterCell.m; sourceTree = "<group>"; };
 		2DA1AEDC18E2EF8500085F27 /* SearchResultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchResultCell.h; sourceTree = "<group>"; };
@@ -620,8 +617,6 @@
 				2DA1AED218E2EF8500085F27 /* MenuButton.m */,
 				2DA1AED318E2EF8500085F27 /* MenuScrollView.h */,
 				2DA1AED418E2EF8500085F27 /* MenuScrollView.m */,
-				2DA1AED518E2EF8500085F27 /* PDFPageView.h */,
-				2DA1AED618E2EF8500085F27 /* PDFPageView.m */,
 				2D157BFF18ED765F0034F953 /* PreviewView.h */,
 				2D157C0018ED765F0034F953 /* PreviewView.m */,
 				2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */,
@@ -1051,7 +1046,6 @@
 				2DA1AF1918E2EF9600085F27 /* SlideOverSegue.m in Sources */,
 				2DA1AF1A18E2EF9600085F27 /* SlideSegue.m in Sources */,
 				2DA1AF1F18E2EF9600085F27 /* HomeViewController.m in Sources */,
-				2DA1AEE318E2EF8500085F27 /* PDFPageView.m in Sources */,
 				2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */,
 				2D157C0118ED765F0034F953 /* PreviewView.m in Sources */,
 				2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */,

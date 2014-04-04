@@ -50,11 +50,11 @@ CGSize paperDimensionsMM[] = {
                                     duplexSetting: (NSUInteger)  duplex
                                     bookletBindSettingOn: (BOOL) isBookletBind
 {
-    if(duplex > DUPLEX_OFF || isBookletBind == YES)
+    if(duplex > kDuplexSettingOff || isBookletBind == YES)
     {
         return UIPageViewControllerSpineLocationMid;
     }
-    if(bind == BIND_RIGHT)
+    if(bind == kFinishingSideRight)
     {
         return UIPageViewControllerSpineLocationMax;
     }
@@ -82,7 +82,7 @@ CGSize paperDimensionsMM[] = {
 
 +(UIPageViewControllerNavigationOrientation) navigationOrientationForBindSetting : (NSUInteger) bind
 {
-    if(bind == BIND_TOP)
+    if(bind == kFinishingSideTop)
     {
         return UIPageViewControllerNavigationOrientationVertical;
     }

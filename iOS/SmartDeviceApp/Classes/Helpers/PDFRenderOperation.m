@@ -253,7 +253,7 @@
     [self drawPagesInRects:rectArray atStartPageNumber:pageNumber inContext:contextRef];
 }
 
-- (void) drawPagesInRects:(NSArray *) rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef) contextRef
+- (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef) contextRef
 {
     for(int i = 0; i < rectArray.count; i++)
     {
@@ -271,8 +271,8 @@
 -(void) drawFinishing:(CGContextRef) contextRef
 {
     kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
-    kStapleType stapleType= (kStapleType)self.printDocument.previewSetting.staple;
     
+    kStapleType stapleType= (kStapleType)self.printDocument.previewSetting.staple;
     if(stapleType > kStapleTypeNone)
     {
         if(stapleType == kStapleType2Pos)
@@ -299,7 +299,7 @@
 {
 
     CGFloat xPos = FINISHING_MARGIN;
-    CGFloat yPos = self.size.height - STAPLE_TOP_WIDTH-FINISHING_MARGIN;
+    CGFloat yPos = self.size.height - STAPLE_TOP_WIDTH - FINISHING_MARGIN;
     NSString *stapleImageName = @"img_staple_left_top";
 
     
@@ -314,15 +314,15 @@
     CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
 }
 
--(void) drawStaple2Pos: (CGContextRef) contextRef atFinishingSide: (kFinishingSide) finishingSide
+-(void) drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide
 {
     
     CGFloat xPos = FINISHING_MARGIN;
-    CGFloat yPos = self.size.height/4 - STAPLE_SIDE_WIDTH/2;
+    CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_WIDTH * 0.5f);
     CGFloat xOffset = 0;
-    CGFloat yOffset = self.size.height/2;
-    CGFloat rectHeight = STAPLE_SIDE_HEIGHT;
-    CGFloat rectWidth = STAPLE_SIDE_WIDTH;
+    CGFloat yOffset = self.size.height * 0.5f;
+    CGFloat stapleRectHeight = STAPLE_SIDE_HEIGHT;
+    CGFloat stapleRectWidth = STAPLE_SIDE_WIDTH;
     NSString *stapleImageName = @"img_staple_left";
     
     if( finishingSide == kFinishingSideRight)
@@ -332,17 +332,17 @@
     }
     else if ( finishingSide == kFinishingSideTop)
     {
-        rectWidth = STAPLE_SIDE_HEIGHT;
-        rectHeight = STAPLE_SIDE_WIDTH;
-        xPos = (self.size.width/4) - (rectWidth/2);
-        yPos = self.size.height - FINISHING_MARGIN - rectHeight;
-        xOffset = self.size.width/2;
+        stapleRectWidth = STAPLE_SIDE_HEIGHT;
+        stapleRectHeight = STAPLE_SIDE_WIDTH;
+        xPos = (self.size.width * 0.25f) - (stapleRectWidth * 0.5f);
+        yPos = self.size.height - FINISHING_MARGIN - stapleRectHeight;
+        xOffset = (self.size.width * 0.5f);
         yOffset = 0;
         stapleImageName = @"img_staple_top";
     }
     
     UIImage *stapleImage = [UIImage imageNamed:stapleImageName];
-    CGRect stapleRect = CGRectMake(xPos, yPos, rectWidth, rectHeight);
+    CGRect stapleRect = CGRectMake(xPos, yPos, stapleRectWidth, stapleRectHeight);
     CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
     
     // Cancel check
@@ -356,7 +356,6 @@
 
 -(void) drawPunch: (CGContextRef) contextRef withPunchType: (kPunchType) punchType atFinishingSide: (kFinishingSide) finishingSide
 {
-
     BOOL isHorizontalLength = NO;
     CGFloat edgeLength = self.size.height;
     CGFloat xPos = FINISHING_MARGIN;

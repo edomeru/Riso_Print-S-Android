@@ -72,25 +72,12 @@ typedef enum{
     kPunchType4Holes
 }kPunchType;
 
-typedef enum  {
-    BIND_LEFT,
-    BIND_RIGHT,
-    BIND_TOP
-} T_BIND;
+typedef enum {
+    kDuplexSettingOff,
+    kDuplexSettingLongEdge,
+    kDuplexSettingShortEdge
+} kDuplexSetting;
 
-typedef enum
-{
-    ORIENTATION_PORTRAIT,
-    ORIENTATION_LANDSCAPE
-    
-}T_ORIENTATION;
-
-typedef enum
-{
-    DUPLEX_OFF,
-    DUPLEX_SHORT_EDGE,
-    DUPLEX_LONG_EDGE
-} T_DUPLEX;
 
 @interface PrintPreviewHelper : NSObject
 /**
