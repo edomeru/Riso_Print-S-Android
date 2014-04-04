@@ -979,11 +979,7 @@ namespace SmartDeviceApp.Controllers
                 // Check color mode value
                 if (_selectedPrinter.PrintSetting.ColorMode.Equals((int)ColorMode.Mono))
                 {
-                    byte[] pixelBytes = finalBitmap.ToByteArray();
-                    pixelBytes = ApplyMonochrome(pixelBytes);
-
-                    // Write out to the stream
-                    WriteableBitmapExtensions.FromByteArray(finalBitmap, pixelBytes);
+                    ApplyMonochrome(finalBitmap);
                 }
 
                 // Apply punch
@@ -1366,11 +1362,10 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Changes the bitmap to grayscale
         /// </summary>
-        /// <param name="pixelBytes">pixel bytes</param>
-        /// <returns>pixel bytes with altered color to monochrome</returns>
-        private byte[] ApplyMonochrome(byte[] pixelBytes)
+        /// <param name="canvasBitmap">bitmap to change</param>
+        private void ApplyMonochrome(WriteableBitmap canvasBitmap)
         {
-            byte[] newPixelBytes = new byte[pixelBytes.Length];
+            byte[] pixelBytes = canvasBitmap.ToByteArray();
 
             // From http://social.msdn.microsoft.com/Forums/windowsapps/en-US/5ff10c14-51d4-4760-afe6-091624adc532/sample-code-for-making-a-bitmapimage-grayscale
             for (int i = 0; i < pixelBytes.Length; i += 4)
@@ -1378,20 +1373,20 @@ namespace SmartDeviceApp.Controllers
                 double b = (double)pixelBytes[i] / 255.0;
                 double g = (double)pixelBytes[i + 1] / 255.0;
                 double r = (double)pixelBytes[i + 2] / 255.0;
-
                 byte a = pixelBytes[i + 3];
 
                 // Altered color factor to be equal
-                double e = (0.33 * r + 0.33 * g + 0.33 * b) * 255;
-                byte f = Convert.ToByte(e);
+                double bwPixel = (0.3 * r + 0.59 * g + 0.11 * b) * 255;
+                byte bwPixelByte = Convert.ToByte(bwPixel);
 
-                newPixelBytes[i] = f;
-                newPixelBytes[i + 1] = f;
-                newPixelBytes[i + 2] = f;
-                newPixelBytes[i + 3] = a;
+                pixelBytes[i] = bwPixelByte;
+                pixelBytes[i + 1] = bwPixelByte;
+                pixelBytes[i + 2] = bwPixelByte;
+                pixelBytes[i + 3] = a;
             }
 
-            return newPixelBytes;
+            // Copy pixels to bitmap
+            WriteableBitmapExtensions.FromByteArray(canvasBitmap, pixelBytes);
         }
 
         /// <summary>
