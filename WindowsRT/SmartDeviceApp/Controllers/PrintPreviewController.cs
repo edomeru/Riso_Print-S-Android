@@ -1365,7 +1365,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="canvasBitmap">bitmap to change</param>
         private void ApplyMonochrome(WriteableBitmap canvasBitmap)
         {
-            byte[] pixelBytes = canvasBitmap.ToByteArray();
+            byte[] pixelBytes = WriteableBitmapExtensions.ToByteArray(canvasBitmap);
 
             // From http://social.msdn.microsoft.com/Forums/windowsapps/en-US/5ff10c14-51d4-4760-afe6-091624adc532/sample-code-for-making-a-bitmapimage-grayscale
             for (int i = 0; i < pixelBytes.Length; i += 4)
