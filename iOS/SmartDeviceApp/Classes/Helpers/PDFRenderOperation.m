@@ -30,7 +30,6 @@
 @property (nonatomic, weak) PrintDocument *printDocument;
 @property (nonatomic) CGSize size;
 @property (nonatomic, strong) UIImage *image;
-
 @end
 
 @implementation PDFRenderOperation
@@ -145,6 +144,10 @@
 -(void) drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext: (CGContextRef)contextRef
 {
     CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.printDocument.pdfDocument, pageNumber);
+    if(pageRef == nil)
+    {
+        return;
+    }
     // Cancel check
     if (self.isCancelled)
     {
@@ -270,14 +273,30 @@
 
 -(void) drawFinishing:(CGContextRef) contextRef
 {
-    kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
+    if(self.printDocument.previewSetting.booklet == YES)
+    {
+        if(self.printDocument.previewSetting.bookletFinish == kBookletTypeFoldAndStaple &&
+           (self.pageIndex % 2) == 0)
+        {
+            if(self.printDocument.previewSetting.orientation == kOrientationPortrait)
+            {
+                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideLeft withMargin:0];
+            }
+            else
+            {
+                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideTop withMargin:0];
+            }
+        }
+        return;
+    }
     
+    kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
     kStapleType stapleType= (kStapleType)self.printDocument.previewSetting.staple;
     if(stapleType > kStapleTypeNone)
     {
         if(stapleType == kStapleType2Pos)
         {
-            [self drawStaple2Pos:contextRef atFinishingSide:finishingSide];
+            [self drawStaple2Pos:contextRef atFinishingSide:finishingSide withMargin:FINISHING_MARGIN];
         }
         else
         {
@@ -314,10 +333,10 @@
     CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
 }
 
--(void) drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide
+-(void) drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat) margin
 {
     
-    CGFloat xPos = FINISHING_MARGIN;
+    CGFloat xPos = margin;
     CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_WIDTH * 0.5f);
     CGFloat xOffset = 0;
     CGFloat yOffset = self.size.height * 0.5f;
@@ -327,7 +346,7 @@
     
     if( finishingSide == kFinishingSideRight)
     {
-        xPos = self.size.width - FINISHING_MARGIN;
+        xPos = self.size.width - margin;
         stapleImageName = @"img_staple_right";
     }
     else if ( finishingSide == kFinishingSideTop)
@@ -335,7 +354,7 @@
         stapleRectWidth = STAPLE_SIDE_HEIGHT;
         stapleRectHeight = STAPLE_SIDE_WIDTH;
         xPos = (self.size.width * 0.25f) - (stapleRectWidth * 0.5f);
-        yPos = self.size.height - FINISHING_MARGIN - stapleRectHeight;
+        yPos = self.size.height - margin - stapleRectHeight;
         xOffset = (self.size.width * 0.5f);
         yOffset = 0;
         stapleImageName = @"img_staple_top";

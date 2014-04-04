@@ -78,6 +78,11 @@ typedef enum {
     kDuplexSettingShortEdge
 } kDuplexSetting;
 
+typedef enum {
+    kBookletTypeFold,
+    kBookletTypeFoldAndStaple
+} kBookletType;
+
 
 @interface PrintPreviewHelper : NSObject
 /**
@@ -94,7 +99,12 @@ typedef enum {
  */
 +(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize;
 
-
+/**
+ Helper function to determine actual paper dimensions in points
+ @param paperSize - paper size
+ @param isLandscape - if paper should be in landscape
+ @return CGSize
+ */
 + (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape: (BOOL) isLandscape;
 
 /**
@@ -129,22 +139,13 @@ typedef enum {
 +(BOOL) isPaperLandscapeForPreviewSetting:(PreviewSetting*) setting;
 
 /**
- Helper function to get ratio of paper height versus paper width based on paper size settings
- 
- @param paperSize - value of paper size setting
- 
- @return ratio of paper height versus paper width
- **/
-+(CGFloat) heightToWidthRatioForPaperSizeSetting:(NSUInteger) paperSize;
-
-/**
  Helper function to determine number of pages in a sheet based on the pagination settings
  
  @param pagination - value of paginationsetting
  
  @return Number of pages per sheet
  **/
-+(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) imposition;
++ (NSUInteger)getNumberOfPagesPerSheetForImpostionSetting:(NSUInteger)imposition;
 
 @end
 

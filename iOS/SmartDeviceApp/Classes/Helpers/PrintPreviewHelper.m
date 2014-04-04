@@ -63,7 +63,7 @@ CGSize paperDimensionsMM[] = {
     
 }
 
-+ (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape: (BOOL) isLandscape
++ (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape:(BOOL)isLandscape
 {
     CGSize size = paperDimensionsMM[paperSize];
     //To have paper size in actual proportion to size of PDF in points, convert paper mm dimensions to points at 72 PPI
@@ -96,6 +96,15 @@ CGSize paperDimensionsMM[] = {
         return NO;
     }
     
+    if(setting.booklet == YES)
+    {
+        if(setting.orientation == kOrientationPortrait)
+        {
+            return YES;
+        }
+        return NO;
+    }
+    
     if(setting.imposition == kImposition2Pages && setting.orientation == kOrientationPortrait)
     {
         return YES;
@@ -114,13 +123,7 @@ CGSize paperDimensionsMM[] = {
     return NO;
 }
 
-+(CGFloat) heightToWidthRatioForPaperSizeSetting:(NSUInteger) paperSize
-{
-    CGFloat ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
-    return ratio;
-}
-
-+(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) imposition
++ (NSUInteger)getNumberOfPagesPerSheetForImpostionSetting:(NSUInteger)imposition
 {
     switch(imposition)
     {
