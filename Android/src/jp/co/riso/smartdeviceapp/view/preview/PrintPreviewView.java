@@ -733,7 +733,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         private int mWidth;
         private int mHeight;
         private int mIndex;
-        Bitmap mRenderBmps[];
+        private Bitmap mRenderBmps[];
         
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
             mCurlPageRef = new WeakReference<CurlPage>(page);
