@@ -51,28 +51,24 @@ public class PrinterManager implements SnmpSearchCallback {
     // Public Methods
     // ================================================================================
     
+    /**
+     * Save Printer to the Database
+     * <p>
+     * Saves the Printer to the Database
+     * 
+     * @param printer
+     *            Printer object containing the Printer Information such as Print Settings
+     */
     public boolean savePrinterToDB(Printer printer) {
         if (printer == null || isExists(printer)) {
             return false;
         }
         
-        // Create Content
-        ContentValues newPrinter = new ContentValues();
+        if (!savePrinterInfo(printer)) {
+            return false;
+        }
         
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.getIpAddress());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.getName());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_LPR, printer.getLpr());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_RAW, printer.getRaw());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION, printer.getPagination());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX, printer.getDuplex());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING, printer.getBookletBinding());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
-        DatabaseManager dbManager = new DatabaseManager(mContext);
-        
-        if (!dbManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
-            dbManager.close();
+        if (!savePrintSettings(printer)) {
             return false;
         }
         
@@ -80,7 +76,6 @@ public class PrinterManager implements SnmpSearchCallback {
             setDefaultPrinter(printer);
             mDefaultExists = true;
         }
-        dbManager.close();
         
         if (mPrintersCallback != null && mPrintersCallback.get() != null) {
             mPrintersCallback.get().onAddedNewPrinter(printer);
@@ -140,8 +135,7 @@ public class PrinterManager implements SnmpSearchCallback {
     
     public List<Printer> getSavedPrintersList() {
         DatabaseManager dbManager = new DatabaseManager(mContext);
-        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] { KeyConstants.KEY_SQL_PRINTER_ID, KeyConstants.KEY_SQL_PRINTER_NAME,
-                KeyConstants.KEY_SQL_PRINTER_IP }, null, null, null, null, null);
+        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null);
         
         mPrinterList.clear();
         if (cursor.getCount() < 1) {
@@ -155,6 +149,14 @@ public class PrinterManager implements SnmpSearchCallback {
                 Printer printer = new Printer(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_NAME)), cursor.getString(cursor
                         .getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_IP)), null);
                 printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
+                printer.setPortSetting(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT)));
+                printer.setLpr(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_LPR)) > 0);
+                printer.setRaw(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_RAW)) > 0);
+                printer.setPagination(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION)) > 0);
+                printer.setDuplex(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX)) > 0);
+                printer.setBookletBinding(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING)) > 0);
+                printer.setStaple(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE)) > 0);
+                printer.setBind(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_BIND)) > 0);
                 mPrinterList.add(printer);
             } while (cursor.moveToNext());
             
@@ -162,6 +164,11 @@ public class PrinterManager implements SnmpSearchCallback {
         mDefaultExists = true;
         dbManager.close();
         cursor.close();
+        
+        for (int i = 0; i < mPrinterList.size(); i++) {
+            getPrintSettings(mPrinterList.get(i));
+        }
+        
         return mPrinterList;
     }
     
@@ -218,6 +225,13 @@ public class PrinterManager implements SnmpSearchCallback {
         dbManager.close();
     }
     
+    /**
+     * Get Default Printer
+     * <p>
+     * Obtains the printer ID of the default printer
+     * 
+     * @return Printer ID of the default printer
+     */
     public int getDefaultPrinter() {
         int printer = -1;
         DatabaseManager dbManager = new DatabaseManager(mContext);
@@ -318,6 +332,49 @@ public class PrinterManager implements SnmpSearchCallback {
      */
     public void setPrintersCallback(PrintersCallback printersCallback) {
         mPrintersCallback = new WeakReference<PrintersCallback>(printersCallback);
+    }
+    
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    private boolean savePrinterInfo(Printer printer) {
+        if (printer == null || isExists(printer)) {
+            return false;
+        }
+        
+        // Create Content
+        ContentValues newPrinter = new ContentValues();
+        
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.getIpAddress());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.getName());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_LPR, printer.getLpr());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_RAW, printer.getRaw());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION, printer.getPagination());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX, printer.getDuplex());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING, printer.getBookletBinding());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
+        
+        DatabaseManager dbManager = new DatabaseManager(mContext);
+        if (!dbManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
+            dbManager.close();
+            return false;
+        }
+        dbManager.close();
+        return true;
+    }
+    
+    private boolean savePrintSettings(Printer printer) {
+        if (printer == null || printer.getPrintSettings() == null) {
+            return false;
+        }
+        return true;
+    }
+    
+    private void getPrintSettings(Printer printer) {
+        // TODO: Get Print Settings
     }
     
     // ================================================================================
