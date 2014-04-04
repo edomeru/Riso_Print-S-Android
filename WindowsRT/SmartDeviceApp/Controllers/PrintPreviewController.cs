@@ -1106,7 +1106,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (enableScaleToFit)
             {
-                ApplyScaleToFit(canvasBitmap, pageBitmap);
+                ApplyScaleToFit(canvasBitmap, pageBitmap, false);
             }
             else
             {
@@ -1119,7 +1119,9 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="canvasBitmap">target page image placement</param>
         /// <param name="pageBitmap">page image to be fitted</param>
-        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap)
+        /// <param name="addBorder">true when border is added to fitted image, false otherwise</param>
+        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap,
+            bool addBorder)
         {
             double scaleX = (double)canvasBitmap.PixelWidth / pageBitmap.PixelWidth;
             double scaleY = (double)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
@@ -1130,6 +1132,11 @@ namespace SmartDeviceApp.Controllers
                 (int)(pageBitmap.PixelWidth * targetScaleFactor),
                 (int)(pageBitmap.PixelHeight * targetScaleFactor),
                 WriteableBitmapExtensions.Interpolation.Bilinear);
+            if (addBorder)
+            {
+                ApplyBorder(scaledBitmap, 0, 0, scaledBitmap.PixelWidth,
+                    scaledBitmap.PixelHeight);
+            }
 
             // Compute position in PreviewPage image
             Rect srcRect = new Rect(0, 0, scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
@@ -1140,7 +1147,6 @@ namespace SmartDeviceApp.Controllers
             WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
         }
 
-        /*
         /// <summary>
         /// Applies border to the image
         /// </summary>
@@ -1155,7 +1161,6 @@ namespace SmartDeviceApp.Controllers
             WriteableBitmapExtensions.DrawRectangle(canvasBitmap, xOrigin, xOrigin,
                     width, height, Windows.UI.Colors.Black);
         }
-         * */
 
         /// <summary>
         /// Puts the LogicalPage image into PreviewPage as is (cropping the excess area)
@@ -1263,7 +1268,7 @@ namespace SmartDeviceApp.Controllers
                 WriteableBitmapExtensions.FillRectangle(scaledImpositionPageBitmap, 0, 0,
                     scaledImpositionPageBitmap.PixelWidth, scaledImpositionPageBitmap.PixelHeight,
                     Windows.UI.Colors.White);
-                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap);
+                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap, true);
 
                 // Put imposition page image to target page image
                 Rect destRect = new Rect(x, y, scaledImpositionPageBitmap.PixelWidth,
