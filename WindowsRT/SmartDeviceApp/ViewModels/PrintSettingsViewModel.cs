@@ -52,8 +52,6 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
-
-            // Initialize();
         }
         
         public PrintSettingList PrintSettingsList

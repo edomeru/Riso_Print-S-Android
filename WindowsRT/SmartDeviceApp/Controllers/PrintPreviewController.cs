@@ -50,6 +50,7 @@ namespace SmartDeviceApp.Controllers
         private const string FILE_PATH_RES_IMAGE_PUNCH = "Resources/Images/img_punch.png";
 
         private PrintPreviewViewModel _printPreviewViewModel;
+        private PrintSettingsViewModel _printSettingsViewModel;
         private PrintSettingOptionsViewModel _printSettingOptionsViewModel;
         private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
@@ -77,15 +78,17 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Notifies view model of PDF load result and starts query of printer and print settings
+        /// Entry point for print preview and print settings.
+        /// Starts query of printer and print settings.
         /// </summary>
-        /// <returns>Task</returns>
+        /// <returns>task</returns>
         public async Task Initialize()
         {
             _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
             _selectedPrintOptionEventHandler = new SelectedPrintSettingOptionEventHandler(UpdateSelectedPrintSettingOption);
 
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
+            _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
 
             await Cleanup(); // Ensure to clean up previous
@@ -100,7 +103,12 @@ namespace SmartDeviceApp.Controllers
 
                 // Get print settings
                 LoadPrintSettingsOptions();
-                await GetPrintAndPrintSetting();
+                await GetPrinterAndPrintSetting();
+                ApplyPrintSettingConstraints();
+
+                // Send list to view model
+                _printSettingsViewModel.PrintSettingsList = _printSettingList;
+
                 await UpdatePreviewInfo(true, true, true);
 
                 InitializeGestures();
@@ -134,7 +142,7 @@ namespace SmartDeviceApp.Controllers
         /// Resets the generated PreviewPage(s) list and removed the page images from AppData
         /// temporary store.
         /// </summary>
-        /// <returns>Task</returns>
+        /// <returns>task</returns>
         private async Task ClearPreviewPageListAndImages()
         {
             if (_previewPages != null)
@@ -154,7 +162,7 @@ namespace SmartDeviceApp.Controllers
         /// selected printer and default print settings are assigned.
         /// </summary>
         /// <returns>task</returns>
-        public async Task GetPrintAndPrintSetting()
+        public async Task GetPrinterAndPrintSetting()
         {
             // Get default printer and print settings from database
             _selectedPrinter = await DatabaseController.Instance.GetDefaultPrinter();
@@ -179,6 +187,10 @@ namespace SmartDeviceApp.Controllers
 
         #region Print Preview
 
+        /// <summary>
+        /// Initializes the gesture of the preview area.
+        /// Final paper size must be known before using this function.
+        /// </summary>
         private void InitializeGestures()
         {
             Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
@@ -191,10 +203,13 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Receiver of the selected print setting option.
+        /// Updates the print settings list (PrintSettingList) and cache (PagePrintSettings),
+        /// updates value and enabled options based on constraints, and applies
+        /// changes to the PreviewPage image.
         /// </summary>
-        /// <param name="printSetting"></param>
-        /// <param name="selected"></param>
+        /// <param name="printSetting">affected print setting</param>
+        /// <param name="selected">updated value</param>
         private async void UpdateSelectedPrintSettingOption(PrintSetting printSetting, int selectedIndex)
         {
             if (printSetting == null)
@@ -202,15 +217,19 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
-                .Where(ps => ps.Name == printSetting.Name);
-            PrintSetting result = query.First();
+            string name = printSetting.Name;
+            PrintSetting result = GetPrintSetting(name);
+            if (result == null)
+            {
+                return;
+            }
             result.Value = selectedIndex;
 
             // Manual check here what is changed
             bool isPreviewPageAffected = false;
             bool isPageCountAffected = false;
-            if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_COLOR_MODE))
+            bool isConstraintAffected = false;
+            if (name.Equals(PrintSettingConstant.NAME_VALUE_COLOR_MODE))
             {
                 int prevColorMode = _selectedPrinter.PrintSetting.ColorMode;
                 if (_selectedPrinter.PrintSetting.ColorMode != selectedIndex)
@@ -224,7 +243,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_ORIENTATION))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_ORIENTATION))
             {
                 if (_selectedPrinter.PrintSetting.Orientation != selectedIndex)
                 {
@@ -232,14 +251,14 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
             {
                 if (_selectedPrinter.PrintSetting.Duplex != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Duplex = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
             {
                 if (_selectedPrinter.PrintSetting.PaperSize != selectedIndex)
                 {
@@ -247,21 +266,21 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
             {
                 if (_selectedPrinter.PrintSetting.PaperType != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.PaperType = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_INPUT_TRAY))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_INPUT_TRAY))
             {
                 if (_selectedPrinter.PrintSetting.InputTray != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.InputTray = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
             {
                 if (_selectedPrinter.PrintSetting.Imposition != selectedIndex)
                 {
@@ -270,7 +289,7 @@ namespace SmartDeviceApp.Controllers
                     isPageCountAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
             {
                 if (_selectedPrinter.PrintSetting.ImpositionOrder != selectedIndex)
                 {
@@ -281,14 +300,14 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_SORT))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_SORT))
             {
                 if (_selectedPrinter.PrintSetting.Sort != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Sort = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING))
             {
                 if (_selectedPrinter.PrintSetting.BookletFinishing != selectedIndex)
                 {
@@ -300,17 +319,20 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
                 if (_selectedPrinter.PrintSetting.BookletLayout != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.BookletLayout = selectedIndex;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
             {
                 if (_selectedPrinter.PrintSetting.FinishingSide != selectedIndex)
                 {
+                    isConstraintAffected = UpdateConstraintStapleUsingFinishingSide(selectedIndex);
+                    isConstraintAffected = UpdateConstaintPunchUsingFinishingSide(selectedIndex) ||
+                        isConstraintAffected;
                     _selectedPrinter.PrintSetting.FinishingSide = selectedIndex;
                     // Matters only when staple or punch is ON
                     if (_selectedPrinter.PrintSetting.Staple != (int)Staple.Off ||
@@ -320,7 +342,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
             {
                 if (_selectedPrinter.PrintSetting.Staple != selectedIndex)
                 {
@@ -328,15 +350,16 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
             {
                 if (_selectedPrinter.PrintSetting.Punch != selectedIndex)
                 {
+                    isConstraintAffected = UpdateConstraintFinishingSideUsingPunch(selectedIndex);
                     _selectedPrinter.PrintSetting.Punch = selectedIndex;
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
             {
                 if (_selectedPrinter.PrintSetting.OutputTray != selectedIndex)
                 {
@@ -344,8 +367,13 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
+            if (isConstraintAffected)
+            {
+                // Send to UI here
+                _printSettingsViewModel.PrintSettingsList = _printSettingList;
+            }
             // Generate PreviewPages again
-            if (isPreviewPageAffected || isPageCountAffected)
+            if (isPreviewPageAffected || isPageCountAffected || isConstraintAffected)
             {
                 await UpdatePreviewInfo(false, false, isPageCountAffected);
                 //InitializeGestures();
@@ -353,15 +381,32 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Receiver of the selected print setting option (must be a switch).
+        /// Updates the print settings list (PrintSettingList) and cache (PagePrintSettings),
+        /// updates value and enabled options based on constraints, and applies
+        /// changes to the PreviewPage image.
+        /// </summary>
+        /// <param name="printSetting">affected print setting</param>
+        /// <param name="state">updated value</param>
         private async void UpdatePrintSettingState(PrintSetting printSetting, bool state)
         {
-            var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
-                .Where(ps => ps.Name == printSetting.Name);
-            PrintSetting result = query.First();
+            if (printSetting == null)
+            {
+                return;
+            }
+
+            string name = printSetting.Name;
+            PrintSetting result = GetPrintSetting(name);
+            if (result == null)
+            {
+                return;
+            }
             result.Value = state;
 
             bool isPreviewPageAffected = false;
-            if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT))
+            bool isConstraintAffected = false;
+            if (name.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT))
             {
                 if (_selectedPrinter.PrintSetting.ScaleToFit != state)
                 {
@@ -369,22 +414,35 @@ namespace SmartDeviceApp.Controllers
                     isPreviewPageAffected = true;
                 }
             }
-            else if (result.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 if (_selectedPrinter.PrintSetting.Booklet != state)
                 {
+                    isConstraintAffected = UpdateConstraintsUsingBooklet(state);
                     _selectedPrinter.PrintSetting.Booklet = state;
                     isPreviewPageAffected = true;
                 }
             }
 
             await UpdatePreviewInfo(isPreviewPageAffected, false, false);
+
+            if (isConstraintAffected)
+            {
+                // Send to UI here
+                _printSettingsViewModel.PrintSettingsList = _printSettingList;
+            }
+            if (isPreviewPageAffected || isConstraintAffected)
+            {
+                _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
+            }
         }
 
         /// <summary>
         /// Checks for view related print setting and notifies view model
         /// </summary>
-        /// <param name="updatePageCount">flag when page count is needed to update in view model</param>
+        /// <param name="updatePageBind">true when view mode is needed to update in view model</param>
+        /// <param name="updateDuplex"></param>
+        /// <param name="updatePageCount">true when page count is needed to update in view model</param>
         /// <returns>task</returns>
         private async Task UpdatePreviewInfo(bool updatePageBind, bool updateDuplex, bool updatePageCount)
         {
@@ -464,8 +522,6 @@ namespace SmartDeviceApp.Controllers
                 DocumentController.Instance.GetLogicalPages(targetLogicalPageIndex,
                     _pagesPerSheet);
 
-            // await SendEmptyPage();
-
             List<LogicalPage> logicalPages = await getLogicalPagesTask;
             await ApplyPrintSettings(logicalPages, targetPreviewPageIndex, true);
 
@@ -474,13 +530,389 @@ namespace SmartDeviceApp.Controllers
 
         #endregion Preview Page Navigation
 
+        #region Print Settings
+
+        /// <summary>
+        /// Loads the initial print settings file
+        /// </summary>
+        private void LoadPrintSettingsOptions()
+        {
+            PagePrintSettingToValueConverter valueConverter = new PagePrintSettingToValueConverter();
+
+            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
+                FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            XDocument data = XDocument.Load(xmlPath);
+
+            var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
+                select new PrintSettingGroup
+                {
+                    Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
+                    Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
+                    PrintSettings =
+                    (
+                        from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
+                        select new PrintSetting
+                        {
+                            Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                            Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
+                            Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
+                            Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
+                            Value = valueConverter.Convert(
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                null),
+                            Default = valueConverter.Convert(
+                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                null),
+                            Options =
+                            (
+                                from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
+                                select new PrintSettingOption
+                                {
+                                    Text = (string)optionData.Value,
+                                    Index = optionData.ElementsBeforeSelf().Count(),
+                                    IsEnabled = true // To be updated later upon apply constraints
+                                }).ToList<PrintSettingOption>(),
+                            IsEnabled = true // To be updated later upon apply constraints
+                        }).ToList<PrintSetting>()
+                };
+            
+            // Construct the PrintSettingList
+            _printSettingList = new PrintSettingList();
+            var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
+            foreach (PrintSettingGroup group in tempList)
+            {
+                _printSettingList.Add(group);
+            }
+        }
+
+        /// <summary>
+        /// Updates constraints (value/enable state) on print settings list (PrintSettingList)
+        /// and cache (PagePrintSetting)
+        /// </summary>
+        private void ApplyPrintSettingConstraints()
+        {
+            UpdateConstraintsUsingBooklet(_selectedPrinter.PrintSetting.Booklet);
+            UpdateConstraintStapleUsingFinishingSide(_selectedPrinter.PrintSetting.FinishingSide);
+            UpdateConstaintPunchUsingFinishingSide(_selectedPrinter.PrintSetting.FinishingSide);
+            UpdateConstraintFinishingSideUsingPunch(_selectedPrinter.PrintSetting.Punch);
+        }
+
+        /// <summary>
+        /// Queries the print settings list based on name.
+        /// </summary>
+        /// <param name="name">print setting name</param>
+        /// <returns>PrintSetting if found, else null</returns>
+        private PrintSetting GetPrintSetting(string name)
+        {
+            var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
+                .Where(ps => ps.Name == name);
+            PrintSetting result = query.First();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Generates next and previous PreviewPage images if not exist.
+        /// It is assumed here that required LogicalPage images are already done
+        /// by DocumentController.
+        /// </summary>
+        private async void GenerateNearPreviewPages()
+        {
+            PreviewPage previewPage = null;
+            if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))
+            {
+                int nextLogicalPageIndex = ((_currPreviewPageIndex + 1) * _pagesPerSheet);
+                List<LogicalPage> nextLogicalPages =
+                    await DocumentController.Instance.GetLogicalPages(nextLogicalPageIndex,
+                    _pagesPerSheet);
+
+                // Next page
+                await ApplyPrintSettings(nextLogicalPages, _currPreviewPageIndex + 1, false);
+            }
+
+            if (!_previewPages.TryGetValue(_currPreviewPageIndex - 1, out previewPage))
+            {
+                int prevLogicalPageIndex = ((_currPreviewPageIndex - 1) * _pagesPerSheet);
+                List<LogicalPage> prevLogicalPages =
+                    await DocumentController.Instance.GetLogicalPages(prevLogicalPageIndex,
+                    _pagesPerSheet);
+
+                // Previous page
+                await ApplyPrintSettings(prevLogicalPages, _currPreviewPageIndex - 1, false);
+            }
+
+        }
+
+        #endregion Print Settings
+
+        #region Print Settings Constraints
+
+        /// <summary>
+        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// for its values and enabled state based on constraints with Booklet print setting.
+        /// </summary>
+        /// <param name="value">selected Booklet print setting state</param>
+        /// <returns>true if constraints are applied, false otherwise</returns>
+        private bool UpdateConstraintsUsingBooklet(bool value)
+        {
+            bool isUpdated = false;
+
+            PrintSetting duplexPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_DUPLEX);
+            PrintSetting finishingSidePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
+            PrintSetting staplePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
+            PrintSetting punchPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+            PrintSetting impositionPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_IMPOSITION);
+            PrintSetting impositionOrderPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER);
+            PrintSetting bookletFinishPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
+            PrintSetting bookletLayoutPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
+
+            if (duplexPrintSetting == null || finishingSidePrintSetting == null ||
+                staplePrintSetting == null || punchPrintSetting == null ||
+                impositionPrintSetting == null || impositionOrderPrintSetting == null ||
+                bookletFinishPrintSetting == null || bookletLayoutPrintSetting == null)
+            {
+                return isUpdated;
+            }
+
+            int defaultFinishingSide = (int)finishingSidePrintSetting.Default;
+            int defaultStaple = (int)staplePrintSetting.Default;
+            int defaultPunch = (int)punchPrintSetting.Default;
+
+            if (value)
+            {
+                // Disable views
+                duplexPrintSetting.IsEnabled = false;
+                finishingSidePrintSetting.IsEnabled = false;
+                staplePrintSetting.IsEnabled = false;
+                punchPrintSetting.IsEnabled = false;
+                impositionPrintSetting.IsEnabled = false;
+                impositionOrderPrintSetting.IsEnabled = false;
+
+                // Enable views
+                bookletFinishPrintSetting.IsEnabled = true;
+                bookletLayoutPrintSetting.IsEnabled = true;
+
+                // Reset values to default
+                finishingSidePrintSetting.Value = defaultFinishingSide;
+                _selectedPrinter.PrintSetting.FinishingSide = defaultFinishingSide;
+                staplePrintSetting.Value = defaultStaple;
+                _selectedPrinter.PrintSetting.Staple = defaultStaple;
+                punchPrintSetting.Value = defaultPunch;
+                _selectedPrinter.PrintSetting.Punch = defaultPunch;
+
+                isUpdated = true;
+            }
+            else
+            {
+                // Enable views
+                duplexPrintSetting.IsEnabled = true;
+                finishingSidePrintSetting.IsEnabled = true;
+                staplePrintSetting.IsEnabled = true;
+                punchPrintSetting.IsEnabled = true;
+                impositionPrintSetting.IsEnabled = true;
+                impositionOrderPrintSetting.IsEnabled = true;
+
+                // Disable views
+                bookletFinishPrintSetting.IsEnabled = false;
+                bookletLayoutPrintSetting.IsEnabled = false;
+
+                isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        /// <summary>
+        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// for its values and enabled state based on constraints with Finishing Side print setting
+        /// against Staple print setting.
+        /// </summary>
+        /// <param name="value">selected Finishing Side print setting option</param>
+        /// <returns>true if constraints are applied, false otherwise</returns>
+        private bool UpdateConstraintStapleUsingFinishingSide(int value)
+        {
+            bool isUpdated = false;
+
+            PrintSetting staplePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
+
+            if (staplePrintSetting == null)
+            {
+                return isUpdated;
+            }
+
+            int newStaple = -1;
+            int currStaple = _selectedPrinter.PrintSetting.Staple;
+            int currFinishingSide = _selectedPrinter.PrintSetting.FinishingSide;
+
+            if (value == (int)FinishingSide.Left ||
+                value == (int)FinishingSide.Right)
+            {
+                if (currStaple == (int)Staple.OneUpperLeft ||
+                    currStaple == (int)Staple.OneUpperRight)
+                {
+                    newStaple = (int)Staple.One;
+                }
+
+                // Disable controls
+                staplePrintSetting.Options[(int)Staple.OneUpperLeft].IsEnabled = false;
+                staplePrintSetting.Options[(int)Staple.OneUpperRight].IsEnabled = false;
+
+                // Enable controls
+                staplePrintSetting.Options[(int)Staple.One].IsEnabled = true;
+                isUpdated = true;
+            }
+            else if (value == (int)FinishingSide.Top)
+            {
+                if (currStaple == (int)Staple.One)
+                {
+                    if (currFinishingSide == (int)FinishingSide.Left)
+                    {
+                        newStaple = (int)Staple.OneUpperLeft;
+                    }
+                    else if (currFinishingSide == (int)FinishingSide.Right)
+                    {
+                        newStaple = (int)Staple.OneUpperRight;
+                    }
+                }
+
+                // Disable controls
+                staplePrintSetting.Options[(int)Staple.One].IsEnabled = false;
+
+                // Enable controls
+                staplePrintSetting.Options[(int)Staple.OneUpperLeft].IsEnabled = true;
+                staplePrintSetting.Options[(int)Staple.OneUpperRight].IsEnabled = true;
+                isUpdated = true;
+            }
+
+            if (newStaple > -1)
+            {
+                _selectedPrinter.PrintSetting.Staple = newStaple;
+                staplePrintSetting.Value = newStaple;
+                isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        /// <summary>
+        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// for its values and enabled state based on constraints with Finishing Side print setting
+        /// against Punch print setting.
+        /// </summary>
+        /// <param name="value">selected Finishing Side print setting option</param>
+        /// <returns>true if constraints are applied, false otherwise</returns>
+        private bool UpdateConstaintPunchUsingFinishingSide(int value)
+        {
+            bool isUpdated = false;
+
+            PrintSetting punchPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+            PrintSetting finishingSidePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE);
+
+            if (punchPrintSetting == null || finishingSidePrintSetting == null)
+            {
+                return isUpdated;
+            }
+
+            int newPunch = -1;
+            int currPunch = _selectedPrinter.PrintSetting.Punch;
+            int defaultPunch = (int)punchPrintSetting.Default;
+            int defaultFinishingSide = (int)finishingSidePrintSetting.Default;
+
+            if (currPunch == (int)Punch.FourHoles)
+            {
+                if (value != defaultFinishingSide)
+                {
+                    if (defaultFinishingSide == (int)FinishingSide.Top ||
+                        (defaultFinishingSide == (int)FinishingSide.Left &&
+                         value != (int)FinishingSide.Right))
+                    {
+                        newPunch = defaultPunch;
+                    }
+                }
+            }
+
+            if (newPunch > -1)
+            {
+                _selectedPrinter.PrintSetting.Punch = newPunch;
+                punchPrintSetting.Value = newPunch;
+                isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        /// <summary>
+        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// for its values and enabled state based on constraints with Punch print setting
+        /// against Finishing Side print setting.
+        /// </summary>
+        /// <param name="value">selected Punch print setting option</param>
+        /// <returns>true if constraints are applies, false otherwise</returns>
+        private bool UpdateConstraintFinishingSideUsingPunch(int value)
+        {
+            bool isUpdated = false;
+
+            PrintSetting finishingSidePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE);
+
+            if (finishingSidePrintSetting == null)
+            {
+                return isUpdated;
+            }
+
+            int newFinishingSide = -1;
+            int currFinishingSide = _selectedPrinter.PrintSetting.FinishingSide;
+            int defaultFinishingSide = (int)finishingSidePrintSetting.Default;
+            int currPunch = _selectedPrinter.PrintSetting.Punch;
+
+            if (value == (int)Punch.FourHoles)
+            {
+                if (currFinishingSide != defaultFinishingSide)
+                {
+                    if (defaultFinishingSide != (int)FinishingSide.Left ||
+                        (defaultFinishingSide == (int)FinishingSide.Left &&
+                         currFinishingSide != (int)FinishingSide.Right))
+                    {
+                        newFinishingSide = defaultFinishingSide;
+                    }
+                }
+            }
+
+            if (newFinishingSide > -1)
+            {
+                _selectedPrinter.PrintSetting.FinishingSide = newFinishingSide;
+                finishingSidePrintSetting.Value = newFinishingSide;
+                isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        #endregion Print Settings Constraints
+
         #region Apply Print Settings
 
         /// <summary>
-        /// Applies print settings to LogicalPage(s) then creates a PreviewPage
+        /// Applies print settings to LogicalPage images then creates a PreviewPage
         /// </summary>
-        /// <param name="previewPageIndex">target page</param>
-        /// <returns>task</returns>
+        /// <param name="logicalPages">source LogicalPage images</param>
+        /// <param name="previewPageIndex">target page index</param>
+        /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
+        /// <returns></returns>
         private async Task ApplyPrintSettings(List<LogicalPage> logicalPages, int previewPageIndex,
             bool enableSend)
         {
@@ -640,6 +1072,12 @@ namespace SmartDeviceApp.Controllers
             return canvasBitmap;
         }
 
+        /// <summary>
+        /// Retrieves the target PreviewPage image size
+        /// </summary>
+        /// <param name="paperSize">selected paper size</param>
+        /// <param name="isPortrait">true if portrait, false otherwise</param>
+        /// <returns>size of the PreviewPage image</returns>
         private Size GetPreviewPageImageSize(Size paperSize, bool isPortrait)
         {
             // Get paper size and apply DPI
@@ -841,8 +1279,6 @@ namespace SmartDeviceApp.Controllers
                     srcRect);
 
                 // Update offset/postion based on direction
-
-
                 if (impositionOrder == (int)ImpositionOrder.TwoUpLeftToRight ||
                     impositionOrder == (int)ImpositionOrder.FourUpUpperLeftToRight)
                 {
@@ -1191,6 +1627,7 @@ namespace SmartDeviceApp.Controllers
             double currPos = startPos;
             for (int index = 0; index < holeCount; ++index, currPos += diameterPunch + distanceBetweenHoles)
             {
+                // Do not put punch hole image when it is outside the page image size
                 if (currPos < 0 || (isAlongXAxis && currPos > canvasBitmap.PixelWidth) ||
                     (!isAlongXAxis && currPos > canvasBitmap.PixelHeight))
                 {
@@ -1207,97 +1644,6 @@ namespace SmartDeviceApp.Controllers
         }
 
         #endregion Apply Print Settings
-
-        #region Print Settings
-
-        private void LoadPrintSettingsOptions()
-        {
-            PagePrintSettingToValueConverter valueConverter = new PagePrintSettingToValueConverter();
-
-            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
-                FILE_PATH_ASSET_PRINT_SETTINGS_XML);
-            XDocument data = XDocument.Load(xmlPath);
-
-            var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
-                select new PrintSettingGroup
-                {
-                    Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
-                    Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
-                    PrintSettings =
-                    (
-                        from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
-                        select new PrintSetting
-                        {
-                            Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                            Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
-                            Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
-                            Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
-                                (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
-                            Value = valueConverter.Convert(
-                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
-                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                null),
-                            Default = valueConverter.Convert(
-                                (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
-                                null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                null),
-                            Options =
-                            (
-                                from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
-                                select new PrintSettingOption
-                                {
-                                    Text = (string)optionData.Value,
-                                    Index = optionData.ElementsBeforeSelf().Count()
-                                }).ToList<PrintSettingOption>()
-                        }).ToList<PrintSetting>()
-                };
-            
-            // Construct the PrintSettingList
-            _printSettingList = new PrintSettingList();
-            var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            foreach (PrintSettingGroup group in tempList)
-            {
-                _printSettingList.Add(group);
-            }
-
-            // Send to view model
-            var printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
-            printSettingsViewModel.PrintSettingsList = _printSettingList;
-        }
-
-        /// <summary>
-        /// Generates next and previous PreviewPage images if not exist.
-        /// It is assumed here that required LogicalPage images are already done
-        /// by DocumentController.
-        /// </summary>
-        private async void GenerateNearPreviewPages()
-        {
-            PreviewPage previewPage = null;
-            if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))
-            {
-                int nextLogicalPageIndex = ((_currPreviewPageIndex + 1) * _pagesPerSheet);
-                List<LogicalPage> nextLogicalPages =
-                    await DocumentController.Instance.GetLogicalPages(nextLogicalPageIndex,
-                    _pagesPerSheet);
-
-                // Next page
-                await ApplyPrintSettings(nextLogicalPages, _currPreviewPageIndex + 1, false);
-            }
-
-            if (!_previewPages.TryGetValue(_currPreviewPageIndex - 1, out previewPage))
-            {
-                int prevLogicalPageIndex = ((_currPreviewPageIndex - 1) * _pagesPerSheet);
-                List<LogicalPage> prevLogicalPages =
-                    await DocumentController.Instance.GetLogicalPages(prevLogicalPageIndex,
-                    _pagesPerSheet);
-
-                // Previous page
-                await ApplyPrintSettings(prevLogicalPages, _currPreviewPageIndex - 1, false);
-            }
-
-        }
-
-        #endregion Print Settings
 
     }
 
