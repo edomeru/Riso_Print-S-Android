@@ -920,7 +920,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         
-        if (type.equalsIgnoreCase("boolean")) {
+        if (type.equalsIgnoreCase(Setting.ATTR_VAL_BOOLEAN)) {
             int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);
             params.leftMargin = margin;
             params.rightMargin = margin;
@@ -930,7 +930,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             switchView.setTag(tag);
             switchView.setLayoutParams(params);
             return switchView;
-        } else if (type.equalsIgnoreCase("numeric")) {
+        } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_NUMERIC)) {
             int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);
             params.leftMargin = margin;
             params.rightMargin = margin;
@@ -943,7 +943,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             editText.setTag(tag);
             editText.addTextChangedListener(new EditTextWatcher(tag));
             return editText;
-        } else if (type.equalsIgnoreCase("list")) {
+        } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
             
             View view = li.inflate(R.layout.printsettings_disclosure_withvalue, null);
