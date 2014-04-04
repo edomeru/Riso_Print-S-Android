@@ -55,10 +55,6 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     
     private LruCache<String, Bitmap> mBmpCache;
     
-    public PrintPreviewFragment() {
-        
-    }
-    
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printpreview;
@@ -75,15 +71,16 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-
+            
             /*
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            SharedPreferences.Editor edit = prefs.edit();
+            android.content.SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity());
+            android.content.SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
             edit.commit();
-            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
-            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
+            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
+            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
             */
+            
             mPdfManager = new PDFFileManager(this);
             
             if (data != null) {
@@ -214,8 +211,8 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     }
     
     public void setPrintPreviewViewDisplayed(View v, boolean show) {
+        mProgressBar.setVisibility(View.GONE);
         if (show) {
-            mProgressBar.setVisibility(View.GONE);
             mOpenInView.setVisibility(View.GONE);
             if (!mPdfManager.isInitialized()) {
                 mPrintPreviewView.setVisibility(View.GONE);
@@ -227,6 +224,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 showPrintSettingsButton(v, true);
             }
         } else {
+            mOpenInView.setVisibility(View.VISIBLE);
             mPrintPreviewView.setVisibility(View.GONE);
             showPrintSettingsButton(v, false);
         }

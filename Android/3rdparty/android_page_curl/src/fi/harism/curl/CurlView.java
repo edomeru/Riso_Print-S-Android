@@ -309,6 +309,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			mPointerPos.mPressure = 0.8f;
 		}
 
+		boolean cancelAction = false;
+
 		switch (me.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
 
@@ -439,6 +441,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			break;
 		}
 		case MotionEvent.ACTION_CANCEL:
+			cancelAction = true;
 		case MotionEvent.ACTION_UP: {
 			if (mCurlState == CURL_LEFT || mCurlState == CURL_RIGHT) {
 				// Animation source is the point from where animation starts.
@@ -454,9 +457,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				if (mBindPosition == BIND_LEFT) {
 					// Given the explanation, here we decide whether to simulate
 					// drag to left or right end.
-					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
-							&& mPointerPos.mPos.x > rightRect.left) {
+							&& mPointerPos.mPos.x > rightRect.left)) {
 						// On right side target is always right page's right border.
 						mAnimationTarget.set(mDragStartPos);
 						mAnimationTarget.x = mRenderer
@@ -477,9 +480,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				if (mBindPosition == BIND_RIGHT) {
 					// Given the explanation, here we decide whether to simulate
 					// drag to left or right end.
-					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
-							&& mPointerPos.mPos.x < rightRect.right) {
+							&& mPointerPos.mPos.x < rightRect.right)) {
 						// On left side target is always right page's left border.
 						mAnimationTarget.set(mDragStartPos);
 						mAnimationTarget.x = mRenderer
@@ -498,9 +501,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				}
 
 				if (mBindPosition == BIND_TOP) {
-					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
-							&& mPointerPos.mPos.y < rightRect.top) {
+							&& mPointerPos.mPos.y < rightRect.top)) {
 						// On right side target is always right page's right border.
 						mAnimationTarget.set(mDragStartPos);
 						mAnimationTarget.y = mRenderer
@@ -818,6 +821,14 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageLeft.setBindPosition(bindPosition);
 		mPageRight.setBindPosition(bindPosition);
 		mPageCurl.setBindPosition(bindPosition);
+	}
+
+	public void adjustPan(float x, float y) {
+		mRenderer.adjustPan(x / (float) getWidth(), y / (float) getHeight());
+	}
+
+	public void setZoomLevel(float zoomLevel) {
+		mRenderer.setZoomLevel(zoomLevel);
 	}
 
 	public void setDropShadowSize(float dropShadowSize) {
