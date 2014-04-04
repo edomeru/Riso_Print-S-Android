@@ -15,6 +15,7 @@
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
+		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
@@ -101,6 +102,8 @@
 		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
 		28A9173718E3D55900BA5232 /* PrintJobHistoryGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroupCell.h; sourceTree = "<group>"; };
 		28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroupCell.m; sourceTree = "<group>"; };
+		28D7B31418EE48D300FE15BA /* NSDate+Format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Format.h"; sourceTree = "<group>"; };
+		28D7B31518EE48D300FE15BA /* NSDate+Format.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Format.m"; sourceTree = "<group>"; };
 		28FDEDDF18E53D5400423CFC /* PrintJobHistoryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroup.h; sourceTree = "<group>"; };
 		28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroup.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -795,6 +798,8 @@
 				2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */,
 				2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */,
 				2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */,
+				28D7B31418EE48D300FE15BA /* NSDate+Format.h */,
+				28D7B31518EE48D300FE15BA /* NSDate+Format.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -978,6 +983,7 @@
 				2DA1AF1718E2EF9600085F27 /* main.m in Sources */,
 				2DA1AEC718E2EF7D00085F27 /* PrintSetting.m in Sources */,
 				2DA1AF1818E2EF9600085F27 /* ReplaceSegue.m in Sources */,
+				28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */,
 				2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */,
 				2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */,
 				28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */,

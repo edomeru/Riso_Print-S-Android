@@ -8,21 +8,16 @@
 
 #import "PrintJobHistoryGroupCell.h"
 #import "UIColor+Theme.h"
-
-#define TEXT_GROUP_COLLAPSED    @"+"
-#define TEXT_GROUP_EXPANDED     @"-"
+#import "NSDate+Format.h"
 
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
 
-#define IDX_NAME                0
-#define IDX_RESULT              1
+#define IDX_RESULT              0
+#define IDX_NAME                1
 #define IDX_TIMESTAMP           2
 
 #define TAG_SEPARATOR           5
-
-#define FORMAT_DATE_TIME        @"yyyy/MM/dd HH:mm"
-#define FORMAT_ZONE             @"GMT"
 
 @interface PrintJobHistoryGroupCell ()
 
@@ -51,6 +46,7 @@
 
 #pragma mark - Data Properties
 
+/** The data source for the list of print jobs (result, name, timestamp). */
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 #pragma mark - Methods
@@ -99,21 +95,18 @@
     // get print job details (name, result, timestamp)
     NSArray* printJob = [self.listPrintJobs objectAtIndex:indexPath.row];
     
-    // print job name
-    printJobCell.textLabel.text = [NSString stringWithFormat:@"%@", printJob[IDX_NAME]];
-    
     // print job result
-    BOOL result = [printJob[IDX_RESULT] boolValue];
+    BOOL result = [[printJob objectAtIndex:IDX_RESULT] boolValue];
     if (result)
         printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
     else
         printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
     
+    // print job name
+    printJobCell.textLabel.text = [NSString stringWithFormat:@"%@", [printJob objectAtIndex:IDX_NAME]];
+    
     // print job timestamp
-    NSDateFormatter* timestampFormat = [[NSDateFormatter alloc] init];
-    [timestampFormat setDateFormat:FORMAT_DATE_TIME];
-    [timestampFormat setTimeZone:[NSTimeZone timeZoneWithName:FORMAT_ZONE]]; //TODO: should depend on localization?
-    printJobCell.detailTextLabel.text = [timestampFormat stringFromDate:printJob[IDX_TIMESTAMP]];
+    printJobCell.detailTextLabel.text = [[printJob objectAtIndex:IDX_TIMESTAMP] formattedString];
     printJobCell.detailTextLabel.hidden = NO;
     
     // clear tracker for the delete button
@@ -162,19 +155,19 @@
 - (void)putIndicator:(BOOL)isCollapsed
 {
     if (isCollapsed)
-        [self.groupIndicator setTitle:TEXT_GROUP_COLLAPSED forState:UIControlStateNormal];
+        [self.groupIndicator setTitle:@"-" forState:UIControlStateNormal];
     else
-        [self.groupIndicator setTitle:TEXT_GROUP_EXPANDED forState:UIControlStateNormal];
+        [self.groupIndicator setTitle:@"+" forState:UIControlStateNormal];
 }
 
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp
 {
     // store the print job details in a ordered array
-    // [0] print job name
-    // [1] print job result
+    // [0] print job result
+    // [1] print job name
     // [2] print job timestamp
-    NSArray* printJob = [NSArray arrayWithObjects:name,
-                                                  [NSNumber numberWithInt:(result ? 1 : 0)],
+    NSArray* printJob = [NSArray arrayWithObjects:[NSNumber numberWithInt:(result ? 1 : 0)],
+                                                  name,
                                                   timestamp,
                                                   nil];
     [self.listPrintJobs addObject:printJob];

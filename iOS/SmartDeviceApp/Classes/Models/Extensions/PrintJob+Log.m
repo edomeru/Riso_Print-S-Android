@@ -8,23 +8,17 @@
 
 #import "PrintJob+Log.h"
 #import "Printer.h"
+#import "NSDate+Format.h"
 
 @implementation PrintJob (Log)
 
 - (void)log
 {
     NSMutableString* msg = [NSMutableString stringWithString:@"  Print Job:"];
-    
     [msg appendFormat:@"\n   Name=%@", self.name];
     [msg appendFormat:@"\n   Result=%@", [self.result boolValue] ? @"YES" : @"NO"];
-    
-    NSDateFormatter* timestampFormat = [[NSDateFormatter alloc] init];
-    [timestampFormat setDateFormat:@"yyyy/MM/dd HH:mm"];
-    [timestampFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
-    [msg appendFormat:@"\n   Date=%@", [timestampFormat stringFromDate:self.date]];
-    
+    [msg appendFormat:@"\n   Date=%@", [self.date formattedString]];
     [msg appendFormat:@"\n   Printer=%@", self.printer.name];
-    
     NSLog(@"[INFO][PrintJob]\n%@\n", msg);
 }
 

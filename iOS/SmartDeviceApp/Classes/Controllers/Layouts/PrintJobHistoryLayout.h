@@ -11,12 +11,12 @@
 @protocol PrintJobHistoryLayoutDelegate <NSObject>
 
 /** 
- Requests the data source for the size of the current group
- to be displayed. A fixed size cannot be used since each
- group has a different number of print jobs to be displayed.
+ Requests the data source for the number of print jobs
+ to be displayed for the current group (a fixed size
+ for all groups cannot be used).
  @param indexPath
  */
-- (CGSize)sizeForGroupAtIndexPath:(NSIndexPath*)indexPath;
+- (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 

@@ -178,8 +178,16 @@
     NSLog(@"[INFO][PrintJobLayout] row=%lu, col=%lu", (unsigned long)row, (unsigned long)col);
 #endif
     
-    // request for the size of the group from the data source
-    CGSize groupSize = [self.delegate sizeForGroupAtIndexPath:indexPath];
+    // determine the group size
+    // group height = header height + (number of jobs * height per job)
+    CGFloat groupHeight = 45.0f + ([self.delegate numberOfJobsForGroupAtIndexPath:indexPath] * 45.0f);
+    // group width = fixed frame width
+    CGFloat groupWidth = 320.0f;
+    CGSize groupSize = CGSizeMake(groupWidth, groupHeight);
+    
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+    NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", groupHeight, groupWidth);
+#endif
     
     // set the x-origin pt.
     CGFloat originX = floorf(self.groupInsets.left + (groupSize.width + self.interGroupSpacingX) * col);

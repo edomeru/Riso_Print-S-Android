@@ -13,11 +13,6 @@
 #import "PListHelper.h"
 #import "AlertHelper.h"
 
-const float GROUP_HEADER_HEIGHT     = 45.0f;  //should match the value in storyboard
-const float GROUP_FRAME_WIDTH       = 320.f;  //should match the value in storyboard
-const float GROUP_MARGIN_BOTTOM     = 0.0f;   //TODO: how to properly set margin (iOS7 != iOS6)
-const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyboard
-
 @interface PrintJobHistoryViewController ()
 
 #pragma mark - UI Properties
@@ -180,42 +175,18 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 
 #pragma mark - PrintJobHistoryLayoutDelegate
 
-- (CGSize)sizeForGroupAtIndexPath:(NSIndexPath*)indexPath
+- (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
-    // get the group
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
+    
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] setting size for %@", group.groupName);
     NSLog(@"[INFO][PrintJobCtrl] num print jobs = %lu", (unsigned long)group.countPrintJobs);
 #endif
     
-    // set the list height
-    CGFloat heightPrintJobsList;
     if (group.isCollapsed)
-    {
-        // collapsed
-        // the height occupied by the print jobs will be zero
-        heightPrintJobsList = 0;
-    }
+        return 0; //no need to display any jobs
     else
-    {
-        // expanded
-        // the height occupied by the print jobs will be (number of print jobs)*(height for each print job)
-        heightPrintJobsList = group.countPrintJobs * PRINT_JOB_ITEM_HEIGHT;
-        heightPrintJobsList += GROUP_MARGIN_BOTTOM;
-    }
-    
-    // finalize the group dimensions
-    CGFloat groupCellHeight = GROUP_HEADER_HEIGHT + heightPrintJobsList;
-    CGFloat groupCellWidth = GROUP_FRAME_WIDTH;
-    
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", groupCellHeight, groupCellWidth);
-#endif
-    
-    CGSize groupCellSize = CGSizeMake(groupCellWidth, groupCellHeight);
-    
-    return groupCellSize;
+        return group.countPrintJobs;
 }
 
 #pragma mark - Actions
