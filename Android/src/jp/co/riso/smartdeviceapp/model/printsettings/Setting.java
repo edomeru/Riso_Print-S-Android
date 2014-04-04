@@ -16,6 +16,11 @@ import org.w3c.dom.NodeList;
 
 public class Setting extends XmlNode {
     public static final String TAG = "Setting";
+    public static final String ATTR_DEFAULT = "default";
+    
+    public static final String ATTR_VAL_LIST = "list";
+    public static final String ATTR_VAL_BOOLEAN = "boolean";
+    public static final String ATTR_VAL_NUMERIC = "default";
 
     public static final int TYPE_INVALID = -1;
     public static final int TYPE_LIST = 0;
@@ -40,13 +45,13 @@ public class Setting extends XmlNode {
     }
     
     public int getType() {
-        String type = getAttributeValue("type");
+        String type = getAttributeValue(ATTR_TYPE);
         
-        if (type.equalsIgnoreCase("list")) {
+        if (type.equalsIgnoreCase(ATTR_VAL_LIST)) {
             return TYPE_LIST;
-        } else if (type.equalsIgnoreCase("boolean")) {
+        } else if (type.equalsIgnoreCase(ATTR_VAL_BOOLEAN)) {
             return TYPE_BOOLEAN;
-        } else if (type.equalsIgnoreCase("numeric")) {
+        } else if (type.equalsIgnoreCase(ATTR_VAL_NUMERIC)) {
             return TYPE_NUMERIC;
         }
         
@@ -54,7 +59,7 @@ public class Setting extends XmlNode {
     }
     
     public Integer getDefaultValue() {
-        String value = getAttributeValue("default");
+        String value = getAttributeValue(ATTR_DEFAULT);
         
         switch (getType()) {
             case TYPE_LIST:

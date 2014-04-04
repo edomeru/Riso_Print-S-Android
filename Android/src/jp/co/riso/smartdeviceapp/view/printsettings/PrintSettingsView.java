@@ -19,6 +19,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
@@ -487,10 +488,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void addSettingsItemView(LinearLayout ll, Setting setting, boolean withSeparator) {
-        String name = setting.getAttributeValue("name");
-        String icon = setting.getAttributeValue("icon");
-        String text = setting.getAttributeValue("text");
-        String type = setting.getAttributeValue("type");
+        String name = setting.getAttributeValue(XmlNode.ATTR_NAME);
+        String icon = setting.getAttributeValue(XmlNode.ATTR_ICON);
+        String text = setting.getAttributeValue(XmlNode.ATTR_TEXT);
+        String type = setting.getAttributeValue(XmlNode.ATTR_TYPE);
         
         String titleText = "";
         int titleId = AppUtils.getResourseId(text, R.string.class, -1);
@@ -520,8 +521,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void addSettingsTitleView(Group group) {
-        String nameStr = group.getAttributeValue("name");
-        String textStr = group.getAttributeValue("text");
+        String nameStr = group.getAttributeValue(XmlNode.ATTR_NAME);
+        String textStr = group.getAttributeValue(XmlNode.ATTR_TEXT);
         
         LinearLayout itemsGroup = new LinearLayout(getContext());
         itemsGroup.setOrientation(LinearLayout.VERTICAL);

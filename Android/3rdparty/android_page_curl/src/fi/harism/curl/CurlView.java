@@ -87,7 +87,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	// One page is the default.
 	private int mViewMode = SHOW_ONE_PAGE;
 
-    public static final int BIND_LEFT = 0;
+	public static final int BIND_LEFT = 0;
 	public static final int BIND_RIGHT = 1;
 	public static final int BIND_TOP = 2;
 
@@ -1019,10 +1019,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					if (mViewMode == SHOW_TWO_PAGES) {
 						mCurlPos.x -= mCurlDir.x * translate / dist;
 					} else {
-                        float pageLeftX = mRenderer
-                                .getPageRect(CurlRenderer.PAGE_RIGHT).left;
-                        radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius),
-                                0f);
+						float pageLeftX = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).left;
+						radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius),
+								0f);
 					}
 					mCurlPos.y -= mCurlDir.y * translate / dist;
 				} else {

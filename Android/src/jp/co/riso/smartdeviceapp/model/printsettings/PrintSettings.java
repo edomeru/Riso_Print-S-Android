@@ -119,7 +119,7 @@ public class PrintSettings {
         sGroupList = new ArrayList<Group>(); 
         sSettingMap = new HashMap<String, Setting>();
         
-        NodeList groupList = printSettingsContent.getElementsByTagName("group");
+        NodeList groupList = printSettingsContent.getElementsByTagName(XmlNode.NODE_GROUP);
         
         // looping through all item nodes <item>
         for (int i = 0; i < groupList.getLength(); i++) {
@@ -127,7 +127,7 @@ public class PrintSettings {
             sGroupList.add(group);
             
             for (Setting setting : group.getSettings()) {
-                sSettingMap.put(setting.getAttributeValue("name"), setting);
+                sSettingMap.put(setting.getAttributeValue(XmlNode.ATTR_NAME), setting);
             }
         }
     }

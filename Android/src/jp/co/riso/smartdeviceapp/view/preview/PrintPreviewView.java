@@ -63,6 +63,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private static final float BASE_ZOOM_LEVEL = 1.0f;
     private static final float MAX_ZOOM_LEVEL = 4.0f;
     
+    private static final int INVALID_IDX = -1;
+    
     private static final int SLEEP_DELAY = 128;
     private static final int SMALL_BMP_SIZE = 64;
     private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.RGB_565;
@@ -84,7 +86,14 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private float mMarginTop = 0;
     private float mMarginBottom = 0;
     
-    float mZoomLevel = BASE_ZOOM_LEVEL;
+    // Zoom/pan related variables
+    
+    private ScaleGestureDetector mScaleDetector;
+    private float mZoomLevel = BASE_ZOOM_LEVEL;
+    
+    private int mPtrIdx = INVALID_IDX;
+    private PointF mPtrDownPos = new PointF();
+    private PointF mPtrLastPos = new PointF();
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -109,8 +118,6 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         fitCurlView(l, t, r, b);
     }
     
-    ScaleGestureDetector mScaleDetector;
-    
     public void init() {
         
         mScaleDetector = new ScaleGestureDetector(getContext(), this);
@@ -133,15 +140,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return true;
     }
     
-    int mPtrIdx = -1;
-    PointF mPtrDownPos = new PointF();
-    PointF mPtrLastPos = new PointF();
-    
     public void processTouchEvent(MotionEvent ev) {
         if (ev.getPointerCount() == 1) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if (mPtrIdx == -1) {
+                    if (mPtrIdx == INVALID_IDX) {
                         mPtrIdx = ev.getActionIndex();
                         mPtrDownPos.set(ev.getX(), ev.getY());
                         mPtrLastPos.set(ev.getX(), ev.getY());
@@ -657,21 +660,18 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         setPageControlsDisplay(mZoomLevel == BASE_ZOOM_LEVEL);
         mCurlView.setZoomLevel(mZoomLevel);
         mCurlView.requestLayout();
-        Log.wtf(TAG, "Current zoom level: " + mZoomLevel);
         
         return true;
     }
     
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
-        Log.wtf(TAG, "onScaleBegin");
-        
+        // Return true to begin scale
         return true;
     }
 
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
-        Log.wtf(TAG, "onScaleEnd");
     }
     
     // ================================================================================
@@ -733,7 +733,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         private int mWidth;
         private int mHeight;
         private int mIndex;
-        Bitmap renderBmps[];
+        Bitmap mRenderBmps[];
         
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
             mCurlPageRef = new WeakReference<CurlPage>(page);
@@ -755,7 +755,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 Log.w(TAG, "Cancelled process");
                 return null;
             }
-            renderBmps = getRenderBitmaps();
+            mRenderBmps = getRenderBitmaps();
             return null;
         }
         
@@ -763,8 +763,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         protected void onPostExecute(Void param) {
             if (mHandlerRef.get() != null && mCurlPageRef.get() != null) {
                 mCurlPageRef.get().reset();
-                mCurlPageRef.get().setTexture(Bitmap.createBitmap(renderBmps[0]), CurlPage.SIDE_FRONT);
-                mCurlPageRef.get().setTexture(Bitmap.createBitmap(renderBmps[1]), CurlPage.SIDE_BACK);
+                mCurlPageRef.get().setTexture(Bitmap.createBitmap(mRenderBmps[0]), CurlPage.SIDE_FRONT);
+                mCurlPageRef.get().setTexture(Bitmap.createBitmap(mRenderBmps[1]), CurlPage.SIDE_BACK);
                 mCurlView.requestRender();
             } else {
                 Log.w(TAG, "Will recycle");

@@ -13,6 +13,13 @@ import org.w3c.dom.Node;
 
 public abstract class XmlNode {
     
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_ICON = "icon";
+    public static final String ATTR_TEXT = "text";
+    public static final String ATTR_TYPE = "type";
+    
+    public static final String NODE_GROUP = "group";
+    
     public NamedNodeMap mAttributes;
     
     public XmlNode(Node node) {

@@ -71,6 +71,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	private float mMaxPanX = 0.0f;
 	private float mMinPanY = 0.0f;
 
+	// Set to true to enable the border.
 	private static final boolean RENDER_DROP_SHADOW = true;
 
 	/*
