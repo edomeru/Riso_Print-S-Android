@@ -445,6 +445,15 @@
     
     [self applyBindSetting];
     
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
+    {
+        [self.pageViewController setDoubleSided:YES];
+    }
+    else
+    {
+        [self.pageViewController setDoubleSided:NO];
+    }
+    
     [self goToPage:self.currentPage];
 }
 

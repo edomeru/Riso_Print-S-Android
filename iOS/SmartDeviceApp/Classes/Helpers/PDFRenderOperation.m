@@ -30,6 +30,7 @@
 @property (nonatomic, weak) PrintDocument *printDocument;
 @property (nonatomic) CGSize size;
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic) BOOL isFrontPage;
 @end
 
 @implementation PDFRenderOperation
@@ -43,6 +44,7 @@
         _size = size;
         _delegate = delegate;
         _printDocument = [[PDFFileManager sharedManager] printDocument];
+        _isFrontPage = ((pageIndex % 2) == 0); //front size if index is even
     }
     return self;
 }
@@ -115,7 +117,13 @@
         CGContextSaveGState(contextRef);
         
         CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
-        self.image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:UIImageOrientationDownMirrored];
+        UIImageOrientation imageOrientation = UIImageOrientationDownMirrored;
+        if([self isImageUpsideDown] == YES)
+        {
+            imageOrientation = UIImageOrientationUpMirrored;
+        }
+
+        self.image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:imageOrientation];
         CGImageRelease(imageRef);
         CGContextRelease(contextRef);
         
@@ -451,6 +459,23 @@
         xPos += xOffset;
         yPos += yOffset;
     }
+}
+
+- (BOOL)isImageUpsideDown
+{
+    if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff)
+    {
+        if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
+        {
+            return YES;
+        }
+        if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width > self.size.height)
+        {
+            return YES;
+        }
+            
+    }
+    return NO;
 }
 
 @end
