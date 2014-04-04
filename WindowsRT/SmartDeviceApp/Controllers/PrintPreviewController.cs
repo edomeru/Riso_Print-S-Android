@@ -912,7 +912,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="logicalPages">source LogicalPage images</param>
         /// <param name="previewPageIndex">target page index</param>
         /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
-        /// <returns></returns>
+        /// <returns>task</returns>
         private async Task ApplyPrintSettings(List<LogicalPage> logicalPages, int previewPageIndex,
             bool enableSend)
         {
@@ -942,21 +942,20 @@ namespace SmartDeviceApp.Controllers
                             // Put LogicalPage image to a bitmap
                             WriteableBitmap pageBitmap = await WriteableBitmapExtensions.FromStream(
                                 null, raStream);
-
-                            WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
-                                isPortrait);
-
+                            
+                            
                             if (_pagesPerSheet > 1)
                             {
-                                ApplyPageImageToPaper(true, canvasBitmap, pageBitmap);
+                                pageImages.Add(pageBitmap);
                             }
-                            else
+                            else if (_pagesPerSheet == 1)
                             {
+                                WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
+                                    isPortrait);
                                 ApplyPageImageToPaper(_selectedPrinter.PrintSetting.ScaleToFit,
                                     canvasBitmap, pageBitmap);
+                                pageImages.Add(canvasBitmap);
                             }
-
-                            pageImages.Add(canvasBitmap);
                         }
                     }
                     catch (Exception)
@@ -971,9 +970,9 @@ namespace SmartDeviceApp.Controllers
                     finalBitmap = ApplyImposition(paperSize, pageImages, isPortrait,
                         _selectedPrinter.PrintSetting.ImpositionOrder);
                 }
-                else
+                else if (_pagesPerSheet == 1)
                 {
-                    finalBitmap = pageImages[0];
+                    finalBitmap = WriteableBitmapExtensions.Clone(pageImages[0]);
                 }
 
                 // Check color mode value
