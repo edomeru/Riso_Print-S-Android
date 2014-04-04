@@ -155,9 +155,9 @@
 - (void)putIndicator:(BOOL)isCollapsed
 {
     if (isCollapsed)
-        [self.groupIndicator setTitle:@"-" forState:UIControlStateNormal];
-    else
         [self.groupIndicator setTitle:@"+" forState:UIControlStateNormal];
+    else
+        [self.groupIndicator setTitle:@"-" forState:UIControlStateNormal];
 }
 
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp
