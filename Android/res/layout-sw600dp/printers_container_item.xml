@@ -196,7 +196,7 @@
                     android:textSize="@dimen/printers_name_font_size" />
 
                 <Button
-                    android:id="@+id/defaultPrintSettings"
+                    android:id="@+id/default_print_settings"
                     android:layout_width="@dimen/printers_row_height"
                     android:layout_height="@dimen/printers_row_height"
                     android:layout_alignParentRight="true"

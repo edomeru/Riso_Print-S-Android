@@ -18,6 +18,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -73,6 +74,22 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     public PrintersScreenTabletView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
+    }
+    
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (getContext() != null && getContext() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getContext();
+            
+            if (activity.isDrawerOpen(Gravity.RIGHT)) {
+                activity.closeDrawers();
+            }
+            if (mSelectedPrinter != null) {
+                mSelectedPrinter = null;
+                return true;
+            }
+        }
+        return false;
     }
     
     // ================================================================================
@@ -271,7 +288,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_onOff);
         viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
         viewHolder.mDefaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
-        viewHolder.mPrintSettings = (Button) pView.findViewById(R.id.defaultPrintSettings);
+        viewHolder.mPrintSettings = (Button) pView.findViewById(R.id.default_print_settings);
         
         viewHolder.mPrinterName.setText(printer.getName());
         viewHolder.mIpAddress.setText(printer.getIpAddress());
@@ -446,7 +463,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
                     setPrinterViewToNormal(viewHolder);
                 }
                 break;
-            case R.id.defaultPrintSettings:
+            case R.id.default_print_settings:
                 mSelectedPrinter = (Printer) v.getTag();
                 if (getContext() != null && getContext() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getContext();
@@ -460,7 +477,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
                         if (fragment == null) {
                             FragmentTransaction ft = fm.beginTransaction();
                             fragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, fragment, "fragment_selected_printer_printsettings");
+                            ft.replace(R.id.rightLayout, fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
                             ft.commit();
                         }
                         
@@ -480,12 +497,6 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     
     @Override
     public boolean onTouch(View view, MotionEvent ev) {
-        if (mSelectedPrinter != null) {
-            MainActivity activity = (MainActivity) getContext();
-            activity.closeDrawers();
-            mSelectedPrinter = null;
-            return true;
-        }
         if (mDeleteViewHolder != null) {
             setPrinterView(mDeleteViewHolder);
             mDeleteViewHolder = null;
