@@ -66,25 +66,21 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
+        if (savedInstanceState != null) {
+            mPrinter = savedInstanceState.getParcelableArrayList(KEY_PRINTER_LIST);
+        }
+        if (mPrinter == null) {
+            mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
+        }
+        
         if (isTablet()) {
             mPrinterTabletView = (PrintersScreenTabletView) view.findViewById(R.id.printerParentView);
-            mPrinterManager.setPrintersCallback(this);
-            if (savedInstanceState != null) {
-                mPrinter = savedInstanceState.getParcelableArrayList(KEY_PRINTER_LIST);
-                if (mPrinter == null) {
-                    mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
-                }
-                mPrinterTabletView.restoreState(mPrinter);
-            } else {
-                Message newMessage = Message.obtain(mHandler, MSG_SET_POPULATE_PRINTERS_LIST);
-                mHandler.sendMessage(newMessage);
-            }
         } else {
-            mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
             mListView = (ListView) view.findViewById(R.id.printer_list);
-            mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
-            mListView.setAdapter(mPrinterAdapter);
         }
+        mPrinterManager.setPrintersCallback(this);
+        Message newMessage = Message.obtain(mHandler, MSG_SET_POPULATE_PRINTERS_LIST);
+        mHandler.sendMessage(newMessage);
     }
     
     @Override
@@ -162,7 +158,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onAddedNewPrinter(Printer printer) {
-        Message newMessage = Message.obtain(mHandler, MSG_SET_POPULATE_PRINTERS_LIST);
+        Message newMessage = Message.obtain(mHandler, MSG_ADD_NEW_PRINTER);
         newMessage.obj = printer;
         mHandler.sendMessage(newMessage);
     }
@@ -175,12 +171,21 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case MSG_SET_POPULATE_PRINTERS_LIST:
-                mPrinterTabletView.refreshPrintersList(mPrinter);
+                if (isTablet()) {
+                    mPrinterTabletView.restoreState(mPrinter);
+                    
+                } else {
+                    mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
+                    mListView.setAdapter(mPrinterAdapter);
+                }
                 return true;
             case MSG_ADD_NEW_PRINTER:
                 Printer printer = (Printer) msg.obj;
                 if (isTablet()) {
                     mPrinterTabletView.onAddedNewPrinter(printer);
+                } else {
+                    mPrinterAdapter.add(printer);
+                    mPrinterAdapter.notifyDataSetChanged();
                 }
         }
         return false;
