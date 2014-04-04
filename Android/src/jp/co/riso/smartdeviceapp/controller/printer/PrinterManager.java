@@ -153,7 +153,7 @@ public class PrinterManager implements SnmpSearchCallback {
         if (cursor.moveToFirst()) {
             do {
                 Printer printer = new Printer(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_NAME)), cursor.getString(cursor
-                        .getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_IP)), false, null);
+                        .getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_IP)), null);
                 printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
                 mPrinterList.add(printer);
             } while (cursor.moveToNext());
@@ -326,7 +326,7 @@ public class PrinterManager implements SnmpSearchCallback {
     
     @Override
     public void onSearchedPrinterAdd(String printerName, String ipAddress) {
-        Printer printer = new Printer(printerName, ipAddress, false, null);
+        Printer printer = new Printer(printerName, ipAddress, null);
         if (isSearching()) {
             if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
                 mPrinterSearchCallback.get().onPrinterAdd(printer);

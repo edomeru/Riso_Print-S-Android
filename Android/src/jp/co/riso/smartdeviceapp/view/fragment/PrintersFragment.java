@@ -14,6 +14,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
+import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -61,6 +62,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         ((MainActivity) getActivity()).mPrintPreviewScreen = false;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
+        if (isTablet()) {
+            setTargetFragment(this, 0);
+        }
     }
     
     @Override
@@ -96,6 +100,16 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList(KEY_PRINTER_LIST, mPrinter);
         super.onSaveInstanceState(savedInstanceState);
+    }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
+    
+    public void setPrintSettings(PrintSettings printSettings) {
+        if (isTablet()) {
+            mPrinterTabletView.updatePrintSettings(printSettings);
+        }
     }
     
     // ================================================================================
@@ -140,16 +154,31 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
         switch (v.getId()) {
             case ID_MENU_ACTION_SEARCH_BUTTON:
-                displayPrinterSearchFragment();
-                onPause();
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        displayPrinterSearchFragment();
+                    } else {
+                        activity.closeDrawers();
+                    }
+                }
                 break;
             case ID_MENU_ACTION_ADD_BUTTON:
-                displayAddPrinterFragment();
-                onPause();
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        displayAddPrinterFragment();
+                    } else {
+                        activity.closeDrawers();
+                    }
+                }
                 break;
             default:
                 break;
         }
+        
     }
     
     // ================================================================================
@@ -173,7 +202,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             case MSG_SET_POPULATE_PRINTERS_LIST:
                 if (isTablet()) {
                     mPrinterTabletView.restoreState(mPrinter);
-                    
                 } else {
                     mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
                     mListView.setAdapter(mPrinterAdapter);

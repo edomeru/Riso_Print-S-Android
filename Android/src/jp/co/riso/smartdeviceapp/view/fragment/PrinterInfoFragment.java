@@ -11,11 +11,14 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -23,11 +26,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
-    public static final String KEY_PRINTER_INFO = "fragment_printer_info";
+    public static final String KEY_PRINTER_INFO = "fragment_printer_info";    
     private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private Printer mPrinter = null;
+    private PrintSettings mPrintSettings = null;
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
     private Switch mDefaultPrinter = null;
@@ -58,26 +62,38 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printer_info);
         
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, R.drawable.img_btn_default_print_settings, this);
+        addMenuButton(view, R.id.rightActionLayout, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, R.drawable.selector_actionbar_printsettings, this);
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        
         Bundle extras = getArguments();
         if (extras == null) {
             extras = getActivity().getIntent().getExtras();
         }
         mPrinter = extras.getParcelable(KEY_PRINTER_INFO);
-        
+        mPrintSettings = mPrinter.getPrintSettings();
+        if (mPrintSettings == null) {
+            mPrintSettings = new PrintSettings();
+        }
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
         }
         
+    }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
+    
+    public void setPrintSettings(PrintSettings printSettings) {
+        //TODO: Update settings
+        // mPrintSettings.update(printSettings);
     }
     
     // ================================================================================
@@ -88,6 +104,30 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void onClick(View v) {
         switch (v.getId()) {
             case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        FragmentManager fm = getFragmentManager();
+                        
+                        // Always make new
+                        PrintSettingsFragment fragment = null;
+                        
+                        if (fragment == null) {
+                            FragmentTransaction ft = fm.beginTransaction();
+                            fragment = new PrintSettingsFragment();
+                            ft.replace(R.id.rightLayout, fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
+                            ft.commit();
+                        }
+                        
+                        fragment.setPrintSettings(mPrintSettings);
+                        fragment.setTargetFragment(this, 0);
+                        
+                        activity.openDrawer(Gravity.RIGHT, true);
+                    } else {
+                        activity.closeDrawers();
+                    }
+                }
                 break;
             case ID_MENU_BACK_BUTTON:
                 FragmentManager fm = getFragmentManager();

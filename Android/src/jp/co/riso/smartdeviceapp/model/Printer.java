@@ -12,6 +12,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Printer implements Parcelable {
+    private PrintSettings mPrintSettings = null;
     private int mId;
     private String mName;
     private String mIpAddress;
@@ -23,6 +24,24 @@ public class Printer implements Parcelable {
     private boolean mBookletBinding;
     private boolean mStaple;
     private boolean mBind;
+    
+    public Printer(String name, String ipAddress, PrintSettings printSettings) {
+        super();
+        mName = name;
+        mIpAddress = ipAddress;
+        mPortSetting = 0;
+        mLpr = true;
+        mRaw = true;
+        mPagination = true;
+        mDuplex = true;
+        mBookletBinding = true;
+        mStaple = true;
+        mBind = true;
+        mPrintSettings = printSettings;
+        if (mPrintSettings == null) {
+            mPrintSettings = new PrintSettings();
+        }
+    }
     
     public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
         super();
@@ -36,15 +55,35 @@ public class Printer implements Parcelable {
         mBookletBinding = true;
         mStaple = true;
         mBind = true;
-        
+        mPrintSettings = printSettings;
+        if (mPrintSettings == null) {
+            mPrintSettings = new PrintSettings();
+        }
     }
     
     public Printer(Parcel source) {
         if (source != null) {
             mName = source.readString();
             mIpAddress = source.readString();
+            if (mPrintSettings == null) {
+                mPrintSettings = new PrintSettings();
+            }
         }
     }
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        return;
+    }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
     
     public static final Parcelable.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
         @Override
@@ -146,13 +185,11 @@ public class Printer implements Parcelable {
         this.mBind = bind;
     }
     
-    @Override
-    public int describeContents() {
-        return 0;
+    public PrintSettings getPrintSettings() {
+        return mPrintSettings;
     }
     
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        return;
+    public void setPrintSettings(PrintSettings printSettings) {
+        this.mPrintSettings = printSettings;
     }
 }
