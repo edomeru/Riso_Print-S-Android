@@ -2529,7 +2529,7 @@
                 </swipeGestureRecognizer>
                 <swipeGestureRecognizer direction="right" id="4FT-dv-paH" userLabel="iPhone - SwipeRight">
                     <connections>
-                        <action selector="swipedRight:" destination="FqZ-P9-QXX" id="XFb-po-Fzw"/>
+                        <action selector="tappedGroup:" destination="FqZ-P9-QXX" id="Z02-Je-jQp"/>
                     </connections>
                 </swipeGestureRecognizer>
                 <tapGestureRecognizer id="CyX-qC-fn8" userLabel="iPhone - Tap">
@@ -2773,7 +2773,7 @@
                 </swipeGestureRecognizer>
                 <swipeGestureRecognizer direction="right" id="ggu-Gx-tC4" userLabel="iPad - SwipeRight">
                     <connections>
-                        <action selector="swipedRight:" destination="k93-fC-OMI" id="Ns5-JT-btm"/>
+                        <action selector="tappedGroup:" destination="k93-fC-OMI" id="7iy-Z2-dAD"/>
                     </connections>
                 </swipeGestureRecognizer>
                 <tapGestureRecognizer id="64e-AY-apm" userLabel="iPad - Tap">

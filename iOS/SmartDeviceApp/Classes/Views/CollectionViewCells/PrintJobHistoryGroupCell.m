@@ -220,7 +220,7 @@
         
         // create the delete button
         UIButton* deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [deleteButton setTitle:@"DELETE" forState:UIControlStateNormal];
+        [deleteButton setTitle:@"DELETE" forState:UIControlStateNormal]; //TODO: localize DELETE
         [deleteButton setTitleEdgeInsets:UIEdgeInsetsMake(10.0f, 15.0f, 10.0f, 15.0f)];
         [deleteButton setBackgroundColor:[UIColor redThemeColor]];
         [deleteButton setUserInteractionEnabled:YES];

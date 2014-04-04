@@ -68,10 +68,6 @@
         NSMutableDictionary* dictPrintJobHistoryGroups = [NSMutableDictionary dictionary];
         for (PrintJob* job in listPrintJobs)
         {
-#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-            NSLog(@"[INFO][PrintJobHelper] job=%@", job.name);
-#endif
-            
             // get the printer
             NSString* printerName = job.printer.name;
             
@@ -82,9 +78,6 @@
                 // group does not exist yet
                 
                 // create a group for this printer
-#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-                NSLog(@"[INFO][PrintJobHelper] create group for printer=%@", printerName);
-#endif
                 PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName];
                 [newGroup collapse:NO];
                 
@@ -99,9 +92,6 @@
                 // group already exists
                 
                 // add the current job to the group
-#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-                NSLog(@"[INFO][PrintJobHelper] update group for printer=%@", printerName);
-#endif
                 [group addPrintJob:job];
             }
         }
@@ -112,11 +102,7 @@
                                                                        PrintJobHistoryGroup* group,
                                                                        BOOL* stop)
         {
-#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-            NSLog(@"[INFO][PrintJobHelper] sorting jobs for group=%@", printerName);
-#endif
             [group sortPrintJobs];
-            
             [listPrintJobHistoryGroups addObject:group];
         }];
     }

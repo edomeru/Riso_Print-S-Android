@@ -63,9 +63,6 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
 /** Swiping left on a print job displays the DELETE button. */
 - (IBAction)swipedLeft:(UIGestureRecognizer*)gestureRecognizer;
 
-/** Swiping right on the UICollectionView hides any DELETE button displayed. */
-- (IBAction)swipedRight:(UIGestureRecognizer*)gestureRecognizer;
-
 /** Tapping anywhere on the UICollectionView hides any DELETE button displayed. */
 - (IBAction)tappedGroup:(UIGestureRecognizer*)gestureRecognizer;
 
@@ -232,51 +229,49 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
     NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
 #endif
     
-    // toggle collapsed/expanded
-    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
-    [group collapse:!group.isCollapsed];
-    
-    // force redraw
-    // with animation (not smooth)
-    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
-    // without animation //TODO: should have some animation
-    [self.groupsView reloadData];
+    // check if there is a delete button present
+    if (self.groupWithDelete != nil)
+    {
+        // cancel the delete button instead
+        [self removeDeleteButton];
+    }
+    else
+    {
+        // toggle collapsed/expanded
+        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
+        [group collapse:!group.isCollapsed];
+        
+        // force redraw
+        // with animation (not smooth)
+        //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+        // without animation //TODO: should have some animation
+        [self.groupsView reloadData];
+    }
 }
 
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender
 {
     // get the group tapped
-    NSInteger groupTag = [sender tag];
+    NSInteger groupIndex = [sender tag];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupTag);
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
 #endif
     
-    // remove the group (and all its print jobs)
-    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
-    BOOL bRemovedAllJobs = NO;
-    while (group.countPrintJobs != 0)
+    // check if there is a delete button present
+    if (self.groupWithDelete != nil)
     {
-        bRemovedAllJobs = [group removePrintJobAtIndex:0];
-        if (!bRemovedAllJobs)
-            break; // avoids corrupting the list and/or DB
-    }
-    if (bRemovedAllJobs)
-    {
-        [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
+        // cancel the delete button instead
+        [self removeDeleteButton];
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDefault
-                         withTitle:kAlertTitlePrintJobHistory
-                       withDetails:nil];
+        // show user confirmation for deleting all jobs
+        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
+        [AlertHelper displayConfirmation:kAlertConfirmationDeleteAllJobs
+                               forScreen:self
+                             withDetails:@[[NSNumber numberWithInteger:groupIndex], group.groupName]];
     }
-    
-    // force redraw
-    // with animation (not smooth)
-    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
-    // without animation //TODO: should have some animation
-    [self.groupsView reloadData];
 }
 
 - (void)tappedDeleteOneButton:(UIButton*)button
@@ -336,20 +331,6 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
               usingActionOnTap:@selector(tappedDeleteOneButton:)];
 }
 
-- (void)swipedRight:(UIGestureRecognizer*)gestureRecognizer
-{
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    // get the group swiped
-    CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
-    NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
-    NSLog(@"[INFO][PrintJobCtrl] swiped right on group=%ld", (long)groupIndexPath.row);
-#endif
-    
-    // check if a delete button is present in any group
-    if (self.groupWithDelete != nil)
-        [self removeDeleteButton];
-}
-
 - (void)tappedGroup:(UIGestureRecognizer*)gestureRecognizer
 {
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
@@ -374,6 +355,43 @@ const float PRINT_JOB_ITEM_HEIGHT   = 45.0f;  //should match the value in storyb
                                                                       cellForItemAtIndexPath:self.groupWithDelete];
     [groupCell removeDeleteButton];
     self.groupWithDelete = nil;
+}
+
+#pragma mark - Delete Confirmation
+
+- (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == [alertView firstOtherButtonIndex])
+    {
+        // get the group
+        NSInteger groupIndex = alertView.tag;
+        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:alertView.tag];
+        
+        // remove each job from the group
+        BOOL bRemovedAllJobs = NO;
+        while (group.countPrintJobs != 0)
+        {
+            bRemovedAllJobs = [group removePrintJobAtIndex:0];
+            if (!bRemovedAllJobs)
+                break; // avoids corrupting the list and/or DB
+        }
+        if (bRemovedAllJobs)
+        {
+            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+        }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDefault
+                             withTitle:kAlertTitlePrintJobHistory
+                           withDetails:nil];
+        }
+        
+        // force redraw
+        // with animation (not smooth)
+        //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+        // without animation //TODO: should have some animation
+        [self.groupsView reloadData];
+    }
 }
 
 #pragma mark - Segue
