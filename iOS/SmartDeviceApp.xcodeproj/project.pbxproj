@@ -27,6 +27,7 @@
 		2D157BF518ED5A960034F953 /* PDFRenderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BF418ED5A960034F953 /* PDFRenderOperation.m */; };
 		2D157BF818ED5B3E0034F953 /* PrintSettingsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BF718ED5B3E0034F953 /* PrintSettingsHelper.m */; };
 		2D157BFB18ED5B580034F953 /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BFA18ED5B580034F953 /* XMLParser.m */; };
+		2D157C0118ED765F0034F953 /* PreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157C0018ED765F0034F953 /* PreviewView.m */; };
 		2D232D7218E511D4008D06C8 /* PrintSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D7118E511D4008D06C8 /* PrintSettingsTableViewController.m */; };
 		2D232D7518E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D7418E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m */; };
 		2D232D7818E517E3008D06C8 /* PrintSettingsPrinterItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D7718E517E3008D06C8 /* PrintSettingsPrinterItemCell.m */; };
@@ -125,6 +126,8 @@
 		2D157BF718ED5B3E0034F953 /* PrintSettingsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsHelper.m; sourceTree = "<group>"; };
 		2D157BF918ED5B580034F953 /* XMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLParser.h; sourceTree = "<group>"; };
 		2D157BFA18ED5B580034F953 /* XMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLParser.m; sourceTree = "<group>"; };
+		2D157BFF18ED765F0034F953 /* PreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewView.h; sourceTree = "<group>"; };
+		2D157C0018ED765F0034F953 /* PreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewView.m; sourceTree = "<group>"; };
 		2D232D7018E511D4008D06C8 /* PrintSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsTableViewController.h; sourceTree = "<group>"; };
 		2D232D7118E511D4008D06C8 /* PrintSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsTableViewController.m; sourceTree = "<group>"; };
 		2D232D7318E51247008D06C8 /* PrintSettingsPrinterHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterHeaderCell.h; sourceTree = "<group>"; };
@@ -619,6 +622,8 @@
 				2DA1AED418E2EF8500085F27 /* MenuScrollView.m */,
 				2DA1AED518E2EF8500085F27 /* PDFPageView.h */,
 				2DA1AED618E2EF8500085F27 /* PDFPageView.m */,
+				2D157BFF18ED765F0034F953 /* PreviewView.h */,
+				2D157C0018ED765F0034F953 /* PreviewView.m */,
 				2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */,
 				2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */,
 			);
@@ -1048,6 +1053,7 @@
 				2DA1AF1F18E2EF9600085F27 /* HomeViewController.m in Sources */,
 				2DA1AEE318E2EF8500085F27 /* PDFPageView.m in Sources */,
 				2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */,
+				2D157C0118ED765F0034F953 /* PreviewView.m in Sources */,
 				2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */,
 				2DA1AF1D18E2EF9600085F27 /* SlidingViewController.m in Sources */,
 				2D232D9918E580D1008D06C8 /* PrintSettingsItemSwitchCell.m in Sources */,

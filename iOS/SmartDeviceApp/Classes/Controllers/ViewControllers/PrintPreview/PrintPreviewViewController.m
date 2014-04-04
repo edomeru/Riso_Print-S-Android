@@ -31,7 +31,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *pageLabel;
 
 // Preview View
-@property (nonatomic, weak) IBOutlet UIView *previewView;
+@property (nonatomic, weak) IBOutlet PreviewView *previewView;
 @property (nonatomic, weak) NSLayoutConstraint *aspectRatioConstraint;
 
 // PageView Controller
@@ -76,6 +76,7 @@
     
     self.printSettingsButton.hidden = YES;
     self.previewView.hidden = YES;
+    self.previewView.delegate = self;
     self.pageIsAnimating = NO;
     
     NSOperationQueue *renderQueue = [[NSOperationQueue alloc] init];
@@ -127,6 +128,7 @@
             self.printSettingsButton.hidden = NO;
             self.previewView.hidden = NO;
             self.pageNavArea.hidden = NO;
+            [self.activityIndicator stopAnimating];
             [self setupPreview];
             [self computeTotalPageNum];
             [self setupPageLabel];
@@ -144,54 +146,22 @@
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
 
     BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
     if(isLandscape == YES)
     {
-        aspectRatio = 1.0f / aspectRatio;
+        orientation = kPreviewViewOrientationLandscape;
     }
     
     self.previewView.hidden = NO;
-    self.previewView.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    // Create margin constraints
-    NSDictionary *metrics = @{@"margin": @PREVIEW_MARGIN};
-    NSDictionary *views = @{@"previewView": self.previewView};
-    NSArray *hMarginConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=margin)-[previewView]-(>=margin)-|" options:0 metrics:metrics views:views];
-    NSArray *vMarginConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=margin)-[previewView]-(>=margin)-|" options:0 metrics:metrics views:views];
-    
-    // Create max dimension constraints
-    NSLayoutConstraint *maxWidthConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.previewArea attribute:NSLayoutAttributeWidth multiplier:1.0f constant:-20.0f];
-    [maxWidthConstraint setPriority:UILayoutPriorityDefaultLow];
-    NSLayoutConstraint *maxHeighConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.previewArea attribute:NSLayoutAttributeHeight multiplier:1.0f constant:-20.0f];
-    [maxHeighConstraint setPriority:UILayoutPriorityDefaultLow];
-    
-    // Create alignment constraints
-    NSLayoutConstraint *xAlignConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.previewArea attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f];
-    [xAlignConstraint setPriority:UILayoutPriorityRequired];
-    [self.previewArea addConstraint:xAlignConstraint];
-    NSLayoutConstraint *yAlignConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.previewArea attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0.0f];
-    [yAlignConstraint setPriority:UILayoutPriorityRequired];
-    
-    // Create aspect ratio constraints
-    NSLayoutConstraint *aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.previewView attribute:NSLayoutAttributeHeight multiplier:aspectRatio constant:0.0f];
-    [aspectRatioConstraint setPriority:UILayoutPriorityRequired];
-    
-    // Add constraints
-    [self.previewArea addConstraints:hMarginConstraints];
-    [self.previewArea addConstraints:vMarginConstraints];
-    [self.previewArea addConstraints:@[maxWidthConstraint, maxHeighConstraint, xAlignConstraint, yAlignConstraint]];
-    [self.previewView addConstraint:aspectRatioConstraint];
-    self.aspectRatioConstraint = aspectRatioConstraint;
-    
-    // Apply constraints
-    [self.previewArea layoutIfNeeded];
+    [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
     
     // Create PageViewController
     // Assume left spine
     UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:UIPageViewControllerSpineLocationMin]}];
     pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self addChildViewController:pageViewController];
-    [self.previewView addSubview:pageViewController.view];
-    views = @{@"pageView": pageViewController.view};
+    [self.previewView.contentView addSubview:pageViewController.view];
+    NSDictionary *views = @{@"pageView": pageViewController.view};
     [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
     [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
     pageViewController.dataSource = self;
@@ -321,6 +291,13 @@
     [viewController setImage:pdfRenderOperation.image];
 }
 
+#pragma mark - 
+
+- (void)previewView:(PreviewView *)previewView didChangeZoomMode:(BOOL)zoomed
+{
+    [self.pageViewController.view setUserInteractionEnabled:!zoomed];
+}
+
 #pragma mark -
 
 - (void)previewSettingDidChange
@@ -335,16 +312,12 @@
     // Recompute aspect ratio
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
     BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
     if(isLandscape == YES)
     {
-        aspectRatio = 1.0f / aspectRatio;
+        orientation = kPreviewViewOrientationLandscape;
     }
-    
-    NSLayoutConstraint *aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.previewView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.previewView attribute:NSLayoutAttributeHeight multiplier:aspectRatio constant:0.0f];
-    [aspectRatioConstraint setPriority:UILayoutPriorityRequired];
-    [self.previewView removeConstraint:self.aspectRatioConstraint];
-    [self.previewView addConstraint:aspectRatioConstraint];
-    self.aspectRatioConstraint = aspectRatioConstraint;
+    [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
     
     [self computeTotalPageNum];
     [self setupPageLabel];

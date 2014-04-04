@@ -438,17 +438,16 @@
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="440"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GCh-6b-axd">
-                                                <rect key="frame" x="0.0" y="0.0" width="320" height="440"/>
+                                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GCh-6b-axd" customClass="PreviewView">
+                                                <rect key="frame" x="10" y="10" width="300" height="420"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             </view>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="GCh-6b-axd" firstAttribute="leading" secondItem="q8a-bN-pFV" secondAttribute="leading" placeholder="YES" id="2OP-un-iU7"/>
-                                            <constraint firstAttribute="trailing" secondItem="GCh-6b-axd" secondAttribute="trailing" placeholder="YES" id="Agd-Lc-5vK"/>
-                                            <constraint firstAttribute="bottom" secondItem="GCh-6b-axd" secondAttribute="bottom" placeholder="YES" id="nA1-6Q-EaA"/>
-                                            <constraint firstItem="GCh-6b-axd" firstAttribute="top" secondItem="q8a-bN-pFV" secondAttribute="top" placeholder="YES" id="o0i-Sd-VlF"/>
+                                            <constraint firstItem="GCh-6b-axd" firstAttribute="leading" secondItem="q8a-bN-pFV" secondAttribute="leading" constant="10" id="2OP-un-iU7"/>
+                                            <constraint firstAttribute="trailing" secondItem="GCh-6b-axd" secondAttribute="trailing" constant="10" id="Agd-Lc-5vK"/>
+                                            <constraint firstAttribute="bottom" secondItem="GCh-6b-axd" secondAttribute="bottom" constant="10" id="nA1-6Q-EaA"/>
+                                            <constraint firstItem="GCh-6b-axd" firstAttribute="top" secondItem="q8a-bN-pFV" secondAttribute="top" constant="10" id="o0i-Sd-VlF"/>
                                         </constraints>
                                     </view>
                                     <view hidden="YES" autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XgQ-UQ-sVe" userLabel="Page Number and Slider">
@@ -2816,7 +2815,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="c8V-UF-iWe"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>
