@@ -30,7 +30,7 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("Index", typeof(int), typeof(KeyRadioButtonControl), null);
 
         public static readonly DependencyProperty IconImageProperty =
-            DependencyProperty.Register("IconImage", typeof(PrintSettingOption), typeof(KeyRadioButtonControl), null);
+            DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyRadioButtonControl), null);
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyRadioButtonControl), null);

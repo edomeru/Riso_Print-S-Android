@@ -8,7 +8,10 @@ namespace SmartDeviceApp.Common.Enum
 {
     public enum RightPaneMode
     {
-        PrintSettingsVisible,
-        PrintSettingOptionsVisible
+        PrintSettings,
+        DefaultPrintSettings,
+        AddPrinter,
+        SearchPrinter,
+        Hidden
     }
 }

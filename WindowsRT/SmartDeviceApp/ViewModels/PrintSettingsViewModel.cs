@@ -106,8 +106,8 @@ namespace SmartDeviceApp.ViewModels
                     break;
 
                 case PrintSettingType.list:
-                    Messenger.Default.Send<PrintSetting>(printSetting);
-                    Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingOptionsVisible);
+                    new ViewModelLocator().PrintSettingOptionsViewModel.PrintSetting = printSetting;
+                    new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettingOptions;
                     SelectedPrintSetting = printSetting;
                     break;
                 case PrintSettingType.unknown:

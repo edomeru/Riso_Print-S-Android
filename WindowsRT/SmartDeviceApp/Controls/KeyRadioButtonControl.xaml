@@ -43,7 +43,7 @@
                 <controls:KeyValueControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                           LeftButtonVisibility="Collapsed"
                                           RightButtonVisibility="Collapsed"
-                                          IconImage="{Binding IconImage}">
+                                          IconImage="{Binding IconImage, ElementName=keyRadioButtonControl}">
                     <controls:KeyValueControl.ValueContent>
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Ellipse x:Name="BackgroundEllipse"

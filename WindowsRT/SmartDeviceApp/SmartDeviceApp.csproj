@@ -108,14 +108,16 @@
     </Compile>
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\PageViewMode.cs" />
-    <Compile Include="Common\Enum\PreviewViewMode.cs" />
+    <Compile Include="Common\Enum\AppViewMode.cs" />
     <Compile Include="Common\Enum\ListValueType.cs" />
     <Compile Include="Common\Enum\PrintSettingType.cs" />
+    <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
     <Compile Include="Common\Enum\RightPaneMode.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\GlobalizationUtility.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
+    <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
       <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
@@ -132,12 +134,18 @@
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SidePaneTitleControl.xaml.cs">
+      <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\IntToStringConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemCheckedConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
+    <Compile Include="Converters\WidthHeightConverter.cs" />
+    <Compile Include="Selectors\RightPaneTemplateSelector.cs" />
+    <Compile Include="Selectors\AppViewTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
     <Compile Include="Converters\ItemClickedConverter.cs" />
@@ -188,14 +196,24 @@
     <Compile Include="Models\PagePrintSetting.cs" />
     <Compile Include="Models\PrintSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
-    <Compile Include="ViewModels\PreviewPageViewModel.cs" />
     <Compile Include="ViewModels\PrintPreviewViewModel.cs" />
     <Compile Include="ViewModels\PrintSettingOptionsViewModel.cs" />
+    <Compile Include="ViewModels\PrintSettingsPaneViewModel.cs" />
     <Compile Include="ViewModels\PrintSettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\AddPrinterPane.xaml.cs">
+      <DependentUpon>AddPrinterPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AppView.xaml.cs">
+      <DependentUpon>AppView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainMenuPane.xaml.cs">
       <DependentUpon>MainMenuPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrintersPage.xaml.cs">
+      <DependentUpon>PrintersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PrintPreviewPage.xaml.cs">
       <DependentUpon>PrintPreviewPage.xaml</DependentUpon>
@@ -203,14 +221,17 @@
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RightPane.xaml.cs">
-      <DependentUpon>RightPane.xaml</DependentUpon>
+    <Compile Include="Views\PrintSettingsPane.xaml.cs">
+      <DependentUpon>PrintSettingsPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PrintSettingOptionsBox.xaml.cs">
       <DependentUpon>PrintSettingOptionsBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PrintSettingsBox.xaml.cs">
       <DependentUpon>PrintSettingsBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchPrinterPane.xaml.cs">
+      <DependentUpon>SearchPrinterPane.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -349,6 +370,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\SidePaneTitleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\TwoPageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -372,7 +397,19 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Views\AddPrinterPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AppView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainMenuPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -384,7 +421,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\RightPane.xaml">
+    <Page Include="Views\PrintSettingsPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -393,6 +430,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PrintSettingsBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchPrinterPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
