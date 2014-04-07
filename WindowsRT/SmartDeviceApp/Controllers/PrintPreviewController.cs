@@ -256,6 +256,7 @@ namespace SmartDeviceApp.Controllers
                 if (_selectedPrinter.PrintSetting.Duplex != selectedIndex)
                 {
                     _selectedPrinter.PrintSetting.Duplex = selectedIndex;
+                    isPreviewPageAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
@@ -523,7 +524,21 @@ namespace SmartDeviceApp.Controllers
                     _pagesPerSheet);
 
             List<LogicalPage> logicalPages = await getLogicalPagesTask;
-            await ApplyPrintSettings(logicalPages, targetPreviewPageIndex, true);
+            await ApplyPrintSettings(logicalPages, targetPreviewPageIndex, (_currPreviewPageIndex % 2 != 0), true);
+
+            if (_isDuplex)
+            {
+                ++_currPreviewPageIndex;
+                int nextLogicalPageIndex = targetLogicalPageIndex + _pagesPerSheet;
+                DocumentController.Instance.GenerateLogicalPages(nextLogicalPageIndex,
+                    _pagesPerSheet);
+                Task<List<LogicalPage>> getNextLogicalPagesTask =
+                    DocumentController.Instance.GetLogicalPages(nextLogicalPageIndex,
+                        _pagesPerSheet);
+
+                List<LogicalPage> nextLogicalPages = await getNextLogicalPagesTask;
+                await ApplyPrintSettings(nextLogicalPages, _currPreviewPageIndex, (_currPreviewPageIndex % 2 != 0), false);
+            }
 
             GenerateNearPreviewPages();
         }
@@ -630,7 +645,8 @@ namespace SmartDeviceApp.Controllers
                     _pagesPerSheet);
 
                 // Next page
-                await ApplyPrintSettings(nextLogicalPages, _currPreviewPageIndex + 1, false);
+                int nextPreviewPageIndex = _currPreviewPageIndex + 1;
+                await ApplyPrintSettings(nextLogicalPages, nextPreviewPageIndex, (nextPreviewPageIndex % 2 != 0), false);
             }
 
             if (!_previewPages.TryGetValue(_currPreviewPageIndex - 1, out previewPage))
@@ -641,7 +657,8 @@ namespace SmartDeviceApp.Controllers
                     _pagesPerSheet);
 
                 // Previous page
-                await ApplyPrintSettings(prevLogicalPages, _currPreviewPageIndex - 1, false);
+                int prevPreviewPageIndex = _currPreviewPageIndex - 1;
+                await ApplyPrintSettings(prevLogicalPages, prevPreviewPageIndex, (prevPreviewPageIndex % 2 != 0), false);
             }
 
         }
@@ -910,11 +927,12 @@ namespace SmartDeviceApp.Controllers
         /// Applies print settings to LogicalPage images then creates a PreviewPage
         /// </summary>
         /// <param name="logicalPages">source LogicalPage images</param>
-        /// <param name="previewPageIndex">target page index</param>
+        /// <param name="previewPageIndex">target preview page index</param>
+        /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
         /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
-        /// <returns>task</returns>
+        /// <returns></returns>
         private async Task ApplyPrintSettings(List<LogicalPage> logicalPages, int previewPageIndex,
-            bool enableSend)
+            bool isBackSide, bool enableSend)
         {
             if (logicalPages != null && logicalPages.Count > 0)
             {
@@ -964,11 +982,12 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
+                bool isFinalPortrait = isPortrait;
                 // Check imposition value
                 if (_pagesPerSheet > 1)
                 {
                     finalBitmap = ApplyImposition(paperSize, pageImages, isPortrait,
-                        _selectedPrinter.PrintSetting.ImpositionOrder);
+                        _selectedPrinter.PrintSetting.ImpositionOrder, out isFinalPortrait);
                 }
                 else if (_pagesPerSheet == 1)
                 {
@@ -981,12 +1000,31 @@ namespace SmartDeviceApp.Controllers
                     ApplyMonochrome(finalBitmap);
                 }
 
+                int finishingSide = _selectedPrinter.PrintSetting.FinishingSide;
+                bool rotateForDuplex =
+                    (_selectedPrinter.PrintSetting.Duplex == (int)Duplex.LongEdge && !isFinalPortrait) ||
+                    (_selectedPrinter.PrintSetting.Duplex == (int)Duplex.ShortEdge && isFinalPortrait);
+                // Determine Finishing Side based on Duplex
+                if (_isDuplex && isBackSide && !rotateForDuplex)
+                {
+                    // Change the side of the staple if letf or right
+                    if (finishingSide == (int)FinishingSide.Left)
+                    {
+                        finishingSide = (int)FinishingSide.Right;
+                    }
+                    else if (finishingSide == (int)FinishingSide.Right)
+                    {
+                        finishingSide = (int)FinishingSide.Left;
+                    }
+                }
+
                 // Apply punch
                 int holeCount = PrintSettingConverter.PunchIntToNumberOfHolesConverter.Convert(
                         _selectedPrinter.PrintSetting.Punch);
                 if (holeCount > 0)
                 {
-                    await ApplyPunch(finalBitmap, holeCount, _selectedPrinter.PrintSetting.FinishingSide);
+
+                    await ApplyPunch(finalBitmap, holeCount, finishingSide);
                 }
 
                 // Apply staple
@@ -994,8 +1032,13 @@ namespace SmartDeviceApp.Controllers
                     _selectedPrinter.PrintSetting.BookletFinishing == (int)BookletFinishing.FoldAndStaple) ||
                     _selectedPrinter.PrintSetting.Staple != (int)Staple.Off)
                 {
-                    await ApplyStaple(finalBitmap, _selectedPrinter.PrintSetting.Staple,
-                        _selectedPrinter.PrintSetting.FinishingSide);
+                    await ApplyStaple(finalBitmap, _selectedPrinter.PrintSetting.Staple, finishingSide);
+                }
+
+                // Apply Duplex
+                if (_isDuplex && isBackSide && rotateForDuplex)
+                {
+                    finalBitmap = WriteableBitmapExtensions.Rotate(finalBitmap, 180);
                 }
 
                 try
@@ -1205,11 +1248,11 @@ namespace SmartDeviceApp.Controllers
         /// * portrait when imposition value is 4-up
         /// * otherwise landscape</returns>
         private WriteableBitmap ApplyImposition(Size paperSize, List<WriteableBitmap> pageImages,
-            bool isPortrait, int impositionOrder)
+            bool isPortrait, int impositionOrder, out bool isImpositionPortrait)
         {
             // Determine final orientation based on imposition
             bool isPagesPerSheetPerfectSquare = (Math.Sqrt(_pagesPerSheet) % 1) == 0;
-            bool isImpositionPortrait = (isPagesPerSheetPerfectSquare) ? isPortrait : !isPortrait;
+            isImpositionPortrait = (isPagesPerSheetPerfectSquare) ? isPortrait : !isPortrait;
             // Create target page image based on imposition
             WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize, isImpositionPortrait);
 
