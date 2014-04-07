@@ -13,12 +13,12 @@
 #import "PDFFileManager.h"
 
 
-#define FINISHING_MARGIN  	10.0f
+#define FINISHING_MARGIN        10.0f
 //approximate staple and punch dimensions in points
-#define STAPLE_TOP_WIDTH  	30.0f
+#define STAPLE_TOP_WIDTH        30.0f
 #define STAPLE_SIDE_WIDTH   	5.0f
 #define STAPLE_SIDE_HEIGHT  	42.4f //staple height when 
-#define PUNCH_WIDTH  		18.0f 
+#define PUNCH_WIDTH             18.0f
 
 //punch hole distance in points (converted from mm at 72dpi)
 #define PUNCH_2HOLE_DISTANCE 	228.0f
@@ -163,7 +163,38 @@
     }
     
     CGContextSaveGState(contextRef);
-    CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
+    //get the rect of pdf to know actual pdf size in points (which is at 72 ppi)
+    CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
+    if(self.printDocument.previewSetting.scaleToFit == YES) //Scale To Fit
+    {
+        //self.size is actual size of paper at 72ppi
+        //check if paper is larger than pdf size.
+        //if paper is larger than pdf, pdf must be scaled up to occupy whole paper but still retaining aspect ratio of pdf image
+        if(pdfRect.size.height < rect.size.height && pdfRect.size.width < rect.size.width)
+        {
+            //use the ratio from the side with less difference to the original size of the pdf
+            CGFloat scaleRatio  = rect.size.width/pdfRect.size.width;
+            CGFloat heightScaleRatio = rect.size.height/pdfRect.size.height;
+            if(scaleRatio > heightScaleRatio)
+            {
+                scaleRatio = heightScaleRatio;
+            }
+            rect.size.height/= scaleRatio;
+            rect.size.width /= scaleRatio;
+            CGContextScaleCTM(contextRef, scaleRatio, scaleRatio);
+        }
+   
+        //draw pdf at the center of the paper
+        CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
+    }
+    else
+    {
+        //Not scale to fit
+        //translate the origin so the upper left corner of the pdf coincides to the upper left corner of the paper/rect
+        CGContextTranslateCTM(contextRef, rect.origin.x, rect.origin.y);
+        CGContextTranslateCTM(contextRef, 0, -(pdfRect.size.height - rect.size.height));
+    }
+    
     CGContextDrawPDFPage(contextRef, pageRef);
     CGContextRestoreGState(contextRef);
 }
@@ -203,9 +234,9 @@
     else
     {
         rectArray = [NSArray arrayWithObjects:
-                                            [NSValue valueWithCGRect:leftRect],
-                                            [NSValue valueWithCGRect:rightRect],
-                                            nil];
+                        [NSValue valueWithCGRect:leftRect],
+                        [NSValue valueWithCGRect:rightRect],
+                        nil];
     }
     [self drawPagesInRects:rectArray atStartPageNumber:pageNumber inContext:contextRef];
 }
@@ -281,6 +312,7 @@
 
 -(void) drawFinishing:(CGContextRef) contextRef
 {
+    //For booklet finishing
     if(self.printDocument.previewSetting.booklet == YES)
     {
         if(self.printDocument.previewSetting.bookletFinish == kBookletTypeFoldAndStaple &&
@@ -298,6 +330,7 @@
         return;
     }
     
+    //For duplex, adjust the context  for the correct location of the staple and punch in the backside of the paper
     if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.isFrontPage == NO)
     {
         if([self shouldInvertImage] == NO)
@@ -330,12 +363,11 @@
     }
     
     kPunchType punchType = (kPunchType)self.printDocument.previewSetting.punch;
-    
     if(punchType > kPunchTypeNone)
     {
         [self drawPunch:contextRef withPunchType:punchType atFinishingSide: finishingSide];
     }
-    
+
 }
 
 -(void) drawStapleSingle: (CGContextRef) contextRef withStapleType: (kStapleType) stapleType  atFinishingSide: (kFinishingSide) finishingSide
