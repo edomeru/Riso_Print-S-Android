@@ -20,7 +20,7 @@ public class Setting extends XmlNode {
     
     public static final String ATTR_VAL_LIST = "list";
     public static final String ATTR_VAL_BOOLEAN = "boolean";
-    public static final String ATTR_VAL_NUMERIC = "default";
+    public static final String ATTR_VAL_NUMERIC = "numeric";
 
     public static final int TYPE_INVALID = -1;
     public static final int TYPE_LIST = 0;
