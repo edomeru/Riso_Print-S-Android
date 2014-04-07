@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 namespace SmartDeviceApp.Controls
 {
     [ContentProperty(Name = "Children")]
-    public sealed partial class ViewControl : UserControl
+    public partial class ViewControl : UserControl
     {
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(ViewControl), null);
@@ -34,6 +34,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty Button3CommandProperty =
             DependencyProperty.Register("Button3Command", typeof(ICommand), typeof(ViewControl), null);
+
+        public static new readonly DependencyProperty WidthProperty =
+            DependencyProperty.Register("Width", typeof(double), typeof(ViewControl), new PropertyMetadata(0, SetWidth));
         
         public ViewControl()
         {
@@ -69,6 +72,20 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ICommand)GetValue(Button3CommandProperty); }
             set { SetValue(Button3CommandProperty, value); }
+        }
+
+        public new double Width
+        {
+            get { return (double)GetValue(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
+        }
+
+        private static void SetWidth(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != null && e.NewValue is double)
+            {
+                ((ViewControl)obj).viewControlGrid.Width = (double)e.NewValue;
+            }
         }
     }
 }

@@ -40,6 +40,7 @@
 
     <!-- APP CONVERTERS START -->
     <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
     <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
     <conv:ItemCheckedConverter x:Key="ItemCheckedConverter"/>
@@ -47,7 +48,9 @@
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
+    <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
-    <!-- APP CONVERTERS END -->
+    <conv:WidthConverter x:Key="WidthConverter"/>
+    <!-- APP CONVERTERS END -->       
 
 </ResourceDictionary>

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
-    public enum PreviewViewMode
+    public enum PrintSettingsPaneMode
     {
-        MainMenuPaneVisible,
-        PreviewViewFullScreen,
-        RightPaneVisible
+        PrintSettings,
+        PrintSettingOptions
     }
 }

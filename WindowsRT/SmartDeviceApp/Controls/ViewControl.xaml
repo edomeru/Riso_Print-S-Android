@@ -20,7 +20,10 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Style="{StaticResource STYLE_ViewGrid}" >
+    <Grid x:Name="viewControlGrid"
+          Style="{StaticResource STYLE_ViewGrid}"
+          Width="{Binding Converter={StaticResource WidthConverter}}"
+          Height="{Binding Converter={StaticResource HeightConverter}}">
     	<Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>

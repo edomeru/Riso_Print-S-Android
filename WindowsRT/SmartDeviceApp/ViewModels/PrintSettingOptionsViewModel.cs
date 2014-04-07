@@ -30,7 +30,6 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            Messenger.Default.Register<PrintSetting>(this, (printSetting) => OnSelectPrintSetting(printSetting));
         }
 
         public PrintSetting PrintSetting
@@ -90,11 +89,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void OnSelectPrintSetting(PrintSetting printSetting)
-        {
-            PrintSetting = printSetting;
-        }
-
         private void SelectPrintSettingOptionExecute(PrintSettingOption option)
         {
             SelectedIndex = option.Index;
@@ -108,7 +102,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void BackToPrintSettingsExecute()
         {
-            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingsVisible);  
+            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
         }
     }
 
