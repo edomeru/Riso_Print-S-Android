@@ -27,6 +27,7 @@ namespace SmartDeviceApp.Models
     {
         public string Text { get; set; }
         public int Index { get; set; }
+        public bool IsEnabled { get; set; }
     }
 
     public class PrintSetting : ObservableObject
@@ -71,6 +72,7 @@ namespace SmartDeviceApp.Models
         }
         public object Default { get; set; }
         public List<PrintSettingOption> Options { get; set; }
+        public bool IsEnabled { get; set; }
     }
 
     public class PrintSettingGroup
