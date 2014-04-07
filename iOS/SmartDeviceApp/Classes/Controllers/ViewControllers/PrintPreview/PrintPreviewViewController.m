@@ -20,7 +20,9 @@
 
 @interface PrintPreviewViewController ()
 
-// IBOutlets
+/**
+ IBOutlets
+ */
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 @property (nonatomic, weak) IBOutlet UIButton *mainMenuButton;
 @property (nonatomic, weak) IBOutlet UIButton *printSettingsButton;
@@ -29,39 +31,150 @@
 @property (weak, nonatomic) IBOutlet UIView *pageNavArea;
 @property (weak, nonatomic) IBOutlet UISlider *pageScroll;
 @property (weak, nonatomic) IBOutlet UILabel *pageLabel;
-
-// Preview View
 @property (nonatomic, weak) IBOutlet PreviewView *previewView;
-@property (nonatomic, weak) NSLayoutConstraint *aspectRatioConstraint;
 
-// PageView Controller
+/**
+ Page view controller
+ */
 @property (nonatomic, weak) UIPageViewController *pageViewController;
 
-// Document object
+/**
+ Document object:
+ */
 @property (nonatomic, weak) PrintDocument *printDocument;
 
-// Display
+/**
+ Current page
+ */
 @property (nonatomic) NSInteger currentPage;
+
+/**
+ Indicates whether or not the page view controller is currently being animated (page curl)
+ */
 @property (nonatomic) BOOL pageIsAnimating;
+
+/**
+ Number of pages
+ */
 @property (nonatomic) NSInteger totalPageNum;
+
+/**
+ Number of pdf pages per logical page (variations based on 2-up/4-up setting)
+ */
 @property (nonatomic) NSInteger numPDFPagesPerPage;
 
-// Operations
+/**
+ Render queue
+ */
 @property (atomic, strong) NSOperationQueue *renderQueue;
-@property (atomic, strong) NSMutableDictionary *renderOperations;
-@property (atomic, strong) NSMutableDictionary *renderedViewControllers;
 
+/**
+ List of active render operations
+ */
+@property (atomic, strong) NSMutableArray *renderArray;
+
+/**
+ Cache of pages and rendered images
+ */
+@property (atomic, strong) RenderCache *renderCache;
+
+/**
+ Prepares PDF document
+ */
 - (void)loadPDF;
+
+/**
+ Setup views for preview
+ */
 - (void)setupPreview;
-- (void)computeTotalPageNum;
-- (void)setupPageScroll;
-- (void)setupPageLabel;
+
+/**
+ Setup page view controller based on spine location
+ */
 - (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation) spineLocation navigationOrientation: (UIPageViewControllerNavigationOrientation) navigationOrientation;
--(BOOL) applyBindSetting;
+
+/**
+ Calculate total page number based on print settings
+ */
+- (void)computeTotalPageNum;
+
+/**
+ Setup page scroll view
+ */
+- (void)setupPageScroll;
+
+/**
+ Setup page label view
+ */
+- (void)setupPageLabel;
+
+/**
+ Updates spine setting of page view controller based on print setting
+ @return YES if update is succesful
+ */
+- (BOOL)applyBindSetting;
+
+/**
+ Loads next view controller of the page view controller
+ @param index
+        Index of current view controller
+ @return Next view controller
+ */
+- (UIViewController *)nextViewController:(NSInteger)index;
+
+/**
+ Loads previous view controlller of the page view controller
+ @param index
+        Index of the current view controller
+ @return Previous view controller
+ */
+- (UIViewController *)previousViewController:(NSInteger)index;
+
+/**
+ Loads view controller for the specified index
+ @param index
+        Index of the view controller to be loaded
+ @return View controller for the specified index
+ */
+- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index;
+
+/**
+ Change current page to specified page
+ @param pageNum
+        Index of the page
+ */
+- (void)goToPage:(NSInteger)pageNum;
+
+/**
+ Action when view unwinds back to print preview
+ */
+- (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue;
+
+/**
+ Action when main menu button is tapped
+ */
+- (IBAction)mainMenuAction:(id)sender;
+
+/**
+ Action when print settings button is tapped
+ */
+- (IBAction)printSettingsAction:(id)sender;
+
+/**
+ Action when page scroller thumb is dragged
+ */
+- (IBAction)dragPageScrollAction:(id)sender;
+
+/**
+ Action when page scroller is tapped
+ */
+- (IBAction)tapPageScrollAction:(id)sender;
+
 @end
 
 @implementation PrintPreviewViewController
 
+#pragma mark - Public Methods
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -74,7 +187,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
     
     self.printSettingsButton.hidden = YES;
     self.previewView.hidden = YES;
@@ -82,11 +194,12 @@
     self.pageIsAnimating = NO;
     
     NSOperationQueue *renderQueue = [[NSOperationQueue alloc] init];
-    renderQueue.maxConcurrentOperationCount = 1;
+    renderQueue.maxConcurrentOperationCount = 2;
     renderQueue.name = @"RenderQueue";
     self.renderQueue = renderQueue;
-    self.renderOperations = [[NSMutableDictionary alloc] init];
-    self.renderedViewControllers = [[NSMutableDictionary alloc] init];
+    self.renderArray = [[NSMutableArray alloc] init];
+    self.renderCache = [[RenderCache alloc] initWithMaxItemCount:20];
+    self.renderCache.delegate = self;
     
     if ([[PDFFileManager sharedManager] fileAvailableForLoad])
     {
@@ -119,32 +232,38 @@
     [self.activityIndicator startAnimating];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
-        [[PDFFileManager sharedManager] loadFile];
-        dispatch_async(dispatch_get_main_queue(), ^
+        kPDFError error = [[PDFFileManager sharedManager] setupDocument];
+        if (error == kPDFErrorNone)
         {
-            self.printDocument = [[PDFFileManager sharedManager] printDocument];
-            self.printDocument.delegate = self;
-            self.currentPage = 0;
-            self.numPDFPagesPerPage = 1;
-            self.titleLabel.text = [[PDFFileManager sharedManager] fileName];
-            self.printSettingsButton.hidden = NO;
-            self.previewView.hidden = NO;
-            self.pageNavArea.hidden = NO;
-            [self.activityIndicator stopAnimating];
-            [self setupPreview];
-            [self computeTotalPageNum];
-            [self setupPageLabel];
-            [self setupPageScroll];
-        });
+            dispatch_async(dispatch_get_main_queue(), ^
+            {
+                [self setupPreview];
+            });
+        }
+        else
+        {
+            // TODO: Error message
+        }
     });
 }
 
 - (void)setupPreview
 {
-    // *Assume portrait
-    // Get aspect ratio
+    self.printDocument = [[PDFFileManager sharedManager] printDocument];
+    self.printDocument.delegate = self;
+    self.currentPage = 0;
+    self.numPDFPagesPerPage = 1;
+    self.titleLabel.text = [[PDFFileManager sharedManager] fileName];
+    self.printSettingsButton.hidden = NO;
+    self.previewView.hidden = NO;
+    self.pageNavArea.hidden = NO;
+    [self.activityIndicator stopAnimating];
+    [self computeTotalPageNum];
+    [self setupPageLabel];
+    [self setupPageScroll];
+    
+    // Get aspect ratio and orientation
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
-
     BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
     kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
     if(isLandscape == YES)
@@ -253,7 +372,109 @@
     return YES;
 }
 
-#pragma mark - UIPageViewControllerDataSource
+- (UIViewController *)nextViewController:(NSInteger)index
+{
+    if((self.totalPageNum - 1) == index)
+    {
+        return nil;
+    }
+    index++;
+    return [self viewControllerAtIndex:index];
+}
+
+- (UIViewController *)previousViewController:(NSInteger)index
+{
+    if(index == 0)
+    {
+        return nil;
+    }
+    index--;
+    return [self viewControllerAtIndex:index];
+}
+
+- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index
+{
+    // Check if page needs to be created
+    RenderCacheItem *renderCacheItem = [self.renderCache itemWithIndex:index];
+    if (renderCacheItem == nil)
+    {
+        renderCacheItem = [[RenderCacheItem alloc] init];
+        renderCacheItem.viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+        renderCacheItem.viewController.pageIndex = index;
+        [self.renderCache addItem:renderCacheItem withIndex:index];
+    }
+    else if (renderCacheItem.image != nil)
+    {
+        // Use cache if it is available
+        if (renderCacheItem.viewController == nil)
+        {
+            renderCacheItem.viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+            renderCacheItem.viewController.pageIndex = index;
+        }
+        renderCacheItem.viewController.image = renderCacheItem.image;
+    }
+    
+    NSMutableArray *activeIndices = [[NSMutableArray alloc] init];
+    // Obtain list of pages that is currently being rendered in the background
+    for (PDFRenderOperation *renderOperation in self.renderArray)
+    {
+        [activeIndices addObjectsFromArray:renderOperation.pageIndices];
+    }
+    
+    NSMutableArray *indices = [[NSMutableArray alloc] init];
+    // Add current page only if it is not already being rendered in the background or if it is already rendered
+    if (renderCacheItem.image == nil && [activeIndices indexOfObject:[NSNumber numberWithUnsignedInteger:index]] == NSNotFound)
+    {
+        [indices addObject:[NSNumber numberWithUnsignedInteger:index]];
+    }
+    
+    // Add pages -5.. and ..+5 of the current page
+    for (int i = 1; i <= 5; i++)
+    {
+        NSInteger forwardIndex = index + i;
+        NSInteger backwardIndex = index - i;
+        
+        // Add only valid pages and if the page is not already being rendered in the background or if it is already rendered
+        if (forwardIndex < self.totalPageNum)
+        {
+            //RenderCacheItem *forwardCacheItem = [self.renderCache objectForKey:[NSNumber numberWithUnsignedInteger:forwardIndex]];
+            RenderCacheItem *forwardCacheItem = [self.renderCache itemWithIndex:forwardIndex];
+            if ((forwardCacheItem == nil || forwardCacheItem.image == nil) && [activeIndices indexOfObject:[NSNumber numberWithUnsignedInteger:forwardIndex]] == NSNotFound)
+            {
+                [indices addObject:[NSNumber numberWithUnsignedInteger:forwardIndex]];
+            }
+        }
+        if (backwardIndex >= 0)
+        {
+            //RenderCacheItem *backwardCacheItem = [self.renderCache objectForKey:[NSNumber numberWithUnsignedInteger:backwardIndex]];
+            RenderCacheItem *backwardCacheItem = [self.renderCache itemWithIndex:backwardIndex];
+            if ((backwardCacheItem == nil || backwardCacheItem.image == nil) && [activeIndices indexOfObject:[NSNumber numberWithUnsignedInteger:backwardIndex]] == NSNotFound)
+            {
+                [indices addObject:[NSNumber numberWithUnsignedInteger:backwardIndex]];
+            }
+        }
+    }
+    
+    // Create a render operation only if there is a page to render
+    if (indices.count > 0)
+    {
+        BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+        CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize isLandscape:isLandscape];
+        PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:size delegate:self];
+        [self.renderArray addObject:renderOperation];
+        [self.renderQueue addOperation:renderOperation];
+    }
+    
+    return renderCacheItem.viewController;
+}
+
+- (void)goToPage:(NSInteger)pageNum
+{
+    PDFPageContentViewController *current = [self viewControllerAtIndex:pageNum];
+    [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+}
+
+#pragma mark - UIPageViewControllerDataSource Methods
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
@@ -283,57 +504,6 @@
     return [self nextViewController:index];
 }
 
-- (UIViewController *)nextViewController:(NSInteger)index
-{
-    if((self.totalPageNum - 1) == index)
-    {
-        return nil;
-    }
-    index++;
-    return [self viewControllerAtIndex:index];
-}
-
-- (UIViewController *)previousViewController:(NSInteger)index
-{
-    if(index == 0)
-    {
-        return nil;
-    }
-    index--;
-    return [self viewControllerAtIndex:index];
-}
-
-- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index
-{
-    NSNumber *pageIndexKey = [NSNumber numberWithInteger:index];
-    
-    // Check if page needs to be created
-    PDFPageContentViewController *viewController = [self.renderedViewControllers objectForKey:pageIndexKey];
-    if (viewController == nil)
-    {
-        viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
-        viewController.pageIndex = index;
-        
-        // TODO: add buffer size limit
-        [self.renderedViewControllers setObject:viewController forKey:pageIndexKey];
-    }
-    
-    // Do not create a render operation if one is already started
-    PDFRenderOperation *existingRenderOperation = [self.renderOperations objectForKey:pageIndexKey];
-    if (existingRenderOperation != nil)
-    {
-        return viewController;
-    }
-    
-    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
-    // Create render option
-    CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize isLandscape:isLandscape];
-    PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndex:index size:size delegate:self];
-    [self.renderOperations setObject:renderOperation forKey:pageIndexKey];
-    [self.renderQueue addOperation:renderOperation];
-    
-    return viewController;
-}
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
 {
@@ -356,32 +526,58 @@
     }
 }
 
-#pragma mark -
-- (void)renderDidDFinish:(PDFRenderOperation *)pdfRenderOperation
+#pragma mark - PDFRenderOperationDelegate Methods
+
+- (void)renderOperation:(PDFRenderOperation *)pdfRenderOperation didFinishRenderingImageForPage:(NSNumber *)pageIndex
 {
-    NSNumber *pageIndexKey = [NSNumber numberWithInteger:pdfRenderOperation.pageIndex];
-    [self.renderOperations removeObjectForKey:pageIndexKey];
-    PDFPageContentViewController *viewController = [self.renderedViewControllers objectForKey:pageIndexKey];
-    [viewController setImage:pdfRenderOperation.image];
+    UIImage *image = [pdfRenderOperation.images objectForKey:pageIndex];
+    //RenderCacheItem *renderCacheItem = [self.renderCache objectForKey:pageIndex];
+    RenderCacheItem *renderCacheItem = [self.renderCache itemWithIndex:[pageIndex unsignedIntegerValue]];
+    if (renderCacheItem == nil)
+    {
+        renderCacheItem = [[RenderCacheItem alloc] init];
+        //[self.renderCache setObject:renderCacheItem forKey:pageIndex];
+        [self.renderCache addItem:renderCacheItem withIndex:[pageIndex unsignedIntegerValue]];
+    }
+    renderCacheItem.image = image;
+    renderCacheItem.viewController.image = image;
 }
 
-#pragma mark - 
+- (void)renderDidDFinish:(PDFRenderOperation *)pdfRenderOperation
+{
+    [self.renderArray removeObject:pdfRenderOperation];
+}
+
+#pragma mark - PreviewViewDelegate Methods
 
 - (void)previewView:(PreviewView *)previewView didChangeZoomMode:(BOOL)zoomed
 {
     [self.pageViewController.view setUserInteractionEnabled:!zoomed];
 }
 
-#pragma mark -
+#pragma mark - RenderCacheDelegate Methods
+
+- (void)cache:(NSCache *)cache willEvictObject:(id)obj
+{
+    RenderCacheItem *renderCacheItem = obj;
+    NSLog(@"**Releasing: %d **", renderCacheItem.viewController.pageIndex);
+}
+
+- (NSUInteger) currentIndex
+{
+    return self.currentPage;
+}
+
+#pragma mark - PrintDocument Delegate Methods
 
 - (void)previewSettingDidChange
 {
-    // Destroy cache
-    [self.renderedViewControllers removeAllObjects];
-    
     // Cancel all operations
     [self.renderQueue cancelAllOperations];
-    [self.renderOperations removeAllObjects];
+    [self.renderArray removeAllObjects];
+    
+    // Clear cache
+    [self.renderCache removeAllItems];
     
     // Recompute aspect ratio
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
@@ -402,25 +598,9 @@
     [self goToPage:self.currentPage];
 }
 
-- (void)goToPage:(NSInteger)pageNum
-{
-    PDFPageContentViewController *current = [self viewControllerAtIndex:pageNum];
-    [self.pageViewController setViewControllers:@[current] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
-}
 
-#pragma mark - IBActions
+#pragma mark - IBAction Methods
 
-- (IBAction)mainMenuAction:(id)sender
-{
-    [self.mainMenuButton setEnabled:NO];
-    [self performSegueTo:[HomeViewController class]];
-}
-
-- (IBAction)printSettingsAction:(id)sender
-{
-    [self.printSettingsButton setEnabled:NO];
-    [self performSegueTo:[PrintSettingsViewController class]];
-}
 
 - (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
 {
@@ -436,7 +616,18 @@
     }
 }
 
-/*Action when slider is dragged*/
+- (IBAction)mainMenuAction:(id)sender
+{
+    [self.mainMenuButton setEnabled:NO];
+    [self performSegueTo:[HomeViewController class]];
+}
+
+- (IBAction)printSettingsAction:(id)sender
+{
+    [self.printSettingsButton setEnabled:NO];
+    [self performSegueTo:[PrintSettingsViewController class]];
+}
+
 - (IBAction)dragPageScrollAction:(id)sender
 {
     UISlider *slider  = (UISlider *) sender;
@@ -446,7 +637,6 @@
     [self setupPageLabel];
 }
 
-/*Action when slider is tapped*/
 - (IBAction)tapPageScrollAction:(id)sender
 {
     UIGestureRecognizer *tap =  (UIGestureRecognizer *)sender;

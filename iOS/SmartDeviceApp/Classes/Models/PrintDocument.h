@@ -8,25 +8,46 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol PrintDocumentDelegate
+@protocol PrintDocumentDelegate;
+@class PreviewSetting;
 
-@required
-- (void)previewSettingDidChange;
+@interface PrintDocument : NSObject
+
+/**
+ URL of the PDF File
+ */
+@property (nonatomic, readonly) NSURL *url;
+
+/**
+ Current Preview Setting
+ */
+@property (nonatomic, strong) PreviewSetting *previewSetting;
+
+/**
+ Delegate that will handle Preview Setting changes
+ */
+@property (nonatomic, weak) id<PrintDocumentDelegate> delegate;
+
+/**
+ Page count of the PDF File
+ */
+@property (nonatomic, readonly) NSInteger pageCount;
+
+/**
+ Initialize Print Document with URL of the PDF File
+ @param url
+        URL of the PDF File
+ */
+- (id)initWithURL:(NSURL *)url;
 
 @end
 
-@class PreviewSetting;
-@interface PrintDocument : NSObject
+@protocol PrintDocumentDelegate <NSObject>
 
-@property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
-@property (nonatomic, readonly) NSInteger pageCount;
-@property (nonatomic, strong) PreviewSetting *previewSetting;
-@property (nonatomic, weak) id<PrintDocumentDelegate> delegate;
-
-
-// TODO:
-// Add selected printer
-
-- (id)initWithURL:(NSURL *)url;
+@required
+/**
+ Notifies the delegate when a preview setting has changed
+ */
+- (void)previewSettingDidChange;
 
 @end

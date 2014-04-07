@@ -8,24 +8,64 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ PDF Error types
+ */
 typedef enum
 {
-    PDF_ERROR_NONE,
-    PDF_ERROR_ENCRYPTED,
-    PDF_ERROR_OPEN,
-    PDF_ERROR_LOCKED,
-    PDF_ERROR_PRINTING_NOT_ALLOWED,
-    PDF_ERROR_PROCESSING_FAILED
-} T_PDF_ERROR;
+    /**
+     No error
+     */
+    kPDFErrorNone,
+    
+    /**
+     PDF File cannot be opened
+     */
+    kPDFErrorOpen,
+    
+    /**
+     PDF File is locked/has open password
+     */
+    kPDFErrorLocked,
+    
+    /**
+     PDF File does not allow printing
+     */
+    kPDFErrorPrintingNotAllowed,
+    
+    /**
+     PDF File was not copied succesfully
+     */
+    kPDFErrorProcessingFailed
+} kPDFError;
 
 @class PrintDocument;
 
 @interface PDFFileManager : NSObject
 
+/**
+ Indicates whether or not a file is available for loading (Open In...)
+ */
 @property (nonatomic) BOOL fileAvailableForLoad;
+
+/**
+ Indicates whether or not a file ready for preview
+ */
 @property (nonatomic, readonly) BOOL fileAvailableForPreview;
+
+/**
+ URL of the PDF File
+ */
 @property (nonatomic, strong) NSURL *fileURL;
+
+/**
+ File name (without full path) of the PDF File
+ */
 @property (nonatomic, weak, readonly) NSString *fileName;
+
+/**
+ Print Document object
+ */
 @property (nonatomic, strong, readonly) PrintDocument *printDocument;
 
 /**
@@ -34,6 +74,9 @@ typedef enum
  **/
 + (id)sharedManager;
 
-- (T_PDF_ERROR)loadFile;
+/**
+ Prepares the document for preview
+ */
+- (kPDFError)setupDocument;
 
 @end

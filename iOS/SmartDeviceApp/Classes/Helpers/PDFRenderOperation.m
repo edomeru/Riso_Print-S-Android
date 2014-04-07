@@ -12,7 +12,6 @@
 #import "PrintPreviewHelper.h"
 #import "PDFFileManager.h"
 
-
 #define FINISHING_MARGIN  	10.0f
 //approximate staple and punch dimensions in points
 #define STAPLE_TOP_WIDTH  	30.0f
@@ -27,22 +26,47 @@
 
 @interface PDFRenderOperation()
 
+@property (nonatomic, strong) NSArray *pageIndices;
+/**
+ Print Document object
+ */
 @property (nonatomic, weak) PrintDocument *printDocument;
+
+/**
+ Dimension of the ouput images
+ */
 @property (nonatomic) CGSize size;
-@property (nonatomic, strong) UIImage *image;
+
+/**
+ Current that is being rendered
+ */
+@property (nonatomic) NSUInteger currentPage;
+
+- (void)drawPagesInRect:(CGRect)rect inContext:(CGContextRef)contextRef;
+- (void)drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext:(CGContextRef)contextRef;
+- (void)draw2In1InContext:(CGContextRef)contextRef;
+- (void)draw4In1InContext:(CGContextRef)contextRef;
+- (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef)contextRef;
+- (void)drawFinishing:(CGContextRef)contextRef;
+- (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType atFinishingSide:(kFinishingSide)finishingSide;
+- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide;
+- (void)drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide;
 
 @end
 
 @implementation PDFRenderOperation
 
-- (id)initWithPageIndex:(NSInteger)pageIndex size:(CGSize)size delegate:(id<PDFRenderOperationDelegate>)delegate
+#pragma mark - Public Methods
+
+- (id)initWithPageIndexSet:(NSArray *)pageIndices size:(CGSize)size delegate:(id<PDFRenderOperationDelegate>)delegate
 {
     self = [super init];
     if (self)
     {
-        _pageIndex = pageIndex;
+        _pageIndices = pageIndices;
         _size = size;
         _delegate = delegate;
+        _images = [[NSMutableDictionary alloc] init];
         _printDocument = [[PDFFileManager sharedManager] printDocument];
     }
     return self;
@@ -60,6 +84,7 @@
             return;
         }
         
+        // Create color space
         CGColorSpaceRef colorSpaceRef;
         CGBitmapInfo bitmapInfo;
         if ([PrintPreviewHelper isGrayScaleColorForColorModeSetting:(kColorMode)self.printDocument.previewSetting.colorMode])
@@ -80,6 +105,7 @@
             return;
         }
         
+        // Create bitmap context
         CGContextRef contextRef = CGBitmapContextCreate(nil, self.size.width, self.size.height, 8, 0, colorSpaceRef, bitmapInfo);
         CGColorSpaceRelease(colorSpaceRef);
         
@@ -89,40 +115,58 @@
             return;
         }
         
-        CGContextSetRGBFillColor(contextRef, 1.0f, 1.0f, 1.0f, 1.0f);
-        CGContextFillRect(contextRef, rect);
-        
-        CGContextSaveGState(contextRef);
+        // Flip transform
         CGContextTranslateCTM(contextRef, 0.0f, self.size.height);
         CGContextScaleCTM(contextRef, 1.0f, -1.0f);
         
-        [self drawPagesInRect:rect inContext:contextRef];
+        // Render pages
+        [self.pageIndices enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSNumber *index = obj;
+            self.currentPage = [index unsignedIntegerValue];
+            
+            // Clear context with white fill
+            CGContextSetRGBFillColor(contextRef, 1.0f, 1.0f, 1.0f, 1.0f);
+            CGContextFillRect(contextRef, rect);
+            
+            // Render page
+            [self drawPagesInRect:rect inContext:contextRef];
+            
+            // Cancel check
+            if (self.isCancelled)
+            {
+                *stop = YES;
+                return;
+            }
+            
+            // Render finishing
+            [self drawFinishing:contextRef];
+            
+            if (self.isCancelled)
+            {
+                *stop = YES;
+                return;
+            }
+            
+            // Create image
+            CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
+            UIImage *image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:UIImageOrientationDownMirrored];
+            [self.images setObject:image forKey:index];
+            CGImageRelease(imageRef);
+            dispatch_sync(dispatch_get_main_queue(), ^(void)
+            {
+                // Notify delegate that a page has finished rendering
+                [self.delegate renderOperation:self didFinishRenderingImageForPage:index];
+            });
+        }];
         
-        // Cancel check
-        if (self.isCancelled)
-        {
-            CGContextRelease(contextRef);
-            return;
-        }
-        
-        [self drawFinishing:contextRef];
-        
-        if (self.isCancelled)
-        {
-            CGContextRelease(contextRef);
-            return;
-        }
-        
-        CGContextSaveGState(contextRef);
-        
-        CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
-        self.image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:UIImageOrientationDownMirrored];
-        CGImageRelease(imageRef);
         CGContextRelease(contextRef);
         
+        // Notify the delegate that the render operation has finished rendering all the pages
         [(NSObject *)self.delegate performSelectorOnMainThread:@selector(renderDidDFinish:) withObject:self waitUntilDone:YES];
     }
 }
+
+#pragma mark - Helper Methods
 
 - (void)drawPagesInRect:(CGRect)rect inContext:(CGContextRef)contextRef
 {
@@ -137,17 +181,20 @@
             [self draw4In1InContext:contextRef];
             break;
         default:
-            [self drawPage: self.pageIndex + 1 inRect:rect inContext:contextRef];
+            [self drawPage: self.currentPage + 1 inRect:rect inContext:contextRef];
             break;
     }
 }
 
--(void) drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext: (CGContextRef)contextRef
+- (void)drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext:(CGContextRef)contextRef
 {
-    CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.printDocument.pdfDocument, pageNumber);
+    CGPDFDocumentRef documentRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.printDocument.url);
+    //CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.printDocument.pdfDocument, pageNumber);
+    CGPDFPageRef pageRef = CGPDFDocumentGetPage(documentRef, pageNumber);
     // Cancel check
     if (self.isCancelled)
     {
+        CGPDFDocumentRelease(documentRef);
         return;
     }
     
@@ -155,6 +202,7 @@
     CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
     CGContextDrawPDFPage(contextRef, pageRef);
     CGContextRestoreGState(contextRef);
+    CGPDFDocumentRelease(documentRef);
 }
 
 - (void)draw2In1InContext:(CGContextRef)contextRef
@@ -178,7 +226,7 @@
     CGRect leftRect = CGRectMake(0, yPos, rectWidth, rectHeight);
     CGRect rightRect = CGRectOffset(leftRect, xOffset, yOffset);
     
-    NSUInteger pageNumber = (self.pageIndex * 2) + 1;
+    NSUInteger pageNumber = (self.currentPage * 2) + 1;
     
     NSArray *rectArray = nil;
     
@@ -210,7 +258,7 @@
     CGRect leftTopRect = CGRectOffset(leftBottomRect, 0, rectHeight);
     CGRect rightTopRect = CGRectOffset(leftTopRect, rectWidth, 0);
     
-    NSUInteger pageNumber = (self.pageIndex * 4) + 1;
+    NSUInteger pageNumber = (self.currentPage * 4) + 1;
     
     NSArray *rectArray = nil;
     if(order == kImpositionOrderUpperLeftToBottom)
@@ -253,7 +301,7 @@
     [self drawPagesInRects:rectArray atStartPageNumber:pageNumber inContext:contextRef];
 }
 
-- (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef) contextRef
+- (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef)contextRef
 {
     for(int i = 0; i < rectArray.count; i++)
     {
@@ -268,7 +316,7 @@
     }
 }
 
--(void) drawFinishing:(CGContextRef) contextRef
+- (void)drawFinishing:(CGContextRef)contextRef
 {
     kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
     
@@ -295,13 +343,11 @@
     
 }
 
--(void) drawStapleSingle: (CGContextRef) contextRef withStapleType: (kStapleType) stapleType  atFinishingSide: (kFinishingSide) finishingSide
+- (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType  atFinishingSide:(kFinishingSide)finishingSide
 {
-
     CGFloat xPos = FINISHING_MARGIN;
     CGFloat yPos = self.size.height - STAPLE_TOP_WIDTH - FINISHING_MARGIN;
     NSString *stapleImageName = @"img_staple_left_top";
-
     
     if(stapleType == kStapleTypeUpperRight || (stapleType == kStapleType1Pos && finishingSide == kFinishingSideRight))
     {
@@ -314,9 +360,8 @@
     CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
 }
 
--(void) drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide
+- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide
 {
-    
     CGFloat xPos = FINISHING_MARGIN;
     CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_WIDTH * 0.5f);
     CGFloat xOffset = 0;
@@ -354,7 +399,7 @@
     CGContextDrawImage(contextRef, CGRectOffset(stapleRect, xOffset, yOffset), [stapleImage CGImage]);
 }
 
--(void) drawPunch: (CGContextRef) contextRef withPunchType: (kPunchType) punchType atFinishingSide: (kFinishingSide) finishingSide
+- (void)drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide
 {
     BOOL isHorizontalLength = NO;
     CGFloat edgeLength = self.size.height;

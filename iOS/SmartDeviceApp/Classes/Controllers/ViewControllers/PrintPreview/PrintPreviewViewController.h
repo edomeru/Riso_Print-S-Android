@@ -10,7 +10,8 @@
 #import "PDFRenderOperation.h"
 #import "PrintDocument.h"
 #import "PreviewView.h"
+#import "RenderCache.h"
 
-@interface PrintPreviewViewController : UIViewController<UIPageViewControllerDataSource, UIPageViewControllerDelegate, PreviewViewDelegate, PrintDocumentDelegate, PDFRenderOperationDelegate>
+@interface PrintPreviewViewController : UIViewController<UIPageViewControllerDataSource, UIPageViewControllerDelegate, PreviewViewDelegate, PrintDocumentDelegate, PDFRenderOperationDelegate, RenderCacheDelegate>
 
 @end

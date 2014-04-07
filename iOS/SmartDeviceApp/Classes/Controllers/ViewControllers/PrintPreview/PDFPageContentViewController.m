@@ -7,26 +7,28 @@
 //
 
 #import "PDFPageContentViewController.h"
-#import "PDFFileManager.h"
-#import "PrintDocument.h"
 
 @interface PDFPageContentViewController ()
 
+/**
+ Outlet for the Image View of the View
+ */
 @property (nonatomic, weak) IBOutlet UIImageView *imageView;
-@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
-@property (nonatomic, weak) PrintDocument *printDocument;
+/**
+ Outlet for the Activity Indicator of the View
+ */
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
 @end
 
 @implementation PDFPageContentViewController
 
+#pragma mark - Public Methods
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
     return self;
 }
 
@@ -34,7 +36,7 @@
 {
     [super viewDidLoad];
     
-    // Show activity indicator
+    // Show activity indicator if an image is not available
     if (self.image == nil)
     {
         [self.activityIndicatorView startAnimating];
@@ -45,14 +47,11 @@
     }
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+#pragma mark - Getter/Setter Methods
 
 - (void)setImage:(UIImage *)image
 {
+    // Hide Activity indicator when image is available
     [self.activityIndicatorView stopAnimating];
     _image = image;
     self.imageView.image = image;

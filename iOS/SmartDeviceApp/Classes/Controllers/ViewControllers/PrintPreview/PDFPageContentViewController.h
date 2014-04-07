@@ -10,7 +10,14 @@
 
 @interface PDFPageContentViewController : UIViewController
 
+/**
+ Page number
+ */
 @property (nonatomic) NSInteger pageIndex;
+
+/**
+ Rendered image of the PDF page
+ */
 @property (nonatomic) UIImage *image;
 
 

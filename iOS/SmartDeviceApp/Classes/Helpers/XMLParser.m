@@ -13,11 +13,19 @@
 @property (nonatomic, strong) NSMutableArray *stack;
 @property (nonatomic, strong) NSMutableString *currentString;
 
+/**
+ Creates a dictionary by parsing an XML data
+ @param data
+        Data of the XML file
+ @return Dictionary object of the parsed XML file
+ */
 - (NSDictionary *)dictionaryWithXMLData:(NSData *)data;
 
 @end
 
 @implementation XMLParser
+
+#pragma mark - Public Methods
 
 + (NSDictionary *)dictionaryFromXMLFile:(NSString *)path
 {
@@ -28,6 +36,8 @@
     NSData *data = [NSData dataWithContentsOfURL:url];
     return [parser dictionaryWithXMLData:data];
 }
+
+#pragma mark - Helper Methods
 
 - (NSDictionary *)dictionaryWithXMLData:(NSData *)data
 {
@@ -50,8 +60,7 @@
     return nil;
 }
 
-#pragma mark -
-#pragma mark NSXMLParserDelegate
+#pragma mark - NSXMLParserDelegate Methods
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {

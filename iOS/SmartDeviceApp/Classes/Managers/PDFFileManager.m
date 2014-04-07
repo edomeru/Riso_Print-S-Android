@@ -11,15 +11,35 @@
 #import "XMLParser.h"
 #import "PrintSettingsHelper.h"
 
+#define PREVIEW_FILENAME @"%@/SDAPreview.pdf"
+
 @interface PDFFileManager()
 
+/**
+ Indicates whether or not a file ready for preview
+ */
 @property (nonatomic) BOOL fileAvailableForPreview;
-@property (nonatomic, strong) NSURL *documentURL;
+
+/**
+ Print document object
+ */
 @property (nonatomic, strong) PrintDocument *printDocument;
+
+/**
+ Moves the PDF File (from Open In to Documents)
+ */
+- (BOOL)moveFileToDocuments:(NSURL **)documentURL;
+
+/**
+ Verifies if the PDF file is valid
+ */
+- (kPDFError)verifyDocument:(NSURL *)documentURL;
 
 @end
 
 @implementation PDFFileManager
+
+#pragma mark - Public Methods
 
 +(id) sharedManager
 {
@@ -41,74 +61,89 @@
     {
         _fileAvailableForLoad = NO;
         _fileAvailableForPreview = NO;
-        _printDocument = [[PrintDocument alloc] init];
-        _printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
     }
     return self;
 }
+
+- (kPDFError)setupDocument
+{
+    NSURL *documentURL;
+    if (![self moveFileToDocuments:&documentURL])
+    {
+        return kPDFErrorProcessingFailed;
+    }
+    
+    kPDFError result = [self verifyDocument:documentURL];
+    if (result == kPDFErrorNone)
+    {
+        self.fileAvailableForPreview = YES;
+        self.fileAvailableForLoad = NO;
+        self.printDocument = [[PrintDocument alloc] initWithURL:documentURL];
+        self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
+    }
+    
+    return result;
+}
+
+#pragma mark - Getter/Setter Methods
 
 - (NSString *)fileName
 {
     return [[NSFileManager defaultManager] displayNameAtPath:[self.fileURL path]];
 }
 
-- (BOOL)moveFileToDocuments
+#pragma mark - Helper Methods
+
+- (BOOL)moveFileToDocuments:(NSURL **)documentURL
 {
+    // Create new path in the directory
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *newPath = [NSString stringWithFormat:@"%@/SDAPreview.pdf", documentsDirectory];
+    NSString *newPath = [NSString stringWithFormat:PREVIEW_FILENAME, documentsDirectory];
     NSError *error;
+    
+    // Remove existing file, if any
     [[NSFileManager defaultManager] removeItemAtPath:newPath error:&error];
+    
+    // Copy file to new path
     if ([[NSFileManager defaultManager] moveItemAtPath:[self.fileURL path] toPath:newPath error:&error] == NO)
     {
-        self.documentURL = nil;
+        (*documentURL) = nil;
         return NO;
     }
     
-    self.documentURL = [NSURL fileURLWithPath:newPath];
+    (*documentURL) = [NSURL fileURLWithPath:newPath];
     return YES;
 }
 
-- (T_PDF_ERROR)verifyDocument
+- (kPDFError)verifyDocument:(NSURL *)documentURL
 {
+    CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((__bridge CFURLRef)documentURL);
+    
     // Check if loaded
-    if (self.printDocument.pdfDocument == nil)
+    if (document == nil)
     {
-        return PDF_ERROR_OPEN;
+        return kPDFErrorOpen;
     }
     
-    if (CGPDFDocumentIsUnlocked(self.printDocument.pdfDocument) == false)
-    {
-        return PDF_ERROR_LOCKED;
-    }
+    kPDFError error = kPDFErrorNone;
     
-    if (CGPDFDocumentIsEncrypted(self.printDocument.pdfDocument) == true)
+    // Check if PDF has open password
+    if (CGPDFDocumentIsUnlocked(document) == false)
     {
-        if (CGPDFDocumentAllowsPrinting(self.printDocument.pdfDocument) == false)
+        error = kPDFErrorLocked;
+    }
+    // Check if PDF has encryption
+    else if (CGPDFDocumentIsEncrypted(document) == true)
+    {
+        if (CGPDFDocumentAllowsPrinting(document) == false)
         {
-            return PDF_ERROR_PRINTING_NOT_ALLOWED;
+            error = kPDFErrorPrintingNotAllowed;
         }
     }
     
-    return PDF_ERROR_NONE;
-}
-
-- (T_PDF_ERROR)loadFile
-{
-    if (![self moveFileToDocuments])
-    {
-        return PDF_ERROR_PROCESSING_FAILED;
-    }
-   
-    self.printDocument = [[PrintDocument alloc] initWithURL:self.documentURL];
-    T_PDF_ERROR result = [self verifyDocument];
-    if (result == PDF_ERROR_NONE)
-    {
-        self.fileAvailableForPreview = YES;
-        self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
-    }
-    
-    return result;
+    CGPDFDocumentRelease(document);
+    return error;
 }
 
 @end

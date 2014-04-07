@@ -13,25 +13,37 @@
 
 #define MAX_PAGE_CACHE 5
 
+/**
+ Key-Value Observing Context
+ */
 static NSString *previewSettingContext = @"PreviewSettingContext";
 
 @interface PrintDocument()
 
-@property (nonatomic) CGPDFDocumentRef pdfDocument;
+@property (nonatomic, strong) NSURL *url;
 
+/**
+ Add self as observer of Preview Settings object
+ */
 - (void)addObservers;
+
+/**
+ Remove self as observer of Preview Settings object
+ */
 - (void)removeObservers;
 
 @end
 
 @implementation PrintDocument
 
+#pragma mark - Public Methods
+
 - (id)initWithURL:(NSURL *)url
 {
     self = [super init];
     if (self)
     {
-        _pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)url);
+        _url = url;
         
     }
     return self;
@@ -40,11 +52,28 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 - (void)dealloc
 {
     [self removeObservers];
-    CGPDFDocumentRelease(_pdfDocument);
 }
+
+#pragma mark - Getter/Setter Methods
+
+- (void)setPreviewSetting:(PreviewSetting *)previewSetting
+{
+    [self removeObservers];
+    _previewSetting = previewSetting;
+    [self addObservers];
+}
+
+- (NSInteger)pageCount
+{
+    CGPDFDocumentRef pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.url);
+    return CGPDFDocumentGetNumberOfPages(pdfDocument);
+}
+
+#pragma mark - Helper Methods
 
 - (void)addObservers
 {
+    // Add self as observer of all the relevant properties in Preview Settings
     NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     NSArray *groups = [printSettingsTree objectForKey:@"group"];
     for (NSDictionary *group in groups)
@@ -60,6 +89,7 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 
 - (void)removeObservers
 {
+    // Remove self as observer of all the relevant properties in Preview Settings
     NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     NSArray *groups = [printSettingsTree objectForKey:@"group"];
     for (NSDictionary *group in groups)
@@ -73,20 +103,24 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     }
 }
 
+#pragma mark - Key-Value Observing Methods
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    // Ignore changes outside of the current context
     if (context != &previewSettingContext)
     {
         return;
     }
     
+    // Ignore changes besides NSKeyValueChangeSetting
     int changeKind = [[change objectForKey:NSKeyValueChangeKindKey] intValue];
     if (changeKind != NSKeyValueChangeSetting)
     {
         return;
     }
     
-    // Compare if value is changed
+    // Ignore changes if actual value has not changed
     NSNumber *old = [change objectForKey:NSKeyValueChangeOldKey];
     NSNumber *new = [change objectForKey:NSKeyValueChangeNewKey];
     if ([old isEqualToNumber:new])
@@ -94,24 +128,9 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         return;
     }
     
+    // Notify delegate of the change
     [self.delegate previewSettingDidChange];
 }
 
-- (void)setPreviewSetting:(PreviewSetting *)previewSetting
-{
-    [self removeObservers];
-    _previewSetting = previewSetting;
-    [self addObservers];
-}
-
-- (NSInteger)pageCount
-{
-    if (self.pdfDocument == nil)
-    {
-        return 0;
-    }
-    
-    return CGPDFDocumentGetNumberOfPages(self.pdfDocument);
-}
 
 @end

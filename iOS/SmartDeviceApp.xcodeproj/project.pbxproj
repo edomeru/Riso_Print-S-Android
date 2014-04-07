@@ -23,6 +23,7 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
+		2D0D74C218F2887B002B5E40 /* RenderCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0D74C118F2887B002B5E40 /* RenderCache.m */; };
 		2D0DE96318E3E9C8002DB0B4 /* PrintDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DE96218E3E9C8002DB0B4 /* PrintDocument.m */; };
 		2D157BF518ED5A960034F953 /* PDFRenderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BF418ED5A960034F953 /* PDFRenderOperation.m */; };
 		2D157BF818ED5B3E0034F953 /* PrintSettingsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BF718ED5B3E0034F953 /* PrintSettingsHelper.m */; };
@@ -117,6 +118,8 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D0D74C018F2887B002B5E40 /* RenderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderCache.h; sourceTree = "<group>"; };
+		2D0D74C118F2887B002B5E40 /* RenderCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenderCache.m; sourceTree = "<group>"; };
 		2D0DE96118E3E9C8002DB0B4 /* PrintDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintDocument.h; sourceTree = "<group>"; };
 		2D0DE96218E3E9C8002DB0B4 /* PrintDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintDocument.m; sourceTree = "<group>"; };
 		2D157BF318ED5A960034F953 /* PDFRenderOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFRenderOperation.h; sourceTree = "<group>"; };
@@ -834,6 +837,8 @@
 				2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */,
 				2D157BF918ED5B580034F953 /* XMLParser.h */,
 				2D157BFA18ED5B580034F953 /* XMLParser.m */,
+				2D0D74C018F2887B002B5E40 /* RenderCache.h */,
+				2D0D74C118F2887B002B5E40 /* RenderCache.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1040,6 +1045,7 @@
 				2DA1AF3618E2EF9C00085F27 /* PrinterManager.m in Sources */,
 				2DA1AF6618E2F08900085F27 /* AlertHelper.m in Sources */,
 				2DA1AEE018E2EF8500085F27 /* UIView+Localization.m in Sources */,
+				2D0D74C218F2887B002B5E40 /* RenderCache.m in Sources */,
 				2DA1AF1B18E2EF9600085F27 /* AddPrinterViewController.m in Sources */,
 				2D232D7218E511D4008D06C8 /* PrintSettingsTableViewController.m in Sources */,
 				2DA1AF3318E2EF9C00085F27 /* DatabaseManager.m in Sources */,

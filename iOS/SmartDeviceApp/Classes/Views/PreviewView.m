@@ -13,30 +13,96 @@
 
 @interface PreviewView ()
 
+/**
+ Container of the preview page
+ */
 @property (nonatomic, strong) UIView *contentView;
+
+/**
+ Orientation mode
+ */
 @property (nonatomic) kPreviewViewOrientation orientation;
+
+/**
+ Aspect ratio (W:H)
+ */
 @property (nonatomic) CGFloat aspectRatio;
+
+/**
+ Constraint that ensures that the aspect ratio is maintained
+ */
 @property (nonatomic, weak) NSLayoutConstraint *aspectRatioConstraint;
+
+/**
+ Constraint that ensures that the size of the content view is based on the container + scale
+ */
 @property (nonatomic, weak) NSLayoutConstraint *sizeConstraint;
+
+/**
+ Constraint that ensure that the content view is centered horizontally inside the container + pan value
+ */
 @property (nonatomic, weak) NSLayoutConstraint *xAlignConstraint;
+
+/**
+ Constraint that ensure that the content view is centered vertically inside the container + pan value
+ */
 @property (nonatomic, weak) NSLayoutConstraint *yAlignConstraint;
+
+/**
+ Pinch gesture recognizer for scaling
+ */
 @property (nonatomic, weak) UIPinchGestureRecognizer *pincher;
+
+/**
+ Pan gesture recognizer for panning
+ */
 @property (nonatomic, weak) UIPanGestureRecognizer *panner;
 
+/**
+ Current scale
+ */
 @property (nonatomic) CGFloat scale;
+
+/**
+ Current position
+ */
 @property (nonatomic) CGPoint position;
+
+/**
+ Center point of the pinch gesture
+ */
 @property (nonatomic) CGPoint zoomAnchor;
+
+/**
+ Indicates whether or not the content view is currently being scaled
+ */
 @property (nonatomic) BOOL zooming;
 
+/**
+ Initializes the content view and property values
+ */
 - (void)initialize;
 
-- (IBAction)pinchAction:(id)sender;
-- (IBAction)panAction:(id)sender;
+/**
+ Snap dimensions and position to nearest valid value
+ */
 - (void)snap;
+
+/**
+ Action when content view is pinched/being pinched
+ */
+- (IBAction)pinchAction:(id)sender;
+
+/**
+ Action when content view is panned/being panned
+ */
+- (IBAction)panAction:(id)sender;
 
 @end
 
 @implementation PreviewView
+
+#pragma mark - Public Methods
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -56,35 +122,6 @@
         [self initialize];
     }
     return self;
-}
-
-- (void)dealloc
-{
-}
-
-- (void)initialize
-{
-    // Create content view
-    self.contentView = [[UIView alloc] init];
-    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:self.contentView];
-    
-    // Create gesture recognizers
-    UIPinchGestureRecognizer *pincher = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
-    UIPanGestureRecognizer *panner = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
-    pincher.delegate = self;
-    panner.delegate = self;
-    [self.contentView addGestureRecognizer:pincher];
-    [self.contentView addGestureRecognizer:panner];
-    self.pincher = pincher;
-    self.panner = panner;
-    
-    // Initialize properties/flags
-    self.scale = 1.0f;
-    self.position = CGPointZero;
-    self.zoomAnchor = CGPointZero;
-    self.minScale = MIN_SCALE;
-    self.maxScale = MAX_SCALE;
 }
 
 - (void)setPreviewWithOrientation:(kPreviewViewOrientation)orientation aspectRatio:(CGFloat)ratio
@@ -137,14 +174,90 @@
     [self layoutIfNeeded];
 }
 
-#pragma - UIGestureRecognizerDelegate
+#pragma mark - Helper Methods
+
+- (void)initialize
+{
+    // Create content view
+    self.contentView = [[UIView alloc] init];
+    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.contentView];
+    
+    // Create gesture recognizers
+    UIPinchGestureRecognizer *pincher = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
+    UIPanGestureRecognizer *panner = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
+    pincher.delegate = self;
+    panner.delegate = self;
+    [self.contentView addGestureRecognizer:pincher];
+    [self.contentView addGestureRecognizer:panner];
+    self.pincher = pincher;
+    self.panner = panner;
+    
+    // Initialize properties/flags
+    self.scale = 1.0f;
+    self.position = CGPointZero;
+    self.zoomAnchor = CGPointZero;
+    self.minScale = MIN_SCALE;
+    self.maxScale = MAX_SCALE;
+}
+
+- (void)snap
+{
+    // Snap scale
+    self.scale = MIN(MAX(self.scale, self.minScale), self.maxScale);
+    CGFloat referenceSize;
+    if (self.orientation == kPreviewViewOrientationPortrait)
+    {
+        referenceSize = self.frame.size.height;
+    }
+    else
+    {
+        referenceSize = self.frame.size.width;
+    }
+    self.sizeConstraint.constant = referenceSize * (self.scale - 1.0f);
+    [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^
+     {
+         [self layoutIfNeeded];
+         // Snap position
+         CGPoint position = self.position;
+         CGSize containerSize = self.frame.size;
+         CGSize contentSize = self.contentView.frame.size;
+         // Snap left/right sides to container
+         if (contentSize.width >= containerSize.width)
+         {
+             CGFloat maxX = (contentSize.width - containerSize.width) / 2.0f;
+             position.x = MIN(MAX(position.x, -maxX), maxX);
+         }
+         else
+         {
+             position.x = 0.0f;
+         }
+         // Snap top/bottom sides to container
+         if (contentSize.height >= containerSize.height)
+         {
+             CGFloat maxY = (contentSize.height - containerSize.height) / 2.0f;
+             position.y = MIN(MAX(position.y, -maxY), maxY);
+         }
+         else
+         {
+             position.y = 0.0f;
+         }
+         self.position = position;
+         self.xAlignConstraint.constant = position.x;
+         self.yAlignConstraint.constant = position.y;
+         
+         [self layoutIfNeeded];
+     } completion:nil];
+}
+
+#pragma - UIGestureRecognizerDelegate Methods
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return NO;
 }
 
-#pragma - Actions
+#pragma - IBACtion Methods
 
 - (IBAction)pinchAction:(id)sender
 {
@@ -218,55 +331,6 @@
         self.position = position;
         [self snap];
     }
-}
-
-- (void)snap
-{
-    // Snap scale
-    self.scale = MIN(MAX(self.scale, self.minScale), self.maxScale);
-    CGFloat referenceSize;
-    if (self.orientation == kPreviewViewOrientationPortrait)
-    {
-        referenceSize = self.frame.size.height;
-    }
-    else
-    {
-        referenceSize = self.frame.size.width;
-    }
-    self.sizeConstraint.constant = referenceSize * (self.scale - 1.0f);
-    [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^
-     {
-         [self layoutIfNeeded];
-         // Snap position
-         CGPoint position = self.position;
-         CGSize containerSize = self.frame.size;
-         CGSize contentSize = self.contentView.frame.size;
-         // Snap left/right sides to container
-         if (contentSize.width >= containerSize.width)
-         {
-             CGFloat maxX = (contentSize.width - containerSize.width) / 2.0f;
-             position.x = MIN(MAX(position.x, -maxX), maxX);
-         }
-         else
-         {
-             position.x = 0.0f;
-         }
-         // Snap top/bottom sides to container
-         if (contentSize.height >= containerSize.height)
-         {
-             CGFloat maxY = (contentSize.height - containerSize.height) / 2.0f;
-             position.y = MIN(MAX(position.y, -maxY), maxY);
-         }
-         else
-         {
-             position.y = 0.0f;
-         }
-         self.position = position;
-         self.xAlignConstraint.constant = position.x;
-         self.yAlignConstraint.constant = position.y;
-         
-         [self layoutIfNeeded];
-     } completion:nil];
 }
 
 @end
