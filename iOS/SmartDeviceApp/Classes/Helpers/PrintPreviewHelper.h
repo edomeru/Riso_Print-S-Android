@@ -108,28 +108,6 @@ typedef enum {
 + (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape: (BOOL) isLandscape;
 
 /**
- Helper function to determine spine location of page view controller based on settings affecting spine location
- 
- @param bind - bind setting value
- @param duplex - duplex setting value
- @param isBookletBind - indicate if setting for booklet bind is On
- 
- @return UIPageViewControllerSpineLocation
- **/
-+(UIPageViewControllerSpineLocation) spineLocationForBindSetting: (NSUInteger) bind
-                                                   duplexSetting: (NSUInteger)  duplex
-                                            bookletBindSettingOn: (BOOL) isBookletBind;
-
-/**
- Helper function to determine navigation orientation of page view controller based on bind setting
- 
- @param bind - bind setting value
- 
- @return UIPageViewControllerNavigationOrientation
- **/
-+(UIPageViewControllerNavigationOrientation) navigationOrientationForBindSetting : (NSUInteger) bind;
-
-/**
  Helper function to determine if paper orientation is landscape based on combination of settings
  
  @param previewSetting - preview setting object containing setting values

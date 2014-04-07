@@ -44,7 +44,6 @@
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) BOOL pageIsAnimating;
 @property (nonatomic) NSInteger totalPageNum;
-@property (nonatomic) NSInteger numPDFPagesPerPage;
 
 // Operations
 @property (atomic, strong) NSOperationQueue *renderQueue;
@@ -53,11 +52,11 @@
 
 - (void)loadPDF;
 - (void)setupPreview;
-- (void)computeTotalPageNum;
+- (void)setupTotalPageNum;
 - (void)setupPageScroll;
 - (void)setupPageLabel;
-- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation) spineLocation navigationOrientation: (UIPageViewControllerNavigationOrientation) navigationOrientation;
--(BOOL) applyBindSetting;
+- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation;
+- (void)setupPageviewControllerWithBindSetting;
 @end
 
 @implementation PrintPreviewViewController
@@ -125,13 +124,12 @@
             self.printDocument = [[PDFFileManager sharedManager] printDocument];
             self.printDocument.delegate = self;
             self.currentPage = 0;
-            self.numPDFPagesPerPage = 1;
             self.titleLabel.text = [[PDFFileManager sharedManager] fileName];
             self.printSettingsButton.hidden = NO;
             self.previewView.hidden = NO;
             self.pageNavArea.hidden = NO;
             [self.activityIndicator stopAnimating];
-            [self computeTotalPageNum];
+            [self setupTotalPageNum];
             [self setupPreview];
             [self setupPageLabel];
             [self setupPageScroll];
@@ -154,24 +152,10 @@
     
     self.previewView.hidden = NO;
     [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
-    
-    // Create PageViewController
-    // Assume left spine
-    UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:UIPageViewControllerSpineLocationMin]}];
-    pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addChildViewController:pageViewController];
-    [self.previewView.contentView addSubview:pageViewController.view];
-    NSDictionary *views = @{@"pageView": pageViewController.view};
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
-    pageViewController.dataSource = self;
-    pageViewController.delegate = self;
-    
+
     self.currentPage = 0;
-    PDFPageContentViewController *initial = [self viewControllerAtIndex:self.currentPage];
-    [pageViewController setViewControllers:@[initial] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
-    
-    self.pageViewController = pageViewController;
+    [self setupPageviewControllerWithBindSetting];
+    [self goToPage:self.currentPage];
 }
 
 - (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation
@@ -193,34 +177,34 @@
     pageViewController.dataSource = self;
     pageViewController.delegate = self;
     
-    [self goToPage:self.currentPage];
-    
     self.pageViewController = pageViewController;
 }
 
-- (void)computeTotalPageNum
+- (void)setupTotalPageNum
 {
     if(self.printDocument.previewSetting.booklet == YES)
     {
         //booklet number of pages is always a multiple of 4 (1 paper folded in half = 2 leaves * 2 sides per leaf = 4 pages)
         //total number of pages is the actual number of pdf pages  + padding pages to make number of pages multiple by 4
         self.totalPageNum = self.printDocument.pageCount  +  self.printDocument.pageCount % 4;
-        self.numPDFPagesPerPage = 1; // always 1 sheet per page for booklet
-        return;
+        [self.pageScroll setMaximumValue:self.totalPageNum - 1]; //the last page that can be visited for the slider should be the second to the last page  which is the front page of the last sheet
     }
-    
-    NSUInteger numPagesPerSheet =[PrintPreviewHelper getNumberOfPagesPerSheetForImpostionSetting:self.printDocument.previewSetting.imposition];
-    self.totalPageNum = self.printDocument.pageCount/numPagesPerSheet;
-    if((self.printDocument.pageCount % numPagesPerSheet) > 0)
+    else
     {
-        self.totalPageNum++;
+        //consider imposition setting for the total number of pages of the page view controller
+        NSUInteger numPagesPerSheet =[PrintPreviewHelper getNumberOfPagesPerSheetForImpostionSetting:self.printDocument.previewSetting.imposition];
+        self.totalPageNum = self.printDocument.pageCount/numPagesPerSheet;
+        if((self.printDocument.pageCount % numPagesPerSheet) > 0)
+        {
+            self.totalPageNum++;
+        }
+        [self.pageScroll setMaximumValue:self.totalPageNum];
     }
-    
-    if(numPagesPerSheet != self.numPDFPagesPerPage || self.currentPage >= self.totalPageNum)
+    //reset current page if it is now way past the computed total page number
+    if(self.currentPage >= self.totalPageNum)
     {
         self.currentPage = 0;
     }
-    self.numPDFPagesPerPage = numPagesPerSheet;
 }
 
 - (void)setupPageScroll
@@ -230,7 +214,6 @@
     [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateNormal];
     [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateHighlighted];
     [self.pageScroll setMinimumValue:1];
-    [self.pageScroll setMaximumValue:self.totalPageNum];
     [self.pageScroll setContinuous:NO];
 }
 
@@ -240,8 +223,9 @@
     self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)self.currentPage + 1, (long)self.totalPageNum];
 }
 
-- (BOOL)applyBindSetting
+- (void)setupPageviewControllerWithBindSetting
 {
+    //Determine the spine location and navigation direction considering the finishing side and booklet bind setting
     UIPageViewControllerSpineLocation spineLocation = UIPageViewControllerSpineLocationMin;
     UIPageViewControllerNavigationOrientation navOrientation = UIPageViewControllerNavigationOrientationHorizontal;
     
@@ -261,16 +245,52 @@
     {
         navOrientation = UIPageViewControllerNavigationOrientationVertical;
     }
-    
-    if(self.pageViewController!= nil && self.pageViewController.spineLocation == spineLocation && self.pageViewController.navigationOrientation == navOrientation)
+
+    //set-up page view controller if initial or if the spine location and navigation direction changed
+    //don't resetup page view controller is existing and the spine location and navigationOrientation are still the same
+    if(!(self.pageViewController!= nil && self.pageViewController.spineLocation == spineLocation && self.pageViewController.navigationOrientation == navOrientation))
     {
-        //don't resetup page view controller if spine location and navigationOrientation are still the same
-        return NO;
+        [self setupPageviewControllerWithSpineLocation:spineLocation navigationOrientation:navOrientation];
     }
     
-    [self setupPageviewControllerWithSpineLocation:spineLocation navigationOrientation:navOrientation];
+    //apply double sided setting for duplex and booklet bind setting
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff || self.printDocument.previewSetting.booklet == YES)
+    {
+        [self.pageViewController setDoubleSided:YES];
+    }
+    else
+    {
+        [self.pageViewController setDoubleSided:NO];
+    }
+}
+
+- (void)goToPage:(NSInteger)pageIndex
+{
+    PDFPageContentViewController *current = [self viewControllerAtIndex:pageIndex];
+    NSMutableArray *viewControllerArray = [NSMutableArray arrayWithObject:current];
     
-    return YES;
+    //if Spine is in mid location, must provide 2 controllers always. This occurs for booklet bind setting
+    if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
+    {
+        if(pageIndex == 0)//if first index, provide last page(back cover) as the left side page of the first page (front cover)
+        {
+            NSInteger lastPageIndex = self.totalPageNum - 1;
+            PDFPageContentViewController *lastPage = [self viewControllerAtIndex:lastPageIndex];
+            [viewControllerArray insertObject:lastPage atIndex:0];
+        }
+        else if((pageIndex % 2) == 0) //if page index is even but not the first index, provide the page before it
+        {
+            PDFPageContentViewController *previous = [self viewControllerAtIndex:pageIndex - 1];
+            [viewControllerArray insertObject:previous atIndex:0];
+        }
+        else // if the page index is odd, provide the page next to it
+        {
+            PDFPageContentViewController *next = [self viewControllerAtIndex:pageIndex + 1];
+            [viewControllerArray addObject:next];
+        }
+    }
+    
+    [self.pageViewController setViewControllers:viewControllerArray direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
 #pragma mark - UIPageViewControllerDataSource
@@ -446,51 +466,17 @@
     }
     [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
     
-    [self computeTotalPageNum];
+    //recompute total page number
+    [self setupTotalPageNum];
+    
+    //set page label and page scroll based on the new total page number
     [self setupPageLabel];
     [self.pageScroll setValue:self.currentPage + 1];
     
-    [self applyBindSetting];
-    
-    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff || self.printDocument.previewSetting.booklet == YES)
-    {
-        [self.pageViewController setDoubleSided:YES];
-    }
-    else
-    {
-        [self.pageViewController setDoubleSided:NO];
-    }
+    //reset-up page view controller with new bind setting
+    [self setupPageviewControllerWithBindSetting];
     
     [self goToPage:self.currentPage];
-}
-
-- (void)goToPage:(NSInteger)pageIndex
-{
-    PDFPageContentViewController *current = [self viewControllerAtIndex:pageIndex];
-    NSMutableArray *viewControllerArray = [NSMutableArray arrayWithObject:current];
-    
-    //if spine is in mid location, must provide 2 controllers always, this occurs for booklet binding
-    if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
-    {
-        if(pageIndex == 0)//if first index, provide last page(back cover) as the left side page of the first page (front cover)
-        {
-            NSInteger lastPageIndex = self.totalPageNum - 1;
-            PDFPageContentViewController *lastPage = [self viewControllerAtIndex:lastPageIndex];
-            [viewControllerArray insertObject:lastPage atIndex:0];
-        }
-        else if((pageIndex % 2) == 0) //if page index is even but not the first index, provide the page before it
-        {
-            PDFPageContentViewController *previous = [self viewControllerAtIndex:pageIndex - 1];
-            [viewControllerArray insertObject:previous atIndex:0];
-        }
-        else // if the page index is odd, provide the page next to it
-        {
-            PDFPageContentViewController *next = [self viewControllerAtIndex:pageIndex + 1];
-            [viewControllerArray addObject:next];
-        }
-    }
-    
-    [self.pageViewController setViewControllers:viewControllerArray direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
 #pragma mark - IBActions
@@ -526,6 +512,8 @@
 {
     UISlider *slider  = (UISlider *) sender;
     NSInteger pageNumber = slider.value;
+    
+    //update the current page  and page number label
     self.currentPage = pageNumber - 1;
     [self goToPage:self.currentPage];
     [self setupPageLabel];
@@ -548,6 +536,7 @@
     }
     else if(pageNumber > self.totalPageNum)
     {
+        // the last viewable page for 2 page view or mid spine location is the front page of last sheet (second to the last page)
         if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
         {
             self.currentPage = self.totalPageNum - 2;

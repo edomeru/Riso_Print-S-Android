@@ -310,7 +310,7 @@
     }
 }
 
--(void) drawFinishing:(CGContextRef) contextRef
+-(void) drawFinishing:(CGContextRef)contextRef
 {
     //For booklet finishing
     if(self.printDocument.previewSetting.booklet == YES)
@@ -367,7 +367,6 @@
     {
         [self drawPunch:contextRef withPunchType:punchType atFinishingSide: finishingSide];
     }
-
 }
 
 -(void) drawStapleSingle: (CGContextRef) contextRef withStapleType: (kStapleType) stapleType  atFinishingSide: (kFinishingSide) finishingSide
@@ -429,7 +428,7 @@
     CGContextDrawImage(contextRef, CGRectOffset(stapleRect, xOffset, yOffset), [stapleImage CGImage]);
 }
 
--(void) drawPunch: (CGContextRef) contextRef withPunchType: (kPunchType) punchType atFinishingSide: (kFinishingSide) finishingSide
+-(void) drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide
 {
     BOOL isHorizontalLength = NO;
     CGFloat edgeLength = self.size.height;
@@ -525,7 +524,6 @@
         {
             return YES;
         }
-            
     }
     return NO;
 }

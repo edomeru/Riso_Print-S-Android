@@ -46,23 +46,6 @@ CGSize paperDimensionsMM[] = {
     return ratio;
 }
 
-+(UIPageViewControllerSpineLocation) spineLocationForBindSetting: (NSUInteger) bind
-                                    duplexSetting: (NSUInteger)  duplex
-                                    bookletBindSettingOn: (BOOL) isBookletBind
-{
-    if(duplex > kDuplexSettingOff || isBookletBind == YES)
-    {
-        return UIPageViewControllerSpineLocationMid;
-    }
-    if(bind == kFinishingSideRight)
-    {
-        return UIPageViewControllerSpineLocationMax;
-    }
-    
-    return UIPageViewControllerSpineLocationMin;
-    
-}
-
 + (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape:(BOOL)isLandscape
 {
     CGSize size = paperDimensionsMM[paperSize];
@@ -77,16 +60,6 @@ CGSize paperDimensionsMM[] = {
         size.height = temp;
     }
     return size;
-}
-
-
-+(UIPageViewControllerNavigationOrientation) navigationOrientationForBindSetting : (NSUInteger) bind
-{
-    if(bind == kFinishingSideTop)
-    {
-        return UIPageViewControllerNavigationOrientationVertical;
-    }
-    return UIPageViewControllerNavigationOrientationHorizontal;
 }
 
 +(BOOL) isPaperLandscapeForPreviewSetting:(PreviewSetting*) setting
