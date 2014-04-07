@@ -1004,7 +1004,7 @@ namespace SmartDeviceApp.Controllers
                 bool rotateForDuplex =
                     (_selectedPrinter.PrintSetting.Duplex == (int)Duplex.LongEdge && !isFinalPortrait) ||
                     (_selectedPrinter.PrintSetting.Duplex == (int)Duplex.ShortEdge && isFinalPortrait);
-                // Determine Finishing Side based on Duplex
+                // Determine actual finishing side based on duplex
                 if (_isDuplex && isBackSide && !rotateForDuplex)
                 {
                     // Change the side of the staple if letf or right
@@ -1023,7 +1023,6 @@ namespace SmartDeviceApp.Controllers
                         _selectedPrinter.PrintSetting.Punch);
                 if (holeCount > 0)
                 {
-
                     await ApplyPunch(finalBitmap, holeCount, finishingSide);
                 }
 
@@ -1035,7 +1034,7 @@ namespace SmartDeviceApp.Controllers
                     await ApplyStaple(finalBitmap, _selectedPrinter.PrintSetting.Staple, finishingSide);
                 }
 
-                // Apply Duplex
+                // Apply duplex on the back page image
                 if (_isDuplex && isBackSide && rotateForDuplex)
                 {
                     finalBitmap = WriteableBitmapExtensions.Rotate(finalBitmap, 180);
