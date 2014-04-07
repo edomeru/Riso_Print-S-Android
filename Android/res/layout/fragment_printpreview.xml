@@ -16,12 +16,15 @@
             android:id="@+id/openInView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/preview_logo_margin"
+            android:paddingRight="@dimen/preview_logo_margin"
             android:layout_gravity="center"
             android:orientation="vertical" >
 
             <ImageView
-                android:layout_width="@dimen/temp_splash_logo_width"
-                android:layout_height="@dimen/temp_splash_logo_height"
+                android:layout_width="@dimen/splash_logo_width"
+                android:layout_height="@dimen/splash_logo_height"
+                android:layout_gravity="center_horizontal"
            		android:layout_weight="0.5"
                 android:contentDescription="@string/default_content_description"
                 android:src="@drawable/temp_img_riso_splash" />

@@ -9,15 +9,19 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.ValueChangedListener {
     public static final String TAG = "PrintSettingsFragment";
     
+    private boolean mFragmentForPrinting = false;
+    
+    private int mPrinterId;
     private PrintSettings mPrintSettings;
     private PrintSettingsView mPrintSettingsView;
     private Bundle mPrintSettingsBundle = null;
@@ -41,7 +45,17 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
         
         mPrintSettingsView.setValueChangedListener(this);
+        
         mPrintSettingsView.setPrintSettings(mPrintSettings);
+        mPrintSettingsView.setShowPrintControls(mFragmentForPrinting);
+        mPrintSettingsView.setPrinterId(mPrinterId);
+
+        TextView textView = (TextView) view.findViewById(R.id.titleTextView);
+        textView.setText(R.string.ids_lbl_print_settings);
+        
+        if (!mFragmentForPrinting) {
+            textView.setText(R.string.ids_lbl_default_print_settings);
+        }
         
         if (mPrintSettingsBundle != null) {
             mPrintSettingsView.restoreState(mPrintSettingsBundle);
@@ -67,6 +81,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // Public functions
     // ================================================================================
     
+    public void setFragmentForPrinting(boolean fragmentForPrinting) {
+        mFragmentForPrinting = fragmentForPrinting;
+    }
+    
+    public void setPrinterId(int printerId) {
+        mPrinterId = printerId;
+    }
+    
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
     }
@@ -74,6 +96,16 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // ================================================================================
     // INTERFACE - ValueChangedListener
     // ================================================================================
+    
+    @Override
+    public void onPrinterIdSelectedChanged(int printerId) {
+        setPrinterId(printerId);
+        
+        if (getTargetFragment() instanceof PrintPreviewFragment) {
+            PrintPreviewFragment fragment = (PrintPreviewFragment) getTargetFragment();
+            fragment.setPrintId(printerId);
+        }
+    }
     
     @Override
     public void onPrintSettingsValueChanged(PrintSettings printSettings) {

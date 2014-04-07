@@ -4,7 +4,6 @@
     <style name="AppTheme" parent="android:Theme.Holo.NoActionBar">
         <item name="android:actionBarStyle">@style/SDAActionBar</item>
         <item name="android:windowBackground">@color/theme_light_2</item>
-    	<item name="android:listChoiceIndicatorSingle">@drawable/widgettheme_btn_radio_holo_dark</item>
     </style>
     
     <style name="SplashTheme" parent="android:Theme.NoTitleBar">

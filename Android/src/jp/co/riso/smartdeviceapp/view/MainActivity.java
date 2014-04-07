@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -82,7 +83,7 @@ public class MainActivity extends BaseActivity {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
                 mMainLayout.requestLayout();
             } else {
-                mMainLayout.setTranslationX(translate);                
+                mMainLayout.setTranslationX(translate);
             }
         }
     }
@@ -152,6 +153,7 @@ public class MainActivity extends BaseActivity {
             
             if (isTablet() && mPrintPreviewScreen && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
                 mMainLayout.setPadding(0, 0, getDrawerWidth(), 0);
+                mMainLayout.requestLayout();
             }
         }
         
@@ -165,7 +167,12 @@ public class MainActivity extends BaseActivity {
             if (isTablet() && mPrintPreviewScreen && drawerView.getId() == mRightLayout.getId()) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(moveFactor), 0);
             } else {
-                mMainLayout.setTranslationX(moveFactor);                
+                mMainLayout.setTranslationX(moveFactor);
+                
+                // #3614 fix
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
+                    mMainLayout.requestLayout();
+                }
             }
         }
         

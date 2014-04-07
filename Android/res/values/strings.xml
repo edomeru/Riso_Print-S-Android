@@ -52,6 +52,7 @@
     <string name="ids_lbl_print_settings">Print Settings</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
+    <string name="ids_lbl_choose_printer">Choose printer</string>
     <string name="ids_lbl_basic">Basic</string>
     <string name="ids_lbl_colormode">Color Mode</string>
     <string name="ids_lbl_colormode_auto">Auto</string>
@@ -65,6 +66,7 @@
     <string name="ids_lbl_duplex_long_edge">Long Edge</string>
     <string name="ids_lbl_duplex_short_edge">Short Edge</string>
     <string name="ids_lbl_papersize">Paper Size</string>
+    <string name="ids_lbl_papersize_a3">A3</string>
     <string name="ids_lbl_papersize_a3w">A3W</string>
     <string name="ids_lbl_papersize_a4">A4</string>
     <string name="ids_lbl_papersize_a5">A5</string>
@@ -115,15 +117,15 @@
     <string name="ids_lbl_booklet_layout_lr">Left to right</string>
     <string name="ids_lbl_booklet_layout_rl">Right to left</string>
     <string name="ids_lbl_booklet_layout_tb">Top to bottom</string>
-    <string name="ids_lbl_finishingside">Binding side</string>
+    <string name="ids_lbl_finishingside">Finishing side</string>
     <string name="ids_lbl_finishingside_left">Left</string>
-    <string name="ids_lbl_finishingside_top">Upper</string>
+    <string name="ids_lbl_finishingside_top">Top</string>
     <string name="ids_lbl_finishingside_right">Right</string>
     <string name="ids_lbl_staple">Staple</string>
-    <string name="ids_lbl_staple_upperleft">Left 1</string>
-    <string name="ids_lbl_staple_upperright">Right 1</string>
-    <string name="ids_lbl_staple_2">2 pos.</string>
-    <string name="ids_lbl_staple_1">1 pos.</string>
+    <string name="ids_lbl_staple_upperleft">1 (Upper-left)</string>
+    <string name="ids_lbl_staple_upperright">1 (Upper-right)</string>
+    <string name="ids_lbl_staple_2">2</string>
+    <string name="ids_lbl_staple_1">1</string>
     <string name="ids_lbl_punch">Punch</string>
     <string name="ids_lbl_punch_2holes">2 holes</string>
     <string name="ids_lbl_punch_3holes">3 holes</string>

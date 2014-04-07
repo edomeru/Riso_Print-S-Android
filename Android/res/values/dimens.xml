@@ -16,6 +16,9 @@
     <dimen name="home_text_size">16dp</dimen>
     <dimen name="home_menu_height">48dp</dimen>
     
+    <dimen name="printsettings_option_with_sub_text_size">14dp</dimen>
+    <dimen name="printsettings_option_with_sub_height">56dp</dimen>
+    
     <dimen name="printsettings_menu_padding">10dp</dimen>
     <dimen name="printsettings_icon_width">20dp</dimen>
     
@@ -27,6 +30,7 @@
     
     <dimen name="printsettings_listvalue_text_size">16dp</dimen>
     <dimen name="printsettings_disclosure_size">20dp</dimen>
+    <dimen name="printsettings_radiobutton_size">32dp</dimen>
     
     <dimen name="printsettings_icon_setting_padding">12dp</dimen>
     
@@ -41,6 +45,7 @@
     <dimen name="preview_controls_text_width">120dp</dimen>
     <dimen name="preview_controls_margin_side">32dp</dimen>
     <dimen name="preview_controls_margin_bottom">8dp</dimen>
+    <dimen name="preview_logo_margin">24dp</dimen>
         
     <dimen name="printjob_column_margin_side">16dp</dimen>
     <dimen name="printjob_margin_side">2dp</dimen>
@@ -54,11 +59,12 @@
     <dimen name="printjob_row_height">52dp</dimen>
     <dimen name="printjob_icon_width">30dp</dimen>
     <dimen name="printjob_groupicon_width">12dp</dimen>
+
+    <dimen name="splash_logo_width">240dp</dimen>
+    <dimen name="splash_logo_height">80dp</dimen>
     
     <!-- Temporary values -->
-
-    <dimen name="temp_splash_logo_width">240dp</dimen>
-    <dimen name="temp_splash_logo_height">80dp</dimen><dimen name="printers_row_left_icon_size">30dp</dimen>
+    <dimen name="printers_row_left_icon_size">30dp</dimen>
 
     <dimen name="printers_row_left_padding">10dp</dimen>
     <dimen name="printers_left_editbox_padding">10dp</dimen>

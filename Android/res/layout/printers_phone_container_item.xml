@@ -65,6 +65,6 @@
         android:layout_weight="0"
         android:contentDescription="@string/default_content_description"
         android:paddingRight="@dimen/printers_row_right_padding"
-        android:src="@drawable/temp_img_disclosure" />
+        android:src="@drawable/img_btn_submenu" />
 
 </LinearLayout>

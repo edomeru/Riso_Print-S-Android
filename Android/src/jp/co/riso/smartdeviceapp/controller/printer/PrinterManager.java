@@ -22,6 +22,9 @@ import android.content.Context;
 import android.database.Cursor;
 
 public class PrinterManager implements SNMPSearchCallback {
+    
+    public static final int EMPTY_ID = -1;
+    
     private static SNMPManager sSNMPManager = null;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList;
@@ -202,7 +205,7 @@ public class PrinterManager implements SNMPSearchCallback {
     }
     
     public int getDefaultPrinter() {
-        int printer = -1;
+        int printer = EMPTY_ID;
         DatabaseManager dbManager = new DatabaseManager(mContext);
 
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
@@ -210,7 +213,7 @@ public class PrinterManager implements SNMPSearchCallback {
         if (cursor.getCount() != 1) {
             dbManager.close();
             cursor.close();
-            return -1;
+            return EMPTY_ID;
         }
         
         if (cursor.moveToFirst()) {
