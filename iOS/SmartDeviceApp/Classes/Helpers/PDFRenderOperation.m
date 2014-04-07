@@ -113,12 +113,12 @@
             CGContextRelease(contextRef);
             return;
         }
-        
-        CGContextSaveGState(contextRef);
-        
+           
+        CGContextRestoreGState(contextRef);
+  
         CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
         UIImageOrientation imageOrientation = UIImageOrientationDownMirrored;
-        if([self isImageUpsideDown] == YES)
+        if([self shouldInvertImage] == YES)
         {
             imageOrientation = UIImageOrientationUpMirrored;
         }
@@ -298,6 +298,22 @@
         return;
     }
     
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.isFrontPage == NO)
+    {
+        if([self shouldInvertImage] == NO)
+        {
+            //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
+            CGContextTranslateCTM(contextRef, self.size.width, 0);
+            CGContextScaleCTM(contextRef, -1.0f, 1.0f);
+        }
+        if([self shouldInvertImage] == YES || self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        {
+            //flip context vertically so that finishing at the top will be drawn at the bottom
+            CGContextTranslateCTM(contextRef, 0, self.size.height);
+            CGContextScaleCTM(contextRef, 1.0f, -1.0f);
+        }
+    }
+    
     kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
     kStapleType stapleType= (kStapleType)self.printDocument.previewSetting.staple;
     if(stapleType > kStapleTypeNone)
@@ -461,10 +477,14 @@
     }
 }
 
-- (BOOL)isImageUpsideDown
+- (BOOL)shouldInvertImage
 {
     if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff)
     {
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop) //for vertical navigation, ios automatically inverts back image
+        {
+            return NO;
+        }
         if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
         {
             return YES;
