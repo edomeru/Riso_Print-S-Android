@@ -36,12 +36,10 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class PrintPreviewPage : PageBase
+    public sealed partial class PrintPreviewPage : ViewControl
     {        
         public PrintPreviewPage()
         {
-            // TODO: Verify if this is acceptable for MVVM
-            Messenger.Default.Register<PreviewViewMode>(this, (previewViewMode) => OnSetPreviewViewMode(previewViewMode));
             this.InitializeComponent();
         }
 
@@ -67,32 +65,6 @@ namespace SmartDeviceApp.Views
         private void ResetTransforms(object sender, RoutedEventArgs e)
         {
             ViewModel._gestureController.ResetTransforms();
-        }
-
-        // Note: Cannot set this in ViewModel because need to get this object
-        // for VisualStateManager.GoToState
-        private void OnSetPreviewViewMode(PreviewViewMode previewViewMode)
-        {
-            switch (previewViewMode)
-            {
-                case PreviewViewMode.MainMenuPaneVisible:
-                {
-                    VisualStateManager.GoToState(this, "MainMenuPaneVisibleState", true);
-                    break;
-                }
-
-                case PreviewViewMode.PreviewViewFullScreen:
-                {
-                    VisualStateManager.GoToState(this, "PreviewViewFullScreenState", true);
-                    break;
-                }
-
-                case PreviewViewMode.RightPaneVisible:
-                {
-                    VisualStateManager.GoToState(this, "RightPaneVisibleState", true);
-                    break;
-                }
-            }
         }
     }
 }

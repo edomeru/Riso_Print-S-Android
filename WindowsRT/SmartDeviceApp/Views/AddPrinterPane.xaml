@@ -1,0 +1,35 @@
+﻿<UserControl
+    x:Class="SmartDeviceApp.Views.AddPrinterPane"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Views"
+    xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="400">
+
+    <!--TODO: Localize title!!-->
+
+    <UserControl.Resources>
+        <Style x:Key="STYLE_RootGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Style="{StaticResource STYLE_RootGrid}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:SidePaneTitleControl Title="Add Printer" ButtonVisibility="Visible"
+                                       ButtonImage="ms-appx:///Resources/Images/img_btn_add_printer_ok_normal.png"/>
+        <Grid>
+            <!--CONTENTS HERE-->
+        </Grid>
+    </Grid>
+
+</UserControl>
