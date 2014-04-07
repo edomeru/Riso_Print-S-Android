@@ -11,6 +11,7 @@
 //
 
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;

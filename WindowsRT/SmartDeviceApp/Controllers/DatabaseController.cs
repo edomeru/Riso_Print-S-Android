@@ -107,7 +107,7 @@ namespace SmartDeviceApp.Controllers
                     db.Commit();
 
                     //PrintSettings Table
-                    db.CreateTable<PagePrintSetting>();
+                    db.CreateTable<PrintSettings>();
                     db.Commit();
 
                     //PrintJob Table
@@ -296,15 +296,15 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSetting Table Operations
 
-        public async Task<PagePrintSetting> GetPrintSetting(int printerId)
+        public async Task<PrintSettings> GetPrintSetting(int printerId)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            PagePrintSetting printSetting = null;
+            PrintSettings printSetting = null;
 
             try
             {
-                printSetting = await db.GetAsync<PagePrintSetting>(printerId);
+                printSetting = await db.GetAsync<PrintSettings>(printerId);
             }
             catch
             {

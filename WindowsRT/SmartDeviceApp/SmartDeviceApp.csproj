@@ -110,6 +110,7 @@
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\AppViewMode.cs" />
     <Compile Include="Common\Enum\ListValueType.cs" />
+    <Compile Include="Common\Enum\PrintSettingsOptions.cs" />
     <Compile Include="Common\Enum\PrintSettingType.cs" />
     <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
     <Compile Include="Common\Enum\RightPaneMode.cs" />
@@ -193,7 +194,6 @@
     <Compile Include="Models\PreviewPage.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\PrintJob.cs" />
-    <Compile Include="Models\PagePrintSetting.cs" />
     <Compile Include="Models\PrintSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />

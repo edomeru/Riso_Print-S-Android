@@ -111,7 +111,7 @@ namespace SmartDeviceApp.Models
         /// Print settings associated to the printer
         /// </summary>
         [SQLite.Ignore]
-        public PagePrintSetting PrintSetting { get; set; }
+        public PrintSettings PrintSettings { get; set; }
 
         #endregion Properties
 
@@ -134,7 +134,7 @@ namespace SmartDeviceApp.Models
             EnabledBind = false;
             IsDefault = false;
             IsOnline = false;
-            PrintSetting = null;
+            PrintSettings = null;
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace SmartDeviceApp.Models
             EnabledBind = enabledBind;
             IsDefault = false;
             IsOnline = false;
-            PrintSetting = null;
+            PrintSettings = null;
         }
 
     }

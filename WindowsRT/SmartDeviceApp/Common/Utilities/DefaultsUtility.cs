@@ -54,48 +54,48 @@ namespace SmartDeviceApp.Common.Utilities
         /// </summary>
         /// <param name="printSettingList">print settings list</param>
         /// <returns>PagePrintSetting object</returns>
-        public static PagePrintSetting GetDefaultPrintSetting(PrintSettingList printSettingList)
+        public static PrintSettings GetDefaultPrintSettings(PrintSettingList printSettingList)
         {
-            PagePrintSetting defaultPrintSetting = new PagePrintSetting();
+            PrintSettings defaultPrintSettings = new PrintSettings();
 
-            defaultPrintSetting.ColorMode =
+            defaultPrintSettings.ColorMode =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_COLOR_MODE);
-            defaultPrintSetting.Orientation =
+            defaultPrintSettings.Orientation =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_ORIENTATION);
-            defaultPrintSetting.Copies =
+            defaultPrintSettings.Copies =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_COPIES);
-            defaultPrintSetting.Duplex =
+            defaultPrintSettings.Duplex =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_DUPLEX);
-            defaultPrintSetting.PaperSize =
+            defaultPrintSettings.PaperSize =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
-            defaultPrintSetting.ScaleToFit =
+            defaultPrintSettings.ScaleToFit =
                 (bool)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT);
-            defaultPrintSetting.PaperType =
+            defaultPrintSettings.PaperType =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
-            defaultPrintSetting.InputTray =
+            defaultPrintSettings.InputTray =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
-            defaultPrintSetting.Imposition =
+            defaultPrintSettings.Imposition =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_IMPOSITION);
-            defaultPrintSetting.ImpositionOrder =
+            defaultPrintSettings.ImpositionOrder =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER);
-            defaultPrintSetting.Sort =
+            defaultPrintSettings.Sort =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_SORT);
-            defaultPrintSetting.Booklet =
+            defaultPrintSettings.Booklet =
                 (bool)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET);
-            defaultPrintSetting.BookletFinishing =
+            defaultPrintSettings.BookletFinishing =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
-            defaultPrintSetting.BookletLayout =
+            defaultPrintSettings.BookletLayout =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
-            defaultPrintSetting.FinishingSide =
+            defaultPrintSettings.FinishingSide =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_FINISHING_SIDE);
-            defaultPrintSetting.Staple =
+            defaultPrintSettings.Staple =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_STAPLE);
-            defaultPrintSetting.Punch =
+            defaultPrintSettings.Punch =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PUNCH);
-            defaultPrintSetting.OutputTray =
+            defaultPrintSettings.OutputTray =
                 (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
 
-            return defaultPrintSetting;
+            return defaultPrintSettings;
         }
 
         /// <summary>
