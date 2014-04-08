@@ -14,10 +14,10 @@
 
 #define FINISHING_MARGIN  	10.0f
 //approximate staple and punch dimensions in points
-#define STAPLE_TOP_WIDTH  	30.0f
+#define STAPLE_TOP_WIDTH        30.0f
 #define STAPLE_SIDE_WIDTH   	5.0f
 #define STAPLE_SIDE_HEIGHT  	42.4f //staple height when 
-#define PUNCH_WIDTH  		18.0f 
+#define PUNCH_WIDTH             18.0f
 
 //punch hole distance in points (converted from mm at 72dpi)
 #define PUNCH_2HOLE_DISTANCE 	228.0f
@@ -42,6 +42,11 @@
  */
 @property (nonatomic) NSUInteger currentPage;
 
+/**
+ 
+ */
+@property (nonatomic) BOOL isFrontPage;
+
 - (void)drawPagesInRect:(CGRect)rect inContext:(CGContextRef)contextRef;
 - (void)drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext:(CGContextRef)contextRef;
 - (void)draw2In1InContext:(CGContextRef)contextRef;
@@ -49,8 +54,9 @@
 - (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef)contextRef;
 - (void)drawFinishing:(CGContextRef)contextRef;
 - (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType atFinishingSide:(kFinishingSide)finishingSide;
-- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide;
+- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat)margin;
 - (void)drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide;
+- (BOOL)shouldInvertImage;
 
 @end
 
@@ -115,18 +121,21 @@
             return;
         }
         
-        // Flip transform
-        CGContextTranslateCTM(contextRef, 0.0f, self.size.height);
-        CGContextScaleCTM(contextRef, 1.0f, -1.0f);
         
         // Render pages
         [self.pageIndices enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSNumber *index = obj;
             self.currentPage = [index unsignedIntegerValue];
+            self.isFrontPage = ((self.currentPage % 2) == 0); //front side if index is even
             
             // Clear context with white fill
             CGContextSetRGBFillColor(contextRef, 1.0f, 1.0f, 1.0f, 1.0f);
             CGContextFillRect(contextRef, rect);
+            
+            // Flip transform
+            CGContextSaveGState(contextRef);
+            CGContextTranslateCTM(contextRef, 0.0f, self.size.height);
+            CGContextScaleCTM(contextRef, 1.0f, -1.0f);
             
             // Render page
             [self drawPagesInRect:rect inContext:contextRef];
@@ -145,11 +154,19 @@
             {
                 *stop = YES;
                 return;
+            
             }
+            
+            CGContextRestoreGState(contextRef);
             
             // Create image
             CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
-            UIImage *image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:UIImageOrientationDownMirrored];
+            UIImageOrientation imageOrientation = UIImageOrientationDownMirrored;
+            if([self shouldInvertImage] == YES)
+            {
+                imageOrientation = UIImageOrientationUpMirrored;
+            }
+            UIImage *image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:imageOrientation];
             [self.images setObject:image forKey:index];
             CGImageRelease(imageRef);
             dispatch_sync(dispatch_get_main_queue(), ^(void)
@@ -199,7 +216,38 @@
     }
     
     CGContextSaveGState(contextRef);
-    CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
+    //get the rect of pdf to know actual pdf size in points (which is at 72 ppi)
+    CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
+    if(self.printDocument.previewSetting.scaleToFit == YES) //Scale To Fit
+    {
+        //self.size is actual size of paper at 72ppi
+        //check if paper is larger than pdf size.
+        //if paper is larger than pdf, pdf must be scaled up to occupy whole paper but still retaining aspect ratio of pdf image
+        if(pdfRect.size.height < rect.size.height && pdfRect.size.width < rect.size.width)
+        {
+            //use the ratio from the side with less difference to the original size of the pdf
+            CGFloat scaleRatio  = rect.size.width/pdfRect.size.width;
+            CGFloat heightScaleRatio = rect.size.height/pdfRect.size.height;
+            if(scaleRatio > heightScaleRatio)
+            {
+                scaleRatio = heightScaleRatio;
+            }
+            rect.size.height/= scaleRatio;
+            rect.size.width /= scaleRatio;
+            CGContextScaleCTM(contextRef, scaleRatio, scaleRatio);
+        }
+   
+        //draw pdf at the center of the paper
+        CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
+    }
+    else
+    {
+        //Not scale to fit
+        //translate the origin so the upper left corner of the pdf coincides to the upper left corner of the paper/rect
+        CGContextTranslateCTM(contextRef, rect.origin.x, rect.origin.y);
+        CGContextTranslateCTM(contextRef, 0, -(pdfRect.size.height - rect.size.height));
+    }
+    
     CGContextDrawPDFPage(contextRef, pageRef);
     CGContextRestoreGState(contextRef);
     CGPDFDocumentRelease(documentRef);
@@ -240,9 +288,9 @@
     else
     {
         rectArray = [NSArray arrayWithObjects:
-                                            [NSValue valueWithCGRect:leftRect],
-                                            [NSValue valueWithCGRect:rightRect],
-                                            nil];
+                        [NSValue valueWithCGRect:leftRect],
+                        [NSValue valueWithCGRect:rightRect],
+                        nil];
     }
     [self drawPagesInRects:rectArray atStartPageNumber:pageNumber inContext:contextRef];
 }
@@ -318,14 +366,48 @@
 
 - (void)drawFinishing:(CGContextRef)contextRef
 {
-    kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
+    //For booklet finishing
+    if(self.printDocument.previewSetting.booklet == YES)
+    {
+        if(self.printDocument.previewSetting.bookletFinish == kBookletTypeFoldAndStaple &&
+           self.isFrontPage)
+        {
+            if(self.printDocument.previewSetting.orientation == kOrientationPortrait)
+            {
+                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideLeft withMargin:0];
+            }
+            else
+            {
+                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideTop withMargin:0];
+            }
+        }
+        return;
+    }
     
+    //For duplex, adjust the context  for the correct location of the staple and punch in the backside of the paper
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.isFrontPage == NO)
+    {
+        if([self shouldInvertImage] == NO)
+        {
+            //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
+            CGContextTranslateCTM(contextRef, self.size.width, 0);
+            CGContextScaleCTM(contextRef, -1.0f, 1.0f);
+        }
+        if([self shouldInvertImage] == YES || self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        {
+            //flip context vertically so that finishing at the top will be drawn at the bottom
+            CGContextTranslateCTM(contextRef, 0, self.size.height);
+            CGContextScaleCTM(contextRef, 1.0f, -1.0f);
+        }
+    }
+    
+    kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
     kStapleType stapleType= (kStapleType)self.printDocument.previewSetting.staple;
     if(stapleType > kStapleTypeNone)
     {
         if(stapleType == kStapleType2Pos)
         {
-            [self drawStaple2Pos:contextRef atFinishingSide:finishingSide];
+            [self drawStaple2Pos:contextRef atFinishingSide:finishingSide withMargin:FINISHING_MARGIN];
         }
         else
         {
@@ -335,15 +417,13 @@
     }
     
     kPunchType punchType = (kPunchType)self.printDocument.previewSetting.punch;
-    
     if(punchType > kPunchTypeNone)
     {
         [self drawPunch:contextRef withPunchType:punchType atFinishingSide: finishingSide];
     }
-    
 }
 
-- (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType  atFinishingSide:(kFinishingSide)finishingSide
+- (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType atFinishingSide:(kFinishingSide)finishingSide
 {
     CGFloat xPos = FINISHING_MARGIN;
     CGFloat yPos = self.size.height - STAPLE_TOP_WIDTH - FINISHING_MARGIN;
@@ -360,7 +440,7 @@
     CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
 }
 
-- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide
+- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat)margin
 {
     CGFloat xPos = FINISHING_MARGIN;
     CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_WIDTH * 0.5f);
@@ -372,7 +452,7 @@
     
     if( finishingSide == kFinishingSideRight)
     {
-        xPos = self.size.width - FINISHING_MARGIN;
+        xPos = self.size.width - margin;
         stapleImageName = @"img_staple_right";
     }
     else if ( finishingSide == kFinishingSideTop)
@@ -380,7 +460,7 @@
         stapleRectWidth = STAPLE_SIDE_HEIGHT;
         stapleRectHeight = STAPLE_SIDE_WIDTH;
         xPos = (self.size.width * 0.25f) - (stapleRectWidth * 0.5f);
-        yPos = self.size.height - FINISHING_MARGIN - stapleRectHeight;
+        yPos = self.size.height - margin - stapleRectHeight;
         xOffset = (self.size.width * 0.5f);
         yOffset = 0;
         stapleImageName = @"img_staple_top";
@@ -477,6 +557,26 @@
         xPos += xOffset;
         yPos += yOffset;
     }
+}
+
+- (BOOL)shouldInvertImage
+{
+    if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff)
+    {
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop) //for vertical navigation, ios automatically inverts back image
+        {
+            return NO;
+        }
+        if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
+        {
+            return YES;
+        }
+        if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width > self.size.height)
+        {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 @end
