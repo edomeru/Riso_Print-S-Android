@@ -11,17 +11,25 @@ package jp.co.riso.android.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 
-public class ConfirmDialogFragment  extends DialogFragment {
+/**
+ * Generic confirmation dialog. To use do the ff:
+ * 1. Target Fragment must implement the ConfirmDialogListener
+ * 2. In the target fragment, add these snippet:
+ *      ConfirmDialogFragment dialog = new ConfirmDialogFragment(<parameters>):
+ *      dialog.setTargetFragment(this, requestCode);
+ *      DialogUtils.showdisplayDialog(activity, tag, newFragment);
+ * 3. To dismiss, simply call: dialog.dismiss();
+ */
+public class ConfirmDialogFragment extends DialogFragment implements OnClickListener {
     
     private static final String KEY_TITLE = "title";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
-    
-    private OnClickListener mListener;
     
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
         return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
@@ -38,6 +46,7 @@ public class ConfirmDialogFragment  extends DialogFragment {
         args.putString(KEY_NEG_BUTTON, buttonNegTitle);
         
         dialog.setArguments(args);
+        dialog.setCancelable(false);
         
         return dialog;
     }
@@ -65,11 +74,11 @@ public class ConfirmDialogFragment  extends DialogFragment {
         }
         
         if (buttonPosTitle != null) {
-            builder.setPositiveButton(buttonPosTitle, mListener);
+            builder.setPositiveButton(buttonPosTitle, this);
         }
         
         if (buttonNegTitle != null) {
-            builder.setNegativeButton(buttonNegTitle, null);
+            builder.setNegativeButton(buttonNegTitle, this);
         }
         
         AlertDialog dialog = null;
@@ -78,8 +87,28 @@ public class ConfirmDialogFragment  extends DialogFragment {
         return dialog;
     }
     
-    public void setListener(OnClickListener dialogListener){
-        mListener = dialogListener;
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (getTargetFragment() instanceof ConfirmDialogListener) {
+            ConfirmDialogListener listener = (ConfirmDialogListener) getTargetFragment();
+            switch (which) {
+                case Dialog.BUTTON_POSITIVE:
+                    listener.onConfirm();
+                    break;
+                case Dialog.BUTTON_NEGATIVE:
+                    listener.onCancel();
+                    break;
+            }
+        }
     }
     
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    
+    public interface ConfirmDialogListener {
+        public void onConfirm();
+        
+        public void onCancel();
+    }
 }
