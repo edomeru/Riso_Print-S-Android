@@ -248,14 +248,13 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         switch (status) {
             case PDFFileManager.PDF_ENCRYPTED:
                 return getResources().getString(R.string.ids_err_msg_pdf_encrypted);
-            case PDFFileManager.PDF_UNKNOWN_ENCRYPTION:
-                return getResources().getString(R.string.ids_err_msg_open_failed);
-            case PDFFileManager.PDF_DAMAGED:
-                return getResources().getString(R.string.ids_err_msg_open_failed);
-            case PDFFileManager.PDF_INVALID_PATH:
+            case PDFFileManager.PDF_PRINT_RESTRICTED:
+                return "Printing not Allowed";
+            case PDFFileManager.PDF_OPEN_FAILED:
                 return getResources().getString(R.string.ids_err_msg_open_failed);
         }
-        return null;
+        
+        return "";
     }
     
     // ================================================================================
@@ -309,17 +308,11 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         switch (status) {
             case PDFFileManager.PDF_OK:
                 setPrintPreviewViewDisplayed(getView(), true);
-                
                 break;
-            case PDFFileManager.PDF_ENCRYPTED:
-            case PDFFileManager.PDF_UNKNOWN_ENCRYPTION:
-            case PDFFileManager.PDF_DAMAGED:
-            case PDFFileManager.PDF_INVALID_PATH:
+            default:
                 String message = getPdfErrorMessage(status);
                 String button = getResources().getString(R.string.ids_lbl_ok);
                 DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
-                break;
-            default:
                 break;
         }
         

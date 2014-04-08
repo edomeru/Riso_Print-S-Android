@@ -563,6 +563,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         mSeekBar.setProgress(currentPage);
     }
     
+    private void updateSeekBarProgress(int currentPage) {
+        mSeekBar.setProgress(currentPage);
+    }
+    
     private void updatePageLabel() {
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
         final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
@@ -717,13 +721,15 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         @Override
         public void indexChanged(int index) {
-            updateSeekBar();
+            updateSeekBarProgress(index);
             
+            /*
             ((android.app.Activity) getContext()).runOnUiThread(new Runnable() {
                 public void run() {
                     updatePageLabel();
                 }
             });
+            */
         }
     }
     
