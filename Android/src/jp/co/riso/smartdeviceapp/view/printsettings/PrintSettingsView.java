@@ -868,7 +868,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * and transitions the screen to Print Jobs History Screen
      * 
      * @param result
-     *            the row layout
+     *            the result of the printing execution (SUCCESSFUL, ERROR)
      */
     private void continuePrintSuccess(JobResult result){
         mPrintingDialog.dismiss();
