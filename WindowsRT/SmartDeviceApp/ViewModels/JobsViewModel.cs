@@ -12,7 +12,7 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.ViewModels
 {
-    public class PrintersViewModel : ViewModelBase
+    public class JobsViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -20,7 +20,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _toggleMainMenuPane;
         private AppViewModel _appViewModel;
 
-        public PrintersViewModel(IDataService dataService, INavigationService navigationService)
+        public JobsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
@@ -46,16 +46,16 @@ namespace SmartDeviceApp.ViewModels
 
         private void ToggleMainMenuPaneExecute()
         {
-            AppViewMode appViewMode = AppViewMode.PrintersPageFullScreen;
+            AppViewMode appViewMode = AppViewMode.JobsPageFullScreen;
             switch (_appViewModel.AppViewMode)
             {
                 case AppViewMode.MainMenuPaneVisible:
                     {
-                        appViewMode = AppViewMode.PrintPreviewPageFullScreen;
+                        appViewMode = AppViewMode.JobsPageFullScreen;
                         break;
                     }
 
-                case AppViewMode.PrintersPageFullScreen:
+                case AppViewMode.JobsPageFullScreen:
                     {
                         appViewMode = AppViewMode.MainMenuPaneVisible;
                         break;

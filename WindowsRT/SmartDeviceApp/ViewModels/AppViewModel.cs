@@ -19,9 +19,6 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
-        private ICommand _toggleMainMenuPane;
-        private ICommand _showPreviewViewFullScreen;
-        private ICommand _toggleRightPane;
         private AppViewMode _appViewMode;
         private RightPaneMode _rightPaneMode;
 

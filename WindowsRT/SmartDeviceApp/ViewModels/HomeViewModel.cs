@@ -15,9 +15,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -25,39 +28,54 @@ namespace SmartDeviceApp.ViewModels
     {
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
+
+        private ICommand _toggleMainMenuPane;
+        private AppViewModel _appViewModel;
         
         public HomeViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            Initialize();
+            _appViewModel = new ViewModelLocator().AppViewModel;
         }
 
-        ////public override void Cleanup()
-        ////{
-        ////    // Clean up if needed
+        #region PANE VISIBILITY
 
-        ////    base.Cleanup();
-        ////}
-        public void Load(DateTime lastVisit)
+        public ICommand ToggleMainMenuPane
         {
-            if (lastVisit > DateTime.MinValue)
+            get
             {
-                // TODO
+                if (_toggleMainMenuPane == null)
+                {
+                    _toggleMainMenuPane = new RelayCommand(
+                        () => ToggleMainMenuPaneExecute(),
+                        () => true
+                    );
+                }
+                return _toggleMainMenuPane;
             }
         }
 
-        private async Task Initialize()
+        private void ToggleMainMenuPaneExecute()
         {
-            try
+            AppViewMode appViewMode = AppViewMode.HomePageFullScreen;
+            switch (_appViewModel.AppViewMode)
             {
-                var item = await _dataService.GetData();
-                // TODO
+                case AppViewMode.MainMenuPaneVisible:
+                    {
+                        appViewMode = AppViewMode.HomePageFullScreen;
+                        break;
+                    }
+
+                case AppViewMode.HomePageFullScreen:
+                    {
+                        appViewMode = AppViewMode.MainMenuPaneVisible;
+                        break;
+                    }
             }
-            catch (Exception ex)
-            {
-                // Report error here
-            }
+            _appViewModel.AppViewMode = appViewMode;
         }
+
+        #endregion
     }
 }

@@ -64,12 +64,12 @@
                 <Button x:Name="button3" 
                         Command="{Binding Button3Command, ElementName=viewControl}" 
                         Template="{StaticResource TEMPLATE_Button3}"
-                        Visibility="{Binding Button3Visiblity, ElementName=viewControl}"
+                        Visibility="{Binding Button3Visibility, ElementName=viewControl}"
                         Style="{StaticResource STYLE_AlignRight}"/>
                 <Button x:Name="button2" 
                         Command="{Binding Button2Command, ElementName=viewControl}" 
                         Template="{StaticResource TEMPLATE_Button2}"
-                        Visibility="{Binding Button2Visiblity, ElementName=viewControl}"
+                        Visibility="{Binding Button2Visibility, ElementName=viewControl}"
                         Style="{StaticResource STYLE_AlignRight}"/>
             </StackPanel>
         </Grid>

@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Text="Home" 
+    Button1Command="{Binding Path=ToggleMainMenuPane}"
     DataContext="{Binding HomeViewModel, Source={StaticResource Locator}}">
     
 </controls:ViewControl>

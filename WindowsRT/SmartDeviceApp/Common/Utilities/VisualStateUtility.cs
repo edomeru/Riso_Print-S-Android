@@ -41,11 +41,13 @@ namespace SmartDeviceApp.Common.Utilities
                         VisualStateManager.GoToState((PageBase)obj, "MainMenuPaneVisibleState", true);
                         break;
                     }
-
+                    case AppViewMode.HomePageFullScreen:
                     case AppViewMode.PrintPreviewPageFullScreen:
                     case AppViewMode.PrintersPageFullScreen:
                     case AppViewMode.JobsPageFullScreen:
                     case AppViewMode.SettingsPageFullScreen:
+                    case AppViewMode.HelpPageFullScreen:
+                    case AppViewMode.LegalPageFullScreen:
                     {
                         VisualStateManager.GoToState((PageBase)obj, "FullScreenState", true);
                         break;
