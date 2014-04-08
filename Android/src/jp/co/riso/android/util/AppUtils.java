@@ -32,6 +32,7 @@ import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 public final class AppUtils {
     public static final String TAG = "AppUtils"; 
@@ -135,7 +136,17 @@ public final class AppUtils {
         return appFile.lastModified();
     }
     
-
+    /**
+     * Forcibly dismisses the Softkeyboard
+     * 
+     * @param activity
+     *            Valid activity
+     */
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    
     /**
      * Gets the Screen Dimensions of the Device
      * 
