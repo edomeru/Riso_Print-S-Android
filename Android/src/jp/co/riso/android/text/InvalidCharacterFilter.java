@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
- * CommunityNameFilter.java
+ * InvalidCharacterFilter.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
