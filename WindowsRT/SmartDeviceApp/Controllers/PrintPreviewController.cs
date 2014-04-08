@@ -97,7 +97,7 @@ namespace SmartDeviceApp.Controllers
             _previewPages = new Dictionary<int, PreviewPage>();
 
             // Get print settings if document is successfully loaded
-            if (DocumentController.Instance.IsFileLoaded)
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
                 _previewPageTotal = DocumentController.Instance.PageCount;
 
@@ -121,7 +121,7 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
-                // Notify error
+                // TODO: Notify ViewModel regarding error
             }
         }
 
