@@ -6,6 +6,7 @@
     xmlns:controls="using:SmartDeviceApp.Controls"
     xmlns:sel="using:SmartDeviceApp.Selectors"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:utility="using:SmartDeviceApp.Common.Utilities"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,19 +19,25 @@
         <DataTemplate x:Key="TEMPLATE_ListViewItemToggleSwitch">
             <controls:KeyToggleSwitchControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                              IsOn="{Binding Path=Value, Mode=TwoWay}"
-                                             IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+                                             utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
+                                             IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                             SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemTextBox">
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding Path=Value, Converter={StaticResource IntToStringConverter}, Mode=TwoWay}"
-                                        IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+                                        utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
+                                        IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                        SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">
             <controls:KeyValueControl x:Name="listViewItemList"
                                       Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                       ValueText="{Binding Path=SelectedOption.Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                      utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                       LeftButtonVisibility="Collapsed"
-                                      IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"/>
+                                      IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                      SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"/>
         </DataTemplate>
         <sel:PrintSettingsListTemplateSelector x:Key="PrintSettingsListTemplateSelector"
                                                ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"

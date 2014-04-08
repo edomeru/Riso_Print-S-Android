@@ -35,6 +35,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyRadioButtonControl), null);
 
+        public static readonly DependencyProperty SeparatorVisibilityProperty =
+            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyRadioButtonControl), null);
+
         public object Value
         {
             get { return this.DataContext; }
@@ -59,5 +62,10 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextProperty, value); }
         }
 
+        public string SeparatorVisibility
+        {
+            get { return (string)GetValue(SeparatorVisibilityProperty); }
+            set { SetValue(SeparatorVisibilityProperty, value); }
+        }
     }
 }

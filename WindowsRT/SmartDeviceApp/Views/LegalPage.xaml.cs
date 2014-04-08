@@ -1,16 +1,4 @@
-﻿//
-//  HomePage.xaml.cs
-//  SmartDeviceApp
-//
-//  Created by a-LINK Group on 2014/02/25.
-//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
-//
-//  Revision History :
-//  Date            Author/ID           Ver.
-//  ----------------------------------------------------------------------
-//
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,14 +12,13 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Controls;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class HomePage : ViewControl
+    public sealed partial class LegalPage : ViewControl
     {
-        public HomePage()
+        public LegalPage()
         {
             this.InitializeComponent();
         }

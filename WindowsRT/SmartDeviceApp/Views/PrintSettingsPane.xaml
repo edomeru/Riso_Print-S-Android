@@ -8,8 +8,10 @@
     utility:VisualStateUtility.PrintSettingsPaneState="{Binding PrintSettingsPaneMode}"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{StaticResource BRUSH_Gray2}"
     mc:Ignorable="d"
     d:DesignWidth="400"
+    Height="{Binding Converter={StaticResource HeightConverter}}"
     DataContext="{Binding PrintSettingsPaneViewModel, Source={StaticResource Locator}}">
     
     <!--TODO: Localize title!!-->

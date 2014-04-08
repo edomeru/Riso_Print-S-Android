@@ -44,11 +44,67 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public HomeViewModel HomeViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HomeViewModel>();
+            }
+        }
+
         public PrintPreviewViewModel PrintPreviewViewModel
         {
             get
             {
                 return ServiceLocator.Current.GetInstance<PrintPreviewViewModel>();
+            }
+        }
+
+        public PrintersViewModel PrintersViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PrintersViewModel>();
+            }
+        }
+
+        public JobsViewModel JobsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<JobsViewModel>();
+            }
+        }
+
+        public SettingsViewModel SettingsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SettingsViewModel>();
+            }
+        }
+
+        public HelpViewModel HelpViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HelpViewModel>();
+            }
+        }
+
+        public LegalViewModel LegalViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<LegalViewModel>();
+            }
+        }
+
+        public MainMenuViewModel MainMenuViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<MainMenuViewModel>();
             }
         }
 
@@ -92,7 +148,14 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
             SimpleIoc.Default.Register<AppViewModel>();
+            SimpleIoc.Default.Register<HomeViewModel>();
             SimpleIoc.Default.Register<PrintPreviewViewModel>();
+            SimpleIoc.Default.Register<PrintersViewModel>();
+            SimpleIoc.Default.Register<JobsViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<HelpViewModel>();
+            SimpleIoc.Default.Register<LegalViewModel>();
+            SimpleIoc.Default.Register<MainMenuViewModel>();
             SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();

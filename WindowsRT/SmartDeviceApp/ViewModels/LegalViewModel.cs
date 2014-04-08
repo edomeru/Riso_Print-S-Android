@@ -1,16 +1,4 @@
-﻿//
-//  HomeViewModel.cs
-//  SmartDeviceApp
-//
-//  Created by a-LINK Group on 2014/02/25.
-//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
-//
-//  Revision History :
-//  Date            Author/ID           Ver.
-//  ----------------------------------------------------------------------
-//
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,15 +12,15 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.ViewModels
 {
-    public class HomeViewModel : ViewModelBase
+    public class LegalViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
         private ICommand _toggleMainMenuPane;
         private AppViewModel _appViewModel;
-        
-        public HomeViewModel(IDataService dataService, INavigationService navigationService)
+
+        public LegalViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
@@ -58,16 +46,16 @@ namespace SmartDeviceApp.ViewModels
 
         private void ToggleMainMenuPaneExecute()
         {
-            AppViewMode appViewMode = AppViewMode.HomePageFullScreen;
+            AppViewMode appViewMode = AppViewMode.LegalPageFullScreen;
             switch (_appViewModel.AppViewMode)
             {
                 case AppViewMode.MainMenuPaneVisible:
                     {
-                        appViewMode = AppViewMode.HomePageFullScreen;
+                        appViewMode = AppViewMode.LegalPageFullScreen;
                         break;
                     }
 
-                case AppViewMode.HomePageFullScreen:
+                case AppViewMode.LegalPageFullScreen:
                     {
                         appViewMode = AppViewMode.MainMenuPaneVisible;
                         break;

@@ -1,5 +1,5 @@
 ﻿<controls:ViewControl
-    x:Class="SmartDeviceApp.Views.PrintersPage"
+    x:Class="SmartDeviceApp.Views.JobsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Views"
@@ -7,8 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Text="Printers" 
+    Text="Jobs" 
     Button1Command="{Binding Path=ToggleMainMenuPane}"
-    DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
+    DataContext="{Binding JobsViewModel, Source={StaticResource Locator}}">
 
 </controls:ViewControl>
+

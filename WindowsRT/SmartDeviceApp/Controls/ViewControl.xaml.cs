@@ -35,6 +35,18 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty Button3CommandProperty =
             DependencyProperty.Register("Button3Command", typeof(ICommand), typeof(ViewControl), null);
 
+        public static readonly DependencyProperty Button2ImageProperty =
+           DependencyProperty.Register("Button2Image", typeof(ImageSource), typeof(ViewControl), null);
+
+        public static readonly DependencyProperty Button3ImageProperty =
+           DependencyProperty.Register("Button3Image", typeof(ImageSource), typeof(ViewControl), null);
+        
+        public static readonly DependencyProperty Button2VisibilityProperty =
+           DependencyProperty.Register("Button2Visibility", typeof(ImageSource), typeof(ViewControl), null);
+
+        public static readonly DependencyProperty Button3VisibilityProperty =
+           DependencyProperty.Register("Button3Visibility", typeof(ImageSource), typeof(ViewControl), null);
+        
         public static new readonly DependencyProperty WidthProperty =
             DependencyProperty.Register("Width", typeof(double), typeof(ViewControl), new PropertyMetadata(0, SetWidth));
         
@@ -72,6 +84,30 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ICommand)GetValue(Button3CommandProperty); }
             set { SetValue(Button3CommandProperty, value); }
+        }
+
+        public ImageSource Button2Image
+        {
+            get { return (ImageSource)GetValue(Button2ImageProperty); }
+            set { SetValue(Button2ImageProperty, value); }
+        }
+
+        public ImageSource Button3Image
+        {
+            get { return (ImageSource)GetValue(Button3ImageProperty); }
+            set { SetValue(Button3ImageProperty, value); }
+        }
+
+        public Visibility Button2Visibility
+        {
+            get { return (Visibility)GetValue(Button2VisibilityProperty); }
+            set { SetValue(Button2VisibilityProperty, value); }
+        }
+
+        public Visibility Button3Visibility
+        {
+            get { return (Visibility)GetValue(Button3VisibilityProperty); }
+            set { SetValue(Button3VisibilityProperty, value); }
         }
 
         public new double Width

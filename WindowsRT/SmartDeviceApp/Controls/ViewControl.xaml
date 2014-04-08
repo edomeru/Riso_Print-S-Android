@@ -18,6 +18,21 @@
                 <Setter Property="Background" Value="{StaticResource BRUSH_Purple1}"/>
             </Style.Setters>
         </Style>
+        <ControlTemplate x:Key="TEMPLATE_Button1" TargetType="Button">
+            <Grid>
+                <Image Source="ms-appx:///Resources/Images/img_btn_main_menu_normal.png" Stretch="None"/>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="TEMPLATE_Button2" TargetType="Button">
+            <Grid>
+                <Image Source="{Binding Button2Image, ElementName=viewControl}" Stretch="None"/>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="TEMPLATE_Button3" TargetType="Button">
+            <Grid>
+                <Image Source="{Binding Button3Image, ElementName=viewControl}" Stretch="None"/>
+            </Grid>
+        </ControlTemplate>
     </UserControl.Resources>
 
     <Grid x:Name="viewControlGrid"
@@ -39,12 +54,23 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-                <Button x:Name="button1" Command="{Binding Button1Command, ElementName=viewControl}" Style="{StaticResource STYLE_TitleBarLeftButton}"/>
+                <Button x:Name="button1" 
+                        Command="{Binding Button1Command, ElementName=viewControl}" 
+                        Template="{StaticResource TEMPLATE_Button1}" 
+                        Style="{StaticResource STYLE_AlignLeft}"/>
                 <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-                <Button x:Name="button3" Command="{Binding Button3Command, ElementName=viewControl}" Style="{StaticResource STYLE_TitleBarRightButton}"/>
-                <Button x:Name="button2" Command="{Binding Button2Command, ElementName=viewControl}" Style="{StaticResource STYLE_TitleBarRightButton}"/>
+                <Button x:Name="button3" 
+                        Command="{Binding Button3Command, ElementName=viewControl}" 
+                        Template="{StaticResource TEMPLATE_Button3}"
+                        Visibility="{Binding Button3Visibility, ElementName=viewControl}"
+                        Style="{StaticResource STYLE_AlignRight}"/>
+                <Button x:Name="button2" 
+                        Command="{Binding Button2Command, ElementName=viewControl}" 
+                        Template="{StaticResource TEMPLATE_Button2}"
+                        Visibility="{Binding Button2Visibility, ElementName=viewControl}"
+                        Style="{StaticResource STYLE_AlignRight}"/>
             </StackPanel>
         </Grid>
         <Grid x:Name="contentGrid" Grid.Row="1"/>

@@ -52,6 +52,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty SeparatorVisibilityProperty =
+            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
         
         public int Index
         {
@@ -105,6 +108,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
+        }
+
+        public string SeparatorVisibility
+        {
+            get { return (string)GetValue(SeparatorVisibilityProperty); }
+            set { SetValue(SeparatorVisibilityProperty, value); }
         }
     }
 }

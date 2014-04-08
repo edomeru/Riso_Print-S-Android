@@ -35,11 +35,26 @@
                 </Setter>
             </Style.Setters>
         </Style>
+        <DataTemplate x:Key="TEMPLATE_HomePage">
+            <local:HomePage/>
+        </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintPreviewPage">
             <local:PrintPreviewPage/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintersPage">
             <local:PrintersPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_JobsPage">
+            <local:JobsPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_SettingsPage">
+            <local:SettingsPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_HelpPage">
+            <local:HelpPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_LegalPage">
+            <local:LegalPage/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintSettingsPane">
             <local:PrintSettingsPane/>
@@ -51,8 +66,13 @@
             <local:SearchPrinterPane/>
         </DataTemplate>
         <sel:AppViewTemplateSelector x:Key="AppViewTemplateSelector"
+                                     HomePageTemplate="{StaticResource TEMPLATE_HomePage}"
                                      PrintPreviewPageTemplate="{StaticResource TEMPLATE_PrintPreviewPage}"
-                                     PrintersPageTemplate="{StaticResource TEMPLATE_PrintersPage}"/>
+                                     PrintersPageTemplate="{StaticResource TEMPLATE_PrintersPage}"
+                                     JobsPageTemplate="{StaticResource TEMPLATE_JobsPage}"
+                                     SettingsPageTemplate="{StaticResource TEMPLATE_SettingsPage}"
+                                     HelpPageTemplate="{StaticResource TEMPLATE_HelpPage}"
+                                     LegalPageTemplate="{StaticResource TEMPLATE_LegalPage}"/>
         <sel:RightPaneTemplateSelector x:Key="RightPaneTemplateSelector"
                                      PrintSettingsPaneTemplate="{StaticResource TEMPLATE_PrintSettingsPane}"
                                      AddPrinterPaneTemplate="{StaticResource TEMPLATE_AddPrinterPane}"
