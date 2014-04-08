@@ -44,7 +44,7 @@ public class PrintJobManager {
     private static PrintJobManager sInstance;
     
     private DatabaseManager mManager;
-    private boolean mRefreshFlag = true;
+    private boolean mRefreshFlag;
     
     private PrintJobManager(Context context) {
         mManager = new DatabaseManager(context);

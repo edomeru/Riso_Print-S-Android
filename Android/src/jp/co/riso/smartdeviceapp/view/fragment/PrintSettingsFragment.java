@@ -96,6 +96,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPrintSettings = new PrintSettings(printSettings);
     }
     
+    /**
+     * This method sets the value of mPdfFileName
+     * 
+     * @param filename
+     *            the PDF filename string
+     */
     public void setPdfFileName(String filename) {
         mPdfFileName = filename;
     }

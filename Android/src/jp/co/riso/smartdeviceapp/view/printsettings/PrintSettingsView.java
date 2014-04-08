@@ -448,6 +448,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
+    /**
+     * This method sets the value of mPdfFileName
+     * 
+     * @param filename
+     *            the PDF filename string
+     */
+    
     public void setPdfFileName(String filename) {
         mPdfFileName = filename;
     }
@@ -845,20 +852,28 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void executePrint() {
+        //TODO: add actual printing execution and remove Handler.postDelayed
         mPrintingDialog = PrintingDialogFragment.newInstance();
         DialogUtils.displayDialog((Activity) getContext(), TAG, mPrintingDialog);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                continuePrintSuccess();
+                continuePrintSuccess(JobResult.SUCCESSFUL);
             }
         }, 10000);
     }
     
-    private void continuePrintSuccess(){
+    /**
+     * This method dismisses the printing progress dialog after the actual printing execution
+     * and transitions the screen to Print Jobs History Screen
+     * 
+     * @param result
+     *            the row layout
+     */
+    private void continuePrintSuccess(JobResult result){
         mPrintingDialog.dismiss();
         PrintJobManager pm = PrintJobManager.getInstance(getContext());
-        pm.createPrintJob(mPrinterId, mPdfFileName, new Date(), JobResult.SUCCESSFUL);
+        pm.createPrintJob(mPrinterId, mPdfFileName, new Date(), result);
         
         MainActivity activity = (MainActivity) getContext();
         activity.closeDrawers();

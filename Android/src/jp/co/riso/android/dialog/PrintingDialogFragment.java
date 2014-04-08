@@ -17,6 +17,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
+/**
+ * Printing progress dialog. To use do the ff:
+ * 1. In the target fragment, add these snippet:
+ *      PrintingDialogFragment dialog = new PrintingDialogFragment():
+ *      DialogUtils.showdisplayDialog(activity, tag, dialog);
+ * 2. To dismiss, simply call: dialog.dismiss();
+ */
 public class PrintingDialogFragment extends DialogFragment {
     
     public PrintingDialogFragment() {
