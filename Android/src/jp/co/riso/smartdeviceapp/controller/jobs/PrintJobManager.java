@@ -35,9 +35,6 @@ public class PrintJobManager {
     private static final String C_SEL_PRN_ID = KeyConstants.KEY_SQL_PRINTER_TABLE + "."
             + KeyConstants.KEY_SQL_PRINTER_ID + " IN (SELECT DISTINCT "
             + KeyConstants.KEY_SQL_PRINTER_ID + " FROM " + KeyConstants.KEY_SQL_PRINTJOB_TABLE + ")";
-    private static final String C_COUNT = "COUNT";
-    private static final String C_COL_COUNT = "COUNT(DISTINCT " + KeyConstants.KEY_SQL_PRINTER_ID
-            + ") AS " + C_COUNT;
     private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String C_TIMEZONE = "UTC";
     
