@@ -541,7 +541,7 @@
         <!--Printers Ipad View Controller-->
         <scene sceneID="bjc-YQ-oJ5">
             <objects>
-                <viewController id="ZEw-b3-LhF" customClass="PrintersIpadViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrintersIpadViewController" id="ZEw-b3-LhF" customClass="PrintersIpadViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8Vx-Ei-wvM"/>
                         <viewControllerLayoutGuide type="bottom" id="frR-2Y-NPX"/>
@@ -927,7 +927,7 @@
         <!--Add Printer View Controller-->
         <scene sceneID="SWa-uh-zo2">
             <objects>
-                <viewController id="Awv-gP-Onf" customClass="AddPrinterViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddPrinterViewController" id="Awv-gP-Onf" customClass="AddPrinterViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ApK-at-nP0"/>
                         <viewControllerLayoutGuide type="bottom" id="tTZ-eS-6NZ"/>
@@ -1127,7 +1127,7 @@
         <!--Printer Search View Controller-->
         <scene sceneID="mQk-ox-nKu">
             <objects>
-                <viewController id="vSr-S1-xXi" customClass="PrinterSearchViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrinterSearchViewController" id="vSr-S1-xXi" customClass="PrinterSearchViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ek8-aF-fja"/>
                         <viewControllerLayoutGuide type="bottom" id="ylJ-51-wiY"/>
@@ -1351,7 +1351,7 @@
         <!--Add Printer View Controller-->
         <scene sceneID="DVg-Uj-EGa">
             <objects>
-                <viewController id="vvM-i0-l3B" customClass="AddPrinterViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddPrinterViewController" id="vvM-i0-l3B" customClass="AddPrinterViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="xno-mX-KcI"/>
                         <viewControllerLayoutGuide type="bottom" id="TsA-tj-qUd"/>
@@ -1569,7 +1569,7 @@
         <!--Printer Info View Controller-->
         <scene sceneID="ZR4-j3-87j">
             <objects>
-                <viewController id="qXF-RA-AFJ" customClass="PrinterInfoViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrinterInfoViewController" id="qXF-RA-AFJ" customClass="PrinterInfoViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="OgJ-Tu-sEn"/>
                         <viewControllerLayoutGuide type="bottom" id="A4I-fK-7AS"/>
@@ -1870,7 +1870,7 @@
         <!--Printers Iphone View Controller-->
         <scene sceneID="tWg-WX-q5M">
             <objects>
-                <viewController id="jTA-Cg-WoR" customClass="PrintersIphoneViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrintersIphoneViewController" id="jTA-Cg-WoR" customClass="PrintersIphoneViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="d8a-Xh-39V"/>
                         <viewControllerLayoutGuide type="bottom" id="n6E-c6-Ilu"/>
@@ -2119,7 +2119,7 @@
         <!--Printer Search View Controller-->
         <scene sceneID="LSV-7C-xq4">
             <objects>
-                <viewController id="RaD-uj-jjo" customClass="PrinterSearchViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrinterSearchViewController" id="RaD-uj-jjo" customClass="PrinterSearchViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dyX-rz-MDP"/>
                         <viewControllerLayoutGuide type="bottom" id="7Xe-3X-qMb"/>
@@ -2321,7 +2321,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="c8V-UF-iWe"/>
+        <segue reference="Ysc-8g-iB4"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -1,5 +1,5 @@
 //
-//  PrinterManagerDBTest.m
+//  PrinterManagerTest.m
 //  SmartDeviceApp
 //
 //  Created by Gino Mempin on 4/7/14.
@@ -18,14 +18,14 @@ const NSUInteger DEFAULT_2    = 4;
 const NSString*  PRINTER_NAME = @"UT-Printer";
 const NSString*  PRINTER_IP   = @"192.168.1.";
 
-@interface PrinterManagerDBTest : GHTestCase
+@interface PrinterManagerTest : GHTestCase
 {
     PrinterManager* printerManager;
 }
 
 @end
 
-@implementation PrinterManagerDBTest
+@implementation PrinterManagerTest
 
 #pragma mark - Setup/TearDown Methods
 
@@ -44,6 +44,7 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
+    printerManager = nil;
 }
 
 // Run before each test method
@@ -68,8 +69,6 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     GHAssertEquals(printerManager.countSavedPrinters, (NSUInteger)0, @"printer count should be 0");
     GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test002_AddPrinters
@@ -92,8 +91,6 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
         GHTestLog(@"-- registering \"%@\"..", pd.name);
         GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
     }
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test003_GetPrinters
@@ -128,8 +125,6 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
         
         GHAssertNotNil(testPrinter.printsetting, @"Printer should have a valid PrintSetting object");
     }
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test004_SetUnsetDefaultPrinter
@@ -160,8 +155,6 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     GHAssertEquals(printerManager.countSavedPrinters, NUM_PRINTERS, @"printer count should remain the same");
     GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
     GHAssertFalse([printerManager isDefaultPrinter:default2], @"default2 is not anymore the default printer");
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test005_MaximumPrinters
@@ -193,8 +186,6 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     GHAssertTrue([printerManager isAtMaximumPrinters], @"count(%lu) = MAX_PRINTERS(%lu)",
                   (unsigned long)printerManager.countSavedPrinters,
                   (unsigned long)MAX_PRINTERS);
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test006_DuplicatePrinter
@@ -206,8 +197,6 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     
     NSString* newIP = @"127.0.0.1";
     GHAssertFalse([printerManager isIPAlreadyRegistered:newIP], @"IP=%@ shouldn't be registered", newIP);
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test007_DeletePrinters
@@ -231,8 +220,16 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     GHAssertEquals(printerManager.countSavedPrinters, (NSUInteger)0, @"printers count should be 0");
     GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
+}
+
+- (void)test008_SearchForOnePrinter
+{
+    GHTestLog(@"# CHECK: PM can search for a Printer. #");
+}
+
+- (void)test009_SearchForAllPrinters
+{
+    GHTestLog(@"# CHECK: PM can search for Printers. #");
 }
 
 @end

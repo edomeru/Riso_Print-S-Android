@@ -61,26 +61,22 @@
     [self checkAdd:E_PRINTER usingTag:@"newPrinter1"];
     [self checkDiscard:@"newPrinter1"];
     [self checkDBShouldBeEmpty:E_PRINTER];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test002_PrinterAddWithoutPrintSetting
 {
-    GHTestLog(@"# CHECK: DBM can block invalid Printers. #");
+    GHTestLog(@"# CHECK: DBM saving an invalid Printer. #");
     
     [self checkDBShouldBeEmpty:E_PRINTER];
     [self checkAdd:E_PRINTER usingTag:@"newPrinter2"];
     [self checkSave:@"newPrinter2" expectingResult:NO errorMsg:@"save should fail, PrintSetting object is nil"];
     [self checkDiscard:@"newPrinter2"];
     [self checkDBShouldBeEmpty:E_PRINTER];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test003_PrinterAddWithPrintSetting
 {
-    GHTestLog(@"# CHECK: DBM can save valid Printers. #");
+    GHTestLog(@"# CHECK: DBM saving a valid Printer. #");
     
     [self checkDBShouldBeEmpty:E_PRINTER];
     Printer* newPrinter3 = (Printer*)[self checkAdd:E_PRINTER usingTag:@"newPrinter3"];
@@ -90,13 +86,11 @@
     [self checkSave:@"newPrinter3" expectingResult:YES errorMsg:@"save should be successful"];
     [self checkDBShouldNotBeEmpty:E_PRINTER expecting:1];
     [self checkDBShouldNotBeEmpty:E_PRINTSETTING expecting:1];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test004_PrinterRetrieveThenDelete
 {
-    GHTestLog(@"# CHECK: DBM can retrieve and delete Printers. #");
+    GHTestLog(@"# CHECK: DBM retrieve and delete Printers. #");
     
     [self checkDBShouldNotBeEmpty:E_PRINTER expecting:1];
     Printer* retrievedPrinter1 = (Printer*)[[self checkGet:E_PRINTER] firstObject];
@@ -106,8 +100,6 @@
     [self checkDelete:retrievedPrinter1 usingTag:@"retrievedPrinter1"];
     [self checkDBShouldBeEmpty:E_PRINTER];
     [self checkDBShouldBeEmpty:E_PRINTSETTING];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test005_DefaultPrinterAddNoSave
@@ -118,26 +110,22 @@
     [self checkAdd:E_DEFAULTPRINTER usingTag:@"defaultPrinter1"];
     [self checkDiscard:@"defaultPrinter1"];
     [self checkDBShouldBeEmpty:E_DEFAULTPRINTER];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test006_DefaultPrinterAddWithoutPrinter
 {
-    GHTestLog(@"# CHECK: DBM can block invalid DefaultPrinter. #");
+    GHTestLog(@"# CHECK: DBM saving an invalid DefaultPrinter. #");
     
     [self checkDBShouldBeEmpty:E_DEFAULTPRINTER];
     [self checkAdd:E_DEFAULTPRINTER usingTag:@"defaultPrinter2"];
     [self checkSave:@"defaultPrinter2" expectingResult:NO errorMsg:@"save should fail, Printer object is nil"];
     [self checkDiscard:@"defaultPrinter2"];
     [self checkDBShouldBeEmpty:E_DEFAULTPRINTER];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test007_DefaultPrinterAddWithPrinter
 {
-    GHTestLog(@"# CHECK: DBM can save valid DefaultPrinter. #");
+    GHTestLog(@"# CHECK: DBM saving a valid DefaultPrinter. #");
     
     [self checkDBShouldBeEmpty:E_DEFAULTPRINTER];
     DefaultPrinter* defaultPrinter3 = (DefaultPrinter*)[self checkAdd:E_DEFAULTPRINTER
@@ -152,13 +140,11 @@
     [self checkDBShouldNotBeEmpty:E_DEFAULTPRINTER expecting:1];
     [self checkDBShouldNotBeEmpty:E_PRINTER expecting:1];
     [self checkDBShouldNotBeEmpty:E_PRINTSETTING expecting:1];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test008_DefaultPrinterRetrieveThenDelete
 {
-    GHTestLog(@"# CHECK: DBM can retrieve and delete DefaultPrinter. #");
+    GHTestLog(@"# CHECK: DBM retrieve and delete DefaultPrinter. #");
     
     [self checkDBShouldNotBeEmpty:E_DEFAULTPRINTER expecting:1];
     DefaultPrinter* retrievedDefaultPrinter = (DefaultPrinter*)[[self checkGet:E_DEFAULTPRINTER] firstObject];
@@ -174,8 +160,6 @@
     [self checkDelete:attachedPrinter usingTag:@"attachedPrinter"];
     [self checkDBShouldBeEmpty:E_PRINTER];
     [self checkDBShouldBeEmpty:E_PRINTSETTING];
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 #pragma mark - Utility Methods

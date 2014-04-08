@@ -56,8 +56,6 @@
     GHTestLog(@"-- reading [Max Printer Count]");
     NSUInteger actualMaxPrinterCount = [PListHelper readUint:kPlistUintValMaxPrinters];
     GHAssertEquals(actualMaxPrinterCount, (NSUInteger)20, @"");
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test002_ReadBool
@@ -71,8 +69,6 @@
     GHTestLog(@"-- reading [Use SNMP Timeout]");
     BOOL useSNMPTimeout = [PListHelper readBool:kPlistBoolValUseSNMPTimeout];
     GHAssertFalse(useSNMPTimeout, @"");
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test003_ReadDefaultSettings
@@ -129,8 +125,6 @@
     
     GHTestLog(@"-- reading ZoomRate");
     GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"ZoomRate"] intValue], 100, nil);
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 @end

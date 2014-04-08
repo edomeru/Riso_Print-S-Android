@@ -106,8 +106,6 @@
         actualTrimmedIP = [InputHelper trimIP:untrimmedIP];
         GHAssertEqualStrings(actualTrimmedIP, expectedTrimmedIP, @"trimmed IP should be @%@", expectedTrimmedIP);
     }
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 - (void)test002_ValidateIP
@@ -131,8 +129,6 @@
         GHTestLog(@"-- validating [%@]..", validIP);
         GHAssertTrue([InputHelper isIPValid:validIP], @"IP=%@ should be valid", validIP);
     }
-    
-    GHTestLog(@"# CHECK: END. NO ISSUES. #");
 }
 
 @end
