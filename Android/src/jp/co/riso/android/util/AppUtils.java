@@ -33,6 +33,7 @@ import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 public final class AppUtils {
     public static final String TAG = "AppUtils"; 
@@ -139,6 +140,17 @@ public final class AppUtils {
     }
     
     /**
+     * Forcibly dismisses the Softkeyboard
+     * 
+     * @param activity
+     *            Valid activity
+     */
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    
+    /**
      * Gets the Screen Dimensions of the Device
      * 
      * @param activity
@@ -158,7 +170,7 @@ public final class AppUtils {
         
         return size;
     }
-
+    
     /**
      * Checks whether the asset exists
      * 
@@ -221,7 +233,7 @@ public final class AppUtils {
         }
         return assetOk;
     }
-
+    
     /**
      * Gets the relative localized path
      * 
@@ -253,8 +265,7 @@ public final class AppUtils {
         
         return relativePath;
     }
-
-
+    
     /**
      * Gets the full localized path
      * 
