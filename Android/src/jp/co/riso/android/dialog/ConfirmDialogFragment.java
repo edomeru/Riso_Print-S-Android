@@ -89,9 +89,8 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        
-        ConfirmDialogListener listener = (ConfirmDialogListener) getTargetFragment();
-        if (listener != null) {
+        if (getTargetFragment() instanceof ConfirmDialogListener) {
+            ConfirmDialogListener listener = (ConfirmDialogListener) getTargetFragment();
             switch (which) {
                 case Dialog.BUTTON_POSITIVE:
                     listener.onConfirm();
@@ -111,6 +110,5 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         public void onConfirm();
         
         public void onCancel();
-        
     }
 }

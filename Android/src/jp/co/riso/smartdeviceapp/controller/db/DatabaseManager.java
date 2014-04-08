@@ -22,9 +22,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
+    
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
+    private static final boolean INITIALIZE_DATA = true; // set to true for testing
     
     private static final int DATABASE_VERSION = 1;
+    
     private Context mContext;
     
     public DatabaseManager(Context context) {
@@ -50,11 +53,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         
         /* for testing only */
-        sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
-        separated = sqlString.split(";");
-        
-        for (int i = 0; i < separated.length; i++) {
-            db.execSQL(separated[i]);
+        if (INITIALIZE_DATA) {
+            sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
+            separated = sqlString.split(";");
+            
+            for (int i = 0; i < separated.length; i++) {
+                db.execSQL(separated[i]);
+            }
         }
         /* end of for testing only */
         
@@ -90,7 +95,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     public boolean delete(String table, String whereClause, String whereArg) {
-        String[] whereArgs = (whereArg == null || whereArg.isEmpty()) ? null : new String[] { whereArg };
+        String whereArgs[] = null;
+        if (whereArg != null && !whereArg.isEmpty()) {
+            whereArgs = new String[] { whereArg };
+        }
+        
         return delete(table, whereClause, whereArgs);
     }
     

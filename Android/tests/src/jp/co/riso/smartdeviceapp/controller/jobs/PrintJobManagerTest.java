@@ -33,8 +33,8 @@ public class PrintJobManagerTest extends AndroidTestCase {
     private RenamingDelegatingContext mContext;
     private PrintJobManager mPrintJobManager;
     private DatabaseManager mManager;
-    private int printerid=-1;
-    private int printerid2=-1;
+    private int mPrinterid=-1;
+    private int mPrinterid2=-1;
 
     public PrintJobManagerTest() {
         super();
@@ -59,9 +59,9 @@ public class PrintJobManagerTest extends AndroidTestCase {
         mManager.insert(TABLE_PRINTER, "true", pvalues);
         Cursor c = mManager.query(TABLE_PRINTER, null, null, null, null, null, null);
         c.moveToFirst();
-        printerid = c.getInt(c.getColumnIndex(C_PRN_ID));
+        mPrinterid = c.getInt(c.getColumnIndex(C_PRN_ID));
         c.moveToNext();
-        printerid2 = c.getInt(c.getColumnIndex(C_PRN_ID));
+        mPrinterid2 = c.getInt(c.getColumnIndex(C_PRN_ID));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         ContentValues pvalues = new ContentValues();
 
-        pvalues.put(C_PRN_ID, printerid);
+        pvalues.put(C_PRN_ID, mPrinterid);
         pvalues.put(C_PJB_NAME, "Print Job Name");
         pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
         pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
@@ -98,7 +98,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
         List<PrintJob> pj = mPrintJobManager.getPrintJobs();
         assertNotNull(pj);
         assertEquals(1, pj.size());
-        assertEquals(printerid, pj.get(0).getPrinterId());
+        assertEquals(mPrinterid, pj.get(0).getPrinterId());
         assertEquals("Print Job Name", pj.get(0).getName());
         assertEquals(JobResult.SUCCESSFUL, pj.get(0).getResult());
 
@@ -114,7 +114,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         ContentValues pvalues = new ContentValues();
 
-        pvalues.put(C_PRN_ID, printerid);
+        pvalues.put(C_PRN_ID, mPrinterid);
         pvalues.put(C_PJB_NAME, "Print Job Name");
         pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
         pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
@@ -123,7 +123,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         pvalues.clear();
 
-        pvalues.put(C_PRN_ID, printerid);
+        pvalues.put(C_PRN_ID, mPrinterid);
         pvalues.put(C_PJB_NAME, "Print Job Name1");
         pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
         pvalues.put(C_PJB_DATE, "2014-03-18 08:12:11");
@@ -132,7 +132,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         pvalues.clear();
 
-        pvalues.put(C_PRN_ID, printerid);
+        pvalues.put(C_PRN_ID, mPrinterid);
         pvalues.put(C_PJB_NAME, "Print Job Name2");
         pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
         pvalues.put(C_PJB_DATE, "2012-03-18 08:12:11");
@@ -141,7 +141,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         pvalues.clear();
 
-        pvalues.put(C_PRN_ID, printerid2);
+        pvalues.put(C_PRN_ID, mPrinterid2);
         pvalues.put(C_PJB_NAME, "Print Job Name3");
         pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
         pvalues.put(C_PJB_DATE, "2014-01-18 08:12:11");
@@ -150,7 +150,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         pvalues.clear();
 
-        pvalues.put(C_PRN_ID, printerid);
+        pvalues.put(C_PRN_ID, mPrinterid);
         pvalues.put(C_PJB_NAME, "Print Job Name4");
         pvalues.put(C_PJB_RESULT, JobResult.ERROR.ordinal());
         pvalues.put(C_PJB_DATE, "2014-01-18 08:12:11");
@@ -180,7 +180,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         ContentValues pvalues = new ContentValues();
 
-        pvalues.put(C_PRN_ID, printerid);
+        pvalues.put(C_PRN_ID, mPrinterid);
         pvalues.put(C_PJB_NAME, "Print Job Name");
         pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
         pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
@@ -193,8 +193,38 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         assertNotNull(printers);
         assertEquals(1, printers.size());
-        assertEquals(printerid,printers.get(0).getId());
+        assertEquals(mPrinterid,printers.get(0).getId());
         assertEquals("printer with job",printers.get(0).getName());
+    }
+
+    public void testGetPrintersCount() {
+
+        SQLiteDatabase db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+
+        ContentValues pvalues = new ContentValues();
+
+        pvalues.put(C_PRN_ID, mPrinterid);
+        pvalues.put(C_PJB_NAME, "New Print Job Name");
+        pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
+        pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
+
+        db.insert(TABLE, null, pvalues);
+
+        pvalues.put(C_PRN_ID, mPrinterid2);
+        pvalues.put(C_PJB_NAME, "A Print Job");
+        pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
+        pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
+
+        db.insert(TABLE, null, pvalues);
+
+        db.close();
+
+        List<Printer> printers = mPrintJobManager.getPrintersWithJobs();
+
+        assertNotNull(printers);
+        assertEquals(mPrintJobManager.getPrintersCount(), printers.size());
+
     }
 
     public void testCreatePrintJob() {
@@ -209,15 +239,12 @@ public class PrintJobManagerTest extends AndroidTestCase {
         Date date = null;
 
         try {
-
-
             date = mSdf.parse("2014-03-17 13:12:11");
-
         } catch (ParseException e) {
             Log.e("PrintJobManagerTest", "convertSQLToDate parsing error.");
         }
 
-        result = mPrintJobManager.createPrintJob(printerid, "printjob.pdf", date,
+        result = mPrintJobManager.createPrintJob(mPrinterid, "printjob.pdf", date,
                 JobResult.ERROR);
         assertTrue(result);
 
@@ -227,7 +254,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
         assertNotNull(cur);
         assertEquals(1, cur.getCount());
         cur.moveToFirst();
-        //assertEquals(1, cur.getInt(cur.getColumnIndex(C_PJB_ID)));
+
         assertEquals("printjob.pdf",
                 cur.getString(cur.getColumnIndex(C_PJB_NAME)));
         assertEquals("2014-03-17 13:12:11",
@@ -253,7 +280,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE, null, null);
         db.close();
-        boolean result = mPrintJobManager.deleteWithPrinterId(printerid);
+        boolean result = mPrintJobManager.deleteWithPrinterId(mPrinterid);
         assertFalse(result);
     }
 

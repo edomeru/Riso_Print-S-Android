@@ -14,7 +14,6 @@ import java.util.List;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
-import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager;
 import jp.co.riso.smartdeviceapp.controller.snmp.SNMPManager.SNMPSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -198,12 +197,7 @@ public class PrinterManager implements SNMPSearchCallback {
         }
         DatabaseManager dbManager = new DatabaseManager(mContext);
         
-        boolean result = dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
-        
-        // reload Print Job History if a Printer is deleted
-        if (result){
-            PrintJobManager.getInstance(mContext).setRefreshFlag(true);
-        }
+        dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
         
         dbManager.close();
     }

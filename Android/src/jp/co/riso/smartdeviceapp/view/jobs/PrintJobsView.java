@@ -46,6 +46,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private boolean mDeleteMode = false;
     private View mDeleteView = null;
     private Point mDownPoint;
+    private int[] mColumnsHeight;
     
     public PrintJobsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -146,11 +147,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private int getSmallestColumn() {
         // initially assign to 1st column
         int smallestColumn = 0;
-        int tempHeight = mColumns.get(smallestColumn).getHeight();
+        int tempHeight = mColumnsHeight[smallestColumn];
         
-        for (int i = 1; i < mColumns.size(); i++) {
-            if (mColumns.get(i).getHeight() < tempHeight) {
-                tempHeight = mColumns.get(i).getHeight();
+        for (int i = 1; i < mColumnsHeight.length; i++) {
+            if (mColumnsHeight[i] < tempHeight) {
+                tempHeight = mColumnsHeight[i];
                 smallestColumn = i;
             }
         }
@@ -188,7 +189,10 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
         }
         pjView.setOrientation(VERTICAL);
-        mColumns.get(getSmallestColumn()).addView(pjView, lp);
+        
+        int col = getSmallestColumn();
+        mColumns.get(col).addView(pjView, lp);
+        mColumnsHeight[col] += pjView.getGroupHeight() + lp.topMargin; // update column height
     }
     
     private void addViewsToColumns() {
@@ -199,13 +203,12 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     private void relayoutColumns() {
         if (checkIfNeedsRelayout()) {
-            if (mListenerRef != null && mListenerRef.get() != null) {
-                for (int i = 0; i < mColumns.size(); i++) {
-                    mColumns.get(i).removeAllViews();
-                }
-                mGroupViewCtr = 0;
-                addViewsToColumns();
+            for (int i = 0; i < mColumns.size(); i++) {
+                mColumns.get(i).removeAllViews();
+                mColumnsHeight[i] = 0; // clear columns height
             }
+            mGroupViewCtr = 0;
+            addViewsToColumns();
         }
     }
     
@@ -240,6 +243,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             param.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_column_margin_side);
         }
         
+        mColumnsHeight = new int[colNum];
+        
         for (int i = 0; i < colNum; i++) {
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
             mColumns.add(new LinearLayout(getContext()));
@@ -250,7 +255,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     private boolean checkSwipe(MotionEvent ev) {
         int coords[] = new int[2];
-        boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
+        boolean dragged = Math.abs(mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
         boolean contains1 = false;
         boolean contains2 = false;
         // check self, if valid swipe don't redisplay nor remove delete button
@@ -262,29 +267,30 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             contains2 = rect.contains((int) ev.getRawX(), (int) ev.getRawY());
             
             return (contains1 && contains2 && dragged);
-        } else {
-            for (int i = 0; i < mColumns.size(); i++) {
-                LinearLayout column = mColumns.get(i);
+        }
+        
+        for (int i = 0; i < mColumns.size(); i++) {
+            LinearLayout column = mColumns.get(i);
+            
+            if (column != null) {
+                column.getLocationOnScreen(coords);
                 
-                if (column != null) {
-                    column.getLocationOnScreen(coords);
-                    
-                    Rect rect = new Rect(coords[0], coords[1], coords[0] + column.getWidth(), coords[1] + column.getHeight());
-                    contains1 = rect.contains(mDownPoint.x, mDownPoint.y);
-                    contains2 = rect.contains((int) ev.getRawX(), (int) ev.getRawY());
-                    
-                    if (contains1 && contains2 && dragged) {
-                        for (int j = 0; j < column.getChildCount(); j++) {
-                            View view = ((PrintJobsGroupView) column.getChildAt(j)).getJobViewSwiped(mDownPoint, ev);
-                            if (view != null) {
-                                beginDelete(mPrintGroupViews.get(i), view, true);
-                                return true;
-                            }
+                Rect rect = new Rect(coords[0], coords[1], coords[0] + column.getWidth(), coords[1] + column.getHeight());
+                contains1 = rect.contains(mDownPoint.x, mDownPoint.y);
+                contains2 = rect.contains((int) ev.getRawX(), (int) ev.getRawY());
+                
+                if (contains1 && contains2 && dragged) {
+                    for (int j = 0; j < column.getChildCount(); j++) {
+                        View view = ((PrintJobsGroupView) column.getChildAt(j)).getJobViewSwiped(mDownPoint, ev);
+                        if (view != null) {
+                            beginDelete(mPrintGroupViews.get(i), view, true);
+                            return true;
                         }
                     }
                 }
             }
         }
+        
         return false;
     }
     
@@ -363,9 +369,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             
             if (swipe) {
                 return true;
-            } else {
-                return super.onInterceptTouchEvent(ev);
             }
+            return super.onInterceptTouchEvent(ev);
         }
     }
     

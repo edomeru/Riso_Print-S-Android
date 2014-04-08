@@ -30,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
@@ -46,6 +47,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
     private PrintJob mPrintJobToDelete;
     private Printer mPrinterToDelete;
+    private ConfirmDialogFragment mConfirmDialog;
+    private ScrollView mScrollView;
+    private int mScrollPosition;
     
     public PrintJobsFragment() {
         super();
@@ -65,11 +69,11 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void initializeView(View view, Bundle savedInstanceState) {
         
         // mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
+        mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
+        mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
         
         mPrintJobContainer.setOnTouchListener(this);
-        
-        mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
         
         // mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
         mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
@@ -81,6 +85,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_print_job_history);
         addActionMenuButton(view);
+    }
+    
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mScrollPosition = mScrollView.getScrollY();
     }
     
     // ================================================================================
@@ -116,15 +126,20 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     }
     
     @Override
-    public void showDeleteDialog() {
+    public boolean showDeleteDialog() {
         String title = getResources().getString(R.string.ids_lbl_delete_jobs_title);
         String message = getResources().getString(R.string.ids_lbl_delete_jobs_msg);
         String confirmMsg = getResources().getString(R.string.ids_lbl_ok);
         String cancelMsg = getResources().getString(R.string.ids_lbl_cancel);
         
-        ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg);
-        dialog.setTargetFragment(this, 0);
-        DialogUtils.displayDialog(getActivity(), TAG, dialog);
+        if (mConfirmDialog != null) {
+            return false;
+        } else {
+            mConfirmDialog = ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg);
+            mConfirmDialog.setTargetFragment(this, 0);
+            DialogUtils.displayDialog(getActivity(), TAG, mConfirmDialog);
+            return true;
+        }
     }
     
     @Override
@@ -149,6 +164,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void hideLoading() {
         if (!isTablet()) {
             getView().setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+            mScrollView.scrollTo(0, mScrollPosition);
         }
         
         // mPrintJobsView.setVisibility(View.VISIBLE);
@@ -165,6 +181,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             mPrintGroupToDelete.onDeleteJobGroup();
             mPrintGroupToDelete = null;
             mPrinterToDelete = null;
+            mConfirmDialog = null;
         }
     }
     
@@ -174,7 +191,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             mPrintGroupToDelete.onCancelDeleteGroup();
             mPrintGroupToDelete = null;
             mPrinterToDelete = null;
+            mConfirmDialog = null;
         }
+        
     }
     
     // ================================================================================
@@ -188,15 +207,19 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         
         public LoadPrintJobsTask(Context context, List<PrintJob> printJobs, List<Printer> printers) {
             mContextRef = new WeakReference<Context>(context);
-            mPrintJobsList = printJobs == null ? null : new ArrayList<PrintJob>(printJobs);
-            mPrintersList = printers == null ? null : new ArrayList<Printer>(printers);
+            if (printJobs != null) {
+                mPrintJobsList = new ArrayList<PrintJob>(printJobs);
+            }
+            if (printers != null) {
+                mPrintersList = new ArrayList<Printer>(printers);
+            }
         }
         
         @Override
         protected Void doInBackground(Void... arg0) {
             if (mContextRef != null && mContextRef.get() != null) {
                 PrintJobManager pm = PrintJobManager.getInstance(mContextRef.get());
-                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag()) {
+                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag() || pm.getPrintersCount() != mPrintersList.size()) {
                     mPrintJobsList = pm.getPrintJobs();
                     mPrintersList = pm.getPrintersWithJobs();
                     pm.setRefreshFlag(false);
