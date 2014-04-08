@@ -48,6 +48,8 @@
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
+    <conv:PrintSettingOptionToSeparatorVisibilityConverter x:Key="PrintSettingOptionToSeparatorVisibilityConverter"/>
+    <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>
     <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <conv:WidthConverter x:Key="WidthConverter"/>

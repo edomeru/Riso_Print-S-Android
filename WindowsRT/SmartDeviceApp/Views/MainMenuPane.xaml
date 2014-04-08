@@ -1,4 +1,4 @@
-﻿<Grid
+﻿<Grid x:Name="mainMenuPane"
     x:Class="SmartDeviceApp.Views.MainMenuPane"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,7 +6,8 @@
     xmlns:controls="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="400">
+    mc:Ignorable="d" d:DesignWidth="400"
+    DataContext="{Binding MainMenuViewModel, Source={StaticResource Locator}}">
     <Grid.Style>
         <Style TargetType="Grid">
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray4}"/>
@@ -23,14 +24,20 @@
         <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
         <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <Grid x:Name="titleBar" Grid.Row="0" Style="{StaticResource STYLE_TitleBarSidePane}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-            <TextBlock x:Name="menuPaneTitle" Text="{StaticResource AppName}" Style="{StaticResource STYLE_TextHeader}"/>
-        </StackPanel>
-    </Grid>
-    <Grid x:Name="contentGrid" Grid.Row="1"/>
+    <controls:SidePaneTitleControl Grid.Row="0"
+                                   Title="{Binding Title, Converter={StaticResource ResourceStringToTextConverter}}" ButtonVisibility="Collapsed"/>
+    
+    <!--LOCALIZE HOME AND JOBS-->
+    <ListView Grid.Row="1" x:Name="listView"
+              ItemsSource="{Binding Path=MainMenuItems}"
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <controls:MainMenuKeyControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                                             Command="{Binding Command}"
+                                             SeparatorVisibility="{Binding SeparatorVisibility}"/>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+
+    </ListView>
 </Grid>

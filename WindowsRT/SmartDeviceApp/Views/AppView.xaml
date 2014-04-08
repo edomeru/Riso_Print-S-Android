@@ -35,11 +35,26 @@
                 </Setter>
             </Style.Setters>
         </Style>
+        <DataTemplate x:Key="TEMPLATE_HomePage">
+            <local:HomePage/>
+        </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintPreviewPage">
             <local:PrintPreviewPage/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintersPage">
             <local:PrintersPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_JobsPage">
+            <local:JobsPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_SettingsPage">
+            <local:SettingsPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_HelpPage">
+            <local:HelpPage/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_LegalPage">
+            <local:LegalPage/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintSettingsPane">
             <local:PrintSettingsPane/>

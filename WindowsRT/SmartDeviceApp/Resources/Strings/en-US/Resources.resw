@@ -501,4 +501,10 @@
   <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
     <value>Page {0} / {1}</value>
   </data>
+  <data name="IDS_LBL_HOME" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="IDS_LBL_JOBS" xml:space="preserve">
+    <value>Jobs</value>
+  </data>
 </root>

@@ -52,6 +52,14 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public MainMenuViewModel MainMenuViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<MainMenuViewModel>();
+            }
+        }
+
         public PrintSettingsPaneViewModel PrintSettingsPaneViewModel
         {
             get
@@ -93,6 +101,7 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
             SimpleIoc.Default.Register<AppViewModel>();
             SimpleIoc.Default.Register<PrintPreviewViewModel>();
+            SimpleIoc.Default.Register<MainMenuViewModel>();
             SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();

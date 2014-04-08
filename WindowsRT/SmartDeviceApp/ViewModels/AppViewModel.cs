@@ -38,7 +38,7 @@ namespace SmartDeviceApp.ViewModels
         // TODO: Remove dummy variables and unneeded initialization
         private void Initialize()
         {
-            AppViewMode = AppViewMode.PreviewViewFullScreen;
+            AppViewMode = AppViewMode.PrintPreviewPageFullScreen;
             /*
             //DocumentTitleText = DummyProvider.Instance.PDF_FILENAME;
             DocumentTitleText = DocumentController.Instance.FileName;

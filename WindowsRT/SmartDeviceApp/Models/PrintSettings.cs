@@ -28,13 +28,41 @@ namespace SmartDeviceApp.Models
         public string Text { get; set; }
         public int Index { get; set; }
         public bool IsEnabled { get; set; }
+
+        public override bool Equals(System.Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            PrintSettingOption otherOption = obj as PrintSettingOption;
+            if ((System.Object)otherOption == null)
+            {
+                return false;
+            }
+            return Text == otherOption.Text;
+        }
+
+        public bool Equals(PrintSettingOption otherOption)
+        {
+            if ((object)otherOption == null)
+            {
+                return false;
+            }
+            return (Text == otherOption.Text);
+        }
+
+        public override int GetHashCode()
+        {
+            return Text.GetHashCode();
+        }
     }
 
     public class PrintSetting : ObservableObject
     {
         private object _value;
         private PrintSettingOption _selectedOption;
-
         public string Name { get; set; }
         public string Text { get; set; }
         public string Icon { get; set; }
@@ -73,6 +101,35 @@ namespace SmartDeviceApp.Models
         public object Default { get; set; }
         public List<PrintSettingOption> Options { get; set; }
         public bool IsEnabled { get; set; }
+
+        public override bool Equals(System.Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            PrintSetting otherPrintSetting = obj as PrintSetting;
+            if ((System.Object)otherPrintSetting == null)
+            {
+                return false;
+            }
+            return Text == otherPrintSetting.Text;
+        }
+
+        public bool Equals(PrintSetting otherPrintSetting)
+        {
+            if ((object)otherPrintSetting == null)
+            {
+                return false;
+            }
+            return (Text == otherPrintSetting.Text);
+        }
+
+        public override int GetHashCode()
+        {
+            return Text.GetHashCode();
+        }
     }
 
     public class PrintSettingGroup

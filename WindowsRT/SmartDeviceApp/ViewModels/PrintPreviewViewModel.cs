@@ -77,7 +77,7 @@ namespace SmartDeviceApp.ViewModels
 
             _rightPageIndex = 0;
             _appViewModel = new ViewModelLocator().AppViewModel;
-            AppViewMode = _appViewModel.AppViewMode;
+            SetAppViewMode(_appViewModel.AppViewMode);
         }
 
 
@@ -126,7 +126,7 @@ namespace SmartDeviceApp.ViewModels
                     RaisePropertyChanged("AppViewMode");
                 }
             }
-        }        
+        }
 
         public ICommand ToggleMainMenuPane
         {
@@ -164,11 +164,11 @@ namespace SmartDeviceApp.ViewModels
             {
                 case AppViewMode.MainMenuPaneVisible:
                 {
-                    SetAppViewMode(AppViewMode.PreviewViewFullScreen);
+                    SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
                     break;
                 }
 
-                case AppViewMode.PreviewViewFullScreen:
+                case AppViewMode.PrintPreviewPageFullScreen:
                 {
                     SetAppViewMode(AppViewMode.MainMenuPaneVisible);
                     break;
@@ -176,7 +176,7 @@ namespace SmartDeviceApp.ViewModels
 
                 case AppViewMode.RightPaneVisible_ResizedView:
                 {
-                    SetAppViewMode(AppViewMode.PreviewViewFullScreen);
+                    SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
                     SetAppViewMode(AppViewMode.MainMenuPaneVisible);
                     break;
                 }
@@ -189,12 +189,12 @@ namespace SmartDeviceApp.ViewModels
             {
                 case AppViewMode.MainMenuPaneVisible:
                     {
-                        SetAppViewMode(AppViewMode.PreviewViewFullScreen);
+                        SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
                         SetAppViewMode(AppViewMode.RightPaneVisible);
                         break;
                     }
 
-                case AppViewMode.PreviewViewFullScreen:
+                case AppViewMode.PrintPreviewPageFullScreen:
                     {
                         SetAppViewMode(AppViewMode.RightPaneVisible_ResizedView);
                         _appViewModel.RightPaneMode = RightPaneMode.PrintSettings;
@@ -203,7 +203,7 @@ namespace SmartDeviceApp.ViewModels
 
                 case AppViewMode.RightPaneVisible_ResizedView:
                     {
-                        SetAppViewMode(AppViewMode.PreviewViewFullScreen);
+                        SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
                         break;
                     }
             }
@@ -221,7 +221,7 @@ namespace SmartDeviceApp.ViewModels
                     break;
                 }
 
-                case AppViewMode.PreviewViewFullScreen:
+                case AppViewMode.PrintPreviewPageFullScreen:
                 {
                     EnablePreviewGestures();
                     break;

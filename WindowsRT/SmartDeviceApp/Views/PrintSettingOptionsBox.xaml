@@ -42,7 +42,8 @@
                                                 Index="{Binding Index}"
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                                                IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}">
+                                                IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
+                                                SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="Checked">
                             <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}" InputConverter="{StaticResource ItemCheckedConverter}"/>

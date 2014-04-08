@@ -9,10 +9,13 @@ namespace SmartDeviceApp.Common.Enum
     public enum AppViewMode
     {
         MainMenuPaneVisible,
-        PreviewViewFullScreen,
-        PrintersViewFullScreen,
-        SettingsViewFullScreen,
-        JobsViewFullScreen,
+        HomePageFullScreen,
+        PrintPreviewPageFullScreen,
+        PrintersPageFullScreen,
+        JobsPageFullScreen,
+        SettingsPageFullScreen,
+        HelpPageFullScreen,
+        LegalPageFullScreen,
         RightPaneVisible,
         RightPaneVisible_ResizedView, // View will be adjusted to fit width of screen
     }

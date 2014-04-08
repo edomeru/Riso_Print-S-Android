@@ -33,7 +33,7 @@
             <Setter Property="Padding" Value="0" />
         </Style>
     </UserControl.Resources>
-    <Grid x:Name="button" Style="{StaticResource STYLE_ListItemGrid}">
+    <Grid Style="{StaticResource STYLE_ListItemGrid}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="1" />
@@ -63,6 +63,8 @@
                         Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
                         Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
         </StackPanel>
-        <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"></Line>
+        <Line Grid.Row="1" Grid.ColumnSpan="2" 
+              Visibility="{Binding SeparatorVisibility, ElementName=keyValueControl}"
+              Style="{StaticResource STYLE_List_Separator}"></Line>
     </Grid>
 </UserControl>

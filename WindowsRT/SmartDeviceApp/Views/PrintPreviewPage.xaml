@@ -9,6 +9,8 @@
     Text="{Binding Path=DocumentTitleText}" 
     Button1Command="{Binding Path=ToggleMainMenuPane}"
     Button2Command="{Binding Path=TogglePrintSettingsPane}"
+    Button2Image="ms-appx:///Resources/Images/img_btn_print_settings_normal.png"
+    Button3Visibility="Collapsed"
     Width="{Binding AppViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

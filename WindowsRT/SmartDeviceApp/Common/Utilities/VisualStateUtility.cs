@@ -42,10 +42,10 @@ namespace SmartDeviceApp.Common.Utilities
                         break;
                     }
 
-                    case AppViewMode.PreviewViewFullScreen:
-                    case AppViewMode.PrintersViewFullScreen:
-                    case AppViewMode.JobsViewFullScreen:
-                    case AppViewMode.SettingsViewFullScreen:
+                    case AppViewMode.PrintPreviewPageFullScreen:
+                    case AppViewMode.PrintersPageFullScreen:
+                    case AppViewMode.JobsPageFullScreen:
+                    case AppViewMode.SettingsPageFullScreen:
                     {
                         VisualStateManager.GoToState((PageBase)obj, "FullScreenState", true);
                         break;
