@@ -36,10 +36,10 @@ namespace SmartDeviceApp.Controllers
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
         public delegate Task GoToPageEventHandler(int pageIndex);
-        public delegate void SelectedPrintSettingOptionEventHandler(PrintSetting printSetting,
-            int selectedIndex);
+        public delegate void PrintSettingValueChangedEventHandler(PrintSetting printSetting,
+            object value);
         private GoToPageEventHandler _goToPageEventHandler;
-        private SelectedPrintSettingOptionEventHandler _selectedPrintOptionEventHandler;
+        private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
 
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
@@ -85,7 +85,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Initialize()
         {
             _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
-            _selectedPrintOptionEventHandler = new SelectedPrintSettingOptionEventHandler(UpdateSelectedPrintSettingOption);
+            _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
@@ -109,14 +109,15 @@ namespace SmartDeviceApp.Controllers
                 // Send list to view model
                 _printSettingsViewModel.PrintSettingsList = _printSettingList;
 
-                await UpdatePreviewInfo(true, true, true);
+                await UpdatePreviewInfo();
 
                 InitializeGestures();
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
-                _printSettingOptionsViewModel.SelectedPrintSettingOptionEventHandler += _selectedPrintOptionEventHandler;
+                _printSettingOptionsViewModel.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
                 await LoadPage(0);
             }
             else
@@ -132,7 +133,8 @@ namespace SmartDeviceApp.Controllers
         public async Task Cleanup()
         {
             _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-            _printSettingOptionsViewModel.SelectedPrintSettingOptionEventHandler -= _selectedPrintOptionEventHandler;
+            _printSettingOptionsViewModel.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
             _previewPages = null;
@@ -202,6 +204,23 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel.InitializeGestures();
         }
 
+        public async void PrintSettingValueChanged(PrintSetting printSetting, object value)
+        {
+            if (printSetting == null || value == null)
+            {
+                return;
+            }
+
+            if (printSetting.Type == PrintSettingType.list)
+            {
+                await UpdateSelectedPrintSettingOption(printSetting, (int)value);
+            }
+            else if (printSetting.Type == PrintSettingType.boolean)
+            {
+                await UpdatePrintSettingState(printSetting, (bool)value);
+            }
+        }
+
         /// <summary>
         /// Receiver of the selected print setting option.
         /// Updates the print settings list (PrintSettingList) and cache (PagePrintSettings),
@@ -210,7 +229,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="printSetting">affected print setting</param>
         /// <param name="selected">updated value</param>
-        private async void UpdateSelectedPrintSettingOption(PrintSetting printSetting, int selectedIndex)
+        /// <returns>task</returns>
+        private async Task UpdateSelectedPrintSettingOption(PrintSetting printSetting, int selectedIndex)
         {
             if (printSetting == null)
             {
@@ -376,7 +396,7 @@ namespace SmartDeviceApp.Controllers
             // Generate PreviewPages again
             if (isPreviewPageAffected || isPageCountAffected || isConstraintAffected)
             {
-                await UpdatePreviewInfo(false, false, isPageCountAffected);
+                await UpdatePreviewInfo();
                 //InitializeGestures();
                 _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
             }
@@ -390,7 +410,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="printSetting">affected print setting</param>
         /// <param name="state">updated value</param>
-        private async void UpdatePrintSettingState(PrintSetting printSetting, bool state)
+        /// <returns>task</returns>
+        private async Task UpdatePrintSettingState(PrintSetting printSetting, bool state)
         {
             if (printSetting == null)
             {
@@ -425,7 +446,7 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            await UpdatePreviewInfo(isPreviewPageAffected, false, false);
+            await UpdatePreviewInfo();
 
             if (isConstraintAffected)
             {
@@ -441,11 +462,8 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Checks for view related print setting and notifies view model
         /// </summary>
-        /// <param name="updatePageBind">true when view mode is needed to update in view model</param>
-        /// <param name="updateDuplex"></param>
-        /// <param name="updatePageCount">true when page count is needed to update in view model</param>
         /// <returns>task</returns>
-        private async Task UpdatePreviewInfo(bool updatePageBind, bool updateDuplex, bool updatePageCount)
+        private async Task UpdatePreviewInfo()
         {
             // Clean-up generated PreviewPages
             await ClearPreviewPageListAndImages();
@@ -463,20 +481,27 @@ namespace SmartDeviceApp.Controllers
             }
 
             _isDuplex = PrintSettingConverter.DuplexIntToBoolConverter.Convert(
-                _selectedPrinter.PrintSettings.Duplex);
+                _selectedPrinter.PrintSettings.Duplex) && !_isBooklet;
 
-            _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
-                .Convert(_selectedPrinter.PrintSettings.Imposition);
+            if (!_isBooklet)
+            {
+                _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
+                    .Convert(_selectedPrinter.PrintSettings.Imposition);
+            }
+            else
+            {
+                _pagesPerSheet = 1;
+            }
 
-            if (updatePageBind)
+            if (_printPreviewViewModel.PageViewMode != _pageViewMode)
             {
                 _printPreviewViewModel.PageViewMode = _pageViewMode;
-
             }
-            if (updatePageCount)
+
+            _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
+                                                    _pagesPerSheet);
+            if (_printPreviewViewModel.PageTotal != _previewPageTotal)
             {
-                _previewPageTotal = (uint)Math.Ceiling(
-                    (decimal)DocumentController.Instance.PageCount / _pagesPerSheet);
                 _printPreviewViewModel.PageTotal = _previewPageTotal;
             }
         }
@@ -528,7 +553,7 @@ namespace SmartDeviceApp.Controllers
 
             if (_isDuplex)
             {
-                ++_currPreviewPageIndex;
+                int nextPreviewPageIndex = _currPreviewPageIndex + 1;
                 int nextLogicalPageIndex = targetLogicalPageIndex + _pagesPerSheet;
                 DocumentController.Instance.GenerateLogicalPages(nextLogicalPageIndex,
                     _pagesPerSheet);
@@ -537,7 +562,7 @@ namespace SmartDeviceApp.Controllers
                         _pagesPerSheet);
 
                 List<LogicalPage> nextLogicalPages = await getNextLogicalPagesTask;
-                await ApplyPrintSettings(nextLogicalPages, _currPreviewPageIndex, (_currPreviewPageIndex % 2 != 0), false);
+                await ApplyPrintSettings(nextLogicalPages, nextPreviewPageIndex, (nextPreviewPageIndex % 2 != 0), false);
             }
 
             GenerateNearPreviewPages();
@@ -1077,7 +1102,7 @@ namespace SmartDeviceApp.Controllers
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
 
-                        // TODO: Duplex and Booklet print settings
+                        // TODO: Duplex and Booklet on the actual side of the two page view
                         _printPreviewViewModel.RightPageImage = bitmapImage;
                         _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
                     }

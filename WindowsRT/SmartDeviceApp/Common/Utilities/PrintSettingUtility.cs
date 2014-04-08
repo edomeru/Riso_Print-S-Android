@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using SmartDeviceApp.Views;
-using SmartDeviceApp.Common.Base;
+﻿//
+//  PrintSettingUtility.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/04/08.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Controls;
-using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
+using Windows.UI.Xaml;
 
 namespace SmartDeviceApp.Common.Utilities
 {
     public class PrintSettingUtility : DependencyObject
     {
+        public static event SmartDeviceApp.Controllers.PrintPreviewController.PrintSettingValueChangedEventHandler PrintSettingValueChangedEventHandler;
+
         public static readonly DependencyProperty PrintSettingValueChangedProperty =
-            DependencyProperty.RegisterAttached("PrintSettingValueChanged", typeof(object), typeof(PrintSettingUtility),
-            new PropertyMetadata(null, NotifyPrintSettingValueChanged));
+            DependencyProperty.RegisterAttached("PrintSettingValueChanged", typeof(object),
+            typeof(PrintSettingUtility), new PropertyMetadata(null, NotifyPrintSettingValueChanged));
 
         public static void SetPrintSettingValueChanged(DependencyObject obj, object value)
         {
@@ -29,7 +35,8 @@ namespace SmartDeviceApp.Common.Utilities
             return (object)obj.GetValue(PrintSettingValueChangedProperty);
         }
 
-        private static void NotifyPrintSettingValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void NotifyPrintSettingValueChanged(DependencyObject obj,
+            DependencyPropertyChangedEventArgs e)
         {
             if (obj != null && e.NewValue != null)
             {
@@ -48,7 +55,10 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 object value = e.NewValue;
 
-                // LESTER'S TODO: Raise event for controller here
+                if (PrintSettingValueChangedEventHandler != null)
+                {
+                    PrintSettingValueChangedEventHandler(printSetting, value);
+                }
             }
         }
     }

@@ -107,6 +107,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\LoadDocumentResult.cs" />
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\AppViewMode.cs" />
     <Compile Include="Common\Enum\ListValueType.cs" />
