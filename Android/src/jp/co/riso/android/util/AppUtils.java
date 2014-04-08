@@ -10,6 +10,7 @@ package jp.co.riso.android.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,6 +36,8 @@ import android.view.ViewGroup;
 
 public final class AppUtils {
     public static final String TAG = "AppUtils"; 
+    
+    public static final String CONST_ASSET_PATH = "file:///android_asset/";
     
     /**
      * Creates an activity intent launcher
@@ -135,7 +138,6 @@ public final class AppUtils {
         return appFile.lastModified();
     }
     
-
     /**
      * Gets the Screen Dimensions of the Device
      * 
@@ -156,7 +158,17 @@ public final class AppUtils {
         
         return size;
     }
-    
+
+    /**
+     * Checks whether the asset exists
+     * 
+     * @param context
+     *            Valid Context
+     * @param assetFile
+     *            Relative path of the asset (from assets/)
+     *            
+     * @return Whether the asset exists or not
+     */
     public static String getFileContentsFromAssets(Context context, String assetFile) {
         if (context == null) {
             return null;
@@ -180,6 +192,89 @@ public final class AppUtils {
         }
         
         return buf.toString();
+    }
+    
+    /**
+     * Checks whether the asset exists
+     * 
+     * @param context
+     *            Valid Context
+     * @param assetFile
+     *            Relative path of the asset (from assets/)
+     *            
+     * @return Whether the asset exists or not
+     */
+    public static boolean assetExists(Context context, String assetFile) {
+        if (context == null || assetFile == null) {
+            return false;
+        }
+        
+        boolean assetOk = false;
+        try {
+            InputStream stream = context.getAssets().open(assetFile);
+            stream.close();
+            assetOk = true;
+        } catch (FileNotFoundException e) {
+            Log.w(TAG, "assetExists failed: "+e.toString());
+        } catch (IOException e) {
+            Log.w(TAG, "assetExists failed: "+e.toString());
+        }
+        return assetOk;
+    }
+
+    /**
+     * Gets the relative localized path
+     * 
+     * @param context
+     *            Valid Context
+     * @param folder
+     *            Directory of the file for localization
+     * @param resource
+     *            File to be opened
+     *            
+     * @return Localized relative path of the asset file
+     */
+    public static String getLocalizedAssetRelativePath(Context context, String folder, String resource) {
+        if (context == null || folder == null || resource == null) {
+            return null;
+        }
+        
+        if (folder.isEmpty() || resource.isEmpty()) {
+            return null;
+        }
+        
+        String relativePath = folder + "-" + AppUtils.getLocaleCode() + "/" + resource;
+        
+        boolean assetExists = assetExists(context, relativePath);
+        
+        if (!assetExists) {
+            relativePath = folder + "/" + resource;
+        }
+        
+        return relativePath;
+    }
+
+
+    /**
+     * Gets the full localized path
+     * 
+     * @param context
+     *            Valid Context
+     * @param folder
+     *            Directory of the file for localization
+     * @param resource
+     *            File to be opened
+     *            
+     * @return Localized full path of the asset file
+     */
+    public static String getLocalizedAssetFullPath(Context context, String folder, String resource) {
+        String relativePath = getLocalizedAssetRelativePath(context, folder, resource);
+        
+        if (relativePath != null) {
+            return CONST_ASSET_PATH + relativePath;
+        }
+        
+        return null;
     }
     
     //http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
