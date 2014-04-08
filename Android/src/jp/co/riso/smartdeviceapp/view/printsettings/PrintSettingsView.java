@@ -10,24 +10,34 @@ package jp.co.riso.smartdeviceapp.view.printsettings;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.PrintingDialogFragment;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
-import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
-import jp.co.riso.smartdeviceapp.model.Printer;
-
+import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +46,6 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +71,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final String KEY_SUB_SCROLL_POSITION = "key_sub_scroll_position";
     
     private static final String KEY_TAG_PRINTER = "key_tag_printer";
+    private static final String FRAGMENT_TAG_PRINTJOBS = "fragment_printjobs";
     
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
@@ -106,6 +116,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private ArrayList<LinearLayout> mPrintSettingsTitles = null;
     
     private ValueChangedListener mListener = null;
+    
+    private String mPdfFileName;
+    
+    PrintingDialogFragment mPrintingDialog;
     
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -290,7 +304,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             boolean enabled = (value != 0);
             setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
         }
-
+        
         if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
             int stapleValue = mPrintSettings.getValue(PrintSettings.TAG_STAPLE);
             if (value == FinishingSide.TOP.ordinal()) {
@@ -307,7 +321,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
             }
         }
-
+        
         if (tag.equals(PrintSettings.TAG_ORIENTATION) || tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
             int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE);
             int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
@@ -319,10 +333,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
             }
         }
-
+        
         if (tag.equals(PrintSettings.TAG_PUNCH)) {
             if (value == Punch.HOLES_4.ordinal()) {
-                int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE); 
+                int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE);
                 int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
                 if (finishValue != finishDefault) {
                     if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
@@ -407,7 +421,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     public void setShowPrintControls(boolean showPrintControls) {
         mShowPrintControls = showPrintControls;
-
+        
         if (mShowPrintControls) {
             mPrintControls.setVisibility(View.VISIBLE);
         } else {
@@ -417,7 +431,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     public void setPrinterId(int printerId) {
         mPrinterId = printerId;
-
+        
         updateHighlightedPrinter(mPrinterId);
     }
     
@@ -432,6 +446,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 updateDisplayedValue(key);
             }
         }
+    }
+    
+    public void setPdfFileName(String filename) {
+        mPdfFileName = filename;
     }
     
     // ================================================================================
@@ -475,7 +493,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         for (Option option : options) {
             String value = option.getTextContent();
-
+            
             int id = AppUtils.getResourseId(value, R.string.class, -1);
             if (id != -1) {
                 optionsStrings.add(getResources().getString(id));
@@ -693,7 +711,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             if (mPrintersList != null) {
                 for (int i = 0; i < mPrintersList.size(); i++) {
                     Printer printer = mPrintersList.get(i);
-
+                    
                     boolean showSeparator = (i != mPrintersList.size() - 1);
                     addSubviewOptionsList(printer.getName(), printer.getIpAddress(), mPrinterId, printer.getId(), showSeparator, ID_SUBVIEW_PRINTER_ITEM);
                 }
@@ -729,11 +747,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
             
             // hide the separator of the last item added
-            if (mSubLayout.findViewWithTag((Integer) lastIdx) != null) {
-                View container = mSubLayout.findViewWithTag((Integer) lastIdx);
+            if (mSubLayout.findViewWithTag(lastIdx) != null) {
+                View container = mSubLayout.findViewWithTag(lastIdx);
                 container.findViewById(R.id.menuSeparator).setVisibility(View.GONE);
             }
-                    
+            
         }
     }
     
@@ -806,14 +824,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         } else if (v.getId() == ID_SUBVIEW_PRINTER_ITEM) {
             if (mPrinterId != id) {
                 setPrinterId(id);
-                // TODO: get new printer settings 
+                // TODO: get new printer settings
                 setPrintSettings(new PrintSettings(mPrinterId));
                 
                 if (mListener != null) {
                     mListener.onPrinterIdSelectedChanged(mPrinterId);
                     mListener.onPrintSettingsValueChanged(mPrintSettings);
                 }
-    
+                
                 // Update UI
                 for (int i = 0; i < mPrintersList.size(); i++) {
                     Printer printer = mPrintersList.get(i);
@@ -827,8 +845,44 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void executePrint() {
-        // TODO: Implement print here
-        Log.wtf(TAG, "Execute Print Clicked");
+        mPrintingDialog = PrintingDialogFragment.newInstance();
+        DialogUtils.displayDialog((Activity) getContext(), TAG, mPrintingDialog);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                continuePrintSuccess();
+            }
+        }, 10000);
+    }
+    
+    private void continuePrintSuccess(){
+        mPrintingDialog.dismiss();
+        PrintJobManager pm = PrintJobManager.getInstance(getContext());
+        pm.createPrintJob(mPrinterId, mPdfFileName, new Date(), JobResult.SUCCESSFUL);
+        
+        MainActivity activity = (MainActivity) getContext();
+        activity.closeDrawers();
+        
+        FragmentManager fm = ((Activity) getContext()).getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        
+        Fragment container = fm.findFragmentById(R.id.mainLayout);
+        if (container != null) {
+            if (container.getRetainInstance()) {
+                ft.detach(container);
+            } else {
+                ft.remove(container);
+            }
+        }
+        
+        Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG_PRINTJOBS);
+        if (fragment == null) {
+            fragment = new PrintJobsFragment();
+            ft.add(R.id.mainLayout, fragment, FRAGMENT_TAG_PRINTJOBS);
+        } else {
+            ft.attach(fragment);
+        }
+        ft.commit();
     }
     
     // ================================================================================
@@ -884,7 +938,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         TextView textView = (TextView) item.findViewById(R.id.menuTextView);
         textView.setText(text);
-
+        
         if (subText != null) {
             textView = (TextView) item.findViewById(R.id.subTextView);
             textView.setText(subText);
@@ -1223,6 +1277,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             mEditing = false;
         }
         
+        @Override
         public synchronized void afterTextChanged(Editable s) {
             if (!mEditing) {
                 mEditing = true;
@@ -1246,9 +1301,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
+        @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
         
+        @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
         

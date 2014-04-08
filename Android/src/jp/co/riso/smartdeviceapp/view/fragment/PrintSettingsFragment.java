@@ -26,6 +26,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private PrintSettingsView mPrintSettingsView;
     private Bundle mPrintSettingsBundle = null;
     
+    private String mPdfFileName;
+    
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printsettings;
@@ -49,7 +51,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPrintSettingsView.setPrintSettings(mPrintSettings);
         mPrintSettingsView.setShowPrintControls(mFragmentForPrinting);
         mPrintSettingsView.setPrinterId(mPrinterId);
-
+        mPrintSettingsView.setPdfFileName(mPdfFileName);
+        
         TextView textView = (TextView) view.findViewById(R.id.titleTextView);
         textView.setText(R.string.ids_lbl_print_settings);
         
@@ -91,6 +94,10 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
+    }
+    
+    public void setPdfFileName(String filename) {
+        mPdfFileName = filename;
     }
     
     // ================================================================================

@@ -18,6 +18,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
@@ -26,6 +27,8 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -33,7 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
+public class PrintJobsFragment extends BaseFragment implements View.OnClickListener, OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
     
     private static final String TAG = "PrintJobsFragment";
     private PrintJobsView mPrintJobsView;
@@ -73,6 +76,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
         mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
         
+        view.setOnClickListener(this);
         mPrintJobContainer.setOnTouchListener(this);
         
         // mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
@@ -91,6 +95,25 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void onDestroyView() {
         super.onDestroyView();
         mScrollPosition = mScrollView.getScrollY();
+    }
+    
+    // ================================================================================
+    // INTERFACE - View.OnClickListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case ID_MENU_ACTION_BUTTON:
+                Log.d("CESTEST", "onclick1");
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    ((HomeFragment) activity.getFragmentManager().findFragmentById(R.id.leftLayout)).setJobsFragment();
+                    activity.openDrawer(Gravity.LEFT);
+                }
+                break;
+        }
     }
     
     // ================================================================================
