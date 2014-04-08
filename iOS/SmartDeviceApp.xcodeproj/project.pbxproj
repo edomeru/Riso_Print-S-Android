@@ -55,7 +55,7 @@
 		286CE3F018F222A700642A10 /* SQLiteMagicalRecordStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 286CE3BA18F222A700642A10 /* SQLiteMagicalRecordStack.m */; };
 		286CE3F118F222A700642A10 /* SQLiteWithSavingContextMagicalRecordStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 286CE3BC18F222A700642A10 /* SQLiteWithSavingContextMagicalRecordStack.m */; };
 		286CE3F618F2264E00642A10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
-		286CE3FC18F22A7A00642A10 /* PrinterManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 286CE3FB18F22A7A00642A10 /* PrinterManagerTest.m */; };
+		286CE3FC18F22A7A00642A10 /* PrinterManagerDBTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 286CE3FB18F22A7A00642A10 /* PrinterManagerDBTest.m */; };
 		286CE40418F232AE00642A10 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */; };
 		286CE40518F232AE00642A10 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB918E2EF7D00085F27 /* PreviewSetting.m */; };
 		286CE40618F232AE00642A10 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBB18E2EF7D00085F27 /* Printer.m */; };
@@ -68,9 +68,15 @@
 		286CE40D18F2340C00642A10 /* SNMPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3218E2EF9C00085F27 /* SNMPManager.m */; };
 		286CE40E18F2342A00642A10 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5D18E2F08900085F27 /* AlertHelper.m */; };
 		286CE40F18F2342A00642A10 /* InputHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5F18E2F08900085F27 /* InputHelper.m */; };
-		286CE41018F2342A00642A10 /* PListHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListHelper.m */; };
 		286CE41118F2344900642A10 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6F18E278B000085F27 /* Reachability.m */; };
 		286CE41218F23C2B00642A10 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
+		28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
+		28C1CE0C18F27EC8007FA569 /* InputHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C1CE0B18F27EC8007FA569 /* InputHelperTest.m */; };
+		28C1CE0F18F28688007FA569 /* PListHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListHelper.m */; };
+		28C1CE1118F286A6007FA569 /* PListHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C1CE1018F286A6007FA569 /* PListHelperTest.m */; };
+		28C1CE1318F28D6A007FA569 /* DatabaseManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C1CE1218F28D6A007FA569 /* DatabaseManagerTest.m */; };
+		28FCAAE218F37C610051DB9F /* PrinterManagerSNMPTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FCAAE118F37C610051DB9F /* PrinterManagerSNMPTest.m */; };
+		28FCAAE318F37CF30051DB9F /* PrinterManagerSNMPTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FCAAE118F37C610051DB9F /* PrinterManagerSNMPTest.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -239,7 +245,11 @@
 		286CE3BC18F222A700642A10 /* SQLiteWithSavingContextMagicalRecordStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLiteWithSavingContextMagicalRecordStack.m; sourceTree = "<group>"; };
 		286CE3F418F222CF00642A10 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		286CE3F818F2289D00642A10 /* MagicalRecordLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicalRecordLogging.h; sourceTree = "<group>"; };
-		286CE3FB18F22A7A00642A10 /* PrinterManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManagerTest.m; sourceTree = "<group>"; };
+		286CE3FB18F22A7A00642A10 /* PrinterManagerDBTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManagerDBTest.m; sourceTree = "<group>"; };
+		28C1CE0B18F27EC8007FA569 /* InputHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputHelperTest.m; sourceTree = "<group>"; };
+		28C1CE1018F286A6007FA569 /* PListHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListHelperTest.m; sourceTree = "<group>"; };
+		28C1CE1218F28D6A007FA569 /* DatabaseManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseManagerTest.m; sourceTree = "<group>"; };
+		28FCAAE118F37C610051DB9F /* PrinterManagerSNMPTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManagerSNMPTest.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -632,6 +642,8 @@
 		286CE3F918F229EE00642A10 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				28C1CE0B18F27EC8007FA569 /* InputHelperTest.m */,
+				28C1CE1018F286A6007FA569 /* PListHelperTest.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -639,7 +651,9 @@
 		286CE3FA18F229EE00642A10 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				286CE3FB18F22A7A00642A10 /* PrinterManagerTest.m */,
+				28C1CE1218F28D6A007FA569 /* DatabaseManagerTest.m */,
+				286CE3FB18F22A7A00642A10 /* PrinterManagerDBTest.m */,
+				28FCAAE118F37C610051DB9F /* PrinterManagerSNMPTest.m */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1259,6 +1273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1282,6 +1297,7 @@
 				2DA1AE7018E278B000085F27 /* Reachability.m in Sources */,
 				2DA1AF3718E2EF9C00085F27 /* SNMPManager.m in Sources */,
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
+				28FCAAE218F37C610051DB9F /* PrinterManagerSNMPTest.m in Sources */,
 				2DA1AEC618E2EF7D00085F27 /* PrintJob.m in Sources */,
 				2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */,
 				2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */,
@@ -1341,14 +1357,17 @@
 				286CE40718F232AE00642A10 /* PrinterDetails.m in Sources */,
 				286CE40518F232AE00642A10 /* PreviewSetting.m in Sources */,
 				286CE40A18F232DE00642A10 /* PrinterManager.m in Sources */,
+				286CE3FC18F22A7A00642A10 /* PrinterManagerDBTest.m in Sources */,
+				28FCAAE318F37CF30051DB9F /* PrinterManagerSNMPTest.m in Sources */,
 				286CE40D18F2340C00642A10 /* SNMPManager.m in Sources */,
 				286CE40B18F2340C00642A10 /* DatabaseManager.m in Sources */,
 				286CE40C18F2340C00642A10 /* NetworkManager.m in Sources */,
 				286CE40E18F2342A00642A10 /* AlertHelper.m in Sources */,
 				286CE40F18F2342A00642A10 /* InputHelper.m in Sources */,
-				286CE41018F2342A00642A10 /* PListHelper.m in Sources */,
+				28C1CE0C18F27EC8007FA569 /* InputHelperTest.m in Sources */,
+				28C1CE0F18F28688007FA569 /* PListHelper.m in Sources */,
+				28C1CE1118F286A6007FA569 /* PListHelperTest.m in Sources */,
 				286CE41118F2344900642A10 /* Reachability.m in Sources */,
-				286CE3FC18F22A7A00642A10 /* PrinterManagerTest.m in Sources */,
 				2D0AEC62185FE43200810455 /* main.m in Sources */,
 				286CE3E618F222A700642A10 /* MagicalRecord.m in Sources */,
 				286CE3E218F222A700642A10 /* MagicalRecord+Actions.m in Sources */,
@@ -1363,6 +1382,7 @@
 				286CE3D118F222A700642A10 /* NSManagedObject+MagicalRecord.m in Sources */,
 				286CE3CF18F222A700642A10 /* NSManagedObject+MagicalFetching.m in Sources */,
 				286CE3CD18F222A700642A10 /* NSManagedObject+MagicalAggregation.m in Sources */,
+				28C1CE1318F28D6A007FA569 /* DatabaseManagerTest.m in Sources */,
 				286CE3D618F222A700642A10 /* NSManagedObjectModel+MagicalRecord.m in Sources */,
 				286CE3D418F222A700642A10 /* NSManagedObjectContext+MagicalRecord.m in Sources */,
 				286CE3D318F222A700642A10 /* NSManagedObjectContext+MagicalObserving.m in Sources */,
