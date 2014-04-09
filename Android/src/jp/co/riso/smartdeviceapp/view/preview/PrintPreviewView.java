@@ -165,7 +165,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     public boolean onTouchEvent(MotionEvent ev) {
         mScaleDetector.onTouchEvent(ev);
         
-        if (!mScaleDetector.isInProgress()) {
+        if (!mScaleDetector.isInProgress() && ev.getPointerCount() == 1) {
             if (mZoomLevel == BASE_ZOOM_LEVEL) {
                 for (int i = 0; i < getChildCount(); i++) {
                     getChildAt(i).dispatchTouchEvent(ev);
@@ -558,7 +558,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         
         if (mListener != null) {
-            mListener.setControlsVisible(isBaseZoom());
+            mListener.zoomLevelChanged(mZoomLevel);
+            mListener.setControlsEnabled(isBaseZoom());
         }
         mCurlView.setZoomLevel(mZoomLevel);
         mCurlView.requestLayout();
@@ -622,13 +623,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             if (mListener != null) {
                 mListener.onIndexChanged(index);
             }
-            /*
-            ((android.app.Activity) getContext()).runOnUiThread(new Runnable() {
-                public void run() {
-                    updatePageLabel();
-                }
-            });
-            */
         }
     }
     

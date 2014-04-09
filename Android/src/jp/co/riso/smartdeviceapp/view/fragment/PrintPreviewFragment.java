@@ -151,8 +151,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
         mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
-        updateSeekBar();
-        updatePageLabel();
         
         if (mCurrentPage != 0) {
             mPrintPreviewView.setCurrentPage(mCurrentPage);
@@ -238,6 +236,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (mPrintPreviewView != null) {
             mPrintPreviewView.setPrintSettings(mPrintSettings);
             mPrintPreviewView.refreshView();
+            updateSeekBar();
+            updatePageLabel();
         }
     }
     
@@ -252,8 +252,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 showPrintSettingsButton(v, false);
             } else {
                 mPrintPreviewView.setVisibility(View.VISIBLE);
-                setControlsVisible(mPrintPreviewView.isBaseZoom());
+                mPageControls.setVisibility(View.VISIBLE);
                 mPrintPreviewView.refreshView();
+                updateSeekBar();
+                updatePageLabel();
                 showPrintSettingsButton(v, true);
             }
         } else {
@@ -398,12 +400,20 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         return 0;
     }
     
-    public void setControlsVisible(boolean visible) {
-        if (visible) {
-            mPageControls.setVisibility(View.VISIBLE);
-        } else {
-            mPageControls.setVisibility(View.INVISIBLE);
-        }
+    public void zoomLevelChanged(float zoomLevel) {
+        float percentage = (zoomLevel - 1.0f) * 4.0f;
+        
+        int height = mPageControls.getHeight();
+        mPageControls.setTranslationY(height * percentage);
+        
+        mPageControls.setAlpha(1.0f - percentage);
+        
+        mPageControls.setScaleX(zoomLevel);
+        mPageControls.setScaleY(zoomLevel);
+    }
+    
+    public void setControlsEnabled(boolean enable) {
+        mSeekBar.setEnabled(enable);
     }
     
     // ================================================================================

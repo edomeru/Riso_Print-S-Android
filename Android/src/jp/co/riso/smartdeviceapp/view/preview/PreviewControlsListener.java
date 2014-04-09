@@ -11,5 +11,6 @@ package jp.co.riso.smartdeviceapp.view.preview;
 public interface PreviewControlsListener {
     public void onIndexChanged(int index);
     public int getControlsHeight();
-    public void setControlsVisible(boolean visible);
+    public void zoomLevelChanged(float zoomLevel);
+    public void setControlsEnabled(boolean enabled);
 }
