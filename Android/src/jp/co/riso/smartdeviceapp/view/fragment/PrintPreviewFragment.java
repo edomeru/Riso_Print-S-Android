@@ -13,10 +13,16 @@ import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
@@ -31,9 +37,10 @@ import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartdeviceapp.view.preview.PreviewControlsListener;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 
-public class PrintPreviewFragment extends BaseFragment implements PDFFileManagerInterface {
+public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface, PreviewControlsListener, OnSeekBarChangeListener {
     public static final String TAG = "PrintPreviewFragment";
     
     public static final String KEY_CURRENT_PAGE = "current_page";
@@ -48,12 +55,18 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     private PrintSettings mPrintSettings;
     
     private PrintPreviewView mPrintPreviewView = null;
+    private View mPageControls = null;
+    private SeekBar mSeekBar = null;
+    private TextView mPageLabel = null;
+    
     private ProgressBar mProgressBar = null;
     private View mOpenInView = null;
     
     private int mCurrentPage = 0;
     
     private LruCache<String, Bitmap> mBmpCache;
+    
+    private Handler mHandler;
     
     @Override
     public int getViewLayout() {
@@ -63,6 +76,8 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
+        
+        mHandler = new Handler(this);
         
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
@@ -123,10 +138,21 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
+        
         mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
+        mPrintPreviewView.setListener(this);
+        mPrintPreviewView.setVisibility(View.GONE);
+
+        mPageControls = view.findViewById(R.id.previewControls);
+
+        mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
+        mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
+        mSeekBar.setOnSeekBarChangeListener(this);
+        updateSeekBar();
+        updatePageLabel();
         
         if (mCurrentPage != 0) {
             mPrintPreviewView.setCurrentPage(mCurrentPage);
@@ -140,8 +166,13 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         
         mProgressBar.setVisibility(View.GONE);
         
-        // Hide appropriate views
         setPrintPreviewViewDisplayed(view, mPdfManager.getFileName() != null);
+        
+        Message newMessage = Message.obtain(mHandler, 0);
+        newMessage.arg1 = mPrintPreviewView.getVisibility();
+        
+        mPrintPreviewView.setVisibility(View.GONE);
+        mHandler.sendMessage(newMessage);
     }
     
     @Override
@@ -216,16 +247,19 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             mOpenInView.setVisibility(View.GONE);
             if (!mPdfManager.isInitialized()) {
                 mPrintPreviewView.setVisibility(View.GONE);
+                mPageControls.setVisibility(View.INVISIBLE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 showPrintSettingsButton(v, false);
             } else {
                 mPrintPreviewView.setVisibility(View.VISIBLE);
+                setControlsVisible(mPrintPreviewView.isBaseZoom());
                 mPrintPreviewView.refreshView();
                 showPrintSettingsButton(v, true);
             }
         } else {
             mOpenInView.setVisibility(View.VISIBLE);
             mPrintPreviewView.setVisibility(View.GONE);
+            mPageControls.setVisibility(View.INVISIBLE);
             showPrintSettingsButton(v, false);
         }
     }
@@ -255,6 +289,31 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         }
         
         return "";
+    }
+    
+    // ================================================================================
+    // Page Control functions
+    // ================================================================================
+    
+    private void updateSeekBar() {
+        int currentPage = mPrintPreviewView.getCurrentPage();
+        int pageCount = mPrintPreviewView.getPageCount();
+        
+        if (!mPrintPreviewView.getAllowLastPageCurl()) {
+            pageCount--;
+        }
+        
+        mSeekBar.setMax(0);
+        mSeekBar.setMax(pageCount);
+        updateSeekBarProgress(currentPage);
+    }
+    
+    private void updateSeekBarProgress(int index) {
+        mSeekBar.setProgress(index);
+    }
+    
+    private void updatePageLabel() {
+        mPageLabel.setText(mPrintPreviewView.getPageString());
     }
     
     // ================================================================================
@@ -316,5 +375,64 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 break;
         }
         
+    }
+    
+    // ================================================================================
+    // INTERFACE - PrintPreviewPageChangedListener
+    // ================================================================================
+    
+    public void onIndexChanged(int index) {
+        updateSeekBarProgress(index);
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                updatePageLabel();
+            }
+        });
+    }
+    
+    public int getControlsHeight() {
+        if (mPageControls != null) {
+            MarginLayoutParams params = (MarginLayoutParams) mPageControls.getLayoutParams();
+            return mPageControls.getHeight() + params.bottomMargin;
+        }
+        return 0;
+    }
+    
+    public void setControlsVisible(boolean visible) {
+        if (visible) {
+            mPageControls.setVisibility(View.VISIBLE);
+        } else {
+            mPageControls.setVisibility(View.INVISIBLE);
+        }
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnSeekBarChangeListener
+    // ================================================================================
+    
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            mPrintPreviewView.setCurrentPage(progress);
+            updatePageLabel();
+        }
+    }
+    
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+    
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+    
+    // ================================================================================
+    // INTERFACE - Callback
+    // ================================================================================
+    
+    @Override
+    public boolean handleMessage(Message msg) {
+        mPrintPreviewView.setVisibility(msg.arg1);
+        return true;
     }
 }

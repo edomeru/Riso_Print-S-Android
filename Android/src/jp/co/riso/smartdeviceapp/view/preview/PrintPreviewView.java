@@ -21,7 +21,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -34,20 +33,14 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 
-public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener, OnScaleGestureListener {
+public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener {
     public static final String TAG = "PrintPreviewView";
     
     private static final float DEFAULT_MARGIN_IN_MM = 0;
@@ -60,8 +53,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private static final float STAPLE_POS_CORNER_IN_MM = 6;
     private static final float STAPLE_POS_SIDE_IN_MM = 4;
 
-    private static final float BASE_ZOOM_LEVEL = 1.0f;
-    private static final float MAX_ZOOM_LEVEL = 4.0f;
+    public static final float BASE_ZOOM_LEVEL = 1.0f;
+    public static final float MAX_ZOOM_LEVEL = 4.0f;
     
     private static final int INVALID_IDX = -1;
     
@@ -72,12 +65,9 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private CurlView mCurlView;
     private PDFFileManager mPdfManager = null;
     private PDFPageProvider mPdfPageProvider = new PDFPageProvider();
-    private PrintSettings mPrintSettings = new PrintSettings(); // Should not be null
+    private PrintSettings mPrintSettings;
     private LruCache<String, Bitmap> mBmpCache = null;
     
-    private LinearLayout mPageControlLayout;
-    private SeekBar mSeekBar;
-    private TextView mPageLabel;
     private Bitmap mStapleBmp;
     private Bitmap mPunchBmp;
     
@@ -85,6 +75,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private float mMarginRight = 0;
     private float mMarginTop = 0;
     private float mMarginBottom = 0;
+    
+    private PreviewControlsListener mListener;
     
     // Zoom/pan related variables
     
@@ -114,17 +106,20 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         
-        // Re-adjust the margin of the CurlView
-        fitCurlView(l, t, r, b);
+        if (!isInEditMode()) {
+            // Re-adjust the margin of the CurlView
+            fitCurlView(l, t, r, b);
+        }
     }
     
     public void init() {
-        
-        mScaleDetector = new ScaleGestureDetector(getContext(), this);
-        
-        initializeCurlView();
-        initializePageControls();
-        loadResources();
+        if (!isInEditMode()) {
+            mPrintSettings = new PrintSettings(); // Should not be null
+            mScaleDetector = new ScaleGestureDetector(getContext(), this);
+            
+            initializeCurlView();
+            loadResources();
+        }
     }
     
     public void onPause() {
@@ -211,17 +206,11 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     }
     
     public void refreshView() {
-        invalidate();
-        
-        updateSeekBar();
-        updatePageLabel();
+        requestLayout(); 
     }
     
     public void setPdfManager(PDFFileManager pdfManager) {
         mPdfManager = pdfManager;
-        
-        updateSeekBar();
-        updatePageLabel();
     }
     
     public void setPrintSettings(PrintSettings printSettings) {
@@ -269,6 +258,51 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     public void setMarginBottomInMm(float marginBottom) {
         mMarginBottom = marginBottom;
+    }
+    
+    public void setListener(PreviewControlsListener listener) {
+        mListener = listener;
+    }
+    
+    public boolean getAllowLastPageCurl() {
+        return mCurlView.getAllowLastPageCurl();
+    }
+    
+    public int getPageCount() {
+        if (mPdfManager == null) {
+            return 0;
+        }
+        
+        // will depend on PDF and pagination, always false for now
+        int count = mPdfManager.getPageCount();
+        
+        if (isTwoPageDisplayed()) {
+            count = (int) Math.ceil(count / 2.0f);
+        }
+        
+        count = (int) Math.ceil(count / (double) mPrintSettings.getImposition().getPerPage());
+        
+        return count;
+    }
+    
+    public String getPageString() {
+        final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
+        final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
+
+        int currentPage = getCurrentPage();
+        int pageCount = mPdfPageProvider.getPageCount();
+        
+        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || getCurrentPage() == 0) {
+            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage + 1, pageCount);
+        } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
+            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount);
+        } else {
+            return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
+        }
+    }
+    
+    public boolean isBaseZoom() {
+        return mZoomLevel == BASE_ZOOM_LEVEL;
     }
     
     // ================================================================================
@@ -363,23 +397,6 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     // ================================================================================
     // PDF page methods
     // ================================================================================
-    
-    private int getPageCount() {
-        if (mPdfManager == null) {
-            return 0;
-        }
-        
-        // will depend on PDF and pagination, always false for now
-        int count = mPdfManager.getPageCount();
-        
-        if (isTwoPageDisplayed()) {
-            count = (int) Math.ceil(count / 2.0f);
-        }
-        
-        count = (int) Math.ceil(count / (double) mPrintSettings.getImposition().getPerPage());
-        
-        return count;
-    }
     
     private boolean shouldDisplayLandscape() {
         if (mPdfManager == null) {
@@ -504,104 +521,17 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         addView(mCurlView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
     
-    private void initializePageControls() {
-        mSeekBar = new SeekBar(getContext());
-        mSeekBar.setOnSeekBarChangeListener(this);
-        
-        mPageLabel = new TextView(getContext());
-        mPageLabel.setTextColor(getResources().getColor(R.color.theme_dark_1));
-        mPageLabel.setGravity(Gravity.CENTER);
-        
-        updateSeekBar();
-        updatePageLabel();
-        
-        mPageControlLayout = new LinearLayout(getContext());
-        
-        boolean isTablet = getResources().getBoolean(R.bool.is_tablet);
-        boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        
-        if (isLandscape && !isTablet) {
-            mPageControlLayout.setOrientation(LinearLayout.HORIZONTAL);
-            
-            int width = getResources().getDimensionPixelSize(R.dimen.preview_controls_text_width);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, LayoutParams.WRAP_CONTENT);
-            params.weight = 0.0f;
-            params.gravity = Gravity.CENTER_VERTICAL;
-            mPageControlLayout.addView(mPageLabel, params);
-            
-            params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER_VERTICAL;
-            params.weight = 1.0f;
-            mPageControlLayout.addView(mSeekBar, params);
-        } else {
-            mPageControlLayout.setOrientation(LinearLayout.VERTICAL);
-            mPageControlLayout.addView(mSeekBar, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER_HORIZONTAL;
-            mPageControlLayout.addView(mPageLabel, params);
-        }
-        
-        FrameLayout.LayoutParams curlViewParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        curlViewParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_side);
-        curlViewParams.rightMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_side);
-        curlViewParams.bottomMargin = getResources().getDimensionPixelSize(R.dimen.preview_controls_margin_bottom);
-        curlViewParams.gravity = Gravity.BOTTOM;
-        addView(mPageControlLayout, curlViewParams);
-    }
-    
-    private void updateSeekBar() {
-        int currentPage = getCurrentPage();
-        int pageCount = mPdfPageProvider.getPageCount();
-        
-        if (!mCurlView.getAllowLastPageCurl()) {
-            pageCount--;
-        }
-        
-        mSeekBar.setMax(0);
-        mSeekBar.setMax(pageCount);
-        mSeekBar.setProgress(currentPage);
-    }
-    
-    private void updateSeekBarProgress(int currentPage) {
-        mSeekBar.setProgress(currentPage);
-    }
-    
-    private void updatePageLabel() {
-        final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
-        final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
-        
-        int currentPage = getCurrentPage();
-        int pageCount = mPdfPageProvider.getPageCount();
-        
-        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || getCurrentPage() == 0) {
-            mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage + 1, pageCount));
-        } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
-            mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount));
-        } else {
-            mPageLabel.setText(String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount));
-        }
-    }
-    
-    private void setPageControlsDisplay(boolean visible) {
-        if (visible) {
-            mSeekBar.setVisibility(View.VISIBLE);
-            mPageLabel.setVisibility(View.VISIBLE);
-        } else {
-            mSeekBar.setVisibility(View.GONE);
-            mPageLabel.setVisibility(View.GONE);
-        }
-    }
-    
     private void fitCurlView(int l, int t, int r, int b) {
         int w = r - l;
         int h = b - t;
         
         int marginSize = getResources().getDimensionPixelSize(R.dimen.preview_view_margin);
+        int pageControlSize = 0;
         
-        MarginLayoutParams params = (MarginLayoutParams) mPageControlLayout.getLayoutParams();
-        int pageControlSize = mPageControlLayout.getHeight() + params.bottomMargin;
-        
+        if (mListener != null) {
+            pageControlSize = mListener.getControlsHeight();
+        }
+
         int newDimensions[] = getScreenDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
         
         float lrMargin = ((w - newDimensions[0]) / (w * 2.0f));
@@ -609,42 +539,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         lrMargin += (marginSize / (float) w);
         tbMargin += (marginSize / (float) h);
-        
-        /*
-        mZoomLevel = 4.0f;
-        
-        int zoomedInDimensions[] = newDimensions.clone();
-        zoomedInDimensions[0] *= mZoomLevel;
-        zoomedInDimensions[1] *= mZoomLevel;
-        
-        float marginAdjustX = ((mZoomLevel * newDimensions[0]) - newDimensions[0]) / (float)w;
-        float marginAdjustY = ((mZoomLevel * newDimensions[1]) - newDimensions[1]) / (float)h;
-        
-        lrMargin -= marginAdjustX;
-        tbMargin -= marginAdjustY;
-        */
-        
+
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
-    }
-    
-    // ================================================================================
-    // INTERFACE - OnSeekBarChangeListener
-    // ================================================================================
-    
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            mCurlView.setCurrentIndex(progress);
-            updatePageLabel();
-        }
-    }
-    
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-    }
-    
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
     }
     
     // ================================================================================
@@ -660,8 +556,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         if (mZoomLevel >= MAX_ZOOM_LEVEL) {
             mZoomLevel = MAX_ZOOM_LEVEL;
         }
-
-        setPageControlsDisplay(mZoomLevel == BASE_ZOOM_LEVEL);
+        
+        if (mListener != null) {
+            mListener.setControlsVisible(isBaseZoom());
+        }
         mCurlView.setZoomLevel(mZoomLevel);
         mCurlView.requestLayout();
         
@@ -721,8 +619,9 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         @Override
         public void indexChanged(int index) {
-            updateSeekBarProgress(index);
-            
+            if (mListener != null) {
+                mListener.onIndexChanged(index);
+            }
             /*
             ((android.app.Activity) getContext()).runOnUiThread(new Runnable() {
                 public void run() {
