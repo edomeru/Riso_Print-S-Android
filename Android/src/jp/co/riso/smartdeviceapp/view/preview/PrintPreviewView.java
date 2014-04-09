@@ -148,7 +148,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 case MotionEvent.ACTION_MOVE:
                     if (mPtrIdx == ev.getActionIndex()) {
                         mCurlView.adjustPan(ev.getX() - mPtrLastPos.x, ev.getY() - mPtrLastPos.y);
-                        mCurlView.requestLayout();
+                        mCurlView.requestRender();
                         
                         mPtrLastPos.set(ev.getX(), ev.getY());
                     }
@@ -206,7 +206,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     public void refreshView() {
-        requestLayout(); 
+        mCurlView.requestRender(); 
     }
     
     public void setPdfManager(PDFFileManager pdfManager) {
@@ -222,7 +222,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         setupCurlPageView();
         setupCurlBind();
-        requestLayout();
+        mCurlView.requestRender();
     }
     
     public void setBmpCache(LruCache<String, Bitmap> bmpCache) {
@@ -562,7 +562,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             mListener.setControlsEnabled(isBaseZoom());
         }
         mCurlView.setZoomLevel(mZoomLevel);
-        mCurlView.requestLayout();
+        mCurlView.requestRender();
         
         return true;
     }

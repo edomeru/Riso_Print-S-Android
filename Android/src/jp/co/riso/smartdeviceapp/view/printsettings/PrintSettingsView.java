@@ -264,7 +264,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         updateDisplayedValue(tag);
     }
     
-    private void applyConstraints(String tag, int prevValue) {
+    private void applyViewConstraints(String tag) {
         int value = mPrintSettings.getValue(tag);
         
         if (tag.equals(PrintSettings.TAG_BOOKLET)) {
@@ -276,19 +276,27 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION, enabled);
             setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
             
+            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled);
+            
+            applyViewConstraints(PrintSettings.TAG_IMPOSITION);
+        }
+        if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
+            boolean enabled = (value != 0);
+            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
+        }
+    }
+    
+    private void applyValueConstraints(String tag, int prevValue) {
+        int value = mPrintSettings.getValue(tag);
+        
+        if (tag.equals(PrintSettings.TAG_BOOKLET)) {
             updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE,
                     getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE));
             updateValueWithConstraints(PrintSettings.TAG_STAPLE,
                     getDefaultValueWithConstraints(PrintSettings.TAG_STAPLE));
             updateValueWithConstraints(PrintSettings.TAG_PUNCH,
                     getDefaultValueWithConstraints(PrintSettings.TAG_PUNCH));
-            
-            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled);
-            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled);
-        }
-        if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
-            boolean enabled = (value != 0);
-            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
         }
 
         if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
@@ -364,7 +372,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private boolean updateValue(String tag, int newValue) {
         int prevValue = mPrintSettings.getValue(tag);
         if (mPrintSettings.setValue(tag, newValue)) {
-            applyConstraints(tag, prevValue);
+            applyViewConstraints(tag);
+            applyValueConstraints(tag, prevValue);
             return true;
         }
         
@@ -398,7 +407,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
-        applyConstraints(tag, -1);
+        applyViewConstraints(tag);
     }
     
     public void setValueChangedListener(ValueChangedListener listener) {

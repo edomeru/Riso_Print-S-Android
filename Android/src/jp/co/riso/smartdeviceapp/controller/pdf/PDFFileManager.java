@@ -297,7 +297,6 @@ public class PDFFileManager {
         
         switch (status) {
             case RADAEE_OK:
-                android.util.Log.wtf(TAG,"Permission: " + mDocument.GetPermission() + " " + Integer.toBinaryString(mDocument.GetPermission()));
                 int permission = mDocument.GetPermission();
                 // check if (permission != 0) means that license is not standard. if standard license, just display.
                 if (permission != 0) {

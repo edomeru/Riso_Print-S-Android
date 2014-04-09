@@ -70,10 +70,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 
 	private float mPanX = 0.0f;
 	private float mPanY = 0.0f;
-    private float mMinPanX = 0.0f;
+	private float mMinPanX = 0.0f;
 	private float mMaxPanX = 0.0f;
 	private float mMinPanY = 0.0f;
-    private float mMaxPanY = 0.0f;
+	private float mMaxPanY = 0.0f;
 
 	// Set to true to enable the border.
 	private static final boolean RENDER_DROP_SHADOW = true;
@@ -219,9 +219,9 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		gl.glLoadIdentity();
 		gl.glScalef(mZoomLevel, mZoomLevel, 1.0f);
 
-        float panX = mPanX / mZoomLevel;
-        float panY = mPanY / mZoomLevel;
-        gl.glTranslatef(panX, panY, 0);
+		float panX = mPanX / mZoomLevel;
+		float panY = mPanY / mZoomLevel;
+		gl.glTranslatef(panX, panY, 0);
 
 		if (USE_PERSPECTIVE_PROJECTION) {
 			gl.glTranslatef(0, 0, -6f);
@@ -296,22 +296,22 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	}
 
 	public void tryAdjustPan(float deltaX, float deltaY) {
-	    float tempPanX = mPanX + (deltaX * mZoomLevel);
-        float tempPanY = mPanY - (deltaY * mZoomLevel);
-        
+		float tempPanX = mPanX + (deltaX);
+		float tempPanY = mPanY - (deltaY);
+		
 		if (tempPanX < mMinPanX) {
-		    tempPanX = mMinPanX;
+			tempPanX = mMinPanX;
 		}
 		if (tempPanX > mMaxPanX) {
-		    tempPanX = mMaxPanX;
+			tempPanX = mMaxPanX;
 		}
-        if (tempPanY < mMinPanY) {
-            tempPanY = mMinPanY;
-        }
-        if (tempPanY > mMaxPanY) {
-            tempPanY = mMaxPanY;
-        }
-        
+		if (tempPanY < mMinPanY) {
+			tempPanY = mMinPanY;
+		}
+		if (tempPanY > mMaxPanY) {
+			tempPanY = mMaxPanY;
+		}
+		
 		mPanX = tempPanX;
 		mPanY = tempPanY;
 	}
@@ -322,26 +322,26 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		
 		mZoomLevel = zoomLevel;
 		
-        float minMargin = Math.min(mMargins.left, mMargins.right);
-        minMargin = Math.min(minMargin, mMargins.top);
-        minMargin = Math.min(minMargin, mMargins.bottom);
+		float minMargin = Math.min(mMargins.left, mMargins.right);
+		minMargin = Math.min(minMargin, mMargins.top);
+		minMargin = Math.min(minMargin, mMargins.bottom);
 
-        RectF rect = new RectF(mPageRectRight);
+		RectF rect = new RectF(mPageRectRight);
 
-        rect.left -= minMargin;
-        rect.right += minMargin;
-        rect.top += minMargin;
-        rect.bottom -= minMargin;
-        
-        rect.left *= mZoomLevel;
-        rect.right *= mZoomLevel;
-        rect.top *= mZoomLevel;
-        rect.bottom *= mZoomLevel;
-        
-        mMinPanX = Math.min(0, rect.left - mViewRect.left);
-        mMaxPanX = Math.max(0, rect.right - mViewRect.right);
-        mMinPanY = Math.min(0, mViewRect.top - rect.top);
-        mMaxPanY = Math.max(0, mViewRect.bottom - rect.bottom);
+		rect.left -= minMargin;
+		rect.right += minMargin;
+		rect.top += minMargin;
+		rect.bottom -= minMargin;
+
+		rect.left *= mZoomLevel;
+		rect.right *= mZoomLevel;
+		rect.top *= mZoomLevel;
+		rect.bottom *= mZoomLevel;
+
+		mMinPanX = Math.min(0, rect.left - mViewRect.left);
+		mMaxPanX = Math.max(0, rect.right - mViewRect.right);
+		mMinPanY = Math.min(0, mViewRect.top - rect.top);
+		mMaxPanY = Math.max(0, mViewRect.bottom - rect.bottom);
 
 		tryAdjustPan(0, 0);
 	}
