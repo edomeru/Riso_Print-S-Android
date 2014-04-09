@@ -1,4 +1,4 @@
-﻿CREATE TABLE Printer (
+CREATE TABLE Printer (
   prn_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   prn_ip_address VARCHAR(20) NULL,
   prn_name VARCHAR(255) NULL,

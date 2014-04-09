@@ -23,9 +23,12 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
@@ -40,6 +43,8 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     public static final String FRAGMENT_TAG_PRINTSETTINGS = "fragment_printsettings";
     
     private PDFFileManager mPdfManager = null;
+    
+    private int mPrinterId = PrinterManager.EMPTY_ID;
     private PrintSettings mPrintSettings;
     
     private PrintPreviewView mPrintPreviewView = null;
@@ -49,10 +54,6 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     private int mCurrentPage = 0;
     
     private LruCache<String, Bitmap> mBmpCache;
-    
-    public PrintPreviewFragment() {
-        
-    }
     
     @Override
     public int getViewLayout() {
@@ -70,15 +71,16 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             if (getActivity().getIntent().getData() != null) {
                 data = getActivity().getIntent().getData();
             }
-
+            
             /*
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            SharedPreferences.Editor edit = prefs.edit();
+            android.content.SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity());
+            android.content.SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
             edit.commit();
-            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
-            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
+            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
+            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
             */
+            
             mPdfManager = new PDFFileManager(this);
             
             if (data != null) {
@@ -86,6 +88,14 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 
                 // Automatically open asynchronously
                 mPdfManager.initializeAsync();
+            }
+        }
+        
+        if (mPrinterId == PrinterManager.EMPTY_ID) {
+            mPrinterId = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getDefaultPrinter();
+            
+            if (mPrinterId != -1) {
+                mPrintSettings = new PrintSettings(mPrinterId);
             }
         }
         
@@ -188,6 +198,10 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
         addMenuButton(v, R.id.rightActionLayout, ID_PRINT_BUTTON, R.drawable.selector_actionbar_printsettings, this);
     }
     
+    public void setPrintId(int printerId) {
+        mPrinterId = printerId;
+    }
+    
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
         if (mPrintPreviewView != null) {
@@ -197,8 +211,8 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
     }
     
     public void setPrintPreviewViewDisplayed(View v, boolean show) {
+        mProgressBar.setVisibility(View.GONE);
         if (show) {
-            mProgressBar.setVisibility(View.GONE);
             mOpenInView.setVisibility(View.GONE);
             if (!mPdfManager.isInitialized()) {
                 mPrintPreviewView.setVisibility(View.GONE);
@@ -210,6 +224,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                 showPrintSettingsButton(v, true);
             }
         } else {
+            mOpenInView.setVisibility(View.VISIBLE);
             mPrintPreviewView.setVisibility(View.GONE);
             showPrintSettingsButton(v, false);
         }
@@ -269,10 +284,12 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                             ft.commit();
                         }
                         
+                        fragment.setPrinterId(mPrinterId);
                         fragment.setPrintSettings(mPrintSettings);
+                        fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
                         
-                        activity.openDrawer(Gravity.RIGHT, true);
+                        activity.openDrawer(Gravity.RIGHT, isTablet());
                     } else {
                         activity.closeDrawers();
                     }

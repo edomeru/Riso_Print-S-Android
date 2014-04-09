@@ -16,7 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 /**
- * Generic class for displaying a view (e.g. delete button) using TranslateAnimation and
+ * Class for displaying a view (e.g. delete button) using TranslateAnimation and
  * hiding other views using AlphaAnimation.
  */
 public class DisplayDeleteAnimation {
@@ -25,8 +25,8 @@ public class DisplayDeleteAnimation {
     /**
      * Returns a View object that represents the item layout for deletion.
      * <p>
-     * This method displays a view (e.g. delete button) using TranslateAnimation and hides other views using
-     * AlphaAnimation if animation is enabled.
+     * This method displays a view (e.g. delete button) using TranslateAnimation and hides
+     * other views using AlphaAnimation if animation is enabled.
      * 
      * @param view
      *            the row layout
@@ -82,8 +82,8 @@ public class DisplayDeleteAnimation {
     }
     
     /**
-     * This method hides a view (e.g. delete button) using TranslateAnimation and displays other views using
-     * AlphaAnimation if animation is enabled.
+     * This method hides a view (e.g. delete button) using TranslateAnimation and displays
+     * other views using AlphaAnimation if animation is enabled.
      * 
      * @param view
      *            the row layout
@@ -139,17 +139,21 @@ public class DisplayDeleteAnimation {
         }
     }
     
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    
     public class HideOnFadeAnimationListener implements Animation.AnimationListener {
-        private WeakReference<View> viewReference = null;
+        private WeakReference<View> mViewReference = null;
         
         public void setView(View view) {
-            viewReference = new WeakReference<View>(view);
+            mViewReference = new WeakReference<View>(view);
         }
         
         @Override
         public void onAnimationEnd(Animation animation) {
-            if (viewReference != null) {
-                final View view = viewReference.get();
+            if (mViewReference != null) {
+                final View view = mViewReference.get();
                 if (view != null) {
                     view.setVisibility(View.INVISIBLE);
                 }

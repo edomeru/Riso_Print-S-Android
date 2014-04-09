@@ -24,6 +24,7 @@ import android.os.AsyncTask;
 import android.view.View;
 
 public class PrinterManager implements SnmpSearchCallback {
+    public static final int EMPTY_ID = -1;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList = null;
     private Context mContext = null;
@@ -46,7 +47,7 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         return sSharedMngr;
     }
-    
+
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -222,6 +223,7 @@ public class PrinterManager implements SnmpSearchCallback {
         DatabaseManager dbManager = new DatabaseManager(mContext);
         
         dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
+        
         dbManager.close();
     }
     
@@ -233,7 +235,7 @@ public class PrinterManager implements SnmpSearchCallback {
      * @return Printer ID of the default printer
      */
     public int getDefaultPrinter() {
-        int printer = -1;
+        int printer = EMPTY_ID;
         DatabaseManager dbManager = new DatabaseManager(mContext);
         
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
@@ -241,7 +243,7 @@ public class PrinterManager implements SnmpSearchCallback {
         if (cursor.getCount() != 1) {
             dbManager.close();
             cursor.close();
-            return -1;
+            return EMPTY_ID;
         }
         
         if (cursor.moveToFirst()) {
@@ -404,6 +406,7 @@ public class PrinterManager implements SnmpSearchCallback {
     // ================================================================================
     
     public interface PrinterSearchCallback {
+
         public void onPrinterAdd(Printer printer);
         
         public void onSearchEnd();
@@ -445,4 +448,5 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         
     }
+
 }

@@ -14,35 +14,60 @@ import java.util.Locale;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.model.PrintSettings;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.ColorMode;
-import jp.co.riso.smartdeviceapp.model.PrintSettingsConstants.Duplex;
-import fi.harism.curl.CurlPage;
-import fi.harism.curl.CurlView;
-import android.app.Activity;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import fi.harism.curl.CurlPage;
+import fi.harism.curl.CurlView;
 
-public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener {
+public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeListener, OnScaleGestureListener {
     public static final String TAG = "PrintPreviewView";
     
-    private static final String FORMAT_CACHE_KEY = "%s-%d-%d-%d-%d-%d"; // path; page; side; duplex; imposition
-    private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.ARGB_8888;
+    private static final float DEFAULT_MARGIN_IN_MM = 0;
+    
+    private static final float PUNCH_DIAMETER_IN_MM = 12;
+    private static final float PUNCH_POS_SIDE_IN_MM = 8;
+    
+    private static final float STAPLE_LENGTH_IN_MM = 12;
+    
+    private static final float STAPLE_POS_CORNER_IN_MM = 6;
+    private static final float STAPLE_POS_SIDE_IN_MM = 4;
+
+    private static final float BASE_ZOOM_LEVEL = 1.0f;
+    private static final float MAX_ZOOM_LEVEL = 4.0f;
+    
+    private static final int INVALID_IDX = -1;
+    
+    private static final int SLEEP_DELAY = 128;
+    private static final int SMALL_BMP_SIZE = 64;
+    private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.RGB_565;
     
     private CurlView mCurlView;
     private PDFFileManager mPdfManager = null;
@@ -53,15 +78,26 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     private LinearLayout mPageControlLayout;
     private SeekBar mSeekBar;
     private TextView mPageLabel;
-    // private Bitmap stapleBmp;
-    // private Bitmap punchBmp;
+    private Bitmap mStapleBmp;
+    private Bitmap mPunchBmp;
+    
+    private float mMarginLeft = 0;
+    private float mMarginRight = 0;
+    private float mMarginTop = 0;
+    private float mMarginBottom = 0;
+    
+    // Zoom/pan related variables
+    
+    private ScaleGestureDetector mScaleDetector;
+    private float mZoomLevel = BASE_ZOOM_LEVEL;
+    
+    private int mPtrIdx = INVALID_IDX;
+    private PointF mPtrDownPos = new PointF();
+    private PointF mPtrLastPos = new PointF();
     
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        
-        initializeCurlView();
-        initializePageControls();
-        loadResources();
+        init();
     }
     
     public PrintPreviewView(Context context, AttributeSet attrs) {
@@ -70,10 +106,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     public PrintPreviewView(Context context) {
         super(context);
-        
-        initializeCurlView();
-        initializePageControls();
-        loadResources();
+
+        init();
     }
     
     @Override
@@ -84,6 +118,15 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         fitCurlView(l, t, r, b);
     }
     
+    public void init() {
+        
+        mScaleDetector = new ScaleGestureDetector(getContext(), this);
+        
+        initializeCurlView();
+        initializePageControls();
+        loadResources();
+    }
+    
     public void onPause() {
         mCurlView.onPause();
     }
@@ -92,18 +135,79 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         mCurlView.onResume();
     }
     
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return true;
+    }
+    
+    public void processTouchEvent(MotionEvent ev) {
+        if (ev.getPointerCount() == 1) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (mPtrIdx == INVALID_IDX) {
+                        mPtrIdx = ev.getActionIndex();
+                        mPtrDownPos.set(ev.getX(), ev.getY());
+                        mPtrLastPos.set(ev.getX(), ev.getY());
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (mPtrIdx == ev.getActionIndex()) {
+                        mCurlView.adjustPan(ev.getX() - mPtrLastPos.x, ev.getY() - mPtrLastPos.y);
+                        mCurlView.requestLayout();
+                        
+                        mPtrLastPos.set(ev.getX(), ev.getY());
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    mPtrIdx = -1;
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        mScaleDetector.onTouchEvent(ev);
+        
+        if (!mScaleDetector.isInProgress()) {
+            if (mZoomLevel == BASE_ZOOM_LEVEL) {
+                for (int i = 0; i < getChildCount(); i++) {
+                    getChildAt(i).dispatchTouchEvent(ev);
+                }                
+            } else {
+                processTouchEvent(ev);
+            }
+        } else {
+            MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
+                    SystemClock.uptimeMillis(), 
+                    MotionEvent.ACTION_CANCEL, 
+                    ev.getX(), ev.getY(), 0);
+            
+            processTouchEvent(e);
+            
+            for (int i = 0; i < getChildCount(); i++) {
+                getChildAt(i).dispatchTouchEvent(e);
+            }
+            
+            e.recycle();
+        }
+        
+        return true;
+    }
+    
     // ================================================================================
     // Public methods
     // ================================================================================
     
     public void loadResources() {
-        // stapleBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
-        // punchBmp = null;//BitmapFactory.decodeResource(getResources(), R.drawable.temp_img_staple);
+        mStapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_staple);
+        mPunchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_punch);
     }
     
     public void freeResources() {
-        // stapleBmp.recycle();
-        // punchBmp.recycle();
+        mStapleBmp.recycle();
+        mPunchBmp.recycle();
     }
     
     public void refreshView() {
@@ -142,6 +246,29 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     public void setCurrentPage(int page) {
         mCurlView.setCurrentIndex(page);
+    }
+    
+    public void setDefaultMargins() {
+        setMarginLeftInMm(DEFAULT_MARGIN_IN_MM);
+        setMarginRightInMm(DEFAULT_MARGIN_IN_MM);
+        setMarginTopInMm(DEFAULT_MARGIN_IN_MM);
+        setMarginBottomInMm(DEFAULT_MARGIN_IN_MM);
+    }
+    
+    public void setMarginLeftInMm(float marginLeft) {
+        mMarginLeft = marginLeft;
+    }
+    
+    public void setMarginRightInMm(float marginRight) {
+        mMarginRight = marginRight;
+    }
+    
+    public void setMarginTopInMm(float marginTop) {
+        mMarginTop = marginTop;
+    }
+    
+    public void setMarginBottomInMm(float marginBottom) {
+        mMarginBottom = marginBottom;
     }
     
     // ================================================================================
@@ -192,10 +319,21 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     }
     
     protected String getCacheKey(int index, int side) {
-        int imposition = mPrintSettings.getImposition().ordinal();
-        int duplexMode = mPrintSettings.getDuplex().ordinal();
-        int scaleToFit = mPrintSettings.isScaleToFit() ? 1 : 0;
-        return String.format(Locale.getDefault(), FORMAT_CACHE_KEY, mPdfManager.getPath(), index, side, duplexMode, imposition, scaleToFit);
+        // path; page; side; paper size; duplex; imposition; color; landscape; staple; punch
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(mPdfManager.getPath());
+        buffer.append(index);
+        buffer.append(side);
+        buffer.append(mPrintSettings.getPaperSize().ordinal());
+        buffer.append(mPrintSettings.getImposition().ordinal());
+        buffer.append(mPrintSettings.getDuplex().ordinal());
+        buffer.append(mPrintSettings.isScaleToFit());
+        buffer.append(shouldDisplayColor());
+        buffer.append(shouldDisplayLandscape());
+        buffer.append(mPrintSettings.getStaple().ordinal());
+        buffer.append(mPrintSettings.getPunch().ordinal());
+        
+        return buffer.toString();
     }
     
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -218,6 +356,10 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         return new Bitmap[] { front, back };
     }
     
+    protected int convertDimension(float dimension, int bmpWidth) {
+        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
+    }
+    
     // ================================================================================
     // PDF page methods
     // ================================================================================
@@ -230,7 +372,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         // will depend on PDF and pagination, always false for now
         int count = mPdfManager.getPageCount();
         
-        if (mPrintSettings.getDuplex() != Duplex.OFF) {
+        if (isTwoPageDisplayed()) {
             count = (int) Math.ceil(count / 2.0f);
         }
         
@@ -244,15 +386,17 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             return false;
         }
         
-        // will depend on PDF and pagination, always false for now
-        float pdfWidth = mPdfManager.getPageWidth();
-        float pdfHeight = mPdfManager.getPageHeight();
+        boolean flipToLandscape = mPrintSettings.getOrientation() == Orientation.LANDSCAPE;
         
-        boolean flipToLandscape = (pdfWidth > pdfHeight);
+        /*
+        if (mPrintSettings.isBooklet()) {
+            flipToLandscape = !flipToLandscape;
+        }
         
         if (mPrintSettings.getImposition().isFlipLandscape()) {
             flipToLandscape = !flipToLandscape;
         }
+        */
         
         return flipToLandscape;
     }
@@ -281,7 +425,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
         
-        if (mPrintSettings.getDuplex() != Duplex.OFF) {
+        if (isTwoPageDisplayed()) {
             twoPage = true;
             
             if (getCurrentPage() % 2 == 0) {
@@ -301,16 +445,40 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     private void setupCurlBind() {
         int bindPosition = CurlView.BIND_LEFT;
-        /*
-         * switch (mPrintSettings.getBind()) { case LEFT: bindPosition = CurlView.BIND_LEFT; break; case RIGHT:
-         * bindPosition = CurlView.BIND_RIGHT; break; case TOP: bindPosition = CurlView.BIND_TOP; break; }
-         */
+        
+        switch (mPrintSettings.getFinishingSide()) {
+            case LEFT:
+                bindPosition = CurlView.BIND_LEFT;
+                break;
+            case RIGHT:
+                bindPosition = CurlView.BIND_RIGHT;
+                break;
+            case TOP:
+                bindPosition = CurlView.BIND_TOP;
+                break;
+        }
         
         mCurlView.setBindPosition(bindPosition);
     }
     
     private boolean shouldDisplayColor() {
         return (mPrintSettings.getColorMode() != ColorMode.MONOCHROME);
+    }
+    
+    private boolean isTwoPageDisplayed() {
+        return (mPrintSettings.getDuplex() != Duplex.OFF);
+    }
+    
+    private boolean isVerticalFlip() {
+        boolean verticalFlip = true;
+        
+        if (shouldDisplayLandscape()) {
+            verticalFlip = (mPrintSettings.getDuplex() == Duplex.LONG_EDGE);
+        } else {
+            verticalFlip = (mPrintSettings.getDuplex() == Duplex.SHORT_EDGE);
+        }
+        
+        return verticalFlip;
     }
     
     // ================================================================================
@@ -326,6 +494,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         setupCurlPageView();
         setupCurlBind();
+        setDefaultMargins();
         
         if (!isInEditMode()) {
             float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
@@ -410,6 +579,16 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         }
     }
     
+    private void setPageControlsDisplay(boolean visible) {
+        if (visible) {
+            mSeekBar.setVisibility(View.VISIBLE);
+            mPageLabel.setVisibility(View.VISIBLE);
+        } else {
+            mSeekBar.setVisibility(View.GONE);
+            mPageLabel.setVisibility(View.GONE);
+        }
+    }
+    
     private void fitCurlView(int l, int t, int r, int b) {
         int w = r - l;
         int h = b - t;
@@ -426,6 +605,20 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         
         lrMargin += (marginSize / (float) w);
         tbMargin += (marginSize / (float) h);
+        
+        /*
+        mZoomLevel = 4.0f;
+        
+        int zoomedInDimensions[] = newDimensions.clone();
+        zoomedInDimensions[0] *= mZoomLevel;
+        zoomedInDimensions[1] *= mZoomLevel;
+        
+        float marginAdjustX = ((mZoomLevel * newDimensions[0]) - newDimensions[0]) / (float)w;
+        float marginAdjustY = ((mZoomLevel * newDimensions[1]) - newDimensions[1]) / (float)h;
+        
+        lrMargin -= marginAdjustX;
+        tbMargin -= marginAdjustY;
+        */
         
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
@@ -448,6 +641,37 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
     
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnScaleGestureListener
+    // ================================================================================
+    
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        mZoomLevel  = mZoomLevel * detector.getScaleFactor();
+        if (mZoomLevel <= BASE_ZOOM_LEVEL) {
+            mZoomLevel = BASE_ZOOM_LEVEL;
+        }
+        if (mZoomLevel >= MAX_ZOOM_LEVEL) {
+            mZoomLevel = MAX_ZOOM_LEVEL;
+        }
+
+        setPageControlsDisplay(mZoomLevel == BASE_ZOOM_LEVEL);
+        mCurlView.setZoomLevel(mZoomLevel);
+        mCurlView.requestLayout();
+        
+        return true;
+    }
+    
+    @Override
+    public boolean onScaleBegin(ScaleGestureDetector detector) {
+        // Return true to begin scale
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd(ScaleGestureDetector detector) {
     }
     
     // ================================================================================
@@ -476,25 +700,18 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 cachedPages = task.getRenderBitmaps();
             }
             
-            Bitmap bmps[] = {
-                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE),
-                    Bitmap.createBitmap(width, height, BMP_CONFIG_TEXTURE)
-            };
-            
             if (cachedPages[0] == null || cachedPages[1] == null) {
-                page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
-                page.setTexture(bmps[1], CurlPage.SIDE_BACK);
+                Bitmap front = Bitmap.createBitmap(SMALL_BMP_SIZE, SMALL_BMP_SIZE, BMP_CONFIG_TEXTURE);
+                Bitmap back = Bitmap.createBitmap(SMALL_BMP_SIZE, SMALL_BMP_SIZE, BMP_CONFIG_TEXTURE);
+                front.eraseColor(Color.WHITE);
+                back.eraseColor(Color.WHITE);
+                page.setTexture(front, CurlPage.SIDE_FRONT);
+                page.setTexture(back, CurlPage.SIDE_BACK);
                 
                 new PDFRenderTask(page, width, height, index, page.createNewHandler()).execute();
             } else {
-                for (int i = 0; i < cachedPages.length; i++) {
-                    if (cachedPages[i] != null) {
-                        ImageUtils.renderBmpToCanvas(cachedPages[i], new Canvas(bmps[i]), shouldDisplayColor());
-                    }
-                }
-                
-                page.setTexture(bmps[0], CurlPage.SIDE_FRONT);
-                page.setTexture(bmps[1], CurlPage.SIDE_BACK);
+                page.setTexture(Bitmap.createBitmap(cachedPages[0]), CurlPage.SIDE_FRONT);
+                page.setTexture(Bitmap.createBitmap(cachedPages[1]), CurlPage.SIDE_BACK);
             }
         }
         
@@ -502,7 +719,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         public void indexChanged(int index) {
             updateSeekBar();
             
-            ((Activity) getContext()).runOnUiThread(new Runnable() {
+            ((android.app.Activity) getContext()).runOnUiThread(new Runnable() {
                 public void run() {
                     updatePageLabel();
                 }
@@ -516,8 +733,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         private int mWidth;
         private int mHeight;
         private int mIndex;
-        
-        private Bitmap mBmps[];
+        private Bitmap mRenderBmps[];
         
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
             mCurlPageRef = new WeakReference<CurlPage>(page);
@@ -525,18 +741,21 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             mWidth = width;
             mHeight = height;
             mIndex = index;
-            
-            int bmpDimensions[] = getPaperDimensions(width, height);
-            mBmps = new Bitmap[] { Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE),
-                    Bitmap.createBitmap(bmpDimensions[0], bmpDimensions[1], BMP_CONFIG_TEXTURE) };
-            mBmps[0].eraseColor(getResources().getColor(R.color.bg_paper));
-            mBmps[1].eraseColor(getResources().getColor(R.color.bg_paper));
         }
         
         @Override
         protected Void doInBackground(Void... params) {
-            Bitmap renderBmps[] = getRenderBitmaps();
-            tryDrawRenderBitmaps(renderBmps, mBmps);
+            try {
+                Thread.sleep(SLEEP_DELAY);
+            } catch (InterruptedException e) {
+                Log.w(TAG, "Thread exception received");
+            }
+            
+            if (mHandlerRef.get() == null || mCurlPageRef.get() == null) {
+                Log.w(TAG, "Cancelled process");
+                return null;
+            }
+            mRenderBmps = getRenderBitmaps();
             return null;
         }
         
@@ -544,42 +763,117 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
         protected void onPostExecute(Void param) {
             if (mHandlerRef.get() != null && mCurlPageRef.get() != null) {
                 mCurlPageRef.get().reset();
-                mCurlPageRef.get().setTexture(mBmps[0], CurlPage.SIDE_FRONT);
-                mCurlPageRef.get().setTexture(mBmps[1], CurlPage.SIDE_BACK);
+                mCurlPageRef.get().setTexture(Bitmap.createBitmap(mRenderBmps[0]), CurlPage.SIDE_FRONT);
+                mCurlPageRef.get().setTexture(Bitmap.createBitmap(mRenderBmps[1]), CurlPage.SIDE_BACK);
                 mCurlView.requestRender();
             } else {
                 Log.w(TAG, "Will recycle");
-                mBmps[0].recycle();
-                mBmps[1].recycle();
             }
         }
         
         private void drawStapleImages(Canvas canvas) {
+            int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
+            float scale = stapleLength / (float) mStapleBmp.getWidth();
+            
+            int count = mPrintSettings.getStaple().getCount();
+            
+            // CORNER
+            if (count == 1) {
+                int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth());
+                
+                int x = staplePos;
+                int y = staplePos;
+                float rotate = -45.0f;
+
+                if (mPrintSettings.getStaple() == Staple.ONE_UR || 
+                        mCurlView.getBindPosition() == CurlView.BIND_RIGHT) {
+                    x = canvas.getWidth() - staplePos;
+                    rotate = -rotate;
+                }
+                
+                ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);                
+            } else {
+                int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth());
+                
+                for (int i = 0; i < count; i++) {
+                    int x = staplePos;
+                    int y = staplePos;
+                    float rotate = -90.0f;
+                    
+                    if (mCurlView.getBindPosition() == CurlView.BIND_LEFT) {
+                        y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                    } else if (mCurlView.getBindPosition() == CurlView.BIND_RIGHT) {
+                        x = (canvas.getWidth() - staplePos);
+                        y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                        rotate = -rotate;
+                    } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
+                        x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                        rotate = 0.0f;
+                    }
+                    
+                    ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);
+                }
+            }
         }
         
         private void drawPunchImages(Canvas canvas) {
+            int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
+            float scale = punchDiameter / (float) mPunchBmp.getWidth();
+
+            int count = mPrintSettings.getPunch().getCount();
+            int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth());
+            
+            for (int i = 0; i < count; i++) {
+                int x = punchPos;
+                int y = punchPos;
+                
+                if (mCurlView.getBindPosition() == CurlView.BIND_LEFT) {
+                    y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                } else if (mCurlView.getBindPosition() == CurlView.BIND_RIGHT) {
+                    x = (canvas.getWidth() - punchPos);
+                    y = (canvas.getHeight() * (i + 1)) / (count + 1);
+                } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
+                    x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                }
+                
+                ImageUtils.renderBmpToCanvas(mPunchBmp, canvas, shouldDisplayColor(), x, y, 0, scale);
+            }
         }
         
         private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean flipX, boolean flipY) {
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
-            PrintSettingsConstants.Imposition pagination = mPrintSettings.getImposition();
+            Imposition pagination = mPrintSettings.getImposition();
             
-            int width = bmp.getWidth() / pagination.getCols();
-            int height = bmp.getHeight() / pagination.getRows();
+            int paperWidth = bmp.getWidth();
+            int paperHeight = bmp.getHeight();
+            
+            // adjust paperWidth and paperHeight based on margins
+            paperWidth -= convertDimension(mMarginLeft, bmp.getWidth());
+            paperWidth -= convertDimension(mMarginRight, bmp.getWidth());
+            
+            paperHeight -= convertDimension(mMarginTop, bmp.getWidth());
+            paperHeight -= convertDimension(mMarginBottom, bmp.getWidth());
+            
+            int pdfPageWidth = paperWidth / pagination.getCols();
+            int pdfPageHeight = paperHeight / pagination.getRows();
             
             int beginX = 0;
             int beginY = 0;
             
             switch (mCurlView.getBindPosition()) {
                 case CurlView.BIND_LEFT:
-                    beginX = bmp.getWidth() - (pagination.getCols() * width);
+                    beginX = paperWidth - (pagination.getCols() * pdfPageWidth);
                     break;
                 case CurlView.BIND_TOP:
-                    beginY = bmp.getHeight() - (pagination.getRows() * height);
+                    beginY = paperHeight - (pagination.getRows() * pdfPageHeight);
                     break;
             }
+            
+            // adjust beginX and beginY based on margins
+            beginX += convertDimension(mMarginLeft, bmp.getWidth());
+            beginY += convertDimension(mMarginTop, bmp.getWidth());
             
             int curX = beginX;
             int curY = beginY;
@@ -592,16 +886,15 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                 
                 int left = curX;
                 int top = curY;
-                int right = curX + width;
-                int bottom = curY + height;
+                int right = curX + pdfPageWidth;
+                int bottom = curY + pdfPageHeight;
                 
                 // Left to right
-                curX += width;
+                curX += pdfPageWidth;
                 if (i % pagination.getCols() == pagination.getCols() - 1) {
                     curX = beginX;
-                    curY += height;
+                    curY += pdfPageHeight;
                 }
-                
                 
                 float scale = 1.0f / pagination.getPerPage();
                 
@@ -618,7 +911,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
                     int y = top + ((bottom - top) - dim[1]) / 2;
                     
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
-                    ImageUtils.renderBmpToCanvas(page, canvas, true, destRect);
+                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
                     
                     page.recycle();
                 }
@@ -634,7 +927,8 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             
             Bitmap front = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
             Bitmap back = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
-            
+            front.eraseColor(Color.WHITE);
+            back.eraseColor(Color.WHITE);
             int pagePerScreen = 1;
             if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
                 pagePerScreen = 2;
@@ -648,7 +942,7 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
                 int backIndex = (mIndex * pagePerScreen) + mPrintSettings.getImposition().getPerPage();
                 
-                boolean verticalFlip = mCurlView.getBindPosition() == CurlView.BIND_TOP;
+                boolean verticalFlip = isVerticalFlip();
                 drawPDFPagesOnBitmap(back, backIndex, !verticalFlip, verticalFlip);
             }
             
@@ -659,13 +953,6 @@ public class PrintPreviewView extends FrameLayout implements OnSeekBarChangeList
             
             return new Bitmap[] { front, back };
         }
-        
-        private void tryDrawRenderBitmaps(Bitmap renderBmps[], Bitmap destBmps[]) {
-            for (int i = 0; i < renderBmps.length; i++) {
-                if (renderBmps[i] != null) {
-                    ImageUtils.renderBmpToCanvas(renderBmps[i], new Canvas(destBmps[i]), shouldDisplayColor());
-                }
-            }
-        }
     }
 }
+ 

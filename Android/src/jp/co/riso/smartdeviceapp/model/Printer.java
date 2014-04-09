@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
