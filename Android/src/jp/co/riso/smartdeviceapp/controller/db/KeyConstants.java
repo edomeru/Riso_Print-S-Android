@@ -19,7 +19,12 @@ public final class KeyConstants {
     public static final String KEY_SQL_PRINTER_EN_DUPLEX = "prn_enabled_duplex";
     public static final String KEY_SQL_PRINTER_EN_BOOKLET_BINDING = "prn_enabled_booklet_binding";
     public static final String KEY_SQL_PRINTER_EN_STAPLE = "prn_enabled_staple";
-    public static final String KEY_SQL_PRINTER_EN_BIND = "prn_enabled_bind";    
+    public static final String KEY_SQL_PRINTER_EN_BIND = "prn_enabled_bind";
     public static final String KEY_SQL_PRINTER_TABLE = "Printer";
-    public static final String KEY_SQL_DEFAULT_PRINTER_TABLE = "DefaultPrinter";   
+    public static final String KEY_SQL_DEFAULT_PRINTER_TABLE = "DefaultPrinter";
+    public static final String KEY_SQL_PRINTJOB_TABLE = "PrintJob";
+    public static final String KEY_SQL_PRINTJOB_ID = "pjb_id";
+    public static final String KEY_SQL_PRINTJOB_NAME = "pjb_name";
+    public static final String KEY_SQL_PRINTJOB_DATE = "pjb_date";
+    public static final String KEY_SQL_PRINTJOB_RESULT = "pjb_result";
 }
