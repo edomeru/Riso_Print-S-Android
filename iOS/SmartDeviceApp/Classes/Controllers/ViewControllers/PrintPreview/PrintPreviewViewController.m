@@ -321,7 +321,14 @@
 - (void)setupPageLabel
 {
     NSString *pageString = @"PAGE";
-    self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)self.currentPage + 1, (long)self.totalPageNum];
+    NSInteger totalSheets = self.totalPageNum;
+    NSInteger currentSheet = self.currentPage + 1;
+    if(self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)
+    {
+        currentSheet = self.currentPage/2 + 1;
+        totalSheets = self.totalPageNum/2 + self.totalPageNum % 2;
+    }
+    self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)currentSheet, (long)totalSheets];
 }
 
 - (void)setupPageviewControllerWithBindSetting
@@ -687,6 +694,19 @@
     NSInteger pageNumber = slider.value;
     
     //update the current page  and page number label
+    // if double sided and page is at the back (even pages)
+    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) == 0)
+    {
+        if(pageNumber < self.totalPageNum)
+        {
+            pageNumber++;
+        }
+        else
+        {
+            pageNumber--;
+        }
+    }
+    
     self.currentPage = pageNumber - 1;
     [self goToPage:self.currentPage];
     [self setupPageLabel];
@@ -702,31 +722,41 @@
     
     //multiply the the percentage with the total number of pages in view to get the current page index;
     NSInteger pageNumber = (self.totalPageNum * scrollPercentage);
-    if(pageNumber <= 0)
+   
+    // if double sided and page is at the back (even pages)
+    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2)== 0)
     {
-        self.currentPage = 0;
-    }
-    else if(pageNumber > self.totalPageNum)
-    {
-        // the last viewable page for 2 page view or mid spine location is the front page of last sheet (second to the last page)
-        if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
+        if(pageNumber < self.totalPageNum)
         {
-            self.currentPage = self.totalPageNum - 2;
+            pageNumber++;
         }
         else
         {
-            self.currentPage = self.totalPageNum - 1;
+            pageNumber--;
         }
     }
-    else
+    
+    if(pageNumber <= 0)
     {
-        self.currentPage = pageNumber - 1;
+        pageNumber = 1;
+    }
+    else if(pageNumber > self.totalPageNum)
+    {
+        if(self.pageViewController.isDoubleSided == YES && (self.totalPageNum % 2 == 0)) // double sided with even number of pages, give the front page of the last sheet
+        {
+            pageNumber = self.totalPageNum - 1;
+        }
+        else
+        {
+           pageNumber =  self.totalPageNum; // give the last page
+        }
     }
     
+    self.currentPage = pageNumber - 1;
     //update page in view, page number label. slider thumb position
     [self goToPage:self.currentPage];
     [self setupPageLabel];
-    [self.pageScroll setValue:self.currentPage+1];
+    [self.pageScroll setValue:pageNumber];
 }
 
 @end
