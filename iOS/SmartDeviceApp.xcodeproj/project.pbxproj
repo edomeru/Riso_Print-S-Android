@@ -11,11 +11,57 @@
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
+		286CE3F618F2264E00642A10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
+		286CE40418F232AE00642A10 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */; };
+		286CE40518F232AE00642A10 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB918E2EF7D00085F27 /* PreviewSetting.m */; };
+		286CE40618F232AE00642A10 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBB18E2EF7D00085F27 /* Printer.m */; };
+		286CE40718F232AE00642A10 /* PrinterDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBD18E2EF7D00085F27 /* PrinterDetails.m */; };
+		286CE40818F232AE00642A10 /* PrintJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBF18E2EF7D00085F27 /* PrintJob.m */; };
+		286CE40918F232AE00642A10 /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEC118E2EF7D00085F27 /* PrintSetting.m */; };
+		286CE40A18F232DE00642A10 /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3018E2EF9C00085F27 /* PrinterManager.m */; };
+		286CE40B18F2340C00642A10 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2A18E2EF9C00085F27 /* DatabaseManager.m */; };
+		286CE40C18F2340C00642A10 /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2C18E2EF9C00085F27 /* NetworkManager.m */; };
+		286CE40D18F2340C00642A10 /* SNMPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3218E2EF9C00085F27 /* SNMPManager.m */; };
+		286CE40E18F2342A00642A10 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5D18E2F08900085F27 /* AlertHelper.m */; };
+		286CE40F18F2342A00642A10 /* InputHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5F18E2F08900085F27 /* InputHelper.m */; };
+		286CE41118F2344900642A10 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6F18E278B000085F27 /* Reachability.m */; };
+		286CE41218F23C2B00642A10 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
+		28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
+		28C1CE0F18F28688007FA569 /* PListHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListHelper.m */; };
+		28CFC55518F61C1700DBD2BD /* AddPrinterViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54518F61C1700DBD2BD /* AddPrinterViewControllerTest.m */; };
+		28CFC55618F61C1700DBD2BD /* PrinterInfoViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54718F61C1700DBD2BD /* PrinterInfoViewControllerTest.m */; };
+		28CFC55718F61C1700DBD2BD /* PrintersIpadViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54918F61C1700DBD2BD /* PrintersIpadViewControllerTest.m */; };
+		28CFC55818F61C1700DBD2BD /* PrintersIphoneViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54A18F61C1700DBD2BD /* PrintersIphoneViewControllerTest.m */; };
+		28CFC55918F61C1700DBD2BD /* PrinterSearchViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54C18F61C1700DBD2BD /* PrinterSearchViewControllerTest.m */; };
+		28CFC55A18F61C1700DBD2BD /* InputHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */; };
+		28CFC55B18F61C1700DBD2BD /* PListHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */; };
+		28CFC55C18F61C1700DBD2BD /* DatabaseManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55118F61C1700DBD2BD /* DatabaseManagerTest.m */; };
+		28CFC55D18F61C1700DBD2BD /* NetworkManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */; };
+		28CFC55E18F61C1700DBD2BD /* PrinterManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55318F61C1700DBD2BD /* PrinterManagerTest.m */; };
+		28CFC55F18F61C1700DBD2BD /* SNMPManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */; };
+		28CFC56018F61DCB00DBD2BD /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
+		28CFC56218F61DF700DBD2BD /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
+		28CFC56318F61DF700DBD2BD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
+		28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF618E2EF9600085F27 /* AddPrinterViewController.m */; };
+		28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
+		28FCAAEC18F3A5ED0051DB9F /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEFB18E2EF9600085F27 /* SlidingViewController.m */; };
+		28FCAAED18F3A9620051DB9F /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED018E2EF8500085F27 /* UIView+Localization.m */; };
+		28FCAAF118F3DD5F0051DB9F /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0D18E2EF9600085F27 /* PrinterSearchViewController.m */; };
+		28FCAAF618F3E0AD0051DB9F /* PrinterInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0318E2EF9600085F27 /* PrinterInfoViewController.m */; };
+		28FCAAF818F3E19A0051DB9F /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */; };
+		28FCAAFC18F3E4BB0051DB9F /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0618E2EF9600085F27 /* PrintersIpadViewController.m */; };
+		28FCAAFD18F3E4BB0051DB9F /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0818E2EF9600085F27 /* PrintersIphoneViewController.m */; };
+		28FCAAFE18F3E4BB0051DB9F /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0A18E2EF9600085F27 /* PrintersViewController.m */; };
+		28FCAB0118F3E5FC0051DB9F /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0018E2EF9600085F27 /* HomeViewController.m */; };
+		28FCAB0218F3E6630051DB9F /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1218E2EF9600085F27 /* PrintPreviewViewController.m */; };
+		28FCAB0318F3E6A10051DB9F /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1518E2EF9600085F27 /* PrintSettingsViewController.m */; };
+		28FCAB0418F3E6A10051DB9F /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2E18E2EF9C00085F27 /* PDFFileManager.m */; };
+		28FCAB0518F3E6A10051DB9F /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
@@ -102,6 +148,17 @@
 		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
 		28A9173718E3D55900BA5232 /* PrintJobHistoryGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroupCell.h; sourceTree = "<group>"; };
 		28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroupCell.m; sourceTree = "<group>"; };
+		28CFC54518F61C1700DBD2BD /* AddPrinterViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPrinterViewControllerTest.m; sourceTree = "<group>"; };
+		28CFC54718F61C1700DBD2BD /* PrinterInfoViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterInfoViewControllerTest.m; sourceTree = "<group>"; };
+		28CFC54918F61C1700DBD2BD /* PrintersIpadViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIpadViewControllerTest.m; sourceTree = "<group>"; };
+		28CFC54A18F61C1700DBD2BD /* PrintersIphoneViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIphoneViewControllerTest.m; sourceTree = "<group>"; };
+		28CFC54C18F61C1700DBD2BD /* PrinterSearchViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterSearchViewControllerTest.m; sourceTree = "<group>"; };
+		28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputHelperTest.m; sourceTree = "<group>"; };
+		28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListHelperTest.m; sourceTree = "<group>"; };
+		28CFC55118F61C1700DBD2BD /* DatabaseManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseManagerTest.m; sourceTree = "<group>"; };
+		28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkManagerTest.m; sourceTree = "<group>"; };
+		28CFC55318F61C1700DBD2BD /* PrinterManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManagerTest.m; sourceTree = "<group>"; };
+		28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNMPManagerTest.m; sourceTree = "<group>"; };
 		28D7B31418EE48D300FE15BA /* NSDate+Format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Format.h"; sourceTree = "<group>"; };
 		28D7B31518EE48D300FE15BA /* NSDate+Format.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Format.m"; sourceTree = "<group>"; };
 		28FDEDDF18E53D5400423CFC /* PrintJobHistoryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroup.h; sourceTree = "<group>"; };
@@ -250,6 +307,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				286CE3F618F2264E00642A10 /* CoreData.framework in Frameworks */,
 				2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */,
 				2D0AEC59185FE43200810455 /* CoreGraphics.framework in Frameworks */,
 				2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */,
@@ -305,6 +363,88 @@
 				28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */,
 			);
 			path = PrintJobHistory;
+			sourceTree = "<group>";
+		};
+		28CFC54118F61C1700DBD2BD /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54218F61C1700DBD2BD /* Controllers */,
+				28CFC54D18F61C1700DBD2BD /* Helpers */,
+				28CFC55018F61C1700DBD2BD /* Managers */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		28CFC54218F61C1700DBD2BD /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54318F61C1700DBD2BD /* ViewControllers */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		28CFC54318F61C1700DBD2BD /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54418F61C1700DBD2BD /* AddPrinter */,
+				28CFC54618F61C1700DBD2BD /* PrinterInfo */,
+				28CFC54818F61C1700DBD2BD /* Printers */,
+				28CFC54B18F61C1700DBD2BD /* PrinterSearch */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		28CFC54418F61C1700DBD2BD /* AddPrinter */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54518F61C1700DBD2BD /* AddPrinterViewControllerTest.m */,
+			);
+			path = AddPrinter;
+			sourceTree = "<group>";
+		};
+		28CFC54618F61C1700DBD2BD /* PrinterInfo */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54718F61C1700DBD2BD /* PrinterInfoViewControllerTest.m */,
+			);
+			path = PrinterInfo;
+			sourceTree = "<group>";
+		};
+		28CFC54818F61C1700DBD2BD /* Printers */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54918F61C1700DBD2BD /* PrintersIpadViewControllerTest.m */,
+				28CFC54A18F61C1700DBD2BD /* PrintersIphoneViewControllerTest.m */,
+			);
+			path = Printers;
+			sourceTree = "<group>";
+		};
+		28CFC54B18F61C1700DBD2BD /* PrinterSearch */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54C18F61C1700DBD2BD /* PrinterSearchViewControllerTest.m */,
+			);
+			path = PrinterSearch;
+			sourceTree = "<group>";
+		};
+		28CFC54D18F61C1700DBD2BD /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */,
+				28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		28CFC55018F61C1700DBD2BD /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC55118F61C1700DBD2BD /* DatabaseManagerTest.m */,
+				28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */,
+				28CFC55318F61C1700DBD2BD /* PrinterManagerTest.m */,
+				28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		2D0AEBF6185FDD2100810455 = {
@@ -403,7 +543,7 @@
 		2D0AEC5B185FE43200810455 /* SmartDeviceAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				2D0AEC81185FE50000810455 /* Classes */,
+				28CFC54118F61C1700DBD2BD /* Classes */,
 				2D0AEC82185FE50000810455 /* GHUnit */,
 				2D0AEC84185FE50000810455 /* Resources */,
 				2D0AEC5C185FE43200810455 /* Supporting Files */,
@@ -415,17 +555,10 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */,
-				2D0AEC61185FE43200810455 /* main.m */,
 				2D0AEC63185FE43200810455 /* SmartDeviceAppTests-Prefix.pch */,
+				2D0AEC61185FE43200810455 /* main.m */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		2D0AEC81185FE50000810455 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Classes;
 			sourceTree = "<group>";
 		};
 		2D0AEC82185FE50000810455 /* GHUnit */ = {
@@ -940,6 +1073,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */,
+				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1021,6 +1156,49 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				286CE41218F23C2B00642A10 /* SmartDeviceApp.xcdatamodeld in Sources */,
+				286CE40618F232AE00642A10 /* Printer.m in Sources */,
+				286CE40918F232AE00642A10 /* PrintSetting.m in Sources */,
+				286CE40418F232AE00642A10 /* DefaultPrinter.m in Sources */,
+				286CE40818F232AE00642A10 /* PrintJob.m in Sources */,
+				28CFC56218F61DF700DBD2BD /* PrintJobHistoryGroup.m in Sources */,
+				286CE40718F232AE00642A10 /* PrinterDetails.m in Sources */,
+				286CE40518F232AE00642A10 /* PreviewSetting.m in Sources */,
+				286CE40A18F232DE00642A10 /* PrinterManager.m in Sources */,
+				28CFC55E18F61C1700DBD2BD /* PrinterManagerTest.m in Sources */,
+				286CE40D18F2340C00642A10 /* SNMPManager.m in Sources */,
+				28CFC55F18F61C1700DBD2BD /* SNMPManagerTest.m in Sources */,
+				286CE40B18F2340C00642A10 /* DatabaseManager.m in Sources */,
+				28CFC55C18F61C1700DBD2BD /* DatabaseManagerTest.m in Sources */,
+				286CE40C18F2340C00642A10 /* NetworkManager.m in Sources */,
+				28CFC55D18F61C1700DBD2BD /* NetworkManagerTest.m in Sources */,
+				28FCAB0418F3E6A10051DB9F /* PDFFileManager.m in Sources */,
+				286CE40E18F2342A00642A10 /* AlertHelper.m in Sources */,
+				286CE40F18F2342A00642A10 /* InputHelper.m in Sources */,
+				28CFC55A18F61C1700DBD2BD /* InputHelperTest.m in Sources */,
+				28C1CE0F18F28688007FA569 /* PListHelper.m in Sources */,
+				28CFC55B18F61C1700DBD2BD /* PListHelperTest.m in Sources */,
+				28FCAB0518F3E6A10051DB9F /* PrintPreviewHelper.m in Sources */,
+				28FCAAF818F3E19A0051DB9F /* PrinterStatusHelper.m in Sources */,
+				28CFC56318F61DF700DBD2BD /* PrintJobHistoryHelper.m in Sources */,
+				286CE41118F2344900642A10 /* Reachability.m in Sources */,
+				28FCAAED18F3A9620051DB9F /* UIView+Localization.m in Sources */,
+				28FCAAEC18F3A5ED0051DB9F /* SlidingViewController.m in Sources */,
+				28FCAB0118F3E5FC0051DB9F /* HomeViewController.m in Sources */,
+				28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */,
+				28CFC55518F61C1700DBD2BD /* AddPrinterViewControllerTest.m in Sources */,
+				28FCAAFE18F3E4BB0051DB9F /* PrintersViewController.m in Sources */,
+				28FCAAFD18F3E4BB0051DB9F /* PrintersIphoneViewController.m in Sources */,
+				28CFC55818F61C1700DBD2BD /* PrintersIphoneViewControllerTest.m in Sources */,
+				28FCAAFC18F3E4BB0051DB9F /* PrintersIpadViewController.m in Sources */,
+				28CFC55718F61C1700DBD2BD /* PrintersIpadViewControllerTest.m in Sources */,
+				28FCAAF118F3DD5F0051DB9F /* PrinterSearchViewController.m in Sources */,
+				28CFC55918F61C1700DBD2BD /* PrinterSearchViewControllerTest.m in Sources */,
+				28FCAAF618F3E0AD0051DB9F /* PrinterInfoViewController.m in Sources */,
+				28CFC55618F61C1700DBD2BD /* PrinterInfoViewControllerTest.m in Sources */,
+				28CFC56018F61DCB00DBD2BD /* PrintJobHistoryViewController.m in Sources */,
+				28FCAB0218F3E6630051DB9F /* PrintPreviewViewController.m in Sources */,
+				28FCAB0318F3E6A10051DB9F /* PrintSettingsViewController.m in Sources */,
 				2D0AEC62185FE43200810455 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1186,7 +1364,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/**",
+					"\"$(SRCROOT)/SmartDeviceAppTests/GHUnit\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
@@ -1195,7 +1373,10 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "SmartDeviceAppTests/SmartDeviceAppTests-Info.plist";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1209,12 +1390,15 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/**",
+					"\"$(SRCROOT)/SmartDeviceAppTests/GHUnit\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceAppTests/SmartDeviceAppTests-Info.plist";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

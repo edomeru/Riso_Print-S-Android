@@ -59,7 +59,6 @@
 /**
  Discards all the changes made to the database.
  This includes all previous insertions and deletions.
- @return YES if successful, NO otherwise.
  */
 + (void)discardChanges;
 
