@@ -25,6 +25,7 @@ public class Printer implements Parcelable {
     private boolean mBookletBinding;
     private boolean mStaple;
     private boolean mBind;
+    private boolean mOnline;
     
     public Printer(String name, String ipAddress, PrintSettings printSettings) {
         super();
@@ -38,9 +39,11 @@ public class Printer implements Parcelable {
         mBookletBinding = true;
         mStaple = true;
         mBind = true;
-        mPrintSettings = printSettings;
-        if (mPrintSettings == null) {
+        mOnline = false;
+        if (printSettings == null) {
             mPrintSettings = new PrintSettings();
+        } else {
+            mPrintSettings = new PrintSettings(printSettings);
         }
     }
     
@@ -56,9 +59,11 @@ public class Printer implements Parcelable {
         mBookletBinding = true;
         mStaple = true;
         mBind = true;
-        mPrintSettings = printSettings;
-        if (mPrintSettings == null) {
+        mOnline = false;
+        if (printSettings == null) {
             mPrintSettings = new PrintSettings();
+        } else {
+            mPrintSettings = new PrintSettings(printSettings);
         }
     }
     
@@ -192,5 +197,13 @@ public class Printer implements Parcelable {
     
     public void setPrintSettings(PrintSettings printSettings) {
         this.mPrintSettings = printSettings;
+    }
+    
+    public boolean getOnlineStatus() {
+        return mOnline;
+    }
+    
+    public void setOnlineStatus(boolean online) {
+        this.mOnline = online;
     }
 }

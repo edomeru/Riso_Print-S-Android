@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -19,14 +20,12 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -71,7 +70,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             int left = (int) getResources().getDimension(R.dimen.preview_view_margin);
             view.setPadding(left, 0, 0, 0);
         }
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.temp_img_btn_save_printer, this);
+        addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.selector_addprinter_save, this);
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
@@ -148,6 +147,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 }
                 break;
         }
+        AppUtils.hideSoftKeyboard(getActivity());
     }
     
     // ================================================================================
@@ -181,8 +181,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(mIpAddress.getWindowToken(), 0);
+            AppUtils.hideSoftKeyboard(getActivity());
             return true;
         }
         return false;

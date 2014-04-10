@@ -154,5 +154,5 @@
     <string name="ids_err_msg_pdf_encrypted">PDF Encryption is not supported</string>
     <string name="ids_err_msg_delete_failed">Error deleting Print Job</string>
     <string name="ids_err_msg_network_error">No network available.</string>
-
+    <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
 </resources>
