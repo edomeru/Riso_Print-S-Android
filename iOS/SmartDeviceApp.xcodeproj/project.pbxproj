@@ -46,6 +46,10 @@
 		28CFC56018F61DCB00DBD2BD /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28CFC56218F61DF700DBD2BD /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		28CFC56318F61DF700DBD2BD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
+		28CFC56518F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */; };
+		28CFC56818F6351600DBD2BD /* PrintJobHistoryGroupTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */; };
+		28CFC56B18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */; };
+		28CFC56C18F6675C00DBD2BD /* PrintJobHistoryLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF618E2EF9600085F27 /* AddPrinterViewController.m */; };
 		28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
@@ -159,6 +163,9 @@
 		28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkManagerTest.m; sourceTree = "<group>"; };
 		28CFC55318F61C1700DBD2BD /* PrinterManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManagerTest.m; sourceTree = "<group>"; };
 		28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNMPManagerTest.m; sourceTree = "<group>"; };
+		28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryHelperTest.m; sourceTree = "<group>"; };
+		28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroupTest.m; sourceTree = "<group>"; };
+		28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewControllerTest.m; sourceTree = "<group>"; };
 		28D7B31418EE48D300FE15BA /* NSDate+Format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Format.h"; sourceTree = "<group>"; };
 		28D7B31518EE48D300FE15BA /* NSDate+Format.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Format.m"; sourceTree = "<group>"; };
 		28FDEDDF18E53D5400423CFC /* PrintJobHistoryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroup.h; sourceTree = "<group>"; };
@@ -368,9 +375,10 @@
 		28CFC54118F61C1700DBD2BD /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				28CFC56618F6350200DBD2BD /* Models */,
 				28CFC54218F61C1700DBD2BD /* Controllers */,
-				28CFC54D18F61C1700DBD2BD /* Helpers */,
 				28CFC55018F61C1700DBD2BD /* Managers */,
+				28CFC54D18F61C1700DBD2BD /* Helpers */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -390,6 +398,7 @@
 				28CFC54618F61C1700DBD2BD /* PrinterInfo */,
 				28CFC54818F61C1700DBD2BD /* Printers */,
 				28CFC54B18F61C1700DBD2BD /* PrinterSearch */,
+				28CFC56918F6664300DBD2BD /* PrintJobHistory */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -432,6 +441,7 @@
 			children = (
 				28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */,
 				28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */,
+				28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -445,6 +455,22 @@
 				28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		28CFC56618F6350200DBD2BD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		28CFC56918F6664300DBD2BD /* PrintJobHistory */ = {
+			isa = PBXGroup;
+			children = (
+				28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */,
+			);
+			path = PrintJobHistory;
 			sourceTree = "<group>";
 		};
 		2D0AEBF6185FDD2100810455 = {
@@ -1162,6 +1188,7 @@
 				286CE40418F232AE00642A10 /* DefaultPrinter.m in Sources */,
 				286CE40818F232AE00642A10 /* PrintJob.m in Sources */,
 				28CFC56218F61DF700DBD2BD /* PrintJobHistoryGroup.m in Sources */,
+				28CFC56818F6351600DBD2BD /* PrintJobHistoryGroupTest.m in Sources */,
 				286CE40718F232AE00642A10 /* PrinterDetails.m in Sources */,
 				286CE40518F232AE00642A10 /* PreviewSetting.m in Sources */,
 				286CE40A18F232DE00642A10 /* PrinterManager.m in Sources */,
@@ -1181,7 +1208,9 @@
 				28FCAB0518F3E6A10051DB9F /* PrintPreviewHelper.m in Sources */,
 				28FCAAF818F3E19A0051DB9F /* PrinterStatusHelper.m in Sources */,
 				28CFC56318F61DF700DBD2BD /* PrintJobHistoryHelper.m in Sources */,
+				28CFC56518F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m in Sources */,
 				286CE41118F2344900642A10 /* Reachability.m in Sources */,
+				28CFC56C18F6675C00DBD2BD /* PrintJobHistoryLayout.m in Sources */,
 				28FCAAED18F3A9620051DB9F /* UIView+Localization.m in Sources */,
 				28FCAAEC18F3A5ED0051DB9F /* SlidingViewController.m in Sources */,
 				28FCAB0118F3E5FC0051DB9F /* HomeViewController.m in Sources */,
@@ -1197,6 +1226,7 @@
 				28FCAAF618F3E0AD0051DB9F /* PrinterInfoViewController.m in Sources */,
 				28CFC55618F61C1700DBD2BD /* PrinterInfoViewControllerTest.m in Sources */,
 				28CFC56018F61DCB00DBD2BD /* PrintJobHistoryViewController.m in Sources */,
+				28CFC56B18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m in Sources */,
 				28FCAB0218F3E6630051DB9F /* PrintPreviewViewController.m in Sources */,
 				28FCAB0318F3E6A10051DB9F /* PrintSettingsViewController.m in Sources */,
 				2D0AEC62185FE43200810455 /* main.m in Sources */,
