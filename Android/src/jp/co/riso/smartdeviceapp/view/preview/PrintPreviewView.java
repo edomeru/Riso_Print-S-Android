@@ -230,14 +230,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mBmpCache = bmpCache;
     }
     
-    public int getCurrentPage() {
-        return mCurlView.getCurrentIndex();
-    }
-    
-    public void setCurrentPage(int page) {
-        mCurlView.setCurrentIndex(page);
-    }
-    
     public void setDefaultMargins() {
         setMarginLeftInMm(DEFAULT_MARGIN_IN_MM);
         setMarginRightInMm(DEFAULT_MARGIN_IN_MM);
@@ -267,6 +259,14 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     public boolean getAllowLastPageCurl() {
         return mCurlView.getAllowLastPageCurl();
+    }
+    
+    public int getCurrentPage() {
+        return mCurlView.getCurrentIndex();
+    }
+    
+    public void setCurrentPage(int page) {
+        mCurlView.setCurrentIndex(page);
     }
     
     public int getPageCount() {
@@ -329,28 +329,29 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return new int[] { newWidth, newHeight };
     }
     
-    protected int[] getScreenDimensions(int screenWidth, int screenHeight) {
+    protected int[] getCurlViewDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
-        float paperWidth = getPaperDisplayWidth();
-        float paperHeight = getPaperDisplayHeight();
+        float paperDisplaySize[] = getPaperDisplaySize();
         
+        // Adjust display on screen.
         if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
             if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
-                paperHeight *= 2.0f;
+                // double the height if bind == top
+                paperDisplaySize[1] *= 2.0f;
             } else {
-                paperWidth *= 2.0f;
+                // double the width if bind != top
+                paperDisplaySize[0] *= 2.0f;
             }
         }
         
-        return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
+        return getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
     
     protected int[] getPaperDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
-        float paperWidth = getPaperDisplayWidth();
-        float paperHeight = getPaperDisplayHeight();
+        float paperDisplaySize[] = getPaperDisplaySize();
         
-        return getFitToAspectRatioSize(paperWidth, paperHeight, screenWidth, screenHeight);
+        return getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
     
     protected String getCacheKey(int index, int side) {
@@ -404,7 +405,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     // ================================================================================
-    // PDF page methods
+    // Preview Related functions
     // ================================================================================
     
     private boolean shouldDisplayLandscape() {
@@ -419,36 +420,20 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return flipToLandscape;
     }
     
-    private float getPaperDisplayWidth() {
+    private float[] getPaperDisplaySize() {
         float width = mPrintSettings.getPaperSize().getWidth();
-        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
-            width = mPrintSettings.getPaperSize().getHeight();
-        }
-        
-        if (mPrintSettings.isBooklet()) {
-            width = mPrintSettings.getPaperSize().getHeight() / 2;
-            if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
-                width = mPrintSettings.getPaperSize().getWidth();
-            }
-        } 
-        
-        return width;
-    }
-    
-    private float getPaperDisplayHeight() {
         float height = mPrintSettings.getPaperSize().getHeight();
-        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
-            height = mPrintSettings.getPaperSize().getWidth();
-        }
 
         if (mPrintSettings.isBooklet()) {
+            width = mPrintSettings.getPaperSize().getHeight() / 2;
             height = mPrintSettings.getPaperSize().getWidth();
-            if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
-                height = mPrintSettings.getPaperSize().getHeight() / 2;
-            }
+        } 
+
+        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+            return (new float[] {height, width});
         }
-        
-        return height;
+
+        return (new float[] {width, height});
     }
     
     public int getPagesPerSheet() {
@@ -594,7 +579,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             pageControlSize = mListener.getControlsHeight();
         }
 
-        int newDimensions[] = getScreenDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
+        int newDimensions[] = getCurlViewDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
         
         float lrMargin = ((w - newDimensions[0]) / (w * 2.0f));
         float tbMargin = (((h - pageControlSize) - newDimensions[1]) / (h * 2.0f));
@@ -780,6 +765,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         y = (canvas.getHeight() * (i + 1)) / (count + 1);
                         rotate = -rotate;
                         
+                        // do not rotate when booklet to show a "continuous" staple image
                         if (mPrintSettings.isBooklet()) {
                             if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
                                 rotate = -rotate;
