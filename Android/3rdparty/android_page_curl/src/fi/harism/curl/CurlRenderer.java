@@ -221,7 +221,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 
 		float panX = mPanX / mZoomLevel;
 		float panY = mPanY / mZoomLevel;
-		gl.glTranslatef(panX, panY, 0);
+		gl.glTranslatef(-panX, panY, 0);
 
 		if (USE_PERSPECTIVE_PROJECTION) {
 			gl.glTranslatef(0, 0, -6f);
@@ -296,7 +296,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	}
 
 	public void tryAdjustPan(float deltaX, float deltaY) {
-		float tempPanX = mPanX + (deltaX);
+		float tempPanX = mPanX - (deltaX);
 		float tempPanY = mPanY - (deltaY);
 		
 		if (tempPanX < mMinPanX) {
@@ -326,7 +326,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		minMargin = Math.min(minMargin, mMargins.top);
 		minMargin = Math.min(minMargin, mMargins.bottom);
 
-		RectF rect = new RectF(mPageRectRight);
+		RectF rect = mObserver.getDropShadowRect();
 
 		rect.left -= minMargin;
 		rect.right += minMargin;
