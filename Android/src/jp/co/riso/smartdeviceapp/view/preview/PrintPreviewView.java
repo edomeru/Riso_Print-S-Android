@@ -14,9 +14,10 @@ import java.util.Locale;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
@@ -222,7 +223,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         setupCurlPageView();
         setupCurlBind();
-        mCurlView.requestRender();
+        mCurlView.requestLayout();
     }
     
     public void setBmpCache(LruCache<String, Bitmap> bmpCache) {
@@ -280,7 +281,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             count = (int) Math.ceil(count / 2.0f);
         }
         
-        count = (int) Math.ceil(count / (double) mPrintSettings.getImposition().getPerPage());
+        count = (int) Math.ceil(count / (double) getPagesPerSheet());
         
         return count;
     }
@@ -353,19 +354,27 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     protected String getCacheKey(int index, int side) {
-        // path; page; side; paper size; duplex; imposition; color; landscape; staple; punch
         StringBuffer buffer = new StringBuffer();
         buffer.append(mPdfManager.getPath());
         buffer.append(index);
         buffer.append(side);
-        buffer.append(mPrintSettings.getPaperSize().ordinal());
-        buffer.append(mPrintSettings.getImposition().ordinal());
-        buffer.append(mPrintSettings.getDuplex().ordinal());
-        buffer.append(mPrintSettings.isScaleToFit());
+        
         buffer.append(shouldDisplayColor());
-        buffer.append(shouldDisplayLandscape());
+        buffer.append(mPrintSettings.isScaleToFit());
+        buffer.append(mPrintSettings.getOrientation().ordinal());
+        buffer.append(mPrintSettings.getPaperSize().ordinal());
+        
+        buffer.append(mPrintSettings.getDuplex().ordinal());
+        buffer.append(mPrintSettings.getImposition().ordinal());
+        buffer.append(mPrintSettings.getImpositionOrder().ordinal());
+        
+        buffer.append(mPrintSettings.getFinishingSide().ordinal());
         buffer.append(mPrintSettings.getStaple().ordinal());
         buffer.append(mPrintSettings.getPunch().ordinal());
+        
+        buffer.append(mPrintSettings.isBooklet());
+        buffer.append(mPrintSettings.getBookletFinish().ordinal());
+        buffer.append(mPrintSettings.getBookletLayout().ordinal());
         
         return buffer.toString();
     }
@@ -399,43 +408,79 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // ================================================================================
     
     private boolean shouldDisplayLandscape() {
-        if (mPdfManager == null) {
-            return false;
-        }
+        boolean flipToLandscape = (mPrintSettings.getOrientation() == Orientation.LANDSCAPE);
         
-        boolean flipToLandscape = mPrintSettings.getOrientation() == Orientation.LANDSCAPE;
-        
-        /*
-        if (mPrintSettings.isBooklet()) {
-            flipToLandscape = !flipToLandscape;
+        if (!mPrintSettings.isBooklet()) {
+            if (mPrintSettings.getImposition().isFlipLandscape()) {
+                flipToLandscape = !flipToLandscape;
+            }
         }
-        
-        if (mPrintSettings.getImposition().isFlipLandscape()) {
-            flipToLandscape = !flipToLandscape;
-        }
-        */
         
         return flipToLandscape;
     }
     
     private float getPaperDisplayWidth() {
         float width = mPrintSettings.getPaperSize().getWidth();
-        
-        if (shouldDisplayLandscape()) {
+        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
             width = mPrintSettings.getPaperSize().getHeight();
         }
+        
+        if (mPrintSettings.isBooklet()) {
+            width = mPrintSettings.getPaperSize().getHeight() / 2;
+            if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+                width = mPrintSettings.getPaperSize().getWidth();
+            }
+        } 
         
         return width;
     }
     
     private float getPaperDisplayHeight() {
         float height = mPrintSettings.getPaperSize().getHeight();
-        
-        if (shouldDisplayLandscape()) {
+        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
             height = mPrintSettings.getPaperSize().getWidth();
+        }
+
+        if (mPrintSettings.isBooklet()) {
+            height = mPrintSettings.getPaperSize().getWidth();
+            if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+                height = mPrintSettings.getPaperSize().getHeight() / 2;
+            }
         }
         
         return height;
+    }
+    
+    public int getPagesPerSheet() {
+        if (mPrintSettings.isBooklet()) {
+            return 1;
+        }
+        
+        return mPrintSettings.getImposition().getPerPage();
+    }
+    
+    public int getColsPerSheet() {
+        if (mPrintSettings.isBooklet()) {
+            return 1;
+        }
+        
+        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+            return mPrintSettings.getImposition().getRows();
+        }
+        
+        return mPrintSettings.getImposition().getCols();
+    }
+    
+    public int getRowsPerSheet() {
+        if (mPrintSettings.isBooklet()) {
+            return 1;
+        }
+        
+        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+            return mPrintSettings.getImposition().getCols();
+        }
+        
+        return mPrintSettings.getImposition().getRows();
     }
     
     private void setupCurlPageView() {
@@ -457,22 +502,41 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             mCurlView.setViewMode(CurlView.SHOW_ONE_PAGE);
             mCurlView.setRenderLeftPage(false);
         }
+        
         mCurlView.setAllowLastPageCurl(allowLastPageCurl);
+    }
+    
+    private boolean isTwoPageDisplayed() {
+        if (mPrintSettings.isBooklet()) {
+            return true;
+        }
+        
+        return (mPrintSettings.getDuplex() != Duplex.OFF);
     }
     
     private void setupCurlBind() {
         int bindPosition = CurlView.BIND_LEFT;
         
-        switch (mPrintSettings.getFinishingSide()) {
-            case LEFT:
-                bindPosition = CurlView.BIND_LEFT;
-                break;
-            case RIGHT:
-                bindPosition = CurlView.BIND_RIGHT;
-                break;
-            case TOP:
+        if (mPrintSettings.isBooklet()) {
+            bindPosition = CurlView.BIND_LEFT;
+            
+            if (shouldDisplayLandscape()) {
                 bindPosition = CurlView.BIND_TOP;
-                break;
+            } else if (mPrintSettings.getBookletLayout() == BookletLayout.R_L) {
+                bindPosition = CurlView.BIND_RIGHT;
+            }
+        } else {
+            switch (mPrintSettings.getFinishingSide()) {
+                case LEFT:
+                    bindPosition = CurlView.BIND_LEFT;
+                    break;
+                case RIGHT:
+                    bindPosition = CurlView.BIND_RIGHT;
+                    break;
+                case TOP:
+                    bindPosition = CurlView.BIND_TOP;
+                    break;
+            }
         }
         
         mCurlView.setBindPosition(bindPosition);
@@ -482,14 +546,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return (mPrintSettings.getColorMode() != ColorMode.MONOCHROME);
     }
     
-    private boolean isTwoPageDisplayed() {
-        return (mPrintSettings.getDuplex() != Duplex.OFF);
-    }
-    
     private boolean isVerticalFlip() {
         boolean verticalFlip = true;
         
-        if (shouldDisplayLandscape()) {
+        if (mPrintSettings.isBooklet()) {
+            verticalFlip = shouldDisplayLandscape();
+        } else if (shouldDisplayLandscape()) {
             verticalFlip = (mPrintSettings.getDuplex() == Duplex.LONG_EDGE);
         } else {
             verticalFlip = (mPrintSettings.getDuplex() == Duplex.SHORT_EDGE);
@@ -676,6 +738,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             int count = mPrintSettings.getStaple().getCount();
             
+            if (mPrintSettings.isBooklet()) {
+                if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
+                    count = 2;
+                }
+            }
+            
             // CORNER
             if (count == 1) {
                 int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth());
@@ -693,6 +761,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);                
             } else {
                 int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth());
+
+                if (mPrintSettings.isBooklet()) {
+                    if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
+                        staplePos = convertDimension(0, canvas.getWidth());
+                    }
+                }
                 
                 for (int i = 0; i < count; i++) {
                     int x = staplePos;
@@ -705,6 +779,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         x = (canvas.getWidth() - staplePos);
                         y = (canvas.getHeight() * (i + 1)) / (count + 1);
                         rotate = -rotate;
+                        
+                        if (mPrintSettings.isBooklet()) {
+                            if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
+                                rotate = -rotate;
+                            }
+                        }
                     } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
                         x = (canvas.getWidth() * (i + 1)) / (count + 1);
                         rotate = 0.0f;
@@ -739,11 +819,25 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        private int[] getBeginPositions(int paperWidth, int paperHeight, int pageWidth, int pageHeight) {
+            int beginX = 0;
+            int beginY = 0;
+            
+            switch (mCurlView.getBindPosition()) {
+                case CurlView.BIND_LEFT:
+                    beginX = paperWidth - (getColsPerSheet() * pageWidth);
+                    break;
+                case CurlView.BIND_TOP:
+                    beginY = paperHeight - (getRowsPerSheet() * pageHeight);
+                    break;
+            }
+            
+            return (new int[] {beginX, beginY});
+        }
+        
         private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean flipX, boolean flipY) {
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
-            
-            Imposition pagination = mPrintSettings.getImposition();
             
             int paperWidth = bmp.getWidth();
             int paperHeight = bmp.getHeight();
@@ -755,29 +849,41 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             paperHeight -= convertDimension(mMarginTop, bmp.getWidth());
             paperHeight -= convertDimension(mMarginBottom, bmp.getWidth());
             
-            int pdfPageWidth = paperWidth / pagination.getCols();
-            int pdfPageHeight = paperHeight / pagination.getRows();
+            int pdfPageWidth = paperWidth / getColsPerSheet();
+            int pdfPageHeight = paperHeight / getRowsPerSheet();
             
-            int beginX = 0;
-            int beginY = 0;
-            
-            switch (mCurlView.getBindPosition()) {
-                case CurlView.BIND_LEFT:
-                    beginX = paperWidth - (pagination.getCols() * pdfPageWidth);
-                    break;
-                case CurlView.BIND_TOP:
-                    beginY = paperHeight - (pagination.getRows() * pdfPageHeight);
-                    break;
-            }
+            int beginPos[] = getBeginPositions(paperWidth, paperHeight, pdfPageWidth, pdfPageHeight);
             
             // adjust beginX and beginY based on margins
-            beginX += convertDimension(mMarginLeft, bmp.getWidth());
-            beginY += convertDimension(mMarginTop, bmp.getWidth());
+            beginPos[0] += convertDimension(mMarginLeft, bmp.getWidth());
+            beginPos[1] += convertDimension(mMarginTop, bmp.getWidth());
             
-            int curX = beginX;
-            int curY = beginY;
+            boolean leftToRight = true;
+            boolean topToBottom = true;
+            boolean horizontalFlow = true;
             
-            for (int i = 0; i < pagination.getPerPage(); i++) {
+            if (!mPrintSettings.isBooklet()) {
+                leftToRight = mPrintSettings.getImpositionOrder().isLeftToRight();
+                topToBottom = mPrintSettings.getImpositionOrder().isTopToBottom();
+                horizontalFlow = mPrintSettings.getImpositionOrder().isHorizontalFlow();
+            }
+            
+            // start from right
+            if (!leftToRight) {
+                int acualWidthPixels = (getColsPerSheet() * pdfPageWidth);
+                beginPos[0] = beginPos[0] + acualWidthPixels - pdfPageWidth;
+            }
+            
+            if (!topToBottom) {
+                int acualHeightPixels = (getRowsPerSheet() * pdfPageHeight);
+                beginPos[1] = beginPos[1] + acualHeightPixels - pdfPageHeight;
+            }
+            
+            
+            int curX = beginPos[0];
+            int curY = beginPos[1];
+            
+            for (int i = 0; i < getPagesPerSheet(); i++) {
                 if (mHandlerRef.get() == null || mCurlPageRef.get() == null) {
                     Log.w(TAG, "Cancelled process");
                     return;
@@ -788,14 +894,30 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 int right = curX + pdfPageWidth;
                 int bottom = curY + pdfPageHeight;
                 
-                // Left to right
-                curX += pdfPageWidth;
-                if (i % pagination.getCols() == pagination.getCols() - 1) {
-                    curX = beginX;
-                    curY += pdfPageHeight;
+                float addX = pdfPageWidth;
+                if (!leftToRight) {
+                    addX = -pdfPageWidth;
+                }
+                float addY = pdfPageHeight;
+                if (!topToBottom) {
+                    addY = -pdfPageHeight;
                 }
                 
-                float scale = 1.0f / pagination.getPerPage();
+                if (horizontalFlow) {
+                    curX += addX;
+                    if (i % getColsPerSheet() == getColsPerSheet() - 1) {
+                        curX = beginPos[0];
+                        curY += addY;
+                    }
+                } else {
+                    curY += addY;
+                    if (i % getRowsPerSheet() == getRowsPerSheet() - 1) {
+                        curY = beginPos[0];
+                        curX += addX;
+                    }
+                }
+                
+                float scale = 1.0f / getPagesPerSheet();
                 
                 Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
                 
@@ -833,13 +955,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 pagePerScreen = 2;
             }
             
-            pagePerScreen *= mPrintSettings.getImposition().getPerPage();
+            pagePerScreen *= getPagesPerSheet();
             
             int frontIndex = (mIndex * pagePerScreen);
             drawPDFPagesOnBitmap(front, frontIndex, false, false);
             
             if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
-                int backIndex = (mIndex * pagePerScreen) + mPrintSettings.getImposition().getPerPage();
+                int backIndex = (mIndex * pagePerScreen) + getPagesPerSheet();
                 
                 boolean verticalFlip = isVerticalFlip();
                 drawPDFPagesOnBitmap(back, backIndex, !verticalFlip, verticalFlip);

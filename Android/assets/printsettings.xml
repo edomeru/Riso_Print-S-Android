@@ -108,13 +108,13 @@
             text="ids_lbl_imposition_order"
             icon="temp_img_printsettings_null"
             type="list"
-            default="1" >
-            <option>ids_lbl_imposition_order_2up_rl</option>
+            default="0" >
             <option>ids_lbl_imposition_order_2up_lr</option>
-            <option>ids_lbl_imposition_order_4up_ulb</option>
+            <option>ids_lbl_imposition_order_2up_rl</option>
             <option>ids_lbl_imposition_order_4up_ulr</option>
-            <option>ids_lbl_imposition_order_4up_urb</option>
             <option>ids_lbl_imposition_order_4up_url</option>
+            <option>ids_lbl_imposition_order_4up_ulb</option>
+            <option>ids_lbl_imposition_order_4up_urb</option>
         </setting>
     </group>
     <group
