@@ -40,7 +40,6 @@ namespace SmartDeviceApp.ViewModels
                 if (_printSetting != value)
                 {
                     _printSetting = value;
-                    SelectedIndex = (int)_printSetting.Value;
                     RaisePropertyChanged("PrintSetting");
                 }
             }
@@ -61,19 +60,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set
-            {
-                if (_selectedIndex != value)
-                {
-                    _selectedIndex = value;
-                    RaisePropertyChanged("SelectedIndex");
-                }
-            }
-        }
-
         public ICommand BackToPrintSettings
         {
             get
@@ -91,13 +77,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SelectPrintSettingOptionExecute(PrintSettingOption option)
         {
-            SelectedIndex = option.Index;
-
-            // Send selected index to PrintPreviewController
-            if (PrintSettingValueChangedEventHandler != null)
-            {
-                PrintSettingValueChangedEventHandler(PrintSetting, SelectedIndex);
-            }
+            PrintSetting.Value = option.Index;
         }
 
         private void BackToPrintSettingsExecute()

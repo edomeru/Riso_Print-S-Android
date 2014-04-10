@@ -197,13 +197,27 @@ namespace SmartDeviceApp.ViewModels
         public Size RightPageActualSize
         {
             get { return _rightPageActualSize; }
-            set { _rightPageActualSize = value; }
+            set
+            {
+                if (_rightPageActualSize != value)
+                {
+                    _rightPageActualSize = value;
+                    RaisePropertyChanged("RightPageActualSize");
+                }
+            }
         }
 
         public Size LeftPageActualSize
         {
             get { return _leftPageActualSize; }
-            set { _leftPageActualSize = value; }
+            set
+            {
+                if (_leftPageActualSize != value)
+                {
+                    _leftPageActualSize = value;
+                    RaisePropertyChanged("LeftPageActualSize");
+                }
+            }
         }
         
         public PageViewMode PageViewMode
