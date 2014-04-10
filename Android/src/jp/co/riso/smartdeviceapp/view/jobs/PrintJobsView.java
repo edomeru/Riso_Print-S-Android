@@ -417,6 +417,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    @Override
+    public void onDeleteJob(){
+        endDelete(false);
+    }
+    
     // ================================================================================
     // Internal Classes
     // ================================================================================

@@ -65,7 +65,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private Handler mHandler;
     private LinearLayout mJobsLayout;
     private int mRowHeight;
-    private int mTotalHeight;
     
     public PrintJobsGroupView(Context context) {
         super(context);
@@ -92,7 +91,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     // get expanded height of PrintJobsGroupView
     public int getGroupHeight() {
-        return (mPrintJobs.size() + 1) * getResources().getDimensionPixelSize(R.dimen.printjob_row_height);
+        return (mPrintJobViews.size() + 1) * mRowHeight;
     }
     
     public void restoreState(boolean isCollapsed, PrintJob jobToDelete, Printer printerToDelete) {
@@ -188,7 +187,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
         
         mRowHeight = getResources().getDimensionPixelSize(R.dimen.printjob_row_height);
-        mTotalHeight = mRowHeight * mPrintJobViews.size();
+        
     }
     
     private void createHeader() {
@@ -277,12 +276,13 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     private void animateExpand(boolean animate) {
         mJobsLayout.setVisibility(View.VISIBLE);
+        int totalHeight = mPrintJobViews.size() * mRowHeight;
         
         if (animate) {
             for (int i = 0; i < mPrintJobViews.size(); i++) {
                 View child = mPrintJobViews.get(i);
-                TranslateAnimation animation = new TranslateAnimation(0, 0, -mTotalHeight, 0);
-                animation.setDuration((int) (mTotalHeight * DURATION_MULTIPLIER));
+                TranslateAnimation animation = new TranslateAnimation(0, 0, -totalHeight, 0);
+                animation.setDuration((int) (totalHeight * DURATION_MULTIPLIER));
                 
                 if (i == mPrintJobViews.size() - 1) {
                     animation.setAnimationListener(new Animation.AnimationListener() {
@@ -304,7 +304,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 child.clearAnimation();
                 child.startAnimation(animation);
             }
-            mLayoutListener.animateGroups(this, mTotalHeight, DURATION_MULTIPLIER, true);
+            mLayoutListener.animateGroups(this, totalHeight, DURATION_MULTIPLIER, true);
         } else {
             expandGroupView();
         }
@@ -312,10 +312,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     private void animateCollapse(boolean animate) {
         if (animate) {
+            int totalHeight = mPrintJobViews.size() * mRowHeight;
             for (int i = 0; i < mPrintJobViews.size(); i++) {
                 View child = mPrintJobViews.get(i);
-                TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -mTotalHeight);
-                animation.setDuration((int) (mTotalHeight * DURATION_MULTIPLIER));
+                TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -totalHeight);
+                animation.setDuration((int) (totalHeight * DURATION_MULTIPLIER));
                 animation.setFillAfter(true);
                 
                 if (i == mPrintJobViews.size() - 1) {
@@ -341,7 +342,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 child.clearAnimation();
                 child.startAnimation(animation);
             }
-            mLayoutListener.animateGroups(PrintJobsGroupView.this, mTotalHeight, DURATION_MULTIPLIER, false);
+            mLayoutListener.animateGroups(PrintJobsGroupView.this, totalHeight, DURATION_MULTIPLIER, false);
         } else {
             collapseGroupView();
         }
@@ -395,12 +396,14 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
             DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
         }
+        mLayoutListener.onDeleteJob();
     }
     
     private void deletePrintJobView(View v) {
         for (int i = 0; i < mPrintJobViews.size(); i++) {
             if (mPrintJobViews.get(i).equals(v)) {
                 mPrintJobViews.remove(i);
+                mPrintJobs.remove(i);
             }
         }
         mJobsLayout.removeView(v);
@@ -492,5 +495,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         public void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView);
         
         public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean isCollapsed);
+        
+        public void onDeleteJob();
     }
 }
