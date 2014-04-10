@@ -4,6 +4,11 @@
       "idiom" : "universal",
       "scale" : "1x",
       "filename" : "img_slider_minimum.png"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x",
+      "filename" : "img_slider_minimum_2x.png"
     }
   ],
   "info" : {

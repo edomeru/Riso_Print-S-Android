@@ -454,7 +454,7 @@
                                         <rect key="frame" x="0.0" y="440" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
+                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
                                                 <rect key="frame" x="18" y="10" width="284" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>

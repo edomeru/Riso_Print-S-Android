@@ -96,11 +96,6 @@
 - (void)setupTotalPageNum;
 
 /**
- Setup page scroll view
- */
-- (void)setupPageScroll;
-
-/**
  Setup page label view
  */
 - (void)setupPageLabel;
@@ -192,6 +187,12 @@
     self.renderCache = [[RenderCache alloc] initWithMaxItemCount:20];
     self.renderCache.delegate = self;
     
+    //set theme of UISlider
+    [[UISlider appearance] setMaximumTrackImage:[[UIImage imageNamed:@"img_slider_maximum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 5)]forState: UIControlStateNormal];
+    [[UISlider appearance]  setMinimumTrackImage:[[UIImage imageNamed:@"img_slider_minimum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 5, 0, 0) ] forState: UIControlStateNormal];
+    [[UISlider appearance]  setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateNormal];
+    [[UISlider appearance]  setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateHighlighted];
+    
     if ([[PDFFileManager sharedManager] fileAvailableForLoad])
     {
         [self loadPDF];
@@ -250,7 +251,6 @@
     [self.activityIndicator stopAnimating];
     [self setupTotalPageNum];
     [self setupPageLabel];
-    [self setupPageScroll];
     
     // Get aspect ratio and orientation
     CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
@@ -316,16 +316,6 @@
     {
         self.currentPage = 0;
     }
-}
-
-- (void)setupPageScroll
-{
-    //[self.pageScroll setMaximumTrackImage:[[UIImage imageNamed:@"img_slider_maximum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 5)]forState: UIControlStateNormal];
-    //[self.pageScroll setMinimumTrackImage:[[UIImage imageNamed:@"img_slider_minimum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 5, 0, 0) ] forState: UIControlStateNormal];
-    [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateNormal];
-    [self.pageScroll setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateHighlighted];
-    [self.pageScroll setMinimumValue:1];
-    [self.pageScroll setContinuous:NO];
 }
 
 - (void)setupPageLabel
