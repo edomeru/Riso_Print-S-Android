@@ -207,18 +207,24 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            if (printSetting.Type == PrintSettingType.list)
+            switch (printSetting.Type)
             {
-                await UpdateSelectedPrintSettingOption(printSetting, (int)value);
-            }
-            else if (printSetting.Type == PrintSettingType.boolean)
-            {
-                await UpdatePrintSettingState(printSetting, (bool)value);
+                case PrintSettingType.boolean:
+                    await UpdatePrintSettings(printSetting, (bool)value);
+                    break;
+                case PrintSettingType.list:
+                case PrintSettingType.numeric:
+                    await UpdatePrintSettings(printSetting, (int)value);
+                    break;
+                case PrintSettingType.unknown:
+                default:
+                    // Do nothing
+                    break;
             }
         }
 
         /// <summary>
-        /// Receiver of the selected print setting option.
+        /// Receiver of the selected print setting option (selected index or numeric value).
         /// Updates the print settings list (PrintSettingList) and cache (PagePrintSettings),
         /// updates value and enabled options based on constraints, and applies
         /// changes to the PreviewPage image.
@@ -226,7 +232,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printSetting">affected print setting</param>
         /// <param name="selected">updated value</param>
         /// <returns>task</returns>
-        private async Task UpdateSelectedPrintSettingOption(PrintSetting printSetting, int selectedIndex)
+        private async Task UpdatePrintSettings(PrintSetting printSetting, int value)
         {
             if (printSetting == null)
             {
@@ -239,7 +245,7 @@ namespace SmartDeviceApp.Controllers
             {
                 return;
             }
-            result.Value = selectedIndex;
+            result.Value = value;
 
             // Manual check here what is changed
             bool isPreviewPageAffected = false;
@@ -248,69 +254,76 @@ namespace SmartDeviceApp.Controllers
             if (name.Equals(PrintSettingConstant.NAME_VALUE_COLOR_MODE))
             {
                 int prevColorMode = _selectedPrinter.PrintSettings.ColorMode;
-                if (_selectedPrinter.PrintSettings.ColorMode != selectedIndex)
+                if (_selectedPrinter.PrintSettings.ColorMode != value)
                 {
-                    _selectedPrinter.PrintSettings.ColorMode = selectedIndex;
+                    _selectedPrinter.PrintSettings.ColorMode = value;
                     // Matters only if changed to/from Black
                     if (prevColorMode == (int)ColorMode.Mono ||
-                        selectedIndex == (int)ColorMode.Mono)
+                        value == (int)ColorMode.Mono)
                     {
                         isPreviewPageAffected = true;
                     }
                 }
             }
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_COPIES))
+            {
+                if (_selectedPrinter.PrintSettings.Copies != value)
+                {
+                    _selectedPrinter.PrintSettings.Copies = value;
+                }
+            }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_ORIENTATION))
             {
-                if (_selectedPrinter.PrintSettings.Orientation != selectedIndex)
+                if (_selectedPrinter.PrintSettings.Orientation != value)
                 {
-                    _selectedPrinter.PrintSettings.Orientation = selectedIndex;
+                    _selectedPrinter.PrintSettings.Orientation = value;
                     isPreviewPageAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
             {
-                if (_selectedPrinter.PrintSettings.Duplex != selectedIndex)
+                if (_selectedPrinter.PrintSettings.Duplex != value)
                 {
-                    _selectedPrinter.PrintSettings.Duplex = selectedIndex;
+                    _selectedPrinter.PrintSettings.Duplex = value;
                     isPreviewPageAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
             {
-                if (_selectedPrinter.PrintSettings.PaperSize != selectedIndex)
+                if (_selectedPrinter.PrintSettings.PaperSize != value)
                 {
-                    _selectedPrinter.PrintSettings.PaperSize = selectedIndex;
+                    _selectedPrinter.PrintSettings.PaperSize = value;
                     isPreviewPageAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
             {
-                if (_selectedPrinter.PrintSettings.PaperType != selectedIndex)
+                if (_selectedPrinter.PrintSettings.PaperType != value)
                 {
-                    _selectedPrinter.PrintSettings.PaperType = selectedIndex;
+                    _selectedPrinter.PrintSettings.PaperType = value;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_INPUT_TRAY))
             {
-                if (_selectedPrinter.PrintSettings.InputTray != selectedIndex)
+                if (_selectedPrinter.PrintSettings.InputTray != value)
                 {
-                    _selectedPrinter.PrintSettings.InputTray = selectedIndex;
+                    _selectedPrinter.PrintSettings.InputTray = value;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
             {
-                if (_selectedPrinter.PrintSettings.Imposition != selectedIndex)
+                if (_selectedPrinter.PrintSettings.Imposition != value)
                 {
-                    _selectedPrinter.PrintSettings.Imposition = selectedIndex;
+                    _selectedPrinter.PrintSettings.Imposition = value;
                     isPreviewPageAffected = true;
                     isPageCountAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
             {
-                if (_selectedPrinter.PrintSettings.ImpositionOrder != selectedIndex)
+                if (_selectedPrinter.PrintSettings.ImpositionOrder != value)
                 {
-                    _selectedPrinter.PrintSettings.ImpositionOrder = selectedIndex;
+                    _selectedPrinter.PrintSettings.ImpositionOrder = value;
                     if (_pagesPerSheet > 1) // Matters only if pages per sheet is more than 1
                     {
                         isPreviewPageAffected = true;
@@ -319,16 +332,16 @@ namespace SmartDeviceApp.Controllers
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_SORT))
             {
-                if (_selectedPrinter.PrintSettings.Sort != selectedIndex)
+                if (_selectedPrinter.PrintSettings.Sort != value)
                 {
-                    _selectedPrinter.PrintSettings.Sort = selectedIndex;
+                    _selectedPrinter.PrintSettings.Sort = value;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING))
             {
-                if (_selectedPrinter.PrintSettings.BookletFinishing != selectedIndex)
+                if (_selectedPrinter.PrintSettings.BookletFinishing != value)
                 {
-                    _selectedPrinter.PrintSettings.BookletFinishing = selectedIndex;
+                    _selectedPrinter.PrintSettings.BookletFinishing = value;
                     // Matters only when staple is ON
                     if (_selectedPrinter.PrintSettings.Staple != (int)Staple.Off)
                     {
@@ -338,19 +351,19 @@ namespace SmartDeviceApp.Controllers
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
-                if (_selectedPrinter.PrintSettings.BookletLayout != selectedIndex)
+                if (_selectedPrinter.PrintSettings.BookletLayout != value)
                 {
-                    _selectedPrinter.PrintSettings.BookletLayout = selectedIndex;
+                    _selectedPrinter.PrintSettings.BookletLayout = value;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
             {
-                if (_selectedPrinter.PrintSettings.FinishingSide != selectedIndex)
+                if (_selectedPrinter.PrintSettings.FinishingSide != value)
                 {
-                    isConstraintAffected = UpdateConstraintStapleUsingFinishingSide(selectedIndex);
-                    isConstraintAffected = UpdateConstaintPunchUsingFinishingSide(selectedIndex) ||
+                    isConstraintAffected = UpdateConstraintStapleUsingFinishingSide(value);
+                    isConstraintAffected = UpdateConstaintPunchUsingFinishingSide(value) ||
                         isConstraintAffected;
-                    _selectedPrinter.PrintSettings.FinishingSide = selectedIndex;
+                    _selectedPrinter.PrintSettings.FinishingSide = value;
                     // Matters only when staple or punch is ON
                     if (_selectedPrinter.PrintSettings.Staple != (int)Staple.Off ||
                         _selectedPrinter.PrintSettings.Punch != (int)Punch.Off)
@@ -361,26 +374,26 @@ namespace SmartDeviceApp.Controllers
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
             {
-                if (_selectedPrinter.PrintSettings.Staple != selectedIndex)
+                if (_selectedPrinter.PrintSettings.Staple != value)
                 {
-                    _selectedPrinter.PrintSettings.Staple = selectedIndex;
+                    _selectedPrinter.PrintSettings.Staple = value;
                     isPreviewPageAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
             {
-                if (_selectedPrinter.PrintSettings.Punch != selectedIndex)
+                if (_selectedPrinter.PrintSettings.Punch != value)
                 {
-                    isConstraintAffected = UpdateConstraintFinishingSideUsingPunch(selectedIndex);
-                    _selectedPrinter.PrintSettings.Punch = selectedIndex;
+                    isConstraintAffected = UpdateConstraintFinishingSideUsingPunch(value);
+                    _selectedPrinter.PrintSettings.Punch = value;
                     isPreviewPageAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
             {
-                if (_selectedPrinter.PrintSettings.OutputTray != selectedIndex)
+                if (_selectedPrinter.PrintSettings.OutputTray != value)
                 {
-                    _selectedPrinter.PrintSettings.OutputTray = selectedIndex;
+                    _selectedPrinter.PrintSettings.OutputTray = value;
                 }
             }
 
@@ -407,7 +420,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printSetting">affected print setting</param>
         /// <param name="state">updated value</param>
         /// <returns>task</returns>
-        private async Task UpdatePrintSettingState(PrintSetting printSetting, bool state)
+        private async Task UpdatePrintSettings(PrintSetting printSetting, bool state)
         {
             if (printSetting == null)
             {
