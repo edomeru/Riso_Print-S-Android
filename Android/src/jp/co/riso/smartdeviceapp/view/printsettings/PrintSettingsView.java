@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import jp.co.riso.android.dialog.DialogUtils;
-import jp.co.riso.android.dialog.PrintingDialogFragment;
+import jp.co.riso.android.dialog.WaitingDialogFragment;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -32,12 +32,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -71,7 +66,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final String KEY_SUB_SCROLL_POSITION = "key_sub_scroll_position";
     
     private static final String KEY_TAG_PRINTER = "key_tag_printer";
-    private static final String FRAGMENT_TAG_PRINTJOBS = "fragment_printjobs";
     
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
@@ -80,6 +74,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final int MSG_SLIDE_OUT = 4;
     private static final int MSG_SET_SUB_SCROLL = 5;
     private static final int MSG_SHOW_SUBVIEW = 6;
+    private static final int MSG_PRINT = 7;
     
     private static final int ID_COLLAPSE_CONTAINER = 0x11000001;
     private static final int ID_COLLAPSE_TARGET_GROUP = 0x11000002;
@@ -119,7 +114,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private String mPdfFileName;
     
-    PrintingDialogFragment mPrintingDialog;
+    private WaitingDialogFragment mPrintingDialog;
     
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -853,51 +848,28 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private void executePrint() {
         //TODO: add actual printing execution and remove Handler.postDelayed
-        mPrintingDialog = PrintingDialogFragment.newInstance();
+        mPrintingDialog = WaitingDialogFragment.newInstance(null, getResources().getString(R.string.ids_lbl_printing), null);
         DialogUtils.displayDialog((Activity) getContext(), TAG, mPrintingDialog);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                continuePrintSuccess(JobResult.SUCCESSFUL);
+                Message newMessage = Message.obtain(mHandler, MSG_PRINT);
+                mHandler.sendMessage(newMessage);
             }
         }, 10000);
     }
     
     /**
-     * This method dismisses the printing progress dialog after the actual printing execution
+     * This method dismisses the waiting dialog after the actual printing execution
      * and transitions the screen to Print Jobs History Screen
      * 
      * @param result
      *            the result of the printing execution (SUCCESSFUL, ERROR)
      */
-    private void continuePrintSuccess(JobResult result){
-        mPrintingDialog.dismiss();
+    private void continuePrint(JobResult result){
         PrintJobManager pm = PrintJobManager.getInstance(getContext());
         pm.createPrintJob(mPrinterId, mPdfFileName, new Date(), result);
-        
-        MainActivity activity = (MainActivity) getContext();
-        activity.closeDrawers();
-        
-        FragmentManager fm = ((Activity) getContext()).getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        
-        Fragment container = fm.findFragmentById(R.id.mainLayout);
-        if (container != null) {
-            if (container.getRetainInstance()) {
-                ft.detach(container);
-            } else {
-                ft.remove(container);
-            }
-        }
-        
-        Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG_PRINTJOBS);
-        if (fragment == null) {
-            fragment = new PrintJobsFragment();
-            ft.add(R.id.mainLayout, fragment, FRAGMENT_TAG_PRINTJOBS);
-        } else {
-            ft.attach(fragment);
-        }
-        ft.commit();
+        mPrintingDialog.dismissAndTransition();
     }
     
     // ================================================================================
@@ -1259,7 +1231,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             case MSG_SHOW_SUBVIEW:
                 displayOptionsSubview(mMainLayout.findViewWithTag(msg.obj), false);
                 return true;
-                
+            case MSG_PRINT:
+                //TODO: change implementation using actual print result
+                continuePrint(JobResult.SUCCESSFUL);
+                return true;
         }
         return false;
     }

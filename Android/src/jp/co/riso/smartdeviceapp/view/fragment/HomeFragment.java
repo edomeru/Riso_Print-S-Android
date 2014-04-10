@@ -15,7 +15,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
@@ -96,13 +95,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // ================================================================================
     
     /**
-     * This method updates the selected state and button to "Print Job History" (STATE_PRINTJOBS)
+     * This method updates the selected state fragment to "Print Job History" (STATE_PRINTJOBS)
      */
-    public void setJobsFragment(){
-        mState = STATE_PRINTJOBS;
-        setSelectedButton(getView(), mState);
+    public void goToJobsFragment(){
+        setCurrentState(STATE_PRINTJOBS);
     }
-    
     // ================================================================================
     // Private Methods
     // ================================================================================
@@ -194,7 +191,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.printPreviewButton:
-                Log.d("CESTEST","okay");
                 setCurrentState(STATE_PRINTPREVIEW);
                 break;
             case R.id.printersButton:

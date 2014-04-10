@@ -223,10 +223,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                     mPrintJobsList = pm.getPrintJobs();
                     mPrintersList = pm.getPrintersWithJobs();
                     
-                    if (pm.isRefreshFlag()){ // if from Printing Execution, set homefragment button
-                        ((HomeFragment) getActivity().getFragmentManager().findFragmentById(R.id.leftLayout)).setJobsFragment();
-                    }
-                    
                     pm.setRefreshFlag(false);
                 }
             }
