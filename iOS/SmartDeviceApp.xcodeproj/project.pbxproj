@@ -50,6 +50,8 @@
 		28CFC56818F6351600DBD2BD /* PrintJobHistoryGroupTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */; };
 		28CFC56B18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */; };
 		28CFC56C18F6675C00DBD2BD /* PrintJobHistoryLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */; };
+		28CFC57018F6710C00DBD2BD /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AECD18E2EF8500085F27 /* DefaultView.m */; };
+		28CFC57118F6712D00DBD2BD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF618E2EF9600085F27 /* AddPrinterViewController.m */; };
 		28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
@@ -1099,6 +1101,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28CFC57118F6712D00DBD2BD /* Images.xcassets in Resources */,
 				28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */,
 				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
@@ -1212,6 +1215,7 @@
 				286CE41118F2344900642A10 /* Reachability.m in Sources */,
 				28CFC56C18F6675C00DBD2BD /* PrintJobHistoryLayout.m in Sources */,
 				28FCAAED18F3A9620051DB9F /* UIView+Localization.m in Sources */,
+				28CFC57018F6710C00DBD2BD /* DefaultView.m in Sources */,
 				28FCAAEC18F3A5ED0051DB9F /* SlidingViewController.m in Sources */,
 				28FCAB0118F3E5FC0051DB9F /* HomeViewController.m in Sources */,
 				28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */,
