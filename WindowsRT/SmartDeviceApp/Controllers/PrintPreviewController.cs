@@ -51,7 +51,6 @@ namespace SmartDeviceApp.Controllers
 
         private PrintPreviewViewModel _printPreviewViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
-        private PrintSettingOptionsViewModel _printSettingOptionsViewModel;
         private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
@@ -89,7 +88,6 @@ namespace SmartDeviceApp.Controllers
 
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
-            _printSettingOptionsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
 
             await Cleanup(); // Ensure to clean up previous
 
@@ -116,7 +114,6 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
-                _printSettingOptionsViewModel.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
                 await LoadPage(0);
             }
@@ -133,7 +130,6 @@ namespace SmartDeviceApp.Controllers
         public async Task Cleanup()
         {
             _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-            _printSettingOptionsViewModel.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
             PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();

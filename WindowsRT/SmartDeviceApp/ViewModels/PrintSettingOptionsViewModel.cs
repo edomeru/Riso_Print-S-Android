@@ -16,8 +16,6 @@ namespace SmartDeviceApp.ViewModels
 {
     public class PrintSettingOptionsViewModel : ViewModelBase
     {
-        public event SmartDeviceApp.Controllers.PrintPreviewController.PrintSettingValueChangedEventHandler PrintSettingValueChangedEventHandler;
-
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
