@@ -216,10 +216,8 @@
         [group collapse:!group.isCollapsed];
         
         // redraw the view
-        //NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
-        //[self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
-        // without animation //TODO: should have some animation
-        [self.groupsView reloadData];
+        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+        [self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
     }
 }
 
