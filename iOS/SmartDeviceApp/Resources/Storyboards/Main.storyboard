@@ -1871,7 +1871,7 @@
                                                 <constraint firstAttribute="height" constant="1" id="kmv-hb-4BT"/>
                                             </constraints>
                                         </view>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ddZ-el-y7o">
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vGw-gO-e98">
                                             <rect key="frame" x="239" y="9" width="79" height="27"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="onTintColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -1879,11 +1879,11 @@
                                         </switch>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="vGw-gO-e98" secondAttribute="trailing" constant="4" id="1DV-vV-lbe"/>
                                         <constraint firstAttribute="trailing" secondItem="SKh-J1-XDp" secondAttribute="trailing" id="2Jk-ap-5hC"/>
-                                        <constraint firstAttribute="trailing" secondItem="ddZ-el-y7o" secondAttribute="trailing" constant="4" id="2vo-s1-BH2"/>
                                         <constraint firstAttribute="bottom" secondItem="SKh-J1-XDp" secondAttribute="bottom" id="3MH-nV-dBx"/>
                                         <constraint firstAttribute="centerY" secondItem="jtb-bm-8LQ" secondAttribute="centerY" id="5N5-OA-xwQ"/>
-                                        <constraint firstAttribute="centerY" secondItem="ddZ-el-y7o" secondAttribute="centerY" id="6u4-3E-ff5"/>
+                                        <constraint firstAttribute="centerY" secondItem="vGw-gO-e98" secondAttribute="centerY" id="TIT-je-43O"/>
                                         <constraint firstItem="SKh-J1-XDp" firstAttribute="leading" secondItem="jtb-bm-8LQ" secondAttribute="leading" id="UOq-ud-6Z1"/>
                                         <constraint firstItem="jtb-bm-8LQ" firstAttribute="leading" secondItem="wqO-QN-Eok" secondAttribute="leading" constant="36" id="xxz-cI-ZSF"/>
                                     </constraints>
@@ -1891,7 +1891,7 @@
                                 <connections>
                                     <outlet property="separator" destination="SKh-J1-XDp" id="T0J-Jm-nVs"/>
                                     <outlet property="settingLabel" destination="jtb-bm-8LQ" id="VV0-iJ-7rN"/>
-                                    <outlet property="valueSwitch" destination="ddZ-el-y7o" id="Ntf-Vu-fEe"/>
+                                    <outlet property="valueSwitch" destination="vGw-gO-e98" id="elj-al-FRi"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
