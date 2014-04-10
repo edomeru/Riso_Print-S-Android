@@ -14,54 +14,40 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class VisualStateUtility : DependencyObject
     {
-        #region AppViewState
+        #region ViewState
 
-        public static readonly DependencyProperty AppViewStateProperty =
-            DependencyProperty.RegisterAttached("AppViewState", typeof(AppViewMode), typeof(VisualStateUtility),
+        public static readonly DependencyProperty ViewStateProperty =
+            DependencyProperty.RegisterAttached("ViewState", typeof(ViewMode), typeof(VisualStateUtility),
             new PropertyMetadata(null, GoToViewState));
 
-        public static void SetAppViewState(DependencyObject obj, AppViewMode value)
+        public static void SetViewState(DependencyObject obj, ViewMode value)
         {
-            obj.SetValue(AppViewStateProperty, value);
+            obj.SetValue(ViewStateProperty, value);
         }
 
-        public static AppViewMode GetAppViewState(DependencyObject obj)
+        public static ViewMode GetViewState(DependencyObject obj)
         {
-            return (AppViewMode)obj.GetValue(AppViewStateProperty);
+            return (ViewMode)obj.GetValue(ViewStateProperty);
         }
 
         private static void GoToViewState(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue != null)
             {
-                switch ((AppViewMode)e.NewValue)
+                switch ((ViewMode)e.NewValue)
                 {
-                    case AppViewMode.MainMenuPaneVisible:
-                    {
-                        VisualStateManager.GoToState((PageBase)obj, "MainMenuPaneVisibleState", true);
+                    case ViewMode.MainMenuPaneVisible:
+                        VisualStateManager.GoToState((UserControl)obj, "MainMenuPaneVisibleState", true);
                         break;
-                    }
-                    case AppViewMode.HomePageFullScreen:
-                    case AppViewMode.PrintPreviewPageFullScreen:
-                    case AppViewMode.PrintersPageFullScreen:
-                    case AppViewMode.JobsPageFullScreen:
-                    case AppViewMode.SettingsPageFullScreen:
-                    case AppViewMode.HelpPageFullScreen:
-                    case AppViewMode.LegalPageFullScreen:
-                    {
-                        VisualStateManager.GoToState((PageBase)obj, "FullScreenState", true);
+                    case ViewMode.FullScreen:
+                        VisualStateManager.GoToState((UserControl)obj, "FullScreen", true);
                         break;
-                    }
-                    case AppViewMode.RightPaneVisible:
-                    {
-                        VisualStateManager.GoToState((PageBase)obj, "RightPaneVisibleState", true);
+                    case ViewMode.RightPaneVisible_ResizedWidth:
+                        VisualStateManager.GoToState((UserControl)obj, "RightPaneVisible_ResizedViewState", true);
                         break;
-                    }
-                    case AppViewMode.RightPaneVisible_ResizedView:
-                    {
-                        VisualStateManager.GoToState((PageBase)obj, "RightPaneVisible_ResizedViewState", true);
+                    case ViewMode.RightPaneVisible:
+                        VisualStateManager.GoToState((UserControl)obj, "RightPaneVisibleState", true);
                         break;
-                    }
                 }
             }
         }

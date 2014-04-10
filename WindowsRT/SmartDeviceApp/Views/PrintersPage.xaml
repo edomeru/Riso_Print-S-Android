@@ -1,14 +1,35 @@
-﻿<controls:ViewControl
+﻿<base:PageBase x:Name="printersPage"
     x:Class="SmartDeviceApp.Views.PrintersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="using:SmartDeviceApp.Common.Base"
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:sel="using:SmartDeviceApp.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Text="Printers" 
-    Button1Command="{Binding Path=ToggleMainMenuPane}"
+    NavigationCacheMode="Enabled"
     DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
+    
+    <base:PageBase.Resources>
+        <DataTemplate x:Key="TEMPLATE_AddPrinterPane">
+            <local:AddPrinterPane/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_SearchPrinterPane">
+            <local:SearchPrinterPane/>
+        </DataTemplate>
+        <sel:PrintersRightPaneTemplateSelector x:Key="PrintersRightPaneTemplateSelector"
+                                     AddPrinterPaneTemplate="{StaticResource TEMPLATE_AddPrinterPane}"
+                                     SearchPrinterPaneTemplate="{StaticResource TEMPLATE_SearchPrinterPane}"/>
+    </base:PageBase.Resources>
 
-</controls:ViewControl>
+    <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=printersPage}"
+                          Text="{Binding Source=IDS_LBL_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                          Button1Image="ms-appx:///Resources/Images/img_btn_search_printer_normal.png" 
+                          Button2Image="ms-appx:///Resources/Images/img_btn_add_printer_normal.png"
+                          RightPaneContent="{Binding DataContext.RightPaneMode, ElementName=printersPage}"
+                          RightPaneContentTemplateSelector="{StaticResource PrintersRightPaneTemplateSelector}">
+        
+    </controls:ViewControl>
+</base:PageBase>

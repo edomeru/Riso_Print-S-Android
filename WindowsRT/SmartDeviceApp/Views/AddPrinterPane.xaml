@@ -23,7 +23,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
-            <RowDefinition />
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <controls:SidePaneTitleControl Title="Add Printer" ButtonVisibility="Visible"
                                        ButtonImage="ms-appx:///Resources/Images/img_btn_add_printer_ok_normal.png"/>

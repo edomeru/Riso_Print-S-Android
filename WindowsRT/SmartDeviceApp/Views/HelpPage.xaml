@@ -1,14 +1,17 @@
-﻿<controls:ViewControl
+﻿<base:PageBase x:Name="helpPage"
     x:Class="SmartDeviceApp.Views.HelpPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="using:SmartDeviceApp.Common.Base"
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:controls="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Text="Help" 
-    Button1Command="{Binding Path=ToggleMainMenuPane}"
+    NavigationCacheMode="Enabled"
     DataContext="{Binding HelpViewModel, Source={StaticResource Locator}}">
 
-</controls:ViewControl>
+    <controls:ViewControl 
+        Text="{Binding Source=IDS_LBL_HELP, Converter={StaticResource ResourceStringToTextConverter}}" >
+    </controls:ViewControl>
+</base:PageBase>

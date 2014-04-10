@@ -12,27 +12,14 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using SmartDeviceApp.Common.Base;
-using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceApp.Views
+namespace SmartDeviceApp.Controls
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class AppView : PageBase
+    public sealed partial class MainMenuPane : Grid
     {
-        public AppView()
+        public MainMenuPane()
         {
             this.InitializeComponent();
-        }
-
-        public AppViewModel ViewModel
-        {
-            get
-            {
-                return (AppViewModel)DataContext;
-            }
         }
     }
 }

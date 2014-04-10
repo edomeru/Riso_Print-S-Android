@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
@@ -17,53 +18,40 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
-        private ICommand _toggleMainMenuPane;
-        private AppViewModel _appViewModel;
+        private PrintersRightPaneMode _rightPaneMode;
 
         public PrintersViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            _appViewModel = new ViewModelLocator().AppViewModel;
+            Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
         }
 
-        #region PANE VISIBILITY
-
-        public ICommand ToggleMainMenuPane
+        public PrintersRightPaneMode RightPaneMode
         {
-            get
+            get { return _rightPaneMode; }
+            set
             {
-                if (_toggleMainMenuPane == null)
+                if (_rightPaneMode != value)
                 {
-                    _toggleMainMenuPane = new RelayCommand(
-                        () => ToggleMainMenuPaneExecute(),
-                        () => true
-                    );
+                    _rightPaneMode = value;
+                    RaisePropertyChanged("RightPaneMode");
                 }
-                return _toggleMainMenuPane;
             }
         }
 
-        private void ToggleMainMenuPaneExecute()
+        private void SetRightPaneMode(VisibleRightPane visibleRightPane)
         {
-            AppViewMode appViewMode = AppViewMode.PrintersPageFullScreen;
-            switch (_appViewModel.AppViewMode)
+            switch (visibleRightPane)
             {
-                case AppViewMode.MainMenuPaneVisible:
-                    {
-                        appViewMode = AppViewMode.PrintPreviewPageFullScreen;
-                        break;
-                    }
-
-                case AppViewMode.PrintersPageFullScreen:
-                    {
-                        appViewMode = AppViewMode.MainMenuPaneVisible;
-                        break;
-                    }
+                case VisibleRightPane.Pane1:
+                    RightPaneMode = PrintersRightPaneMode.SearchPrinter;
+                    break;
+                case VisibleRightPane.Pane2:
+                    RightPaneMode = PrintersRightPaneMode.AddPrinter;
+                    break;
             }
-            _appViewModel.AppViewMode = appViewMode;
         }
 
-        #endregion
     }
 }

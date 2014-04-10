@@ -63,12 +63,7 @@ namespace SmartDeviceApp.ViewModels
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
 
-        private ICommand _toggleMainMenuPane;
-        private ICommand _showPreviewViewFullScreen;
-        private ICommand _togglePrintSettingsPane;
-
-        private AppViewModel _appViewModel;
-        private AppViewMode _appViewMode;
+        private ViewControlViewModel _viewControlViewModel;
 
         public PrintPreviewViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -76,10 +71,11 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             _rightPageIndex = 0;
-            _appViewModel = new ViewModelLocator().AppViewModel;
-            SetAppViewMode(_appViewModel.AppViewMode);
-        }
+            _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
+            SetViewMode(_viewControlViewModel.ViewMode); 
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+        }
 
         public void SetPageAreaGrid(Grid pageAreaGrid)
         {
@@ -114,124 +110,29 @@ namespace SmartDeviceApp.ViewModels
         }
 
         #region PANE VISIBILITY
-
-        public AppViewMode AppViewMode
+                
+        private void SetViewMode(ViewMode viewMode)
         {
-            get { return _appViewMode; }
-            set
+            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
+            switch (viewMode)
             {
-                if (_appViewMode != value)
-                {
-                    _appViewMode = value;
-                    RaisePropertyChanged("AppViewMode");
-                }
-            }
-        }
-
-        public ICommand ToggleMainMenuPane
-        {
-            get
-            {
-                if (_toggleMainMenuPane == null)
-                {
-                    _toggleMainMenuPane = new RelayCommand(
-                        () => ToggleMainMenuPaneExecute(),
-                        () => true
-                    );
-                }
-                return _toggleMainMenuPane;
-            }
-        }        
-
-        public ICommand TogglePrintSettingsPane
-        {
-            get
-            {
-                if (_togglePrintSettingsPane == null)
-                {
-                    _togglePrintSettingsPane = new RelayCommand(
-                        () => TogglePrintSettingsPaneExecute(),
-                        () => true
-                    );
-                }
-                return _togglePrintSettingsPane;
-            }
-        }
-
-        private void ToggleMainMenuPaneExecute()
-        {
-            switch (_appViewModel.AppViewMode)
-            {
-                case AppViewMode.MainMenuPaneVisible:
-                {
-                    SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
-                    break;
-                }
-
-                case AppViewMode.PrintPreviewPageFullScreen:
-                {
-                    SetAppViewMode(AppViewMode.MainMenuPaneVisible);
-                    break;
-                }
-
-                case AppViewMode.RightPaneVisible_ResizedView:
-                {
-                    SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
-                    SetAppViewMode(AppViewMode.MainMenuPaneVisible);
-                    break;
-                }
-            }
-        }
-
-        private void TogglePrintSettingsPaneExecute()
-        {
-            switch (_appViewModel.AppViewMode)
-            {
-                case AppViewMode.MainMenuPaneVisible:
+                case ViewMode.MainMenuPaneVisible:
                     {
-                        SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
-                        SetAppViewMode(AppViewMode.RightPaneVisible);
+                        DisablePreviewGestures();
                         break;
                     }
 
-                case AppViewMode.PrintPreviewPageFullScreen:
+                case ViewMode.FullScreen:
                     {
-                        SetAppViewMode(AppViewMode.RightPaneVisible_ResizedView);
-                        _appViewModel.RightPaneMode = RightPaneMode.PrintSettings;
+                        EnablePreviewGestures();
                         break;
                     }
-
-                case AppViewMode.RightPaneVisible_ResizedView:
+                case ViewMode.RightPaneVisible: // NOTE: Technically not possible
+                case ViewMode.RightPaneVisible_ResizedWidth:
                     {
-                        SetAppViewMode(AppViewMode.PrintPreviewPageFullScreen);
+                        EnablePreviewGestures();
                         break;
                     }
-            }
-        }
-
-        private void SetAppViewMode(AppViewMode appViewMode)
-        {
-            AppViewMode = appViewMode;
-            _appViewModel.AppViewMode = appViewMode;
-            switch (appViewMode)
-            {
-                case AppViewMode.MainMenuPaneVisible:
-                {
-                    DisablePreviewGestures();
-                    break;
-                }
-
-                case AppViewMode.PrintPreviewPageFullScreen:
-                {
-                    EnablePreviewGestures();
-                    break;
-                }
-
-                case AppViewMode.RightPaneVisible:
-                {
-                    EnablePreviewGestures();
-                    break;
-                }
             }
         }
 

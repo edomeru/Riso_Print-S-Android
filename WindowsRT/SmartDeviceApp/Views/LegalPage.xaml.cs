@@ -13,10 +13,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
+using SmartDeviceApp.Common.Base;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class LegalPage : ViewControl
+    public sealed partial class LegalPage : PageBase
     {
         public LegalPage()
         {

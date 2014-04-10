@@ -36,7 +36,7 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class PrintPreviewPage : ViewControl
+    public sealed partial class PrintPreviewPage : PageBase
     {        
         public PrintPreviewPage()
         {

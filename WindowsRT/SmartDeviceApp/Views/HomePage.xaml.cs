@@ -29,7 +29,7 @@ using SmartDeviceApp.Controls;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class HomePage : ViewControl
+    public sealed partial class HomePage : PageBase
     {
         public HomePage()
         {

@@ -107,14 +107,16 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\VisibleRightPane.cs" />
+    <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />
     <Compile Include="Common\Enum\PageViewMode.cs" />
-    <Compile Include="Common\Enum\AppViewMode.cs" />
+    <Compile Include="Common\Enum\ViewMode.cs" />
     <Compile Include="Common\Enum\ListValueType.cs" />
     <Compile Include="Common\Enum\PrintSettingsOptions.cs" />
     <Compile Include="Common\Enum\PrintSettingType.cs" />
     <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
-    <Compile Include="Common\Enum\RightPaneMode.cs" />
+    <Compile Include="Common\Enum\PrintersRightPaneMode.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\LogUtility.cs" />
@@ -154,8 +156,7 @@
     <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
-    <Compile Include="Selectors\RightPaneTemplateSelector.cs" />
-    <Compile Include="Selectors\AppViewTemplateSelector.cs" />
+    <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
     <Compile Include="Converters\ItemClickedConverter.cs" />
@@ -205,9 +206,8 @@
     <Compile Include="Models\PrintJob.cs" />
     <Compile Include="Models\PrintSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
-    <Compile Include="ViewModels\MainMenuViewModel.cs" />
+    <Compile Include="ViewModels\ViewControlViewModel.cs" />
     <Compile Include="ViewModels\JobsViewModel.cs" />
     <Compile Include="ViewModels\HelpViewModel.cs" />
     <Compile Include="ViewModels\LegalViewModel.cs" />
@@ -221,9 +221,6 @@
     <Compile Include="Views\AddPrinterPane.xaml.cs">
       <DependentUpon>AddPrinterPane.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AppView.xaml.cs">
-      <DependentUpon>AppView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\HelpPage.xaml.cs">
       <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
@@ -233,7 +230,7 @@
     <Compile Include="Views\LegalPage.xaml.cs">
       <DependentUpon>LegalPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainMenuPane.xaml.cs">
+    <Compile Include="Controls\MainMenuPane.xaml.cs">
       <DependentUpon>MainMenuPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PrintersPage.xaml.cs">
@@ -432,10 +429,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AppView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\HelpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -448,7 +441,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainMenuPane.xaml">
+    <Page Include="Controls\MainMenuPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

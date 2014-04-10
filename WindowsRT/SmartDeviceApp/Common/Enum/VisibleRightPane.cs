@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
-    public enum RightPaneMode
+    public enum VisibleRightPane
     {
-        PrintSettings,
-        DefaultPrintSettings,
-        AddPrinter,
-        SearchPrinter,
-        Hidden
+        Pane1,
+        Pane2
     }
 }

@@ -36,11 +36,11 @@ namespace SmartDeviceApp.ViewModels
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
 
-        public AppViewModel AppViewModel
+        public ViewControlViewModel ViewControlViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<AppViewModel>();
+                return ServiceLocator.Current.GetInstance<ViewControlViewModel>();
             }
         }
 
@@ -100,14 +100,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public MainMenuViewModel MainMenuViewModel
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MainMenuViewModel>();
-            }
-        }
-
         public PrintSettingsPaneViewModel PrintSettingsPaneViewModel
         {
             get
@@ -147,7 +139,7 @@ namespace SmartDeviceApp.ViewModels
 
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
-            SimpleIoc.Default.Register<AppViewModel>();
+            SimpleIoc.Default.Register<ViewControlViewModel>();
             SimpleIoc.Default.Register<HomeViewModel>();
             SimpleIoc.Default.Register<PrintPreviewViewModel>();
             SimpleIoc.Default.Register<PrintersViewModel>();
@@ -155,7 +147,6 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<HelpViewModel>();
             SimpleIoc.Default.Register<LegalViewModel>();
-            SimpleIoc.Default.Register<MainMenuViewModel>();
             SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();

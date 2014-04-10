@@ -28,14 +28,14 @@ namespace SmartDeviceApp.Converters
         {
             if (value != null)
             {
-                AppViewMode appViewMode;
-                var success = Enum.TryParse<AppViewMode>(value.ToString(), out appViewMode);
+                ViewMode viewMode;
+                var success = Enum.TryParse<ViewMode>(value.ToString(), out viewMode);
                 if (success)
                 {
-                    if (appViewMode == AppViewMode.RightPaneVisible_ResizedView)
+                    if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
                     {
-                        //return Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"];
-                        return Window.Current.Bounds.Width - 400;
+                        return Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"];
+                        //return Window.Current.Bounds.Width - 400;
                     }
                 }
             }

@@ -37,7 +37,7 @@ namespace SmartDeviceApp.Controls
 
         private static void SetIsOn(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            _isToggled = false; // Set this value so that Toggled hanlder will not be called by the next line
+            _isToggled = false; // Set this value so that Toggled handler will not be called by the next line
             ((KeyToggleSwitchControl)obj).toggleSwitch.IsOn = bool.Parse(e.NewValue.ToString());
             _isToggled = true;
         }
