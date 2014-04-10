@@ -219,7 +219,7 @@
         [deleteButton setUserInteractionEnabled:YES];
         deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
         deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
-        deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f,
+        deleteButton.frame = CGRectMake(printJobCell.frame.size.width, //initial position offscreen
                                         5.0f,
                                         self.deleteAllButton.frame.size.width-15.0f,
                                         printJobCell.frame.size.height-10.0f);
@@ -230,8 +230,15 @@
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end
         printJobCell.detailTextLabel.hidden = YES;
+        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end
+        [UIView animateWithDuration:0.3 animations:^
+        {
+            deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f, //final position onscreen
+                                            5.0f,
+                                            self.deleteAllButton.frame.size.width-15.0f,
+                                            printJobCell.frame.size.height-10.0f);
+        }];
     }
 }
 

@@ -64,6 +64,9 @@
 /** Removes a displayed DELETE button from a group. */
 - (void)removeDeleteButton;
 
+/** Reloads the groups succeeding a recently deleted group. */
+- (void)reloadGroupsStartingFrom:(NSUInteger)tag;
+
 @end
 
 @implementation PrintJobHistoryViewController
@@ -194,7 +197,7 @@
 - (IBAction)tappedPrinterHeader:(UIButton*)sender
 {
     // get the group tapped
-    NSInteger groupIndex = [sender tag];
+    NSInteger groupTag = [sender tag];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
@@ -209,12 +212,12 @@
     else
     {
         // toggle collapsed/expanded
-        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
+        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
         [group collapse:!group.isCollapsed];
         
-        // force redraw
-        // with animation (not smooth)
-        //[self.collectionView reloadItemsAtIndexPaths:@[index]];
+        // redraw the view
+        //NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+        //[self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
         // without animation //TODO: should have some animation
         [self.groupsView reloadData];
     }
@@ -261,8 +264,24 @@
     BOOL bRemovedJob = [group removePrintJobAtIndex:jobTag];
     if (bRemovedJob)
     {
+        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+        
         if ([group countPrintJobs] == 0)
+        {
+            // no more jobs for this group
+            
+            // remove this group from the data source and the view
             [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
+            [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+            
+            // also reload the next groups to update their tags
+            [self reloadGroupsStartingFrom:groupTag];
+        }
+        else
+        {
+            // reload the view for this modified group
+            [self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
+        }
     }
     else
     {
@@ -270,12 +289,6 @@
                          withTitle:kAlertTitlePrintJobHistory
                        withDetails:nil];
     }
-    
-    // force redraw
-    // with animation (not smooth)
-    //[self.collectionView reloadItemsAtIndexPaths:@[index]];
-    // without animation //TODO: should have some animation
-    [self.groupsView reloadData];
 }
 
 - (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
@@ -328,6 +341,23 @@
     self.groupWithDelete = nil;
 }
 
+- (void)reloadGroupsStartingFrom:(NSUInteger)tag
+{
+    [self.groupsView performBatchUpdates:^
+     {
+         NSMutableArray* arrayIndexPaths = [NSMutableArray array];
+         for (NSInteger i=tag; i<[self.listPrintJobHistoryGroups count]; i++)
+         {
+             NSIndexPath* nextGroupIndexPath = [NSIndexPath indexPathForItem:i inSection:0];
+             [arrayIndexPaths addObject:nextGroupIndexPath];
+         }
+         [self.groupsView reloadItemsAtIndexPaths:arrayIndexPaths];
+         
+     } completion:^(BOOL finished)
+     {
+     }];
+}
+
 #pragma mark - Delete Confirmation
 
 - (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -335,7 +365,7 @@
     if (buttonIndex == [alertView firstOtherButtonIndex])
     {
         // get the group
-        NSInteger groupIndex = alertView.tag;
+        NSInteger groupTag = alertView.tag;
         PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:alertView.tag];
         
         // remove each job from the group
@@ -348,7 +378,13 @@
         }
         if (bRemovedAllJobs)
         {
-            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
+            
+            NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+            [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+            
+            // also reload the next groups to update their tags
+            [self reloadGroupsStartingFrom:groupTag];
         }
         else
         {
@@ -356,12 +392,6 @@
                              withTitle:kAlertTitlePrintJobHistory
                            withDetails:nil];
         }
-        
-        // force redraw
-        // with animation (not smooth)
-        //[self.collectionView reloadItemsAtIndexPaths:@[index]];
-        // without animation //TODO: should have some animation
-        [self.groupsView reloadData];
     }
 }
 
