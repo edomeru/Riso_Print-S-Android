@@ -31,6 +31,8 @@
 		28C1CE0F18F28688007FA569 /* PListHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListHelper.m */; };
 		28C1CE1118F286A6007FA569 /* PListHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C1CE1018F286A6007FA569 /* PListHelperTest.m */; };
 		28C1CE1318F28D6A007FA569 /* DatabaseManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C1CE1218F28D6A007FA569 /* DatabaseManagerTest.m */; };
+		28CFC56E18F66F9700DBD2BD /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AECD18E2EF8500085F27 /* DefaultView.m */; };
+		28CFC56F18F66FD100DBD2BD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF618E2EF9600085F27 /* AddPrinterViewController.m */; };
 		28FCAAEA18F3A4AB0051DB9F /* AddPrinterViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FCAAE718F3A3730051DB9F /* AddPrinterViewControllerTest.m */; };
 		28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
@@ -1019,6 +1021,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28CFC56F18F66FD100DBD2BD /* Images.xcassets in Resources */,
 				28FCAAEB18F3A4C40051DB9F /* Main.storyboard in Resources */,
 				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
@@ -1120,6 +1123,7 @@
 				28FCAAF818F3E19A0051DB9F /* PrinterStatusHelper.m in Sources */,
 				286CE41118F2344900642A10 /* Reachability.m in Sources */,
 				28FCAAED18F3A9620051DB9F /* UIView+Localization.m in Sources */,
+				28CFC56E18F66F9700DBD2BD /* DefaultView.m in Sources */,
 				28FCAAEC18F3A5ED0051DB9F /* SlidingViewController.m in Sources */,
 				28FCAB0118F3E5FC0051DB9F /* HomeViewController.m in Sources */,
 				28FCAAE918F3A4990051DB9F /* AddPrinterViewController.m in Sources */,
