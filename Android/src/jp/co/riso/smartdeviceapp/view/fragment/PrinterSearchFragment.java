@@ -33,6 +33,7 @@ import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback {
+    private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -209,6 +210,19 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                     mListView.onRefreshComplete();
                 }
                 return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean isMaxPrinterCountReached() {
+        if (mPrinterManager.getPrinterCount() == PrinterManager.MAX_PRINTER_COUNT) {
+            String title = getResources().getString(R.string.ids_lbl_printer_info);
+            String errMsg = null;
+            errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
+            InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
+            DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+            return true;
         }
         return false;
     }

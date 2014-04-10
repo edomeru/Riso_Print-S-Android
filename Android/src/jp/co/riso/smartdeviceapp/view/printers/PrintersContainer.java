@@ -3,9 +3,9 @@ package jp.co.riso.smartdeviceapp.view.printers;
 import jp.co.riso.smartdeviceapp.R;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
-public class PrintersContainer extends FrameLayout {
+public class PrintersContainer extends LinearLayout {
     private static final int[] STATE_DELETE = { R.attr.state_delete };
     private static final int[] STATE_DEFAULT = { R.attr.state_default };
     

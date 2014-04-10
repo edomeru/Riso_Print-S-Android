@@ -25,6 +25,7 @@ import android.view.View;
 
 public class PrinterManager implements SnmpSearchCallback {
     public static final int EMPTY_ID = -1;
+    public static final int MAX_PRINTER_COUNT = 10;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList = null;
     private Context mContext = null;
@@ -47,7 +48,7 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         return sSharedMngr;
     }
-
+    
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -315,7 +316,7 @@ public class PrinterManager implements SnmpSearchCallback {
      */
     public void updateOnlineStatus(String ipAddress, View view) {
         // TODO: update implementation
-        new UpdateOnlineStatusTask().execute(ipAddress, view);
+        // new UpdateOnlineStatusTask().execute(ipAddress, view);
     }
     
     /**
@@ -334,6 +335,10 @@ public class PrinterManager implements SnmpSearchCallback {
      */
     public void setPrintersCallback(PrintersCallback printersCallback) {
         mPrintersCallback = new WeakReference<PrintersCallback>(printersCallback);
+    }
+    
+    public int getPrinterCount() {
+        return mPrinterList.size();
     }
     
     // ================================================================================
@@ -406,7 +411,7 @@ public class PrinterManager implements SnmpSearchCallback {
     // ================================================================================
     
     public interface PrinterSearchCallback {
-
+        
         public void onPrinterAdd(Printer printer);
         
         public void onSearchEnd();
@@ -448,5 +453,5 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         
     }
-
+    
 }

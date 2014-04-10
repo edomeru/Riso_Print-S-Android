@@ -20,12 +20,15 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
+    private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -34,7 +37,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private PrintSettings mPrintSettings = null;
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
+    private TextView mStatus = null;
     private Switch mDefaultPrinter = null;
+    private Spinner mPort = null;
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
@@ -56,6 +61,14 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         
         mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
+        mStatus = (TextView) view.findViewById(R.id.inputStatus);
+        mPort = (Spinner) view.findViewById(R.id.inputPort);
+        
+        ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
+        portAdapter.add(getString(R.string.ids_lbl_port_raw));
+        portAdapter.add(getString(R.string.ids_lbl_port_lpr));
+        portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        mPort.setAdapter(portAdapter);
     }
     
     @Override
@@ -72,6 +85,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         super.onActivityCreated(savedInstanceState);
         
         Bundle extras = getArguments();
+        
         if (extras == null) {
             extras = getActivity().getIntent().getExtras();
         }
@@ -85,16 +99,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
         }
+        if (mPrinter.getOnlineStatus()) {
+            mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
+        }
         
-    }
-    
-    // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
-    public void setPrintSettings(PrintSettings printSettings) {
-        // TODO: Update settings
-        // mPrintSettings.update(printSettings);
     }
     
     // ================================================================================
@@ -111,7 +119,6 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
                         
-                        // Always make new
                         mPrintSettingsFragment = null;
                         
                         if (mPrintSettingsFragment == null) {
@@ -122,7 +129,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                         }
                         
                         mPrintSettingsFragment.setPrintSettings(mPrintSettings);
-                        mPrintSettingsFragment.setTargetFragment(this, 0);
+                        PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
+                        mPrintSettingsFragment.setTargetFragment(printersFragment, 0);
                         activity.openDrawer(Gravity.RIGHT, true);
                     } else {
                         activity.closeDrawers();
@@ -132,10 +140,6 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
             case ID_MENU_BACK_BUTTON:
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                
-                if (mPrintSettingsFragment != null) {
-                    mPrintSettingsFragment.setTargetFragment(null, 0);
-                }
                 
                 if (fm.getBackStackEntryCount() > 0) {
                     fm.popBackStack();

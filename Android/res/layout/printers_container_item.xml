@@ -2,13 +2,14 @@
 <jp.co.riso.smartdeviceapp.view.printers.PrintersContainer xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/printerListRow"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/home_menu_height"
-    android:background="@drawable/selector_printers_container"
-    android:orientation="horizontal" >
+    android:layout_height="wrap_content"
+    android:background="@color/theme_light_2"
+    android:orientation="vertical" >
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/printers_row_height"
+        android:background="@drawable/selector_printers_container"
         android:duplicateParentState="true"
         android:orientation="horizontal" >
 
@@ -17,6 +18,8 @@
             android:layout_width="@dimen/printers_row_left_icon_size"
             android:layout_height="@dimen/printers_row_left_icon_size"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/printers_row_left_icon_margin"
+            android:layout_marginRight="@dimen/printers_row_left_icon_margin"
             android:contentDescription="@string/default_content_description"
             android:src="@drawable/selector_printers_onlinestatus" />
 
@@ -24,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/printers_row_left_icon_size"
+            android:layout_marginLeft="@dimen/printers_separator_padding"
             android:layout_marginRight="@dimen/printers_row_right_icon_size"
             android:duplicateParentState="true"
             android:orientation="vertical" >
@@ -36,7 +39,7 @@
                 android:layout_weight="1"
                 android:duplicateParentState="true"
                 android:maxLines="1"
-                android:paddingLeft="@dimen/printers_row_left_padding"
+                android:paddingTop="@dimen/printers_row_top_padding"
                 android:textColor="@color/selector_printers_text"
                 android:textSize="@dimen/printers_name_font_size" />
 
@@ -47,7 +50,6 @@
                 android:layout_weight="1"
                 android:duplicateParentState="true"
                 android:maxLines="1"
-                android:paddingLeft="@dimen/printers_row_left_padding"
                 android:textColor="@color/selector_printers_text"
                 android:textSize="@dimen/printers_ipaddress_font_size" />
         </LinearLayout>
@@ -59,21 +61,32 @@
             android:layout_gravity="right|center_vertical"
             android:contentDescription="@string/default_content_description"
             android:paddingRight="@dimen/printers_row_right_padding"
-            android:src="@drawable/img_btn_submenu" />
+            android:src="@drawable/selector_printers_submenu" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginBottom="@dimen/printjob_delbtn_margin"
+            android:layout_marginLeft="@dimen/printjob_delbtn_margin"
+            android:layout_marginRight="@dimen/printers_delbtn_right_margin"
+            android:layout_marginTop="@dimen/printjob_delbtn_margin"
+            android:background="@drawable/selector_jobs_deletebutton"
+            android:gravity="center"
+            android:paddingLeft="@dimen/printjob_delbtn_padding_side"
+            android:paddingRight="@dimen/printjob_delbtn_padding_side"
+            android:text="@string/ids_lbl_delete"
+            android:textAllCaps="true"
+            android:textColor="@drawable/selector_jobs_deletetextcolor"
+            android:visibility="invisible" />
     </FrameLayout>
 
-    <Button
-        android:id="@+id/btn_delete"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="@dimen/printers_edit_box_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="right|center_vertical"
-        android:layout_margin="@dimen/printers_row_default_printer_margin"
-        android:background="@color/bg_delete_button"
-        android:paddingRight="@dimen/printers_row_right_padding"
-        android:text="@string/ids_lbl_delete"
-        android:textColor="@color/theme_light_1"
-        android:textStyle="bold"
-        android:visibility="invisible" />
+    <View
+        android:id="@+id/printers_separator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_size"
+        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:background="@color/theme_light_1" />
 
 </jp.co.riso.smartdeviceapp.view.printers.PrintersContainer>

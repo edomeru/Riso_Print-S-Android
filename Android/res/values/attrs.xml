@@ -5,5 +5,8 @@
         <attr name="state_delete" format="boolean" />
         <attr name="state_default" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="PortTextView">
+        <attr name="font" format="string" />
+    </declare-styleable>
 
 </resources>

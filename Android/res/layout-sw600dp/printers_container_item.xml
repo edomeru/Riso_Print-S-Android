@@ -4,10 +4,12 @@
     android:layout_height="match_parent"
     android:background="@color/theme_light_2" >
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/theme_light_3" >
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/theme_light_3"
+        android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,7 +19,7 @@
             <jp.co.riso.smartdeviceapp.view.printers.PrintersContainer
                 android:id="@+id/PrintersContainerItem1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/printers_view_row_height"
                 android:background="@drawable/selector_printers_container"
                 android:duplicateParentState="true" >
 
@@ -26,17 +28,19 @@
                     android:layout_width="@dimen/printers_row_left_icon_size"
                     android:layout_height="@dimen/printers_row_left_icon_size"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/printers_row_left_padding"
+                    android:layout_weight="0"
                     android:contentDescription="@string/default_content_description"
                     android:src="@drawable/selector_printers_onlinestatus" />
 
                 <TextView
                     android:id="@+id/txt_printerName"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/printers_row_left_icon_size"
-                    android:layout_marginRight="@dimen/printers_row_right_icon_size"
+                    android:layout_weight="1"
                     android:duplicateParentState="true"
+                    android:gravity="center_vertical"
                     android:maxLines="1"
                     android:paddingLeft="@dimen/printers_row_left_padding"
                     android:textColor="@color/selector_printers_text"
@@ -46,30 +50,18 @@
                     android:id="@+id/btn_delete"
                     android:layout_width="@dimen/printers_edit_box_width"
                     android:layout_height="@dimen/printers_edit_box_height"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
                     android:layout_gravity="right|center_vertical"
+                    android:layout_weight="0"
                     android:contentDescription="@string/default_content_description"
                     android:src="@drawable/img_btn_delete_printer_tablet"
                     android:visibility="gone" />
             </jp.co.riso.smartdeviceapp.view.printers.PrintersContainer>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/img_riso_printer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="@dimen/printers_row_riso_icon_margin"
-            android:layout_marginTop="@dimen/printers_row_riso_icon_margin"
-            android:contentDescription="@string/ids_lbl_printers"
-            android:src="@drawable/temp_riso_printer" />
-
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -77,14 +69,16 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/printers_view_row_height"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
                         android:padding="@dimen/printers_row_left_padding"
                         android:text="@string/ids_lbl_ip_address"
                         android:textColor="@color/theme_dark_1"
@@ -92,13 +86,15 @@
 
                     <TextView
                         android:id="@+id/inputIpAddress"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:padding="@dimen/printers_row_left_padding"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="right|center_vertical"
+                        android:padding="@dimen/printers_row_right_padding"
                         android:textColor="@color/theme_light_1"
                         android:textSize="@dimen/printers_name_font_size" />
-                </RelativeLayout>
+                </LinearLayout>
 
                 <View
                     android:layout_width="fill_parent"
@@ -110,39 +106,35 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_height="wrap_content" >
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/printers_view_row_height"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_weight="1"
+                    android:padding="@dimen/printers_row_left_padding"
+                    android:text="@string/ids_lbl_port"
+                    android:textColor="@color/theme_dark_1"
+                    android:textSize="@dimen/printers_name_font_size" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:padding="@dimen/printers_row_left_padding"
-                        android:text="@string/ids_lbl_port"
-                        android:textColor="@color/theme_dark_1"
-                        android:textSize="@dimen/printers_name_font_size" />
-
-                    <TextView
-                        android:id="@+id/inputPort"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:padding="@dimen/printers_row_left_padding"
-                        android:textColor="@color/theme_light_1"
-                        android:textSize="@dimen/printers_name_font_size" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="@dimen/separator_size"
+                <Spinner
+                    android:id="@+id/input_port"
+                    android:layout_width="@dimen/printers_port_spinner_size"
+                    android:layout_height="@dimen/printers_view_row_height"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
-                    android:background="@color/theme_light_2"
-                    android:visibility="visible" />
+                    android:background="@drawable/widgettheme_spinner_background_holo_dark_2"
+                    android:gravity="right|center_vertical"
+                    android:textSize="@dimen/printers_name_font_size" />
             </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/separator_size"
+                android:layout_marginLeft="@dimen/printers_row_left_padding"
+                android:background="@color/theme_light_2"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -150,14 +142,17 @@
                 android:duplicateParentState="true"
                 android:orientation="vertical" >
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/printers_view_row_height"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
                         android:padding="@dimen/printers_row_left_padding"
                         android:text="@string/ids_lbl_set_default_printer"
                         android:textColor="@color/theme_dark_1"
@@ -167,12 +162,11 @@
                         android:id="@+id/default_printer_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"
                         android:saveEnabled="true"
                         android:thumb="@drawable/widgettheme_switch_inner_holo_dark" />
-                </RelativeLayout>
+                </LinearLayout>
 
                 <View
                     android:layout_width="fill_parent"
@@ -182,30 +176,34 @@
                     android:visibility="visible" />
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/default_print_settings"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_printers_defaultprintsettings" >
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/printers_view_row_height"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_default_print_settings"
-                    android:textColor="@color/theme_dark_1"
+                    android:textColor="@color/selector_printers_text"
                     android:textSize="@dimen/printers_name_font_size" />
 
-                <Button
-                    android:id="@+id/default_print_settings"
-                    android:layout_width="@dimen/printers_row_height"
-                    android:layout_height="@dimen/printers_row_height"
-                    android:layout_alignParentRight="true"
+                <ImageView
+                    android:layout_width="@dimen/printers_row_right_icon_size"
+                    android:layout_height="@dimen/printers_row_right_icon_size"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginRight="@dimen/printers_row_left_padding"
+                    android:layout_weight="0"
                     android:background="@drawable/img_btn_default_print_settings"
-                    android:padding="@dimen/printers_row_left_padding"
+                    android:contentDescription="@string/default_content_description"
                     android:textColor="@color/theme_light_1" />
-            </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
 </FrameLayout>

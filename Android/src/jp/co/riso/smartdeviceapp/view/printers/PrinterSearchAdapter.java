@@ -42,7 +42,8 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         Printer printer = getItem(position);
         ViewHolder viewHolder;
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        View separator = null;
+        
         if (convertView == null) {
             convertView = inflater.inflate(layoutId, parent, false);
             AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
@@ -51,7 +52,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
             viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
             viewHolder.mPrinterName.setText(printer.getName());
-            viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);            
+            viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
             viewHolder.mAddedIndicator.setTag(position);
             
             // Set listener for Add Button
@@ -63,10 +64,15 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             viewHolder.mAddedIndicator.setTag(position);
         }
         
+        separator = convertView.findViewById(R.id.printers_separator);
+        if (position == getCount() - 1) {
+            separator.setVisibility(View.GONE);
+        } else {
+            separator.setVisibility(View.VISIBLE);
+        }
         if (mPrinterManager.isExists(printer)) {
             viewHolder.mAddedIndicator.setActivated(true);
-        }
-        else {
+        } else {
             viewHolder.mAddedIndicator.setActivated(false);
         }
         return convertView;
@@ -91,6 +97,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     
     public interface PrinterSearchAdapterInterface {
         public int onAddPrinter(Printer printer);
+        public boolean isMaxPrinterCountReached();
     }
     
     // ================================================================================
@@ -100,6 +107,9 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.addPrinterButton) {
+            if (mSearchAdapterInterface.isMaxPrinterCountReached()) {
+                return;
+            }
             Printer printer = getItem((Integer) v.getTag());
             if (mSearchAdapterInterface.onAddPrinter(printer) != -1) {
                 v.setActivated(true);

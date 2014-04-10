@@ -39,18 +39,19 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrintersScreenTabletView extends LinearLayout implements OnLongClickListener, View.OnClickListener, OnTouchListener, OnCheckedChangeListener,
         Callback {
     private static final int MSG_ADD_PRINTER = 0x01;
-    private static final int MSG_SET_DEFAULT_PRINTER = 0x02;
+    private static final int MSG_SET_UPDATE_VIEWS = 0x02;
     
     private PrinterManager mPrinterManager = null;
     private ArrayList<ViewGroup> mPrinterViewArray = null;
@@ -60,6 +61,8 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     private ViewHolder mDefaultViewHolder = null;
     private int mOrientation = 0;
     private Handler mHandler = null;
+    private int mDeleteItem = -1;
+    private int[] mCoords = null;
     
     public PrintersScreenTabletView(Context context) {
         super(context);
@@ -103,14 +106,39 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         mHandler.sendMessage(newMessage);
     }
     
-    public void restoreState(List<Printer> printer) {
+    public void restoreState(List<Printer> printer, int deleteItem) {
         mPrinterList = printer;
+        mDeleteItem = deleteItem;
         for (int i = 0; i < printer.size(); i++) {
-            addToTabletPrinterScreen(printer.get(i));
+            if (mDeleteItem == i) {
+                setPrinterViewToDelete(addToTabletPrinterScreen(printer.get(i)));
+            } else {
+                addToTabletPrinterScreen(printer.get(i));
+            }
         }
-        Message newMessage = Message.obtain(mHandler, MSG_SET_DEFAULT_PRINTER);
-        newMessage.obj = mDefaultViewHolder;
+        Message newMessage = Message.obtain(mHandler, MSG_SET_UPDATE_VIEWS);
         mHandler.sendMessage(newMessage);
+        
+    }
+    
+    public int getDeleteItemPosition() {
+        int columnCount = 3;
+        if (mCoords == null || mCoords[0] == -1 || mCoords[1] == -1) {
+            return -1;
+        }
+        // Compute for the number of items
+        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            columnCount = 2;
+        }
+        if (mCoords[1] + 1 < columnCount) {
+            // Row * column - 1 + excess
+            mDeleteItem = mCoords[0] * columnCount + (mCoords[1] + 1);
+        } else {
+            // Row * column
+            mDeleteItem = (mCoords[0] + 1) * (mCoords[1] + 1);
+        }
+        mDeleteItem = mDeleteItem - 1;
+        return mDeleteItem;
     }
     
     public void updatePrintSettings(PrintSettings printSettings) {
@@ -124,6 +152,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     
     private void init(Context context) {
         ViewGroup viewGroup = (ViewGroup) View.inflate(context, R.layout.printers_container, this);
+        mCoords = new int[] { -1, -1 };
         
         mPrinterViewArray = new ArrayList<ViewGroup>();
         mOrientation = context.getResources().getConfiguration().orientation;
@@ -153,6 +182,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         if (printerItem.getDelete()) {
             printerItem.setDelete(false);
             viewHolder.mDeleteButton.setVisibility(View.GONE);
+            resetDeleteCoords();
         }
     }
     
@@ -169,6 +199,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         if (printerItem.getDelete()) {
             viewHolder.mDeleteButton.setVisibility(View.GONE);
             printerItem.setDelete(false);
+            resetDeleteCoords();
         }
         if (printerItem.getDefault()) {
             return;
@@ -196,6 +227,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
             mDeleteViewHolder = null;
         }
         printerItem.setDelete(true);
+        setDeleteCoords(viewHolder);
         viewHolder.mDeleteButton.setVisibility(View.VISIBLE);
         mDeleteViewHolder = viewHolder;
     }
@@ -241,9 +273,9 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         return null;
     }
     
-    private void addToTabletPrinterScreen(Printer printer) {
+    private ViewHolder addToTabletPrinterScreen(Printer printer) {
         if (printer == null) {
-            return;
+            return null;
         }
         
         Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
@@ -273,7 +305,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         height = (int) (0.95 * (screenSize.y - actionBarHeight) / numberOfRow);
         
         if (parentView == null) {
-            return;
+            return null;
         }
         View pView = inflater.inflate(R.layout.printers_container_item, parentView, false);
         AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
@@ -288,12 +320,19 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_onOff);
         viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
         viewHolder.mDefaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
-        viewHolder.mPrintSettings = (Button) pView.findViewById(R.id.default_print_settings);
+        viewHolder.mPrintSettings = (LinearLayout) pView.findViewById(R.id.default_print_settings);
+        viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
+        
+        ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getContext(), R.layout.printerinfo_port_item);
+        portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
+        portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
+        portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        viewHolder.mPort.setAdapter(portAdapter);
         
         viewHolder.mPrinterName.setText(printer.getName());
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         
-        viewHolder.mPrinterName.setOnLongClickListener(this);
+        ((View) viewHolder.mPrinterName.getParent()).setOnLongClickListener(this);
         viewHolder.mDeleteButton.setOnClickListener(this);
         viewHolder.mPrintSettings.setOnClickListener(this);
         viewHolder.mDefaultPrinter.setOnCheckedChangeListener(this);
@@ -309,7 +348,7 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         mPrinterManager.updateOnlineStatus(printer.getIpAddress(), viewHolder.mOnlineIndcator);
         setPrinterView(viewHolder);
         
-        return;
+        return viewHolder;
     }
     
     private void removeFromLayout(ViewHolder viewHolder) {
@@ -329,11 +368,11 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
             for (int c = column; c <= maxColumnIndex; c++) {
                 if (c == -1) {
                 } else if (c == maxColumnIndex) {
-                    if (!movePrinterItem(row + 1, 0, true)) {
+                    if (!movePrinterItem(row + 1, 0, false)) {
                         return;
                     }
                 } else {
-                    if (!movePrinterItem(row, c + 1, true)) {
+                    if (!movePrinterItem(row, c + 1, false)) {
                         return;
                     }
                 }
@@ -410,15 +449,42 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         
         if (animate) {
             TranslateAnimation translate = null;
-            if (column == 0) {
-                translate = new TranslateAnimation(0, printerView.getWidth(), printerView.getHeight(), 0);
-            } else {
-                translate = new TranslateAnimation(printerView.getWidth(), 0, 0, 0);
-            }
+            
+            translate = new TranslateAnimation(printerView.getWidth(), 0, 0, 0);
             translate.setDuration(250);
             printerView.startAnimation(translate);
         }
         return true;
+    }
+    
+    private void resetDeleteCoords() {
+        mCoords[0] = -1;
+        mCoords[1] = -1;
+    }
+    
+    private void setDeleteCoords(ViewHolder viewHolder) {
+        if (viewHolder == null) {
+            return;
+        }
+        View curPrinterView = (View) viewHolder.mOnlineIndcator.getTag();
+        View printerView = (View) viewHolder.mOnlineIndcator.getTag();
+        ViewGroup curColumnView = (ViewGroup) curPrinterView.getParent();
+        ViewGroup parentView = (ViewGroup) printerView.getParent();
+        
+        switch (parentView.getId()) {
+            case R.id.column1:
+                mCoords[1] = 0;
+                break;
+            case R.id.column2:
+                mCoords[1] = 1;
+                break;
+            case R.id.column3:
+                mCoords[1] = 2;
+                break;
+            default:
+                return;
+        }
+        mCoords[0] = curColumnView.indexOfChild(curPrinterView);
     }
     
     // ================================================================================
@@ -430,7 +496,8 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         if (mDeleteViewHolder != null) {
             setPrinterView(mDeleteViewHolder);
         }
-        mDeleteViewHolder = (ViewHolder) v.getTag();
+        
+        mDeleteViewHolder = (ViewHolder) v.findViewById(R.id.txt_printerName).getTag();
         setPrinterViewToDelete(mDeleteViewHolder);
         return true;
     }
@@ -529,8 +596,9 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
-            case MSG_SET_DEFAULT_PRINTER:
-                setPrinterViewToDefault((ViewHolder) msg.obj);
+            case MSG_SET_UPDATE_VIEWS:
+                setPrinterViewToDefault(mDefaultViewHolder);
+                setPrinterViewToDelete(mDeleteViewHolder);
                 return true;
             case MSG_ADD_PRINTER:
                 addToTabletPrinterScreen((Printer) msg.obj);
@@ -544,11 +612,12 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     // ================================================================================
     
     public class ViewHolder {
-        ImageView mOnlineIndcator;
-        TextView mPrinterName;
-        ImageView mDeleteButton;
-        TextView mIpAddress;
-        Switch mDefaultPrinter;
-        Button mPrintSettings;
+        private ImageView mOnlineIndcator;
+        private TextView mPrinterName;
+        private ImageView mDeleteButton;
+        private TextView mIpAddress;
+        private Switch mDefaultPrinter;
+        private Spinner mPort;
+        private LinearLayout mPrintSettings;
     }
 }
