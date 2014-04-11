@@ -143,7 +143,7 @@
     
     NSInteger section = 0; //expecting only one section for all the groups
     NSInteger groupCount = [self.collectionView numberOfItemsInSection:section];
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] sectionCount=%ld, groupCount=%ld", (long)section+1, (long)groupCount);
 #endif
     
@@ -174,7 +174,7 @@
     // determine the correct column
     NSUInteger col = indexPath.item % self.numberOfColumns;
     
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] row=%lu, col=%lu", (unsigned long)row, (unsigned long)col);
 #endif
     
@@ -185,14 +185,14 @@
     CGFloat groupWidth = 320.0f;
     CGSize groupSize = CGSizeMake(groupWidth, groupHeight);
     
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", groupHeight, groupWidth);
 #endif
     
     // set the x-origin pt.
     CGFloat originX = floorf(self.groupInsets.left + (groupSize.width + self.interGroupSpacingX) * col);
     
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] originX=%f", originX);
 #endif
     
@@ -212,7 +212,7 @@
         originY = floorf(currentColumnHeight + self.interGroupSpacingY);
     }
     
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] originY=%f", originY);
 #endif
 

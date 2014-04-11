@@ -20,6 +20,7 @@
 #pragma mark Views
 #define DEBUG_LOG_PRINTER_STATUS_VIEW       0
 #define DEBUG_LOG_PRINT_JOB_GROUP_VIEW      0
+#define DEBUG_LOG_PRINT_JOB_LAYOUT          0
 
 #pragma mark ViewControllers
 #define DEBUG_LOG_PRINTERS_SCREEN           0

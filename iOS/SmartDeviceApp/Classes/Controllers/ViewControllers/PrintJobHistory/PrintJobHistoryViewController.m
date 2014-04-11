@@ -138,9 +138,7 @@
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
     
     // put the model contents into the view
-    // avoid passing the actual PrintJob object into the view
-    //  -- if the view changes, only controller->view needs to update
-    //  -- if the model changes, only the controller<-model needs to update
+    // (avoid passing the actual PrintJob object into the view)
     [groupCell initWithTag:indexPath.row];
     [groupCell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
     [groupCell putIndicator:group.isCollapsed];
@@ -170,12 +168,6 @@
     return groupCell;
 }
 
-- (BOOL)collectionView:(UICollectionView*)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath*)indexPath
-{
-    return NO;  //disables highlighting of the cell on tap
-    //TODO: check if there is a property or storyboard setting to just turn off highlighting
-}
-
 #pragma mark - PrintJobHistoryLayoutDelegate
 
 - (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath
@@ -200,7 +192,7 @@
     NSInteger groupTag = [sender tag];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupTag);
 #endif
     
     // check if there is a delete button present
@@ -268,11 +260,14 @@
         {
             // no more jobs for this group
             
-            // remove this group from the data source and the view
+            // remove this group from the data source
             [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
+            
+            // remove the cell from the view
             [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
             
-            // also reload the next groups to update their tags
+            // also reload the cells for the next groups to update their tags
+            //TODO: ruins the deleteItemsAtIndexPaths animation, check for a better solution
             [self reloadGroupsStartingFrom:groupTag];
         }
         else
@@ -376,12 +371,15 @@
         }
         if (bRemovedAllJobs)
         {
+            // remove this group from the data source
             [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
             
+            // remove the cell from the view
             NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
             [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
             
-            // also reload the next groups to update their tags
+            // also reload the cells for the next groups to update their tags
+            //TODO: ruins the deleteItemsAtIndexPaths animation, check for a better solution
             [self reloadGroupsStartingFrom:groupTag];
         }
         else

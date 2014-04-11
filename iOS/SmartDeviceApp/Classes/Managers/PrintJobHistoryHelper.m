@@ -114,7 +114,7 @@
 {
     // TEST DATA CONSTANTS
     const NSUInteger TEST_NUM_PRINTERS = 8;
-    const NSUInteger TEST_NUM_JOBS[8] = {5, 4, 3, 4, 2, 6, 1, 7};
+    const NSUInteger TEST_NUM_JOBS[8] = {5, 8, 10, 1, 4, 10, 3, 7}; 
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     

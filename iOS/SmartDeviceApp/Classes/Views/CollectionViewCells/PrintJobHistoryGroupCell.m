@@ -231,8 +231,10 @@
         
         // add to the view
         printJobCell.detailTextLabel.hidden = YES;
-        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end
-        [UIView animateWithDuration:0.3 animations:^
+        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
+        
+        // slide the button from offscreen to its place
+        [UIView animateWithDuration:0.2 animations:^
         {
             deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f, //final position onscreen
                                             5.0f,
@@ -251,9 +253,21 @@
     // get the delete button
     UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
     UIButton* deleteButton = (UIButton*)[[printJobCell.contentView subviews] lastObject];
-    [deleteButton removeFromSuperview];
     
-    printJobCell.detailTextLabel.hidden = NO;
+    // slide the button to offscreen
+    __weak PrintJobHistoryGroupCell* weakSelf = self;
+    [UIView animateWithDuration:0.2 animations:^
+    {
+         deleteButton.frame = CGRectMake(printJobCell.frame.size.width, //final position offscreen
+                                         5.0f,
+                                         weakSelf.deleteAllButton.frame.size.width-15.0f,
+                                         printJobCell.frame.size.height-10.0f);
+    } completion:^(BOOL finished)
+    {
+        [deleteButton removeFromSuperview];
+        printJobCell.detailTextLabel.hidden = NO;
+    }];
+    
     self.jobWithDelete = nil;
 }
 
