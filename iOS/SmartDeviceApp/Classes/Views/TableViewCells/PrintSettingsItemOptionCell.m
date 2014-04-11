@@ -42,4 +42,23 @@
     }
 }
 
+
+- (void) setUserInteractionEnabled:(BOOL)userInteractionEnabled
+{
+    [super setUserInteractionEnabled:userInteractionEnabled];
+    if(userInteractionEnabled == NO)
+    {
+        self.settingLabel.enabled = NO;
+        self.valueLabel.enabled = NO;
+        self.subMenuImage.image = [UIImage imageNamed:@"img_btn_submenu_disabled"];
+        
+    }
+    else
+    {
+        self.settingLabel.enabled = YES;
+        self.valueLabel.enabled = YES;
+        self.subMenuImage.image = [UIImage imageNamed:@"img_btn_submenu"];
+    }
+}
+
 @end

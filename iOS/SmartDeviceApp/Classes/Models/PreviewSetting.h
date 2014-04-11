@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+#define KEY_ORIENTATION         @"orientation"
+#define KEY_DUPLEX              @"duplex"
+#define KEY_IMPOSITION          @"imposition"
+#define KEY_IMPOSITION_ORDER    @"impositionOrder"
+#define KEY_BOOKLET             @"booklet"
+#define KEY_BOOKLET_FINISH      @"bookletFinish"
+#define KEY_BOOKLET_LAYOUT      @"bookletLayout"
+#define KEY_FINISHING_SIDE      @"finishingSide"
+#define KEY_STAPLE              @"staple"
+#define KEY_PUNCH               @"punch"
+
 @interface PreviewSetting : NSObject
 @property (nonatomic) NSInteger colorMode;
 @property (nonatomic) NSInteger orientation;

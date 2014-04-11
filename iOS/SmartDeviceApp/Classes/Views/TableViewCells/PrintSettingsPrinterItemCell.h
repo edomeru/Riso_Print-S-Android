@@ -12,5 +12,5 @@
 
 @property (nonatomic, weak) IBOutlet UILabel *printerNameLabel;
 @property (nonatomic, weak) IBOutlet UILabel *printerIPLabel;
-
+@property (weak, nonatomic) IBOutlet UILabel *selectPrinterLabel;
 @end

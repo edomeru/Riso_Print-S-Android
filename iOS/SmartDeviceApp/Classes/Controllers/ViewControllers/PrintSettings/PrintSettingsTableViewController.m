@@ -21,6 +21,7 @@
 #import "PreviewSetting.h"
 #import "PrinterManager.h"
 #import "Printer.h"
+#import "PrintPreviewHelper.h"
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
@@ -28,6 +29,8 @@
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
 #define SETTING_ITEM_SWITCH_CELL @"SettingItemSwitchCell"
+#define PRINTSETTING_CONTEXT @"PrintSettingContext"
+
 #define PRINTER_SECTION  0
 #define PRINTER_SECTION_HEADER_ROW 0
 #define PRINTER_SECTION_ITEM_ROW 1
@@ -47,6 +50,8 @@
 @property (nonatomic, strong) NSMutableDictionary *textFieldBindings;
 @property (nonatomic, strong) NSMutableDictionary *switchBindings;
 @property (nonatomic, weak) Printer *printer;
+@property (nonatomic, strong) NSArray *settingsWithConstraints;
+@property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
 
 @end
 
@@ -109,6 +114,10 @@
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 20)];
     footer.backgroundColor = [UIColor clearColor];
     self.tableView.tableFooterView = footer;
+    //add observer for settings that have constraint
+    self.settingsWithConstraints =[NSArray arrayWithObjects:KEY_BOOKLET, KEY_PUNCH, KEY_FINISHING_SIDE, KEY_IMPOSITION, KEY_ORIENTATION, nil];
+    self.indexPathsForSettings = [NSMutableDictionary dictionary];
+    [self addObserversForSettingsWithConstraints];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -221,6 +230,8 @@
             
             NSString *type = [setting objectForKey:@"type"];
             NSString *key = [setting objectForKey:@"name"];
+	    //keep track of index of each setting for easy access
+            [self.indexPathsForSettings setObject:indexPath forKey:key];
             if ([type isEqualToString:@"list"])
             {
                 PrintSettingsItemOptionCell *itemOptionCell = [tableView dequeueReusableCellWithIdentifier:SETTING_ITEM_OPTION_CELL forIndexPath:indexPath];
@@ -407,46 +418,118 @@
     }
 }
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+
+-(void) addObserversForSettingsWithConstraints
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    for(NSString *key in self.settingsWithConstraints)
+    {
+        [self.printDocument.previewSetting addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:PRINTSETTING_CONTEXT];
+    }
 }
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+-(void) removeObserversForSettingsWithConstraints
 {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a story board-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    for(NSString *key in self.settingsWithConstraints)
+    {
+        [self.printDocument.previewSetting removeObserver:key forKeyPath:key context:PRINTSETTING_CONTEXT];
+    }
 }
 
- */
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == PRINTSETTING_CONTEXT) {
+        [self applySettingsConstraintForKey:keyPath];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)applyBookletConstraints
+{
+    if(self.printDocument.previewSetting.booklet == YES)
+    {
+        [self setState:NO forSettingKey:KEY_DUPLEX];
+        [self setState:NO forSettingKey:KEY_FINISHING_SIDE];
+        [self setState:NO forSettingKey:KEY_PUNCH];
+        [self setState:NO forSettingKey:KEY_STAPLE];
+        [self setState:NO forSettingKey:KEY_IMPOSITION];
+        [self setState:NO forSettingKey:KEY_IMPOSITION_ORDER];
+        [self setState:YES forSettingKey:KEY_BOOKLET_FINISH];
+        [self setState:YES forSettingKey:KEY_BOOKLET_LAYOUT];
+    }
+    else
+    {
+        [self setState:YES forSettingKey:KEY_DUPLEX];
+        [self setState:YES forSettingKey:KEY_FINISHING_SIDE];
+        [self setState:YES forSettingKey:KEY_PUNCH];
+        [self setState:YES forSettingKey:KEY_STAPLE];
+        [self setState:YES forSettingKey:KEY_IMPOSITION];
+        [self setState:YES forSettingKey:KEY_IMPOSITION_ORDER];
+        [self setState:NO forSettingKey:KEY_BOOKLET_FINISH];
+        [self setState:NO forSettingKey:KEY_BOOKLET_LAYOUT];
+    }
+
+    [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
+    [self setOptionSettingToDefaultValue:KEY_STAPLE];
+    [self setOptionSettingToDefaultValue:KEY_PUNCH];
+    [self setOptionSettingToDefaultValue:KEY_BOOKLET_FINISH];
+    [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
+}
+
+- (void)applySettingsConstraintForKey:(NSString*)key
+{
+    if([key isEqualToString:KEY_BOOKLET] == YES)
+    {
+        [self applyBookletConstraints];
+    }
+    if([key isEqualToString:KEY_FINISHING_SIDE] == YES)
+    {
+        [self applyFinishingConstraints];
+    }
+    if([key isEqualToString:KEY_ORIENTATION] == YES)
+    {
+        //TODO
+    }
+    if([key isEqualToString:KEY_PUNCH] == YES)
+    {
+        //TODO
+    }
+    
+    if([key isEqualToString:KEY_IMPOSITION] == YES)
+    {
+        //TODO
+    }
+}
+
+- (void)applyFinishingConstraints
+{
+    //TODO
+}
+
+-(void) setState:(BOOL)isEnabled forSettingKey:(NSString*)key
+{
+    NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    [cell setUserInteractionEnabled:isEnabled];
+}
+
+-(void) setOptionSettingToDefaultValue: (NSString*)key
+{
+    NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
+    PrintSettingsItemOptionCell *itemOptionCell = [self.tableView cellForRowAtIndexPath:indexPath];
+   
+    //get default value
+    NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:indexPath.section - 1];
+    NSArray *settings = [group objectForKey:@"setting"];
+    NSDictionary *setting = [settings objectAtIndex:indexPath.row - 1];
+    
+    NSString *defaultValue = [setting objectForKey:@"default"];
+    
+    NSInteger value = [defaultValue integerValue];
+    NSArray *options = [setting objectForKey:@"option"];
+    NSString *selectedOption = [[options objectAtIndex:value] objectForKey:@"content-body"];
+    itemOptionCell.valueLabel.localizationId = selectedOption;
+    
+    [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];
+}
 
 @end
