@@ -15,6 +15,12 @@
 #pragma mark - Properties
 
 /**
+ Unique identifier for the group, that can be used to associate
+ a group to its view.
+ */
+@property (readonly, assign, nonatomic) NSInteger tag;
+
+/**
  Name of the Printer object under which all the PrintJob objects this group
  holds belong to. This will be displayed in the group header.
  */
@@ -41,7 +47,7 @@
  @param name
         name that will be displayed in the group header
  */
-+ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name;
++ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name withGroupTag:(NSInteger)tag;
 
 /**
  Adds a PrintJob object to the list of print jobs held by

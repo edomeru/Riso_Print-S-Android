@@ -64,8 +64,9 @@
         NSLog(@"[INFO][PrintJobHelper] listPrintJobs=%lu", (unsigned long)countPrintJobs);
 #endif
      
-        // sort the print jobs according to printer
+        // group the print jobs according to printer
         NSMutableDictionary* dictPrintJobHistoryGroups = [NSMutableDictionary dictionary];
+        NSInteger groupTag = 0;
         for (PrintJob* job in listPrintJobs)
         {
             // get the printer
@@ -78,7 +79,8 @@
                 // group does not exist yet
                 
                 // create a group for this printer
-                PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName];
+                PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName
+                                                                            withGroupTag:groupTag++];
                 [newGroup collapse:NO];
                 
                 // add the current job as this group's first job

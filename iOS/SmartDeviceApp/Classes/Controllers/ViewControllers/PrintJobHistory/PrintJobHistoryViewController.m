@@ -28,14 +28,7 @@
 
 #pragma mark - Data Properties
 
-/**
- The data source for the list of print job history items.
- All items are arranged by group, wherein each group corresponds to one
- printer (as specified by the printer name) and each item in the group
- represents one print job (as specified by the print job name).
- Other details of the print job include the status and the
- date of creation (which is used to sort each item in the group).
- */
+/** The data source for the list PrintJobHistoryGroup objects. */
 @property (strong, nonatomic) NSMutableArray* listPrintJobHistoryGroups;
 
 /** Keeps track of the index of the group that has the delete button. */
@@ -64,8 +57,11 @@
 /** Removes a displayed DELETE button from a group. */
 - (void)removeDeleteButton;
 
-/** Reloads the groups succeeding a recently deleted group. */
-- (void)reloadGroupsStartingFrom:(NSUInteger)tag;
+/** 
+ Searches the list of PrintJobHistoryGroups for a group with the specified tag.
+ Returns the group index and the actual group as out parameters.
+ */
+- (void)findGroupWithTag:(NSInteger)tag outIndex:(NSInteger*)index outGroup:(PrintJobHistoryGroup**)group;
 
 @end
 
@@ -135,13 +131,16 @@
                                                                                     forIndexPath:indexPath];
     
     // get the model
-    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
+    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
     // put the model contents into the view
-    // (avoid passing the actual PrintJob object into the view)
-    [groupCell initWithTag:indexPath.row];
+    
+    [groupCell initWithTag:group.tag]; // use a tag that is independent of the list or view position
+                                       // (to support deleting groups later without need for reloading)
+    
     [groupCell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
     [groupCell putIndicator:group.isCollapsed];
+    
     if (!group.isCollapsed)
     {
         // put the print jobs one-by-one
@@ -168,14 +167,19 @@
     return groupCell;
 }
 
+- (BOOL)collectionView:(UICollectionView*)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath*)indexPath
+{
+    return NO; //fix highlight
+}
+
 #pragma mark - PrintJobHistoryLayoutDelegate
 
 - (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
-    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.row];
+    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] num print jobs = %lu", (unsigned long)group.countPrintJobs);
+    NSLog(@"[INFO][PrintJobCtrl] group=%ld printjobs=%lu", (long)group.tag, (unsigned long)group.countPrintJobs);
 #endif
     
     if (group.isCollapsed)
@@ -188,13 +192,6 @@
 
 - (IBAction)tappedPrinterHeader:(UIButton*)sender
 {
-    // get the group tapped
-    NSInteger groupTag = [sender tag];
-    
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupTag);
-#endif
-    
     // check if there is a delete button present
     if (self.groupWithDelete != nil)
     {
@@ -203,25 +200,26 @@
     }
     else
     {
+        // get the group to be modified
+        PrintJobHistoryGroup* group;
+        NSInteger groupIndex;
+        [self findGroupWithTag:[sender tag] outIndex:&groupIndex outGroup:&group];
+        
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+        NSLog(@"[INFO][PrintJobCtrl] tapped header=%ld", (long)groupIndex);
+#endif
+        
         // toggle collapsed/expanded
-        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
         [group collapse:!group.isCollapsed];
         
         // redraw the view
-        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
         [self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
     }
 }
 
 - (IBAction)tappedDeleteAllButton:(UIButton*)sender
 {
-    // get the group tapped
-    NSInteger groupIndex = [sender tag];
-    
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndex);
-#endif
-    
     // check if there is a delete button present
     if (self.groupWithDelete != nil)
     {
@@ -230,8 +228,15 @@
     }
     else
     {
-        // show user confirmation for deleting all jobs
-        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
+        // get the group to be modified
+        PrintJobHistoryGroup* group;
+        NSInteger groupIndex;
+        [self findGroupWithTag:[sender tag] outIndex:&groupIndex outGroup:&group];
+        
+#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
+        NSLog(@"[INFO][PrintJobCtrl] tapped delete all button=%ld", (long)groupIndex);
+#endif
+        
         [AlertHelper displayConfirmation:kAlertConfirmationDeleteAllJobs
                                forScreen:self
                              withDetails:@[[NSNumber numberWithInteger:groupIndex], group.groupName]];
@@ -240,39 +245,39 @@
 
 - (void)tappedDeleteOneButton:(UIButton*)button
 {
-    NSInteger tag = [button tag];
-    NSUInteger groupTag = tag/TAG_FACTOR;
-    NSUInteger jobTag = tag%TAG_FACTOR;
+    // get the group to be modified
+    NSInteger buttonTag = [button tag];
+    NSUInteger groupTag = buttonTag/TAG_FACTOR;
+    NSUInteger jobTag = buttonTag%TAG_FACTOR;
+    PrintJobHistoryGroup* group;
+    NSInteger groupIndex;
+    [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] will delete {group=%ld, job=%ld}",
-          (unsigned long)groupTag, (unsigned long)jobTag);
+    NSLog(@"[INFO][PrintJobCtrl] tapped delete button=%ld", (long)groupIndex);
 #endif
     
     // remove the print job
-    PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupTag];
     BOOL bRemovedJob = [group removePrintJobAtIndex:jobTag];
     if (bRemovedJob)
     {
-        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
         
         if ([group countPrintJobs] == 0)
         {
             // no more jobs for this group
             
             // remove this group from the data source
-            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
+            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
             
             // remove the cell from the view
             [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
-            
-            // also reload the cells for the next groups to update their tags
-            //TODO: ruins the deleteItemsAtIndexPaths animation, check for a better solution
-            [self reloadGroupsStartingFrom:groupTag];
         }
         else
         {
-            // reload the view for this modified group
+            // group still has jobs
+            
+            // just reload the view
             [self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
         }
     }
@@ -291,7 +296,7 @@
     NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)groupIndexPath.row);
+    NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)groupIndexPath.item);
 #endif
     
     // check if another group has a delete button
@@ -314,7 +319,7 @@
     // get the group tapped
     CGPoint tappedArea = [gestureRecognizer locationInView:self.groupsView];
     NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:tappedArea];
-    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndexPath.row);
+    NSLog(@"[INFO][PrintJobCtrl] tapped group=%ld", (long)groupIndexPath.item);
 #endif
     
     // check if a delete button is present in any group
@@ -334,21 +339,20 @@
     self.groupWithDelete = nil;
 }
 
-- (void)reloadGroupsStartingFrom:(NSUInteger)tag
+- (void)findGroupWithTag:(NSInteger)tag outIndex:(NSInteger*)index outGroup:(PrintJobHistoryGroup**)group
 {
-    [self.groupsView performBatchUpdates:^
-     {
-         NSMutableArray* arrayIndexPaths = [NSMutableArray array];
-         for (NSInteger i=tag; i<[self.listPrintJobHistoryGroups count]; i++)
-         {
-             NSIndexPath* nextGroupIndexPath = [NSIndexPath indexPathForItem:i inSection:0];
-             [arrayIndexPaths addObject:nextGroupIndexPath];
-         }
-         [self.groupsView reloadItemsAtIndexPaths:arrayIndexPaths];
-         
-     } completion:^(BOOL finished)
-     {
-     }];
+    PrintJobHistoryGroup* grp;
+    NSInteger idx;
+    
+    for (idx = 0; idx < [self.listPrintJobHistoryGroups count]; idx++)
+    {
+        grp = [self.listPrintJobHistoryGroups objectAtIndex:idx];
+        if (grp.tag == tag)
+            break;
+    }
+    
+    *index = idx;
+    *group = grp;
 }
 
 #pragma mark - Delete Confirmation
@@ -358,8 +362,8 @@
     if (buttonIndex == [alertView firstOtherButtonIndex])
     {
         // get the group
-        NSInteger groupTag = alertView.tag;
-        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:alertView.tag];
+        NSInteger groupIndex = alertView.tag;
+        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
         
         // remove each job from the group
         BOOL bRemovedAllJobs = NO;
@@ -372,15 +376,11 @@
         if (bRemovedAllJobs)
         {
             // remove this group from the data source
-            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupTag];
+            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
             
             // remove the cell from the view
-            NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupTag inSection:0];
+            NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
             [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
-            
-            // also reload the cells for the next groups to update their tags
-            //TODO: ruins the deleteItemsAtIndexPaths animation, check for a better solution
-            [self reloadGroupsStartingFrom:groupTag];
         }
         else
         {

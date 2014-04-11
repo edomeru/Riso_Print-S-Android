@@ -12,6 +12,7 @@
 
 @interface PrintJobHistoryGroup ()
 
+@property (readwrite, assign, nonatomic) NSInteger tag;
 @property (readwrite, strong, nonatomic) NSString* groupName;
 @property (readwrite, assign, nonatomic) NSUInteger countPrintJobs;
 @property (readwrite, assign, nonatomic) BOOL isCollapsed;
@@ -32,11 +33,12 @@
 
 #pragma mark - Initializer
 
-- (id)initWithName:(NSString*)name
+- (id)initWithName:(NSString*)name withTag:(NSInteger)tag
 {
     self = [super init];
     if (self)
     {
+        self.tag = tag;
         self.groupName = name;
         self.listPrintJobs = [NSMutableArray array];
         self.countPrintJobs = 0;
@@ -45,9 +47,9 @@
     return self;
 }
 
-+ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name
++ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name withGroupTag:(NSInteger)tag
 {
-    return [[self alloc] initWithName:name];
+    return [[self alloc] initWithName:name withTag:tag];
 }
 
 #pragma mark - Add

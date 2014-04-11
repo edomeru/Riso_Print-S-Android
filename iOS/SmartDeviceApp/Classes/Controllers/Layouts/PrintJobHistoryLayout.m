@@ -252,7 +252,7 @@
 {
     // height is based on the tallest column
     NSNumber* maxColumnHeight = [self.columnHeights valueForKeyPath:@"@max.self"]; //KVO-style
-    CGFloat height = [maxColumnHeight floatValue];
+    CGFloat height = [maxColumnHeight floatValue] + 25.0f; //bottom space border
     
     // width is simply the width of the collection view itself
     CGFloat width = self.collectionView.bounds.size.width;
