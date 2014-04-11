@@ -81,12 +81,12 @@ namespace SmartDeviceApp.Common.Enum
 
     public enum ImpositionOrder
     {
-        TwoUpRightToLeft,
         TwoUpLeftToRight,
-        FourUpUpperLeftToBottom,
+        TwoUpRightToLeft,
         FourUpUpperLeftToRight,
-        FourUpUpperRightToBottom,
-        FourUpUpperRightToLeft
+        FourUpUpperRightToLeft,
+        FourUpUpperLeftToBottom,
+        FourUpUpperRightToBottom
     }
 
     public enum Sort
