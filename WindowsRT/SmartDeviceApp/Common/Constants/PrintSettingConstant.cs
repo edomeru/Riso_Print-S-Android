@@ -62,19 +62,23 @@ namespace SmartDeviceApp.Common.Constants
         public static Size PAPER_SIZE_STATEMENT  = new Size( 5.50,  8.50);
 
         // Margin; in inches
-        public static double MARGIN_IMPOSITION_EDGE          = 0.5;
-        public static double MARGIN_IMPOSITION_BETWEEN_PAGES = 0.25;
-        public static double MARGIN_STAPLE                   = 0.25;
-        public static double MARGIN_PUNCH                    = 0.25;
+        public const double MARGIN_IMPOSITION_EDGE          = 0.5;
+        public const double MARGIN_IMPOSITION_BETWEEN_PAGES = 0.25;
+        public const double MARGIN_STAPLE                   = 0.25;
+        public const double MARGIN_PUNCH                    = 0.25;
 
         // Staple size; in inches
-        public static double STAPLE_CROWN_LENGTH = 0.47;
+        public const double STAPLE_CROWN_LENGTH = 0.47;
 
         // Punch size; in inches
-        public static double PUNCH_HOLE_DIAMETER                = 0.26;
-        public static double PUNCH_BETWEEN_TWO_HOLES_DISTANCE   = 2.91;
-        public static double PUNCH_BETWEEN_THREE_HOLES_DISTANCE = 4.00;
-        public static double PUNCH_BETWEEN_FOUR_HOLES_DISTANCE  = 3.25;
+        public const double PUNCH_HOLE_DIAMETER                = 0.26;
+        public const double PUNCH_BETWEEN_TWO_HOLES_DISTANCE   = 2.91;
+        public const double PUNCH_BETWEEN_THREE_HOLES_DISTANCE = 4.00;
+        public const double PUNCH_BETWEEN_FOUR_HOLES_DISTANCE  = 3.25;
+
+        // Copies Acceptable Values
+        public const int COPIES_MIN = 1;
+        public const int COPIES_MAX = 9999;
 
     }
 }

@@ -272,6 +272,12 @@ namespace SmartDeviceApp.Controllers
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_COPIES))
             {
+                bool isValid;
+                value = CheckIfCopiesValid(value, out isValid);
+                if (!isValid)
+                {
+                    result.Value = value;
+                }
                 if (_selectedPrinter.PrintSettings.Copies != value)
                 {
                     _selectedPrinter.PrintSettings.Copies = value;
@@ -807,6 +813,31 @@ namespace SmartDeviceApp.Controllers
         #endregion Print Settings
 
         #region Print Settings Constraints
+
+        /// <summary>
+        /// Checks if the copies value is within acceptable range
+        /// </summary>
+        /// <param name="value">input value</param>
+        /// <param name="result">true if input value is accepted, false otherwise</param>
+        /// <returns>the copies value if input value is not accepted</returns>
+        private int CheckIfCopiesValid(int value, out bool result)
+        {
+            result = true;
+
+            // Note: Number received from event is 0 for non-numeric input
+            if (value < PrintSettingConstant.COPIES_MIN)
+            {
+                result = false;
+                return PrintSettingConstant.COPIES_MIN;
+            }
+            else if (value > PrintSettingConstant.COPIES_MAX)
+            {
+                result = false;
+                return PrintSettingConstant.COPIES_MAX;
+            }
+
+            return value;
+        }
 
         /// <summary>
         /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
