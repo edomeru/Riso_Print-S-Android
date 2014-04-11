@@ -157,6 +157,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
         if (mPdfManager.isInitialized()) {
             mPrintPreviewView.refreshView();
+            setTitle(view, mPdfManager.getFileName());
         }
         
         mOpenInView = view.findViewById(R.id.openInView);
@@ -186,8 +187,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
-        textView.setText(R.string.ids_app_name);
+        setDefaultTitle(view);
         
         addActionMenuButton(view);
         addPrintButton(view);
@@ -243,6 +243,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     public void setPrintPreviewViewDisplayed(View v, boolean show) {
         mProgressBar.setVisibility(View.GONE);
+        setDefaultTitle(v);
         if (show) {
             mOpenInView.setVisibility(View.GONE);
             if (!mPdfManager.isInitialized()) {
@@ -257,6 +258,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 updateSeekBar();
                 updatePageLabel();
                 showPrintSettingsButton(v, true);
+                setTitle(v, mPdfManager.getFileName());
             }
         } else {
             mOpenInView.setVisibility(View.VISIBLE);
@@ -264,6 +266,15 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mPageControls.setVisibility(View.INVISIBLE);
             showPrintSettingsButton(v, false);
         }
+    }
+    
+    public void setDefaultTitle(View v) {
+        setTitle(v, getResources().getString(R.string.ids_app_name));
+    }
+    
+    public void setTitle(View v, String title) {
+        TextView textView = (TextView) v.findViewById(R.id.actionBarTitle);
+        textView.setText(title);
     }
     
     public void showPrintSettingsButton(View v, boolean show) {
