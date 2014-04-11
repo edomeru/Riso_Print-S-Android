@@ -281,6 +281,7 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_selectedPrinter.PrintSettings.Orientation != value)
                 {
+                    isConstraintAffected = UpdateConstraintBookletLayoutUsingOrientation(value);
                     _selectedPrinter.PrintSettings.Orientation = value;
                     isPreviewPageAffected = true;
                 }
@@ -319,6 +320,7 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_selectedPrinter.PrintSettings.Imposition != value)
                 {
+                    isConstraintAffected = UpdateConstraintImpositionOrderUsingImposition(value);
                     _selectedPrinter.PrintSettings.Imposition = value;
                     isPreviewPageAffected = true;
                     isPageCountAffected = true;
@@ -748,6 +750,8 @@ namespace SmartDeviceApp.Controllers
             UpdateConstraintStapleUsingFinishingSide(_selectedPrinter.PrintSettings.FinishingSide);
             UpdateConstaintPunchUsingFinishingSide(_selectedPrinter.PrintSettings.FinishingSide);
             UpdateConstraintFinishingSideUsingPunch(_selectedPrinter.PrintSettings.Punch);
+            UpdateConstraintImpositionOrderUsingImposition(_selectedPrinter.PrintSettings.Imposition);
+            UpdateConstraintBookletLayoutUsingOrientation(_selectedPrinter.PrintSettings.Orientation);
         }
 
         /// <summary>
@@ -1015,7 +1019,7 @@ namespace SmartDeviceApp.Controllers
         /// against Finishing Side print setting.
         /// </summary>
         /// <param name="value">selected Punch print setting option</param>
-        /// <returns>true if constraints are applies, false otherwise</returns>
+        /// <returns>true if constraints are applied, false otherwise</returns>
         private bool UpdateConstraintFinishingSideUsingPunch(int value)
         {
             bool isUpdated = false;
@@ -1050,6 +1054,128 @@ namespace SmartDeviceApp.Controllers
             {
                 _selectedPrinter.PrintSettings.FinishingSide = newFinishingSide;
                 finishingSidePrintSetting.Value = newFinishingSide;
+                isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        /// <summary>
+        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// for its values and enabled state based on constraints with Imposition Order print setting
+        /// against Imposition print setting.
+        /// </summary>
+        /// <param name="value">selected Imposition print setting option</param>
+        /// <returns>true if constraints are applied, false otherwise</returns>
+        private bool UpdateConstraintImpositionOrderUsingImposition(int value)
+        {
+            bool isUpdated = false;
+
+            PrintSetting impositionOrderPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER);
+
+            if (impositionOrderPrintSetting == null)
+            {
+                return isUpdated;
+            }
+
+            int newImpositionOrder = -1;
+            int currImposition = _selectedPrinter.PrintSettings.Imposition;
+            int currImpositionOrder = _selectedPrinter.PrintSettings.ImpositionOrder;
+
+            if (value == (int)Imposition.FourUp)
+            {
+                if (currImposition == (int)Imposition.Off ||
+                    (currImposition == (int)Imposition.TwoUp &&
+                    currImpositionOrder == (int)ImpositionOrder.TwoUpLeftToRight))
+                {
+                    newImpositionOrder = (int)ImpositionOrder.FourUpUpperLeftToRight;
+                }
+                else if (currImposition == (int)Imposition.TwoUp &&
+                    currImpositionOrder != (int)ImpositionOrder.TwoUpLeftToRight)
+                {
+                    newImpositionOrder = (int)ImpositionOrder.FourUpUpperRightToLeft;
+                }
+                
+                // Enable control
+                impositionOrderPrintSetting.IsEnabled = true;
+                isUpdated = true;
+            }
+            else if (value == (int)Imposition.TwoUp)
+            {
+                if (currImposition == (int)Imposition.Off ||
+                    (currImposition == (int)Imposition.FourUp &&
+                    (currImpositionOrder == (int)ImpositionOrder.FourUpUpperLeftToRight ||
+                    currImpositionOrder == (int)ImpositionOrder.FourUpUpperLeftToBottom)))
+                {
+                    newImpositionOrder = (int)ImpositionOrder.TwoUpLeftToRight;
+                }
+                else if (currImposition == (int)Imposition.FourUp &&
+                    (currImpositionOrder != (int)ImpositionOrder.FourUpUpperLeftToRight &&
+                    currImpositionOrder != (int)ImpositionOrder.FourUpUpperLeftToBottom))
+                {
+                    newImpositionOrder = (int)ImpositionOrder.TwoUpRightToLeft;
+                }
+
+                // Enable control
+                impositionOrderPrintSetting.IsEnabled = true;
+                isUpdated = true;
+            }
+            else if (value == (int)Imposition.Off)
+            {
+                newImpositionOrder = (int)ImpositionOrder.TwoUpLeftToRight;
+
+                // Disable control
+                impositionOrderPrintSetting.IsEnabled = false;
+                isUpdated = true;
+            }
+
+            if (newImpositionOrder > -1)
+            {
+                _selectedPrinter.PrintSettings.ImpositionOrder = newImpositionOrder;
+                impositionOrderPrintSetting.Value = newImpositionOrder;
+                isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        /// <summary>
+        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// for its values based on constraints with Booklet Layout print setting
+        /// against Orientation print setting.
+        /// </summary>
+        /// <param name="value">selected Orientation print setting option</param>
+        /// <returns>true if constraints are applied, false otherwise</returns>
+        private bool UpdateConstraintBookletLayoutUsingOrientation(int value)
+        {
+            bool isUpdated = false;
+
+            PrintSetting bookletLayoutPrintSetting =
+                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
+
+            if (bookletLayoutPrintSetting == null)
+            {
+                return isUpdated;
+            }
+
+            int newBookletLayout = -1;
+            int currBookletLayout = _selectedPrinter.PrintSettings.BookletLayout;
+            int defaultBookletLayout = (int)bookletLayoutPrintSetting.Default;
+
+            if ((value == (int)Orientation.Landscape &&
+                (currBookletLayout == (int)BookletLayout.LeftToRight ||
+                currBookletLayout == (int)BookletLayout.RightToLeft)) ||
+                (value == (int)Orientation.Portrait &&
+                currBookletLayout == (int)BookletLayout.TopToBottom))
+            {
+                newBookletLayout = defaultBookletLayout;
+            }
+
+            if (newBookletLayout > -1)
+            {
+                _selectedPrinter.PrintSettings.BookletLayout = newBookletLayout;
+                bookletLayoutPrintSetting.Value = newBookletLayout;
                 isUpdated = true;
             }
 
