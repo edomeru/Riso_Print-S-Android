@@ -1,4 +1,10 @@
-LOCAL_PATH := $(call my-dir)
+JNI_LOCAL_PATH := $(call my-dir)
+
+include $(JNI_LOCAL_PATH)/../../CommonLibrary/Android.mk
+
+include $(CLEAR_VARS)
+
+LOCAL_PATH := $(JNI_LOCAL_PATH)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE     := libsnmp-prebuilt
@@ -22,6 +28,15 @@ include $(CLEAR_VARS)
 LOCAL_MODULE     := libsnmpAPI-prebuilt
 LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libsnmpAPI.so
 include $(PREBUILT_SHARED_LIBRARY)
+
+#libcommon.so
+include $(CLEAR_VARS)
+LOCAL_MODULE := libcommon
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../CommonLibrary/include $(LOCAL_PATH)/common-interface
+LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
+LOCAL_STATIC_LIBRARIES := libcommon-static
+LOCAL_SRC_FILES := common-interface/directprint_manager.c common-interface/snmp_manager.c common-interface/common_manager.c
+include $(BUILD_SHARED_LIBRARY)
 
 #include $(CLEAR_VARS)
 #LOCAL_MODULE     := snmpAPI

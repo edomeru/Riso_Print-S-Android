@@ -24,14 +24,12 @@
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
-		2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
-		2D9DD41A185FFB830085AD88 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
-		2D9DD41B185FFB830085AD88 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
-		2D9DD423185FFB830085AD88 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD422185FFB830085AD88 /* main.mm */; };
-		2D9DD442185FFBC50085AD88 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
-		2D9DD443185FFBCB0085AD88 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
-		2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D9DD446185FFC160085AD88 /* InfoPlist.strings */; };
-		2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2D9DD44E185FFED70085AD88 /* gtest-all.cc */; };
+		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
+		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
+		2D6C913618F51257002A7F48 /* directprint.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6C913518F51257002A7F48 /* directprint.c */; };
+		2D6C913918F535DA002A7F48 /* TestPage.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D6C913818F535DA002A7F48 /* TestPage.pdf */; };
+		2D6C913B18F53B0E002A7F48 /* snmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6C913A18F53B0E002A7F48 /* snmp.c */; };
+		2D6C913D18F53EA2002A7F48 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
 		2DA1AE3F18E2788900085F27 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADCD18E2788900085F27 /* AppDelegate.m */; };
 		2DA1AE4018E2788900085F27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADCE18E2788900085F27 /* main.m */; };
 		2DA1AE4118E2788900085F27 /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1ADD118E2788900085F27 /* ReplaceSegue.m */; };
@@ -80,6 +78,28 @@
 		2DA1AE7018E278B000085F27 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6F18E278B000085F27 /* Reachability.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2D6C912718F4FC35002A7F48 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D0AEBF7185FDD2100810455 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D6C90FA18F4FA57002A7F48;
+			remoteInfo = Common;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2D6C90F918F4FA57002A7F48 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
@@ -104,15 +124,12 @@
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2D8E525518605F33009BE88B /* GTestEventListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = GTestEventListener.h; sourceTree = "<group>"; };
-		2D9DD404185FF3200085AD88 /* CommonAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonAPI.h; sourceTree = "<group>"; };
-		2D9DD418185FFB830085AD88 /* CommonAPITests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CommonAPITests.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D9DD41E185FFB830085AD88 /* CommonAPITests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CommonAPITests-Info.plist"; sourceTree = "<group>"; };
-		2D9DD422185FFB830085AD88 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
-		2D9DD424185FFB830085AD88 /* CommonAPITests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommonAPITests-Prefix.pch"; sourceTree = "<group>"; };
-		2D9DD447185FFC160085AD88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2D9DD44E185FFED70085AD88 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
-		2D9DD44F185FFED70085AD88 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
+		2D6C90FB18F4FA57002A7F48 /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D6C913218F51099002A7F48 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		2D6C913518F51257002A7F48 /* directprint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = directprint.c; sourceTree = "<group>"; };
+		2D6C913818F535DA002A7F48 /* TestPage.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = TestPage.pdf; path = ../../../CommonLibrary/TestPage.pdf; sourceTree = "<group>"; };
+		2D6C913A18F53B0E002A7F48 /* snmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = snmp.c; sourceTree = "<group>"; };
+		2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetsnmp.a; path = "../CommonLibrary/3rdParty/net-snmp/lib/ios/libnetsnmp.a"; sourceTree = "<group>"; };
 		2DA1ADCC18E2788900085F27 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2DA1ADCD18E2788900085F27 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2DA1ADCE18E2788900085F27 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -216,6 +233,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D6C913D18F53EA2002A7F48 /* libnetsnmp.a in Frameworks */,
+				2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */,
 				282830FF18C7012B008B127C /* CoreData.framework in Frameworks */,
 				2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */,
 				2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */,
@@ -235,15 +254,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2D9DD415185FFB830085AD88 /* Frameworks */ = {
+		2D6C90F818F4FA57002A7F48 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D9DD442185FFBC50085AD88 /* QuartzCore.framework in Frameworks */,
-				2D9DD41A185FFB830085AD88 /* CoreGraphics.framework in Frameworks */,
-				2D9DD41B185FFB830085AD88 /* UIKit.framework in Frameworks */,
-				2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */,
-				2D9DD443185FFBCB0085AD88 /* GHUnitIOS.framework in Frameworks */,
+				2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,8 +286,7 @@
 			children = (
 				2D0AEC08185FDD2100810455 /* SmartDeviceApp */,
 				2D0AEC5B185FE43200810455 /* SmartDeviceAppTests */,
-				2D9DD402185FF3200085AD88 /* CommonAPI */,
-				2D9DD41C185FFB830085AD88 /* CommonAPITests */,
+				2D6C911D18F4FB55002A7F48 /* CommonLibrary */,
 				2D0AEC01185FDD2100810455 /* Frameworks */,
 				2D0AEC46185FDE8100810455 /* Resources */,
 				2D0AEC00185FDD2100810455 /* Products */,
@@ -284,7 +298,7 @@
 			children = (
 				2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */,
 				2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */,
-				2D9DD418185FFB830085AD88 /* CommonAPITests.app */,
+				2D6C90FB18F4FA57002A7F48 /* libCommon.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -292,6 +306,7 @@
 		2D0AEC01185FDD2100810455 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */,
 				282830FE18C7012B008B127C /* CoreData.framework */,
 				2D0AEC8A185FE64A00810455 /* QuartzCore.framework */,
 				2D0AEC02185FDD2100810455 /* Foundation.framework */,
@@ -324,6 +339,7 @@
 		2D0AEC46185FDE8100810455 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2D6C913718F535BD002A7F48 /* Test */,
 				2828312F18C70699008B127C /* Database */,
 				2D0AEC47185FDE8100810455 /* Images */,
 				2D0AEC49185FDE8100810455 /* Locales */,
@@ -411,92 +427,39 @@
 			path = Locales;
 			sourceTree = "<group>";
 		};
-		2D9DD402185FF3200085AD88 /* CommonAPI */ = {
+		2D6C911D18F4FB55002A7F48 /* CommonLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				2D9DD403185FF3200085AD88 /* include */,
-				2D9DD406185FF3200085AD88 /* src */,
+				2D6C913118F5108C002A7F48 /* include */,
+				2D6C912018F4FB55002A7F48 /* src */,
 			);
-			name = CommonAPI;
-			path = ../CommonAPI;
+			name = CommonLibrary;
+			path = ../CommonLibrary;
 			sourceTree = "<group>";
 		};
-		2D9DD403185FF3200085AD88 /* include */ = {
+		2D6C912018F4FB55002A7F48 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2D9DD404185FF3200085AD88 /* CommonAPI.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		2D9DD406185FF3200085AD88 /* src */ = {
-			isa = PBXGroup;
-			children = (
+				2D6C913518F51257002A7F48 /* directprint.c */,
+				2D6C913A18F53B0E002A7F48 /* snmp.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
 		};
-		2D9DD40F185FFA1D0085AD88 /* tests */ = {
+		2D6C913118F5108C002A7F48 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				2D9DD44C185FFED70085AD88 /* googletest */,
+				2D6C913218F51099002A7F48 /* common.h */,
 			);
-			name = tests;
-			path = ../../CommonAPI/tests;
+			path = include;
 			sourceTree = "<group>";
 		};
-		2D9DD41C185FFB830085AD88 /* CommonAPITests */ = {
+		2D6C913718F535BD002A7F48 /* Test */ = {
 			isa = PBXGroup;
 			children = (
-				2D9DD40F185FFA1D0085AD88 /* tests */,
-				2D9DD41D185FFB830085AD88 /* Supporting Files */,
-				2D9DD444185FFC160085AD88 /* Resources */,
+				2D6C913818F535DA002A7F48 /* TestPage.pdf */,
 			);
-			path = CommonAPITests;
-			sourceTree = "<group>";
-		};
-		2D9DD41D185FFB830085AD88 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				2D9DD41E185FFB830085AD88 /* CommonAPITests-Info.plist */,
-				2D9DD422185FFB830085AD88 /* main.mm */,
-				2D9DD424185FFB830085AD88 /* CommonAPITests-Prefix.pch */,
-				2D8E525518605F33009BE88B /* GTestEventListener.h */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		2D9DD444185FFC160085AD88 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				2D9DD445185FFC160085AD88 /* Locales */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		2D9DD445185FFC160085AD88 /* Locales */ = {
-			isa = PBXGroup;
-			children = (
-				2D9DD446185FFC160085AD88 /* InfoPlist.strings */,
-			);
-			path = Locales;
-			sourceTree = "<group>";
-		};
-		2D9DD44C185FFED70085AD88 /* googletest */ = {
-			isa = PBXGroup;
-			children = (
-				2D9DD44D185FFED70085AD88 /* gtest */,
-			);
-			path = googletest;
-			sourceTree = "<group>";
-		};
-		2D9DD44D185FFED70085AD88 /* gtest */ = {
-			isa = PBXGroup;
-			children = (
-				2D9DD44E185FFED70085AD88 /* gtest-all.cc */,
-				2D9DD44F185FFED70085AD88 /* gtest.h */,
-			);
-			path = gtest;
+			name = Test;
 			sourceTree = "<group>";
 		};
 		2DA1ADC918E2788900085F27 /* Classes */ = {
@@ -815,6 +778,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D6C912818F4FC35002A7F48 /* PBXTargetDependency */,
 			);
 			name = SmartDeviceApp;
 			productName = SmartDeviceApp;
@@ -838,22 +802,22 @@
 			productReference = 2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D9DD417185FFB830085AD88 /* CommonAPITests */ = {
+		2D6C90FA18F4FA57002A7F48 /* Common */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D9DD43C185FFB840085AD88 /* Build configuration list for PBXNativeTarget "CommonAPITests" */;
+			buildConfigurationList = 2D6C911718F4FA57002A7F48 /* Build configuration list for PBXNativeTarget "Common" */;
 			buildPhases = (
-				2D9DD414185FFB830085AD88 /* Sources */,
-				2D9DD415185FFB830085AD88 /* Frameworks */,
-				2D9DD416185FFB830085AD88 /* Resources */,
+				2D6C90F718F4FA57002A7F48 /* Sources */,
+				2D6C90F818F4FA57002A7F48 /* Frameworks */,
+				2D6C90F918F4FA57002A7F48 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = CommonAPITests;
-			productName = CommonAPITests;
-			productReference = 2D9DD418185FFB830085AD88 /* CommonAPITests.app */;
-			productType = "com.apple.product-type.application";
+			name = Common;
+			productName = CommonLibrary;
+			productReference = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -880,7 +844,7 @@
 			targets = (
 				2D0AEBFE185FDD2100810455 /* SmartDeviceApp */,
 				2D0AEC56185FE43200810455 /* SmartDeviceAppTests */,
-				2D9DD417185FFB830085AD88 /* CommonAPITests */,
+				2D6C90FA18F4FA57002A7F48 /* Common */,
 			);
 		};
 /* End PBXProject section */
@@ -893,6 +857,7 @@
 				2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */,
 				2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
+				2D6C913918F535DA002A7F48 /* TestPage.pdf in Resources */,
 				2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
 			);
@@ -903,14 +868,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2D9DD416185FFB830085AD88 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2D9DD448185FFC160085AD88 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,16 +936,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2D9DD414185FFB830085AD88 /* Sources */ = {
+		2D6C90F718F4FA57002A7F48 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D9DD423185FFB830085AD88 /* main.mm in Sources */,
-				2D9DD450185FFED70085AD88 /* gtest-all.cc in Sources */,
+				2D6C913618F51257002A7F48 /* directprint.c in Sources */,
+				2D6C913B18F53B0E002A7F48 /* snmp.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2D6C912818F4FC35002A7F48 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D6C90FA18F4FA57002A7F48 /* Common */;
+			targetProxy = 2D6C912718F4FC35002A7F48 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		2D0AEC4A185FDE8100810455 /* InfoPlist.strings */ = {
@@ -1015,14 +980,6 @@
 				2D5FC7B818DA7A5900459B92 /* ja */,
 			);
 			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		2D9DD446185FFC160085AD88 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2D9DD447185FFC160085AD88 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1105,6 +1062,7 @@
 		2D0AEC35185FDD2100810455 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1112,6 +1070,10 @@
 				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/seph/Repos/projects/riso-03/CommonLibrary/3rdParty/net-snmp/lib/ios",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1120,6 +1082,7 @@
 		2D0AEC36185FDD2100810455 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1127,6 +1090,10 @@
 				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
 				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/seph/Repos/projects/riso-03/CommonLibrary/3rdParty/net-snmp/lib/ios",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1174,18 +1141,13 @@
 			};
 			name = Release;
 		};
-		2D9DD43D185FFB840085AD88 /* Debug */ = {
+		2D6C911818F4FA57002A7F48 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/seph/Projects/SmartDeviceApp/iOS/SmartDeviceAppTests/GHUnit,
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CommonAPITests/CommonAPITests-Prefix.pch";
+				DSTROOT = /tmp/CommonLibrary.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1193,36 +1155,31 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/seph/XCode5.0.1/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../CommonAPI/tests/googletest,
+					"../CommonLibrary/3rdParty/net-snmp/include",
 				);
-				INFOPLIST_FILE = "CommonAPITests/CommonAPITests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		2D9DD43E185FFB840085AD88 /* Release */ = {
+		2D6C911918F4FA57002A7F48 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/seph/Projects/SmartDeviceApp/iOS/SmartDeviceAppTests/GHUnit,
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CommonAPITests/CommonAPITests-Prefix.pch";
+				DSTROOT = /tmp/CommonLibrary.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/seph/XCode5.0.1/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../CommonAPI/tests/googletest,
+					"../CommonLibrary/3rdParty/net-snmp/include",
 				);
-				INFOPLIST_FILE = "CommonAPITests/CommonAPITests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -1256,11 +1213,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D9DD43C185FFB840085AD88 /* Build configuration list for PBXNativeTarget "CommonAPITests" */ = {
+		2D6C911718F4FA57002A7F48 /* Build configuration list for PBXNativeTarget "Common" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2D9DD43D185FFB840085AD88 /* Debug */,
-				2D9DD43E185FFB840085AD88 /* Release */,
+				2D6C911818F4FA57002A7F48 /* Debug */,
+				2D6C911918F4FA57002A7F48 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
