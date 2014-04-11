@@ -24,7 +24,7 @@ namespace SmartDeviceApp.Controllers
         private CompositeTransform _deltaTransform;
         private TransformGroup _tempCumulativeTransform;
         private MatrixTransform _tempPreviousTransform;
-        private CompositeTransform _tempDeltaTransform;        
+        private CompositeTransform _tempDeltaTransform;
 
         private SwipeRightDelegate _swipeRightHandler;
         private SwipeLeftDelegate _swipeLeftHandler;

@@ -34,6 +34,7 @@ namespace SmartDeviceApp.Views
         public AdaptableGridView()
         {
             this.SizeChanged += MyGridViewSizeChanged;
+            
         }
 
         private void MyGridViewSizeChanged(object sender, SizeChangedEventArgs e)

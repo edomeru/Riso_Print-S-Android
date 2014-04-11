@@ -14,62 +14,98 @@
     x:Name="pageRoot"
     x:Class="SmartDeviceApp.Views.PrintersPage"
     
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
 
     <base:PageBase.Resources>
-        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
-        <x:String x:Key="mainMenuPane">My Application</x:String>
-        <x:String x:Key="PageName">Printers</x:String>
-        <Style x:Key="STYLE_NoSelectionStyle" TargetType="ListViewItem">
-        	<Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-        	<Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        	<Setter Property="Background" Value="Transparent"/>
-        	<Setter Property="TabNavigation" Value="Local"/>
-        	<Setter Property="IsHoldingEnabled" Value="True"/>
-        	<Setter Property="Margin" Value="0,0,18,2"/>
-        	<Setter Property="HorizontalContentAlignment" Value="Left"/>
-        	<Setter Property="VerticalContentAlignment" Value="Top"/>
-        	<Setter Property="Template">
-        		<Setter.Value>
-        			<ControlTemplate TargetType="ListViewItem">
-        				<ListViewItemPresenter CheckHintBrush="{ThemeResource ListViewItemCheckHintThemeBrush}" 
-        					CheckBrush="{ThemeResource ListViewItemCheckThemeBrush}"
-        					ContentMargin="4" 
-        					ContentTransitions="{TemplateBinding ContentTransitions}" 
-        					CheckSelectingBrush="{ThemeResource ListViewItemCheckSelectingThemeBrush}" 
-        					DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" 
-        					DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" 
-        					DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" 
-        					FocusBorderBrush="{ThemeResource ListViewItemFocusBorderThemeBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" 
-        					PointerOverBackgroundMargin="1" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource ListViewItemPointerOverBackgroundThemeBrush}" 
-        					ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedForeground="{ThemeResource ListViewItemSelectedForegroundThemeBrush}"
-        					VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-        			</ControlTemplate>
-        		</Setter.Value>
-        	</Setter>
+        <Style x:Key="STYLE_MainMenuPaneGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="Margin">
+                    <Setter.Value>
+                        <Thickness Left="{StaticResource MARGIN_RightSidePane}"></Thickness>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_RightPaneGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="Margin">
+                    <Setter.Value>
+                        <Thickness Right="{StaticResource MARGIN_RightSidePane}"></Thickness>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+
+        <!--ListView Style for Printer Search-->
+        <Style x:Key="PrinterSearchListViewStyle" TargetType="ListView">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="TabNavigation" Value="Once"/>
+            <Setter Property="IsSwipeEnabled" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition/>
+                        <ContentThemeTransition/>
+                        <ReorderThemeTransition/>
+                        <EntranceThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="ScrollViewer" AutomationProperties.AccessibilityView="Raw" BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}" IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" TabNavigation="{TemplateBinding TabNavigation}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}" ManipulationMode="All">
+                                <StackPanel ManipulationMode="All">
+                                    <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" ManipulationMode="All"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="STYLE_List_Separator" TargetType="Line">
+            <Style.Setters>
+                <Setter Property="X1" Value="{StaticResource MARGIN_List}"/>
+                <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
+                <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
+                <Setter Property="StrokeThickness" Value="2"/>
+            </Style.Setters>
         </Style>
 
         <converters:ItemClickedConverter x:Name="ItemClickedConverter" />
-
+        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
+        
     </base:PageBase.Resources>
 
-
-
-
-
-	<base:PageBase.DataContext>
-		<Binding Path="PrintersViewModel" Source="{StaticResource Locator}"/>
-	</base:PageBase.DataContext>
-<!--
-        This grid acts as a root panel for the page that defines two rows:
-        * Row 0 contains the back button and page title
-        * Row 1 contains the rest of the page layout
-    -->
+    <!-- Grid Layout for the Printer Page-->
 	<Grid x:Name="PrintersScreenGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Grid.Projection>
 			<PlaneProjection/>
 		</Grid.Projection>
 		<VisualStateManager.VisualStateGroups>
+            <!--Visual State Group for pane transitions-->
 			<VisualStateGroup x:Name="PrintersStateGroup">
 				<VisualStateGroup.Transitions>
 					<VisualTransition GeneratedDuration="0:0:0.5">
@@ -81,75 +117,93 @@
 				<VisualState x:Name="MainMenuPaneVisibleState">
 					<Storyboard>
 						<DoubleAnimation Duration="0" To="400" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="mainMenuPaneGrid" d:IsOptimized="True"/>
-						<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="addPrinterPaneGrid" d:IsOptimized="True"/>
-						<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="scanPrintersPaneGrid" d:IsOptimized="True"/>
 						<DoubleAnimation Duration="0" To="400" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printersGrid" d:IsOptimized="True"/>
 					</Storyboard>
 				</VisualState>
-				<VisualState x:Name="PrintersFullScreenState"/>
 				<VisualState x:Name="AddPrinterPaneVisibleState">
 					<Storyboard>
-						<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="mainMenuPaneGrid" d:IsOptimized="True"/>
 						<DoubleAnimation Duration="0" To="-400" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printersGrid" d:IsOptimized="True"/>
 						<DoubleAnimation Duration="0" To="-400" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="addPrinterPaneGrid" d:IsOptimized="True"/>
 					</Storyboard>
 				</VisualState>
-				<VisualState x:Name="ScanPrintersPaneVisibleState">
+				<VisualState x:Name="SearchPrinterPaneVisibleState">
 					<Storyboard>
 						<DoubleAnimation Duration="0" To="-400" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="scanPrintersPaneGrid" d:IsOptimized="True"/>
 						<DoubleAnimation Duration="0" To="-400" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printersGrid" d:IsOptimized="True"/>
 					</Storyboard>
 				</VisualState>
+				<VisualState x:Name="PrintersPaneVisibleState"/>
+			</VisualStateGroup>
+            
+            <!--Visual State Group fro refresh states of Printer Search-->
+			<VisualStateGroup x:Name="PrinterSearchRefreshStateGroup">
+				<VisualState x:Name="RefreshingState">
+					<Storyboard>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PrinterSearchProgressRing">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<Visibility>Visible</Visibility>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="NotRefreshingState"/>
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
 
         <!--Main Menu Pane-->
-		<Grid Grid.Column="0" x:Name="mainMenuPaneGrid" Style="{StaticResource STYLE_MainMenuPaneGrid}">
-			<Grid.Projection>
-				<PlaneProjection/>
-			</Grid.Projection>
-			<controls:MenuPaneControl x:Name="mainMenuPane" x:Uid="IDS_APP_NAME">
-				<controls:MenuPaneControl.Projection>
-					<PlaneProjection/>
-				</controls:MenuPaneControl.Projection>
-			</controls:MenuPaneControl>
-		</Grid>
+        <Grid Grid.Column="0" x:Name="mainMenuPaneGrid" Style="{StaticResource STYLE_MainMenuPaneGrid}">
+        	<Grid.Projection>
+        		<PlaneProjection/>
+        	</Grid.Projection>
+            <local:MainMenuPane x:Name="mainMenuPane" x:Uid="IDS_APP_NAME">
+                <local:MainMenuPane.Projection>
+                    <PlaneProjection/>
+                </local:MainMenuPane.Projection>
+            </local:MainMenuPane>
+        </Grid>
         <!--End Main Menu Pane-->
+        
         <!--Add Pane-->
         <Grid Grid.Column="1" x:Name="addPrinterPaneGrid" 
-			Style="{StaticResource STYLE_PrintSettingsPaneGrid}">
+			Style="{StaticResource STYLE_RightPaneGrid}">
 			<Grid.Projection>
 				<PlaneProjection/>
 			</Grid.Projection>
-			<controls:SidePaneControl x:Name="AddPrinterPane" 
-				Title="{Binding AddPrinterPaneTitleText}" 
-				Button1Command="{Binding AddPrinter}"
-				Button1ImageSource="{Binding DoneButtonImage}"/>
-			<Grid>
-				<Grid Margin="0,57,0,639" Height="75">
+            <local:RightPane x:Name="AddPrinterPane"
+				Title="{Binding AddPrinterPaneTitleText}"
+                             Button2Command="{Binding AddPrinter}"/>
+				<!--Button1Command="{Binding AddPrinter}"
+				Button1ImageSource="{Binding DoneButtonImage}"-->
+
+            <Grid Margin="0,52,0,0" Background="#FFADADAD">
+				<Grid Margin="0,0,0,639" Height="75">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="8*"/>
 						<RowDefinition/>
 					</Grid.RowDefinitions>
-					<TextBlock Text="IP Address" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
+                    <TextBlock x:Uid="IDS_LBL_IP_ADDRESS" Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                               Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
 					<utilities:IPAddressTextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay}" />
-					<!--Style="{StaticResource STYLE_TextBoxWithoutDelete}"-->
-					<Rectangle  HorizontalAlignment="Left" Height="1" Margin="26,66,0,0" Stroke="#FFCDCDCD" VerticalAlignment="Top" Width="374"/>
+                    <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
 				</Grid>
-				<Grid Margin="0,132,0,564" Height="75">
+				<Grid Margin="0,75,0,564" Height="75">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="8*"/>
 						<RowDefinition/>
 					</Grid.RowDefinitions>
+                    <!--TODO: Use string from resource-->
 					<TextBlock Text="Username" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
 					<TextBox x:Name="usernameTextBox" Margin="165,10,10,15" Text="{Binding Username, Mode=TwoWay}"/>
-					<Rectangle  HorizontalAlignment="Left" Height="1" Margin="26,66,0,0" Stroke="#FFCDCDCD" VerticalAlignment="Top" Width="374"/>
-				</Grid>
-				<Grid Margin="0,205,0,489" Height="75">
+                    <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
+                </Grid>
+				<Grid Margin="0,150,0,489" Height="75">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="8*"/>
 						<RowDefinition/>
 					</Grid.RowDefinitions>
+                    <!--TODO: Use string from resource-->
 					<TextBlock Text="Password" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
 					<PasswordBox x:Name="passwordTextBox" Margin="165,10,10,15" Password="{Binding Password, Mode=TwoWay}"/>
 				</Grid>
@@ -157,98 +211,134 @@
 		</Grid>
         <!--End Add Pane-->
         <!--Search Pane-->
-        <Grid Grid.Column="1" x:Name="scanPrintersPaneGrid" Style="{StaticResource STYLE_PrintSettingsPaneGrid}">
+        <Grid Grid.Column="1" x:Name="scanPrintersPaneGrid" Style="{StaticResource STYLE_RightPaneGrid}">
 			<Grid.Projection>
 				<PlaneProjection/>
 			</Grid.Projection>
-			<controls:SidePaneControl x:Name="ScanPrintersPane" Title="{Binding ScanPrintersPaneTitleText}" />
+            <local:RightPane x:Name="ScanPrintersPane" Title="{Binding SearchPrintersPaneTitleText}" />
 			<Grid Margin="0,52,0,0" Background="#FFADADAD">
-				<ListView  HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
-					ItemsSource="{Binding PrinterSearchList}" ItemContainerStyle="{StaticResource STYLE_NoSelectionStyle}"
-                           IsItemClickEnabled="True" SelectionMode="None">
-                    <!--Event triggers when item is clicked. Calls PrinterSearchItemSelected in PrintersViewModel-->
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="ItemClick">
-                            <Core:InvokeCommandAction Command="{Binding PrinterSearchItemSelected}" 
-                                                      InputConverter="{StaticResource ItemClickedConverter}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                    <!--Data Template for list view-->
-                    <!--TODO: Styling of text-->
-                    <ListView.ItemTemplate>
-						<DataTemplate>
-							<Grid HorizontalAlignment="Stretch" Margin="0">
-                                
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*"/>
-									<ColumnDefinition Width="Auto"/>
-								</Grid.ColumnDefinitions>
-								<StackPanel Orientation="Horizontal" Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-									<TextBlock  TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10,10,0,0">
-										<Run Text="{Binding Name}"/>
-									</TextBlock>
-								</StackPanel>
-								<StackPanel Orientation="Horizontal" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-									<Button x:Name="ListView" Style="{StaticResource STYLE_AlignRight}" 
-                                            Height="40" Width="40" BorderThickness="0"
-                                            Background="{Binding ImageSource}"/>
-								</StackPanel>
-                            </Grid>
-						</DataTemplate>
-					</ListView.ItemTemplate>
-				</ListView>
-			</Grid>
+                <StackPanel>
+                    <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="39" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay}">
+                    	<Interactivity:Interaction.Behaviors>
+                    		<Core:DataTriggerBehavior Binding="{Binding WillRefresh}" Value="True">
+                                <Core:InvokeCommandAction Command="{Binding PrinterSearchRefreshed}"/>
+                    		</Core:DataTriggerBehavior>
+                    	</Interactivity:Interaction.Behaviors>
+                    </ProgressRing>
+                    <local:PullToRefreshListView  HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
+					    ItemsSource="{Binding PrinterSearchList}" ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                               IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
+                                                  Height="{Binding Height}">
+                        <!--Event triggers when item is clicked. Calls PrinterSearchItemSelected in PrintersViewModel-->
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="ItemClick">
+                                <Core:InvokeCommandAction Command="{Binding PrinterSearchItemSelected}" 
+                                                          InputConverter="{StaticResource ItemClickedConverter}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                        <!--Data Template for list view-->
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch" Margin="0" Tag="{Binding}">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <controls:KeyValueControl x:Name="printerSearchListItem"
+                                                              Text="{Binding Name}"
+                                                              RightImage="{Binding ImageSource}"
+                                                              RightButtonVisibility="Visible"
+                                                              >
+
+                                    </controls:KeyValueControl>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </local:PullToRefreshListView>
+                </StackPanel>
+            </Grid>
 		</Grid>
         <!--End Search Pane-->
 
         <!--Center Pane-->
-		<Grid x:Name="printersGrid" Grid.Row="0">
+        <Grid x:Name="printersGrid" Grid.Row="0"  Tag="{Binding}">
 			<Grid.Projection>
 				<PlaneProjection/>
 			</Grid.Projection>
-			<controls:ViewControl x:Name="printersView" Title="{Binding PageTitleText}"
-				Button1Command="{Binding ToggleMainMenuPane}" 
+            <controls:ViewControl x:Name="printersView" Text="{Binding PageTitleText}"
+            Button1Command="{Binding ToggleMainMenuPane}" 
 				Button2Command="{Binding ToggleScanPrintersPane}"
 				Button3Command="{Binding ToggleAddPrinterPane}"
-                                  
-				Button1ImageSource="{Binding MainMenuButtonImage}"
+                                  />
+            <!--Button1ImageSource="{Binding MainMenuButtonImage}"
 				Button3ImageSource="{Binding AddButtonImage}"
-				Button2ImageSource="{Binding SearchButtonImage}"
-                                  >
-				<Grid Margin="0,0,0,0" x:Name="printerInformationGrid" Background="#FFCDCDCD" >
-					<local:AdaptableGridView x:Name="printerInfoView" ItemWidth="400" 
+				Button2ImageSource="{Binding SearchButtonImage}"-->
+
+            <Grid  x:Name="printerInformationGrid" Background="#FFCDCDCD"  Tag="{Binding}" Margin="0,55,0,0">
+                <local:AdaptableGridView x:Name="printerInfoView" ItemWidth="400"
 						ScrollViewer.VerticalScrollMode="Enabled"
 						ScrollViewer.VerticalScrollBarVisibility="Visible"
 						SelectionMode="None"
 						IsItemClickEnabled="False" 
-						Margin="50,0,50,0" ItemsSource="{Binding PrinterList}">
-						<local:AdaptableGridView.ItemsPanel>
+						Margin="20,0,20,0" ItemsSource="{Binding PrinterList}" >
+                    <GridView.ItemsPanel>
 							<ItemsPanelTemplate>
 								<VariableSizedWrapGrid  Orientation="Horizontal" 
 									ItemWidth="{Binding ItemWidth, ElementName=printerInfoView}"
-									MaximumRowsOrColumns="{Binding MaxRowsOrColumns, ElementName=printerInfoView}"/>
+									MaximumRowsOrColumns="{Binding MaxRowsOrColumns, ElementName=printerInfoView}"
+                                                        />
 							</ItemsPanelTemplate>
-						</local:AdaptableGridView.ItemsPanel>
-						<local:AdaptableGridView.ItemTemplate>
-							<DataTemplate>
+						</GridView.ItemsPanel>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:Name="DataTemplate">
                             <!--TODO: Printers Info-->
-								<Grid HorizontalAlignment="Left" Height="350"  Margin="0,0,0,0" Background="#FFADADAD" Width="400">
-									<StackPanel>
-										<TextBlock  TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10,10,0,0">
-											<Run Text="Ip address: "/>
-											<Run Text="{Binding Ip_address}"/>
-										</TextBlock>
-										<TextBlock  TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10,10,0,0">
-											<Run Text="Online: "/>
-											<Run Text="{Binding isOnline}"/>
-										</TextBlock>
-									</StackPanel>
-								</Grid>
-							</DataTemplate>
-						</local:AdaptableGridView.ItemTemplate>
-					</local:AdaptableGridView>
-                </Grid>
-			</controls:ViewControl>
+                            <ListView x:Name="PrinterInfoList" 
+                                              ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                                              IsItemClickEnabled="True" SelectionMode="None"
+                                              Width="400" DataContext="{Binding}">
+                            
+                                <controls:PrinterNameControl x:Name="printerName"  
+                                                                     Text="{Binding Name}"
+                                                                     RightButtonVisibility="Collapsed" 
+                                                                     IsDefault="{Binding IsDefault}"
+                                                                     IsOnline="{Binding IsOnline}"
+                                                                     IconVisibility="Visible"
+                                                                     LeftButtonVisibility="Collapsed"
+                                                                     PrinterIp="{Binding IpAddress}"
+                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=pageRoot}"/>
+
+                                <controls:KeyImageControl x:Name="printerImage" 
+                                                          PrinterImage="ms-appx:///Resources/Dummy/RZ1070-page1.jpg"/>
+                                
+                                <controls:KeyValueControl x:Name="ipAddress" 
+                                                          Text="Ip Address" ValueText="{Binding IpAddress}"
+                                                          RightButtonVisibility="Collapsed"
+                                                          LeftButtonVisibility="Collapsed"
+                                                          ValueVisibility="Visible"/>
+                                
+                                <controls:KeyValueControl x:Name="port" 
+                                                          Text="Port"
+                                                          LeftButtonVisibility="Collapsed"/>
+                                <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
+                                                                 Text="Set as Default Printer"
+                                                                 RightButtonVisibility="Collapsed"
+                                                                 LeftButtonVisibility="Collapsed"
+                                                                 IsOn="{Binding IsDefault, Mode=TwoWay}"/>
+                                <controls:KeyValueControl x:Name="settings" 
+                                                          Text="Default Print Settings"
+                                                          LeftButtonVisibility="Collapsed"
+                                                          RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"/>
+
+
+
+                            </ListView>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </local:AdaptableGridView>
+            </Grid>
+
         </Grid>
         <!--Center Pane-->
 

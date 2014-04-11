@@ -22,37 +22,19 @@ namespace SmartDeviceApp.Models
 {
     public class LogicalPage
     {
-        private uint _pageIndex;
-        private string _imageId;
-        private Size _size;
-        private PdfPageRotation _rotation;
 
-        public LogicalPage(uint pageIndex, string imageId, Size size, PdfPageRotation rotation)
+        public uint PageIndex { get; private set; }
+        public string Name { get; private set; }
+        public Size ActualSize { get; private set; }
+        public PdfPageRotation Rotation { get; private set; }
+
+        public LogicalPage(uint pageIndex, string name, Size actualSize, PdfPageRotation rotation)
         {
-            _pageIndex = pageIndex;
-            _imageId = imageId;
-            _size = size;
-            _rotation = rotation;
+            PageIndex = pageIndex;
+            Name = name;
+            ActualSize = actualSize;
+            Rotation = rotation;
         }
 
-        public uint PageIndex
-        {
-            get { return _pageIndex; }
-        }
-
-        public string ImageId
-        {
-            get { return _imageId; }
-        }
-
-        public Size Size
-        {
-            get { return _size; }
-        }
-
-        public PdfPageRotation Rotation
-        {
-            get { return _rotation; }
-        }
     }
 }

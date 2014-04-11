@@ -1,0 +1,57 @@
+﻿<UserControl x:Name="keyImageControl"
+    x:Class="SmartDeviceApp.Controls.KeyImageControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="60"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style x:Key="STYLE_ListItemGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
+                <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
+                <Setter Property="Height" Value="{StaticResource SIZE_ListItemHeight}"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_List_Separator" TargetType="Line">
+            <Style.Setters>
+                <Setter Property="X1" Value="{StaticResource MARGIN_List}"/>
+                <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
+                <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
+                <Setter Property="StrokeThickness" Value="2"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Name="STYLE_ListButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+    </UserControl.Resources>
+    <Grid x:Name="button" Style="{StaticResource STYLE_ListItemGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="1" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Style="{StaticResource STYLE_StackRight}" Margin="0,1,70,0" Grid.RowSpan="2">
+            <Image x:Name="printerImage" Source="{Binding PrinterImage, ElementName=keyImageControl}"
+                        Visibility="{Binding RightButtonVisibility, ElementName=keyImageControl}" 
+                        Style="{StaticResource STYLE_AlignRight}" Stretch="None" RenderTransformOrigin="0.5,0.5" Width="115" Margin="20,-49,0,0"
+                   />
+
+            <!--<Image.RenderTransform>
+                    <CompositeTransform ScaleX="-1"/>
+                </Image.RenderTransform>-->
+
+        </StackPanel>
+    </Grid>
+</UserControl>

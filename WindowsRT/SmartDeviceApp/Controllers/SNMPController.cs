@@ -12,8 +12,10 @@ namespace SmartDeviceApp.Controllers
     class SNMPController
     {
         public Action<string, bool> printerControllerGetStatusCallback { get; set; } //PrintersModule
-        public Action<string, string, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
+        public Action<string, string, bool> printerControllerAddPrinterCallback { get; set; }
         public Action<PrinterSearchItem> printerControllerDiscoverCallback { get; set; }
+        public Action<string> printerControllerTimeout { get; set; }
+
         public List<Printer> printerList {get; set;}
         private bool waiting;
 
@@ -46,18 +48,28 @@ namespace SmartDeviceApp.Controllers
          * 
          * */
 
-        public void getCapability(string ip)
+        public void getDevice(string ip)
         {
-            SNMPDevice device = new SNMPDevice(ip);
-            waiting = true;
-            device.snmpControllerCallBackGetCapability = new Action<string, string, bool, List<string>>(handleGetCapability);
-            device.beginRetrieveCapabilities();
+            //SNMPDevice device = new SNMPDevice(ip);
+            //waiting = true;
+            //device.snmpControllerCallBackGetCapability = new Action<string, string, bool, List<string>>(handleGetCapability);
+            //device.beginRetrieveCapabilities();
+
+            SNMPDiscovery discovery = new SNMPDiscovery("public", ip);
+            discovery.FromPrinterSearch = false;
+            discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleGetDevice);
+            discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
+            discovery.startDiscover();
         }
 
-        private void handleGetCapability(string ip, string name, bool isOnline, List<string> capabilities)
+        private void handleGetDevice(SNMPDevice device)
         {
-            printerControllerAddPrinterCallback(ip, name, isOnline, capabilities);
+            System.Diagnostics.Debug.WriteLine("Name(in SNMPController): ");
+            System.Diagnostics.Debug.WriteLine(device.getSysName());
+            printerControllerAddPrinterCallback(device.getIpAddress(), device.getSysName(), true);
         }
+
+        
 
 
         /**
@@ -69,7 +81,9 @@ namespace SmartDeviceApp.Controllers
         {
             SNMPDiscovery discovery = new SNMPDiscovery("public", "192.168.0.255");
             //add callback
+            discovery.FromPrinterSearch = true;
             discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
+            discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
             discovery.startDiscover();
         }
 
@@ -84,6 +98,14 @@ namespace SmartDeviceApp.Controllers
             printerControllerDiscoverCallback(printer);
         }
 
+        /**
+         * Timeout
+         * 
+         * */
+        private void handleTimeout(string ip)
+        {
+            printerControllerTimeout(ip);
+        }
 
     }
 }

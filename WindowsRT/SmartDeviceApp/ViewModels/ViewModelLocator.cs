@@ -52,6 +52,22 @@ namespace SmartDeviceApp.ViewModel
             }
         }
 
+        public PrintSettingsViewModel PrintSettingsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PrintSettingsViewModel>();
+            }
+        }
+
+        public PrintSettingOptionsViewModel PrintSettingOptionsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PrintSettingOptionsViewModel>();
+            }
+        }
+
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
@@ -69,6 +85,8 @@ namespace SmartDeviceApp.ViewModel
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
             SimpleIoc.Default.Register<PrintPreviewViewModel>();
             SimpleIoc.Default.Register<PrintersViewModel>();
+            SimpleIoc.Default.Register<PrintSettingsViewModel>();
+            SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();
         }
 
         /// <summary>

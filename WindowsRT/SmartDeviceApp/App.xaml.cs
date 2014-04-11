@@ -22,15 +22,11 @@ using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp
 {
-
-    
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-
-        static public  DatabaseController db;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -41,7 +37,6 @@ namespace SmartDeviceApp
             Suspending += OnSuspending;
 
             MainController.Initialize();
-            db = new DatabaseController();
         }
 
         /// <summary>
@@ -49,10 +44,8 @@ namespace SmartDeviceApp
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-
-            
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -89,9 +82,12 @@ namespace SmartDeviceApp
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(PrintPreviewPage), e.Arguments);
-                //rootFrame.Navigate(typeof(HomePage), e.Arguments); 
-                rootFrame.Navigate(typeof(PrintersPage), e.Arguments); // testing only PrintersModule
+
+                await MainController.InitializePrintersController();
+
+                //rootFrame.Navigate(typeof(PrintPreviewPage), e.Arguments);
+                rootFrame.Navigate(typeof(PrintersPage), e.Arguments);
+                //await MainController.InitializeSamplePdf(); // TODO: For deletion, used for testing
             }
             // Ensure the current window is active
             Window.Current.Activate();
@@ -101,7 +97,7 @@ namespace SmartDeviceApp
         /// Invoked when the application is launched by the end user thru Open With.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnFileActivated(FileActivatedEventArgs e)
+        protected override async void OnFileActivated(FileActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -126,15 +122,15 @@ namespace SmartDeviceApp
                 DispatcherHelper.Initialize();
             }
 
-            if (rootFrame.Content == null)
-            {
+            //if (rootFrame.Content == null)
+            //{
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(HomePage));
-            }
+                rootFrame.Navigate(typeof(PrintPreviewPage));
+            //}
 
-            MainController.FileActivationHandler(e);
+            await MainController.FileActivationHandler(e);
 
             // Ensure the current window is active
             Window.Current.Activate();

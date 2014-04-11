@@ -10,6 +10,6 @@ namespace SmartDeviceApp.Common.Enum
     {
         MainMenuPaneVisible,
         PreviewViewFullScreen,
-        PrintSettingsPaneVisible
+        RightPaneVisible
     }
 }

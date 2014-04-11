@@ -51,6 +51,17 @@ namespace SmartDeviceApp.DummyControllers
             pageImage.UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
             Messenger.Default.Send<DummyPageMessage>(new DummyPageMessage(pageImage, new Size(2480, 3508)));
         }
+
+        public async Task<StorageFile> GetSamplePdf()
+        {
+            Windows.ApplicationModel.Package package = Windows.ApplicationModel.Package.Current;
+            Windows.Storage.StorageFolder installedLocation = package.InstalledLocation;
+
+            String output = String.Format("Installed Location: {0}", installedLocation.Path);
+
+            StorageFile samplePdf = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Resources/Dummy/RZ1070.pdf"));
+            return samplePdf;
+        }
     }
 
     public class DummyPageMessage

@@ -30,13 +30,14 @@ namespace SmartDeviceApp.Controllers
         public static void Initialize()
         {
             InitializeDataStorage();
+            
         }
 
         /// <summary>
         /// Initiates loading of PDF document
         /// </summary>
-        /// <param name="e"></param>
-        public static void FileActivationHandler(FileActivatedEventArgs e)
+        /// <param name="e">event argument</param>
+        public async static Task FileActivationHandler(FileActivatedEventArgs e)
         {
             // Should handle only one file
             if (e.Files.Count != 1)
@@ -44,7 +45,9 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            DocumentController.Instance.Load(e.Files[0] as StorageFile);
+            await DocumentController.Instance.Load(e.Files[0] as StorageFile);
+            await PrintPreviewController.Instance.Initialize();
+            
         }
 
         /// <summary>
@@ -52,8 +55,25 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private static void InitializeDataStorage()
         {
-            //TODO: Call DatabaseController here
+            DatabaseController.Instance.Initialize();
         }
+
+        public async static Task InitializePrintersController()
+        {
+           await PrinterController.Instance.Initialize();
+           NetworkController.Instance.Initialize(); // remove if no initialization
+        }
+
+        #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
+
+        public async static Task InitializeSamplePdf()
+        {
+            StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
+            await DocumentController.Instance.Load(samplePdf);
+            await PrintPreviewController.Instance.Initialize();
+        }
+
+        #endregion TEST - Sample PDF Page - FOR DELETION -----------------------------------------------------------------------------
 
     }
 }

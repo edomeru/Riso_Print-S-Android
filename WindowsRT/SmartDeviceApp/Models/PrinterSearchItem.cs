@@ -14,7 +14,7 @@ namespace SmartDeviceApp.Models
         private string _name;
         private string _ip_address;
         private bool _isInPrinterList;
-        private ImageBrush _imageSource;
+        private ImageSource _imageSource;
 
         private readonly string _AddImageNormal = "ms-appx:///Resources/Images/img_btn_add_printer_normal.png";
         private readonly string _AddPrinterOkImagePressed = "ms-appx:///Resources/Images/img_btn_add_printer_ok_pressed.png";
@@ -52,7 +52,7 @@ namespace SmartDeviceApp.Models
             }
         }
 
-        public ImageBrush ImageSource
+        public ImageSource ImageSource
         {
             get { return _imageSource; }
             set
@@ -73,21 +73,21 @@ namespace SmartDeviceApp.Models
         {
             if (IsInPrinterList)
             {
-                ImageSource = convertImageSourceToImageBrush(_AddPrinterOkImagePressed);
+                ImageSource = convertImageSource(_AddPrinterOkImagePressed);
             } 
             else
             {
-                ImageSource = convertImageSourceToImageBrush(_AddImageNormal);
+                ImageSource = convertImageSource(_AddImageNormal);
             }
         }
 
-        private ImageBrush convertImageSourceToImageBrush(string src)
+        private ImageSource convertImageSource(string src)
         {
+            
             BitmapImage image = new BitmapImage(new Uri(src));
             ImageSource imgSrc = image;
-            ImageBrush ib = new ImageBrush();
-            ib.ImageSource = image;
-            return ib;
+
+            return imgSrc;
         }
     }
 }

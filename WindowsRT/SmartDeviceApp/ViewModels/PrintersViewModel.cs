@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using System.ComponentModel;
 using System.Diagnostics;
 using GalaSoft.MvvmLight.Command;
+using Windows.UI.Xaml;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -33,8 +34,11 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _toggleScanPrintersPane;
 
         private ICommand _addPrinter;
+        private ICommand _deletePrinter;
 
         private ICommand _printerSearchItemSelected;
+
+        private ICommand _printerSearchRefreshed;
 
         private ObservableCollection<Printer> _printerList;
         private ObservableCollection<PrinterSearchItem> _printerSearchList;
@@ -42,6 +46,8 @@ namespace SmartDeviceApp.ViewModels
         private PrinterController printerController = new PrinterController();
 
         private PrintersViewMode _printersViewMode;
+        private bool _willRefresh;
+        private int _height;
 
         /*
          * Titles for Center Pane and side Panes
@@ -86,12 +92,44 @@ namespace SmartDeviceApp.ViewModels
         private readonly string _MainMenuImagePressed = "ms-appx:///Resources/Images/img_btn_main_menu_pressed.png";
 
         
+        /**
+         * 
+         * Delegates for controllers
+         * 
+         * */
+
+        public event SmartDeviceApp.Controllers.PrinterController.PopulateScreenHandler PopulateScreenHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.SearchPrinterHandler SearchPrinterHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.DeletePrinterHandler DeletePrinterHandler;
+
+
+
 
         /**
          * 
          * Public Getters and Setters
          * 
          * */
+        public int Height
+        {
+            get { return this._height; }
+            set
+            {
+                _height = value;
+                OnPropertyChanged("Height");
+            }
+        }
+
+        public bool WillRefresh
+        {
+            get { return this._willRefresh; }
+            set
+            {
+                _willRefresh = value;
+                OnPropertyChanged("WillRefresh");
+            }
+        }
 
         public ObservableCollection<Printer> PrinterList
         {
@@ -123,10 +161,14 @@ namespace SmartDeviceApp.ViewModels
             get;
             set;
         }
-        public string ScanPrintersPaneTitleText
+        public string SearchPrintersPaneTitleText
         {
-            get;
-            set;
+            get { return this._searchPrintersPaneTitleText; }
+            set
+            {
+                _searchPrintersPaneTitleText = value;
+                OnPropertyChanged("SearchPrintersPaneTitleText");
+            }
         }
 
         
@@ -225,31 +267,26 @@ namespace SmartDeviceApp.ViewModels
             Initialize();
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
 
             PageTitleText = "Printers";
             AddPrinterPaneTitleText = "Add Printer";
-            ScanPrintersPaneTitleText = "Printer Search";
+            SearchPrintersPaneTitleText = "Printer Search";
 
             IpAddress = "";
             Username = "";
             Password = "";
             _printersViewMode = PrintersViewMode.PrintersFullScreen;
-            PrinterSearchList = printerController.PrinterSearchList;
+            
 
 
             setMainMenuButtonImage(_MainMenuImageNormal);
             setAddButtonImage(_AddImageNormal);
             setSearchButtonImage(_SearchImageNormal);
             setDoneButtonImage(_AddPrinterOkImageNormal);
-            populateScreen();
-        }
 
-        private void populateScreen()
-        {
-            printerController.populatePrintersScreen();
-            PrinterList = printerController.PrinterList;
+            Height = (int) Window.Current.Bounds.Height - 52;
         }
 
 
@@ -378,7 +415,7 @@ namespace SmartDeviceApp.ViewModels
                         setAddButtonImage(_AddImageNormal);
                         setSearchButtonImage(_SearchImagePressed);
                         SetPrintersView(PrintersViewMode.ScanPrintersPaneVisible);
-                        printerController.scanPrinters();
+                        SearchPrinterHandler();
                         break;
                     }
 
@@ -387,7 +424,7 @@ namespace SmartDeviceApp.ViewModels
                         setAddButtonImage(_AddImageNormal);
                         setSearchButtonImage(_SearchImagePressed);
                         SetPrintersView(PrintersViewMode.ScanPrintersPaneVisible);
-                        printerController.scanPrinters();
+                        SearchPrinterHandler();
                         break;
                     }
                 case PrintersViewMode.ScanPrintersPaneVisible:
@@ -464,27 +501,49 @@ namespace SmartDeviceApp.ViewModels
             }
 
             //add to printer controller
-            bool isSuccessful = printerController.addPrinter(IpAddress);
+            bool isSuccessful = AddPrinterHandler(IpAddress);
+                //printerController.addPrinter(IpAddress);
             if (!isSuccessful)
             {
                 //display error message TODO
 
                 return;
             }
-
-            //display
-            MessageAlert ma = new MessageAlert();
-            ma.Content = "The new printer was added successfully.";
-            ma.Caption = "Add Printer Info";
-
-            Messenger.Default.Send<MessageAlert>(ma);
-
-
-            //clear data
-            IpAddress = "";
-            Username = "";
-            Password = "";
         }
+
+        public void handleAddIsSuccessful(bool isSuccessful)
+        {
+            string caption = "";
+            string content = "";
+
+            if (isSuccessful)
+            {
+                content = "The new printer was added successfully.";
+                //clear data
+                IpAddress = "";
+                Username = "";
+                Password = "";
+            }
+            else
+            {
+                content = "The new printer is not online but was added successfully with default printer settings.";
+            }
+            caption = "Add Printer Info";
+
+            DisplayMessage(caption, content);
+        }
+
+
+        public void DisplayMessage(string caption, string content)
+        {
+            MessageAlert ma = new MessageAlert();
+            ma.Caption = caption;
+            ma.Content = content;
+            Messenger.Default.Send<MessageAlert>(ma);
+        }
+
+
+
 
         public ICommand PrinterSearchItemSelected
         {
@@ -508,7 +567,8 @@ namespace SmartDeviceApp.ViewModels
             if (!item.IsInPrinterList)
             {
                 //add to printer
-                bool isSuccessful = printerController.addPrinter(item.Ip_address);
+                bool isSuccessful = AddPrinterHandler(item.Ip_address);
+                    //printerController.addPrinter(item.Ip_address);
 
                 if (!isSuccessful)
                 {
@@ -517,18 +577,56 @@ namespace SmartDeviceApp.ViewModels
                     return;
                 }
 
-                //display
-                MessageAlert ma = new MessageAlert();
-                ma.Content = "The new printer was added successfully.";
-                ma.Caption = "Add Printer Info";
-
-                Messenger.Default.Send<MessageAlert>(ma);
-
                 item.IsInPrinterList = true;
                 
             }
         }
 
+
+        public ICommand DeletePrinter
+        {
+            get
+            {
+                if (_deletePrinter == null)
+                {
+                    _deletePrinter = new RelayCommand<string>(
+                        (ip) => DeletePrinterExecute(ip),
+                        (ip) => true
+                    );
+                }
+                return _deletePrinter;
+            }
+        }
+
+        private void DeletePrinterExecute(string ipAddress)
+        {
+            DeletePrinterHandler(ipAddress);
+        }
+
+        public void SearchTimeout()
+        {
+            Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
+        }
+
+        public ICommand PrinterSearchRefreshed
+        {
+            get
+            {
+                if (_printerSearchRefreshed == null)
+                {
+                    _printerSearchRefreshed = new SmartDeviceApp.Common.RelayCommand(
+                        () => PrinterSearchRefreshedExecute(),
+                        () => true
+                    );
+                }
+                return _printerSearchRefreshed;
+            }
+        }
+
+        private void PrinterSearchRefreshedExecute()
+        {
+            SearchPrinterHandler();
+        }
 
 
         /**

@@ -25,20 +25,16 @@ namespace SmartDeviceApp.Controls
         }
 
         public static new readonly DependencyProperty VisibilityProperty = 
-            DependencyProperty.Register("Visibility", typeof(Visibility), typeof(PageControl), 
-            new PropertyMetadata(Visibility.Visible, new PropertyChangedCallback(SetVisibility)));
+            DependencyProperty.Register("Visibility", typeof(Visibility), typeof(PageControl), null);
 
         public static readonly DependencyProperty ImageProperty =
-            DependencyProperty.Register("Image", typeof(ImageSource), typeof(PageControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetImage)));
+            DependencyProperty.Register("Image", typeof(ImageSource), typeof(PageControl), null);
 
         public static new readonly DependencyProperty HorizontalAlignmentProperty =
-            DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(PageControl),
-            new PropertyMetadata(HorizontalAlignment.Center, new PropertyChangedCallback(SetHorizontalAlignment)));
+            DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(PageControl), null);
 
         public static new readonly DependencyProperty MarginProperty =
-            DependencyProperty.Register("Margin", typeof(Thickness), typeof(PageControl),
-            new PropertyMetadata(new Thickness(0,0,0,0), new PropertyChangedCallback(SetMargin)));
+            DependencyProperty.Register("Margin", typeof(Thickness), typeof(PageControl), null);
 
         public new Visibility Visibility
         {
@@ -69,39 +65,5 @@ namespace SmartDeviceApp.Controls
             get { return (double)GetValue(HeightProperty); }
             set { SetValue(HeightProperty, value); }
         }
-
-        #region PRIVATE METHODS
-
-        private static void SetVisibility(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((Visibility)e.NewValue == Visibility.Visible)
-            {
-                ((PageControl)obj).pageGrid.Visibility = Visibility.Visible;
-            }
-            else 
-            {
-                ((PageControl)obj).pageGrid.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private static void SetImage(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((BitmapImage)e.NewValue != null)
-            {
-                ((PageControl)obj).pageImage.Source = (ImageSource)e.NewValue;
-            }
-        }
-
-        private static void SetHorizontalAlignment(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            ((PageControl)obj).pageGrid.HorizontalAlignment = (HorizontalAlignment)e.NewValue;
-        }
-
-        private static void SetMargin(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            ((PageControl)obj).pageGrid.Margin = (Thickness)e.NewValue;
-        }
-
-        #endregion
     }
 }

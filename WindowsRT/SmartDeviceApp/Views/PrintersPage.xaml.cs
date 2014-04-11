@@ -47,6 +47,7 @@ namespace SmartDeviceApp.Views
         public PrintersPage()
         {
             Messenger.Default.Register<PrintersViewMode>(this, (printersViewMode) => OnSetPrintersView(printersViewMode));
+            Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
             
             Messenger.Default.Register<MessageAlert>(
              this,
@@ -54,6 +55,18 @@ namespace SmartDeviceApp.Views
 
 
             this.InitializeComponent();
+        }
+
+        private void OnSetRefreshState(PrinterSearchRefreshState refreshState)
+        {
+            if (refreshState == PrinterSearchRefreshState.RefreshingState)
+            {
+                VisualStateManager.GoToState(this, "RefreshingState", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "NotRefreshingState", true);
+            }
         }
 
         
@@ -125,7 +138,7 @@ namespace SmartDeviceApp.Views
 
                 case PrintersViewMode.PrintersFullScreen:
                     {
-                        VisualStateManager.GoToState(this, "PrintersFullScreenState", true);
+                        VisualStateManager.GoToState(this, "PrintersPaneVisibleState", true);
 
                         break;
                     }
@@ -138,7 +151,7 @@ namespace SmartDeviceApp.Views
                     }
                 case PrintersViewMode.ScanPrintersPaneVisible:
                     {
-                        VisualStateManager.GoToState(this, "ScanPrintersPaneVisibleState", true);
+                        VisualStateManager.GoToState(this, "SearchPrinterPaneVisibleState", true);
                         
                         break;
                     }

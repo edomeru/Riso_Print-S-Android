@@ -30,7 +30,9 @@ namespace SNMP
         ThreadPoolTimer timer;
 
         public Action<SNMPDevice> snmpControllerDiscoverCallback { get; set; }
+        public Action<string> snmpControllerDiscoverTimeOut { get; set; }
 
+        public bool FromPrinterSearch{ get; set; }
 
         //- (id) initWithDelegate:(id<SNMPDiscoveryDelegate>)toDelegate readCommunityName:(NSString *)readCommunityName
         public SNMPDiscovery()
@@ -208,13 +210,18 @@ namespace SNMP
                             //[snmpDevices addObject:snmpDevice];
                             snmpDevices.Add(snmpDevice);
 
-
-                            //call callback
-                            snmpControllerDiscoverCallback(snmpDevice);
+                            
 
                             //[snmpDevice beginRetrieveCapabilities];
                             snmpDevice.beginRetrieveCapabilities();
                             //LOG_PRINTER_SEARCH(@"Began retrieving capabilities of SNMP Device");
+
+                            if (!FromPrinterSearch)
+                            {
+                                snmpControllerDiscoverTimeOut = null;
+                            }
+                            //call callback
+                            snmpControllerDiscoverCallback(snmpDevice);
                         }
                     }
 
@@ -233,8 +240,17 @@ namespace SNMP
         {
             if (udpSocket != null)
             {
+
+
+
                 System.Diagnostics.Debug.WriteLine("Closing udpSocket");
                 udpSocket.close();
+                //call callback if timedout during search or add
+                if (snmpControllerDiscoverTimeOut != null)
+                {
+                    snmpControllerDiscoverTimeOut(sender.ToString());
+                }
+
             }
         }
     }

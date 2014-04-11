@@ -94,12 +94,12 @@ namespace SNMP
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
-            startTimer(timeout);
+            startTimer(timeout, host);
         }
 
 
         private bool isTimerRunning;
-        private async void startTimer(byte timeout)
+        private async void startTimer(byte timeout, HostName host)
         {
             this.isTimerRunning = true;
 
@@ -107,13 +107,13 @@ namespace SNMP
             {
                 await Task.Delay(timeout * 1000);
 
+                //HostName host = udpSocket.Information.RemoteAddress;
                 if (writer != null) writer.Dispose();
                 if (outputStream != null) outputStream.Dispose();
                 if (udpSocket != null) udpSocket.Dispose();
-
                 stopTimer();
 
-                if (timeoutHandler != null) timeoutHandler(null, null);
+                if (timeoutHandler != null) timeoutHandler(host, null);
             }
         }
 

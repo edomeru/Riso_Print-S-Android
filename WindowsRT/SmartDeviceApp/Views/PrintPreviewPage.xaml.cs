@@ -36,15 +36,12 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PrintPreviewPage : PageBase
     {        
         public PrintPreviewPage()
         {
             // TODO: Verify if this is acceptable for MVVM
-            Messenger.Default.Register<PreviewViewMode>(this, (previewViewMode) => OnSetPreviewView(previewViewMode));
+            Messenger.Default.Register<PreviewViewMode>(this, (previewViewMode) => OnSetPreviewViewMode(previewViewMode));
             this.InitializeComponent();
         }
 
@@ -64,7 +61,7 @@ namespace SmartDeviceApp.Views
             // Initialize gesture controller
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
-            ViewModel.InitializeGestures(pageAreaGrid);
+            ViewModel.SetPageAreaGrid(pageAreaGrid);
         }
 
         private void ResetTransforms(object sender, RoutedEventArgs e)
@@ -74,7 +71,7 @@ namespace SmartDeviceApp.Views
 
         // Note: Cannot set this in ViewModel because need to get this object
         // for VisualStateManager.GoToState
-        private void OnSetPreviewView(PreviewViewMode previewViewMode)
+        private void OnSetPreviewViewMode(PreviewViewMode previewViewMode)
         {
             switch (previewViewMode)
             {
@@ -90,9 +87,9 @@ namespace SmartDeviceApp.Views
                     break;
                 }
 
-                case PreviewViewMode.PrintSettingsPaneVisible:
+                case PreviewViewMode.RightPaneVisible:
                 {
-                    VisualStateManager.GoToState(this, "PrintSettingsPaneVisibleState", true);
+                    VisualStateManager.GoToState(this, "RightPaneVisibleState", true);
                     break;
                 }
             }
