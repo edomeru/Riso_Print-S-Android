@@ -391,7 +391,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
     
     // ================================================================================
-    // INTERFACE - PrintPreviewPageChangedListener
+    // INTERFACE - PreviewControlsListener
     // ================================================================================
     
     public void onIndexChanged(int index) {
