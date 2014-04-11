@@ -44,6 +44,9 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
+            await DocumentController.Instance.Unload();
+            await PrintPreviewController.Instance.Cleanup();
+
             await DocumentController.Instance.Load(e.Files[0] as StorageFile);
             await PrintPreviewController.Instance.Initialize();
         }
@@ -60,6 +63,9 @@ namespace SmartDeviceApp.Controllers
 
         public async static Task InitializeSamplePdf()
         {
+            await DocumentController.Instance.Unload();
+            await PrintPreviewController.Instance.Cleanup();
+
             StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
             await DocumentController.Instance.Load(samplePdf);
             await PrintPreviewController.Instance.Initialize();
