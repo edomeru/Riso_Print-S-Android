@@ -38,7 +38,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private PrintSettingsView mPrintSettingsView;
     private Bundle mPrintSettingsBundle = null;
     
-    private String mPdfFileName;
+    private String mPdfPath;
     private PauseableHandler mPauseableHandler;
     private WaitingDialogFragment mWaitingDialog;
     
@@ -125,13 +125,13 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     }
     
     /**
-     * This method sets the value of mPdfFileName
+     * This method sets the value of mPdfPath
      * 
-     * @param filename
-     *            the PDF filename string
+     * @param pdfPath
+     *            the PDF sandbox path
      */
-    public void setPdfFileName(String filename) {
-        mPdfFileName = filename;
+    public void setPdfPath(String pdfPath) {
+        mPdfPath = pdfPath;
     }
     
     // ================================================================================
@@ -185,7 +185,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             case MSG_PRINT:
                 //TODO: change implementation using actual print result
                 PrintJobManager pm = PrintJobManager.getInstance(getActivity());
-                pm.createPrintJob(mPrinterId, mPdfFileName, new Date(), JobResult.SUCCESSFUL);
+                String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
+                pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
                 mWaitingDialog.dismiss();
                 ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
         }

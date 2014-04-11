@@ -285,7 +285,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                         }
                         
                         fragment.setPrinterId(mPrinterId);
-                        fragment.setPdfFileName(mPdfManager.getFileName());
+                        fragment.setPdfPath(mPdfManager.getSandboxPath());
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
