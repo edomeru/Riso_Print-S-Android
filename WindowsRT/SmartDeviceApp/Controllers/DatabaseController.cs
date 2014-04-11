@@ -296,7 +296,7 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSetting Table Operations
 
-        public async Task<PrintSettings> GetPrintSetting(int printerId)
+        public async Task<PrintSettings> GetPrintSettings(int printerId)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);

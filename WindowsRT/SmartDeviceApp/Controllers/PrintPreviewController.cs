@@ -173,11 +173,13 @@ namespace SmartDeviceApp.Controllers
             {
                 // Get print settings
                 _selectedPrinter.PrintSettings =
-                    await DatabaseController.Instance.GetPrintSetting(_selectedPrinter.Id);
+                    await DatabaseController.Instance.GetPrintSettings(_selectedPrinter.Id);
                 if (_selectedPrinter.PrintSettings == null)
                 {
                     _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
                 }
+
+                // TODO: Filter print settings based on printer capabilities
             }
         }
 
