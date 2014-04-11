@@ -20,13 +20,16 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
+import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
-import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -221,8 +224,31 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     return !isTop;
                 case TWO:
                 case OFF:
-                default:
-                    return true;
+            }
+        }
+        
+        if (tag.equals(PrintSettings.TAG_IMPOSITION_ORDER)) {
+            boolean is2up = (mPrintSettings.getValue(PrintSettings.TAG_IMPOSITION) == Imposition.TWO_UP.ordinal());
+            switch (ImpositionOrder.values()[value]) {
+                case L_R:
+                case R_L:
+                    return is2up;
+                case TL_B:
+                case TL_R:
+                case TR_B:
+                case TR_L:
+                    return !is2up;
+            }
+        }
+        
+        if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
+            boolean isLandscape = (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal());
+            switch (BookletLayout.values()[value]) {
+                case L_R:
+                case R_L:
+                    return !isLandscape;
+                case T_B:
+                    return isLandscape;
             }
         }
         
@@ -239,6 +265,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
             if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
                 defaultValue = FinishingSide.TOP.ordinal();
+            }
+        }
+        
+        if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
+            if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
+                defaultValue = BookletLayout.T_B.ordinal();
             }
         }
         
@@ -262,9 +294,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         updateDisplayedValue(tag);
     }
     
-    private void applyConstraints(String tag, int prevValue) {
+    private void applyViewConstraints(String tag) {
         int value = mPrintSettings.getValue(tag);
         
+        // Constraint #1 Booklet
         if (tag.equals(PrintSettings.TAG_BOOKLET)) {
             boolean enabled = (value == 0);
             setViewEnabledWithConstraints(PrintSettings.TAG_DUPLEX, enabled);
@@ -274,6 +307,24 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION, enabled);
             setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
             
+            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled);
+            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled);
+            
+            applyViewConstraints(PrintSettings.TAG_IMPOSITION);
+        }
+        
+        // Constraint #5 Imposition
+        if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
+            boolean enabled = (value != Imposition.OFF.ordinal());
+            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
+        }
+    }
+    
+    private void applyValueConstraints(String tag, int prevValue) {
+        int value = mPrintSettings.getValue(tag);
+
+        // Constraint #1 Booklet
+        if (tag.equals(PrintSettings.TAG_BOOKLET)) {
             updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE,
                     getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE));
             updateValueWithConstraints(PrintSettings.TAG_STAPLE,
@@ -281,16 +332,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             updateValueWithConstraints(PrintSettings.TAG_PUNCH,
                     getDefaultValueWithConstraints(PrintSettings.TAG_PUNCH));
             
-            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled);
-            setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled);
-        }
-        if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
-            boolean enabled = (value != 0);
-            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
+            updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH,
+                    getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
+            updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT,
+                    getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
         }
         
+        // Constraint #2 Finishing Side
         if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
-            int stapleValue = mPrintSettings.getValue(PrintSettings.TAG_STAPLE);
+            int stapleValue = mPrintSettings.getStaple().ordinal();
             if (value == FinishingSide.TOP.ordinal()) {
                 if (stapleValue == Staple.ONE.ordinal()) {
                     if (prevValue == FinishingSide.LEFT.ordinal()) {
@@ -306,8 +356,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
+        // Constraint #3 Finishing Side or Orientation 
         if (tag.equals(PrintSettings.TAG_ORIENTATION) || tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
-            int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE);
+            int finishValue = mPrintSettings.getFinishingSide().ordinal();
             int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
             if (mPrintSettings.getValue(PrintSettings.TAG_PUNCH) == Punch.HOLES_4.ordinal()) {
                 if (finishValue != finishDefault) {
@@ -318,14 +369,70 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
+        // Constraint #4 Punch
         if (tag.equals(PrintSettings.TAG_PUNCH)) {
             if (value == Punch.HOLES_4.ordinal()) {
-                int finishValue = mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE);
+                int finishValue = mPrintSettings.getFinishingSide().ordinal();
                 int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
                 if (finishValue != finishDefault) {
                     if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
                         updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE, finishDefault);
                     }
+                }
+            }
+        }
+        
+        // Constraint #5 Imposition
+        if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
+            if (value == Imposition.OFF.ordinal()) {
+                updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.L_R.ordinal());
+            }
+            if (value == Imposition.TWO_UP.ordinal()) {
+                if (prevValue == Imposition.FOUR_UP.ordinal()) {
+                    int impositionOrderValue = mPrintSettings.getImpositionOrder().ordinal();
+                    switch (ImpositionOrder.values()[impositionOrderValue]) {
+                        case TR_B:
+                        case TR_L:
+                            updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.R_L.ordinal());
+                            break;
+                        default:
+                            updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.L_R.ordinal());
+                            break;
+                    }
+                } else {
+                    updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.L_R.ordinal());
+                }
+            }
+            if (value == Imposition.FOUR_UP.ordinal()) {
+                if (prevValue == Imposition.TWO_UP.ordinal()) {
+                    int impositionOrderValue = mPrintSettings.getImpositionOrder().ordinal();
+                    switch (ImpositionOrder.values()[impositionOrderValue]) {
+                        case R_L:
+                            updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.TR_L.ordinal());
+                            break;
+                        default:
+                            updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.TL_R.ordinal());
+                            break;
+                    }
+                } else {
+                    updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.TL_R.ordinal());
+                }
+            }
+        }
+
+        // Constraint #6 Orientation
+        if (tag.equals(PrintSettings.TAG_ORIENTATION)) {
+            int layoutValue = mPrintSettings.getBookletLayout().ordinal();
+            
+            if (value == Orientation.PORTRAIT.ordinal()) {
+                if (layoutValue == BookletLayout.T_B.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT,
+                            getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
+                }
+            } else {
+                if (layoutValue == BookletLayout.L_R.ordinal() || layoutValue == BookletLayout.R_L.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT,
+                            getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
                 }
             }
         }
@@ -362,7 +469,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private boolean updateValue(String tag, int newValue) {
         int prevValue = mPrintSettings.getValue(tag);
         if (mPrintSettings.setValue(tag, newValue)) {
-            applyConstraints(tag, prevValue);
+            applyViewConstraints(tag);
+            applyValueConstraints(tag, prevValue);
             return true;
         }
         
@@ -396,7 +504,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
-        applyConstraints(tag, -1);
+        applyViewConstraints(tag);
     }
     
     public void setValueChangedListener(ValueChangedListener listener) {
