@@ -46,7 +46,7 @@ static PrinterManager* sharedPrinterManager = nil;
  If this object exists, this PrinterManager will keep a
  reference to this DefaultPrinter object.
  */
-- (void)getDefaultPrinter;
+- (void)retrieveDefaultPrinter;
 
 @end
 
@@ -71,7 +71,7 @@ static PrinterManager* sharedPrinterManager = nil;
 #if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting default printer from DB");
 #endif
-        [self getDefaultPrinter];
+        [self retrieveDefaultPrinter];
     }
     return self;
 }
@@ -167,7 +167,7 @@ static PrinterManager* sharedPrinterManager = nil;
     self.countSavedPrinters = [self.listSavedPrinters count];
 }
 
-- (void)getDefaultPrinter
+- (void)retrieveDefaultPrinter
 {
     NSArray* results = [DatabaseManager getObjects:E_DEFAULTPRINTER];
     if ((results != nil) && [results count] > 0)
@@ -268,6 +268,11 @@ static PrinterManager* sharedPrinterManager = nil;
         return YES;
     else
         return NO;
+}
+
+-(Printer*) getDefaultPrinter
+{
+    return self.defaultPrinter.printer;
 }
 
 #pragma mark - Printers in Network (SNMP)

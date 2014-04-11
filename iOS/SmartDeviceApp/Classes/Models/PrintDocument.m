@@ -66,7 +66,9 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 - (NSInteger)pageCount
 {
     CGPDFDocumentRef pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.url);
-    return CGPDFDocumentGetNumberOfPages(pdfDocument);
+    int pageCount =  CGPDFDocumentGetNumberOfPages(pdfDocument);
+    CGPDFDocumentRelease(pdfDocument);
+    return pageCount;
 }
 
 #pragma mark - Helper Methods

@@ -697,11 +697,12 @@
     // if double sided and page is at the back (even pages)
     if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) == 0)
     {
+        //go to the next front page
         if(pageNumber < self.totalPageNum)
         {
             pageNumber++;
         }
-        else
+        else //if there are no more front pages, go the previous front page
         {
             pageNumber--;
         }

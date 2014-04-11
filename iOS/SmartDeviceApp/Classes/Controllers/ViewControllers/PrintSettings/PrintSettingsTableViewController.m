@@ -13,11 +13,14 @@
 #import "PrintSettingsItemOptionCell.h"
 #import "PrintSettingsItemInputCell.h"
 #import "PrintSettingsItemSwitchCell.h"
+#import "PrintSettingsPrinterListTableViewController.h"
 #import "PrintSettingsHelper.h"
 #import "UIView+Localization.h"
 #import "PDFFileManager.h"
 #import "PrintDocument.h"
 #import "PreviewSetting.h"
+#import "PrinterManager.h"
+#import "Printer.h"
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
@@ -25,6 +28,9 @@
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
 #define SETTING_ITEM_SWITCH_CELL @"SettingItemSwitchCell"
+#define PRINTER_SECTION  0
+#define PRINTER_SECTION_HEADER_ROW 0
+#define PRINTER_SECTION_ITEM_ROW 1
 
 #define ROW_HEIGHT_SINGLE 44
 #define ROW_HEIGHT_DOUBLE 66
@@ -40,6 +46,7 @@
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
 @property (nonatomic, strong) NSMutableDictionary *textFieldBindings;
 @property (nonatomic, strong) NSMutableDictionary *switchBindings;
+@property (nonatomic, weak) Printer *printer;
 
 @end
 
@@ -79,6 +86,10 @@
     {
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
     }
+    
+    //get default printer
+    PrinterManager *printerManager = [PrinterManager sharedPrinterManager];
+    self.printer = [printerManager getDefaultPrinter];
     
     // Add tap recognizer to close keyboard on tap
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
@@ -174,8 +185,22 @@
         else
         {
             PrintSettingsPrinterItemCell *printerItemCell = [tableView dequeueReusableCellWithIdentifier:PRINTER_ITEM_CELL forIndexPath:indexPath];
-            printerItemCell.printerNameLabel.text = @"RISO Printer IS900";
-            printerItemCell.printerIPLabel.text = @"192.168.1.123";
+            
+            if(self.printer != nil)
+            {
+                printerItemCell.printerNameLabel.hidden = NO;
+                printerItemCell.printerIPLabel.hidden = NO;
+                printerItemCell.selectPrinterLabel.hidden = YES;
+                printerItemCell.printerNameLabel.text = self.printer.name;
+                printerItemCell.printerIPLabel.text = self.printer.ip_address;
+            }
+            else
+            {
+                printerItemCell.printerNameLabel.hidden = YES;
+                printerItemCell.printerIPLabel.hidden = YES;
+                printerItemCell.selectPrinterLabel.hidden = NO;
+            }
+            
             cell = printerItemCell;
         }
     }
@@ -303,6 +328,13 @@
             }
         }
     }
+    else
+    {
+        if(row > 0)
+        {
+            [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
+        }
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -349,16 +381,31 @@
         PrintSettingsOptionTableViewController *optionsController = segue.destinationViewController;
         optionsController.setting = self.currentSetting;
     }
+    if ([segue.identifier isEqualToString:@"PrintSettings-PrinterList"])
+    {
+        PrintSettingsPrinterListTableViewController *printerListController = segue.destinationViewController;
+        printerListController.selectedPrinter = self.printer;
+    }
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender
 {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+    if([sender.sourceViewController isKindOfClass:[PrintSettingsPrinterListTableViewController class]])
+    {
+        self.printer = ((PrintSettingsPrinterListTableViewController *)sender.sourceViewController).selectedPrinter;
+        NSIndexPath *printerIndexPath = [NSIndexPath indexPathForRow:PRINTER_SECTION_ITEM_ROW inSection:PRINTER_SECTION];
+        if(self.printer != nil)
+        {
+            PrintSettingsPrinterItemCell * printerItemCell = (PrintSettingsPrinterItemCell *)[self.tableView cellForRowAtIndexPath:printerIndexPath];
+        
+            printerItemCell.printerNameLabel.hidden = NO;
+            printerItemCell.printerIPLabel.hidden = NO;
+            printerItemCell.selectPrinterLabel.hidden = YES;
+            printerItemCell.printerNameLabel.text = self.printer.name;
+            printerItemCell.printerIPLabel.text = self.printer.ip_address;
+        }
+    }
 }
-*/
 
 /*
 // Override to support editing the table view.

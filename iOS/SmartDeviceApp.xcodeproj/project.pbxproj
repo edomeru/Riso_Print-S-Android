@@ -95,6 +95,7 @@
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
+		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -258,6 +259,8 @@
 		2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
 		2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Theme.h"; sourceTree = "<group>"; };
 		2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Theme.m"; sourceTree = "<group>"; };
+		31F32CD718F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListTableViewController.h; sourceTree = "<group>"; };
+		31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -794,6 +797,8 @@
 				2D232D7118E511D4008D06C8 /* PrintSettingsTableViewController.m */,
 				2DA1AF1418E2EF9600085F27 /* PrintSettingsViewController.h */,
 				2DA1AF1518E2EF9600085F27 /* PrintSettingsViewController.m */,
+				31F32CD718F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.h */,
+				31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */,
 			);
 			path = PrintSettings;
 			sourceTree = "<group>";
@@ -1008,6 +1013,7 @@
 				2DA1AF1E18E2EF9600085F27 /* UIViewController+Segue.m in Sources */,
 				2DA1AF1C18E2EF9600085F27 /* RootViewController.m in Sources */,
 				2DA1AF5B18E2F02A00085F27 /* PrinterCollectionViewCell.m in Sources */,
+				31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */,
 				2DA1AF1618E2EF9600085F27 /* AppDelegate.m in Sources */,
 				2DA1AF2518E2EF9600085F27 /* PDFPageContentViewController.m in Sources */,
 				2DA1AF2318E2EF9600085F27 /* PrintersViewController.m in Sources */,

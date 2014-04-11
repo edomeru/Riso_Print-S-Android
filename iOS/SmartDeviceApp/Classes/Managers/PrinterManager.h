@@ -177,4 +177,11 @@
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
 
+/**
+Returns the printer object of the default printer
+ 
+@return Printer object
+ */
+-(Printer*) getDefaultPrinter;
+
 @end

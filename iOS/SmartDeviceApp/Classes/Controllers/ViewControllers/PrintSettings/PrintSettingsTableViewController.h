@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface PrintSettingsTableViewController : UITableViewController<UITextFieldDelegate>
-
+- (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender;
 @end
