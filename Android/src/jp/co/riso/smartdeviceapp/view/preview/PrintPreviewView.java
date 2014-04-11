@@ -283,6 +283,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         count = (int) Math.ceil(count / (double) getPagesPerSheet());
         
+        if (mPrintSettings.isBooklet()) {
+            int modulo = count % 2;
+            if (count > 0) {
+                count = count + 2 - modulo;
+            }
+        }
+        
         return count;
     }
     
@@ -472,7 +479,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
         
-        if (isTwoPageDisplayed()) {
+        if (getPageCount() > 1 && isTwoPageDisplayed()) {
             twoPage = true;
             
             if (getCurrentPage() % 2 == 0) {
