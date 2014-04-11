@@ -8,16 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.LruCache;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
@@ -28,10 +18,19 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
-
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.LruCache;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class PrintPreviewFragment extends BaseFragment implements PDFFileManagerInterface {
     public static final String TAG = "PrintPreviewFragment";
@@ -79,7 +78,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             edit.commit();
             //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
             data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
-            */
+             */
             
             mPdfManager = new PDFFileManager(this);
             
@@ -109,6 +108,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
             int cacheSize = AppUtils.getCacheSizeBasedOnMemoryClass(getActivity());
             cacheSize = cacheSize >> AppConstants.APP_BMP_CACHE_PART; // 1/8
             mBmpCache = new LruCache<String, Bitmap>(cacheSize) {
+                @Override
                 protected int sizeOf(String key, Bitmap value) {
                     return value.getByteCount();
                 }
@@ -285,6 +285,7 @@ public class PrintPreviewFragment extends BaseFragment implements PDFFileManager
                         }
                         
                         fragment.setPrinterId(mPrinterId);
+                        fragment.setPdfPath(mPdfManager.getSandboxPath());
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);

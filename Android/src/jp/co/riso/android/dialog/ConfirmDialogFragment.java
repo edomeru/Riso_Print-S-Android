@@ -21,7 +21,7 @@ import android.os.Bundle;
  * 2. In the target fragment, add these snippet:
  *      ConfirmDialogFragment dialog = new ConfirmDialogFragment(<parameters>):
  *      dialog.setTargetFragment(this, requestCode);
- *      DialogUtils.showdisplayDialog(activity, tag, newFragment);
+ *      DialogUtils.showdisplayDialog(activity, tag, dialog);
  * 3. To dismiss, simply call: dialog.dismiss();
  */
 public class ConfirmDialogFragment extends DialogFragment implements OnClickListener {
