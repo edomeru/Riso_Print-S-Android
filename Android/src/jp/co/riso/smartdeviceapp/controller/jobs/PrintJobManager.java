@@ -35,9 +35,6 @@ public class PrintJobManager {
     private static final String C_SEL_PRN_ID = KeyConstants.KEY_SQL_PRINTER_TABLE + "."
             + KeyConstants.KEY_SQL_PRINTER_ID + " IN (SELECT DISTINCT "
             + KeyConstants.KEY_SQL_PRINTER_ID + " FROM " + KeyConstants.KEY_SQL_PRINTJOB_TABLE + ")";
-    private static final String C_COUNT = "COUNT";
-    private static final String C_COL_COUNT = "COUNT(DISTINCT " + KeyConstants.KEY_SQL_PRINTER_ID
-            + ") AS " + C_COUNT;
     private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String C_TIMEZONE = "UTC";
     
@@ -63,26 +60,6 @@ public class PrintJobManager {
     
     public boolean isRefreshFlag() {
         return mRefreshFlag;
-    }
-    
-    
-    /**
-     * This method retrieves the count of Printers with Print Jobs.
-     * 
-     * @return count of Printers
-     */
-    public int getPrintersCount() {
-        int count = 0;
-        String[] columns = new String[] { C_COL_COUNT };
-        Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, columns, null, null, null, null, null);
-        
-        if (c.moveToFirst()){
-            count = c.getInt(c.getColumnIndex(C_COUNT));
-        }
-        
-        c.close();
-        mManager.close();
-        return count;
     }
     
     /**

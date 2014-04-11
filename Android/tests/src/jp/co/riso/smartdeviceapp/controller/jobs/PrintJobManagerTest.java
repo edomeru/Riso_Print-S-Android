@@ -223,7 +223,6 @@ public class PrintJobManagerTest extends AndroidTestCase {
         List<Printer> printers = mPrintJobManager.getPrintersWithJobs();
 
         assertNotNull(printers);
-        assertEquals(mPrintJobManager.getPrintersCount(), printers.size());
 
     }
 
