@@ -8,8 +8,6 @@
 
 package jp.co.riso.android.dialog;
 
-import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
@@ -109,16 +107,6 @@ public class WaitingDialogFragment extends DialogFragment implements OnClickList
         }
         
         super.onDestroyView();
-    }
-    
-    /**
-     * This method dismisses the  dialog and transitions the screen to Print Jobs History Screen
-     */
-    public void dismissAndTransition() {
-        if (isAdded()) {
-            dismiss();
-            ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
-        }
     }
     
     // ================================================================================

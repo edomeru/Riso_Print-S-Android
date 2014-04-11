@@ -10,18 +10,13 @@ package jp.co.riso.smartdeviceapp.view.printsettings;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import jp.co.riso.android.dialog.DialogUtils;
-import jp.co.riso.android.dialog.WaitingDialogFragment;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
@@ -32,7 +27,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -74,7 +68,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final int MSG_SLIDE_OUT = 4;
     private static final int MSG_SET_SUB_SCROLL = 5;
     private static final int MSG_SHOW_SUBVIEW = 6;
-    private static final int MSG_PRINT = 7;
     
     private static final int ID_COLLAPSE_CONTAINER = 0x11000001;
     private static final int ID_COLLAPSE_TARGET_GROUP = 0x11000002;
@@ -111,10 +104,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private ArrayList<LinearLayout> mPrintSettingsTitles = null;
     
     private ValueChangedListener mListener = null;
-    
-    private String mPdfFileName;
-    
-    private WaitingDialogFragment mPrintingDialog;
     
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -441,17 +430,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 updateDisplayedValue(key);
             }
         }
-    }
-    
-    /**
-     * This method sets the value of mPdfFileName
-     * 
-     * @param filename
-     *            the PDF filename string
-     */
-    
-    public void setPdfFileName(String filename) {
-        mPdfFileName = filename;
     }
     
     // ================================================================================
@@ -847,30 +825,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void executePrint() {
-        //TODO: add actual printing execution and remove Handler.postDelayed
-        mPrintingDialog = WaitingDialogFragment.newInstance(null, getResources().getString(R.string.ids_lbl_printing), null);
-        DialogUtils.displayDialog((Activity) getContext(), TAG, mPrintingDialog);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Message newMessage = Message.obtain(mHandler, MSG_PRINT);
-                mHandler.sendMessage(newMessage);
-            }
-        }, 10000);
+        //TODO: implement actual printing execution
+        mListener.onPrintExecution();
     }
     
-    /**
-     * This method dismisses the waiting dialog after the actual printing execution
-     * and transitions the screen to Print Jobs History Screen
-     * 
-     * @param result
-     *            the result of the printing execution (SUCCESSFUL, ERROR)
-     */
-    private void continuePrint(JobResult result){
-        PrintJobManager pm = PrintJobManager.getInstance(getContext());
-        pm.createPrintJob(mPrinterId, mPdfFileName, new Date(), result);
-        mPrintingDialog.dismissAndTransition();
-    }
     
     // ================================================================================
     // Convenience methods
@@ -1231,10 +1189,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             case MSG_SHOW_SUBVIEW:
                 displayOptionsSubview(mMainLayout.findViewWithTag(msg.obj), false);
                 return true;
-            case MSG_PRINT:
-                //TODO: change implementation using actual print result
-                continuePrint(JobResult.SUCCESSFUL);
-                return true;
         }
         return false;
     }
@@ -1304,5 +1258,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     public interface ValueChangedListener {
         public void onPrinterIdSelectedChanged(int printerId);
         public void onPrintSettingsValueChanged(PrintSettings printSettings);
+        public void onPrintExecution();
     }
 }

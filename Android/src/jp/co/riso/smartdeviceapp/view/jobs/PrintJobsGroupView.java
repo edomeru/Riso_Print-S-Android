@@ -48,7 +48,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private static final String C_SPACE = " ";
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
-    private static float DURATION_MULTIPLIER = 0.3f;
+    private static float DURATION_MULTIPLIER = 0.2f;
     
     private View mPrintGroupView;
     private List<View> mPrintJobViews = new ArrayList<View>();
