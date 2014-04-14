@@ -49,7 +49,6 @@
                           Text="{Binding Source=IDS_LBL_JOBS, Converter={StaticResource ResourceStringToTextConverter}}" 
                           Button1Visibility="Collapsed"
                           Button2Visibility="Collapsed">
-        <!--TODO:CHANGE TO GRIDVIEW!!-->
         <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
             <StackPanel Orientation="Horizontal">
                 <StackPanel.Margin>
