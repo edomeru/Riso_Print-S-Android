@@ -6,28 +6,28 @@ include $(CLEAR_VARS)
 
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE     := libsnmp-prebuilt
-LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libsnmp.so
-LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../../CommonAPI/include/
-include $(PREBUILT_SHARED_LIBRARY)
+#include $(CLEAR_VARS)
+#LOCAL_MODULE     := libsnmp-prebuilt
+#LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libsnmp.so
+#LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../../CommonAPI/include/
+#include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE     := librdpdf-prebuilt
 LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/librdpdf.so
 include $(PREBUILT_SHARED_LIBRARY)
 
-#libCommonAPI.so
-include $(CLEAR_VARS)
-LOCAL_MODULE     := libCommonAPI-prebuilt
-LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libCommonAPI.so
-include $(PREBUILT_SHARED_LIBRARY)
+##libCommonAPI.so
+#include $(CLEAR_VARS)
+#LOCAL_MODULE     := libCommonAPI-prebuilt
+#LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libCommonAPI.so
+#include $(PREBUILT_SHARED_LIBRARY)
 
-#libsnmpAPI.so
-include $(CLEAR_VARS)
-LOCAL_MODULE     := libsnmpAPI-prebuilt
-LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libsnmpAPI.so
-include $(PREBUILT_SHARED_LIBRARY)
+##libsnmpAPI.so
+#include $(CLEAR_VARS)
+#LOCAL_MODULE     := libsnmpAPI-prebuilt
+#LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libsnmpAPI.so
+#include $(PREBUILT_SHARED_LIBRARY)
 
 #libcommon.so
 include $(CLEAR_VARS)
