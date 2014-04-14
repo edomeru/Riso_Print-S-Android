@@ -326,7 +326,9 @@ static PrinterManager* sharedPrinterManager = nil;
     NSLog(@"[INFO][PM] stop waiting for notifications");
 #endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    //TODO: cascade the command to the SNMPManager
+    
+    SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+    [snmpManager cancelSearch];
 }
 
 #pragma mark - SNMP Printer Search Notifications

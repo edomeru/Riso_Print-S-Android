@@ -39,6 +39,14 @@
  */
 - (void)searchForAvailablePrinters;
 
+/**
+ Cancels an ongoing searchForPrinter or searchForAvailablePrinters
+ operation. If a notification observer listening for printer found
+ and/or search ended has been previously setup, they should be then
+ be removed after canceling search.
+ */
+- (void)cancelSearch;
+
 #pragma mark - Printer Status
 
 /**

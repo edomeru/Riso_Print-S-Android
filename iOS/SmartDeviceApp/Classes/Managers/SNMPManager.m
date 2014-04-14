@@ -164,6 +164,22 @@ static SNMPManager* sharedSNMPManager = nil;
     }
 }
 
+#pragma mark - Cancel Search
+
+- (void)cancelSearch
+{
+    if (snmpContext == nil) //there is no ongoing search
+        return;
+    
+    snmp_cancel(snmpContext);
+    snmp_context_free(snmpContext);
+    snmpContext = nil;
+    
+#if DEBUG_LOG_SNMP_MANAGER
+    NSLog(@"[INFO][SNMPM] search canceled");
+#endif
+}
+
 #pragma mark - Get Printer Status
 
 - (BOOL)getPrinterStatus:(NSString*)ipAddress
@@ -239,7 +255,7 @@ static SNMPManager* sharedSNMPManager = nil;
 - (void)addFakePrinter:(NSString*)fakeIP
 {
 #if DEBUG_LOG_SNMP_MANAGER
-    NSLog(@"[INFO][SNMPM] adding fake printer ip=%@", fakeIP);
+    NSLog(@"[INFO][SNMPM] adding fake printer");
 #endif
     
     // invent printer info and capabilities
