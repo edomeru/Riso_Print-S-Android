@@ -243,8 +243,6 @@ static SNMPManager* sharedSNMPManager = nil;
 #if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMPM] ending real search, success=%@", success ? @"YES" : @"NO");
 #endif
-    
-    //TODO: if failed and if manual search, still add a printer with full capabilities
 
     // notify observer that the search has ended (background thread)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

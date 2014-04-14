@@ -200,6 +200,10 @@
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
         return;
+        
+        //TODO: the printer should still be added to the list
+        //  - blank printer name
+        //  - full capabilities
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
@@ -227,6 +231,10 @@
         [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND
                         withTitle:ALERT_TITLE_PRINTERS_ADD
                       withDetails:nil];
+        
+        //TODO: the printer should still be added to the list
+        //  - blank printer name
+        //  - full capabilities
     }
 
     // hide the searching indicator
