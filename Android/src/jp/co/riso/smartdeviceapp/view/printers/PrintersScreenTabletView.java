@@ -80,6 +80,15 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
     }
     
     @Override
+    public void onLayout(boolean changed, int l, int t, int r, int b) {
+        // Hide the column that is not needed
+        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            mPrinterViewArray.get(2).setVisibility(View.GONE);
+        }
+        super.onLayout(changed, l, t, r, b);
+    }
+    
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (getContext() != null && getContext() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getContext();
@@ -161,11 +170,6 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
         mPrinterViewArray.add((LinearLayout) viewGroup.findViewById(R.id.column3));
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         viewGroup.setOnTouchListener(this);
-        // Hide the column that is not needed
-        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            mPrinterViewArray.get(2).setVisibility(View.GONE);
-        }
-        
         mHandler = new Handler(this);
     }
     
