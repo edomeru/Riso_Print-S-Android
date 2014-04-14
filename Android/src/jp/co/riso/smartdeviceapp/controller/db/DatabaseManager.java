@@ -80,9 +80,30 @@ public class DatabaseManager extends SQLiteOpenHelper {
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
-            Log.e(TAG, "failed insert to " + table);
+            Log.e(TAG, "failed insert to " + table + ". Error: " + e.getMessage());
         }
         
+        db.close();
+        
+        return (rowId > -1);
+    }
+    
+    public long insertOrReplace(String table, String nullColumnHack, ContentValues values) {
+        long rowId = -1;
+        SQLiteDatabase db = this.getWritableDatabase();
+        
+        rowId = db.insertWithOnConflict(table, nullColumnHack, values, SQLiteDatabase.CONFLICT_REPLACE);
+        
+        db.close();
+        
+        return rowId;
+    }
+    
+    public boolean update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        long rowId = -1;
+        SQLiteDatabase db = this.getWritableDatabase();
+        
+        rowId = db.update(table, values, whereClause, whereArgs);
         db.close();
         
         return (rowId > -1);

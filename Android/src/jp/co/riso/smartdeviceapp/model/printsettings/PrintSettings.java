@@ -18,15 +18,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import android.util.Log;
-
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
@@ -40,9 +35,16 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import android.util.Log;
+
 public class PrintSettings {
     public static final String TAG = "PrintSettings";
-
+    
     public static final String TAG_COLOR_MODE = "colorMode";
     public static final String TAG_ORIENTATION = "orientation";
     public static final String TAG_DUPLEX = "duplex";
@@ -61,7 +63,7 @@ public class PrintSettings {
     public static List<Group> sGroupList;
     public static HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
     
-    private HashMap<String, Integer> mSettingValues; 
+    private HashMap<String, Integer> mSettingValues;
     
     /**
      * Default Print Settings Constructor
@@ -86,13 +88,18 @@ public class PrintSettings {
     
     public PrintSettings(int printerId) {
         this();
+        PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+        // will overwrite the value if values are retrieved
+        for (String key : manager.getPrintSetting(printerId).keySet()) {
+            mSettingValues.put(key, manager.getPrintSetting(printerId).get(key));
+        }
     }
     
     private static void initializeStaticObjects() {
         String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
         
         Document printSettingsContent = null;
-
+        
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -116,7 +123,7 @@ public class PrintSettings {
             return;
         }
         
-        sGroupList = new ArrayList<Group>(); 
+        sGroupList = new ArrayList<Group>();
         sSettingMap = new HashMap<String, Setting>();
         
         NodeList groupList = printSettingsContent.getElementsByTagName(XmlNode.NODE_GROUP);
@@ -152,7 +159,7 @@ public class PrintSettings {
     // ================================================================================
     // Getter for PrintPreview
     // ================================================================================
-
+    
     /**
      * @return the ColorMode
      */
@@ -250,6 +257,24 @@ public class PrintSettings {
         return Punch.values()[mSettingValues.get(TAG_PUNCH)];
     }
     
+    // ================================================================================
+    // Public methods
+    // ================================================================================
+    /**
+     * This method saves the Print Setting in the database
+     * 
+     * @param printerId
+     *            current printer ID selected
+     * @return boolean result of insert/replace to DB, returns true if successful.
+     */
+    public boolean savePrintSettingToDB(int printerId) {
+        if (printerId == PrinterManager.EMPTY_ID) {
+            return false;
+        }
+        
+        PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+        return manager.saveToDB(printerId, mSettingValues);
+    }
     
     static {
         initializeStaticObjects();

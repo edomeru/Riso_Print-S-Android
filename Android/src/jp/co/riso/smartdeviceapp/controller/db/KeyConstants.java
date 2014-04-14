@@ -27,4 +27,6 @@ public final class KeyConstants {
     public static final String KEY_SQL_PRINTJOB_NAME = "pjb_name";
     public static final String KEY_SQL_PRINTJOB_DATE = "pjb_date";
     public static final String KEY_SQL_PRINTJOB_RESULT = "pjb_result";
+    public static final String KEY_SQL_PRINTSETTING_TABLE = "PrintSetting";
+    public static final String KEY_SQL_PRINTSETTING_ID = "pst_id";
 }
