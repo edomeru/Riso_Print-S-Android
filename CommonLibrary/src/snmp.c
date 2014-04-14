@@ -62,12 +62,6 @@ struct snmp_device_s
     struct snmp_device_s *next;
 };
 
-typedef struct snmp_capabilty_data_s
-{
-    snmp_context *context;
-    snmp_device *device;
-} snmp_capability_data;
-
 static const char *MIB_REQUESTS[] = {
     "1.3.6.1.2.1.1.2.0", // sysObjectId
     //"1.3.6.1.4.1.24807.1.2.1.1.1.0", // ijGeneralName
