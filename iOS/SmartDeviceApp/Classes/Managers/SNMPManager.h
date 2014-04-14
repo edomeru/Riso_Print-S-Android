@@ -9,24 +9,37 @@
 #import <CoreData/CoreData.h>
 #import "PrinterSearchDelegate.h"
 
-@interface SNMPManager : NSManagedObject
+@interface SNMPManager : NSObject
+
+#pragma mark - Initialization
+
+/**
+ Gets access to the singleton SNMPManager object.
+ If the object does not exist yet, then this method creates it.
+ */
++ (SNMPManager*)sharedSNMPManager;
+
+#pragma mark - Printer Search
 
 /**
  Searches for the Printer in the network using its IP Address.
  Uses the Manual Search function of the SNMP Common Library.
- Posts a notification when the printer is found and when the search is over.
- 
+ A notification observer should be prepared beforehand to listen
+ for the printer found and search ended notifications.
  @param printerIP
         IP address of the printer to search
  */
-+ (void)searchForPrinter:(NSString*)printerIP;
+- (void)searchForPrinter:(NSString*)printerIP;
 
 /**
  Searches for all available and supported printers in the network.
  Uses the Device Discovery function of the SNMP Common Library.
- Posts a notification when a printer is found and when the search is over.
+ A notification observer should be prepared beforehand to listen
+ for the printer found and search ended notifications.
  */
-+ (void)searchForAvailablePrinters;
+- (void)searchForAvailablePrinters;
+
+#pragma mark - Printer Status
 
 /**
  Get the Online/Offline status of the Printer
@@ -36,6 +49,6 @@
  
  @return YES if Online; NO if Offline
  */
-+ (BOOL)getPrinterStatus:(NSString*)ipAddress;
+- (BOOL)getPrinterStatus:(NSString*)ipAddress;
 
 @end

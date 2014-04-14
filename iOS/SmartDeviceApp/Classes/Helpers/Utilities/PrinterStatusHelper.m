@@ -34,7 +34,8 @@
 -(void) getPrinterStatus
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        BOOL onlineStatus = [SNMPManager getPrinterStatus:self.ipAddress];
+        SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+        BOOL onlineStatus = [snmpManager getPrinterStatus:self.ipAddress];
         //notification should be on main queue to update the UI
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.delegate statusDidChange:onlineStatus];

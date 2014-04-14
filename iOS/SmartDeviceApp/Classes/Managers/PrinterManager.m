@@ -288,7 +288,8 @@ static PrinterManager* sharedPrinterManager = nil;
     NSLog(@"[INFO][PM] waiting for notifications from SNMP");
 #endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SNMPManager searchForPrinter:printerIP];
+        SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+        [snmpManager searchForPrinter:printerIP];
     });
     // after starting the search, control will immediately return to the screen controller
     // results of the search should be handled by the notification observers
@@ -312,7 +313,8 @@ static PrinterManager* sharedPrinterManager = nil;
     NSLog(@"[INFO][PM] waiting for notifications from SNMP");
 #endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SNMPManager searchForAvailablePrinters];
+        SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+        [snmpManager searchForAvailablePrinters];
     });
     // after starting the search, control will immediately return to the screen controller
     // results of the search should be handled by the notification observers

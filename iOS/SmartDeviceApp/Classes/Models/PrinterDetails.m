@@ -21,4 +21,13 @@
 @synthesize enLPR;
 @synthesize enRAW;
 
+@synthesize capBooklet;
+@synthesize capStapler;
+@synthesize capFin23Holes;
+@synthesize capFin24Holes;
+@synthesize capTrayFaceDown;
+@synthesize capTrayAutoStack;
+@synthesize capTrayTop;
+@synthesize capTrayStack;
+
 @end
