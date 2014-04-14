@@ -10,29 +10,34 @@ package jp.co.riso.smartdeviceapp.common;
 
 import java.lang.ref.WeakReference;
 
+import android.util.Log;
+
 public class SNMPManager {
     private static final String TAG = "SNMPManager";
     public long mContext = 0;
-    private WeakReference<SNMPManagerCallback> mCallback;
+    private WeakReference<SNMPManagerCallback> mCallbackRef;
     
     public native void initializeSNMPManager();
     public native void finalizeSNMPManager();
     public native void deviceDiscovery();
+    public native void manualDiscovery(String ipAddress);
     public native void cancel();
     
     public void setCallback(SNMPManagerCallback callback) {
-        mCallback = new WeakReference<SNMPManagerCallback>(callback);
+        mCallbackRef = new WeakReference<SNMPManagerCallback>(callback);
     }
     
     private void onEndDiscovery(int result) {
-        if (mCallback != null && mCallback.get() != null) {
-            mCallback.get().onEndDiscovery(this, result);
+        Log.d(TAG, "onEndDiscovery");
+        if (mCallbackRef != null && mCallbackRef.get() != null) {
+            mCallbackRef.get().onEndDiscovery(this, result);
         }
     }
     
     private void onFoundDevice(String ipAddress, String name, boolean[] capabilities) {
-        if (mCallback != null && mCallback.get() != null) {
-            mCallback.get().onFoundDevice(this, ipAddress, name, capabilities);
+        Log.d(TAG, "onFoundDevice");
+        if (mCallbackRef != null && mCallbackRef.get() != null) {
+            mCallbackRef.get().onFoundDevice(this, ipAddress, name, capabilities);
         }
     }
     

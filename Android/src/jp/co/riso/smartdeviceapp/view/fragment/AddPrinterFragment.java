@@ -10,10 +10,11 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.OnPrinterSearchCallback;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -22,11 +23,13 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchCallback {
+public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnKeyListener {
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int ERR_INVALID_IP_ADDRESS = -1;
@@ -46,8 +49,8 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mAdded = false;
-        mPrinterManager = PrinterManager.sharedManager(SmartDeviceApp.getAppContext());
-        mPrinterManager.setOnPrinterSearchCallback(this);
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager.setPrinterSearchCallback(this);
     }
     
     @Override
@@ -55,6 +58,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
         mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
         mIpAddress.setFilters(IP_ADDRESS_FILTER);
+        mIpAddress.setOnKeyListener(this);
     }
     
     @Override
@@ -63,9 +67,10 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
         textView.setText(R.string.ids_lbl_add_printer);
         
         if (isTablet()) {
-            view.setPadding((int) (getResources().getDimension(R.dimen.preview_view_margin)), 0, 0, 0);
+            int left = (int) getResources().getDimension(R.dimen.preview_view_margin);
+            view.setPadding(left, 0, 0, 0);
         }
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.temp_img_btn_save_printer, this);
+        addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.selector_addprinter_save, this);
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
@@ -100,8 +105,13 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
         
         if (isTablet()) {
             if (getActivity() != null && getActivity() instanceof MainActivity) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.closeDrawers();
+                final MainActivity activity = (MainActivity) getActivity();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.closeDrawers();
+                    }
+                });
             }
         } else {
             FragmentManager fm = getFragmentManager();
@@ -137,6 +147,7 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
                 }
                 break;
         }
+        AppUtils.hideSoftKeyboard(getActivity());
     }
     
     // ================================================================================
@@ -149,8 +160,8 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
         } else if (mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
-            dialogCb(printer);
             closeScreen();
+            dialogCb(printer);
         }
     }
     
@@ -161,6 +172,19 @@ public class AddPrinterFragment extends BaseFragment implements OnPrinterSearchC
         if (!mAdded && !ipAddress.isEmpty()) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
         }
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnKeyListener
+    // ================================================================================
+    
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            AppUtils.hideSoftKeyboard(getActivity());
+            return true;
+        }
+        return false;
     }
     
     // ================================================================================

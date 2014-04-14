@@ -82,6 +82,7 @@ typedef enum
 snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback);
 void snmp_context_free(snmp_context *context);
 void snmp_device_discovery(snmp_context *context);
+void snmp_manual_discovery(snmp_context *context, const char *ip_address);
 void snmp_cancel(snmp_context *context);
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
