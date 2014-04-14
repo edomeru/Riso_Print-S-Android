@@ -30,7 +30,7 @@
     </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}">
-    <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">
+        <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="leftPageArea"/>
                 <ColumnDefinition x:Name="rightPageArea"/>

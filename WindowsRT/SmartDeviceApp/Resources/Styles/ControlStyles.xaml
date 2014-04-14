@@ -434,7 +434,6 @@
     <Style x:Key="STYLE_ListHeaderGrid" TargetType="Grid">
         <Style.Setters>
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray4}"/>
-            <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
             <Setter Property="Height" Value="{StaticResource SIZE_ListItemHeight}"/>
         </Style.Setters>
     </Style>

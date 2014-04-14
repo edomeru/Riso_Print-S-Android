@@ -25,10 +25,6 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
         }
 
-        // TODO: REMOVE IF UNUSED
-        public static readonly DependencyProperty IndexProperty =
-            DependencyProperty.Register("Index", typeof(int), typeof(KeyValueControl), null);
-
         public static readonly DependencyProperty LeftButtonVisibilityProperty =
             DependencyProperty.Register("LeftButtonVisibility", typeof(Visibility), typeof(KeyValueControl), null);
 
@@ -55,12 +51,6 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
-        
-        public int Index
-        {
-            get { return (int)GetValue(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
-        }
 
         public string LeftButtonVisibility
         {

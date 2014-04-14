@@ -35,7 +35,6 @@ namespace SmartDeviceApp.Converters
                     if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
                     {
                         return Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"];
-                        //return Window.Current.Bounds.Width - 400;
                     }
                 }
             }
@@ -47,6 +46,23 @@ namespace SmartDeviceApp.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class PrintJobListWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var columns = 3;
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var columnWidth = (Window.Current.Bounds.Width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / 3;
+            return columnWidth;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
     public class HeightConverter : IValueConverter
     {
