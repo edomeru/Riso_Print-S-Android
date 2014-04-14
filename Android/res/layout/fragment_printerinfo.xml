@@ -10,7 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_sub_separator_padding"
         android:orientation="horizontal" >
 
         <TextView
@@ -28,20 +29,20 @@
             android:layout_gravity="center_vertical"
             android:gravity="right"
             android:maxLines="1"
-            android:padding="@dimen/printers_left_editbox_padding"
             android:textColor="@color/theme_light_1" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_size"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
         android:background="@color/theme_light_1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_sub_separator_padding"
         android:orientation="horizontal" >
 
         <TextView
@@ -58,7 +59,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="right"
-            android:padding="@dimen/printers_row_left_padding"
             android:textColor="@color/theme_light_1"
             android:textSize="@dimen/printers_name_font_size" />
     </LinearLayout>
@@ -66,13 +66,14 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_size"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
         android:background="@color/theme_light_1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_sub_separator_padding"
         android:orientation="horizontal" >
 
         <TextView
@@ -98,13 +99,14 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_size"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
         android:background="@color/theme_light_1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_sub_separator_padding"
         android:orientation="horizontal" >
 
         <TextView
@@ -123,7 +125,6 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="right"
-            android:padding="@dimen/printers_row_left_padding"
             android:text="@string/ids_lbl_printer_status_offline"
             android:textColor="@color/theme_light_1"
             android:textSize="@dimen/printers_name_font_size" />
@@ -132,13 +133,14 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_size"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
         android:background="@color/theme_light_1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_sub_separator_padding"
         android:orientation="horizontal" >
 
         <TextView

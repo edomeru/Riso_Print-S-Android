@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/printers_view_tablet_padding"
     android:background="@color/theme_light_2" >
 
     <LinearLayout
@@ -67,42 +68,36 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="horizontal" >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/printers_view_row_height"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/printers_row_left_padding"
+                    android:text="@string/ids_lbl_ip_address"
+                    android:textColor="@color/theme_dark_1"
+                    android:textSize="@dimen/printers_name_font_size" />
+
+                <TextView
+                    android:id="@+id/inputIpAddress"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/printers_view_row_height"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/printers_row_left_padding"
-                        android:text="@string/ids_lbl_ip_address"
-                        android:textColor="@color/theme_dark_1"
-                        android:textSize="@dimen/printers_name_font_size" />
-
-                    <TextView
-                        android:id="@+id/inputIpAddress"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:gravity="right|center_vertical"
-                        android:padding="@dimen/printers_row_right_padding"
-                        android:textColor="@color/theme_light_1"
-                        android:textSize="@dimen/printers_name_font_size" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/separator_size"
-                    android:layout_marginLeft="@dimen/printers_row_left_padding"
-                    android:background="@color/theme_light_2"
-                    android:visibility="visible" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:padding="@dimen/printers_row_right_padding"
+                    android:textColor="@color/theme_light_1"
+                    android:textSize="@dimen/printers_name_font_size" />
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_size"
+                android:layout_marginLeft="@dimen/printers_row_left_padding"
+                android:background="@color/theme_light_2"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -194,6 +189,7 @@
                     android:textSize="@dimen/printers_name_font_size" />
 
                 <ImageView
+                    android:id="@+id/print_settings"
                     android:layout_width="@dimen/printers_row_right_icon_size"
                     android:layout_height="@dimen/printers_row_right_icon_size"
                     android:layout_gravity="center_vertical"
