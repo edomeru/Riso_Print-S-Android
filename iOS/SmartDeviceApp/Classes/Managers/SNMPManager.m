@@ -101,7 +101,10 @@ static SNMPManager* sharedSNMPManager = nil;
 {
     if (self.useSNMPCommonLib)
     {
-        //TODO: initiate SNMP Manual Search
+        // Net-SNMP
+        // initiate SNMP Manual Search
+        snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
+        snmp_manual_discovery(snmpContext, [printerIP UTF8String]);
     }
     else
     {
@@ -238,7 +241,7 @@ static SNMPManager* sharedSNMPManager = nil;
 - (void)endRealSearchWithResult:(BOOL)success
 {
 #if DEBUG_LOG_SNMP_MANAGER
-    NSLog(@"[INFO][SNMPM] ending real search, result=%@", success ? @"YES" : @"NO");
+    NSLog(@"[INFO][SNMPM] ending real search, success=%@", success ? @"YES" : @"NO");
 #endif
     
     //TODO: if failed and if manual search, still add a printer with full capabilities
