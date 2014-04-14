@@ -31,6 +31,11 @@ JNIEXPORT void
 Java_jp_co_riso_smartdeviceapp_common_SNMPManager_finalizeSNMPManager(JNIEnv *env, jobject object)
 {
     jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
+    if (m_context == 0)
+    {
+        return;
+    }
+
     snmp_context *context = (snmp_context *)m_context;
     CommonJNIState *state = (CommonJNIState *)snmp_context_get_caller_data(context);
     (*env)->DeleteGlobalRef(env, state->instance);
@@ -42,9 +47,26 @@ JNIEXPORT void
 Java_jp_co_riso_smartdeviceapp_common_SNMPManager_deviceDiscovery(JNIEnv *env, jobject object)
 {
     jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
-    snmp_context *context = (snmp_context *)m_context;
+    if (m_context == 0)
+    {
+        return;
+    }
 
+    snmp_context *context = (snmp_context *)m_context;
     snmp_device_discovery(context);
+}
+
+JNIEXPORT void
+Java_jp_co_riso_smartdeviceapp_common_SNMPManager_cancel(JNIEnv *env, jobject object)
+{
+    jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
+    if (m_context == 0)
+    {
+        return;
+    }
+
+    snmp_context *context = (snmp_context *)m_context;
+    snmp_cancel(context);
 }
 
 void end_callback(snmp_context *context, int result)
@@ -55,6 +77,8 @@ void end_callback(snmp_context *context, int result)
     (*java_vm)->AttachCurrentThread(java_vm, (JNIEnv **)&env, 0);
 
     (*env)->CallVoidMethod(env, state->instance, snmp_end_callback_method_id, (jint)result);
+
+    (*java_vm)->DetachCurrentThread(java_vm);
 }
 
 void found_callback(snmp_context *context, snmp_device *device)

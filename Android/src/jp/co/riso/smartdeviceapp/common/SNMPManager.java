@@ -18,6 +18,7 @@ public class SNMPManager {
     public native void initializeSNMPManager();
     public native void finalizeSNMPManager();
     public native void deviceDiscovery();
+    public native void cancel();
     
     public void setCallback(SNMPManagerCallback callback) {
         mCallback = new WeakReference<SNMPManagerCallback>(callback);

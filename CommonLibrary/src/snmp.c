@@ -15,13 +15,14 @@
 #include "common.h"
 
 #define SNMP_MANAGER "snmpmanager"
-//#define BROADCAST_ADDRESS "255.255.255.255"
-#define BROADCAST_ADDRESS "192.168.1.206"  // For debugging
+#define BROADCAST_ADDRESS "255.255.255.255"
+//#define BROADCAST_ADDRESS "192.168.1.206"  // For debugging
 #define COMMUNITY_NAME "public"
 #define SESSION_TIMEOUT 10000000
 #define REQ_ID_DISCOVERY 0x000003
 #define IP_ADDRESS_LENGTH 128
 #define MIB_STRING_LENGTH 256
+#define TIMEOUT 10
 
 #define SYS_OBJ_ID_VALUE "1.3.6.1.4.1.8072.3.2.10"
 
@@ -87,6 +88,7 @@ int snmp_discovery_callback(int operation, struct snmp_session *host, int req_id
 // SNMP context accessors
 snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback);
 void snmp_context_free(snmp_context *context);
+void snmp_cancel(snmp_context *context);
 int snmp_context_get_state(snmp_context *context);
 void snmp_context_set_state(snmp_context *context, int state);
 void snmp_context_device_add(snmp_context *context, snmp_device *device);
@@ -110,6 +112,7 @@ void snmp_device_discovery(snmp_context *context)
 {
     pthread_t thread;
     pthread_create(&thread, 0, do_device_discovery, (void *)context);
+    pthread_detach(thread);
 }
 
 void *do_device_discovery(void *parameter)
@@ -144,7 +147,7 @@ void *do_device_discovery(void *parameter)
     session.callback = snmp_discovery_callback;
     session.callback_magic = context;
     
-    context->state = kSnmpStateStarted;
+    snmp_context_set_state(context, kSnmpStateStarted);
     
     // Open session
     ss = snmp_open(&session);
@@ -155,6 +158,7 @@ void *do_device_discovery(void *parameter)
         
         free(session.peername);
         free(session.community);
+        snmp_context_set_state(context, kSnmpStateEnded);
         context->discovery_ended_callback(context, -1);
         
         return 0;
@@ -181,11 +185,14 @@ void *do_device_discovery(void *parameter)
         snmp_close(ss);
         free(session.peername);
         free(session.community);
+        snmp_context_set_state(context, kSnmpStateEnded);
         context->discovery_ended_callback(context, -1);
         
         return 0;
     }
     
+    time_t start_time;
+    time(&start_time);
     while (1)
     {
         if (snmp_context_get_state(context) == kSnmpStateCancelled)
@@ -197,7 +204,7 @@ void *do_device_discovery(void *parameter)
         int block = 0;
         fd_set fdset;
         struct timeval timeout;
-        timeout.tv_sec = 10;
+        timeout.tv_sec = 0;
         timeout.tv_usec = 0;
         FD_ZERO(&fdset);
         snmp_select_info(&fds, &fdset, &timeout, &block);
@@ -208,8 +215,13 @@ void *do_device_discovery(void *parameter)
         }
         else
         {
-            snmp_timeout();
-            break;
+            time_t current_time;
+            time(&current_time);
+            if (difftime(current_time, start_time) >= TIMEOUT)
+            {
+                snmp_timeout();
+                break;
+            }
         }
     }
     
@@ -220,8 +232,8 @@ void *do_device_discovery(void *parameter)
         free(session.peername);
         free(session.community);
         int count = snmp_context_device_count(context);
-        context->discovery_ended_callback(context, count);
         snmp_context_set_state(context, kSnmpStateEnded);
+        context->discovery_ended_callback(context, count);
     }
     
     return 0;
@@ -282,6 +294,11 @@ void snmp_context_free(snmp_context *context)
     
     free(context);
     context = 0;
+}
+
+void snmp_cancel(snmp_context *context)
+{
+    snmp_context_set_state(context, kSnmpStateCancelled);
 }
 
 int snmp_context_get_state(snmp_context *context)
