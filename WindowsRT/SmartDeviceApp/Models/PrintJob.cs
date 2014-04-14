@@ -15,10 +15,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight;
 
 namespace SmartDeviceApp.Models
 {
-    public class PrintJob
+    public class PrintJob : ObservableObject
     {
 
         #region Properties
@@ -55,5 +57,50 @@ namespace SmartDeviceApp.Models
 
         #endregion Properties
 
+        public override bool Equals(System.Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            PrintJob otherOption = obj as PrintJob;
+            if ((System.Object)otherOption == null)
+            {
+                return false;
+            }
+            return Id == otherOption.Id;
+        }
+
+        public bool Equals(PrintJob otherOption)
+        {
+            if ((object)otherOption == null)
+            {
+                return false;
+            }
+            return (Id == otherOption.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+    }
+
+    public class PrintJobGroup
+    {
+        public string PrinterName { get; set; }
+        public List<PrintJob> Jobs { get; set; }
+
+        public PrintJobGroup(string printerName, List<PrintJob> jobs)
+        {
+            PrinterName = printerName;
+            Jobs = jobs;
+        }
+    }
+
+    public class PrintJobList : ObservableCollection<PrintJobGroup>
+    {
+        public List<PrintJobGroup> Groups { get; set; }
     }
 }

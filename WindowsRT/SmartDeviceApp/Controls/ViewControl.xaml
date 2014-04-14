@@ -93,7 +93,11 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
-                                    <Thickness>400,0,0,0</Thickness>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="{StaticResource SIZE_SidePaneWidth}"
+                                               Right="0">
+                                    </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>

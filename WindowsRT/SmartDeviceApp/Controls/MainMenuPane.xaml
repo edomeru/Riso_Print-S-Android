@@ -5,15 +5,11 @@
     xmlns:local="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="400">
+    mc:Ignorable="d"
+    Width="{StaticResource SIZE_SidePaneWidth}"
+    Background="{StaticResource BRUSH_Gray4}">
     <!--DataContext="{Binding MainMenuViewModel, Source={StaticResource Locator}}">-->
-    <Grid.Style>
-        <Style TargetType="Grid">
-            <Setter Property="Background" Value="{StaticResource BRUSH_Gray4}"/>
-            <Setter Property="Width" Value="{StaticResource SIZE_SidePaneWidth}"/>
-        </Style>
-    </Grid.Style>
-
+    
     <Grid.ChildrenTransitions>
         <TransitionCollection>
             <PaneThemeTransition/>

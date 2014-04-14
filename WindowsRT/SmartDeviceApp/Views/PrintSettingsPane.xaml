@@ -25,13 +25,11 @@
         <Style x:Key="STYLE_LeftGrid" TargetType="Grid">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Left"/>
-                <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
             </Style.Setters>
         </Style>
         <Style x:Key="STYLE_RightGrid" TargetType="Grid">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Right"/>
-                <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
                 <Setter Property="Margin">
                     <Setter.Value>
                         <Thickness Right="{StaticResource MARGIN_RightSidePane}"></Thickness>
