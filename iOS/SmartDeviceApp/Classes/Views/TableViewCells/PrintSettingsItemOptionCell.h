@@ -13,5 +13,6 @@
 @property (nonatomic, weak) IBOutlet UILabel *settingLabel;
 @property (nonatomic, weak) IBOutlet UILabel *valueLabel;
 @property (nonatomic, weak) IBOutlet UIView *separator;
+@property (weak, nonatomic) IBOutlet UIImageView *subMenuImage;
 
 @end
