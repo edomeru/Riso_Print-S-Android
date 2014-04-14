@@ -211,13 +211,13 @@ namespace SmartDeviceApp.Controllers
                     if (existingDefault != null)
                     {
                         // update default printer id
-                        existingDefault.PrinterId = printerId;
+                        existingDefault.PrinterId = (uint)printerId;
                     }
                     else
                     {
                         // no default printer, insert new
                         DefaultPrinter dp = new DefaultPrinter();
-                        dp.PrinterId = printerId;
+                        dp.PrinterId = (uint)printerId;
 
                         int success = await db.InsertAsync(dp);
                     }
