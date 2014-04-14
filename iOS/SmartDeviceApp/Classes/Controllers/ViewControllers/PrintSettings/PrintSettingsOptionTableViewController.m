@@ -52,7 +52,8 @@
     self.key = [self.setting objectForKey:@"name"];
     
     [self fillOptions];
-    self.selectedIndex = [self.optionValues indexOfObject:[self.printDocument.previewSetting valueForKey:self.key]];
+    NSNumber *value = [self.printDocument.previewSetting valueForKey:self.key];   
+    self.selectedIndex = [self.optionValues indexOfObject:value];
     
     // Add empty footer
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 20.0f)];
@@ -65,6 +66,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
 
 #pragma mark - Table view data source
 
@@ -149,7 +152,24 @@
                 return NO;
             }
         }
-       
+    }
+    
+    if([self.key isEqualToString:KEY_IMPOSITION_ORDER] == YES)
+    {
+        if(option == kImpositionOrderLeftToRight || option == kImpositionOrderRightToLeft)
+        {
+            if(self.printDocument.previewSetting.imposition == kImposition4pages)
+            {
+                return NO;
+            }
+        }
+        else
+        {
+            if(self.printDocument.previewSetting.imposition == kImposition2Pages)
+            {
+                return NO;
+            }
+        }
     }
     return YES;
 }

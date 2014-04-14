@@ -29,7 +29,7 @@
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
 #define SETTING_ITEM_SWITCH_CELL @"SettingItemSwitchCell"
-#define PRINTSETTING_CONTEXT @"PrintSettingContext"
+#define PRINTSETTING_CONTEXT @"PreviewSettingContext"
 
 #define PRINTER_SECTION  0
 #define PRINTER_SECTION_HEADER_ROW 0
@@ -44,7 +44,6 @@
 @property (nonatomic, weak) NSDictionary *printSettingsTree;
 @property (nonatomic, strong) NSMutableArray *expandedSections;
 @property (nonatomic, weak) NSDictionary *currentSetting;
-@property (nonatomic, strong) NSIndexPath *indexPathToUpdate;
 @property (nonatomic, weak) PrintDocument *printDocument;
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
 @property (nonatomic, strong) NSMutableDictionary *textFieldBindings;
@@ -52,7 +51,7 @@
 @property (nonatomic, weak) Printer *printer;
 @property (nonatomic, strong) NSArray *settingsWithConstraints;
 @property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
-
+@property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
 @end
 
 @implementation PrintSettingsTableViewController
@@ -117,15 +116,21 @@
     //add observer for settings that have constraint
     self.settingsWithConstraints =[NSArray arrayWithObjects:KEY_BOOKLET, KEY_PUNCH, KEY_FINISHING_SIDE, KEY_IMPOSITION, KEY_ORIENTATION, nil];
     self.indexPathsForSettings = [NSMutableDictionary dictionary];
+    self.indexPathsToUpdate = [[NSMutableArray array] mutableCopy];
     [self addObserversForSettingsWithConstraints];
+}
+
+-(void)dealloc
+{
+    [self removeObserversForSettingsWithConstraints];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if (self.indexPathToUpdate != nil)
+    if([self.indexPathsToUpdate count] > 0)
     {
-        [self.tableView reloadRowsAtIndexPaths:@[self.indexPathToUpdate] withRowAnimation:UITableViewRowAnimationFade];
-        self.indexPathToUpdate = nil;
+        [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
+        [self.indexPathsToUpdate removeAllObjects];
     }
 }
 
@@ -249,6 +254,7 @@
                     itemOptionCell.separator.hidden = YES;
                 }
                 cell = itemOptionCell;
+                [cell setUserInteractionEnabled:[self isSettingEnabled:key]];
             }
             else if ([type isEqualToString:@"numeric"])
             {
@@ -333,7 +339,7 @@
             UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
             if ([cell isKindOfClass:[PrintSettingsItemOptionCell class]])
             {
-                self.indexPathToUpdate = indexPath;
+                [self.indexPathsToUpdate addObject:indexPath];
                 self.currentSetting = [settings objectAtIndex:row - 1];
                 [self performSegueWithIdentifier:@"PrintSettings-PrintOptions" sender:self];
             }
@@ -430,7 +436,7 @@
 {
     for(NSString *key in self.settingsWithConstraints)
     {
-        [self.printDocument.previewSetting removeObserver:key forKeyPath:key context:PRINTSETTING_CONTEXT];
+        [self.printDocument.previewSetting removeObserver:self forKeyPath:key context:PRINTSETTING_CONTEXT];
     }
 }
 
@@ -439,41 +445,7 @@
     if (context == PRINTSETTING_CONTEXT) {
         NSInteger previousVal = (NSInteger)[[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         [self applySettingsConstraintForKey:keyPath withPreviousValue:previousVal];
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
-
-- (void)applyBookletConstraints
-{
-    if(self.printDocument.previewSetting.booklet == YES)
-    {
-        [self setState:NO forSettingKey:KEY_DUPLEX];
-        [self setState:NO forSettingKey:KEY_FINISHING_SIDE];
-        [self setState:NO forSettingKey:KEY_PUNCH];
-        [self setState:NO forSettingKey:KEY_STAPLE];
-        [self setState:NO forSettingKey:KEY_IMPOSITION];
-        [self setState:NO forSettingKey:KEY_IMPOSITION_ORDER];
-        [self setState:YES forSettingKey:KEY_BOOKLET_FINISH];
-        [self setState:YES forSettingKey:KEY_BOOKLET_LAYOUT];
-    }
-    else
-    {
-        [self setState:YES forSettingKey:KEY_DUPLEX];
-        [self setState:YES forSettingKey:KEY_FINISHING_SIDE];
-        [self setState:YES forSettingKey:KEY_PUNCH];
-        [self setState:YES forSettingKey:KEY_STAPLE];
-        [self setState:YES forSettingKey:KEY_IMPOSITION];
-        [self setState:YES forSettingKey:KEY_IMPOSITION_ORDER];
-        [self setState:NO forSettingKey:KEY_BOOKLET_FINISH];
-        [self setState:NO forSettingKey:KEY_BOOKLET_LAYOUT];
-    }
-
-    [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
-    [self setOptionSettingToDefaultValue:KEY_STAPLE];
-    [self setOptionSettingToDefaultValue:KEY_PUNCH];
-    [self setOptionSettingToDefaultValue:KEY_BOOKLET_FINISH];
-    [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
+    } 
 }
 
 - (void)applySettingsConstraintForKey:(NSString*)key withPreviousValue:(NSInteger)previousValue
@@ -485,21 +457,44 @@
     if([key isEqualToString:KEY_FINISHING_SIDE] == YES)
     {
         [self applyFinishingConstraintsWithPreviousValue:previousValue];
+        [self applyFinishingWithOrientationConstraint];
     }
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
-        //TODO
+        [self applyFinishingWithOrientationConstraint];
+        [self applyOrientationConstraint];
     }
     if([key isEqualToString:KEY_PUNCH] == YES)
     {
-        //TODO
+        [self applyPunchConstraint];
     }
     
     if([key isEqualToString:KEY_IMPOSITION] == YES)
     {
-        //TODO
+        [self applyImpositionConstraintWithPreviousValue:previousValue];
+        [self applyFinishingWithOrientationConstraint];
     }
 }
+
+- (void)applyBookletConstraints
+{
+    [self setState:[self isSettingEnabled:KEY_DUPLEX] forSettingKey:KEY_DUPLEX];
+    [self setState:[self isSettingEnabled:KEY_FINISHING_SIDE] forSettingKey:KEY_FINISHING_SIDE];
+    [self setState:[self isSettingEnabled:KEY_PUNCH] forSettingKey:KEY_PUNCH];
+    [self setState:[self isSettingEnabled:KEY_STAPLE] forSettingKey:KEY_STAPLE];
+    [self setState:[self isSettingEnabled:KEY_IMPOSITION] forSettingKey:KEY_IMPOSITION];
+    [self setState:[self isSettingEnabled:KEY_IMPOSITION_ORDER] forSettingKey:KEY_IMPOSITION_ORDER];
+    [self setState:[self isSettingEnabled:KEY_BOOKLET_FINISH] forSettingKey:KEY_BOOKLET_FINISH];
+    [self setState:[self isSettingEnabled:KEY_BOOKLET_LAYOUT] forSettingKey:KEY_BOOKLET_LAYOUT];
+
+    [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
+    [self setOptionSettingToDefaultValue:KEY_STAPLE];
+    [self setOptionSettingToDefaultValue:KEY_PUNCH];
+    [self setOptionSettingToDefaultValue:KEY_BOOKLET_FINISH];
+    [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
+}
+
+
 
 - (void)applyFinishingConstraintsWithPreviousValue:(NSInteger)previousFinishingSide
 {
@@ -525,6 +520,97 @@
                 {
                     [self setOptionSettingWithKey:KEY_STAPLE toValue:(NSInteger)kStapleTypeUpperRight];
                 }
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+-(void) applyFinishingWithOrientationConstraint
+{
+    kPunchType punch = (kPunchType)self.printDocument.previewSetting.punch;
+    BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    kFinishingSide finishingSide = (kFinishingSide)self.printDocument.previewSetting.finishingSide;
+    
+    if(punch == kPunchType3Holes || punch == kPunchType4Holes)
+    {
+        if((finishingSide != kFinishingSideTop  && isPaperLandscape == YES) ||
+           (finishingSide == kFinishingSideTop && isPaperLandscape == NO))
+        {
+            [self setOptionSettingToDefaultValue:KEY_PUNCH];
+        }
+    }
+}
+
+-(void) applyOrientationConstraint
+{
+    kOrientation orientation = (kOrientation) self.printDocument.previewSetting.orientation;
+    //TODO
+}
+
+-(void) applyPunchConstraint
+{
+    kPunchType punch = (kPunchType)self.printDocument.previewSetting.punch;
+    kFinishingSide finishingSide = (kFinishingSide)self.printDocument.previewSetting.finishingSide;
+    BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    
+    if(punch == kPunchType3Holes || punch == kPunchType4Holes)
+    {
+        if(finishingSide != kFinishingSideTop  && isPaperLandscape == YES)
+        {
+            [self setOptionSettingWithKey:KEY_FINISHING_SIDE toValue:(NSInteger)kFinishingSideTop];
+        }
+        if(finishingSide == kFinishingSideTop  && isPaperLandscape == NO)
+        {
+            [self setOptionSettingWithKey:KEY_FINISHING_SIDE toValue:(NSInteger)kFinishingSideLeft];
+        }
+    }
+}
+
+-(void) applyImpositionConstraintWithPreviousValue:(NSInteger)previousImpositionValue
+{
+    kImposition currentImpositionValue  = (kImposition) self.printDocument.previewSetting.imposition;
+    kImpositionOrder impositionOrder = (kImpositionOrder) self.printDocument.previewSetting.impositionOrder;
+    switch(currentImpositionValue)
+    {
+        case kImpositionOff:
+            [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:kImpositionOrderLeftToRight];
+            [self setState:NO forSettingKey:KEY_IMPOSITION_ORDER];
+            break;
+        case kImposition2Pages:
+            if(previousImpositionValue == kImposition4pages)
+            {
+                if(impositionOrder == kImpositionOrderUpperLeftToRight || impositionOrder == kImpositionOrderUpperLeftToBottom)
+                {
+                    [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:(NSInteger) kImpositionOrderLeftToRight];
+                }
+                else
+                {
+                    [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:(NSInteger) kImpositionOrderRightToLeft];
+                }
+            }
+            if(previousImpositionValue == kImpositionOff)
+            {
+                [self setState:YES forSettingKey:KEY_IMPOSITION_ORDER];
+            }
+            break;
+        case kImposition4pages:
+            if(previousImpositionValue == kImposition2Pages)
+            {
+                if(impositionOrder == kImpositionOrderLeftToRight)
+                {
+                    [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:(NSInteger)kImpositionOrderUpperLeftToRight];
+                }
+                else
+                {
+                    [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:(NSInteger)kImpositionOrderUpperRightToLeft];
+                }
+            }
+            if(previousImpositionValue == kImpositionOff)
+            {
+                [self setState:YES forSettingKey:KEY_IMPOSITION_ORDER];
+                [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:kImpositionOrderUpperLeftToRight];
             }
             break;
         default:
@@ -562,15 +648,69 @@
 -(void) setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
 {
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
-    PrintSettingsItemOptionCell *itemOptionCell = (PrintSettingsItemOptionCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    NSNumber *num = [NSNumber numberWithInt:value];
+    [self.printDocument.previewSetting setValue:num forKey:key];
+    [self.indexPathsToUpdate addObject:indexPath];
+}
+
+-(BOOL) isSettingEnabled:(NSString*) settingKey
+{
+    if([settingKey isEqualToString:KEY_DUPLEX])
+    {
+        if(self.printDocument.previewSetting.booklet == YES)
+        {
+            return NO;
+        }
+    }
     
-    NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:indexPath.section - 1];
-    NSArray *settings = [group objectForKey:@"setting"];
-    NSDictionary *setting = [settings objectAtIndex:indexPath.row - 1];
-    NSArray *options = [setting objectForKey:@"option"];
-    NSString *selectedOption = [[options objectAtIndex:value] objectForKey:@"content-body"];
-    itemOptionCell.valueLabel.localizationId = selectedOption;
+    if([settingKey isEqualToString:KEY_FINISHING_SIDE])
+    {
+        if(self.printDocument.previewSetting.booklet == YES)
+        {
+            return NO;
+        }
+    }
     
-    [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];}
+    if([settingKey isEqualToString:KEY_STAPLE])
+    {
+        if(self.printDocument.previewSetting.booklet == YES)
+        {
+            return NO;
+        }
+    }
+    
+    if([settingKey isEqualToString:KEY_PUNCH])
+    {
+        if(self.printDocument.previewSetting.booklet == YES)
+        {
+            return NO;
+        }
+    }
+    
+    if([settingKey isEqualToString:KEY_IMPOSITION])
+    {
+        if(self.printDocument.previewSetting.booklet == YES)
+        {
+            return NO;
+        }
+    }
+    
+    if([settingKey isEqualToString:KEY_IMPOSITION_ORDER])
+    {
+        if(self.printDocument.previewSetting.booklet == YES ||
+           self.printDocument.previewSetting.imposition == kImpositionOff)
+        {
+            return NO;
+        }
+    }
+    
+    if([settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
+       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
+    {
+        return self.printDocument.previewSetting.booklet;
+    }
+    
+    return YES;
+}
 
 @end
