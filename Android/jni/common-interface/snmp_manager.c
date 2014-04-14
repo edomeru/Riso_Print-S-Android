@@ -57,6 +57,23 @@ Java_jp_co_riso_smartdeviceapp_common_SNMPManager_deviceDiscovery(JNIEnv *env, j
 }
 
 JNIEXPORT void
+Java_jp_co_riso_smartdeviceapp_common_SNMPManager_manualDiscovery(JNIEnv *env, jobject object, jstring ip_address)
+{
+    jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
+    if (m_context == 0)
+    {
+        return;
+    }
+
+    const char *native_ip_address = (*env)->GetStringUTFChars(env, ip_address, 0);
+
+    snmp_context *context = (snmp_context *)m_context;
+    snmp_manual_discovery(context, native_ip_address);
+    
+    (*env)->ReleaseStringUTFChars(env, ip_address, native_ip_address);
+}
+
+JNIEXPORT void
 Java_jp_co_riso_smartdeviceapp_common_SNMPManager_cancel(JNIEnv *env, jobject object)
 {
     jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
