@@ -1072,6 +1072,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"../CommonLibrary/3rdParty/net-snmp/lib/ios",
 					"/Users/seph/Repos/projects/riso-03/CommonLibrary/3rdParty/net-snmp/lib/ios",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1092,6 +1093,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"../CommonLibrary/3rdParty/net-snmp/lib/ios",
 					"/Users/seph/Repos/projects/riso-03/CommonLibrary/3rdParty/net-snmp/lib/ios",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
