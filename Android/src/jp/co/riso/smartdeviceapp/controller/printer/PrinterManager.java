@@ -399,7 +399,7 @@ public class PrinterManager implements SNMPManagerCallback {
     public void onEndDiscovery(SNMPManager manager, int result) {
         mIsSearching = false;
         manager.finalizeSNMPManager();
-        Log.wtf("PrinterManager", "Finalize");
+        Log.d("PrinterManager", "Finalize");
         if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
             mPrinterSearchCallback.get().onSearchEnd();
         }
@@ -408,7 +408,7 @@ public class PrinterManager implements SNMPManagerCallback {
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
         Printer printer = new Printer(name, ipAddress, null);
-        Log.wtf("PrinterManager", "onFoundDevice");
+        Log.d("PrinterManager", "onFoundDevice");
         if (isSearching()) {
             if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
                 mPrinterSearchCallback.get().onPrinterAdd(printer);
