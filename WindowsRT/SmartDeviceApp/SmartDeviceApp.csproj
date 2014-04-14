@@ -124,6 +124,7 @@
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
+    <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
       <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
