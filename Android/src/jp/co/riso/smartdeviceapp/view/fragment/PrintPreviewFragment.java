@@ -106,7 +106,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
         
         if (mPrinterId == PrinterManager.EMPTY_ID) {
-            mPrinterId = PrinterManager.sharedManager(SmartDeviceApp.getAppContext()).getDefaultPrinter();
+            mPrinterId = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getDefaultPrinter();
             
             if (mPrinterId != -1) {
                 mPrintSettings = new PrintSettings(mPrinterId);
