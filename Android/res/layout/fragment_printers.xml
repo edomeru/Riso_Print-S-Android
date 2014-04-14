@@ -11,6 +11,7 @@
         android:id="@+id/printer_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/theme_light_2"
         android:divider="@null" >
     </jp.co.riso.smartdeviceapp.view.printers.PrintersListView>
 

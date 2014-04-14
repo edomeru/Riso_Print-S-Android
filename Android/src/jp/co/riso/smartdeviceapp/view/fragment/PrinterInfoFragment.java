@@ -131,7 +131,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                         mPrintSettingsFragment.setPrintSettings(mPrintSettings);
                         PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
                         mPrintSettingsFragment.setTargetFragment(printersFragment, 0);
-                        activity.openDrawer(Gravity.RIGHT, true);
+                        activity.openDrawer(Gravity.RIGHT, false);
                     } else {
                         activity.closeDrawers();
                     }
