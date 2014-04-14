@@ -293,6 +293,7 @@
     <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
+    <Content Include="Resources\Dummy\SampleData.sql" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-180.png" />

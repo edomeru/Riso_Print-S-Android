@@ -151,12 +151,6 @@ namespace SmartDeviceApp.Models
         #region Properties
 
         /// <summary>
-        /// Print setting ID, used by PrintSetting table as primary key
-        /// </summary>
-        [SQLite.Column("pst_id"), SQLite.PrimaryKey]
-        public int Id { get; set; }
-
-        /// <summary>
         /// Printer ID, used by PrintSetting table as primary key and is indexed
         /// </summary>
         [SQLite.Column("prn_id"), SQLite.PrimaryKey, SQLite.Indexed(Name = "PrintSetting_FKIndex1")]
@@ -279,7 +273,6 @@ namespace SmartDeviceApp.Models
         public PrintSettings()
         {
             PrinterId = -1;
-            Id = -1;
             ColorMode = -1;
             Orientation = -1;
             Copies = -1;
@@ -322,13 +315,12 @@ namespace SmartDeviceApp.Models
         /// <param name="staple">staple</param>
         /// <param name="punch">punch</param>
         /// <param name="outputTray">output tray</param>
-        public PrintSettings(int printerId, int id, int colorMode, int orientation, int copies,
+        public PrintSettings(int printerId, int colorMode, int orientation, int copies,
             int duplex, int paperSize, bool scaleToFit, int paperType, int inputTray,
             int imposition, int impositionOrder, int sort, bool booklet, int bookletFinishing,
             int bookletLayout, int finishingSide, int staple, int punch, int outputTray)
         {
             PrinterId = printerId;
-            Id = id;
             ColorMode = colorMode;
             Orientation = orientation;
             Copies = copies;

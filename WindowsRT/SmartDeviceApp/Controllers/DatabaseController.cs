@@ -10,10 +10,14 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
+using SQLite;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
@@ -40,10 +44,13 @@ namespace SmartDeviceApp.Controllers
         }
 
         // public async Task Initialize() // Used for create database from script
-        public void Initialize()
+        public async Task Initialize()
         {
             // await CreateDatabase();  // Used for create database from script
             CreateDatabase();
+
+            // TODO: Remove after testing (or create an initial data manager)
+            await InsertSampleData();
         }
 
         // private async Task CreateDatabase() // Used for create database from script
@@ -76,7 +83,7 @@ namespace SmartDeviceApp.Controllers
                         catch (SQLiteException)
                         {
                             // Table already exists
-                            // Coninue execution just to create other empty tables
+                            // Continue execution just to create other empty tables
                         }
                     }
                     */
@@ -284,6 +291,23 @@ namespace SmartDeviceApp.Controllers
             return printer;
         }
 
+        // TODO: Check if this is to be implemented in PrinterController class
+        public async Task<string> GetPrinterName(int id)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                Printer printer = await db.GetAsync<Printer>(id);
+                return printer.Name;
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return null;
+        }
+
         #endregion Printer Table Operations
 
         #region PrintSetting Table Operations
@@ -330,6 +354,11 @@ namespace SmartDeviceApp.Controllers
             return printJobsList;
         }
 
+        /// <summary>
+        /// Insert an item into PrintJob table
+        /// </summary>
+        /// <param name="printJob"></param>
+        /// <returns></returns>
         public async Task<int> InsertPrintJob(PrintJob printJob)
         {
             if (printJob == null)
@@ -377,6 +406,45 @@ namespace SmartDeviceApp.Controllers
         }
 
         #endregion PrintJob Table Operations
+
+        #region Dummy - Initial Data
+
+        private async Task InsertSampleData()
+        {
+            try
+            {
+                _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
+                using (var db = new SQLite.SQLiteConnection(_databasePath))
+                {
+                    // Read script from Dummy Resources and create tables
+                    StorageFile file =await StorageFileUtility.GetFileFromAppResource("Resources/Dummy/SampleData.sql");
+                    string script = await FileIO.ReadTextAsync(file);
+
+                    // Loop each commands
+                    string[] commands = script.Split(new char[] { ';' },
+                        StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string command in commands)
+                    {
+                        try
+                        {
+                            // Since each parameter in the script is in each line,
+                            // convert them into a single line statement
+                            db.Execute(command.Replace("\r\n", " ").Trim());
+                        }
+                        catch (SQLiteException)
+                        {
+                            // Error handling
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Error handling
+            }
+        }
+
+        #endregion Dummy - Initial Data
 
     }
 }

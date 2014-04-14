@@ -27,9 +27,9 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initialization
         /// </summary>
-        public static void Initialize()
+        public static async void Initialize()
         {
-            InitializeDataStorage();
+            await InitializeDataStorage();
         }
 
         /// <summary>
@@ -54,15 +54,18 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initializes the database and other data storage
         /// </summary>
-        private static void InitializeDataStorage()
+        private static async Task InitializeDataStorage()
         {
-            DatabaseController.Instance.Initialize();
+            await DatabaseController.Instance.Initialize();
         }
 
         #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
 
         public async static Task InitializeSamplePdf()
         {
+            // TODO: Put in proper initialization location
+            await JobController.Instance.Initialize();
+
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 

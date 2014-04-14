@@ -23,8 +23,8 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
 
-            Initialize();
-            SortPrintJobsListToColumns();
+            //Initialize();
+            //SortPrintJobsListToColumns();
         }
 
         private PrintJobList _printJobsList;
@@ -77,7 +77,8 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void SortPrintJobsListToColumns()
+        // TODO: Change back to private
+        public void SortPrintJobsListToColumns()
         {
             var column1 = new PrintJobList();
             var column2 = new PrintJobList();
