@@ -64,9 +64,9 @@
             <VisualStateGroup x:Name="PreviewViewVisualStateGroup">
                 <VisualStateGroup.Transitions>
                     <VisualTransition GeneratedDuration="0:0:0">
-                        <!--<VisualTransition.GeneratedEasingFunction>
+                        <VisualTransition.GeneratedEasingFunction>
                             <QuinticEase EasingMode="EaseOut"/>
-                        </VisualTransition.GeneratedEasingFunction>-->
+                        </VisualTransition.GeneratedEasingFunction>
                     </VisualTransition>
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="MainMenuPaneVisibleState">
@@ -83,7 +83,18 @@
                 </VisualState>
                 <VisualState x:Name="RightPaneVisibleState">
                     <Storyboard>
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="sidePanesGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="0"
+                                               Right="{StaticResource SIZE_SidePaneWidth}">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>-->
                         <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
                     </Storyboard>
                 </VisualState>
