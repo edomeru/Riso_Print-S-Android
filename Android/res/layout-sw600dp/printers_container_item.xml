@@ -97,7 +97,7 @@
                 </LinearLayout>
 
                 <View
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/separator_size"
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
                     android:background="@color/theme_light_2"
@@ -130,7 +130,7 @@
             </LinearLayout>
 
             <View
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_size"
                 android:layout_marginLeft="@dimen/printers_row_left_padding"
                 android:background="@color/theme_light_2"
@@ -169,7 +169,7 @@
                 </LinearLayout>
 
                 <View
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/separator_size"
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
                     android:background="@color/theme_light_2"

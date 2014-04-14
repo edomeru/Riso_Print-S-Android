@@ -106,6 +106,7 @@ public class PrinterManager implements SnmpSearchCallback {
             cursor.close();
             return true;
         }
+        dbManager.close();
         cursor.close();
         return false;
     }
