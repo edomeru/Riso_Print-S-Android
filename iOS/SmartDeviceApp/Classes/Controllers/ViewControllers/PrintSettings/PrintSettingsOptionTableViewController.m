@@ -13,6 +13,7 @@
 #import "PDFFileManager.h"
 #import "PrintDocument.h"
 #import "PreviewSetting.h"
+#import "PrintPreviewHelper.h"
 
 #define OPTIONS_HEADER_CELL @"OptionsHeaderCell"
 #define OPTIONS_ITEM_CELL @"OptionsItemCell"
@@ -22,7 +23,8 @@
 @property (nonatomic, weak) PrintDocument* printDocument;
 @property (nonatomic) NSInteger selectedIndex;
 @property (nonatomic, strong) NSString *key;
-
+@property (nonatomic,  strong) NSMutableArray *options;
+@property (nonatomic,  strong) NSMutableArray *optionValues;
 @end
 
 @implementation PrintSettingsOptionTableViewController
@@ -48,7 +50,9 @@
     
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
     self.key = [self.setting objectForKey:@"name"];
-    self.selectedIndex = [[self.printDocument.previewSetting valueForKey:self.key] integerValue];
+    
+    [self fillOptions];
+    self.selectedIndex = [self.optionValues indexOfObject:[self.printDocument.previewSetting valueForKey:self.key]];
     
     // Add empty footer
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 20.0f)];
@@ -73,7 +77,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [[self.setting objectForKey:@"option"] count] + 1;
+    return [self.options count] + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -90,14 +94,13 @@
     else
     {
         PrintSettingsOptionsItemCell *itemCell = [tableView dequeueReusableCellWithIdentifier:OPTIONS_ITEM_CELL forIndexPath:indexPath];
-        NSArray *options = [self.setting objectForKey:@"option"];
-        itemCell.optionLabel.localizationId = [[options objectAtIndex:indexPath.row - 1] objectForKey:@"content-body"];
+        itemCell.optionLabel.localizationId = [[self.options objectAtIndex:indexPath.row - 1] objectForKey:@"content-body"];
         if ((indexPath.row - 1) == self.selectedIndex)
         {
             [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
         }
         itemCell.separator.hidden = NO;
-        if (indexPath.row == options.count)
+        if (indexPath.row == self.options.count)
         {
             itemCell.separator.hidden = YES;
         }
@@ -119,7 +122,7 @@
     if (index != self.selectedIndex)
     {
         self.selectedIndex = index;
-        [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:self.selectedIndex] forKey:self.key];
+        [self.printDocument.previewSetting setValue:[self.optionValues objectAtIndex:index] forKey:self.key];
     }
 }
 
@@ -128,56 +131,44 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+-(BOOL) isApplicableOption:(NSInteger)option
 {
-    // Return NO if you do not want the specified item to be editable.
+    if([self.key isEqualToString:KEY_STAPLE] == YES)
+    {
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        {
+            if(option == kStapleType1Pos)
+            {
+                return NO;
+            }
+        }
+        else
+        {
+            if(option == kStapleTypeUpperLeft || option == kStapleTypeUpperRight)
+            {
+                return NO;
+            }
+        }
+       
+    }
     return YES;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+-(void) fillOptions
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a story board-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    self.options = [[NSMutableArray array] mutableCopy];
+    self.optionValues = [[NSMutableArray array] mutableCopy];
+    NSArray *options = [self.setting objectForKey:@"option"];
+    NSInteger count =options.count;
+    for(int index = 0; index < count; index++)
+    {
+        if([self isApplicableOption:index] == YES)
+        {
+            [self.options addObject:[options objectAtIndex:index]];
+            [self.optionValues addObject:[NSNumber numberWithInt:index]];
+        }
+    }
 }
 
- */
 
 @end

@@ -437,7 +437,8 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == PRINTSETTING_CONTEXT) {
-        [self applySettingsConstraintForKey:keyPath];
+        NSInteger previousVal = (NSInteger)[[change objectForKey:NSKeyValueChangeOldKey] integerValue];
+        [self applySettingsConstraintForKey:keyPath withPreviousValue:previousVal];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
@@ -475,7 +476,7 @@
     [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
 }
 
-- (void)applySettingsConstraintForKey:(NSString*)key
+- (void)applySettingsConstraintForKey:(NSString*)key withPreviousValue:(NSInteger)previousValue
 {
     if([key isEqualToString:KEY_BOOKLET] == YES)
     {
@@ -483,7 +484,7 @@
     }
     if([key isEqualToString:KEY_FINISHING_SIDE] == YES)
     {
-        [self applyFinishingConstraints];
+        [self applyFinishingConstraintsWithPreviousValue:previousValue];
     }
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
@@ -500,9 +501,35 @@
     }
 }
 
-- (void)applyFinishingConstraints
+- (void)applyFinishingConstraintsWithPreviousValue:(NSInteger)previousFinishingSide
 {
-    //TODO
+    kFinishingSide currentFinishingSide = (kFinishingSide)self.printDocument.previewSetting.finishingSide;
+    kStapleType staple = (kStapleType)self.printDocument.previewSetting.staple;
+    switch(currentFinishingSide)
+    {
+        case kFinishingSideLeft:
+        case kFinishingSideRight:
+            if(staple == kStapleTypeUpperLeft || staple == kStapleTypeUpperRight)
+            {
+                [self setOptionSettingWithKey:KEY_STAPLE toValue:(NSInteger)kStapleType1Pos];
+            }
+            break;
+        case kFinishingSideTop:
+            if(staple == kStapleType1Pos)
+            {
+                if(previousFinishingSide == kFinishingSideLeft)
+                {
+                    [self setOptionSettingWithKey:KEY_STAPLE toValue:(NSInteger)kStapleTypeUpperLeft];
+                }
+                else if(previousFinishingSide == kFinishingSideRight)
+                {
+                    [self setOptionSettingWithKey:KEY_STAPLE toValue:(NSInteger)kStapleTypeUpperRight];
+                }
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 -(void) setState:(BOOL)isEnabled forSettingKey:(NSString*)key
@@ -515,7 +542,7 @@
 -(void) setOptionSettingToDefaultValue: (NSString*)key
 {
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
-    PrintSettingsItemOptionCell *itemOptionCell = [self.tableView cellForRowAtIndexPath:indexPath];
+    PrintSettingsItemOptionCell *itemOptionCell = (PrintSettingsItemOptionCell*)[self.tableView cellForRowAtIndexPath:indexPath];
    
     //get default value
     NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:indexPath.section - 1];
@@ -531,5 +558,19 @@
     
     [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];
 }
+
+-(void) setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
+{
+    NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
+    PrintSettingsItemOptionCell *itemOptionCell = (PrintSettingsItemOptionCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    
+    NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:indexPath.section - 1];
+    NSArray *settings = [group objectForKey:@"setting"];
+    NSDictionary *setting = [settings objectAtIndex:indexPath.row - 1];
+    NSArray *options = [setting objectForKey:@"option"];
+    NSString *selectedOption = [[options objectAtIndex:value] objectForKey:@"content-body"];
+    itemOptionCell.valueLabel.localizationId = selectedOption;
+    
+    [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];}
 
 @end
