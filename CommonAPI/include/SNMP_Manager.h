@@ -47,5 +47,6 @@ typedef struct {
 void snmp_device_discovery(discovery_ended_callback onEndCallback, printer_added_callback onAddCallback);
 int snmp_get_print_capabilities(snmp_device *device, printer_added_callback onAddCallback);
 void snmp_device_manualdiscovery(discovery_ended_callback onEndCallback, printer_added_callback onAddCallback, char** ipAddress);
-
+void snmp_device_discovery_cancel();
+int snmp_device_checkstatus(const char* ipAddress);
 #endif

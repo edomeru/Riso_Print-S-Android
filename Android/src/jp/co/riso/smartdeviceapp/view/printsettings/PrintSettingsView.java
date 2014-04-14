@@ -145,7 +145,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void loadPrintersList() {
-        mPrintersList = PrinterManager.sharedManager(SmartDeviceApp.getAppContext()).getSavedPrintersList();
+        mPrintersList = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getSavedPrintersList();
     }
     
     // ================================================================================
