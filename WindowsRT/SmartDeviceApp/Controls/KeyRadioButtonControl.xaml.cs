@@ -30,10 +30,13 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("Index", typeof(int), typeof(KeyRadioButtonControl), null);
 
         public static readonly DependencyProperty IconImageProperty =
-            DependencyProperty.Register("IconImage", typeof(PrintSettingOption), typeof(KeyRadioButtonControl), null);
+            DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyRadioButtonControl), null);
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyRadioButtonControl), null);
+
+        public static readonly DependencyProperty SeparatorVisibilityProperty =
+            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyRadioButtonControl), null);
 
         public object Value
         {
@@ -59,5 +62,10 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextProperty, value); }
         }
 
+        public string SeparatorVisibility
+        {
+            get { return (string)GetValue(SeparatorVisibilityProperty); }
+            set { SetValue(SeparatorVisibilityProperty, value); }
+        }
     }
 }

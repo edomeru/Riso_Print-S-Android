@@ -16,6 +16,14 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
         </Style>
+        <Style x:Key="STYLE_List_Separator" TargetType="Line">
+            <Style.Setters>
+                <Setter Property="X1" Value="0"/>
+                <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
+                <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
+                <Setter Property="StrokeThickness" Value="2"/>
+            </Style.Setters>
+        </Style>
         <ControlTemplate x:Key="TEMPLATE_ToggleButton" TargetType="ToggleButton">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
         		<VisualStateManager.VisualStateGroups>
@@ -69,9 +77,15 @@
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <ToggleButton x:Name="header" Grid.Row="0" Template="{StaticResource TEMPLATE_ToggleButton}" Style="{StaticResource STYLE_ListToggleButton}"/>
-        <ContentPresenter Grid.Row="1" Content="{Binding Content, ElementName=groupListControl}" Visibility="{Binding IsChecked, ElementName=header, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+        <ContentPresenter Grid.Row="2" 
+                          Content="{Binding Content, ElementName=groupListControl}" 
+                          Visibility="{Binding IsChecked, ElementName=header, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+        <Line Grid.Row="2" x:Name="separator" Grid.ColumnSpan="2"                
+              Visibility="{Binding IsChecked, ElementName=header, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"
+              Style="{StaticResource STYLE_List_Separator}"/>
     </Grid>
 </UserControl>

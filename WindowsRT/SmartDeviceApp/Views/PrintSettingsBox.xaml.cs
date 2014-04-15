@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class PrintSettingsBox : StackPanel
+    public sealed partial class PrintSettingsBox : Grid
     {
         public PrintSettingsBox()
         {

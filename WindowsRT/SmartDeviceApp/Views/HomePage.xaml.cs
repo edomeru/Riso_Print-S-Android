@@ -25,6 +25,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Base;
+using SmartDeviceApp.Controls;
 
 namespace SmartDeviceApp.Views
 {

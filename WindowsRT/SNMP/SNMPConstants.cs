@@ -33,9 +33,9 @@ namespace SNMP
         public const byte SNMP_SNMPV2_TRAP            = 0xA7;
 
 
-        public const byte SNMP_BROADCAST_SEND_TIMEOUT         = 20;
-        public const byte SNMP_GETCAPABILITY_SEND_TIMEOUT     = 20;
-        public const byte SNMP_GETCAPABILITY_RECEIVE_TIMEOUT  = 20;
+        public const byte SNMP_BROADCAST_SEND_TIMEOUT         = 10;
+        public const byte SNMP_GETCAPABILITY_SEND_TIMEOUT     = 10;
+        public const byte SNMP_GETCAPABILITY_RECEIVE_TIMEOUT  = 10;
 
         enum SNMPRequestError
         {

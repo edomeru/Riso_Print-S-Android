@@ -28,6 +28,8 @@ namespace SmartDeviceApp.Models
         private string _name;
         private bool _isOnline;
         private bool _isDefault;
+        private bool _willBeDeleted;
+        private bool _willPerformDelete;
 
         /// <summary>
         /// Printer ID, used by Printer table as primary key
@@ -144,11 +146,36 @@ namespace SmartDeviceApp.Models
             }
         }
 
+
+        [SQLite.Ignore]
+        public bool WillBeDeleted
+        {
+            get { return this._willBeDeleted; }
+            set
+            {
+                _willBeDeleted = value;
+                OnPropertyChanged("WillBeDeleted");
+            }
+        }
+
+        [SQLite.Ignore]
+        public bool WillPerformDelete
+        {
+            get { return this._willPerformDelete; }
+            set
+            {
+                _willPerformDelete = value;
+                OnPropertyChanged("WillPerformDelete");
+            }
+        }
+
+
+
         /// <summary>
         /// Print settings associated to the printer
         /// </summary>
         [SQLite.Ignore]
-        public PagePrintSetting PrintSetting { get; set; }
+        public PrintSettings PrintSettings { get; set; }
 
         #endregion Properties
 
@@ -180,7 +207,7 @@ namespace SmartDeviceApp.Models
             EnabledBind = false;
             IsDefault = false;
             IsOnline = false;
-            PrintSetting = null;
+            PrintSettings = null;
         }
 
         /// <summary>
@@ -216,7 +243,7 @@ namespace SmartDeviceApp.Models
             EnabledBind = enabledBind;
             IsDefault = false;
             IsOnline = false;
-            PrintSetting = null;
+            PrintSettings = null;
         }
 
     }

@@ -55,6 +55,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty SeparatorVisibilityProperty =
+            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+        
         public static readonly DependencyProperty SetFocusProperty =
             DependencyProperty.Register("SetFocus", typeof(bool), typeof(KeyValueControl), 
             new PropertyMetadata(false, FocusChanged));
@@ -120,6 +123,11 @@ namespace SmartDeviceApp.Controls
             set { SetValue(ValueTextProperty, value); }
         }
 
+        public string SeparatorVisibility
+        {
+            get { return (string)GetValue(SeparatorVisibilityProperty); }
+            set { SetValue(SeparatorVisibilityProperty, value); }
+        }
         public bool SetFocus
         {
             get { return (bool)GetValue(SetFocusProperty); }

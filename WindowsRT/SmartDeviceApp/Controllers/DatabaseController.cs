@@ -62,8 +62,7 @@ namespace SmartDeviceApp.Controllers
                     // Read script from Assets and create tables
                     string dbScriptPath = Path.Combine(Package.Current.InstalledLocation.Path,
                         FILE_PATH_DATABASE_SCRIPT);
-                    StorageFile file =await
-                        StorageFile.GetFileFromApplicationUriAsync(new Uri(dbScriptPath));
+                    StorageFile file =await StorageFileUtility.GetFileFromAppResource(dbScriptPath);
                     string script = await FileIO.ReadTextAsync(file);
                         
                     // Loop each commands
@@ -108,7 +107,7 @@ namespace SmartDeviceApp.Controllers
                     db.Commit();
 
                     //PrintSettings Table
-                    db.CreateTable<PagePrintSetting>();
+                    db.CreateTable<PrintSettings>();
                     db.Commit();
 
                     //PrintJob Table
@@ -136,7 +135,7 @@ namespace SmartDeviceApp.Controllers
         {
             Printer printer = new Printer(1, 1, "192.168.0.170", "RISO_Printer1", 1, true, true,
                 true, true, true, true, true);
-            Printer printer2 = new Printer(2, 2, "192.168.0.199", "RISO_Printer2", 1, true, true,
+            Printer printer2 = new Printer(2, 2, "192.168.0.189", "RISO_Printer2", 1, true, true,
                 true, true, true, true, true);
             Printer printer3 = new Printer(3, 3, "192.168.0.22", "RISO_Printer3", 1, true, true,
                 true, true, true, true, true);
@@ -299,15 +298,15 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSetting Table Operations
 
-        public async Task<PagePrintSetting> GetPrintSetting(int printerId)
+        public async Task<PrintSettings> GetPrintSetting(int printerId)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            PagePrintSetting printSetting = null;
+            PrintSettings printSetting = null;
 
             try
             {
-                printSetting = await db.GetAsync<PagePrintSetting>(printerId);
+                printSetting = await db.GetAsync<PrintSettings>(printerId);
             }
             catch
             {

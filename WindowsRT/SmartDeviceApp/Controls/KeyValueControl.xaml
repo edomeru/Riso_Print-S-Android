@@ -33,7 +33,7 @@
             <Setter Property="Padding" Value="0" />
         </Style>
     </UserControl.Resources>
-    <Grid x:Name="button" Style="{StaticResource STYLE_ListItemGrid}">
+    <Grid Style="{StaticResource STYLE_ListItemGrid}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="1" />
@@ -50,7 +50,7 @@
             <TextBlock x:Name="key" 
                        Text="{Binding Text, ElementName=keyValueControl}" 
                        Style="{StaticResource STYLE_TextKey}"
-                       MaxWidth="250"/>
+                       MaxWidth="150"/>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
             <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" Style="{StaticResource STYLE_AlignRight}"/>
@@ -64,6 +64,8 @@
                         Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
                         Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
         </StackPanel>
-        <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
+        <Line Grid.Row="1" Grid.ColumnSpan="2" 
+              Visibility="{Binding SeparatorVisibility, ElementName=keyValueControl}"
+              Style="{StaticResource STYLE_List_Separator}"></Line>
     </Grid>
 </UserControl>

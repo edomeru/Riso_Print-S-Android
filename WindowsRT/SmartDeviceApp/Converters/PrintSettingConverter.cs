@@ -11,6 +11,8 @@
 //
 
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
@@ -93,6 +95,18 @@ namespace SmartDeviceApp.Converters
             }
         }
 
+        public class DuplexIntToBoolConverter
+        {
+
+            public static bool Convert(int value)
+            {
+                bool convertedValue = (value == (int)Duplex.Off) ? false : true;
+
+                return convertedValue;
+            }
+
+        }
+
         public class PaperSizeToIntConverter : BasePrintSettingConverter.BasePrintSettingToIntConverter
         {
 
@@ -137,6 +151,9 @@ namespace SmartDeviceApp.Converters
                 {
                     case (int)PaperSize.A3W:
                         paperSize = PrintSettingConstant.PAPER_SIZE_A3W;
+                        break;
+                    case (int)PaperSize.A3:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_A3;
                         break;
                     case (int)PaperSize.A5:
                         paperSize = PrintSettingConstant.PAPER_SIZE_A5;
@@ -225,7 +242,7 @@ namespace SmartDeviceApp.Converters
                         break;
                     case (int)Imposition.Off:
                     default:
-                        pagesPerSheet = 1;
+                        // Do nothing
                         break;
                 }
 
@@ -351,6 +368,58 @@ namespace SmartDeviceApp.Converters
 
                 return convertedValue;
             }
+        }
+
+        public class PunchIntToNumberOfHolesConverter
+        {
+
+            public static int Convert(int value)
+            {
+                int numberOfHoles = 0;
+                switch (value)
+                {
+                    case (int)Punch.TwoHoles:
+                        numberOfHoles = 2;
+                        break;
+                    case (int)Punch.FourHoles:
+                        numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
+                        break;
+                    case (int)Punch.Off:
+                    default:
+                        // Do nothing
+                        break;
+                }
+
+                return numberOfHoles;
+            }
+
+        }
+
+        public class PunchIntToDistanceBetweenHolesConverter
+        {
+
+            public static double Convert(int value)
+            {
+                double distance = 0;
+                switch (value)
+                {
+                    case (int)Punch.TwoHoles:
+                        distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
+                        break;
+                    case (int)Punch.FourHoles:
+                        distance = (GlobalizationUtility.IsJapaneseLocale()) ?
+                            PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE :
+                            PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE;
+                        break;
+                    case (int)Punch.Off:
+                    default:
+                        // Do nothing
+                        break;
+                }
+
+                return distance * ImageConstant.BASE_DPI;
+            }
+
         }
 
         public class OutputTrayToIntConverter : BasePrintSettingConverter.BasePrintSettingToIntConverter

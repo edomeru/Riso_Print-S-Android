@@ -105,10 +105,14 @@
             </Core:DataTriggerBehavior>
             <Core:EventTriggerBehavior EventName="Holding">
                 <Core:GoToStateAction StateName="DeletePrinterState"/>
+                <Core:CallMethodAction MethodName="{Binding DataContext.UpdateToBeDeleted}"/>   
+               
             </Core:EventTriggerBehavior>
-            
-            
-		</Interactivity:Interaction.Behaviors>
+            <Core:DataTriggerBehavior Binding="{Binding DataContext.WillBeDeleted,  ElementName=printerNameControl, Mode=TwoWay}" Value="False">
+                <Core:InvokeCommandAction Command="{Binding SetVisualState, ElementName=printerNameControl}"/>
+            </Core:DataTriggerBehavior>
+
+        </Interactivity:Interaction.Behaviors>
 		<StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
 			<Image x:Name="icon"
 				Visibility="Visible" 
@@ -134,16 +138,18 @@
 				Text="{Binding ValueText, ElementName=printerNameControl}"
                        
 				MaxWidth="100"/>
-            <!--Style="{StaticResource STYLE_TextValue}"-->
+            <!--Style="{StaticResource STYLE_TextValue}"  CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"-->
 			<Image x:Name="rightButton" Source="ms-appx:///Resources/Images/img_btn_delete_printer_tablet.scale-100.png" 
-				Style="{StaticResource STYLE_AlignRight}" Stretch="None" Visibility="Collapsed">
+				Style="{StaticResource STYLE_AlignRight}" Stretch="None" Visibility="{Binding WillBeDeleted, ElementName=printerNameControl, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerPressed">
-                        <Core:InvokeCommandAction Command="{Binding DeleteCommand, ElementName=printerNameControl}"
-                                                  CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"/>
+                        <Core:InvokeCommandAction Command="{Binding UpdateDeletionPerform, ElementName=printerNameControl}"
+                                                />
                     </Core:EventTriggerBehavior>
+                    
+
                 </Interactivity:Interaction.Behaviors>
-			</Image>
+            </Image>
 		</StackPanel>
 	</Grid>
 </UserControl>

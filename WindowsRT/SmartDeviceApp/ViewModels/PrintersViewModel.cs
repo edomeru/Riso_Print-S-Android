@@ -1,9 +1,12 @@
+//<<<<<<< HEAD
 ﻿using GalaSoft.MvvmLight;
-using System;
+﻿using System;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//<<<<<<< HEAD
 using SmartDeviceApp.Models;
 
 using SmartDeviceApp.Common.Utilities;
@@ -21,6 +24,14 @@ using System.Diagnostics;
 using GalaSoft.MvvmLight.Command;
 using Windows.UI.Xaml;
 
+using System.Windows.Input;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Models;
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
+
 namespace SmartDeviceApp.ViewModels
 {
     public class PrintersViewModel : ViewModelBase, INotifyPropertyChanged
@@ -28,33 +39,36 @@ namespace SmartDeviceApp.ViewModels
         //contains data that binds with PrintersPage
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
+        
+        private PrintersRightPaneMode _rightPaneMode;
 
-        private ICommand _toggleMainMenuPane;
-        private ICommand _toggleAddPrinterPane;
-        private ICommand _toggleScanPrintersPane;
+        //private ICommand _toggleMainMenuPane;
+        //private ICommand _toggleAddPrinterPane;
+        //private ICommand _toggleScanPrintersPane;
 
-        private ICommand _addPrinter;
+        //private ICommand _addPrinter;
         private ICommand _deletePrinter;
 
-        private ICommand _printerSearchItemSelected;
+        //private ICommand _printerSearchItemSelected;
 
-        private ICommand _printerSearchRefreshed;
+        //private ICommand _printerSearchRefreshed;
 
         private ObservableCollection<Printer> _printerList;
-        private ObservableCollection<PrinterSearchItem> _printerSearchList;
+        //private ObservableCollection<PrinterSearchItem> _printerSearchList;
 
         private PrinterController printerController = new PrinterController();
 
-        private PrintersViewMode _printersViewMode;
-        private bool _willRefresh;
+        //private PrintersViewMode _printersViewMode;
+        //private bool _willRefresh;
         private int _height;
+
 
         /*
          * Titles for Center Pane and side Panes
          */
-        private string _pageTitleText;
-        private string _addPrinterPaneTitleText;
-        private string _searchPrintersPaneTitleText;
+        //private string _pageTitleText;
+        //private string _addPrinterPaneTitleText;
+        //private string _searchPrintersPaneTitleText;
 
 
         /**
@@ -62,9 +76,9 @@ namespace SmartDeviceApp.ViewModels
          * Variables for Add Printer feature
          * 
          * */
-        private string _ipAddress;
-        private string _username;
-        private string _password;
+        //private string _ipAddress;
+        //private string _username;
+        //private string _password;
 
         /**
          * 
@@ -121,15 +135,15 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public bool WillRefresh
-        {
-            get { return this._willRefresh; }
-            set
-            {
-                _willRefresh = value;
-                OnPropertyChanged("WillRefresh");
-            }
-        }
+        //public bool WillRefresh
+        //{
+        //    get { return this._willRefresh; }
+        //    set
+        //    {
+        //        _willRefresh = value;
+        //        OnPropertyChanged("WillRefresh");
+        //    }
+        //}
 
         public ObservableCollection<Printer> PrinterList
         {
@@ -141,26 +155,39 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public ObservableCollection<PrinterSearchItem> PrinterSearchList
-        {
-            get{ return this._printerSearchList; }
-            set
-            {
-                _printerSearchList = value;
-                OnPropertyChanged("PrinterSearchList");
-            }
-        }
+        //private ObservableCollection<int> _temp;
+        //public ObservableCollection<int> Temp
+        //{
+        //    get { return this._temp; }
+        //    set
+        //    {
+        //        _temp = value;
+        //        OnPropertyChanged("Temp");
+        //    }
+        //}
 
-        public string PageTitleText
-        {
-            get;
-            set;
-        }
-        public string AddPrinterPaneTitleText
-        {
-            get;
-            set;
-        }
+
+        //public ObservableCollection<PrinterSearchItem> PrinterSearchList
+        //{
+        //    get{ return this._printerSearchList; }
+        //    set
+        //    {
+        //        _printerSearchList = value;
+        //        OnPropertyChanged("PrinterSearchList");
+        //    }
+        //}
+
+        //public string PageTitleText
+        //{
+        //    get;
+        //    set;
+        //}
+        //public string AddPrinterPaneTitleText
+        //{
+        //    get;
+        //    set;
+        //}
+        private string _searchPrintersPaneTitleText;
         public string SearchPrintersPaneTitleText
         {
             get { return this._searchPrintersPaneTitleText; }
@@ -172,35 +199,35 @@ namespace SmartDeviceApp.ViewModels
         }
 
         
-        public string IpAddress
-        {
-            get { return _ipAddress; }
-            set 
-            { 
-                this._ipAddress = value;
-                OnPropertyChanged("IpAddress");
-            }
-        }
+        //public string IpAddress
+        //{
+        //    get { return _ipAddress; }
+        //    set 
+        //    { 
+        //        this._ipAddress = value;
+        //        OnPropertyChanged("IpAddress");
+        //    }
+        //}
 
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                this._username = value;
-                OnPropertyChanged("Username");
-            }
-        }
+        //public string Username
+        //{
+        //    get { return _username; }
+        //    set
+        //    {
+        //        this._username = value;
+        //        OnPropertyChanged("Username");
+        //    }
+        //}
 
-        public string Password
-        {
-            get { return _password; }
-            set
-            {
-                this._password = value;
-                OnPropertyChanged("Password");
-            }
-        }
+        //public string Password
+        //{
+        //    get { return _password; }
+        //    set
+        //    {
+        //        this._password = value;
+        //        OnPropertyChanged("Password");
+        //    }
+        //}
 
 
         public ImageSource MainMenuButtonImage
@@ -263,6 +290,8 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
+//<<<<<<< HEAD
+            Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
 
             Initialize();
         }
@@ -270,24 +299,55 @@ namespace SmartDeviceApp.ViewModels
         private async void Initialize()
         {
 
-            PageTitleText = "Printers";
-            AddPrinterPaneTitleText = "Add Printer";
+            //PageTitleText = "Printers";
+            //AddPrinterPaneTitleText = "Add Printer";
             SearchPrintersPaneTitleText = "Printer Search";
 
-            IpAddress = "";
-            Username = "";
-            Password = "";
-            _printersViewMode = PrintersViewMode.PrintersFullScreen;
+            
+            //_printersViewMode = PrintersViewMode.PrintersFullScreen;
             
 
 
-            setMainMenuButtonImage(_MainMenuImageNormal);
-            setAddButtonImage(_AddImageNormal);
-            setSearchButtonImage(_SearchImageNormal);
-            setDoneButtonImage(_AddPrinterOkImageNormal);
+            //setMainMenuButtonImage(_MainMenuImageNormal);
+            //setAddButtonImage(_AddImageNormal);
+            //setSearchButtonImage(_SearchImageNormal);
+            //setDoneButtonImage(_AddPrinterOkImageNormal);
 
-            Height = (int) Window.Current.Bounds.Height - 52;
+            //Height = (int) Window.Current.Bounds.Height - 52;
+
+            
+            //Temp = new ObservableCollection<int>();
+            //Temp.Add(0);
+            //Temp.Add(1);
+            //Temp.Add(2);
         }
+
+        public PrintersRightPaneMode RightPaneMode
+        {
+            get { return _rightPaneMode; }
+            set
+            {
+                if (_rightPaneMode != value)
+                {
+                    _rightPaneMode = value;
+                    OnPropertyChanged("RightPaneMode");
+                }
+            }
+        }
+
+        private void SetRightPaneMode(VisibleRightPane visibleRightPane)
+        {
+            switch (visibleRightPane)
+            {
+                case VisibleRightPane.Pane1:
+                    RightPaneMode = PrintersRightPaneMode.SearchPrinter;
+                    break;
+                case VisibleRightPane.Pane2:
+                    RightPaneMode = PrintersRightPaneMode.AddPrinter;
+                    break;
+            }
+        }
+
 
 
         /**
@@ -297,174 +357,174 @@ namespace SmartDeviceApp.ViewModels
          * */
         
 
-        public ICommand ToggleMainMenuPane
-        {
-            get
-            {
-                if (_toggleMainMenuPane == null)
-                {
-                    _toggleMainMenuPane = new SmartDeviceApp.Common.RelayCommand(
-                        () => ToggleMainMenuPaneExecute(),
-                        () => true
-                    );
-                }
-                return _toggleMainMenuPane;
-            }
-        }
+        //public ICommand ToggleMainMenuPane
+        //{
+        //    get
+        //    {
+        //        if (_toggleMainMenuPane == null)
+        //        {
+        //            _toggleMainMenuPane = new SmartDeviceApp.Common.RelayCommand(
+        //                () => ToggleMainMenuPaneExecute(),
+        //                () => true
+        //            );
+        //        }
+        //        return _toggleMainMenuPane;
+        //    }
+        //}
 
-        private void ToggleMainMenuPaneExecute()
-        {
-            switch (_printersViewMode)
-            {
-                case PrintersViewMode.MainMenuPaneVisible:
-                    {
-                        setMainMenuButtonImage(_MainMenuImageNormal);
-                        SetPrintersView(PrintersViewMode.PrintersFullScreen);
-                        break;
-                    }
+        //private void ToggleMainMenuPaneExecute()
+        //{
+        //    switch (_printersViewMode)
+        //    {
+        //        case PrintersViewMode.MainMenuPaneVisible:
+        //            {
+        //                setMainMenuButtonImage(_MainMenuImageNormal);
+        //                SetPrintersView(PrintersViewMode.PrintersFullScreen);
+        //                break;
+        //            }
 
-                case PrintersViewMode.PrintersFullScreen:
-                    {
-                        setMainMenuButtonImage(_MainMenuImagePressed);
-                        SetPrintersView(PrintersViewMode.MainMenuPaneVisible);
-                        break;
-                    }
+        //        case PrintersViewMode.PrintersFullScreen:
+        //            {
+        //                setMainMenuButtonImage(_MainMenuImagePressed);
+        //                SetPrintersView(PrintersViewMode.MainMenuPaneVisible);
+        //                break;
+        //            }
 
-            }
-        }
+        //    }
+        //}
 
-        public ICommand ToggleAddPrinterPane
-        {
-            get
-            {
-                if (_toggleAddPrinterPane == null)
-                {
-                    _toggleAddPrinterPane = new SmartDeviceApp.Common.RelayCommand(
-                        () => ToggleAddPrinterPaneExecute(),
-                        () => true
-                    );
-                }
-                return _toggleAddPrinterPane;
-            }
-        }
+        //public ICommand ToggleAddPrinterPane
+        //{
+        //    get
+        //    {
+        //        if (_toggleAddPrinterPane == null)
+        //        {
+        //            _toggleAddPrinterPane = new SmartDeviceApp.Common.RelayCommand(
+        //                () => ToggleAddPrinterPaneExecute(),
+        //                () => true
+        //            );
+        //        }
+        //        return _toggleAddPrinterPane;
+        //    }
+        //}
 
-        private void ToggleAddPrinterPaneExecute()
-        {
-            switch (_printersViewMode)
-            {
-                case PrintersViewMode.MainMenuPaneVisible:
-                    {
-                        SetPrintersView(PrintersViewMode.PrintersFullScreen);
-                        break;
-                    }
+        //private void ToggleAddPrinterPaneExecute()
+        //{
+        //    switch (_printersViewMode)
+        //    {
+        //        case PrintersViewMode.MainMenuPaneVisible:
+        //            {
+        //                SetPrintersView(PrintersViewMode.PrintersFullScreen);
+        //                break;
+        //            }
 
-                case PrintersViewMode.PrintersFullScreen:
-                    {
-                        SetPrintersView(PrintersViewMode.AddPrinterPaneVisible);
-                        setAddButtonImage(_AddImagePressed);
-                        break;
-                    }
+        //        case PrintersViewMode.PrintersFullScreen:
+        //            {
+        //                SetPrintersView(PrintersViewMode.AddPrinterPaneVisible);
+        //                setAddButtonImage(_AddImagePressed);
+        //                break;
+        //            }
 
-                case PrintersViewMode.AddPrinterPaneVisible:
-                    {
-                        setAddButtonImage(_AddImageNormal);
-                        setSearchButtonImage(_SearchImageNormal);
-                        SetPrintersView(PrintersViewMode.PrintersFullScreen);
+        //        case PrintersViewMode.AddPrinterPaneVisible:
+        //            {
+        //                setAddButtonImage(_AddImageNormal);
+        //                setSearchButtonImage(_SearchImageNormal);
+        //                SetPrintersView(PrintersViewMode.PrintersFullScreen);
 
-                        break;
-                    }
-                case PrintersViewMode.ScanPrintersPaneVisible:
-                    {
-                        setAddButtonImage(_AddImagePressed);
-                        setSearchButtonImage(_SearchImageNormal);
-                        SetPrintersView(PrintersViewMode.AddPrinterPaneVisible);
-                        break;
+        //                break;
+        //            }
+        //        case PrintersViewMode.ScanPrintersPaneVisible:
+        //            {
+        //                setAddButtonImage(_AddImagePressed);
+        //                setSearchButtonImage(_SearchImageNormal);
+        //                SetPrintersView(PrintersViewMode.AddPrinterPaneVisible);
+        //                break;
 
-                    }
-            }
-            }
-
-
-        public ICommand ToggleScanPrintersPane
-        {
-            get
-            {
-                if (_toggleScanPrintersPane == null)
-                {
-                    _toggleScanPrintersPane = new SmartDeviceApp.Common.RelayCommand(
-                        () => ToggleScanPrintersPaneExecute(),
-                        () => true
-                    );
-                }
-                return _toggleScanPrintersPane;
-            }
-        }
-
-        private void ToggleScanPrintersPaneExecute()
-        {
-            switch (_printersViewMode)
-            {
-                case PrintersViewMode.MainMenuPaneVisible:
-                    {
-                        SetPrintersView(PrintersViewMode.PrintersFullScreen);
-                        break;
-                    }
-
-                case PrintersViewMode.PrintersFullScreen:
-                    {
-                        setAddButtonImage(_AddImageNormal);
-                        setSearchButtonImage(_SearchImagePressed);
-                        SetPrintersView(PrintersViewMode.ScanPrintersPaneVisible);
-                        SearchPrinterHandler();
-                        break;
-                    }
-
-                case PrintersViewMode.AddPrinterPaneVisible:
-                    {
-                        setAddButtonImage(_AddImageNormal);
-                        setSearchButtonImage(_SearchImagePressed);
-                        SetPrintersView(PrintersViewMode.ScanPrintersPaneVisible);
-                        SearchPrinterHandler();
-                        break;
-                    }
-                case PrintersViewMode.ScanPrintersPaneVisible:
-                    {
-                        setAddButtonImage(_AddImageNormal);
-                        setSearchButtonImage(_SearchImageNormal);
-                        SetPrintersView(PrintersViewMode.PrintersFullScreen);
-                        break;
-
-                    }
-            }
-        }
+        //            }
+        //    }
+        //    }
 
 
+        //public ICommand ToggleScanPrintersPane
+        //{
+        //    get
+        //    {
+        //        if (_toggleScanPrintersPane == null)
+        //        {
+        //            _toggleScanPrintersPane = new SmartDeviceApp.Common.RelayCommand(
+        //                () => ToggleScanPrintersPaneExecute(),
+        //                () => true
+        //            );
+        //        }
+        //        return _toggleScanPrintersPane;
+        //    }
+        //}
 
-        private void SetPrintersView(PrintersViewMode printersViewMode)
-        {
-            Messenger.Default.Send<PrintersViewMode>(printersViewMode);
-            //switch (printersViewMode)
-            //{
-            //    case PreviewViewMode.MainMenuPaneVisible:
-            //    {
-            //        DisablePreviewGestures();
-            //        break;
-            //    }
+        //private void ToggleScanPrintersPaneExecute()
+        //{
+        //    switch (_printersViewMode)
+        //    {
+        //        case PrintersViewMode.MainMenuPaneVisible:
+        //            {
+        //                SetPrintersView(PrintersViewMode.PrintersFullScreen);
+        //                break;
+        //            }
 
-            //    case PreviewViewMode.PreviewViewFullScreen:
-            //    {
-            //        EnablePreviewGestures();
-            //        break;
-            //    }
+        //        case PrintersViewMode.PrintersFullScreen:
+        //            {
+        //                setAddButtonImage(_AddImageNormal);
+        //                setSearchButtonImage(_SearchImagePressed);
+        //                SetPrintersView(PrintersViewMode.ScanPrintersPaneVisible);
+        //                SearchPrinterHandler();
+        //                break;
+        //            }
 
-            //    case PreviewViewMode.PrintSettingsPaneVisible:
-            //    {
-            //        EnablePreviewGestures();
-            //        break;
-            //    }                
-            //}
-            _printersViewMode = printersViewMode;
-        }
+        //        case PrintersViewMode.AddPrinterPaneVisible:
+        //            {
+        //                setAddButtonImage(_AddImageNormal);
+        //                setSearchButtonImage(_SearchImagePressed);
+        //                SetPrintersView(PrintersViewMode.ScanPrintersPaneVisible);
+        //                SearchPrinterHandler();
+        //                break;
+        //            }
+        //        case PrintersViewMode.ScanPrintersPaneVisible:
+        //            {
+        //                setAddButtonImage(_AddImageNormal);
+        //                setSearchButtonImage(_SearchImageNormal);
+        //                SetPrintersView(PrintersViewMode.PrintersFullScreen);
+        //                break;
+
+        //            }
+        //    }
+        //}
+
+
+
+        //private void SetPrintersView(PrintersViewMode printersViewMode)
+        //{
+        //    Messenger.Default.Send<PrintersViewMode>(printersViewMode);
+        //    //switch (printersViewMode)
+        //    //{
+        //    //    case PreviewViewMode.MainMenuPaneVisible:
+        //    //    {
+        //    //        DisablePreviewGestures();
+        //    //        break;
+        //    //    }
+
+        //    //    case PreviewViewMode.PreviewViewFullScreen:
+        //    //    {
+        //    //        EnablePreviewGestures();
+        //    //        break;
+        //    //    }
+
+        //    //    case PreviewViewMode.PrintSettingsPaneVisible:
+        //    //    {
+        //    //        EnablePreviewGestures();
+        //    //        break;
+        //    //    }                
+        //    //}
+        //    _printersViewMode = printersViewMode;
+        //}
 
 
 
@@ -474,113 +534,50 @@ namespace SmartDeviceApp.ViewModels
          * 
          * */
 
-        public ICommand AddPrinter
-        {
-            get
-            {
-                if (_addPrinter == null)
-                {
-                    _addPrinter = new SmartDeviceApp.Common.RelayCommand(
-                        () => AddPrinterExecute(),
-                        () => true
-                    );
-                }
-                return _addPrinter;
-            }
-        }
-
-        private void AddPrinterExecute()
-        {
-            System.Diagnostics.Debug.WriteLine(IpAddress);
-
-            //check if has data
-            if (IpAddress.Equals("") || Username.Equals("") || Password.Equals(""))
-            {
-                //error please input data
-                return;
-            }
-
-            //add to printer controller
-            bool isSuccessful = AddPrinterHandler(IpAddress);
-                //printerController.addPrinter(IpAddress);
-            if (!isSuccessful)
-            {
-                //display error message TODO
-
-                return;
-            }
-        }
-
-        public void handleAddIsSuccessful(bool isSuccessful)
-        {
-            string caption = "";
-            string content = "";
-
-            if (isSuccessful)
-            {
-                content = "The new printer was added successfully.";
-                //clear data
-                IpAddress = "";
-                Username = "";
-                Password = "";
-            }
-            else
-            {
-                content = "The new printer is not online but was added successfully with default printer settings.";
-            }
-            caption = "Add Printer Info";
-
-            DisplayMessage(caption, content);
-        }
+       
 
 
-        public void DisplayMessage(string caption, string content)
-        {
-            MessageAlert ma = new MessageAlert();
-            ma.Caption = caption;
-            ma.Content = content;
-            Messenger.Default.Send<MessageAlert>(ma);
-        }
+        
 
 
 
 
-        public ICommand PrinterSearchItemSelected
-        {
-            get
-            {
-                if (_printerSearchItemSelected == null)
-                {
-                    _printerSearchItemSelected = new RelayCommand<PrinterSearchItem>(
-                        (item) => PrinterSearchItemSelectedExecute(item),
-                        (item) => true
-                    );
-                }
-                return _printerSearchItemSelected;
-            }
-        }
+        //public ICommand PrinterSearchItemSelected
+        //{
+        //    get
+        //    {
+        //        if (_printerSearchItemSelected == null)
+        //        {
+        //            _printerSearchItemSelected = new RelayCommand<PrinterSearchItem>(
+        //                (item) => PrinterSearchItemSelectedExecute(item),
+        //                (item) => true
+        //            );
+        //        }
+        //        return _printerSearchItemSelected;
+        //    }
+        //}
 
 
-        private void PrinterSearchItemSelectedExecute(PrinterSearchItem item)
-        {
-            //Check if already added
-            if (!item.IsInPrinterList)
-            {
-                //add to printer
-                bool isSuccessful = AddPrinterHandler(item.Ip_address);
-                    //printerController.addPrinter(item.Ip_address);
+        //private void PrinterSearchItemSelectedExecute(PrinterSearchItem item)
+        //{
+        //    //Check if already added
+        //    if (!item.IsInPrinterList)
+        //    {
+        //        //add to printer
+        //        bool isSuccessful = AddPrinterHandler(item.Ip_address);
+        //            //printerController.addPrinter(item.Ip_address);
 
-                if (!isSuccessful)
-                {
-                    //display error message TODO
+        //        if (!isSuccessful)
+        //        {
+        //            //display error message TODO
 
-                    return;
-                }
+        //            return;
+        //        }
 
-                item.IsInPrinterList = true;
+        //        item.IsInPrinterList = true;
                 
-            }
-        }
+        //    }
+        //}
 
 
         public ICommand DeletePrinter
@@ -603,30 +600,27 @@ namespace SmartDeviceApp.ViewModels
             DeletePrinterHandler(ipAddress);
         }
 
-        public void SearchTimeout()
-        {
-            Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
-        }
+        
 
-        public ICommand PrinterSearchRefreshed
-        {
-            get
-            {
-                if (_printerSearchRefreshed == null)
-                {
-                    _printerSearchRefreshed = new SmartDeviceApp.Common.RelayCommand(
-                        () => PrinterSearchRefreshedExecute(),
-                        () => true
-                    );
-                }
-                return _printerSearchRefreshed;
-            }
-        }
+        //public ICommand PrinterSearchRefreshed
+        //{
+        //    get
+        //    {
+        //        if (_printerSearchRefreshed == null)
+        //        {
+        //            _printerSearchRefreshed = new SmartDeviceApp.Common.RelayCommand(
+        //                () => PrinterSearchRefreshedExecute(),
+        //                () => true
+        //            );
+        //        }
+        //        return _printerSearchRefreshed;
+        //    }
+        //}
 
-        private void PrinterSearchRefreshedExecute()
-        {
-            SearchPrinterHandler();
-        }
+        //private void PrinterSearchRefreshedExecute()
+        //{
+        //    SearchPrinterHandler();
+        //}
 
 
         /**
@@ -635,32 +629,32 @@ namespace SmartDeviceApp.ViewModels
          * 
          * */
 
-        private void setMainMenuButtonImage(string strUri)
-        {
-            MainMenuButtonImage = setImageSource(strUri);
-        }
+        //private void setMainMenuButtonImage(string strUri)
+        //{
+        //    MainMenuButtonImage = setImageSource(strUri);
+        //}
 
-        private void setAddButtonImage(string strUri)
-        {
-            AddButtonImage = setImageSource(strUri);
-        }
+        //private void setAddButtonImage(string strUri)
+        //{
+        //    AddButtonImage = setImageSource(strUri);
+        //}
 
-        private void setSearchButtonImage(string strUri)
-        {
-            SearchButtonImage = setImageSource(strUri);
-        }
+        //private void setSearchButtonImage(string strUri)
+        //{
+        //    SearchButtonImage = setImageSource(strUri);
+        //}
 
-        private void setDoneButtonImage(string strUri)
-        {
-            DoneButtonImage = setImageSource(strUri);
-        }
+        //private void setDoneButtonImage(string strUri)
+        //{
+        //    DoneButtonImage = setImageSource(strUri);
+        //}
 
-        private ImageSource setImageSource(string strUri)
-        {
-            BitmapImage image = new BitmapImage(new Uri(strUri));
-            ImageSource imgSrc = image;
-            return imgSrc;
-        }
+        //private ImageSource setImageSource(string strUri)
+        //{
+        //    BitmapImage image = new BitmapImage(new Uri(strUri));
+        //    ImageSource imgSrc = image;
+        //    return imgSrc;
+        //}
 
     }
 

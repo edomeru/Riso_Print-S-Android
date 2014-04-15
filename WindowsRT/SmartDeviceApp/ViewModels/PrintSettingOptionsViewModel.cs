@@ -28,7 +28,6 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            Messenger.Default.Register<PrintSetting>(this, (printSetting) => OnSelectPrintSetting(printSetting));
         }
 
         public PrintSetting PrintSetting
@@ -39,7 +38,6 @@ namespace SmartDeviceApp.ViewModels
                 if (_printSetting != value)
                 {
                     _printSetting = value;
-                    SelectedIndex = (int)_printSetting.Value;
                     RaisePropertyChanged("PrintSetting");
                 }
             }
@@ -60,19 +58,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set
-            {
-                if (_selectedIndex != value)
-                {
-                    _selectedIndex = value;
-                    RaisePropertyChanged("SelectedIndex");
-                }
-            }
-        }
-
         public ICommand BackToPrintSettings
         {
             get
@@ -88,23 +73,14 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void OnSelectPrintSetting(PrintSetting printSetting)
-        {
-            PrintSetting = printSetting;
-        }
-
         private void SelectPrintSettingOptionExecute(PrintSettingOption option)
         {
-            SelectedIndex = option.Index;
-
-            // TODO: Send selected item to PrintPreviewController
-            //PrintPreviewController.Instance.UpdatePrintSetting(PrintSetting,
-            //    SelectedPrintSettingOption);
+            PrintSetting.Value = option.Index;
         }
 
         private void BackToPrintSettingsExecute()
         {
-            Messenger.Default.Send<RightPaneMode>(RightPaneMode.PrintSettingsVisible);  
+            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
         }
     }
 

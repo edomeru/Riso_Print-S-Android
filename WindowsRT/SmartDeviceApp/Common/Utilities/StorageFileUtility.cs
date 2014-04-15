@@ -33,7 +33,7 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 storageFile = await folderLocation.GetFileAsync(fileName);
             }
-            catch (Exception)
+            catch (System.IO.FileNotFoundException)
             {
                 // File does not exist
             }
@@ -71,6 +71,17 @@ namespace SmartDeviceApp.Common.Utilities
                     await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
                 }
             }
+        }
+
+        /// <summary>
+        /// Retrieves the file from the installation path
+        /// </summary>
+        /// <param name="filePath">relative file path</param>
+        /// <returns>resource file</returns>
+        public async static Task<StorageFile> GetFileFromAppResource(string filePath)
+        {
+            Uri uri = new Uri("ms-appx:///" + filePath);
+            return await StorageFile.GetFileFromApplicationUriAsync(uri);
         }
 
     }

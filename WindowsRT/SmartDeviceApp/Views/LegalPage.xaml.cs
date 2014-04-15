@@ -12,12 +12,14 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.Common.Base;
 
 namespace SmartDeviceApp.Views
 {
-    public sealed partial class MainMenuPane : Grid
+    public sealed partial class LegalPage : PageBase
     {
-        public MainMenuPane()
+        public LegalPage()
         {
             this.InitializeComponent();
         }

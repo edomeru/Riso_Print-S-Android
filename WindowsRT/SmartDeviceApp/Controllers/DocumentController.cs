@@ -11,11 +11,13 @@
 //
 
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Data.Pdf;
 using Windows.Foundation;
@@ -25,15 +27,19 @@ using Windows.Storage.Streams;
 
 namespace SmartDeviceApp.Controllers
 {
+
     public sealed class DocumentController
     {
+
         static readonly DocumentController _instance = new DocumentController();
 
         private const int MAX_PAGES = 5;
         private const string TEMP_PDF_NAME = "tempDoc.pdf";
         private const string FORMAT_LOGICAL_PAGE_IMAGE_FILENAME = "logicalpage{0:0000}.jpg";
+        private const string PDF_PASSWORD_EMPTY = "";
 
         private Document _document;
+        private bool _isFileLoaded;
 
         /// <summary>
         /// Number of pages of the actual PDF file
@@ -46,9 +52,9 @@ namespace SmartDeviceApp.Controllers
         public string FileName { get; private set; }
 
         /// <summary>
-        /// Status if PDF file is successfully loaded
+        /// PDF loading result
         /// </summary>
-        public bool IsFileLoaded { get; private set; }
+        public LoadDocumentResult Result { get; private set; }
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -87,19 +93,42 @@ namespace SmartDeviceApp.Controllers
                     NameCollisionOption.ReplaceExisting);
 
                 // Open and load PDF
-                PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(tempPdfFile);
+                // Attempt to open PDF using empty string
+                // This is to determine whether the PDF requires password to open the file
+                // If the PDF file requires a password, invalid password error will be thrown
+                PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(tempPdfFile,
+                    PDF_PASSWORD_EMPTY);
+
                 _document = new Document(file.Path, tempPdfFile.Path, pdfDocument);
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
-                IsFileLoaded = true;
+                _isFileLoaded = true;
+                Result = LoadDocumentResult.Successful;
 
                 GenerateLogicalPages(0, 0); // Pre-load LogicalPages
             }
             catch (FileNotFoundException)
             {
-                // File cannot be loaded
-                IsFileLoaded = false;
-                return;
+                // CopyAsync was not able to find the original source
+                _isFileLoaded = false;
+                Result = LoadDocumentResult.ErrorReadPdf;
+            }
+            catch (Exception e)
+            {
+                // Error in loading/reading TEMP_PDF_NAME
+                _isFileLoaded = false;
+                Result = LoadDocumentResult.ErrorReadPdf;
+
+                // Check HResult value since LoadFromFileAsync returns error for
+                // either open PDF with incorrect password or error in reading the PDF
+                unchecked
+                {
+                    // http://www.symantec.com/business/support/index?page=content&id=TECH12638
+                    if (e.HResult == (int)0x8007052B) // Hex error code for incorrect password
+                    {
+                        Result = LoadDocumentResult.UnsupportedPdf;
+                    }
+                }
             }
         }
 
@@ -114,7 +143,7 @@ namespace SmartDeviceApp.Controllers
             {
                 _document = null;
             }
-            IsFileLoaded = false;
+            _isFileLoaded = false;
         }
 
         /// <summary>
@@ -124,7 +153,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="basePageIndex">base page index</param>
         /// <param name="numPages">number of pages needed (for imposition)</param>
-        /// <returns></returns>
+        /// <returns>task with generated LogicalPage(s)</returns>
         public async Task<List<LogicalPage>> GetLogicalPages(int basePageIndex, int numPages)
         {
             List<LogicalPage> logicalPages = new List<LogicalPage>();
@@ -133,6 +162,14 @@ namespace SmartDeviceApp.Controllers
             do
             {
                 int key = basePageIndex + offset;
+
+                // Check page bounds
+                int pageCount = (int)_document.PdfDocument.PageCount;
+                if (key < 0 || key > pageCount - 1)
+                {
+                    break;
+                }
+
                 if (_document.LogicalPages.ContainsKey(key))
                 {
                     logicalPages.Add(_document.LogicalPages[key]);
@@ -161,7 +198,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="numPages">number of pages needed (for imposition)</param>
         public async void GenerateLogicalPages(int basePageIndex, int numPages)
         {
-            if (!IsFileLoaded)
+            if (!_isFileLoaded)
             {
                 return;
             }

@@ -12,7 +12,6 @@ using Windows.Networking;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.ViewModels;
-using SmartDeviceApp.ViewModel;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -44,6 +43,10 @@ namespace SmartDeviceApp.Controllers
 
         private bool waitingForPrinterStatus;
 
+        private PrintersViewModel _printersViewModel;
+        private SearchPrinterViewModel _searchPrinterViewModel;
+        private AddPrinterViewModel _addPrinterViewModel;
+
         SNMPController snmpController = new SNMPController();
 
 
@@ -58,10 +61,12 @@ namespace SmartDeviceApp.Controllers
         }
 
 
-        private PrintersViewModel _printersViewModel;
+        
         public async Task Initialize()
         {
             _printersViewModel = new ViewModelLocator().PrintersViewModel;
+            _searchPrinterViewModel = new ViewModelLocator().SearchPrinterViewModel;
+            _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
 
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
@@ -76,7 +81,14 @@ namespace SmartDeviceApp.Controllers
 
             populatePrintersScreen();
             _printersViewModel.PrinterList = PrinterList;
-            _printersViewModel.PrinterSearchList = PrinterSearchList;
+            //_printersViewModel.PrinterSearchList = PrinterSearchList;
+
+            _searchPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
+            _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
+            _searchPrinterViewModel.PrinterSearchList = PrinterSearchList;
+            
+
+            _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
 
             
         }
@@ -200,7 +212,7 @@ namespace SmartDeviceApp.Controllers
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                //find the printer
+                //find the printer TODO: error handling here when the printer is deleted while handling status
                 Printer printer = _printerList.First(x => x.IpAddress == ip);
                 System.Diagnostics.Debug.WriteLine(printer.IpAddress);
                 int index = _printerList.IndexOf(printer);
@@ -244,14 +256,14 @@ namespace SmartDeviceApp.Controllers
             if (!isValidIpAddress(ip))
             {
                 //display error theat ip is invalid
-                _printersViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_INVALID_IP_ADDRESS"));
+                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_INVALID_IP_ADDRESS"));
                 return false;
             }
 
             //check if _printerList is already full
             if (_printerList.Count() == 20)//TODO: Change to CONSTANTS
             {
-                _printersViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), "Cannot add printer");
+                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), "Cannot add printer");
                 return false;
             }
 
@@ -279,7 +291,7 @@ namespace SmartDeviceApp.Controllers
             if (printer != null)
             {
                 //cannot add, printer already in list
-                _printersViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
                 return false;
             }
 
@@ -344,12 +356,12 @@ namespace SmartDeviceApp.Controllers
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
 
-                //printer.PropertyChanged += handlePropertyChanged;
+                printer.PropertyChanged += handlePropertyChanged;
                 _printerList.Add(printer);
 
 
                 _printerListTemp = _printerList;
-                _printersViewModel.handleAddIsSuccessful(true);
+                _addPrinterViewModel.handleAddIsSuccessful(true);
                 
             });
 
@@ -395,6 +407,32 @@ namespace SmartDeviceApp.Controllers
                 }
 
             }
+            if (e.PropertyName == "WillPerformDelete")
+            {
+                if (printer.WillPerformDelete == true)
+                {
+                    await deletePrinter(printer.IpAddress);
+                }
+            }
+
+            if (e.PropertyName == "WillBeDeleted" && printer.WillBeDeleted == true)
+            {
+                foreach(var printerInList in PrinterList)
+                {
+                    if (printer.IpAddress == printerInList.IpAddress)
+                    {
+                        if (printerInList.WillBeDeleted != true)
+                        {
+                            printerInList.WillBeDeleted = true;
+                        }
+                    }
+                    else
+                    {
+                        printerInList.WillBeDeleted = false;
+                    }
+                 }
+                
+            }
             //throw new NotImplementedException();
         }
 
@@ -423,13 +461,13 @@ namespace SmartDeviceApp.Controllers
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-
+                printer.PropertyChanged += handlePropertyChanged;
                 _printerList.Add(printer);
 
                 _printerListTemp = _printerList;
 
 
-                    _printersViewModel.handleAddIsSuccessful(false);
+                _addPrinterViewModel.handleAddIsSuccessful(false);
                 });
         }
 
@@ -440,10 +478,12 @@ namespace SmartDeviceApp.Controllers
          * */
         public void searchPrinters()
         {
+            _searchPrinterViewModel.SetStateRefreshState();
             _printerSearchList.Clear();
             snmpController.printerControllerTimeout = new Action<string>(handleSearchTimeout);
             snmpController.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(handleDeviceDiscovered);
             snmpController.startDiscover();
+            
         }
 
         private async void handleDeviceDiscovered(PrinterSearchItem printer)
@@ -507,7 +547,7 @@ namespace SmartDeviceApp.Controllers
              * 
              * */
             //printerControllerSearchTimeout();
-            _printersViewModel.SearchTimeout();
+            _searchPrinterViewModel.SearchTimeout();
             
         }
 

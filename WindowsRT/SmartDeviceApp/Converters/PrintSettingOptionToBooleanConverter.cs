@@ -17,20 +17,19 @@ using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
 using Windows.UI.Xaml;
-using SmartDeviceApp.ViewModel;
 using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Converters
 {
     public class PrintSettingOptionToBooleanConverter : DependencyObject, IValueConverter
     {
-        private PrintSettingOptionsViewModel _printSettingsViewModel = new ViewModelLocator().PrintSettingOptionsViewModel;
+        private PrintSettingsViewModel _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null || !(value is int)) return false;
             int index = (int)value;
-            if (_printSettingsViewModel.SelectedIndex == index) return true;
+            if ((int)_printSettingsViewModel.SelectedPrintSetting.Value == index) return true;
             return false;
         }
 

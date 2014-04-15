@@ -17,9 +17,8 @@ using Microsoft.Practices.ServiceLocation;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Design;
 using SmartDeviceApp.Models;
-using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceApp.ViewModel
+namespace SmartDeviceApp.ViewModels
 {
     /// <summary>
     /// This class contains static references to all the view models in the
@@ -36,6 +35,23 @@ namespace SmartDeviceApp.ViewModel
         [SuppressMessage("Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
+
+        public ViewControlViewModel ViewControlViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            }
+        }
+
+        public HomeViewModel HomeViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HomeViewModel>();
+            }
+        }
+
         public PrintPreviewViewModel PrintPreviewViewModel
         {
             get
@@ -49,6 +65,46 @@ namespace SmartDeviceApp.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<PrintersViewModel>();
+            }
+        }
+
+        public JobsViewModel JobsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<JobsViewModel>();
+            }
+        }
+
+        public SettingsViewModel SettingsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SettingsViewModel>();
+            }
+        }
+
+        public HelpViewModel HelpViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HelpViewModel>();
+            }
+        }
+
+        public LegalViewModel LegalViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<LegalViewModel>();
+            }
+        }
+
+        public PrintSettingsPaneViewModel PrintSettingsPaneViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PrintSettingsPaneViewModel>();
             }
         }
 
@@ -68,6 +124,22 @@ namespace SmartDeviceApp.ViewModel
             }
         }
 
+        public SearchPrinterViewModel SearchPrinterViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SearchPrinterViewModel>();
+            }
+        }
+
+        public AddPrinterViewModel AddPrinterViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<AddPrinterViewModel>();
+            }
+        }
+
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
@@ -83,10 +155,19 @@ namespace SmartDeviceApp.ViewModel
 
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
+            SimpleIoc.Default.Register<ViewControlViewModel>();
+            SimpleIoc.Default.Register<HomeViewModel>();
             SimpleIoc.Default.Register<PrintPreviewViewModel>();
             SimpleIoc.Default.Register<PrintersViewModel>();
+            SimpleIoc.Default.Register<JobsViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<HelpViewModel>();
+            SimpleIoc.Default.Register<LegalViewModel>();
+            SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();
+            SimpleIoc.Default.Register<SearchPrinterViewModel>();
+            SimpleIoc.Default.Register<AddPrinterViewModel>();
         }
 
         /// <summary>

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
-    public enum PreviewViewMode
+    public enum ViewMode
     {
         MainMenuPaneVisible,
-        PreviewViewFullScreen,
-        RightPaneVisible
+        FullScreen,
+        RightPaneVisible,
+        RightPaneVisible_ResizedWidth
     }
 }

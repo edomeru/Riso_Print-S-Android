@@ -38,6 +38,8 @@ namespace SmartDeviceApp.ViewModels
         private const double SIDE_PANE_RATIO = 2;
         private const double PREVIEW_VIEW_RATIO = 5;
 
+        public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -48,8 +50,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _goToPreviousPage;
         private ICommand _goToNextPage;
         private ICommand _pageNumberSliderValueChange;
-        private ObservableCollection<PreviewPageViewModel> _previewPages;
-        private uint _pageTotal;        
+        private uint _pageTotal;
         private uint _currentPageIndex;
         private uint _rightPageIndex;
         private uint _leftPageIndex;
@@ -62,40 +63,19 @@ namespace SmartDeviceApp.ViewModels
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
 
-        private ICommand _toggleMainMenuPane;
-        private ICommand _showPreviewViewFullScreen;
-        private ICommand _toggleRightPane;
-        private PreviewViewMode _previewViewMode;
-        
+        private ViewControlViewModel _viewControlViewModel;
+
         public PrintPreviewViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
 
             _rightPageIndex = 0;
-            // Messenger.Default.Register<DummyPageMessage>(this, (pageMessage) => OnPageImageLoaded(pageMessage));
-            Messenger.Default.Register<DocumentMessage>(this, (documentMessage) => OnDocumentLoaded(documentMessage));
-            Messenger.Default.Register<PreviewInfoMessage>(this, (previewInfoMessage) => OnPreviewInfoUpdated(previewInfoMessage));
-            Messenger.Default.Register<PreviewPageImage>(this, (previewPageImage) => OnPageImageLoaded(previewPageImage));
-            Initialize();
+            _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+
+            SetViewMode(_viewControlViewModel.ViewMode); 
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
         }
-
-        // TODO: Remove dummy variables and unneeded initialization
-        private void Initialize()
-        {
-            SetPreviewViewMode(PreviewViewMode.PreviewViewFullScreen);
-            /*
-            //DocumentTitleText = DummyProvider.Instance.PDF_FILENAME;
-            DocumentTitleText = DocumentController.Instance.FileName;
-
-            // PageTotal = DummyProvider.Instance.TOTAL_PAGES;
-            PageTotal = PrintPreviewController.Instance.PageTotal;
-            // PageViewMode = DummyProvider.Instance.PAGE_VIEW_MODE;
-            PageViewMode = PrintPreviewController.Instance.PageViewMode;
-            GoToPage(0); // Go to first page
-             * */
-        }
-
 
         public void SetPageAreaGrid(Grid pageAreaGrid)
         {
@@ -129,139 +109,31 @@ namespace SmartDeviceApp.ViewModels
             GoToNextPage.Execute(null);
         }
 
-        public ObservableCollection<PreviewPageViewModel> PreviewPages
+        #region PANE VISIBILITY
+                
+        private void SetViewMode(ViewMode viewMode)
         {
-            get
+            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
+            switch (viewMode)
             {
-                if (_previewPages == null)
-                {
-                    _previewPages = new ObservableCollection<PreviewPageViewModel>();
-                }
-                return _previewPages;
-            }
-        }
-
-        #region PANE_VISIBILITY
-
-        public ICommand ToggleMainMenuPane
-        {
-            get
-            {
-                if (_toggleMainMenuPane == null)
-                {
-                    _toggleMainMenuPane = new RelayCommand(
-                        () => ToggleMainMenuPaneExecute(),
-                        () => true
-                    );
-                }
-                return _toggleMainMenuPane;
-            }
-        }        
-
-        public ICommand ShowPreviewViewFullScreen
-        {
-            get
-            {
-                if (_showPreviewViewFullScreen == null)
-                {
-                    _showPreviewViewFullScreen = new RelayCommand(
-                        () => SetPreviewViewMode(PreviewViewMode.PreviewViewFullScreen),
-                        () => true
-                    );
-                }
-                return _showPreviewViewFullScreen;
-            }
-        }
-
-        public ICommand ToggleRightPane
-        {
-            get
-            {
-                if (_toggleRightPane == null)
-                {
-                    _toggleRightPane = new RelayCommand(
-                        () => ToggleRightPaneExecute(),
-                        () => true
-                    );
-                }
-                return _toggleRightPane;
-            }
-        }
-
-        private void ToggleMainMenuPaneExecute()
-        {
-            switch (_previewViewMode)
-            {
-                case PreviewViewMode.MainMenuPaneVisible:
-                {
-                    SetPreviewViewMode(PreviewViewMode.PreviewViewFullScreen);
-                    break;
-                }
-
-                case PreviewViewMode.PreviewViewFullScreen:
-                {
-                    SetPreviewViewMode(PreviewViewMode.MainMenuPaneVisible);
-                    break;
-                }
-
-                case PreviewViewMode.RightPaneVisible:
-                {
-                    SetPreviewViewMode(PreviewViewMode.PreviewViewFullScreen);
-                    SetPreviewViewMode(PreviewViewMode.MainMenuPaneVisible);
-                    break;
-                }
-            }
-        }
-
-        private void ToggleRightPaneExecute()
-        {
-            switch (_previewViewMode)
-            {
-                case PreviewViewMode.MainMenuPaneVisible:
+                case ViewMode.MainMenuPaneVisible:
                     {
-                        SetPreviewViewMode(PreviewViewMode.PreviewViewFullScreen);
-                        SetPreviewViewMode(PreviewViewMode.RightPaneVisible);
+                        DisablePreviewGestures();
                         break;
                     }
 
-                case PreviewViewMode.PreviewViewFullScreen:
+                case ViewMode.FullScreen:
                     {
-                        SetPreviewViewMode(PreviewViewMode.RightPaneVisible);
+                        EnablePreviewGestures();
                         break;
                     }
-
-                case PreviewViewMode.RightPaneVisible:
+                case ViewMode.RightPaneVisible: // NOTE: Technically not possible
+                case ViewMode.RightPaneVisible_ResizedWidth:
                     {
-                        SetPreviewViewMode(PreviewViewMode.PreviewViewFullScreen);
+                        EnablePreviewGestures();
                         break;
                     }
             }
-        }
-
-        private void SetPreviewViewMode(PreviewViewMode previewViewMode)
-        {
-            Messenger.Default.Send<PreviewViewMode>(previewViewMode);
-            switch (previewViewMode)
-            {
-                case PreviewViewMode.MainMenuPaneVisible:
-                {
-                    DisablePreviewGestures();
-                    break;
-                }
-
-                case PreviewViewMode.PreviewViewFullScreen:
-                {
-                    EnablePreviewGestures();
-                    break;
-                }
-
-                case PreviewViewMode.RightPaneVisible:
-                {
-                    EnablePreviewGestures();
-                    break;
-                }
-            }
-            _previewViewMode = previewViewMode;
         }
 
         private void EnablePreviewGestures()
@@ -281,7 +153,7 @@ namespace SmartDeviceApp.ViewModels
 
         #endregion
 
-        #region PAGE_DISPLAY
+        #region PAGE DISPLAY
 
         public string DocumentTitleText
         {
@@ -325,13 +197,27 @@ namespace SmartDeviceApp.ViewModels
         public Size RightPageActualSize
         {
             get { return _rightPageActualSize; }
-            set { _rightPageActualSize = value; }
+            set
+            {
+                if (_rightPageActualSize != value)
+                {
+                    _rightPageActualSize = value;
+                    RaisePropertyChanged("RightPageActualSize");
+                }
+            }
         }
 
         public Size LeftPageActualSize
         {
             get { return _leftPageActualSize; }
-            set { _leftPageActualSize = value; }
+            set
+            {
+                if (_leftPageActualSize != value)
+                {
+                    _leftPageActualSize = value;
+                    RaisePropertyChanged("LeftPageActualSize");
+                }
+            }
         }
         
         public PageViewMode PageViewMode
@@ -345,35 +231,6 @@ namespace SmartDeviceApp.ViewModels
                     RaisePropertyChanged("PageViewMode");
                 }
             }
-        }
-
-        private async void OnPreviewInfoUpdated(PreviewInfoMessage printSettingMessage)
-        {
-            PageTotal = printSettingMessage.PageTotal;
-            PageViewMode = printSettingMessage.PageViewMode;
-            await GoToPage(0); // Go to first page
-        }
-
-        private void OnDocumentLoaded(DocumentMessage pdfStatusMessage)
-        {
-            if (pdfStatusMessage.IsLoaded)
-            {
-                DocumentTitleText = pdfStatusMessage.DocTitle;
-            }
-            else
-            {
-                // Signal error
-            }
-        }
-
-        // TODO: Add handling for left and right pages
-        // Note: For current right page only
-        // private void OnPageImageLoaded(DummyPageMessage pageMessage)
-        private void OnPageImageLoaded(PreviewPageImage previewPageImage)
-        {
-            RightPageImage = previewPageImage.PageImage;
-            RightPageActualSize = previewPageImage.ActualSize;
-            InitializeGestures();
         }
 
         #endregion
@@ -422,23 +279,31 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
-
-        // TODO: Two-page view
-        private async Task GoToPage(uint index)
+        
+        public void SetInitialPageIndex(uint index)
         {
-            //DummyProvider.Instance.LoadPageImage(index);
-            Task task = PrintPreviewController.Instance.LoadPage((int)index);
             _rightPageIndex = index;
             SetPageIndexes();
-
-            await task;
         }
+
+        // TODO: Two-page view
+        public void GoToPage(uint index)
+        {
+            //DummyProvider.Instance.LoadPageImage(index);
+            if (GoToPageEventHandler != null)
+            {
+                GoToPageEventHandler((int)index);
+            }
+            _rightPageIndex = index;
+            SetPageIndexes();
+        }
+
         
         // TODO: Two-page view
-        private async void GoToPreviousPageExecute()
+        private void GoToPreviousPageExecute()
         {
             // DummyProvider.Instance.LoadPageImage(--_rightPageIndex);
-            await PrintPreviewController.Instance.LoadPage((int)--_rightPageIndex);
+            --_rightPageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
@@ -450,10 +315,10 @@ namespace SmartDeviceApp.ViewModels
         }
 
         // TODO: Two-page view
-        private async void GoToNextPageExecute()
+        private void GoToNextPageExecute()
         {
             // DummyProvider.Instance.LoadPageImage(++_rightPageIndex);
-            await PrintPreviewController.Instance.LoadPage((int)++_rightPageIndex);
+            ++_rightPageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
@@ -551,7 +416,7 @@ namespace SmartDeviceApp.ViewModels
         {
             // TODO: Consider handling the event only when drag is released 
             var newValue = CurrentPageIndex; // verify 0-based
-            GoToPage(newValue); // Not awaited ?? since crashing on await
+            GoToPage(newValue);
         }
 
         #endregion

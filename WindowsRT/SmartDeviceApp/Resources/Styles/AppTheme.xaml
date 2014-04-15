@@ -35,19 +35,24 @@
     <x:Double x:Key="SIZE_ListButton1Height">20</x:Double>
     <x:Double x:Key="SIZE_ListButton2Width">22</x:Double>
     <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
-    <x:Double x:Key="SIZE_ListValue_TextboxWidth">100</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth">50</x:Double>
     <!-- APP THEME CONSTANTS END-->
 
     <!-- APP CONVERTERS START -->
     <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <conv:HeightConverter x:Key="HeightConverter"/>
+    <conv:IntToStringConverter x:Key="IntToStringConverter"/>
     <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
     <conv:ItemCheckedConverter x:Key="ItemCheckedConverter"/>
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
-    <conv:PrintSettingTypeToVisibilityConverter x:Key="PrintSettingTypeToVisibilityConverter"/>
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
+    <conv:PrintSettingOptionToSeparatorVisibilityConverter x:Key="PrintSettingOptionToSeparatorVisibilityConverter"/>
+    <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>
+    <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
-    <!-- APP CONVERTERS END -->
+    <conv:WidthConverter x:Key="WidthConverter"/>
+    <!-- APP CONVERTERS END -->       
 
 </ResourceDictionary>

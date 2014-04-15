@@ -1,5 +1,6 @@
 ﻿using SmartDeviceApp.Common;
 using System;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+//<<<<<<< HEAD
 
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Models;
@@ -25,6 +27,9 @@ using Windows.UI.Popups;
 
 using SmartDeviceApp.Common.Utilities;
 using Windows.UI.Xaml.Media.Imaging;
+
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.Common.Base;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -47,8 +52,8 @@ namespace SmartDeviceApp.Views
         public PrintersPage()
         {
             Messenger.Default.Register<PrintersViewMode>(this, (printersViewMode) => OnSetPrintersView(printersViewMode));
-            Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
-            
+            //Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
+
             Messenger.Default.Register<MessageAlert>(
              this,
              msg => ShowDialog(msg));
@@ -69,7 +74,7 @@ namespace SmartDeviceApp.Views
             }
         }
 
-        
+
 
         /// <summary>
         /// Populates the page with content passed during navigation. Any saved state is also
@@ -96,7 +101,7 @@ namespace SmartDeviceApp.Views
         /// serializable state.</param>
         private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
-            
+
         }
 
         #region NavigationHelper registration
@@ -110,7 +115,7 @@ namespace SmartDeviceApp.Views
         /// The navigation parameter is available in the LoadState method 
         /// in addition to page state preserved during an earlier session.
 
-       
+
 
         #endregion
 
@@ -152,12 +157,12 @@ namespace SmartDeviceApp.Views
                 case PrintersViewMode.ScanPrintersPaneVisible:
                     {
                         VisualStateManager.GoToState(this, "SearchPrinterPaneVisibleState", true);
-                        
+
                         break;
                     }
             }
-            
-        
+
+
         }
         private async void ShowDialog(MessageAlert msg)
         {
@@ -166,3 +171,18 @@ namespace SmartDeviceApp.Views
         }
     }
 }
+//=======
+//using SmartDeviceApp.Controls;
+//using SmartDeviceApp.Common.Base;
+
+//namespace SmartDeviceApp.Views
+//{
+//    public sealed partial class PrintersPage : PageBase
+//    {
+//        public PrintersPage()
+//        {
+//            this.InitializeComponent();
+//        }
+//>>>>>>> origin/feature/3570
+//    }
+//}

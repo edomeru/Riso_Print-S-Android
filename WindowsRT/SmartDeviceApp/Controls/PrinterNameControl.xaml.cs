@@ -62,8 +62,17 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty DeleteCommandProperty =
             DependencyProperty.Register("DeleteCommand", typeof(ICommand), typeof(PrinterNameControl), null);
 
+        //public static readonly DependencyProperty SetVisualStateProperty =
+        //    DependencyProperty.Register("SetVisualState", typeof(ICommand), typeof(PrinterNameControl), null);
+
         public static readonly DependencyProperty PrinterIpProperty =
             DependencyProperty.Register("PrinterIp", typeof(string), typeof(PrinterNameControl), null);
+
+        public static readonly DependencyProperty WillPerformDeleteProperty =
+            DependencyProperty.Register("WillPerformDelete", typeof(bool), typeof(PrinterNameControl), null);
+
+        public static readonly DependencyProperty WillBeDeletedProperty =
+            DependencyProperty.Register("WillBeDeleted", typeof(bool), typeof(PrinterNameControl), null);
 
         //public int Index
         //{
@@ -161,10 +170,72 @@ namespace SmartDeviceApp.Controls
                 SetValue(DeleteCommandProperty, value); 
             }
         }
+
+        private ICommand _setVisualState;
+        public ICommand SetVisualState
+        {
+            get
+            {
+                if (_setVisualState == null)
+                {
+                    _setVisualState = new SmartDeviceApp.Common.RelayCommand(
+                        () => SetVisualStateExecute(),
+                        () => true
+                    );
+                }
+                return _setVisualState;
+            }
+        }
+
+        private void SetVisualStateExecute()
+        {
+            if (IsDefault)
+            {
+                VisualStateManager.GoToState(this, "DefaultPrinterState", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "NormalState", true);
+            }
+        }
+
+        private ICommand _updateDeletionPerform;
+        public ICommand UpdateDeletionPerform
+        {
+            get
+            {
+                if (_updateDeletionPerform == null)
+                {
+                    _updateDeletionPerform = new SmartDeviceApp.Common.RelayCommand(
+                        () => UpdateDeletionPerformExecute(),
+                        () => true
+                    );
+                }
+                return _updateDeletionPerform;
+            }
+        }
+
+        private void UpdateDeletionPerformExecute()
+        {
+            WillPerformDelete = !WillPerformDelete;
+        }
+        
         public string PrinterIp
         {
             get { return (string)GetValue(PrinterIpProperty); }
             set { SetValue(PrinterIpProperty, value); }
+        }
+
+        public bool WillPerformDelete
+        {
+            get { return (bool)GetValue(WillPerformDeleteProperty); }
+            set { SetValue(WillPerformDeleteProperty, value); }
+        }
+
+        public bool WillBeDeleted
+        {
+            get { return (bool)GetValue(WillBeDeletedProperty); }
+            set { SetValue(WillBeDeletedProperty, value); }
         }
 
     }
