@@ -436,7 +436,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             height = mPrintSettings.getPaperSize().getWidth();
         } 
 
-        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+        if (shouldDisplayLandscape()) {
             return (new float[] {height, width});
         }
 
