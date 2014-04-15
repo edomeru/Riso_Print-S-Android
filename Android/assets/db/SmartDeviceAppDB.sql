@@ -9,10 +9,10 @@ CREATE TABLE Printer (
   prn_enabled_booklet BOOL NOT NULL DEFAULT true,
   prn_enabled_stapler BOOL NOT NULL DEFAULT true,
   prn_enabled_punch4 BOOL NOT NULL DEFAULT true,
-  prn_enabled_trayfacedown BOOL NOT NULL DEFAULT true,
-  prn_enabled_trayautostack BOOL NOT NULL DEFAULT true,
-  prn_enabled_traytop BOOL NOT NULL DEFAULT true,
-  prn_enabled_traystack BOOL NOT NULL DEFAULT true,
+  prn_enabled_tray_facedown BOOL NOT NULL DEFAULT true,
+  prn_enabled_tray_autostack BOOL NOT NULL DEFAULT true,
+  prn_enabled_tray_top BOOL NOT NULL DEFAULT true,
+  prn_enabled_tray_stack BOOL NOT NULL DEFAULT true,
   FOREIGN KEY(pst_id) REFERENCES PrintSetting(pst_id) 
 );
 

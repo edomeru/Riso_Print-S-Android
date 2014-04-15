@@ -18,10 +18,10 @@ public final class KeyConstants {
     public static final String KEY_SQL_PRINTER_BOOKLET = "prn_enabled_booklet";
     public static final String KEY_SQL_PRINTER_STAPLER = "prn_enabled_stapler";
     public static final String KEY_SQL_PRINTER_PUNCH4 = "prn_enabled_punch4";
-    public static final String KEY_SQL_PRINTER_TRAYFACEDOWN = "prn_enabled_trayfacedown";
-    public static final String KEY_SQL_PRINTER_TRAYAUTOSTACK = "prn_enabled_trayautostack";
-    public static final String KEY_SQL_PRINTER_TRAYTOP = "prn_enabled_traytop";
-    public static final String KEY_SQL_PRINTER_TRAYSTACK = "prn_enabled_traystack";
+    public static final String KEY_SQL_PRINTER_TRAYFACEDOWN = "prn_enabled_tray_facedown";
+    public static final String KEY_SQL_PRINTER_TRAYAUTOSTACK = "prn_enabled_tray_autostack";
+    public static final String KEY_SQL_PRINTER_TRAYTOP = "prn_enabled_tray_top";
+    public static final String KEY_SQL_PRINTER_TRAYSTACK = "prn_enabled_tray_stack";
     public static final String KEY_SQL_PRINTER_TABLE = "Printer";
     public static final String KEY_SQL_DEFAULT_PRINTER_TABLE = "DefaultPrinter";
     public static final String KEY_SQL_PRINTJOB_TABLE = "PrintJob";

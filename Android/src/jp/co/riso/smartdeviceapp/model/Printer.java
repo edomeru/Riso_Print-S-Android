@@ -49,6 +49,11 @@ public class Printer {
         return mId;
     }
     
+    /**
+     * updates the value of mId
+     * 
+     * @param id
+     */
     public void setId(int id) {
         this.mId = id;
     }
@@ -60,6 +65,11 @@ public class Printer {
         return mName;
     }
     
+    /**
+     * updates the value of mName
+     * 
+     * @param name
+     */
     public void setName(String name) {
         this.mName = name;
     }
@@ -71,6 +81,11 @@ public class Printer {
         return mIpAddress;
     }
     
+    /**
+     * updates the value of mIpAddress
+     * 
+     * @param ipAddress
+     */
     public void setIpAddress(String ipAddress) {
         this.mIpAddress = ipAddress;
     }
@@ -82,17 +97,27 @@ public class Printer {
         return mPortSetting;
     }
     
+    /**
+     * updates the value of mPortSetting
+     * 
+     * @param portSetting
+     */
     public void setPortSetting(int portSetting) {
         this.mPortSetting = portSetting;
     }
     
     /**
-     * @return the configurations (mConfig)
+     * @return the printer configuration (mConfig)
      */
     public Config getConfig() {
         return mConfig;
     }
     
+    /**
+     * updates the value of mConfig
+     * 
+     * @param config
+     */
     public void setConfig(Config config) {
         mConfig = config;
     }
@@ -104,6 +129,11 @@ public class Printer {
         return mPrintSettings;
     }
     
+    /**
+     * updates the value of mPrintSettings
+     * 
+     * @param printSettings
+     */
     public void setPrintSettings(PrintSettings printSettings) {
         this.mPrintSettings = new PrintSettings(printSettings);
     }
@@ -147,6 +177,11 @@ public class Printer {
             return mLprAvailable;
         }
         
+        /**
+         * updates the value of mLprAvailable
+         * 
+         * @param lprAvailable
+         */
         public void setLprAvailable(boolean lprAvailable) {
             this.mLprAvailable = lprAvailable;
         }
@@ -158,6 +193,11 @@ public class Printer {
             return mRawAvailable;
         }
         
+        /**
+         * updates the value of mRawAvailable
+         * 
+         * @param rawAvailable
+         */
         public void setRawAvailable(boolean rawAvailable) {
             this.mRawAvailable = rawAvailable;
         }
@@ -169,6 +209,11 @@ public class Printer {
             return mBookletAvailable;
         }
         
+        /**
+         * updates the value of mBookletAvailable
+         * 
+         * @param bookletAvailable
+         */
         public void setBookletAvailable(boolean bookletAvailable) {
             this.mBookletAvailable = bookletAvailable;
         }
@@ -180,6 +225,11 @@ public class Printer {
             return mStaplerAvailable;
         }
         
+        /**
+         * updates the value of mStaplerAvailable
+         * 
+         * @param staplerAvailable
+         */
         public void setStaplerAvailable(boolean staplerAvailable) {
             this.mStaplerAvailable = staplerAvailable;
         }
@@ -191,6 +241,11 @@ public class Printer {
             return mPunch4Available;
         }
         
+        /**
+         * updates the value of mPunch4Available
+         * 
+         * @param punch4Available
+         */
         public void setPunch4Available(boolean punch4Available) {
             this.mPunch4Available = punch4Available;
         }
@@ -202,6 +257,11 @@ public class Printer {
             return mTrayFaceDownAvailable;
         }
         
+        /**
+         * updates the value of mTrayFaceDownAvailable
+         * 
+         * @param trayFaceDownAvailable
+         */
         public void setTrayFaceDownAvailable(boolean trayFaceDownAvailable) {
             this.mTrayFaceDownAvailable = trayFaceDownAvailable;
         }
@@ -213,6 +273,11 @@ public class Printer {
             return mTrayAutoStackAvailable;
         }
         
+        /**
+         * updates the value of mTrayAutoStackAvailable
+         * 
+         * @param trayAutoStackAvailable
+         */
         public void setTrayAutoStackAvailable(boolean trayAutoStackAvailable) {
             this.mTrayAutoStackAvailable = trayAutoStackAvailable;
         }
@@ -224,6 +289,11 @@ public class Printer {
             return mTrayTopAvailable;
         }
         
+        /**
+         * updates the value of mTrayTopAvailable
+         * 
+         * @param trayTopAvailable
+         */
         public void setTrayTopAvailable(boolean trayTopAvailable) {
             this.mTrayTopAvailable = trayTopAvailable;
         }
@@ -235,6 +305,11 @@ public class Printer {
             return mTrayStackAvailable;
         }
         
+        /**
+         * updates the value of mTrayStackAvailable
+         * 
+         * @param trayStackAvailable
+         */
         public void setTrayStackAvailable(boolean trayStackAvailable) {
             this.mTrayStackAvailable = trayStackAvailable;
         }

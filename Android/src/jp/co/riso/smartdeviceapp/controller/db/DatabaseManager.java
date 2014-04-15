@@ -73,11 +73,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade - End");
     }
     
-    public String getStringFromCursor(Cursor cursor, String columnName) {
+    public static String getStringFromCursor(Cursor cursor, String columnName) {
         return cursor.getString(cursor.getColumnIndex(columnName));
     }
     
-    public int getIntFromCursor(Cursor cursor, String columnName) {
+    public static int getIntFromCursor(Cursor cursor, String columnName) {
         return cursor.getInt(cursor.getColumnIndex(columnName));
     }
     

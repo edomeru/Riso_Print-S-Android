@@ -52,10 +52,10 @@ public class PrintSettingsManager {
                 switch (setting.getType()) {
                     case Setting.TYPE_LIST:
                     case Setting.TYPE_NUMERIC:
-                        printSettings.setValue(key, mManager.getIntFromCursor(c, setting.getDbKey()));
+                        printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
                         break;
                     case Setting.TYPE_BOOLEAN:
-                        printSettings.setValue(key, Boolean.parseBoolean(mManager.getStringFromCursor(c, setting.getDbKey())) ? 1 : 0);
+                        printSettings.setValue(key, Boolean.parseBoolean(DatabaseManager.getStringFromCursor(c, setting.getDbKey())) ? 1 : 0);
                         break;
                 }
             }
@@ -127,7 +127,7 @@ public class PrintSettingsManager {
         
         if (c.moveToFirst()) {
             if (!c.isNull(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTSETTING_ID))) {
-                int pst_id = mManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
+                int pst_id = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
                 cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pst_id);
             }
         }

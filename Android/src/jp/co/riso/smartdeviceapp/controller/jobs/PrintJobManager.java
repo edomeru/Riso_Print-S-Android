@@ -75,12 +75,12 @@ public class PrintJobManager {
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, C_ORDERBY_DATE);
         
         while (c.moveToNext()) {
-            int pjb_id = mManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_ID);
-            int prn_id = mManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
-            String pjb_name = mManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_NAME);
-            Date pjb_date = convertStringToDate(mManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_DATE));
+            int pjb_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_ID);
+            int prn_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
+            String pjb_name = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_NAME);
+            Date pjb_date = convertStringToDate(DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_DATE));
             
-            JobResult pjb_result = JobResult.values()[mManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_RESULT)];
+            JobResult pjb_result = JobResult.values()[DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_RESULT)];
             
             printJobs.add(new PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result));
         }
@@ -104,9 +104,9 @@ public class PrintJobManager {
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, C_SEL_PRN_ID, null, null, null, KeyConstants.KEY_SQL_PRINTER_ID);
         
         while (c.moveToNext()) {
-            int prn_id = mManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
-            String prn_name = mManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_NAME);
-            String prn_ip = mManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_IP);
+            int prn_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
+            String prn_name = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_NAME);
+            String prn_ip = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_IP);
             Printer printer = new Printer(prn_name, prn_ip, false, null);
             
             printer.setId(prn_id);
