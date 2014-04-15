@@ -231,7 +231,7 @@
             
             NSString *type = [setting objectForKey:@"type"];
             NSString *key = [setting objectForKey:@"name"];
-	    //keep track of index of each setting for easy access
+            //keep track of index of each setting for easy access
             [self.indexPathsForSettings setObject:indexPath forKey:key];
             if ([type isEqualToString:@"list"])
             {
@@ -335,7 +335,7 @@
             UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
             if ([cell isKindOfClass:[PrintSettingsItemOptionCell class]])
             {
-                [self.indexPathsToUpdate addObject:indexPath];
+                [self addToIndexToUpdate:indexPath];
                 self.currentSetting = [settings objectAtIndex:row - 1];
                 [self performSegueWithIdentifier:@"PrintSettings-PrintOptions" sender:self];
             }
@@ -437,7 +437,8 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context == PRINTSETTING_CONTEXT) {
+    if (context == PRINTSETTING_CONTEXT)
+    {
         NSInteger previousVal = (NSInteger)[[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         [self applySettingsConstraintForKey:keyPath withPreviousValue:previousVal];
     } 
@@ -719,7 +720,7 @@
 
 - (void)addToIndexToUpdate:(NSIndexPath *)indexPath
 {
-    //if([self.indexPathsToUpdate containsObject:indexPath] == NO)
+    if([self.indexPathsToUpdate containsObject:indexPath] == NO)
     {
         [self.indexPathsToUpdate addObject:indexPath];
     }
