@@ -43,7 +43,7 @@ public class PDFFileManager {
     private static final int RADAEE_INVALID_PATH = -10;
     
     // For design consideration
-    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = true;
+    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false;
     
     private Document mDocument;
     private String mPath;

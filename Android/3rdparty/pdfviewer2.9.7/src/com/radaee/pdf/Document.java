@@ -9,6 +9,21 @@ class for PDF Document.
 */
 public class Document
 {
+	public interface PDFFontDelegate
+	{
+		/**
+		 * font delegate, invoked when the Font not found in FontList.
+		 * @param collection like: "", "GB1", "CNS1", and so on.
+		 * @param fname font name that not found in native library.
+		 * @param flag flag&1 means fixed width font, flag&2 means vertical writing.
+		 * @param ret_flags 1 element int array for output values:<br/>
+		 * (ret_flag[0]>>8) is the index of face in Font File(TTC file may has many faces, TTF file just pass 0).<br/>
+		 * (ret_flag[0]&1) tell native library to apply bold effect by program.<br/>
+		 * (ret_flag[0]&2) tell native library to apply italic effect by program.<br/>
+		 * @return full path name to font file, or null if using native default font.
+		 */
+		public String GetExtFont(String collection, String fname, int flag, int[] ret_flags);
+	}
 	public interface PDFStream
 	{
 		/**
@@ -68,7 +83,7 @@ public class Document
 		protected Document doc;
 		/**
 		 * get label of Outline
-		 * @return
+		 * @return title string
 		 */
 		public String GetTitle()
 		{
@@ -119,6 +134,22 @@ public class Document
 			return Document.getOutlineDest(doc.hand_val, hand);
 		}
 		/**
+		 * get url string of Outline
+		 * @return url string or null.
+		 */
+		public String GetURI()
+		{
+			return Document.getOutlineURI(doc.hand_val, hand);
+		}
+		/**
+		 * get file link path of Outline
+		 * @return file link path string or null.
+		 */
+		public String GetFileLink()
+		{
+			return Document.getOutlineFileLink(doc.hand_val, hand);
+		}
+		/**
 		 * insert outline after of this Outline.<br/>
 		 * a premium license is needed for this method.
 		 * @param label label of new outline.
@@ -163,6 +194,7 @@ public class Document
 	private static native int openMem( byte[] data, String password );
 	private static native int openStream( PDFStream stream, String password );
 	private static native boolean setCache( int hand, String path );
+	private static native void setFontDel( int hand, PDFFontDelegate del );
 	private static native int getPermission( int hand );
 	private static native int getPerm( int hand );
 	private static native void close( int hand );
@@ -175,6 +207,8 @@ public class Document
 	private static native String getOutlineTitle( int hand, int outline );
 	private static native boolean setOutlineTitle( int hand, int outline, String title );
 	private static native int getOutlineDest( int hand, int outline );
+	private static native String getOutlineURI( int hand, int outline );
+	private static native String getOutlineFileLink( int hand, int outline );
 	private static native int getOutlineNext( int hand, int outline );
 	private static native int getOutlineChild( int hand, int outline );
 	private static native boolean addOutlineNext( int hand, int outline, String label, int pageno, float top );
@@ -184,7 +218,7 @@ public class Document
 	private static native boolean setMeta( int hand, String tag, String value );
 	private static native boolean canSave( int hand );
 	private static native boolean save( int hand );
-	private static native boolean saveAs( int hand, String dst );//remove security info and save to another file.
+	private static native boolean saveAs( int hand, String dst, boolean rem_sec );//remove security info and save to another file.
 	private static native boolean isEncrypted( int hand );
 
 	private static native int importStart( int hand, int hand_src );
@@ -202,6 +236,11 @@ public class Document
 	private static native int newImage( int hand, Bitmap bmp, boolean has_alpha );
 	private static native int newImageJPEG( int hand, String path );
 	private static native int newImageJPX( int hand, String path );
+	private static native byte[] getSignContents( int hand );
+	private static native String getSignFilter( int hand );
+	private static native String getSignSubFilter( int hand );
+	private static native int[] getSignByteRange( int hand );
+	private static native int checkSignByteRange( int hand );
 	public class DocFont
 	{
 		protected int hand;
@@ -344,6 +383,16 @@ public class Document
 	{
 		return setCache( hand_val, path );
 	}
+	/**
+	 * set font delegate to PDF.<br/>
+	 * a professional or premium license is needed for this method.
+	 * @param del delegate for font mapping, or null to remove delegate.
+	 */
+	public void SetFontDel( PDFFontDelegate del )
+	{
+		setFontDel(hand_val, del);
+	}
+	
 	/**
 	 * open document.<br/>
 	 * first time, SDK try password as user password, and then try password as owner password.
@@ -569,13 +618,14 @@ public class Document
 	}
 	/**
 	 * save as the document to another file. it remove any security information.<br/>
-	 * this always return false, if no license actived.
+	 * this method need professional or premium license.
 	 * @param path path to save.
+	 * @param rem_sec remove security info?
 	 * @return true or false.
 	 */
-	public boolean SaveAs( String path )
+	public boolean SaveAs( String path, boolean rem_sec )
 	{
-		return saveAs( hand_val, path );
+		return saveAs( hand_val, path, rem_sec );
 	}
 	/**
 	 * check if document is encrypted.
@@ -789,5 +839,70 @@ public class Document
 	public boolean SetPageRotate( int pageno, int degree )
 	{
 		return setPageRotate( hand_val, pageno, degree );
+	}
+
+	/**
+	 * get signature contents. mostly an encrypted digest.<br/>
+	 * this method valid in professional or premium version.<br/>
+	 * @return byte array which format depends on Filter and SubFilter.<br/>
+	 * or null, if not signed for document.
+	 */
+	public byte[] GetSignContents()
+	{
+		return getSignContents( hand_val );
+	}
+	/**
+	 * get signature filter name.<br/>
+	 * this method valid in professional or premium version.<br/>
+	 * @return The name of the preferred signature handler to use.<br/>
+	 * Example signature handlers are "Adobe.PPKLite", "Entrust.PPKEF", "CICI.SignIt", and "VeriSign.PPKVS".<br/>
+	 * others maybe user defined.
+	 */
+	public String GetSignFilter()
+	{
+		return getSignFilter( hand_val );
+	}
+	/**
+	 * get sub filter name of signature.<br/>
+	 * this method valid in professional or premium version.<br/>
+	 * @return name that describes the encoding of the signature value and key information in the signature dictionary.<br/>
+	 * like "adbe.x509.rsa_sha1", "adbe.pkcs7.detached", and "adbe.pkcs7.sha1"<br/>
+	 * others maybe user defined.
+	 */
+	public String GetSignSubFilter()
+	{
+		return getSignSubFilter( hand_val );
+	}
+	/**
+	 * get byte ranges from PDF file, to get digest.<br/>
+	 * this method valid in professional or premium version.<br/>
+	 * @return an integer pair array, to record byte ranges.<br/>
+	 * each pair describing a range to digest.<br/>
+	 * 1st element of pair is offset.<br/>
+	 * 2nd element of pair is length.
+	 */
+	public int[] GetSignByteRange()
+	{
+		return getSignByteRange( hand_val );
+	}
+	/**
+	 * check object defined in signature("Data" entry), is in byte ranges defined in signature.
+	 * this method valid in professional or premium version.<br/>
+	 * to ensure PDF file modified, mostly you shall(Adobe Standard):<br/>
+	 * 1. invoke this method first.<br/>
+	 * 2. if succeeded, then get signature contents(see GetSignContents).<br/>
+	 * 3. decode public key from contents(see GetSignContents).<br/>
+	 * 4. decode encrypted digest from contents.<br/>
+	 * 5. decrypt digest.1 using public key, for step 4.<br/>
+	 * 6. calculate digest.2 by yourself, using byte ranges(GetSignByteRange).<br/>
+	 * 7. check digest.1 == digest.2
+	 * @return <br/>
+	 * -1: unknown or not defined in signature.<br/>
+	 *  0: check failed, means modified.<br/>
+	 *  1: check succeeded, means no new objects after signature.
+	 */
+	public int CheckSignByteRange()
+	{
+		return checkSignByteRange( hand_val );
 	}
 }
