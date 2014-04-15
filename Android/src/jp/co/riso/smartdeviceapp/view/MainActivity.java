@@ -32,13 +32,14 @@ public class MainActivity extends BaseActivity {
     
     public static final String KEY_TRANSLATION = "translate";
     public static final String KEY_RIGHT_OPEN = "right_drawer_open";
+    public static final String KEY_RESIZE_VIEW = "resize_view";
     
     private SDADrawerLayout mDrawerLayout;
     private ViewGroup mMainLayout;
     private ViewGroup mLeftLayout;
     private ViewGroup mRightLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    public boolean mPrintPreviewScreen = true;
+    private boolean mResizeView = false;
     
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
@@ -78,8 +79,9 @@ public class MainActivity extends BaseActivity {
             
             ft.commit();
         } else {
+            mResizeView = savedInstanceState.getBoolean(KEY_RIGHT_OPEN, false);
             float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
-            if (isTablet() && mPrintPreviewScreen && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
+            if (mResizeView && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
                 mMainLayout.requestLayout();
             } else {
@@ -99,6 +101,7 @@ public class MainActivity extends BaseActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         
+        outState.putBoolean(KEY_RESIZE_VIEW, mResizeView);
         outState.putFloat(KEY_TRANSLATION, mMainLayout.getTranslationX());
         outState.putBoolean(KEY_RIGHT_OPEN, mDrawerLayout.isDrawerOpen(Gravity.RIGHT));
     }
@@ -122,6 +125,9 @@ public class MainActivity extends BaseActivity {
     }
         
     public void openDrawer(int gravity, boolean preventIntercept) {
+        if (gravity == Gravity.RIGHT) {
+            mResizeView = preventIntercept;
+        }
         mDrawerLayout.setPreventInterceptTouches(preventIntercept);
         mDrawerLayout.openDrawer(gravity);
     }
@@ -151,7 +157,7 @@ public class MainActivity extends BaseActivity {
         public void syncState() {
             super.syncState();
             
-            if (isTablet() && mPrintPreviewScreen && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            if (mResizeView && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
                 mMainLayout.setPadding(0, 0, getDrawerWidth(), 0);
                 mMainLayout.requestLayout();
             }
@@ -164,7 +170,7 @@ public class MainActivity extends BaseActivity {
                 moveFactor *= -1;
             }
             
-            if (isTablet() && mPrintPreviewScreen && drawerView.getId() == mRightLayout.getId()) {
+            if (mResizeView && drawerView.getId() == mRightLayout.getId()) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(moveFactor), 0);
             } else {
                 mMainLayout.setTranslationX(moveFactor);
