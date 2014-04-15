@@ -154,7 +154,6 @@
             {
                 *stop = YES;
                 return;
-            
             }
             
             CGContextRestoreGState(contextRef);
@@ -189,6 +188,11 @@
 {
     kImposition imposition = (kImposition)self.printDocument.previewSetting.imposition;
     
+    if(self.printDocument.previewSetting.booklet == YES)
+    {
+        imposition = kImpositionOff;
+    }
+    
     switch(imposition)
     {
         case kImposition2Pages:
@@ -218,7 +222,10 @@
     CGContextSaveGState(contextRef);
     //get the rect of pdf to know actual pdf size in points (which is at 72 ppi)
     CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
-    if(self.printDocument.previewSetting.scaleToFit == YES) //Scale To Fit
+    
+    if(self.printDocument.previewSetting.scaleToFit == YES ||
+       self.printDocument.previewSetting.booklet == YES ||
+       self.printDocument.previewSetting.imposition != kImpositionOff) //ScaleToFit is on or if there is booklet or imposition
     {
         //self.size is actual size of paper at 72ppi
         //check if paper is larger than pdf size.

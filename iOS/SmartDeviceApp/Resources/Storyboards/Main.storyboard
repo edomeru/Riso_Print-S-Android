@@ -1811,6 +1811,7 @@
                                 <connections>
                                     <outlet property="separator" destination="n7o-mL-zSQ" id="lZV-Xg-lv9"/>
                                     <outlet property="settingLabel" destination="itm-0f-Pua" id="eN9-sU-shq"/>
+                                    <outlet property="subMenuImage" destination="wuk-Mx-6Mn" id="9HK-Ot-B2j"/>
                                     <outlet property="valueLabel" destination="Mmg-Gb-hk8" id="1ZE-Kd-uNL"/>
                                 </connections>
                             </tableViewCell>
