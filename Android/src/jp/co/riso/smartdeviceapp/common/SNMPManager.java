@@ -14,6 +14,7 @@ import android.util.Log;
 
 public class SNMPManager {
     private static final String TAG = "SNMPManager";
+    
     public long mContext = 0;
     private WeakReference<SNMPManagerCallback> mCallbackRef;
     
@@ -22,6 +23,16 @@ public class SNMPManager {
     public native void deviceDiscovery();
     public native void manualDiscovery(String ipAddress);
     public native void cancel();
+    
+    public enum SNMPCapability{
+        BOOKLET,
+        STAPLER,
+        FINISH_2_4,
+        FINISH_2_3,
+        TRAY_FACE_DOWN,
+        TRAY_AUTO_STACK,
+        TRAY_STACK
+    }
     
     public void setCallback(SNMPManagerCallback callback) {
         mCallbackRef = new WeakReference<SNMPManagerCallback>(callback);
