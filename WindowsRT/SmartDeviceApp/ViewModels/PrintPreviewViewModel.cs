@@ -294,11 +294,15 @@ namespace SmartDeviceApp.ViewModels
             {
                 GoToPageEventHandler((int)index);
             }
+            UpdatePageIndexes(index);
+        }
+
+        public void UpdatePageIndexes(uint index)
+        {
             _rightPageIndex = index;
             SetPageIndexes();
         }
 
-        
         // TODO: Two-page view
         private void GoToPreviousPageExecute()
         {

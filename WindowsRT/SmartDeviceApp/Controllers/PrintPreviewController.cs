@@ -83,7 +83,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize()
         {
-            _goToPageEventHandler = new GoToPageEventHandler(LoadPage);
+            _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
@@ -107,12 +107,11 @@ namespace SmartDeviceApp.Controllers
 
                 UpdatePreviewInfo();
                 InitializeGestures();
-                _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
-                await LoadPage(0);
+                await GoToPage(0);
             }
             else
             {
@@ -300,6 +299,8 @@ namespace SmartDeviceApp.Controllers
                 {
                     _selectedPrinter.PrintSettings.Duplex = value;
                     isPreviewPageAffected = true;
+
+                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
@@ -332,6 +333,8 @@ namespace SmartDeviceApp.Controllers
                     _selectedPrinter.PrintSettings.Imposition = value;
                     isPreviewPageAffected = true;
                     isPageCountAffected = true;
+
+                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
@@ -423,7 +426,8 @@ namespace SmartDeviceApp.Controllers
                 await ClearPreviewPageListAndImages();
                 UpdatePreviewInfo();
                 //InitializeGestures();
-                _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
+                await LoadPage(_currPreviewPageIndex, false);
             }
         }
 
@@ -468,6 +472,8 @@ namespace SmartDeviceApp.Controllers
                     isConstraintAffected = UpdateConstraintsUsingBooklet(state);
                     _selectedPrinter.PrintSettings.Booklet = state;
                     isPreviewPageAffected = true;
+
+                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
 
@@ -480,7 +486,8 @@ namespace SmartDeviceApp.Controllers
             {
                 await ClearPreviewPageListAndImages();
                 UpdatePreviewInfo();
-                _printPreviewViewModel.GoToPage((uint)_currPreviewPageIndex);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
+                await LoadPage(_currPreviewPageIndex, false);
             }
         }
 
@@ -527,7 +534,9 @@ namespace SmartDeviceApp.Controllers
             }
             if (_printPreviewViewModel.PageTotal != _previewPageTotal)
             {
+                _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
                 _printPreviewViewModel.PageTotal = _previewPageTotal;
+                _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
             }
         }
 
@@ -536,88 +545,79 @@ namespace SmartDeviceApp.Controllers
         #region Preview Page Navigation
 
         /// <summary>
+        /// Event handler for page slider is changed
+        /// </summary>
+        /// <param name="rightPageIndex">requested right page index based on slider value</param>
+        /// <returns>task</returns>
+        public async Task GoToPage(int rightPageIndex)
+        {
+            await LoadPage(rightPageIndex, true);
+        }
+
+        /// <summary>
         /// Requests for LogicalPages and then applies print setting for the target page only.
         /// Assumes that requested page index is for right side page index
         /// </summary>
-        /// <param name="pageIndex">requested page index based on slider value</param>
+        /// <param name="rightPageIndex">requested right page index based on slider value</param></param>
+        /// <param name="isFromSlider">true when request is from page slider, false otherwise</param>
         /// <returns>task</returns>
-        public async Task LoadPage(int pageIndex)
+        private async Task LoadPage(int rightPageIndex, bool isSliderEvent)
         {
-            // Input is page slider index
-            int previewPageIndex = pageIndex;
-
-            /*
-            // Compute for preview page index based on duplex
-            if (_isDuplex || _isBooklet)
+            if (isSliderEvent)
             {
-                previewPageIndex = pageIndex * 2;
+                _currPreviewPageIndex = (_isDuplex || _isBooklet) ? rightPageIndex * 2 :
+                                                                    rightPageIndex;
             }
-            _currPreviewPageIndex = previewPageIndex;
-
-            // Compute for logical page index based on imposition
-            int logicalPageIndex = _currPreviewPageIndex * _pagesPerSheet;
-
-            // Right side, front
-            await SendPreviewPage(_currPreviewPageIndex, logicalPageIndex, false);
-
-            if (_isDuplex || _isBooklet) 
-            {
-                // Go to back page for duplex
-                int nextPreviewPageIndex = _currPreviewPageIndex + 1;
-
-                // Compute for next logical page index based on imposition
-                int nextLogicalPageIndex = nextPreviewPageIndex * _pagesPerSheet;
-
-                // Right side, back
-                await SendPreviewPage(nextPreviewPageIndex, nextLogicalPageIndex, true);
-            }
-             * */
 
             // Generate right side
-            await GenerateSingleLeaf(pageIndex, true);
+            await GenerateSingleLeaf(_currPreviewPageIndex, true);
 
             if (_isBooklet)
             {
                 // Compute left side page index
-                int leftSidePreviewPageIndex = previewPageIndex - 1;
-                if (leftSidePreviewPageIndex < 0)
+                int leftSidePreviewPageIndex = _currPreviewPageIndex - 1;
+                if (leftSidePreviewPageIndex > 0)
                 {
                     // Generate left side
-                    await GenerateSingleLeaf(pageIndex, false);
+                    await GenerateSingleLeaf(leftSidePreviewPageIndex, false);
                 }
             }
 
             GenerateNearPreviewPages();
         }
 
+        /// <summary>
+        /// Generates a single leaf page(s)
+        /// </summary>
+        /// <param name="pageIndex">page index</param>
+        /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
+        /// <returns>task</returns>
         private async Task GenerateSingleLeaf(int pageIndex, bool isRightSide)
         {
-            // Input is page slider index
-            int previewPageIndex = pageIndex;
-
-            // Compute for preview page index based on duplex
-            if (_isDuplex || _isBooklet)
-            {
-                previewPageIndex = pageIndex * 2;
-            }
-            _currPreviewPageIndex = previewPageIndex;
-
             // Compute for logical page index based on imposition
-            int logicalPageIndex = _currPreviewPageIndex * _pagesPerSheet;
+            int logicalPageIndex = pageIndex * _pagesPerSheet;
 
             // Front
-            await SendPreviewPage(_currPreviewPageIndex, logicalPageIndex, isRightSide, false);
+            await SendPreviewPage(pageIndex, logicalPageIndex, isRightSide, false);
 
             if (_isDuplex || _isBooklet)
             {
-                // Go to back page for duplex
-                int nextPreviewPageIndex = _currPreviewPageIndex + 1;
+                int backPreviewPageIndex;
+
+                if (isRightSide) // Back page is next page
+                {
+                    backPreviewPageIndex = pageIndex + 1;
+                }
+                else // Back page is previous page
+                {
+                    backPreviewPageIndex = pageIndex - 1;
+                }
 
                 // Compute for next logical page index based on imposition
-                int nextLogicalPageIndex = nextPreviewPageIndex * _pagesPerSheet;
+                int nextLogicalPageIndex = backPreviewPageIndex * _pagesPerSheet;
 
                 // Back
-                await SendPreviewPage(nextPreviewPageIndex, nextLogicalPageIndex, isRightSide, true);
+                await SendPreviewPage(backPreviewPageIndex, nextLogicalPageIndex, isRightSide, true);
             }
         }
 
@@ -626,6 +626,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="previewPageIndex">target preview page image</param>
         /// <param name="logicalPageIndex">target logical page image</param>
+        /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
         /// <returns>task</returns>
         private async Task SendPreviewPage(int previewPageIndex, int logicalPageIndex,
@@ -648,9 +649,11 @@ namespace SmartDeviceApp.Controllers
         /// Checks if a PreviewPage image already exists then opens and sends the page image
         /// </summary>
         /// <param name="targetPreviewPageIndex">target page index</param>
+        /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true if the requested page is to be displayed at the back, false otherwise</param>
         /// <returns>task; true if the PreviewPage image already exists, false otherwise</returns>
-        private async Task<bool> SendExistingPreviewImage(int targetPreviewPageIndex, bool isRightSide, bool isBackSide)
+        private async Task<bool> SendExistingPreviewImage(int targetPreviewPageIndex, bool isRightSide,
+            bool isBackSide)
         {
             PreviewPage previewPage = null;
             if (_previewPages.TryGetValue(targetPreviewPageIndex, out previewPage))
@@ -1027,7 +1030,7 @@ namespace SmartDeviceApp.Controllers
             {
                 if (value != defaultFinishingSide)
                 {
-                    if (defaultFinishingSide == (int)FinishingSide.Top ||
+                    if (defaultFinishingSide != (int)FinishingSide.Left ||
                         (defaultFinishingSide == (int)FinishingSide.Left &&
                          value != (int)FinishingSide.Right))
                     {
@@ -1500,8 +1503,8 @@ namespace SmartDeviceApp.Controllers
         /// <param name="canvasBitmap">bitmap image</param>
         /// <param name="xOrigin">starting position</param>
         /// <param name="yOrigin">starting position</param>
-        /// <param name="width">length</param>
-        /// <param name="height">length</param>
+        /// <param name="width">length along x-axis</param>
+        /// <param name="height">length along y-axis</param>
         private void ApplyBorder(WriteableBitmap canvasBitmap, int xOrigin, int yOrigin, int width,
             int height)
         {
