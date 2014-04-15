@@ -127,11 +127,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if([self.indexPathsToUpdate count] > 0)
-    {
-        [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
-        [self.indexPathsToUpdate removeAllObjects];
-    }
+    [self reloadRowsForIndexPathsToUpdate];
 }
 
 - (void)didReceiveMemoryWarning
@@ -424,7 +420,6 @@
     }
 }
 
-
 -(void) addObserversForSettingsWithConstraints
 {
     for(NSString *key in self.settingsWithConstraints)
@@ -479,22 +474,16 @@
 - (void)applyBookletConstraints
 {
     [self setState:[self isSettingEnabled:KEY_DUPLEX] forSettingKey:KEY_DUPLEX];
-    [self setState:[self isSettingEnabled:KEY_FINISHING_SIDE] forSettingKey:KEY_FINISHING_SIDE];
-    [self setState:[self isSettingEnabled:KEY_PUNCH] forSettingKey:KEY_PUNCH];
-    [self setState:[self isSettingEnabled:KEY_STAPLE] forSettingKey:KEY_STAPLE];
     [self setState:[self isSettingEnabled:KEY_IMPOSITION] forSettingKey:KEY_IMPOSITION];
     [self setState:[self isSettingEnabled:KEY_IMPOSITION_ORDER] forSettingKey:KEY_IMPOSITION_ORDER];
-    [self setState:[self isSettingEnabled:KEY_BOOKLET_FINISH] forSettingKey:KEY_BOOKLET_FINISH];
-    [self setState:[self isSettingEnabled:KEY_BOOKLET_LAYOUT] forSettingKey:KEY_BOOKLET_LAYOUT];
 
     [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
     [self setOptionSettingToDefaultValue:KEY_STAPLE];
     [self setOptionSettingToDefaultValue:KEY_PUNCH];
     [self setOptionSettingToDefaultValue:KEY_BOOKLET_FINISH];
     [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
+    [self reloadRowsForIndexPathsToUpdate];
 }
-
-
 
 - (void)applyFinishingConstraintsWithPreviousValue:(NSInteger)previousFinishingSide
 {
@@ -545,8 +534,25 @@
 
 -(void) applyOrientationConstraint
 {
-    kOrientation orientation = (kOrientation) self.printDocument.previewSetting.orientation;
-    //TODO
+    if(self.printDocument.previewSetting.booklet == YES)
+    {
+        kOrientation orientation = (kOrientation) self.printDocument.previewSetting.orientation;
+        kBookletLayout bookletLayout = (kBookletLayout) self.printDocument.previewSetting.bookletLayout;
+        if(orientation == kOrientationPortrait)
+        {
+            if(bookletLayout == kBookletLayoutTopToBottom)
+            {
+                [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
+            }
+        }
+        else
+        {
+            if(bookletLayout != kBookletLayoutTopToBottom)
+            {
+                [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:(NSInteger) kBookletLayoutTopToBottom];
+            }
+        }
+    }
 }
 
 -(void) applyPunchConstraint
@@ -576,7 +582,6 @@
     {
         case kImpositionOff:
             [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:kImpositionOrderLeftToRight];
-            [self setState:NO forSettingKey:KEY_IMPOSITION_ORDER];
             break;
         case kImposition2Pages:
             if(previousImpositionValue == kImposition4pages)
@@ -609,7 +614,6 @@
             }
             if(previousImpositionValue == kImpositionOff)
             {
-                [self setState:YES forSettingKey:KEY_IMPOSITION_ORDER];
                 [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:kImpositionOrderUpperLeftToRight];
             }
             break;
@@ -618,39 +622,39 @@
     }
 }
 
--(void) setState:(BOOL)isEnabled forSettingKey:(NSString*)key
+- (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key
 {
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    [cell setUserInteractionEnabled:isEnabled];
+    if(indexPath != nil)
+    {
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        [cell setUserInteractionEnabled:isEnabled];
+    }
 }
 
 -(void) setOptionSettingToDefaultValue: (NSString*)key
 {
+    PreviewSetting *defaultPreviewSetting = [PrintSettingsHelper defaultPreviewSetting];
+    NSNumber *defaultValue = [defaultPreviewSetting valueForKey:key];
+    [self.printDocument.previewSetting setValue:defaultValue forKey:key];
+    
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
-    PrintSettingsItemOptionCell *itemOptionCell = (PrintSettingsItemOptionCell*)[self.tableView cellForRowAtIndexPath:indexPath];
-   
-    //get default value
-    NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:indexPath.section - 1];
-    NSArray *settings = [group objectForKey:@"setting"];
-    NSDictionary *setting = [settings objectAtIndex:indexPath.row - 1];
-    
-    NSString *defaultValue = [setting objectForKey:@"default"];
-    
-    NSInteger value = [defaultValue integerValue];
-    NSArray *options = [setting objectForKey:@"option"];
-    NSString *selectedOption = [[options objectAtIndex:value] objectForKey:@"content-body"];
-    itemOptionCell.valueLabel.localizationId = selectedOption;
-    
-    [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];
+    if(indexPath != nil)
+    {
+        [self addToIndexToUpdate:indexPath];
+    }
 }
 
 -(void) setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
 {
-    NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
     NSNumber *num = [NSNumber numberWithInt:value];
     [self.printDocument.previewSetting setValue:num forKey:key];
-    [self.indexPathsToUpdate addObject:indexPath];
+    
+    NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
+    if(indexPath != nil)
+    {
+        [self addToIndexToUpdate:indexPath];
+    }
 }
 
 -(BOOL) isSettingEnabled:(NSString*) settingKey
@@ -711,6 +715,23 @@
     }
     
     return YES;
+}
+
+- (void)addToIndexToUpdate:(NSIndexPath *)indexPath
+{
+    //if([self.indexPathsToUpdate containsObject:indexPath] == NO)
+    {
+        [self.indexPathsToUpdate addObject:indexPath];
+    }
+}
+
+- (void) reloadRowsForIndexPathsToUpdate
+{
+    if([self.indexPathsToUpdate count] > 0)
+    {
+        [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
+        [self.indexPathsToUpdate removeAllObjects];
+    }
 }
 
 @end

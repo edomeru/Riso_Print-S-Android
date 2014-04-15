@@ -171,7 +171,25 @@
             }
         }
     }
-    return YES;
+    
+    if([self.key isEqualToString:KEY_BOOKLET_LAYOUT] == YES)
+    {
+        if(option == kBookletLayoutTopToBottom)
+        {
+            if(self.printDocument.previewSetting.orientation == kOrientationPortrait)
+            {
+                return NO;
+            }
+        }
+        else
+        {
+            if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
+            {
+                return NO;
+            }
+        }
+    }   
+     return YES;
 }
 
 -(void) fillOptions

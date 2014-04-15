@@ -43,7 +43,7 @@ typedef enum {
     kImpositionOrderUpperLeftToBottom,
     kImpositionOrderUpperLeftToRight,
     kImpositionOrderUpperRightToBottom,
-    kImpositionOrderUpperRightToLeft,
+    kImpositionOrderUpperRightToLeft
 }kImpositionOrder;
 
 typedef enum {
@@ -83,6 +83,11 @@ typedef enum {
     kBookletTypeFoldAndStaple
 } kBookletType;
 
+typedef enum {
+    kBookletLayoutLeftToRight,
+    kBookletLayoutRightToLeft,
+    kBookletLayoutTopToBottom
+} kBookletLayout;
 
 @interface PrintPreviewHelper : NSObject
 /**
