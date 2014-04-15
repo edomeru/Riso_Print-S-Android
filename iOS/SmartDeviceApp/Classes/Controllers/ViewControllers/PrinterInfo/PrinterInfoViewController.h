@@ -12,6 +12,11 @@
 @class Printer;
 @class PrinterManager;
 
+@protocol PrinterInfoDelegate
+-(void) segueToPrintSettings;
+@end
+
+
 @interface PrinterInfoViewController : SlidingViewController <PrinterStatusHelperDelegate>
 /*NSIndexPath of the printer of which info was shown*/
 @property (weak, nonatomic) NSIndexPath* indexPath;
@@ -19,4 +24,5 @@
 @property BOOL isDefaultPrinter;
 /*Online status of printer*/
 @property BOOL onlineStatus;
+@property (weak, nonatomic) id <PrinterInfoDelegate> delegate;
 @end

@@ -10,6 +10,7 @@
 #import "PreviewSetting.h"
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
+#import "Printer.h"
 
 #define MAX_PAGE_CACHE 5
 
@@ -61,6 +62,16 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     [self removeObservers];
     _previewSetting = previewSetting;
     [self addObservers];
+}
+
+- (void)setPrinter:(Printer *)printer
+{
+    _printer = printer;
+    if(self.previewSetting != nil)
+    {
+        PreviewSetting *previewSetting = self.previewSetting;
+        [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];
+    }
 }
 
 - (NSInteger)pageCount

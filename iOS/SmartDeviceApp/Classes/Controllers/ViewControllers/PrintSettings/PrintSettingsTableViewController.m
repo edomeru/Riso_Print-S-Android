@@ -22,6 +22,7 @@
 #import "PrinterManager.h"
 #import "Printer.h"
 #import "PrintPreviewHelper.h"
+#import "PrintSetting.h"
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
@@ -29,7 +30,6 @@
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
 #define SETTING_ITEM_SWITCH_CELL @"SettingItemSwitchCell"
-#define PRINTSETTING_CONTEXT @"PreviewSettingContext"
 
 #define PRINTER_SECTION  0
 #define PRINTER_SECTION_HEADER_ROW 0
@@ -41,15 +41,14 @@
 @interface PrintSettingsTableViewController ()
 
 @property (nonatomic) BOOL showPrinterSelection;
+
 @property (nonatomic, weak) NSDictionary *printSettingsTree;
 @property (nonatomic, strong) NSMutableArray *expandedSections;
 @property (nonatomic, weak) NSDictionary *currentSetting;
-@property (nonatomic, weak) PrintDocument *printDocument;
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
 @property (nonatomic, strong) NSMutableDictionary *textFieldBindings;
 @property (nonatomic, strong) NSMutableDictionary *switchBindings;
-@property (nonatomic, weak) Printer *printer;
-@property (nonatomic, strong) NSArray *settingsWithConstraints;
+
 @property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
 @property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
 @end
@@ -69,17 +68,8 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    // DEBUG
     self.showPrinterSelection = YES;
-    
-    // Get Document
-    self.printDocument = [[PDFFileManager sharedManager] printDocument];
-    
+        
     // Get print settings tree
     self.printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     
@@ -91,9 +81,13 @@
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
     }
     
-    //get default printer
-    PrinterManager *printerManager = [PrinterManager sharedPrinterManager];
-    self.printer = [printerManager getDefaultPrinter];
+    if(self.isDefaultSettingsMode == YES)
+    {
+        self.showPrinterSelection = NO;
+    }
+    
+    PreviewSetting *previewSetting = self.previewSetting;
+    [PrintSettingsHelper addObserver:self toPreviewSetting: &previewSetting];
     
     // Add tap recognizer to close keyboard on tap
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
@@ -113,16 +107,15 @@
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 20)];
     footer.backgroundColor = [UIColor clearColor];
     self.tableView.tableFooterView = footer;
-    //add observer for settings that have constraint
-    self.settingsWithConstraints =[NSArray arrayWithObjects:KEY_BOOKLET, KEY_PUNCH, KEY_FINISHING_SIDE, KEY_IMPOSITION, KEY_ORIENTATION, nil];
+    
     self.indexPathsForSettings = [NSMutableDictionary dictionary];
     self.indexPathsToUpdate = [[NSMutableArray array] mutableCopy];
-    [self addObserversForSettingsWithConstraints];
 }
 
 -(void)dealloc
 {
-    [self removeObserversForSettingsWithConstraints];
+    PreviewSetting *previewSetting = self.previewSetting;
+    [PrintSettingsHelper removeObserver:self fromPreviewSetting:&previewSetting];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -188,7 +181,7 @@
     
     if (section == 0)
     {
-        if (row == 0)
+        if (row == 0 && self.showPrinterSelection == YES)
         {
             cell = [tableView dequeueReusableCellWithIdentifier:PRINTER_HEADER_CELL forIndexPath:indexPath];
         }
@@ -232,6 +225,7 @@
             NSString *type = [setting objectForKey:@"type"];
             NSString *key = [setting objectForKey:@"name"];
             //keep track of index of each setting for easy access
+            
             [self.indexPathsForSettings setObject:indexPath forKey:key];
             if ([type isEqualToString:@"list"])
             {
@@ -240,7 +234,7 @@
                 
                 // Get value
                 NSArray *options = [setting objectForKey:@"option"];
-                NSNumber *index = [self.printDocument.previewSetting valueForKey:key];
+                NSNumber *index = [self.previewSetting valueForKey:key];
                 NSString *selectedOption = [[options objectAtIndex:[index integerValue]] objectForKey:@"content-body"];
                 itemOptionCell.valueLabel.localizationId = selectedOption;
                 
@@ -256,7 +250,7 @@
             {
                 PrintSettingsItemInputCell *itemInputCell = [tableView dequeueReusableCellWithIdentifier:SETTING_ITEM_INPUT_CELL forIndexPath:indexPath];
                 itemInputCell.settingLabel.localizationId = [setting objectForKey:@"text"];
-                itemInputCell.valueTextField.text = [[self.printDocument.previewSetting valueForKey:key] stringValue];
+                itemInputCell.valueTextField.text = [[self.previewSetting valueForKey:key] stringValue];
                 itemInputCell.valueTextField.tag = indexPath.section * 10 + indexPath.row;
                 itemInputCell.valueTextField.delegate = self;
                 [self.textFieldBindings setObject:key forKey:[NSNumber numberWithInteger:itemInputCell.valueTextField.tag]];
@@ -273,7 +267,7 @@
                 PrintSettingsItemSwitchCell *itemSwitchCell = [tableView dequeueReusableCellWithIdentifier:SETTING_ITEM_SWITCH_CELL forIndexPath:indexPath];
                 itemSwitchCell.settingLabel.localizationId = [setting objectForKey:@"text"];
                 itemSwitchCell.valueSwitch.on = NO;
-                if ([[self.printDocument.previewSetting valueForKey:key] boolValue] == YES)
+                if ([[self.previewSetting valueForKey:key] boolValue] == YES)
                 {
                     itemSwitchCell.valueSwitch.on = YES;
                 }
@@ -343,7 +337,7 @@
     }
     else
     {
-        if(row > 0)
+        if(row > 0 && self.showPrinterSelection == YES)
         {
             [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
         }
@@ -368,13 +362,13 @@
 {
     UISwitch *switchView = sender;
     NSString *key = [self.switchBindings objectForKey:[NSNumber numberWithInteger:switchView.tag]];
-    [self.printDocument.previewSetting setValue:[NSNumber numberWithBool:switchView.on] forKey:key];
+    [self.previewSetting setValue:[NSNumber numberWithBool:switchView.on] forKey:key];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     NSString *key = [self.textFieldBindings objectForKey:[NSNumber numberWithInteger:textField.tag]];
-    [self.printDocument.previewSetting setValue:[NSNumber numberWithInteger:[textField.text integerValue]] forKey:key];
+    [self.previewSetting setValue:[NSNumber numberWithInteger:[textField.text integerValue]] forKey:key];
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification
@@ -393,6 +387,7 @@
     {
         PrintSettingsOptionTableViewController *optionsController = segue.destinationViewController;
         optionsController.setting = self.currentSetting;
+        optionsController.previewSetting = self.previewSetting;
     }
     if ([segue.identifier isEqualToString:@"PrintSettings-PrinterList"])
     {
@@ -406,6 +401,12 @@
     if([sender.sourceViewController isKindOfClass:[PrintSettingsPrinterListTableViewController class]])
     {
         self.printer = ((PrintSettingsPrinterListTableViewController *)sender.sourceViewController).selectedPrinter;
+        
+        if(self.printer != nil)
+        {
+            [[[PDFFileManager sharedManager] printDocument] setPrinter:self.printer];
+        }
+        
         NSIndexPath *printerIndexPath = [NSIndexPath indexPathForRow:PRINTER_SECTION_ITEM_ROW inSection:PRINTER_SECTION];
         if(self.printer != nil)
         {
@@ -420,25 +421,21 @@
     }
 }
 
--(void) addObserversForSettingsWithConstraints
-{
-    for(NSString *key in self.settingsWithConstraints)
-    {
-        [self.printDocument.previewSetting addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:PRINTSETTING_CONTEXT];
-    }
-}
--(void) removeObserversForSettingsWithConstraints
-{
-    for(NSString *key in self.settingsWithConstraints)
-    {
-        [self.printDocument.previewSetting removeObserver:self forKeyPath:key context:PRINTSETTING_CONTEXT];
-    }
-}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context == PRINTSETTING_CONTEXT)
+    if (context == PREVIEWSETTING_CONTEXT)
     {
+        if(self.isDefaultSettingsMode == YES)
+        {
+            NSNumber *value = [self.previewSetting valueForKey:keyPath];
+            if(value != nil)
+            {
+                [self.printer.printsetting setValue:[self.previewSetting valueForKey:keyPath] forKey:keyPath];
+                [[PrinterManager sharedPrinterManager] savePrinterChanges];
+            }
+        }
+        
         NSInteger previousVal = (NSInteger)[[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         [self applySettingsConstraintForKey:keyPath withPreviousValue:previousVal];
     } 
@@ -488,8 +485,8 @@
 
 - (void)applyFinishingConstraintsWithPreviousValue:(NSInteger)previousFinishingSide
 {
-    kFinishingSide currentFinishingSide = (kFinishingSide)self.printDocument.previewSetting.finishingSide;
-    kStapleType staple = (kStapleType)self.printDocument.previewSetting.staple;
+    kFinishingSide currentFinishingSide = (kFinishingSide)self.previewSetting.finishingSide;
+    kStapleType staple = (kStapleType)self.previewSetting.staple;
     switch(currentFinishingSide)
     {
         case kFinishingSideLeft:
@@ -519,9 +516,9 @@
 
 -(void) applyFinishingWithOrientationConstraint
 {
-    kPunchType punch = (kPunchType)self.printDocument.previewSetting.punch;
-    BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
-    kFinishingSide finishingSide = (kFinishingSide)self.printDocument.previewSetting.finishingSide;
+    kPunchType punch = (kPunchType)self.previewSetting.punch;
+    BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
+    kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
     
     if(punch == kPunchType3Holes || punch == kPunchType4Holes)
     {
@@ -535,10 +532,10 @@
 
 -(void) applyOrientationConstraint
 {
-    if(self.printDocument.previewSetting.booklet == YES)
+    if(self.previewSetting.booklet == YES)
     {
-        kOrientation orientation = (kOrientation) self.printDocument.previewSetting.orientation;
-        kBookletLayout bookletLayout = (kBookletLayout) self.printDocument.previewSetting.bookletLayout;
+        kOrientation orientation = (kOrientation) self.previewSetting.orientation;
+        kBookletLayout bookletLayout = (kBookletLayout) self.previewSetting.bookletLayout;
         if(orientation == kOrientationPortrait)
         {
             if(bookletLayout == kBookletLayoutTopToBottom)
@@ -558,9 +555,9 @@
 
 -(void) applyPunchConstraint
 {
-    kPunchType punch = (kPunchType)self.printDocument.previewSetting.punch;
-    kFinishingSide finishingSide = (kFinishingSide)self.printDocument.previewSetting.finishingSide;
-    BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    kPunchType punch = (kPunchType)self.previewSetting.punch;
+    kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
+    BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
     
     if(punch == kPunchType3Holes || punch == kPunchType4Holes)
     {
@@ -577,8 +574,8 @@
 
 -(void) applyImpositionConstraintWithPreviousValue:(NSInteger)previousImpositionValue
 {
-    kImposition currentImpositionValue  = (kImposition) self.printDocument.previewSetting.imposition;
-    kImpositionOrder impositionOrder = (kImpositionOrder) self.printDocument.previewSetting.impositionOrder;
+    kImposition currentImpositionValue  = (kImposition) self.previewSetting.imposition;
+    kImpositionOrder impositionOrder = (kImpositionOrder) self.previewSetting.impositionOrder;
     switch(currentImpositionValue)
     {
         case kImpositionOff:
@@ -637,7 +634,7 @@
 {
     PreviewSetting *defaultPreviewSetting = [PrintSettingsHelper defaultPreviewSetting];
     NSNumber *defaultValue = [defaultPreviewSetting valueForKey:key];
-    [self.printDocument.previewSetting setValue:defaultValue forKey:key];
+    [self.previewSetting setValue:defaultValue forKey:key];
     
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
     if(indexPath != nil)
@@ -649,7 +646,7 @@
 -(void) setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
 {
     NSNumber *num = [NSNumber numberWithInt:value];
-    [self.printDocument.previewSetting setValue:num forKey:key];
+    [self.previewSetting setValue:num forKey:key];
     
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
     if(indexPath != nil)
@@ -662,7 +659,7 @@
 {
     if([settingKey isEqualToString:KEY_DUPLEX])
     {
-        if(self.printDocument.previewSetting.booklet == YES)
+        if(self.previewSetting.booklet == YES)
         {
             return NO;
         }
@@ -670,7 +667,7 @@
     
     if([settingKey isEqualToString:KEY_FINISHING_SIDE])
     {
-        if(self.printDocument.previewSetting.booklet == YES)
+        if(self.previewSetting.booklet == YES)
         {
             return NO;
         }
@@ -678,7 +675,7 @@
     
     if([settingKey isEqualToString:KEY_STAPLE])
     {
-        if(self.printDocument.previewSetting.booklet == YES)
+        if(self.previewSetting.booklet == YES)
         {
             return NO;
         }
@@ -686,7 +683,7 @@
     
     if([settingKey isEqualToString:KEY_PUNCH])
     {
-        if(self.printDocument.previewSetting.booklet == YES)
+        if(self.previewSetting.booklet == YES)
         {
             return NO;
         }
@@ -694,7 +691,7 @@
     
     if([settingKey isEqualToString:KEY_IMPOSITION])
     {
-        if(self.printDocument.previewSetting.booklet == YES)
+        if(self.previewSetting.booklet == YES)
         {
             return NO;
         }
@@ -702,8 +699,8 @@
     
     if([settingKey isEqualToString:KEY_IMPOSITION_ORDER])
     {
-        if(self.printDocument.previewSetting.booklet == YES ||
-           self.printDocument.previewSetting.imposition == kImpositionOff)
+        if(self.previewSetting.booklet == YES ||
+           self.previewSetting.imposition == kImpositionOff)
         {
             return NO;
         }
@@ -712,7 +709,7 @@
     if([settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
        [settingKey isEqualToString:KEY_BOOKLET_FINISH])
     {
-        return self.printDocument.previewSetting.booklet;
+        return self.previewSetting.booklet;
     }
     
     return YES;

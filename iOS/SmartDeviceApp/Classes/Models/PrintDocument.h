@@ -10,6 +10,7 @@
 
 @protocol PrintDocumentDelegate;
 @class PreviewSetting;
+@class Printer;
 
 @interface PrintDocument : NSObject
 
@@ -22,6 +23,11 @@
  Current Preview Setting
  */
 @property (nonatomic, strong) PreviewSetting *previewSetting;
+
+/**
+ Current Printer Setting
+ */
+@property (nonatomic, strong) Printer *printer;
 
 /**
  Delegate that will handle Preview Setting changes

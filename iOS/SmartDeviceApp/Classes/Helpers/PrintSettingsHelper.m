@@ -11,6 +11,8 @@
 #import "PreviewSetting.h"
 #import "PrintSetting.h"
 
+
+
 @implementation PrintSettingsHelper
 
 + (NSDictionary *)sharedPrintSettingsTree;
@@ -91,4 +93,59 @@
     }
 }
 
++ (void)copyPrintSettings:(PrintSetting *)printSetting toPreviewSetting:(PreviewSetting **) previewSetting;
+{
+    if(printSetting == nil || previewSetting == nil || *previewSetting == nil)
+    {
+        return;
+    }
+    NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [printSettingsTree objectForKey:@"group"];
+    for (NSDictionary *group in groups)
+    {
+        NSArray *settings = [group objectForKey:@"setting"];
+        for (NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            [(*previewSetting) setValue:[printSetting valueForKey:key] forKey:key];
+        }
+    }
+}
+
++ (void)addObserver:(id)observer toPreviewSetting:(PreviewSetting **)previewSetting
+{
+    if(previewSetting == nil || *previewSetting == nil)
+    {
+        return;
+    }
+    NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [printSettingsTree objectForKey:@"group"];
+    for (NSDictionary *group in groups)
+    {
+        NSArray *settings = [group objectForKey:@"setting"];
+        for (NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            [(*previewSetting) addObserver:observer forKeyPath:key options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:PREVIEWSETTING_CONTEXT];
+        }
+    }
+}
++ (void)removeObserver:(id)observer fromPreviewSetting:(PreviewSetting **)previewSetting
+{
+    if(previewSetting == nil || *previewSetting == nil)
+    {
+        return;
+    }
+    NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [printSettingsTree objectForKey:@"group"];
+    for (NSDictionary *group in groups)
+    {
+        NSArray *settings = [group objectForKey:@"setting"];
+        for (NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            [(*previewSetting) removeObserver:observer forKeyPath:key];
+        }
+    }
+}
 @end

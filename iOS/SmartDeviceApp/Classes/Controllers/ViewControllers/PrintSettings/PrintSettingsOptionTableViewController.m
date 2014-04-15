@@ -20,7 +20,7 @@
 
 @interface PrintSettingsOptionTableViewController ()
 
-@property (nonatomic, weak) PrintDocument* printDocument;
+//@property (nonatomic, weak) PrintDocument* printDocument;
 @property (nonatomic) NSInteger selectedIndex;
 @property (nonatomic, strong) NSString *key;
 @property (nonatomic,  strong) NSMutableArray *options;
@@ -48,11 +48,11 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.printDocument = [[PDFFileManager sharedManager] printDocument];
+    //self.printDocument = [[PDFFileManager sharedManager] printDocument];
     self.key = [self.setting objectForKey:@"name"];
     
     [self fillOptions];
-    NSNumber *value = [self.printDocument.previewSetting valueForKey:self.key];   
+    NSNumber *value = [self.previewSetting valueForKey:self.key];   
     self.selectedIndex = [self.optionValues indexOfObject:value];
     
     // Add empty footer
@@ -125,7 +125,7 @@
     if (index != self.selectedIndex)
     {
         self.selectedIndex = index;
-        [self.printDocument.previewSetting setValue:[self.optionValues objectAtIndex:index] forKey:self.key];
+        [self.previewSetting setValue:[self.optionValues objectAtIndex:index] forKey:self.key];
     }
 }
 
@@ -138,7 +138,7 @@
 {
     if([self.key isEqualToString:KEY_STAPLE] == YES)
     {
-        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        if(self.previewSetting.finishingSide == kFinishingSideTop)
         {
             if(option == kStapleType1Pos)
             {
@@ -158,14 +158,14 @@
     {
         if(option == kImpositionOrderLeftToRight || option == kImpositionOrderRightToLeft)
         {
-            if(self.printDocument.previewSetting.imposition == kImposition4pages)
+            if(self.previewSetting.imposition == kImposition4pages)
             {
                 return NO;
             }
         }
         else
         {
-            if(self.printDocument.previewSetting.imposition == kImposition2Pages)
+            if(self.previewSetting.imposition == kImposition2Pages)
             {
                 return NO;
             }
@@ -176,14 +176,14 @@
     {
         if(option == kBookletLayoutTopToBottom)
         {
-            if(self.printDocument.previewSetting.orientation == kOrientationPortrait)
+            if(self.previewSetting.orientation == kOrientationPortrait)
             {
                 return NO;
             }
         }
         else
         {
-            if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
+            if(self.previewSetting.orientation == kOrientationLandscape)
             {
                 return NO;
             }

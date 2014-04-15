@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+@class PreviewSetting;
 
 @interface PrintSettingsOptionTableViewController : UITableViewController
 
 @property (nonatomic, weak) NSDictionary *setting;
+@property (nonatomic, weak) PreviewSetting *previewSetting;
 
 @end
