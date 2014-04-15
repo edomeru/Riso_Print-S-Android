@@ -56,6 +56,7 @@ namespace SmartDeviceApp.Controllers
         private int _pagesPerSheet = 1;
         private bool _isDuplex = false;
         private bool _isBooklet = false;
+        private bool _isReversePages = false;
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
@@ -372,6 +373,13 @@ namespace SmartDeviceApp.Controllers
                 if (_selectedPrinter.PrintSettings.BookletLayout != value)
                 {
                     _selectedPrinter.PrintSettings.BookletLayout = value;
+                    // Matters only when booklet is ON
+                    if (_selectedPrinter.PrintSettings.Booklet == true)
+                    {
+                        isPreviewPageAffected = true;
+
+                        _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
+                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
@@ -500,7 +508,7 @@ namespace SmartDeviceApp.Controllers
             if (_selectedPrinter.PrintSettings.Booklet)
             {
                 _isBooklet = true;
-                //_pageViewMode = PageViewMode.TwoPageView;
+                //_pageViewMode = PageViewMode.TwoPageView; // TODO: Enable on two-page view
             }
             else
             {
@@ -510,6 +518,9 @@ namespace SmartDeviceApp.Controllers
 
             _isDuplex = PrintSettingConverter.DuplexIntToBoolConverter.Convert(
                 _selectedPrinter.PrintSettings.Duplex);
+
+            _isReversePages = _isBooklet &&
+                _selectedPrinter.PrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
 
             if (!_isBooklet)
             {
@@ -596,6 +607,10 @@ namespace SmartDeviceApp.Controllers
         {
             // Compute for logical page index based on imposition
             int logicalPageIndex = pageIndex * _pagesPerSheet;
+            if (_isReversePages)
+            {
+                logicalPageIndex = (int)DocumentController.Instance.PageCount - 1 - logicalPageIndex;
+            }
 
             // Front
             await SendPreviewPage(pageIndex, logicalPageIndex, isRightSide, false);
