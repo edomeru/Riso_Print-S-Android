@@ -429,6 +429,59 @@
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="esw-Bl-MDI" userLabel="Splash">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="temp_img_riso_splash" translatesAutoresizingMaskIntoConstraints="NO" id="78X-jO-u0e">
+                                                <rect key="frame" x="60" y="191" width="200" height="55"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="200" id="Xfw-sT-4Lg"/>
+                                                    <constraint firstAttribute="height" constant="55" id="wPE-Jf-BEP"/>
+                                                </constraints>
+                                            </imageView>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0u8-7h-yuK" userLabel="Bar">
+                                                <rect key="frame" x="60" y="250" width="200" height="1"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" red="0.52156862745098043" green="0.25490196078431371" blue="0.84705882352941175" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="W3Q-aW-VrL"/>
+                                                </constraints>
+                                            </view>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OPEN-IN DOCUMENT HERE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RdC-XI-grS">
+                                                <rect key="frame" x="60" y="255" width="200" height="17"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <color key="textColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_OPEN_IN_IOS"/>
+                                                </userDefinedRuntimeAttributes>
+                                            </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tIy-ys-L0J" userLabel="Bar">
+                                                <rect key="frame" x="60" y="276" width="200" height="1"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="Xlr-5U-VJr"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="RdC-XI-grS" firstAttribute="top" secondItem="0u8-7h-yuK" secondAttribute="bottom" constant="4" id="0aU-Xm-RVO"/>
+                                            <constraint firstItem="tIy-ys-L0J" firstAttribute="top" secondItem="RdC-XI-grS" secondAttribute="bottom" constant="4" id="5EU-lQ-JYq"/>
+                                            <constraint firstAttribute="centerY" secondItem="78X-jO-u0e" secondAttribute="centerY" constant="32" id="C40-BJ-ld4"/>
+                                            <constraint firstItem="78X-jO-u0e" firstAttribute="trailing" secondItem="0u8-7h-yuK" secondAttribute="trailing" id="DSm-3H-hK5"/>
+                                            <constraint firstItem="78X-jO-u0e" firstAttribute="leading" secondItem="0u8-7h-yuK" secondAttribute="leading" id="JZd-DI-9no"/>
+                                            <constraint firstItem="78X-jO-u0e" firstAttribute="leading" secondItem="tIy-ys-L0J" secondAttribute="leading" id="Jix-tL-iV2"/>
+                                            <constraint firstAttribute="centerX" secondItem="78X-jO-u0e" secondAttribute="centerX" id="fEk-v6-8jX"/>
+                                            <constraint firstItem="78X-jO-u0e" firstAttribute="trailing" secondItem="RdC-XI-grS" secondAttribute="trailing" id="hbA-y9-ZTj"/>
+                                            <constraint firstItem="78X-jO-u0e" firstAttribute="trailing" secondItem="tIy-ys-L0J" secondAttribute="trailing" id="kQo-MV-8Mq"/>
+                                            <constraint firstItem="78X-jO-u0e" firstAttribute="leading" secondItem="RdC-XI-grS" secondAttribute="leading" id="rWk-t8-cZh"/>
+                                            <constraint firstItem="0u8-7h-yuK" firstAttribute="top" secondItem="78X-jO-u0e" secondAttribute="bottom" constant="4" id="rlr-yD-cwL"/>
+                                        </constraints>
+                                    </view>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Tfn-V2-BUp" userLabel="Loading">
                                         <rect key="frame" x="150" y="240" width="20" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -484,14 +537,18 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="esw-Bl-MDI" secondAttribute="bottom" id="0vb-oH-xyI"/>
                                     <constraint firstAttribute="bottom" secondItem="XgQ-UQ-sVe" secondAttribute="bottom" id="6sw-FS-AHp"/>
                                     <constraint firstItem="XgQ-UQ-sVe" firstAttribute="top" secondItem="q8a-bN-pFV" secondAttribute="bottom" id="8lw-uM-y6t"/>
                                     <constraint firstAttribute="centerY" secondItem="Tfn-V2-BUp" secondAttribute="centerY" id="9c4-zK-hon"/>
                                     <constraint firstAttribute="centerX" secondItem="Tfn-V2-BUp" secondAttribute="centerX" id="GCT-OJ-sYV"/>
+                                    <constraint firstItem="esw-Bl-MDI" firstAttribute="top" secondItem="8sf-yM-sBz" secondAttribute="top" id="Ky3-AU-R5L"/>
                                     <constraint firstAttribute="trailing" secondItem="q8a-bN-pFV" secondAttribute="trailing" id="NDM-Fa-ZSK"/>
                                     <constraint firstItem="q8a-bN-pFV" firstAttribute="leading" secondItem="8sf-yM-sBz" secondAttribute="leading" id="Rfc-lP-WYx"/>
                                     <constraint firstAttribute="trailing" secondItem="XgQ-UQ-sVe" secondAttribute="trailing" id="UTo-sB-ZnN"/>
                                     <constraint firstItem="q8a-bN-pFV" firstAttribute="top" secondItem="8sf-yM-sBz" secondAttribute="top" id="W3h-3C-ILv"/>
+                                    <constraint firstAttribute="trailing" secondItem="esw-Bl-MDI" secondAttribute="trailing" id="WaK-v7-hkh"/>
+                                    <constraint firstItem="esw-Bl-MDI" firstAttribute="leading" secondItem="8sf-yM-sBz" secondAttribute="leading" id="XBz-Ez-ojV"/>
                                     <constraint firstItem="XgQ-UQ-sVe" firstAttribute="leading" secondItem="8sf-yM-sBz" secondAttribute="leading" id="m5N-a2-mwC"/>
                                 </constraints>
                             </view>
@@ -520,6 +577,7 @@
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="TCH-Tx-hm1"/>
                         <outlet property="previewView" destination="GCh-6b-axd" id="WCl-Ct-mpT"/>
                         <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="mj6-GY-FhA"/>
+                        <outlet property="splashView" destination="esw-Bl-MDI" id="XXm-in-PHc"/>
                         <outlet property="titleLabel" destination="4Rb-l1-7Cb" id="3EQ-7P-jl0"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintPreview-Home" customClass="SlideSegue" id="c8V-UF-iWe"/>
                         <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintPreview-PrintSettings" customClass="SlideSegue" id="5pT-ga-236"/>
@@ -1624,7 +1682,7 @@
             <objects>
                 <tableViewController id="pPd-nr-YZr" customClass="PrintSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -2933,6 +2991,7 @@
         <image name="img_btn_search_printer_plus" width="25" height="25"/>
         <image name="img_btn_search_printer_pressed" width="64" height="64"/>
         <image name="img_btn_submenu" width="64" height="64"/>
+        <image name="temp_img_riso_splash" width="401" height="110"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

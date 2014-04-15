@@ -31,6 +31,7 @@
 @property (weak, nonatomic) IBOutlet UIView *pageNavArea;
 @property (weak, nonatomic) IBOutlet UISlider *pageScroll;
 @property (weak, nonatomic) IBOutlet UILabel *pageLabel;
+@property (weak, nonatomic) IBOutlet UIView *splashView;
 @property (nonatomic, weak) IBOutlet PreviewView *previewView;
 
 /**
@@ -174,6 +175,7 @@
 {
     [super viewDidLoad];
     
+    self.splashView.hidden = NO;
     self.printSettingsButton.hidden = YES;
     self.previewView.hidden = YES;
     self.previewView.delegate = self;
@@ -246,6 +248,7 @@
     self.currentPage = 0;
     self.titleLabel.text = [[PDFFileManager sharedManager] fileName];
     self.printSettingsButton.hidden = NO;
+    self.splashView.hidden = YES;
     self.previewView.hidden = NO;
     self.pageNavArea.hidden = NO;
     [self.activityIndicator stopAnimating];

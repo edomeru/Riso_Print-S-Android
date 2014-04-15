@@ -100,7 +100,7 @@
     }
     
     int index = indexPath.row - 1;
-    if (index != self.selectedIndex)
+    if (index != self.selectedIndex || self.selectedPrinter == nil)
     {
         self.selectedIndex = index;
         self.selectedPrinter = [self.printerManager getPrinterAtIndex:index];
