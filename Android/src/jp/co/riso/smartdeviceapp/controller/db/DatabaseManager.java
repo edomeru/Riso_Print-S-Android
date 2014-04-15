@@ -92,7 +92,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         long rowId = -1;
         SQLiteDatabase db = this.getWritableDatabase();
         
-        rowId = db.insertWithOnConflict(table, nullColumnHack, values, SQLiteDatabase.CONFLICT_REPLACE);
+        try {
+            rowId = db.insertWithOnConflict(table, nullColumnHack, values, SQLiteDatabase.CONFLICT_REPLACE);
+        } catch (SQLException e) {
+            Log.e(TAG, "failed insert to " + table + ". Error: " + e.getMessage());
+        }
         
         db.close();
         

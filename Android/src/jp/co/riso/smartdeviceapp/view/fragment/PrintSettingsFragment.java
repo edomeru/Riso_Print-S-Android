@@ -29,7 +29,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public static final String TAG = "PrintSettingsFragment";
     
     private static final int MSG_PRINT = 0;
-    private static final int MSG_PRINT_DELAY = 10000; //TODO: remove delay in actual printing
+    private static final int MSG_PRINT_DELAY = 10000; // TODO: remove delay in actual printing
     
     private boolean mFragmentForPrinting = false;
     
@@ -152,6 +152,10 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void onPrintSettingsValueChanged(PrintSettings printSettings) {
         setPrintSettings(printSettings);
         
+        if (!mFragmentForPrinting) {
+            printSettings.savePrintSettingToDB(mPrinterId);
+        }
+        
         if (getTargetFragment() instanceof PrintPreviewFragment) {
             PrintPreviewFragment fragment = (PrintPreviewFragment) getTargetFragment();
             fragment.setPrintSettings(printSettings);
@@ -162,8 +166,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
      * This method is triggered when the print button is pressed and displays the waiting dialog.
      */
     @Override
-    public void onPrintExecution(){
-        //TODO: add actual printing execution and change sendMessageDelayed
+    public void onPrintExecution() {
+        // TODO: add actual printing execution and change sendMessageDelayed
         mWaitingDialog = WaitingDialogFragment.newInstance(null, getResources().getString(R.string.ids_lbl_printing), null);
         DialogUtils.displayDialog(getActivity(), TAG, mWaitingDialog);
         Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
@@ -183,7 +187,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void processMessage(Message message) {
         switch (message.what) {
             case MSG_PRINT:
-                //TODO: change implementation using actual print result
+                // TODO: change implementation using actual print result
                 PrintJobManager pm = PrintJobManager.getInstance(getActivity());
                 String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
                 pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);

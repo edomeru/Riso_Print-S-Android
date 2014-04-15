@@ -39,7 +39,7 @@ import android.widget.TextView;
 public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    private static final String KEY_PRINTER_LIST = "printers_list";
+    //private static final String KEY_PRINTER_LIST = "printers_list";
     private static final String KEY_PRINTER_LIST_DELETE = "printers_list_delete";
     private static final String KEY_PRINTER_LIST_STATE = "printers_list_state";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
@@ -78,7 +78,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void initializeView(View view, Bundle savedInstanceState) {
         Message newMessage = Message.obtain(mHandler, MSG_SET_POPULATE_PRINTERS_LIST);
         if (savedInstanceState != null) {
-            mPrinter = savedInstanceState.getParcelableArrayList(KEY_PRINTER_LIST);
+            // TODO: change implementation - compile error since Printer is not parcelable
+            //  mPrinter = savedInstanceState.getParcelableArrayList(KEY_PRINTER_LIST);
             newMessage.obj = savedInstanceState.getParcelable(KEY_PRINTER_LIST_STATE);
             newMessage.arg1 = savedInstanceState.getInt(KEY_PRINTER_LIST_DELETE, -1);
         } else if (isTablet()) {
@@ -107,7 +108,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelableArrayList(KEY_PRINTER_LIST, mPrinter);
+        // TODO: change implementation - compile error since Printer is not parcelable
+        //savedInstanceState.putParcelableArrayList(KEY_PRINTER_LIST, mPrinter);
         if (isTablet()) {
             savedInstanceState.putInt(KEY_PRINTER_LIST_DELETE, mPrinterTabletView.getDeleteItemPosition());
         } else {
