@@ -40,12 +40,19 @@ namespace SmartDeviceApp.Controllers
             get { return _instance; }
         }
 
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <returns></returns>
         public async Task Initialize()
         {
             _jobsViewModel = new ViewModelLocator().JobsViewModel;
             await RefreshPrintJobsList();
         }
 
+        /// <summary>
+        /// Clean-up
+        /// </summary>
         public void Cleanup()
         {
             if (_printJobsList != null)
@@ -55,6 +62,10 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Refreshes the print jobs list
+        /// </summary>
+        /// <returns>task</returns>
         private async Task RefreshPrintJobsList()
         {
             Cleanup();
@@ -63,14 +74,17 @@ namespace SmartDeviceApp.Controllers
             PrintJobList printJobList = new PrintJobList();
             if (_printJobsList != null)
             {
-                var list = _printJobsList.OrderBy(pj => pj.PrinterId).ThenBy(pj => pj.Date).GroupBy(pj => pj.PrinterId).ToList();
+                var list = _printJobsList.OrderBy(pj => pj.PrinterId)
+                                         .ThenBy(pj => pj.Date)
+                                         .GroupBy(pj => pj.PrinterId).ToList();
                 foreach (var group in list)
                 {
                     // Get printer name of the first element
                     string printerName = await DatabaseController.Instance.GetPrinterName(
                         group.First().PrinterId);
 
-                    PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(), group.ToList());
+                    PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(),
+                        group.ToList());
                     printJobList.Add(printJobGroup);
                 }
             }
@@ -92,7 +106,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task SavePrintJob(PrintJob printJob)
         {
-            if (printJob == null || _printJobsList == null) // TODO: Checking of list is empty needed?
+            if (printJob == null || _printJobsList == null) // TODO: Is checking of empty list needed?
             {
                 return;
             }
@@ -104,13 +118,20 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes a print job
+        /// </summary>
+        /// <param name="printJobId">print job ID</param>
+        /// <param name="printerId">printer ID</param>
+        /// <returns>task</returns>
         public async Task RemoveJob(int printJobId, int printerId)
         {
-            if (_printJobsList == null) // TODO: Checking of list is empty needed?
+            if (_printJobsList == null) // TODO: Is checking of empty list needed?
             {
                 return;
             }
 
+            // Cache item to be deleted
             PrintJob printJob = _printJobsList.Where(pj => pj.PrinterId == printerId)
                                               .Where(pj => pj.Id == printJobId).First();
 
@@ -123,18 +144,24 @@ namespace SmartDeviceApp.Controllers
                     return;
                 }
 
-                // TODO: Update bindings
+                // TODO: Verify if bindings are updated
                 _jobsViewModel.PrintJobsList.ElementAt(printerId).Jobs.Remove(printJob);
             }
         }
 
+        /// <summary>
+        /// Deletes a set of print jobs based on printer group
+        /// </summary>
+        /// <param name="printerId">printer ID</param>
+        /// <returns>task</returns>
         public async Task RemoveGroupedJobs(int printerId)
         {
-            if (_printJobsList == null) // TODO: Checking of list is empty needed?
+            if (_printJobsList == null) // TODO: Is checking of empty list needed?
             {
                 return;
             }
 
+            // Cache items to be deleted
             List<PrintJob> printJobs = _printJobsList.Where(pj => pj.PrinterId == printerId).ToList();
 
             int deleted = 0;
@@ -149,11 +176,16 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            // TODO: Update bindings
+            // TODO: Verify if bindings are updated
             PrintJobGroup group = _jobsViewModel.PrintJobsList.First(pjg => pjg.PrinterId == printerId);
             _jobsViewModel.PrintJobsList.Remove(group);
         }
 
+        /// <summary>
+        /// Deletes print job from the database and list
+        /// </summary>
+        /// <param name="printJob">item</param>
+        /// <returns>task; number of deleted items</returns>
         private async Task<int> DeletePrintJob(PrintJob printJob)
         {
             // Remove from database
