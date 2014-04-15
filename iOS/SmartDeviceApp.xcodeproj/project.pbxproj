@@ -10,6 +10,7 @@
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
+		28FCD2EC18FD11AC004C48D7 /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FCD2EB18FD11AC004C48D7 /* SimplePing.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		2D0AEC07185FDD2100810455 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
@@ -104,6 +105,8 @@
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
+		28FCD2EA18FD11AC004C48D7 /* SimplePing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplePing.h; sourceTree = "<group>"; };
+		28FCD2EB18FD11AC004C48D7 /* SimplePing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -279,6 +282,15 @@
 				2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */,
 			);
 			path = PropertyList;
+			sourceTree = "<group>";
+		};
+		28FCD2E918FD11AC004C48D7 /* SimplePing */ = {
+			isa = PBXGroup;
+			children = (
+				28FCD2EA18FD11AC004C48D7 /* SimplePing.h */,
+				28FCD2EB18FD11AC004C48D7 /* SimplePing.m */,
+			);
+			path = SimplePing;
 			sourceTree = "<group>";
 		};
 		2D0AEBF6185FDD2100810455 = {
@@ -751,6 +763,7 @@
 			isa = PBXGroup;
 			children = (
 				2DA1AE6D18E278B000085F27 /* Reachability */,
+				28FCD2E918FD11AC004C48D7 /* SimplePing */,
 			);
 			path = OpenSource;
 			sourceTree = "<group>";
@@ -893,6 +906,7 @@
 				2DA1AE5318E2788900085F27 /* PListUtils.m in Sources */,
 				2DA1AE5618E2788900085F27 /* DatabaseManager.m in Sources */,
 				2DA1AE6418E2788900085F27 /* DefaultView.m in Sources */,
+				28FCD2EC18FD11AC004C48D7 /* SimplePing.m in Sources */,
 				2DA1AE6118E2788900085F27 /* PrintJob.m in Sources */,
 				2DA1AE4518E2788900085F27 /* RootViewController.m in Sources */,
 				2DA1AE4B18E2788900085F27 /* PrintersIphoneViewController.m in Sources */,

@@ -7,19 +7,23 @@
 //
 
 #import "PrinterStatusHelper.h"
-#import "SNMPManager.h"
+#import "NetworkManager.h"
 
 @interface PrinterStatusHelper ()
 
 @property (nonatomic) NSTimer *pollingTimer;
 @property (nonatomic) NSString *notifName;
 
+@property (strong, nonatomic) SimplePing* pinger;
+@property (assign, nonatomic) BOOL respondedToPing;
+
 -(void) getPrinterStatus;
+
 @end
 
 @implementation PrinterStatusHelper
 
--(id) initWithPrinterIP:(NSString *) ipAddress
+- (id)initWithPrinterIP:(NSString *) ipAddress
 {
     self = [super init];
     
@@ -31,38 +35,106 @@
     return self;
 }
 
--(void) getPrinterStatus
+- (void)getPrinterStatus
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
-        BOOL onlineStatus = [snmpManager getPrinterStatus:self.ipAddress];
-        //notification should be on main queue to update the UI
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate statusDidChange:onlineStatus];
-        });
-    });
+    // update UI for current ping status
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] %@ is %@", self.ipAddress, (self.respondedToPing ? @"ONLINE" : @"OFFLINE"));
+#endif
+    [self.delegate statusDidChange:self.respondedToPing];
+    
+    [self.pinger sendPingWithData:nil];
+    self.respondedToPing = NO;
 }
 
--(void) startPrinterStatusPolling
+- (void)startPrinterStatusPolling
 {
-    if(self.pollingTimer == nil)
+    if (self.pinger == nil)
     {
-        self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:5 target: self selector: @selector(getPrinterStatus) userInfo:nil repeats:YES];
+        self.pinger = [SimplePing simplePingWithHostName:self.ipAddress];
+        self.pinger.delegate = self;
+        
+        [self.pinger start];
     }
 }
 
--(void)stopPrinterStatusPolling
+- (void)stopPrinterStatusPolling
 {
-    if(self.pollingTimer != nil)
+    if (self.pinger != nil)
     {
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+        NSLog(@"[INFO][PrinterStatus] stop pinger for %@", self.ipAddress);
+#endif
+        [self.pinger stop];
+        self.pinger = nil;
+    }
+    
+    if (self.pollingTimer != nil)
+    {
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+        NSLog(@"[INFO][PrinterStatus] stop polling timer for %@", self.ipAddress);
+#endif
         [self.pollingTimer invalidate];
         self.pollingTimer = nil;
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
     }
 }
 
--(void)dealloc
+- (void)dealloc
 {
     [self stopPrinterStatusPolling];
 }
+
+#pragma mark - SimplePingDelegate
+
+- (void)simplePing:(SimplePing*)pinger didStartWithAddress:(NSData*)address
+{
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] pinger started for %@", self.ipAddress);
+#endif
+    
+    // fire off the first ping
+    [self.pinger sendPingWithData:nil];
+    self.respondedToPing = NO;
+    
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] start polling timer for %@", self.ipAddress);
+#endif
+    
+    // set a timer that will repeatedly ping the IP
+    self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:5
+                                                         target:self
+                                                       selector:@selector(getPrinterStatus)
+                                                       userInfo:nil
+                                                        repeats:YES];
+}
+
+- (void)simplePing:(SimplePing*)pinger didSendPacket:(NSData*)packet
+{
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] ping sent %@", self.ipAddress);
+#endif
+}
+
+- (void)simplePing:(SimplePing*)pinger didReceivePingResponsePacket:(NSData*)packet
+{
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] ping response %@", self.ipAddress);
+#endif
+    self.respondedToPing = YES;
+}
+
+- (void)simplePing:(SimplePing*)pinger didFailWithError:(NSError*)error
+{
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] ping failed %@", self.ipAddress);
+#endif
+}
+
+- (void)simplePing:(SimplePing*)pinger didFailToSendPacket:(NSData*)packet error:(NSError*)error
+{
+#if DEBUG_LOG_PRINTER_STATUS_VIEW
+    NSLog(@"[INFO][PrinterStatus] ping send failed %@", self.ipAddress);
+#endif
+}
+
 @end

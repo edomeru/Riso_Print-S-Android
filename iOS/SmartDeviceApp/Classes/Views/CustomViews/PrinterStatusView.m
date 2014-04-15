@@ -20,6 +20,10 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [self.statusHelper stopPrinterStatusPolling];
+}
 
 - (void) setStatus: (BOOL) isOnline
 {

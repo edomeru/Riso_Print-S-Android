@@ -46,7 +46,7 @@ static SNMPManager* sharedSNMPManager = nil;
 /**
  Handler for the Add Printer Callback of the Fake SNMP.
  Generates a fake printer name, IP, and capabilities then
- posts a notification that a printer was found
+ posts a notification that a printer was found.
  FOR DEBUGGING PURPOSES ONLY.
  @param ip
         IP address for the fake printer
