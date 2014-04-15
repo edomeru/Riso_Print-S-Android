@@ -174,7 +174,7 @@
         }
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.onlineStatus = cell.printerStatus.onlineStatus;
-        //cell.printerStatus.statusHelper.delegate = destController;
+        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
     }
 }
 
@@ -183,8 +183,8 @@
     if ([unwindSegue.sourceViewController isKindOfClass:[PrinterInfoViewController class]])
     {
         PrinterInfoViewController* printerInfoScreen = (PrinterInfoViewController*)unwindSegue.sourceViewController;
-        //PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
-        //[cell.printerStatus.statusHelper startPrinterStatusPolling];
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
+        [cell.printerStatus.statusHelper startPrinterStatusPolling];
         [self setPrinterCell:printerInfoScreen.indexPath asDefault: printerInfoScreen.isDefaultPrinter];
         self.selectedPrinterIndexPath = nil;
     }

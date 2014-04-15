@@ -9,6 +9,8 @@
 #import "PrinterStatusHelper.h"
 #import "NetworkManager.h"
 
+#define SECONDS_IN_BETWEEN_PINGS   5
+
 @interface PrinterStatusHelper ()
 
 @property (nonatomic) NSTimer *pollingTimer;
@@ -79,11 +81,6 @@
     }
 }
 
-- (void)dealloc
-{
-    [self stopPrinterStatusPolling];
-}
-
 #pragma mark - SimplePingDelegate
 
 - (void)simplePing:(SimplePing*)pinger didStartWithAddress:(NSData*)address
@@ -101,7 +98,7 @@
 #endif
     
     // set a timer that will repeatedly ping the IP
-    self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:5
+    self.pollingTimer = [NSTimer scheduledTimerWithTimeInterval:SECONDS_IN_BETWEEN_PINGS
                                                          target:self
                                                        selector:@selector(getPrinterStatus)
                                                        userInfo:nil
