@@ -23,6 +23,7 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
+		2D1B3E4918FC01E7000080E1 /* printsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1B3E4818FC01E7000080E1 /* printsettings.c */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
@@ -121,6 +122,8 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D1B3E4718FBC701000080E1 /* printsettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = printsettings.h; sourceTree = "<group>"; };
+		2D1B3E4818FC01E7000080E1 /* printsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = printsettings.c; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -441,6 +444,8 @@
 			isa = PBXGroup;
 			children = (
 				2D6C913518F51257002A7F48 /* directprint.c */,
+				2D1B3E4718FBC701000080E1 /* printsettings.h */,
+				2D1B3E4818FC01E7000080E1 /* printsettings.c */,
 				2D6C913A18F53B0E002A7F48 /* snmp.c */,
 			);
 			path = src;
@@ -942,6 +947,7 @@
 			files = (
 				2D6C913618F51257002A7F48 /* directprint.c in Sources */,
 				2D6C913B18F53B0E002A7F48 /* snmp.c in Sources */,
+				2D1B3E4918FC01E7000080E1 /* printsettings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

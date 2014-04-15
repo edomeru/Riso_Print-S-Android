@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include "common.h"
+#include "printsettings.h"
 
 /**
  Constants
@@ -31,6 +32,10 @@
 
 #define QUEUE_NAME "normal"
 #define HOST_NAME "SmartDeviceApp"
+
+#define PJL_ESCAPE "\x1B-12345X"
+#define PJL_LANGUAGE "@PJL ENTER LANGUAGE = PDF\x0d\x0a"
+#define PJL_EOJ "@PJL EOJ\x0d\x0a"
 
 /**
  Print Job
@@ -234,6 +239,22 @@ void *do_lpr_print(void *parameter)
 {
     directprint_job *print_job = (directprint_job *)parameter;
     
+    char pjl_header[2048];
+    pjl_header[0] = 0;
+    strcat(pjl_header, PJL_ESCAPE);
+    create_pjl(pjl_header, print_job->print_settings);
+    strcat(pjl_header, PJL_LANGUAGE);
+    printf("%s", pjl_header);
+    
+    char pjl_footer[256];
+    pjl_footer[0] = 0;
+    strcat(pjl_footer, PJL_ESCAPE);
+    strcat(pjl_footer, PJL_EOJ);
+    strcat(pjl_footer, PJL_ESCAPE);
+    printf("%s", pjl_footer);
+    //return 0;
+    
+    
     int sock_fd = -1;
     unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
     do
@@ -316,6 +337,10 @@ void *do_lpr_print(void *parameter)
 
         // CONTROL FILE INFO : Send
         send_size = send(sock_fd, buffer, pos, 0);
+        if (send_size != pos)
+        {
+            notify_callback(print_job, kJobStatusErrorSending);
+        }
 
         // CONTROL FILE INFO : Acknowledgement
         recv_size = recv(sock_fd, &response, sizeof(response), 0);
@@ -334,6 +359,10 @@ void *do_lpr_print(void *parameter)
         }
         buffer[pos++] = 0;
         send_size = send(sock_fd, buffer, pos, 0);
+        if (send_size != pos)
+        {
+            notify_callback(print_job, kJobStatusErrorSending);
+        }
 
         // CONTROL FILE : Acknowledgement
         recv_size = recv(sock_fd, &response, sizeof(response), 0);
@@ -350,7 +379,7 @@ void *do_lpr_print(void *parameter)
         
         // DATA FILE INFO : Prepare
         char data_file_len_str[32];
-        sprintf(data_file_len_str, "%ld", file_size);
+        sprintf(data_file_len_str, "%ld", file_size + strlen(pjl_header) + strlen(pjl_footer));
         len = strlen(data_file_len_str);
         pos = 0;
         buffer[pos++] = 0x3;
@@ -365,9 +394,14 @@ void *do_lpr_print(void *parameter)
             buffer[pos++] = dname[i];
         }
         buffer[pos++] = '\n';
-        send_size = send(sock_fd, buffer, pos, 0); 
-
+        
         // DATA FILE INFO : Send
+        send_size = send(sock_fd, buffer, pos, 0);
+        if (send_size != pos)
+        {
+            notify_callback(print_job, kJobStatusErrorSending);
+        }
+
         recv_size = recv(sock_fd, &response, sizeof(response), 0);
         if (recv_size <= 0 || response != 0)
         {
@@ -377,11 +411,13 @@ void *do_lpr_print(void *parameter)
 
         // DATA FILE : Send
         size_t read = 0;
+        send(sock_fd, pjl_header, strlen(pjl_header), 0);
         while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
         {
             send(sock_fd, buffer, read, 0);
             notify_callback(print_job, kJobStatusSending);
         }
+        send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
         pos = 0;
         buffer[pos++] = 0;
         send(sock_fd, buffer, pos, 0);
