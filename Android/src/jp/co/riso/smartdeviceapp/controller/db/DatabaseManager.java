@@ -73,6 +73,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade - End");
     }
     
+    public String getStringFromCursor(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
+    }
+    
+    public int getIntFromCursor(Cursor cursor, String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
+    }
+    
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
         SQLiteDatabase db = this.getWritableDatabase();

@@ -90,8 +90,12 @@ public class PrintSettings {
         this();
         PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
         // will overwrite the value if values are retrieved
-        for (String key : manager.getPrintSetting(printerId).keySet()) {
-            mSettingValues.put(key, manager.getPrintSetting(printerId).get(key));
+        
+        PrintSettings printSettings = manager.getPrintSetting(printerId);
+        if (printSettings != null){
+            for (String key : printSettings.getSettingValues().keySet()) {
+                mSettingValues.put(key, printSettings.getSettingValues().get(key));
+            }
         }
     }
     
@@ -260,6 +264,7 @@ public class PrintSettings {
     // ================================================================================
     // Public methods
     // ================================================================================
+    
     /**
      * This method saves the Print Setting in the database
      * 
@@ -273,7 +278,7 @@ public class PrintSettings {
         }
         
         PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
-        return manager.saveToDB(printerId, mSettingValues);
+        return manager.saveToDB(printerId, this);
     }
     
     static {

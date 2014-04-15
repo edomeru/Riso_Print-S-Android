@@ -21,7 +21,6 @@ public class Printer {
     private boolean mOnline;
     
     public Printer(String name, String ipAddress, PrintSettings printSettings) {
-        super();
         mName = name;
         mIpAddress = ipAddress;
         mPortSetting = 0;
@@ -43,6 +42,9 @@ public class Printer {
     // Getter/Setters
     // ================================================================================
     
+    /**
+     * @return the ID (mId)
+     */
     public int getId() {
         return mId;
     }
@@ -51,6 +53,9 @@ public class Printer {
         this.mId = id;
     }
     
+    /**
+     * @return the name (mName)
+     */
     public String getName() {
         return mName;
     }
@@ -59,6 +64,9 @@ public class Printer {
         this.mName = name;
     }
     
+    /**
+     * @return the IP address (mIpAddress)
+     */
     public String getIpAddress() {
         return mIpAddress;
     }
@@ -67,6 +75,9 @@ public class Printer {
         this.mIpAddress = ipAddress;
     }
     
+    /**
+     * @return the port setting (mPortSetting)
+     */
     public int getPortSetting() {
         return mPortSetting;
     }
@@ -75,6 +86,9 @@ public class Printer {
         this.mPortSetting = portSetting;
     }
     
+    /**
+     * @return the configurations (mConfig)
+     */
     public Config getConfig() {
         return mConfig;
     }
@@ -83,6 +97,9 @@ public class Printer {
         mConfig = config;
     }
     
+    /**
+     * @return the print settings (mPrintSettings)
+     */
     public PrintSettings getPrintSettings() {
         return mPrintSettings;
     }
@@ -91,6 +108,9 @@ public class Printer {
         this.mPrintSettings = new PrintSettings(printSettings);
     }
     
+    /**
+     * @return the online status (mOnline)
+     */
     public boolean getOnlineStatus() {
         return mOnline;
     }
@@ -120,6 +140,9 @@ public class Printer {
             mTrayStackAvailable = true;
         }
         
+        /**
+         * @return the mLprAvailable
+         */
         public boolean isLprAvailable() {
             return mLprAvailable;
         }
@@ -128,6 +151,9 @@ public class Printer {
             this.mLprAvailable = lprAvailable;
         }
         
+        /**
+         * @return the mRawAvailable
+         */
         public boolean isRawAvailable() {
             return mRawAvailable;
         }
@@ -136,6 +162,9 @@ public class Printer {
             this.mRawAvailable = rawAvailable;
         }
         
+        /**
+         * @return the mBookletAvailable
+         */
         public boolean isBookletAvailable() {
             return mBookletAvailable;
         }
@@ -144,6 +173,9 @@ public class Printer {
             this.mBookletAvailable = bookletAvailable;
         }
         
+        /**
+         * @return the mStaplerAvailable
+         */
         public boolean isStaplerAvailable() {
             return mStaplerAvailable;
         }
@@ -152,6 +184,9 @@ public class Printer {
             this.mStaplerAvailable = staplerAvailable;
         }
         
+        /**
+         * @return the mPunch4Available
+         */
         public boolean isPunch4Available() {
             return mPunch4Available;
         }
@@ -160,6 +195,9 @@ public class Printer {
             this.mPunch4Available = punch4Available;
         }
         
+        /**
+         * @return the mTrayFaceDownAvailable
+         */
         public boolean isTrayFaceDownAvailable() {
             return mTrayFaceDownAvailable;
         }
@@ -168,6 +206,9 @@ public class Printer {
             this.mTrayFaceDownAvailable = trayFaceDownAvailable;
         }
         
+        /**
+         * @return the mTrayAutoStackAvailable
+         */
         public boolean isTrayAutoStackAvailable() {
             return mTrayAutoStackAvailable;
         }
@@ -176,6 +217,9 @@ public class Printer {
             this.mTrayAutoStackAvailable = trayAutoStackAvailable;
         }
         
+        /**
+         * @return the mTrayTopAvailable
+         */
         public boolean isTrayTopAvailable() {
             return mTrayTopAvailable;
         }
@@ -184,6 +228,9 @@ public class Printer {
             this.mTrayTopAvailable = trayTopAvailable;
         }
         
+        /**
+         * @return the mTrayStackAvailable
+         */
         public boolean isTrayStackAvailable() {
             return mTrayStackAvailable;
         }

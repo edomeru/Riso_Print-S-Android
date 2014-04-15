@@ -137,6 +137,11 @@ public class PrinterManager implements SnmpSearchCallback {
         return false;
     }
     
+    /**
+     * Retrieves the Printer objects from the Database
+     * 
+     * @return list of Printer objects
+     */
     public List<Printer> getSavedPrintersList() {
         DatabaseManager dbManager = new DatabaseManager(mContext);
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null);
@@ -150,20 +155,20 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         if (cursor.moveToFirst()) {
             do {
-                Printer printer = new Printer(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_NAME)), cursor.getString(cursor
-                        .getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_IP)), new PrintSettings(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID))));
-                printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
-                printer.setPortSetting(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT)));
+                Printer printer = new Printer(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_NAME),
+                        dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP), new PrintSettings(dbManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID)));
+                printer.setId(dbManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
+                printer.setPortSetting(dbManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT));
                 
-                boolean lprAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_LPR)));
-                boolean rawAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_RAW)));
-                boolean bookletAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_BOOKLET)));
-                boolean staplerAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_STAPLER)));
-                boolean punch4Available = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PUNCH4)));
-                boolean trayFaceDownAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN)));
-                boolean trayAutoStackAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK)));
-                boolean trayTopAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_TRAYTOP)));
-                boolean trayStackAvailable = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_TRAYSTACK)));
+                boolean lprAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_LPR));
+                boolean rawAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_RAW));
+                boolean bookletAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_BOOKLET));
+                boolean staplerAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_STAPLER));
+                boolean punch4Available = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PUNCH4));
+                boolean trayFaceDownAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN));
+                boolean trayAutoStackAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK));
+                boolean trayTopAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYTOP));
+                boolean trayStackAvailable = Boolean.parseBoolean(dbManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYSTACK));
                 
                 printer.getConfig().setLprAvailable(lprAvailable);
                 printer.getConfig().setRawAvailable(rawAvailable);
@@ -189,6 +194,12 @@ public class PrinterManager implements SnmpSearchCallback {
         return mPrinterList;
     }
     
+    /**
+     * Sets the Default Printer by clearing and inserting an entry in DefaultPrinter table
+     * 
+     * @param printer
+     *            The Printer object selected
+     */
     public void setDefaultPrinter(Printer printer) {
         
         if (printer == null) {
@@ -209,7 +220,7 @@ public class PrinterManager implements SnmpSearchCallback {
         ContentValues newDefaultPrinter = new ContentValues();
         
         if (cursor.moveToFirst()) {
-            printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
+            printer.setId(dbManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
             newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, printer.getId());
             cursor.close();
         } else {
@@ -224,6 +235,10 @@ public class PrinterManager implements SnmpSearchCallback {
         dbManager.close();
     }
     
+    /**
+     * Clears the Default Printer table in the database.
+     * 
+     */
     public void clearDefaultPrinter() {
         DatabaseManager dbManager = new DatabaseManager(mContext);
         
@@ -231,6 +246,12 @@ public class PrinterManager implements SnmpSearchCallback {
         dbManager.close();
     }
     
+    /**
+     * Removes the Printer from the database.
+     * 
+     * @param printer
+     *            The Printer object selected for deletion
+     */
     public void removePrinter(Printer printer) {
         
         if (printer == null) {
@@ -263,7 +284,7 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         
         if (cursor.moveToFirst()) {
-            printer = cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID));
+            printer = dbManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID);
         }
         
         cursor.close();

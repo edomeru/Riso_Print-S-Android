@@ -21,7 +21,7 @@ public class Setting extends XmlNode {
     public static final String ATTR_VAL_LIST = "list";
     public static final String ATTR_VAL_BOOLEAN = "boolean";
     public static final String ATTR_VAL_NUMERIC = "numeric";
-    public static final String ATTR_VAL_DBKEY = "dbkey";
+    public static final String ATTR_DBKEY = "dbkey";
     
     public static final int TYPE_INVALID = -1;
     public static final int TYPE_LIST = 0;
@@ -74,6 +74,6 @@ public class Setting extends XmlNode {
     }
     
     public String getDbKey() {
-        return getAttributeValue(ATTR_VAL_DBKEY);
+        return getAttributeValue(ATTR_DBKEY);
     }
 }
