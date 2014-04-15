@@ -27,6 +27,9 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.AsyncTask;
@@ -45,6 +48,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     public static final String TAG = "PrintPreviewView";
     
     private static final float DEFAULT_MARGIN_IN_MM = 0;
+    
+    private static final float CREASE_SIZE = 1.0f;
+    private static final float CREASE_DARK_LENGTH = 8.0f;
+    private static final float CREASE_WHITE_LENGTH = 4.0f;
     
     private static final float PUNCH_DIAMETER_IN_MM = 12;
     private static final float PUNCH_POS_SIDE_IN_MM = 8;
@@ -724,6 +731,37 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        private void drawCrease(Canvas canvas) {
+            Paint paint = new Paint();
+            paint.setStrokeWidth(CREASE_SIZE);
+
+            int fromX = 0;
+            int fromY = 0;
+            int toX = canvas.getWidth() - 1;
+            int toY = canvas.getHeight() - 1;
+            
+            switch (mCurlView.getBindPosition()) {
+                case CurlView.BIND_LEFT:
+                    toX = fromX;
+                    break;
+                case CurlView.BIND_RIGHT:
+                    fromX = toX;
+                    break;
+                case CurlView.BIND_TOP:
+                    toY = fromY;
+                    break;
+            }
+            
+            paint.setStyle(Style.STROKE);
+            paint.setColor(getResources().getColor(R.color.theme_light_1));
+            canvas.drawLine(fromX, fromY, toX, toY, paint);
+            
+            paint.setStyle(Style.STROKE);
+            paint.setColor(getResources().getColor(R.color.theme_light_4));
+            paint.setPathEffect(new DashPathEffect(new float[] {CREASE_DARK_LENGTH, CREASE_WHITE_LENGTH}, 0));
+            canvas.drawLine(fromX, fromY, toX, toY, paint);
+        }
+        
         private void drawStapleImages(Canvas canvas) {
             int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
             float scale = stapleLength / (float) mStapleBmp.getWidth();
@@ -828,7 +866,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             return (new int[] {beginX, beginY});
         }
         
-        private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean flipX, boolean flipY) {
+        private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean drawCrease, boolean flipX, boolean flipY) {
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
@@ -931,6 +969,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 }
                 
                 // Draw staple and punch images
+                if (drawCrease) {
+                    drawCrease(canvas);
+                }
                 drawStapleImages(canvas);
                 drawPunchImages(canvas);
             }
@@ -951,13 +992,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             pagePerScreen *= getPagesPerSheet();
             
             int frontIndex = (mIndex * pagePerScreen);
-            drawPDFPagesOnBitmap(front, frontIndex, false, false);
+            
+            boolean drawCrease = (mIndex != 0);
+            drawCrease = drawCrease && (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES);
+            drawPDFPagesOnBitmap(front, frontIndex, drawCrease, false, false);
             
             if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
                 int backIndex = (mIndex * pagePerScreen) + getPagesPerSheet();
                 
                 boolean verticalFlip = isVerticalFlip();
-                drawPDFPagesOnBitmap(back, backIndex, !verticalFlip, verticalFlip);
+                drawPDFPagesOnBitmap(back, backIndex, false, !verticalFlip, verticalFlip);
             }
             
             if (mBmpCache != null) {
