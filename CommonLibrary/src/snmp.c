@@ -42,6 +42,7 @@ struct snmp_context_s
     
     caps_queue device_queue;
     
+    pthread_t main_thread;
     pthread_mutex_t mutex;
     pthread_mutex_t queue_mutex;
     
@@ -129,19 +130,15 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device);
 void snmp_device_discovery(snmp_context *context)
 {
     strncpy(context->ip_address, BROADCAST_ADDRESS, IP_ADDRESS_LENGTH - 1);
-    
-    pthread_t thread;
-    pthread_create(&thread, 0, do_discovery, (void *)context);
-    pthread_detach(thread);
+
+    pthread_create(&context->main_thread, 0, do_discovery, (void *)context);
 }
 
 void snmp_manual_discovery(snmp_context *context, const char *ip_address)
 {
     strncpy(context->ip_address, ip_address, IP_ADDRESS_LENGTH - 1);
     
-    pthread_t thread;
-    pthread_create(&thread, 0, do_discovery, (void *)context);
-    pthread_detach(thread);
+    pthread_create(&context->main_thread, 0, do_discovery, (void *)context);
 }
 
 /**
@@ -237,7 +234,7 @@ void *do_discovery(void *parameter)
         int block = 0;
         fd_set fdset;
         struct timeval timeout;
-        timeout.tv_sec = 10;
+        timeout.tv_sec = 0;
         timeout.tv_usec = 0;
         FD_ZERO(&fdset);
         snmp_select_info(&fds, &fdset, &timeout, &block);
@@ -258,7 +255,10 @@ void *do_discovery(void *parameter)
             if (difftime(current_time, start_time) >= TIMEOUT)
             {
                 snmp_timeout();
-                snmp_context_set_state(context, kSnmpStateEnded);
+                if (snmp_context_get_state(context) != kSnmpStateCancelled)
+                {
+                    snmp_context_set_state(context, kSnmpStateEnded);
+                }
                 break;
             }
         }
@@ -271,8 +271,11 @@ void *do_discovery(void *parameter)
     
     pthread_join(caps_thread, 0);
     
-    int count = snmp_context_device_count(context);
-    context->discovery_ended_callback(context, count);
+    if (snmp_context_get_state(context) != kSnmpStateCancelled)
+    {
+        int count = snmp_context_device_count(context);
+        context->discovery_ended_callback(context, count);
+    }
     
     return 0;
 }
@@ -395,6 +398,7 @@ void snmp_context_free(snmp_context *context)
 void snmp_cancel(snmp_context *context)
 {
     snmp_context_set_state(context, kSnmpStateCancelled);
+    pthread_join(context->main_thread, 0);
 }
 
 int snmp_context_get_state(snmp_context *context)
