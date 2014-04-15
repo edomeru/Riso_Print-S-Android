@@ -51,6 +51,7 @@
             <option>ids_lbl_papersize_a6</option>
             <option>ids_lbl_papersize_b4</option>
             <option>ids_lbl_papersize_b5</option>
+			<option>ids_lbl_papersize_b6</option>
             <option>ids_lbl_papersize_foolscap</option>
             <option>ids_lbl_papersize_tabloid</option>
             <option>ids_lbl_papersize_legal</option>

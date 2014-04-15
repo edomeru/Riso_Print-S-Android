@@ -55,6 +55,7 @@ namespace SmartDeviceApp.Common.Constants
         public static Size PAPER_SIZE_A6         = new Size( 4.13,  5.83);
         public static Size PAPER_SIZE_B4         = new Size(10.12, 14.33);
         public static Size PAPER_SIZE_B5         = new Size( 7.17, 10.12);
+        public static Size PAPER_SIZE_B6         = new Size( 5.04,  7.17);
         public static Size PAPER_SIZE_FOOLSCAP   = new Size( 8.50, 13.00);
         public static Size PAPER_SIZE_TABLOID    = new Size(11.00, 17.00);
         public static Size PAPER_SIZE_LEGAL      = new Size( 8.50, 14.00);
