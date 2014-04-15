@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
@@ -43,7 +42,6 @@ namespace SmartDeviceApp.Controllers
             get { return _instance; }
         }
 
-        // public async Task Initialize() // Used for create database from script
         public async Task Initialize()
         {
             // await CreateDatabase();  // Used for create database from script
@@ -56,23 +54,84 @@ namespace SmartDeviceApp.Controllers
         // private async Task CreateDatabase() // Used for create database from script
         private void CreateDatabase()
         {
+#if CREATE_TABLES_USING_SCRIPT
+            #region Create Tables Using Script File
+
+            await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
+
+            #endregion Create Create Tables Using Script File
+#else // CREATE_TABLES_USING_SCRIPT
+            #region Create Tables Using Model Classes
+
+            try
+            {
+                // TODO: Handling when database file does not exist
+
+                _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
+                using (var db = new SQLite.SQLiteConnection(_databasePath))
+                {
+                    /*
+                    // DeleteAll is for testing purposes only PrintersModule
+                    db.DeleteAll<Printer>();
+                    db.Commit();
+
+                    db.DeleteAll<DefaultPrinter>();
+                    db.Commit();
+                     * */
+
+                    // Create the tables if they don't exist
+
+                    // Printer table
+                    db.CreateTable<Printer>();
+                    db.Commit();
+
+                    // DefaultPrinter Table
+                    db.CreateTable<DefaultPrinter>();
+                    db.Commit();
+
+                    // PrintSettings Table
+                    db.CreateTable<PrintSettings>();
+                    db.Commit();
+
+                    // PrintJob Table
+                    db.CreateTable<PrintJob>();
+                    db.Commit();
+
+                    db.Dispose();
+                    db.Close();
+
+                    // insertPrinters(); //for testing PrintersModule
+                }
+            }
+            catch
+            {
+                // Error in creating tables
+            }
+
+            #endregion Create Tables Using Model Classes
+#endif // CREATE_TABLES_USING_SCRIPT
+        }
+
+        /// <summary>
+        /// Executes all commands in a script file
+        /// </summary>
+        /// <param name="filePath">file path of the script; assumed to be a resource file</param>
+        /// <returns>task</returns>
+        private async Task ExecuteScript(string filePath)
+        {
             try
             {
                 _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
                 using (var db = new SQLite.SQLiteConnection(_databasePath))
                 {
-                    #region Create Tables Using Script File
-                    /*
-                    // Read script from Assets and create tables
-                    string dbScriptPath = Path.Combine(Package.Current.InstalledLocation.Path,
-                        FILE_PATH_DATABASE_SCRIPT);
-                    StorageFile file =await StorageFileUtility.GetFileFromAppResource(dbScriptPath);
+                    // Read script from Dummy Resources and create tables
+                    StorageFile file = await StorageFileUtility.GetFileFromAppResource(filePath);
                     string script = await FileIO.ReadTextAsync(file);
-                        
+
                     // Loop each commands
-                    string[] commands = script.Split(new char[]{';'},
+                    string[] commands = script.Split(new char[] { ';' },
                         StringSplitOptions.RemoveEmptyEntries);
-                    foreach(string command in commands)
+                    foreach (string command in commands)
                     {
                         try
                         {
@@ -82,53 +141,14 @@ namespace SmartDeviceApp.Controllers
                         }
                         catch (SQLiteException)
                         {
-                            // Table already exists
-                            // Continue execution just to create other empty tables
+                            // Error handling
                         }
                     }
-                    */
-                    #endregion Create Create Tables Using Script File
-
-                    /*
-                    // DeleteAll is for testing purposes only PrintersModule
-                    db.DeleteAll<Printer>();
-                    db.Commit();
-
-                    db.DeleteAll<DefaultPrinter>();
-                    db.Commit();
-                    */
-
-                    #region Create Tables Using Model Classes
-
-                    // Create the tables if they don't exist
-
-                    //Printer table
-                    db.CreateTable<Printer>();
-                    db.Commit();
-
-                    //DefaultPrinter Table
-                    db.CreateTable<DefaultPrinter>();
-                    db.Commit();
-
-                    //PrintSettings Table
-                    db.CreateTable<PrintSettings>();
-                    db.Commit();
-
-                    //PrintJob Table
-                    db.CreateTable<PrintJob>();
-                    db.Commit();
-
-                    db.Dispose();
-                    db.Close();
-
-                    #endregion Create Tables Using Model Classes
-
-                    // insertPrinters(); //for testing PrintersModule
                 }
             }
             catch
             {
-                // Error in creating tables
+                // Error handling
             }
         }
 
@@ -411,37 +431,7 @@ namespace SmartDeviceApp.Controllers
 
         private async Task InsertSampleData()
         {
-            try
-            {
-                _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-                using (var db = new SQLite.SQLiteConnection(_databasePath))
-                {
-                    // Read script from Dummy Resources and create tables
-                    StorageFile file =await StorageFileUtility.GetFileFromAppResource("Resources/Dummy/SampleData.sql");
-                    string script = await FileIO.ReadTextAsync(file);
-
-                    // Loop each commands
-                    string[] commands = script.Split(new char[] { ';' },
-                        StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string command in commands)
-                    {
-                        try
-                        {
-                            // Since each parameter in the script is in each line,
-                            // convert them into a single line statement
-                            db.Execute(command.Replace("\r\n", " ").Trim());
-                        }
-                        catch (SQLiteException)
-                        {
-                            // Error handling
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // Error handling
-            }
+            await ExecuteScript("Resources/Dummy/SampleData.sql");
         }
 
         #endregion Dummy - Initial Data

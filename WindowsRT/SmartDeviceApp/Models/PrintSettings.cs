@@ -151,9 +151,15 @@ namespace SmartDeviceApp.Models
         #region Properties
 
         /// <summary>
-        /// Printer ID, used by PrintSetting table as primary key and is indexed
+        /// Print Settings ID, used by PrintSetting table as primary key
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.PrimaryKey, SQLite.Indexed(Name = "PrintSetting_FKIndex1")]
+        [SQLite.Column("pst_id"), SQLite.NotNull, SQLite.PrimaryKey, SQLite.AutoIncrement]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Printer ID, used by PrintSetting table and is indexed
+        /// </summary>
+        [SQLite.Column("prn_id"), SQLite.Indexed(Name = "PrintSetting_FKIndex1")]
         public int PrinterId { get; set; }
 
         /// <summary>
@@ -272,6 +278,7 @@ namespace SmartDeviceApp.Models
         /// </summary>
         public PrintSettings()
         {
+            Id = -1;
             PrinterId = -1;
             ColorMode = -1;
             Orientation = -1;
@@ -295,8 +302,8 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// PrintSettings class constructor
         /// </summary>
-        /// <param name="printerId">printer ID</param>
         /// <param name="id">print setting ID</param>
+        /// <param name="printerId">printer ID</param>
         /// <param name="colorMode">color mode</param>
         /// <param name="orientation">orientation</param>
         /// <param name="copies">copies</param>
@@ -315,11 +322,12 @@ namespace SmartDeviceApp.Models
         /// <param name="staple">staple</param>
         /// <param name="punch">punch</param>
         /// <param name="outputTray">output tray</param>
-        public PrintSettings(int printerId, int colorMode, int orientation, int copies,
+        public PrintSettings(int id, int printerId, int colorMode, int orientation, int copies,
             int duplex, int paperSize, bool scaleToFit, int paperType, int inputTray,
             int imposition, int impositionOrder, int sort, bool booklet, int bookletFinishing,
             int bookletLayout, int finishingSide, int staple, int punch, int outputTray)
         {
+            Id = id;
             PrinterId = printerId;
             ColorMode = colorMode;
             Orientation = orientation;
