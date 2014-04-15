@@ -11,6 +11,7 @@
 #import "PrinterManager.h"
 #import "PrinterCell.h"
 #import "AlertHelper.h"
+#import "PrintSettingsViewController.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define PRINTERCELL             @"PrinterCell"
@@ -174,8 +175,19 @@
         }
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.onlineStatus = cell.printerStatus.onlineStatus;
+        destController.delegate = self;
         cell.printerStatus.statusHelper.delegate = destController;
     }
+    else if([segue.identifier isEqualToString:@"PrintersIphone-PrintSettings"])
+    {
+        ((PrintSettingsViewController *)segue.destinationViewController).printerIndex = [NSNumber numberWithInteger:self.selectedPrinterIndexPath.row];
+    }
+
+}
+
+-(void) segueToPrintSettings
+{
+    [self performSegueTo:[PrintSettingsViewController class]];
 }
 
 - (IBAction)unwindFromPrinterInfo:(UIStoryboardSegue*)unwindSegue

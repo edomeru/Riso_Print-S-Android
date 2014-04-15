@@ -275,6 +275,11 @@ static PrinterManager* sharedPrinterManager = nil;
     return self.defaultPrinter.printer;
 }
 
+-(BOOL) savePrinterChanges
+{
+    return [DatabaseManager saveChanges];
+}
+
 #pragma mark - Printers in Network (SNMP)
 
 - (void)searchForPrinter:(NSString*)printerIP

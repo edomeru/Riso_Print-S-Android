@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -806,6 +806,9 @@
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
                                                             <state key="highlighted" image="img_btn_default_print_settings"/>
+                                                            <connections>
+                                                                <action selector="defaultSettingsButtonAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="m6Q-MJ-lLH"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <constraints>
@@ -866,6 +869,7 @@
                                         </constraints>
                                         <connections>
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
+                                            <outlet property="defaultSettingsButton" destination="hEi-x2-OHw" id="H69-Iy-BLY"/>
                                             <outlet property="defaultSwitch" destination="Xs2-X2-H9b" id="7kt-b4-tsC"/>
                                             <outlet property="deleteButton" destination="tCl-QS-N9c" id="W5U-Vw-A4c"/>
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
@@ -904,6 +908,7 @@
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintersIpad-Home" customClass="SlideSegue" id="Ysc-8g-iB4"/>
                         <segue destination="Awv-gP-Onf" kind="custom" identifier="PrintersIpad-AddPrinter" customClass="SlideSegue" id="JN0-oy-t0D"/>
                         <segue destination="vSr-S1-xXi" kind="custom" identifier="PrintersIpad-PrinterSearch" customClass="SlideSegue" id="wRN-hA-Rro"/>
+                        <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintersIpad-PrintSettings" customClass="SlideSegue" id="CWW-vD-UgO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tCH-ks-STu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -918,7 +923,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-152" y="2188"/>
+            <point key="canvasLocation" x="-236" y="2124"/>
         </scene>
         <!--Add Printer View Controller-->
         <scene sceneID="SWa-uh-zo2">
@@ -1323,7 +1328,7 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
-                                            <segue destination="vBf-Ei-f2i" kind="embed" id="92K-vz-KiC"/>
+                                            <segue destination="vBf-Ei-f2i" kind="embed" identifier="PrintSettings-PrintSettingsTable" id="92K-vz-KiC"/>
                                         </connections>
                                     </containerView>
                                 </subviews>
@@ -1353,12 +1358,14 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintPreview" unwindAction="unwindToPrintPreview:" id="W5A-uc-DU4"/>
+                        <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="iQ2-0T-cMH"/>
+                        <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="y6B-GG-Ywz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hw1-dX-LAb" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="SC0-5X-vge" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="651" y="743"/>
+            <point key="canvasLocation" x="711" y="751"/>
         </scene>
         <!--Page Content View Controller-->
         <scene sceneID="SH6-Kb-ScT">
@@ -1624,7 +1631,7 @@
             <objects>
                 <tableViewController id="pPd-nr-YZr" customClass="PrintSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -2116,7 +2123,7 @@
                                         <state key="disabled" image="img_btn_print_settings_pressed"/>
                                         <state key="highlighted" image="img_btn_print_settings_pressed"/>
                                         <connections>
-                                            <action selector="printSettingsAction:" destination="3J8-E3-ZCb" eventType="touchUpInside" id="Wpu-dO-omJ"/>
+                                            <action selector="printSettingsAction:" destination="qXF-RA-AFJ" eventType="touchUpInside" id="09e-IU-u3n"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printer Information" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Sg-Ri-y2R">
@@ -2370,7 +2377,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j83-dj-yKS" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="pP7-fQ-WfE" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1743" y="1457"/>
+            <point key="canvasLocation" x="1803" y="1465"/>
         </scene>
         <!--Printers Iphone View Controller-->
         <scene sceneID="tWg-WX-q5M">
@@ -2595,6 +2602,7 @@
                         <segue destination="RaD-uj-jjo" kind="custom" identifier="PrintersIphone-PrinterSearch" customClass="SlideOverSegue" id="lfU-nP-RfT"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintersIphone-Home" customClass="SlideSegue" id="suq-fU-kcs"/>
                         <segue destination="qXF-RA-AFJ" kind="custom" identifier="PrintersIphone-PrinterInfo" customClass="SlideOverSegue" id="nJs-JD-TzO"/>
+                        <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintersIphone-PrintSettings" customClass="SlideSegue" id="JPo-5o-n9C"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7EE-4m-YZw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2940,7 +2948,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="c8V-UF-iWe"/>
+        <segue reference="suq-fU-kcs"/>
+        <segue reference="JPo-5o-n9C"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -10,5 +10,5 @@
 #import "SlidingViewController.h"
 
 @interface PrintSettingsViewController : SlidingViewController
-
+@property (nonatomic, strong) NSNumber *printerIndex;
 @end

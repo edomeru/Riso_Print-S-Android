@@ -10,6 +10,7 @@
 #import "PrintDocument.h"
 #import "XMLParser.h"
 #import "PrintSettingsHelper.h"
+#import "PrinterManager.h"
 
 #define PREVIEW_FILENAME @"%@/SDAPreview.pdf"
 
@@ -80,6 +81,7 @@
         self.fileAvailableForLoad = NO;
         self.printDocument = [[PrintDocument alloc] initWithURL:documentURL];
         self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
+        self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
     }
     
     return result;

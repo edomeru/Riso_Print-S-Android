@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#define PREVIEWSETTING_CONTEXT @"PreviewSettingContext"
 
 @class PreviewSetting;
 @class PrintSetting;
@@ -15,5 +16,7 @@
 + (NSDictionary *)sharedPrintSettingsTree;
 + (PreviewSetting *)defaultPreviewSetting;
 + (void)copyDefaultPrintSettings:(PrintSetting **)printSetting;
-
++ (void)copyPrintSettings:(PrintSetting *)printSetting toPreviewSetting:(PreviewSetting **) previewSetting;
++ (void)addObserver:(id)observer toPreviewSetting:(PreviewSetting **)previewSetting;
++ (void)removeObserver:(id)observer fromPreviewSetting:(PreviewSetting **)previewSetting;
 @end
