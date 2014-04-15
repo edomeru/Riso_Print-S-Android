@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -130,6 +131,24 @@ public class PrintSettings {
                 sSettingMap.put(setting.getAttributeValue(XmlNode.ATTR_NAME), setting);
             }
         }
+    }
+    
+    // ================================================================================
+    // Getter for PJL
+    // ================================================================================
+    
+    public String formattedString() {
+        StringBuffer strBuf = new StringBuffer();
+        String KEY_VAL_FORMAT = "%s=%d\n";
+        
+        for (String key : getSettingValues().keySet()) {
+            int value = getSettingValues().get(key);
+            
+            strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
+        }
+        
+        Log.wtf(TAG, strBuf.toString());
+        return strBuf.toString();
     }
     
     // ================================================================================
