@@ -157,7 +157,7 @@
     <Compile Include="Converters\ItemCheckedConverter.cs" />
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
-    <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
+    <Compile Include="Converters\PrintSettingToValueConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />

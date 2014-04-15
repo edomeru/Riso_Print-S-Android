@@ -70,7 +70,7 @@ namespace SmartDeviceApp.Controllers
                     string printerName = await DatabaseController.Instance.GetPrinterName(
                         group.First().PrinterId);
 
-                    PrintJobGroup printJobGroup = new PrintJobGroup(printerName, group.ToList());
+                    PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(), group.ToList());
                     printJobList.Add(printJobGroup);
                 }
             }

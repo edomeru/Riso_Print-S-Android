@@ -44,7 +44,6 @@ namespace SmartDeviceApp.Controllers
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
             FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}-{1:yyyyMMddHHmmssffff}.jpg";
-        private const string FILE_NAME_EMPTY_IMAGE = FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "_empty.jpg";
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
         private const string FILE_PATH_RES_IMAGE_STAPLE = "Resources/Images/img_staple.png";
         private const string FILE_PATH_RES_IMAGE_PUNCH = "Resources/Images/img_punch.png";
@@ -100,8 +99,7 @@ namespace SmartDeviceApp.Controllers
 
                 // Get print settings
                 LoadPrintSettingsOptions();
-                await GetPrinterAndPrintSetting();
-                ApplyPrintSettingConstraints();
+                await GetDefaultPrinterAndPrintSetting();
 
                 // Send list to view model
                 _printSettingsViewModel.PrintSettingsList = _printSettingList;
@@ -155,32 +153,66 @@ namespace SmartDeviceApp.Controllers
         #region Database and Default Values Operations
 
         /// <summary>
-        /// Retrieves printer and print settings.
+        /// Retrieves the default printer and its print settings.
         /// If no default printer is found, a dummy printer (with ID = -1) is set as
         /// selected printer and default print settings are assigned.
         /// </summary>
         /// <returns>task</returns>
-        public async Task GetPrinterAndPrintSetting()
+        public async Task GetDefaultPrinterAndPrintSetting()
         {
             // Get default printer and print settings from database
-            _selectedPrinter = await DatabaseController.Instance.GetDefaultPrinter();
-            if (_selectedPrinter.Id < 0 || !_selectedPrinter.IsDefault)
+            DefaultPrinter defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
+
+            if (defaultPrinter != null)
             {
-                // No default printer
-                _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
+                await GetPrinterAndPrintSetting((int)defaultPrinter.PrinterId);
             }
             else
             {
-                // Get print settings
-                _selectedPrinter.PrintSettings =
-                    await DatabaseController.Instance.GetPrintSettings(_selectedPrinter.Id);
-                if (_selectedPrinter.PrintSettings == null)
-                {
-                    _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
-                }
-
-                // TODO: Filter print settings based on printer capabilities
+                // Full default capabilities
+                await GetPrinterAndPrintSetting(-1);
             }
+        }
+
+        /// <summary>
+        /// Retrieves the selected printer and its print settings.
+        /// Assigns full default print settings when no printer is selected or failed
+        /// in retrieving printer or print settings from the database.
+        /// </summary>
+        /// <param name="printerId">printer ID; specify -1 as no selected printer</param>
+        /// <returns>task</returns>
+        private async Task GetPrinterAndPrintSetting(int printerId)
+        {
+            if (printerId > -1)
+            {
+                // Get printer from database
+                _selectedPrinter = await DatabaseController.Instance.GetPrinter(printerId);
+                if (_selectedPrinter != null)
+                {
+                    // Get print settings from database
+                    _selectedPrinter.PrintSettings =
+                        await DatabaseController.Instance.GetPrintSettings(_selectedPrinter.PrintSettingId);
+                    if (_selectedPrinter.PrintSettings == null)
+                    {
+                        _selectedPrinter.PrintSettings =
+                            DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
+                    }
+
+                    // TODO: Filter print settings based on printer capabilities
+                    //       OR it is resposibility of PrinterController
+                    MergePrintSettings();
+                    ApplyPrintSettingConstraints();
+
+                    return;
+                }
+            }
+            
+            // Create dummy Printer as current printer
+            _selectedPrinter = new Printer();
+            _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
+
+            MergePrintSettings();
+            ApplyPrintSettingConstraints();
         }
 
         #endregion Database and Default Values Operations
@@ -232,7 +264,7 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Receiver of the selected print setting option (selected index or numeric value).
-        /// Updates the print settings list (PrintSettingList) and cache (PagePrintSettings),
+        /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
         /// updates value and enabled options based on constraints, and applies
         /// changes to the PreviewPage image.
         /// </summary>
@@ -441,7 +473,7 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Receiver of the selected print setting option (must be a switch).
-        /// Updates the print settings list (PrintSettingList) and cache (PagePrintSettings),
+        /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
         /// updates value and enabled options based on constraints, and applies
         /// changes to the PreviewPage image.
         /// </summary>
@@ -706,6 +738,42 @@ namespace SmartDeviceApp.Controllers
             return false;
         }
 
+        /// <summary>
+        /// Generates next and previous PreviewPage images if not exist.
+        /// It is assumed here that required LogicalPage images are already done
+        /// by DocumentController.
+        /// </summary>
+        private async void GenerateNearPreviewPages()
+        {
+            PreviewPage previewPage = null;
+            if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))
+            {
+                int nextLogicalPageIndex = ((_currPreviewPageIndex + 1) * _pagesPerSheet);
+                List<LogicalPage> nextLogicalPages =
+                    await DocumentController.Instance.GetLogicalPages(nextLogicalPageIndex,
+                    _pagesPerSheet);
+
+                // Next page
+                int nextPreviewPageIndex = _currPreviewPageIndex + 1;
+                await ApplyPrintSettings(nextLogicalPages, nextPreviewPageIndex,
+                    false, (nextPreviewPageIndex % 2 != 0), false);
+            }
+
+            if (!_previewPages.TryGetValue(_currPreviewPageIndex - 1, out previewPage))
+            {
+                int prevLogicalPageIndex = ((_currPreviewPageIndex - 1) * _pagesPerSheet);
+                List<LogicalPage> prevLogicalPages =
+                    await DocumentController.Instance.GetLogicalPages(prevLogicalPageIndex,
+                    _pagesPerSheet);
+
+                // Previous page
+                int prevPreviewPageIndex = _currPreviewPageIndex - 1;
+                await ApplyPrintSettings(prevLogicalPages, prevPreviewPageIndex,
+                    false, (prevPreviewPageIndex % 2 != 0), false);
+            }
+
+        }
+
         #endregion Preview Page Navigation
 
         #region Print Settings
@@ -715,7 +783,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
-            PagePrintSettingToValueConverter valueConverter = new PagePrintSettingToValueConverter();
+            PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
 
             string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
                 FILE_PATH_ASSET_PRINT_SETTINGS_XML);
@@ -767,6 +835,80 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Merges print settings cache (PrintSettings) to print settings list (PrintSettingList)
+        /// to reflect actual values from database
+        /// </summary>
+        private void MergePrintSettings()
+        {
+            foreach (var group in _printSettingList)
+            {
+                foreach (var printSetting in group.PrintSettings)
+                {
+                    switch (printSetting.Name)
+                    {
+                        case PrintSettingConstant.NAME_VALUE_COLOR_MODE:
+                            printSetting.Value = _selectedPrinter.PrintSettings.ColorMode;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_ORIENTATION:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Orientation;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_COPIES:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Copies;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_DUPLEX:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Duplex;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_PAPER_SIZE:
+                            printSetting.Value = _selectedPrinter.PrintSettings.PaperSize;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT:
+                            printSetting.Value = _selectedPrinter.PrintSettings.ScaleToFit;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_PAPER_TYPE:
+                            printSetting.Value = _selectedPrinter.PrintSettings.PaperType;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_INPUT_TRAY:
+                            printSetting.Value = _selectedPrinter.PrintSettings.InputTray;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_IMPOSITION:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Imposition;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER:
+                            printSetting.Value = _selectedPrinter.PrintSettings.ImpositionOrder;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_SORT:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Sort;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_BOOKLET:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Booklet;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING:
+                            printSetting.Value = _selectedPrinter.PrintSettings.BookletFinishing;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT:
+                            printSetting.Value = _selectedPrinter.PrintSettings.BookletLayout;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_FINISHING_SIDE:
+                            printSetting.Value = _selectedPrinter.PrintSettings.FinishingSide;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_STAPLE:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Staple;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_PUNCH:
+                            printSetting.Value = _selectedPrinter.PrintSettings.Punch;
+                            break;
+                        case PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY:
+                            printSetting.Value = _selectedPrinter.PrintSettings.OutputTray;
+                            break;
+                        default:
+                            // Do nothing
+                            break;
+                    } // switch-case
+                } // foreach printSetting
+            } // foreach group
+        }
+
+        /// <summary>
         /// Updates constraints (value/enable state) on print settings list (PrintSettingList)
         /// and cache (PagePrintSetting)
         /// </summary>
@@ -792,42 +934,6 @@ namespace SmartDeviceApp.Controllers
             PrintSetting result = query.First();
 
             return result;
-        }
-
-        /// <summary>
-        /// Generates next and previous PreviewPage images if not exist.
-        /// It is assumed here that required LogicalPage images are already done
-        /// by DocumentController.
-        /// </summary>
-        private async void GenerateNearPreviewPages()
-        {
-            PreviewPage previewPage = null;
-            if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))
-            {
-                int nextLogicalPageIndex = ((_currPreviewPageIndex + 1) * _pagesPerSheet);
-                List<LogicalPage> nextLogicalPages =
-                    await DocumentController.Instance.GetLogicalPages(nextLogicalPageIndex,
-                    _pagesPerSheet);
-
-                // Next page
-                int nextPreviewPageIndex = _currPreviewPageIndex + 1;
-                await ApplyPrintSettings(nextLogicalPages, nextPreviewPageIndex,
-                    false, (nextPreviewPageIndex % 2 != 0), false);
-            }
-
-            if (!_previewPages.TryGetValue(_currPreviewPageIndex - 1, out previewPage))
-            {
-                int prevLogicalPageIndex = ((_currPreviewPageIndex - 1) * _pagesPerSheet);
-                List<LogicalPage> prevLogicalPages =
-                    await DocumentController.Instance.GetLogicalPages(prevLogicalPageIndex,
-                    _pagesPerSheet);
-
-                // Previous page
-                int prevPreviewPageIndex = _currPreviewPageIndex - 1;
-                await ApplyPrintSettings(prevLogicalPages, prevPreviewPageIndex,
-                    false, (prevPreviewPageIndex % 2 != 0), false);
-            }
-
         }
 
         #endregion Print Settings
@@ -860,7 +966,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// Updates print settings list (PrintSettingList) and cache (PrintSettings)
         /// for its values and enabled state based on constraints with Booklet print setting.
         /// </summary>
         /// <param name="value">selected Booklet print setting state</param>
@@ -943,7 +1049,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// Updates print settings list (PrintSettingList) and cache (PrintSettings)
         /// for its values and enabled state based on constraints with Finishing Side print setting
         /// against Staple print setting.
         /// </summary>
@@ -1016,7 +1122,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// Updates print settings list (PrintSettingList) and cache (PrintSettings)
         /// for its values and enabled state based on constraints with Finishing Side print setting
         /// against Punch print setting.
         /// </summary>
@@ -1065,7 +1171,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// Updates print settings list (PrintSettingList) and cache (PrintSettings)
         /// for its values and enabled state based on constraints with Punch print setting
         /// against Finishing Side print setting.
         /// </summary>
@@ -1112,7 +1218,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// Updates print settings list (PrintSettingList) and cache (PrintSettings)
         /// for its values and enabled state based on constraints with Imposition Order print setting
         /// against Imposition print setting.
         /// </summary>
@@ -1192,7 +1298,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings list (PrintSettingList) and cache (PagePrintSettings)
+        /// Updates print settings list (PrintSettingList) and cache (PrintSettings)
         /// for its values based on constraints with Booklet Layout print setting
         /// against Orientation print setting.
         /// </summary>

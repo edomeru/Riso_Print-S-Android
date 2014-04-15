@@ -288,30 +288,54 @@ namespace SmartDeviceApp.Controllers
             return 0;
         }
 
-        public async Task<Printer> GetDefaultPrinter()
+        /// <summary>
+        /// Retrieves the default printer
+        /// </summary>
+        /// <returns>task; DefaultPrinter object if found, null otherwise</returns>
+        public async Task<DefaultPrinter> GetDefaultPrinter()
         {
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
-            DefaultPrinter defaultPrinter = new DefaultPrinter();
-            Printer printer = new Printer();
             try
             {
                 int defaultPrinterCount = await db.Table<DefaultPrinter>().CountAsync();
                 if (defaultPrinterCount > 0)
                 {
-                    defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
-                    printer = await (db.GetAsync<Printer>(defaultPrinter.PrinterId));
-                    printer.IsDefault = true;
+                    return await (db.Table<DefaultPrinter>().FirstAsync());
                 }
             }
             catch
             {
                 // Error handling here
             }
-            return printer;
+            return null;
         }
 
-        // TODO: Check if this is to be implemented in PrinterController class
+        /// <summary>
+        /// Retrives the Printer from the database
+        /// </summary>
+        /// <param name="id">printer ID</param>
+        /// <returns>task; Printer object if found, null otherwise</returns>
+        public async Task<Printer> GetPrinter(int id)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                return await db.GetAsync<Printer>(id);
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves the printer name
+        /// </summary>
+        /// <param name="id">printer ID</param>
+        /// <returns>task; printer name if found, empty string otherwise</returns>
         public async Task<string> GetPrinterName(int id)
         {
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
@@ -325,28 +349,31 @@ namespace SmartDeviceApp.Controllers
             {
                 // Error handling here
             }
-            return null;
+            return string.Empty;
         }
 
         #endregion Printer Table Operations
 
         #region PrintSetting Table Operations
 
-        public async Task<PrintSettings> GetPrintSettings(int printerId)
+        /// <summary>
+        /// Retrives print settings
+        /// </summary>
+        /// <param name="id">print setting ID</param>
+        /// <returns>task; print settings if found, null otherwise</returns>
+        public async Task<PrintSettings> GetPrintSettings(int id)
         {
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
-            PrintSettings printSetting = null;
-
             try
             {
-                printSetting = await db.GetAsync<PrintSettings>(printerId);
+                return await db.GetAsync<PrintSettings>(id);
             }
             catch
             {
                 // Error handling here
             }
-            return printSetting;
+            return null;
         }
 
         #endregion PrintSetting Table Operations
@@ -360,10 +387,10 @@ namespace SmartDeviceApp.Controllers
         public async Task<List<PrintJob>> GetPrintJobs()
         {
             var printJobsList = new List<PrintJob>();
+
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
             try
             {
-                var db = new SQLite.SQLiteAsyncConnection(_databasePath);
-
                 printJobsList = await (db.Table<PrintJob>().ToListAsync());
             }
             catch
@@ -377,8 +404,8 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Insert an item into PrintJob table
         /// </summary>
-        /// <param name="printJob"></param>
-        /// <returns></returns>
+        /// <param name="printJob">print job to be added</param>
+        /// <returns>task; number for added rows</returns>
         public async Task<int> InsertPrintJob(PrintJob printJob)
         {
             if (printJob == null)

@@ -1,5 +1,5 @@
 ﻿//
-//  PagePrintSettingToValueConverter.cs
+//  PrintSettingToValueConverter.cs
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group on 2014/03/07.
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
 {
-    public class PagePrintSettingToValueConverter : IValueConverter
+    public class PrintSettingToValueConverter : IValueConverter
     {
 
         private Dictionary<string, Type> _printSettingNameMap = new Dictionary<string, Type>()
@@ -64,11 +64,8 @@ namespace SmartDeviceApp.Converters
             {
                 return intValue;
             }
-            else if (printSettingName.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT))
-            {
-                return boolValue;
-            }
-            else if (printSettingName.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
+            else if (printSettingName.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT) ||
+                printSettingName.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 return boolValue;
             }
@@ -78,63 +75,21 @@ namespace SmartDeviceApp.Converters
             _printSettingNameMap.TryGetValue(printSettingName, out type);
             if (type != null)
             {
-                if (type.Equals(typeof(ColorMode)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(Orientation)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(Duplex)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(PaperSize)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(PaperType)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(InputTray)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(Imposition)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(ImpositionOrder)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(Sort)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(BookletFinishing)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(BookletLayout)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(FinishingSide)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(Staple)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(Punch)))
-                {
-                    return intValue;
-                }
-                else if (type.Equals(typeof(OutputTray)))
+                if (type.Equals(typeof(ColorMode)) ||
+                    type.Equals(typeof(Orientation)) ||
+                    type.Equals(typeof(Duplex)) ||
+                    type.Equals(typeof(PaperSize)) ||
+                    type.Equals(typeof(PaperType)) ||
+                    type.Equals(typeof(InputTray)) ||
+                    type.Equals(typeof(Imposition)) ||
+                    type.Equals(typeof(ImpositionOrder)) ||
+                    type.Equals(typeof(Sort)) ||
+                    type.Equals(typeof(BookletFinishing)) ||
+                    type.Equals(typeof(BookletLayout)) ||
+                    type.Equals(typeof(FinishingSide)) ||
+                    type.Equals(typeof(Staple)) ||
+                    type.Equals(typeof(Punch)) ||
+                    type.Equals(typeof(OutputTray)))
                 {
                     return intValue;
                 }
