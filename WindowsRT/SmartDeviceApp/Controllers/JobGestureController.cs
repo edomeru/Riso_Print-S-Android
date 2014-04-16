@@ -34,17 +34,8 @@ namespace SmartDeviceApp.Controllers
         private bool _isDeleteJobButtonVisible;
         private JobListItemControl _lastJobListItem;
 
-        private TransformGroup _cumulativeTransform;
-        private MatrixTransform _previousTransform;
-        private CompositeTransform _deltaTransform;
-        private TransformGroup _tempCumulativeTransform;
-        private MatrixTransform _tempPreviousTransform;
-        private CompositeTransform _tempDeltaTransform;
-
         private Point _startPoint;
         private bool _isEnabled;
-        private bool _isTranslateXEnabled;
-        private bool _isTranslateYEnabled;
 
         public UIElement Control
         {
@@ -122,23 +113,6 @@ namespace SmartDeviceApp.Controllers
                 _isEnabled = false;
             }
         }
-        
-        //public void ResetTransforms() // TODO: Set to private after debug!!
-        //{
-        //    _cumulativeTransform = new TransformGroup();
-        //    _deltaTransform = new CompositeTransform();
-        //    _previousTransform = new MatrixTransform() { Matrix = Matrix.Identity };
-        //    _cumulativeTransform.Children.Add(_previousTransform);
-        //    _cumulativeTransform.Children.Add(_deltaTransform);
-        //    _control.RenderTransform = _cumulativeTransform;
-
-        //    // Temp transforms for checking validity of transforms before applying
-        //    _tempCumulativeTransform = new TransformGroup();
-        //    _tempDeltaTransform = new CompositeTransform();
-        //    _tempPreviousTransform = new MatrixTransform() { Matrix = Matrix.Identity };
-        //    _tempCumulativeTransform.Children.Add(_tempPreviousTransform);
-        //    _tempCumulativeTransform.Children.Add(_tempDeltaTransform);
-        //}
 
         void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
@@ -166,22 +140,18 @@ namespace SmartDeviceApp.Controllers
         {
             if (_isDeleteJobButtonVisible)
             {
+                HideDeleteJobButton();
                 // Check if tap is for jobListControl which has the visible delete button
-                var jobListItem = GetJobListItemControl(e.Position);
+                var jobListItem = GetJobListItemControl(e.Position, false);
                 if (jobListItem != null && jobListItem == _lastJobListItem)
                 {
                     var printJob = jobListItem.DataContext;
                     (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
-                    HideDeleteJobButton();
-                }
-                else
-                {
-                    HideDeleteJobButton();
                 }
                 return;
             }
 
-            var point = TransformPointToGlobalCoordinates(e.Position);
+            var point = TransformPointToGlobalCoordinates(e.Position, false);
             var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
             bool isDelete = false;
             Button deleteButton;
@@ -203,11 +173,13 @@ namespace SmartDeviceApp.Controllers
             // Manually execute delete command
             if (isDelete && jobListHeader != null)
             {
+                HideDeleteJobButton();
                 var printerId = ((PrintJobGroup)jobListHeader.DataContext).Jobs[0].PrinterId;
                 (new ViewModelLocator().JobsViewModel).DeleteAllJobsCommand.Execute(printerId);
             }
             else if (!isDelete && jobListHeader != null)
             {
+                HideDeleteJobButton();
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
             }
         }
@@ -224,96 +196,77 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
         {
-            if (_isDeleteJobButtonVisible) 
-            {
-                HideDeleteJobButton();
-                return;
-            }
-
-            var isVerticalSwipe = DetectVerticalSwipe(e);
+            var isVerticalSwipe = DetectVerticalSwipe(e.Delta.Translation);
             if (isVerticalSwipe)
             {
-                Debug.WriteLine("Vertical swipe detected");
                 return;
             }
-            var isHorizontalSwipe = DetectHorizontalSwipe(e);
-            if (isHorizontalSwipe)
-            {
-                
-            }
+            var isHorizontalSwipe = DetectHorizontalSwipe(e.Position, true);
         }
 
-        private bool DetectVerticalSwipe(ManipulationUpdatedEventArgs e)
+        private bool DetectHorizontalSwipe(Point currentPosition, bool isScrolled)
         {
             var isSwipe = false;
-            //if (_gestureRecognizer.IsInertial)
-            {
-                // Swipe right;
-                Point currentPosition = e.Position;
-                if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
-                {
-                    _gestureRecognizer.CompleteGesture();
-                    // TODO: Handle swipe
-                    isSwipe = true;
-                }
-                // Swipe left
-                else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
-                {
-                    _gestureRecognizer.CompleteGesture();
-                    // TODO: Handle swipe
-                    isSwipe = true;
-                }
-            }
-            //Debug.WriteLine("DetectVerticalSwipe = {0}", isSwipe);
-            return isSwipe;
-        }
-
-        private bool DetectHorizontalSwipe(ManipulationUpdatedEventArgs e)
-        {
-            var isSwipe = false;
-            Point currentPosition = e.Position;
-            // Swipe right
+            // Swipe right, hide delete button
             if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
             {
-                _gestureRecognizer.CompleteGesture();
-                var jobListItem = GetJobListItemControl(e.Position);
-                if (jobListItem == null) return isSwipe;
-                jobListItem.DeleteButtonVisibility = Visibility.Collapsed;
-                _lastJobListItem = jobListItem;
                 isSwipe = true;
+                _gestureRecognizer.CompleteGesture();
+                var jobListItem = GetJobListItemControl(currentPosition, isScrolled);
+                if (jobListItem == null) return isSwipe;
+                if (_isDeleteJobButtonVisible && _lastJobListItem != null)
+                {
+                    HideDeleteJobButton();
+                    return isSwipe;
+                }
+                if (jobListItem.DeleteButtonVisibility != Visibility.Collapsed)
+                {
+                    jobListItem.DeleteButtonVisibility = Visibility.Collapsed;
+                    _lastJobListItem = jobListItem;
+                }
+                
             }
-            // Swipe left
+            // Swipe left, show delete button
             else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
             {
-                _gestureRecognizer.CompleteGesture();
-                var jobListItem = GetJobListItemControl(e.Position);
-                if (jobListItem == null) return isSwipe;
-                jobListItem.DeleteButtonVisibility = Visibility.Visible;
-                _lastJobListItem = jobListItem;
-                _isDeleteJobButtonVisible = true;
                 isSwipe = true;
+                _gestureRecognizer.CompleteGesture();
+                var jobListItem = GetJobListItemControl(currentPosition, isScrolled);
+                if (jobListItem == null) return isSwipe;
+                if (_isDeleteJobButtonVisible && _lastJobListItem != null && _lastJobListItem != jobListItem)
+                {
+                    HideDeleteJobButton();
+                    return isSwipe;
+                }
+                if (jobListItem.DeleteButtonVisibility != Visibility.Visible)
+                {
+                    jobListItem.DeleteButtonVisibility = Visibility.Visible;
+                    _lastJobListItem = jobListItem;
+                    _isDeleteJobButtonVisible = true;
+                }
             }
-            //Debug.WriteLine("DetectHorizontalSwipe = {0}", isSwipe);
             return isSwipe;
         }
 
         private void HideDeleteJobButton()
         {
+            if (_lastJobListItem == null || !_isDeleteJobButtonVisible) return;
             _lastJobListItem.DeleteButtonVisibility = Visibility.Collapsed;
             _isDeleteJobButtonVisible = false;
         }
 
-        private JobListItemControl GetJobListItemControl(Point position)
+        /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs,
+        /// False if from TappedEventArgs</param>
+        private JobListItemControl GetJobListItemControl(Point position, bool isScrolled)
         {
             // Check if sender is jobListItemControl
             // If true, show delete button
             // Otherwise, ignore
-            var point = TransformPointToGlobalCoordinates(position);
+            var point = TransformPointToGlobalCoordinates(position, isScrolled);
             var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);                
             foreach (UIElement element in elements)
             {
                 var elementName = ((FrameworkElement)element).Name;
-                //if (elementName == JOB_LIST_HEADER_CONTROL_NAME || elementName == JOB_LIST_ITEM_CONTROL_NAME || elementName == JOBS_GRID_CONTROL_NAME)
                 if (elementName == JOB_LIST_ITEM_CONTROL_NAME)
                 {
                     return (JobListItemControl)element;
@@ -322,16 +275,16 @@ namespace SmartDeviceApp.Controllers
             return null;
         }
 
-        private bool DetectTranslate(ManipulationUpdatedEventArgs e)
+        private bool DetectVerticalSwipe(Point delta)
         {
             var isTranslate = false;
-            if (_isTranslateXEnabled || _isTranslateYEnabled)
+            if (Math.Abs(delta.Y) > 0)
             {
-                _previousTransform.Matrix = _cumulativeTransform.Value;
-                if (_isTranslateXEnabled) _deltaTransform.TranslateX = e.Delta.Translation.X;
-                if (_isTranslateYEnabled) _deltaTransform.TranslateY = e.Delta.Translation.Y;
+                isTranslate = true;
+                var scrollViewer = (ScrollViewer)_controlReference;
+                scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);                
+                HideDeleteJobButton();
             }
-            Debug.WriteLine("Translate = {0}", isTranslate);
             return isTranslate;
         }
 
@@ -340,11 +293,17 @@ namespace SmartDeviceApp.Controllers
             //Debug.WriteLine("OnManipulationCompleted");
         }
 
-        private Point TransformPointToGlobalCoordinates(Point point)
+        private Point TransformPointToGlobalCoordinates(Point point, bool isScrolled)
         {
             var transformedPoint = new Point();
+            var scrollViewer = (ScrollViewer)_controlReference;
             transformedPoint.X = point.X + _controlPosition.X;
             transformedPoint.Y = point.Y + _controlPosition.Y;
+            if (isScrolled)
+            {
+                transformedPoint.X -= scrollViewer.HorizontalOffset;
+                transformedPoint.Y -= scrollViewer.VerticalOffset;
+            }
             return transformedPoint;
         }
     }
