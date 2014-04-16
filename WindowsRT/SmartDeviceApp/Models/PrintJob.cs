@@ -118,7 +118,6 @@ namespace SmartDeviceApp.Models
 
     public class PrintJobGroup
     {
-        public int PrinterId { get; set; }
         public string PrinterName { get; set; }
         public List<PrintJob> Jobs { get; set; }
 
