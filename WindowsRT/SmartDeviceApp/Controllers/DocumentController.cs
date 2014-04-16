@@ -56,6 +56,11 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public LoadDocumentResult Result { get; private set; }
 
+        /// <summary>
+        /// Flag to determine if document is loaded from FilePicker
+        /// </summary>
+        public bool IsFromFilePicker { get; private set; }
+
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
         // http://csharpindepth.com/Articles/General/Singleton.aspx
@@ -74,14 +79,17 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Copies the PDF to AppData temporary store and opens it
         /// </summary>
-        /// <param name="file">source file path of the PDF file</param>
-        /// <returns>task</returns>
-        public async Task Load(StorageFile file)
+        /// <param name="file">source PDF file</param>
+        /// <param name="isFromFilePicker">true when opened from FilePicker, false from FileActivation event</param>
+        /// <returns></returns>
+        public async Task Load(StorageFile file, bool isFromFilePicker)
         {
             if (file == null)
             {
                 return;
             }
+
+            IsFromFilePicker = isFromFilePicker;
 
             try
             {
@@ -90,10 +98,10 @@ namespace SmartDeviceApp.Controllers
                 StorageFile tempPdfFile =  await file.CopyAsync(tempFolder, TEMP_PDF_NAME,
                     NameCollisionOption.ReplaceExisting);
 
-                // Open and load PDF
-                // Attempt to open PDF using empty string
-                // This is to determine whether the PDF requires password to open the file
-                // If the PDF file requires a password, invalid password error will be thrown
+                // Open and load PDF.
+                // Attempt to open PDF using empty string to determine whether the PDF requires
+                // password to open the file. If the PDF file requires a password,
+                // invalid password error will be thrown.
                 PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(tempPdfFile,
                     PDF_PASSWORD_EMPTY);
 

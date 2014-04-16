@@ -118,6 +118,7 @@ namespace SmartDeviceApp
                 DispatcherHelper.Initialize();
             }
 
+            // TODO: Verify commented out lines below
             //if (rootFrame.Content == null)
             //{
                 // When the navigation stack isn't restored navigate to the first page,
@@ -126,7 +127,7 @@ namespace SmartDeviceApp
                 rootFrame.Navigate(typeof(PrintPreviewPage));
             //}
 
-            await MainController.FileActivationHandler(e);
+            await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
 
             // Ensure the current window is active
             Window.Current.Activate();

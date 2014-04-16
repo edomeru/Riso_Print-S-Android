@@ -35,11 +35,11 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initiates loading of PDF document
         /// </summary>
-        /// <param name="e">event argument</param>
-        public async static Task FileActivationHandler(FileActivatedEventArgs e)
+        /// <param name="file">PDF file</param>
+        /// <returns>task</returns>
+        public async static Task FileActivationHandler(StorageFile file)
         {
-            // Should handle only one file
-            if (e.Files.Count != 1)
+            if (file == null)
             {
                 return;
             }
@@ -47,7 +47,7 @@ namespace SmartDeviceApp.Controllers
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 
-            await DocumentController.Instance.Load(e.Files[0] as StorageFile);
+            await DocumentController.Instance.Load(file, false);
             await PrintPreviewController.Instance.Initialize();
         }
 
@@ -70,7 +70,7 @@ namespace SmartDeviceApp.Controllers
             await PrintPreviewController.Instance.Cleanup();
 
             StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
-            await DocumentController.Instance.Load(samplePdf);
+            await DocumentController.Instance.Load(samplePdf, false);
             await PrintPreviewController.Instance.Initialize();
         }
 
