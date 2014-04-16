@@ -192,6 +192,8 @@ void *do_discovery(void *parameter)
             free(password);
             snmp_context_set_state(context, kSnmpStateEnded);
             context->discovery_ended_callback(context, -1);
+            
+            return 0;
         }
         free(password);
     }
