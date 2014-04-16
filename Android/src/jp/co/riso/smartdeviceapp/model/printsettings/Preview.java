@@ -171,4 +171,8 @@ public class Preview {
             return mCount;
         }
     }
+    
+    public enum OutputTray {
+        AUTO, FACEDOWN, FACEUP, TOP, STACKING;
+    }
 }
