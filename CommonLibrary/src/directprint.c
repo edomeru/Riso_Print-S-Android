@@ -25,8 +25,7 @@
 #define PORT_RAW "9100"
 
 #define TIMEOUT_CONNECT 10
-#define TIMEOUT_SEND 20
-#define TIMEOUT_RECEIVE 10
+#define TIMEOUT_RECEIVE 30
 
 #define BUFFER_SIZE 4096
 
@@ -299,6 +298,13 @@ void *do_lpr_print(void *parameter)
     int sock_fd = -1;
     FILE *fd = 0;
     unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
+    
+    // Setup receive timeout
+    struct timeval tv;
+    tv.tv_sec = TIMEOUT_RECEIVE;
+    tv.tv_usec = 0;
+    setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
+    
     do
     {
         notify_callback(print_job, kJobStatusConnecting);
