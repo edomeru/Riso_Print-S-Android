@@ -21,7 +21,6 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
-import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
@@ -30,6 +29,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
+import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,7 +92,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private boolean mShowPrintControls;
     private PrintSettings mPrintSettings;
-    private int mPrinterId;
+    private int mPrinterId = PrinterManager.EMPTY_ID;
     private List<Printer> mPrintersList;
     
     private ScrollView mMainScrollView;
@@ -106,7 +106,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private Handler mHandler;
     private ArrayList<LinearLayout> mPrintSettingsTitles = null;
     
-    private ValueChangedListener mListener = null;
+    private PrintSettingsViewInterface mListener = null;
     
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -322,7 +322,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private void applyValueConstraints(String tag, int prevValue) {
         int value = mPrintSettings.getValue(tag);
-
+        
         // Constraint #1 Booklet
         if (tag.equals(PrintSettings.TAG_BOOKLET)) {
             updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE,
@@ -458,7 +458,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         View v = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
-        TextView disclosureTextView = (TextView)v.findViewById(R.id.listValueTextView);
+        TextView disclosureTextView = (TextView) v.findViewById(R.id.listValueTextView);
         if (targetPrinter == null) {
             disclosureTextView.setText(R.string.ids_lbl_choose_printer);
         } else {
@@ -507,7 +507,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         applyViewConstraints(tag);
     }
     
-    public void setValueChangedListener(ValueChangedListener listener) {
+    public void setValueChangedListener(PrintSettingsViewInterface listener) {
         mListener = listener;
     }
     
@@ -933,10 +933,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void executePrint() {
-        //TODO: implement actual printing execution
-        mListener.onPrintExecution();
+        if (mPrinterId != PrinterManager.EMPTY_ID) {
+            mListener.onPrint(getPrinterFromList(mPrinterId), mPrintSettings);
+        }
     }
-    
     
     // ================================================================================
     // Convenience methods
@@ -1232,6 +1232,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
+    private Printer getPrinterFromList(int printerId) {
+        for (Printer p : mPrintersList) {
+            if (p.getId() == printerId) {
+                return p;
+            }
+        }
+        return null;
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -1363,9 +1372,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
     }
     
-    public interface ValueChangedListener {
+    public interface PrintSettingsViewInterface {
         public void onPrinterIdSelectedChanged(int printerId);
         public void onPrintSettingsValueChanged(PrintSettings printSettings);
-        public void onPrintExecution();
+        public void onPrint(Printer printer, PrintSettings printSettings);
     }
 }

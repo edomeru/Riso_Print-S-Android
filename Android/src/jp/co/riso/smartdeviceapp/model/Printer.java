@@ -8,10 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 
 public class Printer {
-    private PrintSettings mPrintSettings = null;
     private int mId;
     private String mName;
     private String mIpAddress;
@@ -20,22 +18,12 @@ public class Printer {
     private Config mConfig;
     private boolean mOnline;
     
-    public Printer(String name, String ipAddress, PrintSettings printSettings) {
+    public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
         mPortSetting = 0;
         
         mConfig = new Config();
-        
-        if (printSettings == null) {
-            mPrintSettings = new PrintSettings();
-        } else {
-            mPrintSettings = new PrintSettings(printSettings);
-        }
-    }
-    
-    public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
-        this(name, ipAddress, printSettings);
     }
     
     // ================================================================================
@@ -120,22 +108,6 @@ public class Printer {
      */
     public void setConfig(Config config) {
         mConfig = config;
-    }
-    
-    /**
-     * @return the print settings (mPrintSettings)
-     */
-    public PrintSettings getPrintSettings() {
-        return mPrintSettings;
-    }
-    
-    /**
-     * updates the value of mPrintSettings
-     * 
-     * @param printSettings
-     */
-    public void setPrintSettings(PrintSettings printSettings) {
-        this.mPrintSettings = new PrintSettings(printSettings);
     }
     
     /**

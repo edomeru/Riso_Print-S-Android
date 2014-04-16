@@ -12,7 +12,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -25,10 +24,10 @@ import android.view.KeyEvent;
  *      DialogUtils.showdisplayDialog(activity, tag, dialog);
  * 3. To dismiss, simply call: dialog.dismiss();
  */
-public class WaitingDialogFragment extends DialogFragment implements OnClickListener {
+public class WaitingDialogFragment extends DialogFragment {
     public static final String KEY_TITLE = "title";
     public static final String KEY_MESSAGE = "message";
-    public static final String KEY_BUTTON = "button";
+    public static final String KEY_CANCELABLE = "cancelable";
     
     public static final OnKeyListener sCancelBackButtonListener;
     
@@ -45,14 +44,14 @@ public class WaitingDialogFragment extends DialogFragment implements OnClickList
         };
     }
     
-    public static WaitingDialogFragment newInstance(String title, String message, String buttonTitle) {
+    public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable) {
         WaitingDialogFragment dialog = new WaitingDialogFragment();
         
         // Supply num input as an argument.
         Bundle args = new Bundle();
         args.putString(KEY_TITLE, title);
         args.putString(KEY_MESSAGE, message);
-        args.putString(KEY_BUTTON, buttonTitle);
+        args.putBoolean(KEY_CANCELABLE, cancelable);
         dialog.setArguments(args);
         
         return dialog;
@@ -69,8 +68,8 @@ public class WaitingDialogFragment extends DialogFragment implements OnClickList
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
         String message = getArguments().getString(KEY_MESSAGE);
-        String buttonTitle = getArguments().getString(KEY_BUTTON);
-        boolean cancelable = (buttonTitle != null);
+        
+        boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
         
         final ProgressDialog dialog = new ProgressDialog(getActivity());
         
@@ -83,14 +82,12 @@ public class WaitingDialogFragment extends DialogFragment implements OnClickList
         }
         
         dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCanceledOnTouchOutside(cancelable);
         dialog.setCancelable(cancelable);
         
         if (!cancelable) {
             // Disable the back button
             dialog.setOnKeyListener(sCancelBackButtonListener);
-        } else {
-            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, buttonTitle, this);
         }
         
         return dialog;
@@ -109,14 +106,20 @@ public class WaitingDialogFragment extends DialogFragment implements OnClickList
         super.onDestroyView();
     }
     
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (getTargetFragment() instanceof WaitingDialogListener) {
+            WaitingDialogListener listener = (WaitingDialogListener) getTargetFragment();
+            listener.onCancel();
+        }
+    }
+    
     // ================================================================================
-    // INTERFACE - OnClickListener
+    // Internal Classes
     // ================================================================================
     
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        if (which == DialogInterface.BUTTON_NEGATIVE) {
-            dismiss();
-        }
+    public interface WaitingDialogListener {
+        public void onCancel();
     }
 }
