@@ -204,7 +204,7 @@
     pincher.delegate = self;
     panner.delegate = self;
     [self.contentView addGestureRecognizer:pincher];
-    //[self.contentView addGestureRecognizer:panner];
+    [self.contentView addGestureRecognizer:panner];
     self.pincher = pincher;
     self.panner = panner;
     
