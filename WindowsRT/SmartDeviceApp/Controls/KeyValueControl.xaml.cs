@@ -42,6 +42,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty IconImageProperty =
             DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyValueControl), null);
+			
+		public static readonly DependencyProperty RightImageProperty =
+            DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyValueControl), null);
@@ -51,6 +54,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+			
+		public static readonly DependencyProperty BackgroundColorProperty =
+            DependencyProperty.Register("BackgroundColor", typeof(SolidColorBrush), typeof(KeyValueControl), null);
 
         public string LeftButtonVisibility
         {
@@ -87,6 +93,12 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
+		
+		public ImageSource RightImage
+        {
+            get { return (ImageSource)GetValue(RightImageProperty); }
+            set { SetValue(RightImageProperty, value); }
+        }
 
         public string Text
         {
@@ -105,5 +117,12 @@ namespace SmartDeviceApp.Controls
             get { return (string)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
         }
+		
+		public SolidColorBrush BackgroundColor
+        {
+            get { return (SolidColorBrush)GetValue(BackgroundColorProperty); }
+            set { SetValue(BackgroundColorProperty, value); }
+        }
+
     }
 }

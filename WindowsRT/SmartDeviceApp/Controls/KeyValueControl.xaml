@@ -56,7 +56,8 @@
                        Text="{Binding ValueText, ElementName=keyValueControl}"
                        Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"                       
                        Style="{StaticResource STYLE_TextValue}"/>
-            <Image x:Name="rightButton" Source="ms-appx:///Resources/Images/img_btn_submenu.png"
+            <Image x:Name="rightButton" 
+	                Source="{Binding RightImage, ElementName=keyValueControl}"
                         Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
                         Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
         </StackPanel>
