@@ -183,19 +183,6 @@ static SNMPManager* sharedSNMPManager = nil;
 #endif
 }
 
-#pragma mark - Get Printer Status
-
-- (BOOL)getPrinterStatus:(NSString*)ipAddress
-{
-    //TODO Get status from SNMP
-    
-    //TODO remove stub code
-    //STUB Code
-    int onlineStatus = arc4random() % 2;
-    
-    return onlineStatus;
-}
-
 #pragma mark - Net-SNMP Callback Handlers
 
 - (void)addRealPrinter:(snmp_device*)device

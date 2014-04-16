@@ -23,5 +23,6 @@
 -(id) initWithPrinterIP:(NSString *) ipAddress;
 -(void) stopPrinterStatusPolling;
 -(void) startPrinterStatusPolling;
+- (BOOL)isPolling;
 
 @end

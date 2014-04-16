@@ -81,6 +81,11 @@
     }
 }
 
+- (BOOL)isPolling
+{
+    return ((self.pinger != nil) && (self.pollingTimer != nil));
+}
+
 #pragma mark - SimplePingDelegate
 
 - (void)simplePing:(SimplePing*)pinger didStartWithAddress:(NSData*)address

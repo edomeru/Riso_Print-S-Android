@@ -47,16 +47,4 @@
  */
 - (void)cancelSearch;
 
-#pragma mark - Printer Status
-
-/**
- Get the Online/Offline status of the Printer
- 
- @param printerIP
- IP address of the printer
- 
- @return YES if Online; NO if Offline
- */
-- (BOOL)getPrinterStatus:(NSString*)ipAddress;
-
 @end

@@ -67,6 +67,7 @@
 {
     [super viewDidDisappear:animated];
     [self.statusHelper stopPrinterStatusPolling];
+    self.statusHelper.delegate = nil;
 }
 
 - (void)didReceiveMemoryWarning

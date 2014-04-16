@@ -85,6 +85,18 @@
     }
     
     cell.printerName.text = printer.name;
+    
+    // fix for the unconnected helper still polling when the
+    // cell and the PrinterStatusViews are reused on reload
+    // (the status view is not dealloc'd and it still sets
+    // the status on its previous cell)
+    if ([cell.printerStatus.statusHelper isPolling])
+    {
+        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+        cell.printerStatus.statusHelper.delegate = nil;
+    }
+    
+    // since cells may be reused, create a new helper for this cell
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
 
