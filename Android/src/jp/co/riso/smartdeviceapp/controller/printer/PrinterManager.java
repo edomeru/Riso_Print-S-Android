@@ -17,6 +17,7 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.snmp.SnmpManager;
 import jp.co.riso.smartdeviceapp.controller.snmp.SnmpManager.SnmpSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -136,6 +137,11 @@ public class PrinterManager implements SnmpSearchCallback {
         return false;
     }
     
+    /**
+     * Retrieves the Printer objects from the Database
+     * 
+     * @return list of Printer objects
+     */
     public List<Printer> getSavedPrintersList() {
         DatabaseManager dbManager = new DatabaseManager(mContext);
         Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null);
@@ -149,17 +155,30 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         if (cursor.moveToFirst()) {
             do {
-                Printer printer = new Printer(cursor.getString(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_NAME)), cursor.getString(cursor
-                        .getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_IP)), null);
-                printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
-                printer.setPortSetting(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT)));
-                printer.setLpr(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_LPR)) > 0);
-                printer.setRaw(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_RAW)) > 0);
-                printer.setPagination(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION)) > 0);
-                printer.setDuplex(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX)) > 0);
-                printer.setBookletBinding(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING)) > 0);
-                printer.setStaple(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE)) > 0);
-                printer.setBind(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_EN_BIND)) > 0);
+                Printer printer = new Printer(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_NAME),
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP), new PrintSettings(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID)));
+                printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
+                printer.setPortSetting(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT));
+                
+                boolean lprAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_LPR));
+                boolean rawAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_RAW));
+                boolean bookletAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_BOOKLET));
+                boolean staplerAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_STAPLER));
+                boolean punch4Available = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PUNCH4));
+                boolean trayFaceDownAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN));
+                boolean trayAutoStackAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK));
+                boolean trayTopAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYTOP));
+                boolean trayStackAvailable = Boolean.parseBoolean(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYSTACK));
+                
+                printer.getConfig().setLprAvailable(lprAvailable);
+                printer.getConfig().setRawAvailable(rawAvailable);
+                printer.getConfig().setBookletAvailable(bookletAvailable);
+                printer.getConfig().setStaplerAvailable(staplerAvailable);
+                printer.getConfig().setPunch4Available(punch4Available);
+                printer.getConfig().setTrayFaceDownAvailable(trayFaceDownAvailable);
+                printer.getConfig().setTrayAutoStackAvailable(trayAutoStackAvailable);
+                printer.getConfig().setTrayTopAvailable(trayTopAvailable);
+                printer.getConfig().setTrayStackAvailable(trayStackAvailable);
                 mPrinterList.add(printer);
             } while (cursor.moveToNext());
             
@@ -175,6 +194,12 @@ public class PrinterManager implements SnmpSearchCallback {
         return mPrinterList;
     }
     
+    /**
+     * Sets the Default Printer by clearing and inserting an entry in DefaultPrinter table
+     * 
+     * @param printer
+     *            The Printer object selected
+     */
     public void setDefaultPrinter(Printer printer) {
         
         if (printer == null) {
@@ -195,7 +220,7 @@ public class PrinterManager implements SnmpSearchCallback {
         ContentValues newDefaultPrinter = new ContentValues();
         
         if (cursor.moveToFirst()) {
-            printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
+            printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
             newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, printer.getId());
             cursor.close();
         } else {
@@ -210,6 +235,10 @@ public class PrinterManager implements SnmpSearchCallback {
         dbManager.close();
     }
     
+    /**
+     * Clears the Default Printer table in the database.
+     * 
+     */
     public void clearDefaultPrinter() {
         DatabaseManager dbManager = new DatabaseManager(mContext);
         
@@ -217,6 +246,12 @@ public class PrinterManager implements SnmpSearchCallback {
         dbManager.close();
     }
     
+    /**
+     * Removes the Printer from the database.
+     * 
+     * @param printer
+     *            The Printer object selected for deletion
+     */
     public void removePrinter(Printer printer) {
         
         if (printer == null) {
@@ -249,7 +284,7 @@ public class PrinterManager implements SnmpSearchCallback {
         }
         
         if (cursor.moveToFirst()) {
-            printer = cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID));
+            printer = DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID);
         }
         
         cursor.close();
@@ -357,13 +392,16 @@ public class PrinterManager implements SnmpSearchCallback {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.getIpAddress());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.getName());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_LPR, printer.getLpr());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_RAW, printer.getRaw());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_PAGINATION, printer.getPagination());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_DUPLEX, printer.getDuplex());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BOOKLET_BINDING, printer.getBookletBinding());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_STAPLE, printer.getStaple());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EN_BIND, printer.getBind());
+        
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_LPR, printer.getConfig().isLprAvailable() );
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_RAW, printer.getConfig().isRawAvailable());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_BOOKLET, printer.getConfig().isBookletAvailable());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_STAPLER, printer.getConfig().isStaplerAvailable());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PUNCH4, printer.getConfig().isPunch4Available());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN, printer.getConfig().isTrayFaceDownAvailable());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK, printer.getConfig().isTrayAutoStackAvailable());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYTOP, printer.getConfig().isTrayTopAvailable());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK, printer.getConfig().isTrayStackAvailable());
         
         DatabaseManager dbManager = new DatabaseManager(mContext);
         if (!dbManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {

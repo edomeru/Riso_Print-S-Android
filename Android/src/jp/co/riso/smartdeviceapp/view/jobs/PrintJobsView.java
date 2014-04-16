@@ -339,6 +339,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                     Rect rect = new Rect(coords[0], coords[1], coords[0] + deleteButton.getWidth(), coords[1] + deleteButton.getHeight());
                     // intercept if touched item is not the delete button
                     if (rect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                            mDownPoint = new Point((int) ev.getRawX(), (int) ev.getRawY());
+                        }
                         return super.onInterceptTouchEvent(ev);
                     }
                 }
@@ -415,6 +418,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             mColumns.get(column).getChildAt(i).clearAnimation();
             mColumns.get(column).getChildAt(i).startAnimation(animation);
         }
+    }
+    
+    @Override
+    public void onDeleteJob(){
+        endDelete(false);
     }
     
     // ================================================================================

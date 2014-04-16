@@ -34,7 +34,7 @@ import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback {
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
+    //private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int MSG_UPDATE_REFRESH_BAR = 0x0;
@@ -54,7 +54,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
+            // TODO: change implementation - compile error since Printer is not parcelable
+            // mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
         } else {
             mPrinter = new ArrayList<Printer>();
         }
@@ -104,7 +105,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
+        // TODO: change implementation - compile error since Printer is not parcelable
+        // savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
         super.onSaveInstanceState(savedInstanceState);
     }
     
