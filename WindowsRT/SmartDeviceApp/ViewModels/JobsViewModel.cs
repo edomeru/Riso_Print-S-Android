@@ -80,8 +80,8 @@ namespace SmartDeviceApp.ViewModels
                 if (_printJobsList != value)
                 {
                     _printJobsList = value;
-                    SortPrintJobsListToColumns();
-                    RaisePropertyChanged("PrintJobsList");
+                    //SortPrintJobsListToColumns();
+                    //RaisePropertyChanged("PrintJobsList");
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void SortPrintJobsListToColumns()
+        public void SortPrintJobsListToColumns()
         {
             var column1 = new PrintJobList();
             var column2 = new PrintJobList();

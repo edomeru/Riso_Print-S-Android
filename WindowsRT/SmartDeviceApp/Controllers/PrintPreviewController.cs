@@ -103,6 +103,7 @@ namespace SmartDeviceApp.Controllers
 
                 // Send list to view model
                 _printSettingsViewModel.PrintSettingsList = _printSettingList;
+                _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
 
                 UpdatePreviewInfo();
                 InitializeGestures();

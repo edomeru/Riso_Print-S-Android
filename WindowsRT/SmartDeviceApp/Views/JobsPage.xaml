@@ -33,7 +33,6 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <controls:JobListItemControl />
-
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -63,7 +62,7 @@
                           Button1Visibility="Collapsed"
                           Button2Visibility="Collapsed">
         <ScrollViewer x:Name="jobsScrollViewer"
-                      HorizontalScrollMode="Disabled" VerticalScrollMode="Disabled"
+                      HorizontalScrollMode="Disabled" VerticalScrollMode="Enabled"
                       ZoomMode="Disabled" 
                       Loaded="OnJobsScrollViewerLoaded">
             <Grid>

@@ -44,14 +44,46 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
+        private string _printerName;
+        private ICommand _printCommand;
+
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
-        private PrintSetting _selectedPrintSetting;
+        private PrintSetting _selectedPrintSetting;        
 
         public PrintSettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
+        }
+
+        public string PrinterName
+        {
+            get { return _printerName; }
+            set
+            {
+                if (_printerName != value)
+                {
+                    _printerName = value;
+                    // TODO: No default/selected printer
+                    RaisePropertyChanged("PrinterName");
+                }
+            }
+        }
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                if (_printCommand == null)
+                {
+                    _printCommand = new RelayCommand(
+                        () => PrintExecute(),
+                        () => true
+                    );
+                }
+                return _printCommand;
+            }
         }
         
         public PrintSettingList PrintSettingsList
@@ -93,6 +125,11 @@ namespace SmartDeviceApp.ViewModels
                 }
                 return _selectPrintSetting;
             }
+        }
+
+        private void PrintExecute()
+        {
+            // TODO
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)
