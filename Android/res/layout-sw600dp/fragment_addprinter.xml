@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/printers_row_height"
             android:layout_marginLeft="@dimen/printers_sub_separator_padding"
-            android:layout_marginRight="@dimen/printers_sub_separator_padding"
+            android:layout_marginRight="@dimen/printers_row_right_margin"
             android:orientation="horizontal" >
 
             <TextView
