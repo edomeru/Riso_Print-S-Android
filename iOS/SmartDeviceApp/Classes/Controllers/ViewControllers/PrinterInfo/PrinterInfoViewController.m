@@ -81,11 +81,11 @@
     self.onlineStatus = isOnline;
     if(isOnline)
     {
-        self.printerStatus.text = @"Online";    //TODO: should use localized strings
+        self.printerStatus.text = NSLocalizedString(IDS_LBL_PRINTER_STATUS_ONLINE, @"Online");
     }
     else
     {
-        self.printerStatus.text = @"Offline";   //TODO: should use localized strings
+        self.printerStatus.text = NSLocalizedString(IDS_LBL_PRINTER_STATUS_OFFLINE, @"Offline");
     }
 }
 
