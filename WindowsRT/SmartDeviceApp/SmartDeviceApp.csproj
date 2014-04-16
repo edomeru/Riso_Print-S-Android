@@ -163,7 +163,10 @@
     <Compile Include="Controls\SidePaneTitleControl.xaml.cs">
       <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\DateTimeToStringConverter.cs" />
+    <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\PrintJobToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintSettingToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\IntToStringConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />

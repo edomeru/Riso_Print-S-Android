@@ -87,11 +87,11 @@ namespace SmartDeviceApp.Controllers
 
                     
                     // DeleteAll is for testing purposes only PrintersModule
-                    db.DeleteAll<Printer>();
-                    db.Commit();
+                    //db.DeleteAll<Printer>();
+                    //db.Commit();
 
-                    db.DeleteAll<DefaultPrinter>();
-                    db.Commit();
+                    //db.DeleteAll<DefaultPrinter>();
+                    //db.Commit();
                     
 
                     #region Create Tables Using Model Classes
@@ -119,7 +119,7 @@ namespace SmartDeviceApp.Controllers
 
                     #endregion Create Tables Using Model Classes
 
-                    insertPrinters(); //for testing PrintersModule
+                    //insertPrinters(); //for testing PrintersModule
                 }
             }
             catch
@@ -131,40 +131,40 @@ namespace SmartDeviceApp.Controllers
         #region Printer Table Operations
 
         
-        private void insertPrinters()
-        {
-            Printer printer = new Printer(1, 1, "192.168.0.170", "RISO_Printer1", 1, true, true,
-                true, true, true, true, true);
-            Printer printer2 = new Printer(2, 2, "192.168.0.189", "RISO_Printer2", 1, true, true,
-                true, true, true, true, true);
-            Printer printer3 = new Printer(3, 3, "192.168.0.22", "RISO_Printer3", 1, true, true,
-                true, true, true, true, true);
+        //private void insertPrinters()
+        //{
+        //    Printer printer = new Printer(1, 1, "192.168.0.170", "RISO_Printer1", 1, true, true,
+        //        true, true, true, true, true);
+        //    Printer printer2 = new Printer(2, 2, "192.168.0.189", "RISO_Printer2", 1, true, true,
+        //        true, true, true, true, true);
+        //    Printer printer3 = new Printer(3, 3, "192.168.0.22", "RISO_Printer3", 1, true, true,
+        //        true, true, true, true, true);
 
-            DefaultPrinter dp = new DefaultPrinter(printer3.Id);
+        //    DefaultPrinter dp = new DefaultPrinter(printer3.Id);
 
-            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
-                FILE_NAME_DATABASE);
-            using (var db = new SQLite.SQLiteConnection(dbpath))
-            {
-                // Create the tables if they don't exist
-                db.Insert(printer);
-                db.Commit();
+        //    var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
+        //        FILE_NAME_DATABASE);
+        //    using (var db = new SQLite.SQLiteConnection(dbpath))
+        //    {
+        //        // Create the tables if they don't exist
+        //        db.Insert(printer);
+        //        db.Commit();
 
-                db.Insert(printer2);
-                db.Commit();
+        //        db.Insert(printer2);
+        //        db.Commit();
 
-                db.Insert(printer3);
-                db.Commit();
+        //        db.Insert(printer3);
+        //        db.Commit();
 
-                db.Insert(dp);
-                db.Commit();
+        //        db.Insert(dp);
+        //        db.Commit();
 
-                db.Dispose();
-                db.Close();
-            }
+        //        db.Dispose();
+        //        db.Close();
+        //    }
 
 
-        }
+        //}
         
 
         public async Task<int> InsertPrinter(Printer printer)

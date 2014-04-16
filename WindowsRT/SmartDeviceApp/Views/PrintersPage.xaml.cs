@@ -14,8 +14,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-//<<<<<<< HEAD
-
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
@@ -52,7 +50,6 @@ namespace SmartDeviceApp.Views
         public PrintersPage()
         {
             Messenger.Default.Register<PrintersViewMode>(this, (printersViewMode) => OnSetPrintersView(printersViewMode));
-            //Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
 
             Messenger.Default.Register<MessageAlert>(
              this,
@@ -119,16 +116,6 @@ namespace SmartDeviceApp.Views
 
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //printerController.updateOnlineStatus();
-        }
-
-        private void buttonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            //printerController.addPrinter("192.168.0.199");
-        }
-
         // Note: Cannot set this in ViewModel because need to get this object
         // for VisualStateManager.GoToState
         private void OnSetPrintersView(PrintersViewMode previewViewMode)
@@ -171,18 +158,3 @@ namespace SmartDeviceApp.Views
         }
     }
 }
-//=======
-//using SmartDeviceApp.Controls;
-//using SmartDeviceApp.Common.Base;
-
-//namespace SmartDeviceApp.Views
-//{
-//    public sealed partial class PrintersPage : PageBase
-//    {
-//        public PrintersPage()
-//        {
-//            this.InitializeComponent();
-//        }
-//>>>>>>> origin/feature/3570
-//    }
-//}

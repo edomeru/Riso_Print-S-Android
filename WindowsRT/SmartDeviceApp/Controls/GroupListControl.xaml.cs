@@ -28,6 +28,9 @@ namespace SmartDeviceApp.Controls
         public static new readonly DependencyProperty ContentProperty =
            DependencyProperty.Register("Content", typeof(object), typeof(GroupListControl), null);
 
+        public static readonly DependencyProperty DeleteButtonVisibilityProperty =
+           DependencyProperty.Register("DeleteButtonVisibility", typeof(Visibility), typeof(GroupListControl), null);
+
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
@@ -38,6 +41,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (object)GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
+        }
+
+        public Visibility DeleteButtonVisibility
+        {
+            get { return (Visibility)GetValue(DeleteButtonVisibilityProperty); }
+            set { SetValue(DeleteButtonVisibilityProperty, value); }
         }
     }
 }

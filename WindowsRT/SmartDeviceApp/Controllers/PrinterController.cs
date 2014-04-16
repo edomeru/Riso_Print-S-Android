@@ -73,15 +73,12 @@ namespace SmartDeviceApp.Controllers
             _deletePrinterHandler = new DeletePrinterHandler(deletePrinter);
             _searchPrinterTimeoutHandler = new SearchPrinterTimeoutHandler(handleSearchTimeout);
 
-            //_printersViewModel.PopulateScreenHandler += _populateScreenHandler;
-            _printersViewModel.AddPrinterHandler += _addPrinterHandler;
-            _printersViewModel.SearchPrinterHandler += _searchPrinterHandler;
             _printersViewModel.DeletePrinterHandler += _deletePrinterHandler;
-            //_printersViewModel.SearchPrinterTimeoutHandler += _searchPrinterTimeoutHandler;
+            
 
             populatePrintersScreen();
             _printersViewModel.PrinterList = PrinterList;
-            //_printersViewModel.PrinterSearchList = PrinterSearchList;
+            
 
             _searchPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
@@ -160,10 +157,8 @@ namespace SmartDeviceApp.Controllers
                 //sort printerlist
                 sortPrinterList(indexOfDefaultPrinter);
                 _printerListTemp = _printerList;
-                //start polling TODO
-                //call snmp
-                updateStatus();
-                //startPolling();
+               
+                await updateStatus();
             }
         }
 
@@ -342,7 +337,7 @@ namespace SmartDeviceApp.Controllers
                 
 
                 //insert to database
-                int id = await DatabaseController.Instance.InsertPrinter(printer);
+                int id =await DatabaseController.Instance.InsertPrinter(printer);
                 if (id < 0)
                 {
                     return;
@@ -542,11 +537,6 @@ namespace SmartDeviceApp.Controllers
 
         private void handleSearchTimeout(string ip)
         {
-            /**
-             * TODO: search timeout
-             * 
-             * */
-            //printerControllerSearchTimeout();
             _searchPrinterViewModel.SearchTimeout();
             
         }

@@ -83,8 +83,6 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            await Unload(); // Ensure to clean up previous
-
             try
             {
                 // Copy to AppData temporary store

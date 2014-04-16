@@ -56,7 +56,7 @@ namespace SmartDeviceApp.Common.Utilities
         }
 
         /// <summary>
-        /// Deletes files with specified part of the file name
+        /// Deletes all files with specified part of the file name
         /// </summary>
         /// <param name="keyword">substring of the file name to be deleted</param>
         /// <param name="folderLocation">folder location</param>
@@ -70,6 +70,21 @@ namespace SmartDeviceApp.Common.Utilities
                 {
                     await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Deletes a file (exact file name match)
+        /// </summary>
+        /// <param name="fileName">file name to be deleted</param>
+        /// <param name="folderLocation">folder location</param>
+        /// <returns>task</returns>
+        public async static Task DeleteFile(string fileName, StorageFolder folderLocation)
+        {
+            var file = await GetExistingFile(fileName, folderLocation);
+            if (file != null)
+            {
+                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
             }
         }
 

@@ -40,6 +40,7 @@
 
     <!-- APP CONVERTERS START -->
     <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <!--<conv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>-->
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
     <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
@@ -47,6 +48,9 @@
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
+    <!--<conv:PrintJobListWidthConverter x:Key="PrintJobListWidthConverter"/>
+    <conv:PrintJobResultToImageSourceConverter x:Key="PrintJobResultToImageSourceConverter"/>
+    <conv:PrintJobToSeparatorVisibilityConverter x:Key="PrintJobToSeparatorVisibilityConverter"/>-->
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
     <conv:PrintSettingOptionToSeparatorVisibilityConverter x:Key="PrintSettingOptionToSeparatorVisibilityConverter"/>
     <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>

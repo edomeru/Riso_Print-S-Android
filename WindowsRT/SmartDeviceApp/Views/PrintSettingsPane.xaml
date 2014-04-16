@@ -25,13 +25,11 @@
         <Style x:Key="STYLE_LeftGrid" TargetType="Grid">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Left"/>
-                <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
             </Style.Setters>
         </Style>
         <Style x:Key="STYLE_RightGrid" TargetType="Grid">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Right"/>
-                <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
                 <Setter Property="Margin">
                     <Setter.Value>
                         <Thickness Right="{StaticResource MARGIN_RightSidePane}"></Thickness>
@@ -45,7 +43,7 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="PrintSettingsVisualStateGroup">
                 <VisualStateGroup.Transitions>
-                    <VisualTransition GeneratedDuration="0:0:0.3">
+                    <VisualTransition GeneratedDuration="0:0:0">
                         <VisualTransition.GeneratedEasingFunction>
                             <QuinticEase EasingMode="EaseInOut"/>
                         </VisualTransition.GeneratedEasingFunction>
@@ -54,8 +52,26 @@
                 <VisualState x:Name="PrintSettingsVisibleState"/>
                 <VisualState x:Name="PrintSettingOptionsVisibleState">
                     <Storyboard>
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printSettingsGrid" d:IsOptimized="True"/>
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printSettingOptionsGrid" d:IsOptimized="True"/>
+                    	<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="printSettingsGrid">
+                    		<DiscreteObjectKeyFrame KeyTime="0">
+                    			<DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="{StaticResource MARGIN_RightSidePane}"
+                                               Right="0">
+                                    </Thickness>
+                    			</DiscreteObjectKeyFrame.Value>
+                    		</DiscreteObjectKeyFrame>
+                    	</ObjectAnimationUsingKeyFrames>
+                    	<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="printSettingOptionsGrid">
+                    		<DiscreteObjectKeyFrame KeyTime="0">
+                    			<DiscreteObjectKeyFrame.Value>
+                    				<Thickness>0</Thickness>
+                    			</DiscreteObjectKeyFrame.Value>
+                    		</DiscreteObjectKeyFrame>
+                    	</ObjectAnimationUsingKeyFrames>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printSettingsGrid" d:IsOptimized="True"/>
+                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printSettingOptionsGrid" d:IsOptimized="True"/>-->
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
@@ -71,17 +87,13 @@
                     <PaneThemeTransition/>
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" x:Name="printSettingsGrid" Style="{StaticResource STYLE_LeftGrid}">
+            <Grid Grid.Row="0" x:Name="printSettingsGrid" Style="{StaticResource STYLE_LeftGrid}">
             	<Grid.Projection>
             		<PlaneProjection/>
             	</Grid.Projection>
                 <local:PrintSettingsBox />
             </Grid>
-            <Grid Grid.Column="1" x:Name="printSettingOptionsGrid" Style="{StaticResource STYLE_RightGrid}">
+            <Grid Grid.Row="0" x:Name="printSettingOptionsGrid" Style="{StaticResource STYLE_RightGrid}">
             	<Grid.Projection>
             		<PlaneProjection/>
             	</Grid.Projection>

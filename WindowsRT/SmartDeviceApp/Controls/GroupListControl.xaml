@@ -19,11 +19,16 @@
         <Style x:Key="STYLE_List_Separator" TargetType="Line">
             <Style.Setters>
                 <Setter Property="X1" Value="0"/>
-                <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
+                <Setter Property="X2" Value="{Binding Width, ElementName=groupListControl}"/>
                 <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
                 <Setter Property="StrokeThickness" Value="2"/>
             </Style.Setters>
         </Style>
+        <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
+            <Grid Background="{StaticResource BRUSH_White}" Width="130" Height="60">
+                <TextBlock Text="DELETE ALL" Style="{StaticResource STYLE_TextBody}"></TextBlock>
+            </Grid>
+        </ControlTemplate>
         <ControlTemplate x:Key="TEMPLATE_ToggleButton" TargetType="ToggleButton">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
         		<VisualStateManager.VisualStateGroups>
@@ -65,14 +70,23 @@
                             </Storyboard>
                         </VisualState>
         			</VisualStateGroup>
-        		</VisualStateManager.VisualStateGroups>        		
-        		<StackPanel Style="{StaticResource STYLE_StackLeft}">
+        		</VisualStateManager.VisualStateGroups>   
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+        		<StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="expandImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_expand.png"/>
                     <Image x:Name="collapseImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_collapse.png"/>
                     <TextBlock x:Name="key" Text="{Binding Text, ElementName=groupListControl}" Style="{StaticResource STYLE_TextListHeader}" />
         		</StackPanel>
+                <Button x:Name="deleteButton" Grid.Column="1" 
+                        Template="{StaticResource TEMPLATE_DeleteButton}"
+                        Visibility="{Binding DeleteButtonVisibility, ElementName=groupListControl}"/>
             </Grid>
         </ControlTemplate>
+       
+            
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>
@@ -80,7 +94,11 @@
             <RowDefinition Height="1"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <ToggleButton x:Name="header" Grid.Row="0" Template="{StaticResource TEMPLATE_ToggleButton}" Style="{StaticResource STYLE_ListToggleButton}"/>
+        <ToggleButton x:Name="header" Grid.Row="0" 
+                      Width="{Binding Width, ElementName=groupListControl}"
+                      Template="{StaticResource TEMPLATE_ToggleButton}" 
+                      ManipulationMode="TranslateInertia"
+                      Style="{StaticResource STYLE_ListToggleButton}"/>
         <ContentPresenter Grid.Row="2" 
                           Content="{Binding Content, ElementName=groupListControl}" 
                           Visibility="{Binding IsChecked, ElementName=header, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>

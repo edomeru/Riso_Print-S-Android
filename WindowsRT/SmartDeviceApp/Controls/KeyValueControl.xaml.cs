@@ -27,10 +27,6 @@ namespace SmartDeviceApp.Controls
             RightImage = new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_submenu.png"));
         }
 
-        // TODO: REMOVE IF UNUSED
-        public static readonly DependencyProperty IndexProperty =
-            DependencyProperty.Register("Index", typeof(int), typeof(KeyValueControl), null);
-
         public static readonly DependencyProperty LeftButtonVisibilityProperty =
             DependencyProperty.Register("LeftButtonVisibility", typeof(Visibility), typeof(KeyValueControl), null);
 
@@ -69,11 +65,11 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty BackgroundColorProperty =
             DependencyProperty.Register("BackgroundColor", typeof(SolidColorBrush), typeof(KeyValueControl), null);
 
-        public int Index
-        {
-            get { return (int)GetValue(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
-        }
+        //public int Index
+        //{
+        //    get { return (int)GetValue(IndexProperty); }
+        //    set { SetValue(IndexProperty, value); }
+        //}
 
         public string LeftButtonVisibility
         {

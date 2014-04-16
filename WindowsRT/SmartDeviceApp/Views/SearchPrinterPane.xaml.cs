@@ -52,5 +52,12 @@ namespace SmartDeviceApp.Views
             }
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var vBar = ((FrameworkElement)VisualTreeHelper.GetChild(printerSearchListView.ElementScrollViewer, 0)).FindName("VerticalScrollBar") as ScrollBar;
+            
+            this.printerSearchListView.SetVBar(vBar);
+        }
+
     }
 }
