@@ -733,7 +733,7 @@
 - (void)cache:(NSCache *)cache willEvictObject:(id)obj
 {
     RenderCacheItem *renderCacheItem = obj;
-    NSLog(@"**Releasing: %d **", renderCacheItem.viewController.pageIndex);
+    NSLog(@"**Releasing: %ld **", (long)renderCacheItem.viewController.pageIndex);
 }
 
 - (NSUInteger) currentIndex

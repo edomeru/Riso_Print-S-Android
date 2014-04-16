@@ -641,7 +641,7 @@
 
 -(void) setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
 {
-    NSNumber *num = [NSNumber numberWithInt:value];
+    NSNumber *num = [NSNumber numberWithInteger:value];
     [self.previewSetting setValue:num forKey:key];
     
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];

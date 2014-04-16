@@ -103,7 +103,7 @@
         return;
     }
     
-    int index = indexPath.row - 1;
+    int index = (int)indexPath.row - 1;
     if (index != self.selectedIndex)
     {
         self.selectedIndex = index;
