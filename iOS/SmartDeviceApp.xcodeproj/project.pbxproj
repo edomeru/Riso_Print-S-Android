@@ -23,6 +23,10 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
+		2D574CA418FE0AC700E52361 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D574CA318FE0AC700E52361 /* HelpViewController.m */; };
+		2D574CA818FE103800E52361 /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = 2D574CAA18FE103800E52361 /* help.html */; };
+		2D574CAE18FE105800E52361 /* legal.html in Resources */ = {isa = PBXBuildFile; fileRef = 2D574CB018FE105800E52361 /* legal.html */; };
+		2D574CB518FE150000E52361 /* LegalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D574CB418FE150000E52361 /* LegalViewController.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D9DD419185FFB830085AD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D9DD41A185FFB830085AD88 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
@@ -102,6 +106,14 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D574CA218FE0AC700E52361 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
+		2D574CA318FE0AC700E52361 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
+		2D574CA918FE103800E52361 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/help.html; sourceTree = "<group>"; };
+		2D574CAB18FE104300E52361 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file; name = ja; path = ja.lproj/help.html; sourceTree = "<group>"; };
+		2D574CAF18FE105800E52361 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/legal.html; sourceTree = "<group>"; };
+		2D574CB118FE105D00E52361 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file; name = ja; path = ja.lproj/legal.html; sourceTree = "<group>"; };
+		2D574CB318FE150000E52361 /* LegalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegalViewController.h; sourceTree = "<group>"; };
+		2D574CB418FE150000E52361 /* LegalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegalViewController.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -327,6 +339,7 @@
 			isa = PBXGroup;
 			children = (
 				2828312F18C70699008B127C /* Database */,
+				2D574CA518FE0FF600E52361 /* HTML */,
 				2D0AEC47185FDE8100810455 /* Images */,
 				2D0AEC49185FDE8100810455 /* Locales */,
 				2828313218C70699008B127C /* PropertyList */,
@@ -411,6 +424,33 @@
 				2D0AEC86185FE50000810455 /* InfoPlist.strings */,
 			);
 			path = Locales;
+			sourceTree = "<group>";
+		};
+		2D574CA118FE0AB400E52361 /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				2D574CA218FE0AC700E52361 /* HelpViewController.h */,
+				2D574CA318FE0AC700E52361 /* HelpViewController.m */,
+			);
+			path = Help;
+			sourceTree = "<group>";
+		};
+		2D574CA518FE0FF600E52361 /* HTML */ = {
+			isa = PBXGroup;
+			children = (
+				2D574CB018FE105800E52361 /* legal.html */,
+				2D574CAA18FE103800E52361 /* help.html */,
+			);
+			path = HTML;
+			sourceTree = "<group>";
+		};
+		2D574CB218FE14F700E52361 /* Legal */ = {
+			isa = PBXGroup;
+			children = (
+				2D574CB318FE150000E52361 /* LegalViewController.h */,
+				2D574CB418FE150000E52361 /* LegalViewController.m */,
+			);
+			path = Legal;
 			sourceTree = "<group>";
 		};
 		2D9DD402185FF3200085AD88 /* CommonAPI */ = {
@@ -628,7 +668,9 @@
 			children = (
 				2DA1AEF418E2EF9600085F27 /* AddPrinter */,
 				2DA1AEF718E2EF9600085F27 /* General */,
+				2D574CA118FE0AB400E52361 /* Help */,
 				2DA1AEFE18E2EF9600085F27 /* Home */,
+				2D574CB218FE14F700E52361 /* Legal */,
 				2DA1AF0118E2EF9600085F27 /* PrinterInfo */,
 				2DA1AF0418E2EF9600085F27 /* Printers */,
 				2DA1AF0B18E2EF9600085F27 /* PrinterSearch */,
@@ -877,7 +919,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D574CAE18FE105800E52361 /* legal.html in Resources */,
 				2D0AEC52185FDE8100810455 /* Main.storyboard in Resources */,
+				2D574CA818FE103800E52361 /* help.html in Resources */,
 				2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
 				2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */,
@@ -936,6 +980,7 @@
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
 				2DA1AF2418E2EF9600085F27 /* PrinterSearchViewController.m in Sources */,
 				2DA1AEE118E2EF8500085F27 /* MenuButton.m in Sources */,
+				2D574CB518FE150000E52361 /* LegalViewController.m in Sources */,
 				2DA1AF2718E2EF9600085F27 /* PrintSettingsViewController.m in Sources */,
 				2DA1AF5318E2EFCB00085F27 /* Printer+Log.m in Sources */,
 				2DA1AF2018E2EF9600085F27 /* PrinterInfoViewController.m in Sources */,
@@ -954,6 +999,7 @@
 				2DA1AEE318E2EF8500085F27 /* PDFPageView.m in Sources */,
 				2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */,
 				2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */,
+				2D574CA418FE0AC700E52361 /* HelpViewController.m in Sources */,
 				2DA1AF1D18E2EF9600085F27 /* SlidingViewController.m in Sources */,
 				2DA1AF2618E2EF9600085F27 /* PrintPreviewViewController.m in Sources */,
 			);
@@ -994,6 +1040,24 @@
 				2D0AEC87185FE50000810455 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2D574CAA18FE103800E52361 /* help.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D574CA918FE103800E52361 /* en */,
+				2D574CAB18FE104300E52361 /* ja */,
+			);
+			name = help.html;
+			sourceTree = "<group>";
+		};
+		2D574CB018FE105800E52361 /* legal.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D574CAF18FE105800E52361 /* en */,
+				2D574CB118FE105D00E52361 /* ja */,
+			);
+			name = legal.html;
 			sourceTree = "<group>";
 		};
 		2D5FC7B518DA79EB00459B92 /* Localizable.strings */ = {

@@ -10,6 +10,8 @@
 #import "PrintPreviewViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "PrintersIpadViewController.h"
+#import "HelpViewController.h"
+#import "LegalViewController.h"
 #import "RootViewController.h"
 #import "UIViewController+Segue.h"
 
@@ -134,10 +136,18 @@
 
 - (IBAction)helpAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[HelpViewController class]];
+    }
 }
 
 - (IBAction)legalAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[LegalViewController class]];
+    }
 }
 
 @end
