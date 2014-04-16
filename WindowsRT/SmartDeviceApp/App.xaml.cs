@@ -82,8 +82,9 @@ namespace SmartDeviceApp
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(PrintPreviewPage), e.Arguments);
-                await MainController.InitializeSamplePdf(); // TODO: For deletion, used for testing
+                rootFrame.Navigate(typeof(HomePage), e.Arguments);
+                //rootFrame.Navigate(typeof(PrintPreviewPage));
+                //await MainController.InitializeSamplePdf(); // TODO: For deletion, used for testing
             }
             // Ensure the current window is active
             Window.Current.Activate();
@@ -125,6 +126,7 @@ namespace SmartDeviceApp
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 rootFrame.Navigate(typeof(PrintPreviewPage));
+                //await MainController.InitializeSamplePdf(); // TODO: For deletion, used for testing
             //}
 
             await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
