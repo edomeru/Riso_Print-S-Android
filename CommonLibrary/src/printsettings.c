@@ -302,7 +302,6 @@ void parse(char *settings, setting_value values[])
         int line_length = next - current_line + 1;
         char *line = calloc(line_length, sizeof(char));
         strncpy(line, current_line, line_length - 1);
-        line[line_length] = 0;
         
         char name[64];
         char value[1024];
