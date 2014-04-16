@@ -1,5 +1,4 @@
-﻿using SmartDeviceApp.Common.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {

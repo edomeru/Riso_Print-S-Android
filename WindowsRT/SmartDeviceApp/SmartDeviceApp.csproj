@@ -125,7 +125,11 @@
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\JobController.cs" />
+    <Compile Include="Controllers\JobGestureController.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controls\JobListItemControl.xaml.cs">
+      <DependentUpon>JobListItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
       <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
     </Compile>
@@ -182,7 +186,7 @@
     <Compile Include="Common\Base\UserControlBase.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
-    <Compile Include="Controllers\GestureController.cs" />
+    <Compile Include="Controllers\PreviewGestureController.cs" />
     <Compile Include="Controls\PageControl.xaml.cs">
       <DependentUpon>PageControl.xaml</DependentUpon>
     </Compile>
@@ -375,6 +379,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\JobListItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\KeyRadioButtonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

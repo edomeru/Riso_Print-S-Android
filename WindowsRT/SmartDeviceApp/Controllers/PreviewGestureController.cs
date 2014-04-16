@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Media;
 
 namespace SmartDeviceApp.Controllers
 {
-    public class GestureController
+    public class PreviewGestureController
     {
         private const int SWIPE_THRESHOLD = 500;
 
@@ -41,7 +41,7 @@ namespace SmartDeviceApp.Controllers
         private bool _isTranslateXEnabled;
         private bool _isTranslateYEnabled;
 
-        public GestureController(UIElement control, UIElement controlReference, Size targetSize,
+        public PreviewGestureController(UIElement control, UIElement controlReference, Size targetSize,
             double originalScale, SwipeRightDelegate swipeRightHandler, SwipeLeftDelegate swipeLeftHandler)
         {
             _control = control;
