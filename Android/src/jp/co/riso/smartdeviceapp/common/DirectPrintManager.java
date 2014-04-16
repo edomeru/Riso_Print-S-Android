@@ -18,6 +18,7 @@ public class DirectPrintManager {
     public native void initializeDirectPrint(String jobName, String fileName, String printSetting, String ipAddress);
     public native void finalizeDirectPrint();
     public native void lprPrint();
+    public native void cancel();
 
     public void setCallback(DirectPrintCallback callback)
     {

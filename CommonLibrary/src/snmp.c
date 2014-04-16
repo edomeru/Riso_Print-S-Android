@@ -16,7 +16,6 @@
 
 #define SNMP_MANAGER "snmpmanager"
 #define BROADCAST_ADDRESS "255.255.255.255"
-//#define BROADCAST_ADDRESS "192.168.1.206"  // For debugging
 #define COMMUNITY_NAME "public"
 #define SESSION_TIMEOUT 10000000
 #define REQ_ID_DISCOVERY 0x000003
@@ -25,6 +24,11 @@
 #define TIMEOUT 10
 
 #define SYS_OBJ_ID_VALUE "1.3.6.1.4.1.8072.3.2.10"
+
+#define SNMPV3_USER "risosnmp"
+#define SNMPV3_PASS "risosnmp"
+
+#define DETECT_ALL_DEVICES 1  // 0 for RISO only
 
 typedef struct
 {
@@ -80,8 +84,11 @@ struct caps_queue_s
 
 static const char *MIB_REQUESTS[] = {
     "1.3.6.1.2.1.1.2.0", // sysObjectId
-    //"1.3.6.1.4.1.24807.1.2.1.1.1.0", // ijGeneralName
-    "1.3.6.1.2.1.1.1.0", // sysDescr // TODO: Replace with above
+#if DETECT_ALL_DEVICES
+    "1.3.6.1.2.1.1.1.0", // sysDescr
+#else
+    "1.3.6.1.4.1.24807.1.2.1.1.1.0", // ijGeneralName
+#endif
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.3", // Booklet unit
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.20", // Stapler
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.1", // Finisher 2/4 holes
@@ -110,7 +117,7 @@ void snmp_context_free(snmp_context *context);
 int snmp_context_get_state(snmp_context *context);
 void snmp_context_set_state(snmp_context *context, int state);
 void snmp_context_device_add(snmp_context *context, snmp_device *device);
-snmp_device *snmp_context_device_find_with_ip(snmp_context *context, const char *ip_address);
+int snmp_context_device_find_with_ip(snmp_context *context, const char *ip_address);
 int snmp_context_device_count(snmp_context *context);
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
@@ -165,18 +172,41 @@ void *do_discovery(void *parameter)
     
     // Setup session information
     session.peername = strdup(context->ip_address);
-    session.flags |= SNMP_FLAGS_UDP_BROADCAST;
-    
-    
-    // Initialize SNMPv1
-    session.version = SNMP_VERSION_1;
     session.community = (u_char *) strdup(COMMUNITY_NAME);
     session.community_len = strlen(COMMUNITY_NAME);
-    
     session.timeout = SESSION_TIMEOUT;
-    
     session.callback = snmp_discovery_callback;
     session.callback_magic = context;
+    
+    if (strcmp(context->ip_address, BROADCAST_ADDRESS) != 0)
+    {
+        // Use V3 for Unicast
+        session.version = SNMP_VERSION_3;
+        session.securityLevel = SNMP_SEC_LEVEL_AUTHNOPRIV;
+        session.securityName = strdup(SNMPV3_USER);
+        session.securityNameLen = strlen(SNMPV3_USER);
+        session.securityAuthProto = usmHMACMD5AuthProtocol;
+        session.securityAuthProtoLen = USM_AUTH_PROTO_MD5_LEN;
+        session.securityAuthKeyLen = USM_AUTH_KU_LEN;
+        char *password = strdup(SNMPV3_PASS);
+        if (generate_Ku(session.securityAuthProto, session.securityAuthProtoLen, (u_char *)password, strlen(SNMPV3_PASS), session.securityAuthKey, &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
+        {
+            free(session.peername);
+            free(session.community);
+            free(password);
+            snmp_context_set_state(context, kSnmpStateEnded);
+            context->discovery_ended_callback(context, -1);
+            
+            return 0;
+        }
+        free(password);
+    }
+    else
+    {
+        // Use V1 for Broadcast
+        session.flags |= SNMP_FLAGS_UDP_BROADCAST;
+        session.version = SNMP_VERSION_1;
+    }
     
     snmp_context_set_state(context, kSnmpStateStarted);
     pthread_t caps_thread;
@@ -360,6 +390,8 @@ int snmp_discovery_callback(int operation, struct snmp_session *host, int req_id
 snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback)
 {
     snmp_context *context = (snmp_context *)malloc(sizeof(snmp_context));
+    memset(context->ip_address, 0, IP_ADDRESS_LENGTH);
+    context->state = kSnmpStateInitialized;
     context->discovery_ended_callback = discovery_ended_callback;
     context->printer_added_callback = printer_added_callback;
     context->device_list = 0;
@@ -438,19 +470,19 @@ void snmp_context_device_add(snmp_context *context, snmp_device *device)
     current_device->next = device;
 }
 
-snmp_device *snmp_context_device_find_with_ip(snmp_context *context, const char *ip_address)
+int snmp_context_device_find_with_ip(snmp_context *context, const char *ip_address)
 {
     snmp_device *device = context->device_list;
     while (device != 0)
     {
         if (strcmp(ip_address, device->ip_address) == 0)
         {
-            break;
+            return 1;
         }
         device = device->next;
     }
     
-    return device;
+    return 0;
 }
 
 int snmp_context_device_count(snmp_context *context)
@@ -576,8 +608,10 @@ int snmp_handle_pdu_response(char *ip_address, netsnmp_variable_list *var_list, 
                     valid = 1;
                     continue;
                 }
+#if DETECT_ALL_DEVICES
                 valid = 1; // TODO: Uncomment code to restrict found printers to Riso printers only
                 continue;
+#endif
             }
         }
     }

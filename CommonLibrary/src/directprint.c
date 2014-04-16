@@ -25,8 +25,7 @@
 #define PORT_RAW "9100"
 
 #define TIMEOUT_CONNECT 10
-#define TIMEOUT_SEND 20
-#define TIMEOUT_RECEIVE 10
+#define TIMEOUT_RECEIVE 30
 
 #define BUFFER_SIZE 4096
 
@@ -36,6 +35,12 @@
 #define PJL_ESCAPE "\x1B-12345X"
 #define PJL_LANGUAGE "@PJL ENTER LANGUAGE = PDF\x0d\x0a"
 #define PJL_EOJ "@PJL EOJ\x0d\x0a"
+
+#define LPR_PREP_PROGRESS_STEP 6.0f
+#define LPR_PREP_END_PROGRESS 20.0f
+#define PJL_HEADER_PROGRESS_STEP 5.0f
+#define PJL_FOOTER_PROGRESS_STEP 4.0f
+#define END_PROGRESS 100.0f
 
 /**
  Print Job
@@ -48,16 +53,32 @@ struct directprint_job_s
     char *ip_address;
     directprint_callback callback;
     
+    pthread_t main_thread;
     pthread_mutex_t mutex;
     float progress;
-    int is_printing;
+    int cancel_print;
     
     void *caller_data;
 };
 
+// Main functions
+int directprint_job_lpr_print(directprint_job *print_job);
+int directprint_job_raw_print(directprint_job *print_job);
+void directprint_job_cancel(directprint_job *print_job);
+
+// Direct print job accessors
+directprint_job *directprint_job_new(const char *job_name, const char *filename, const char *print_settings, const char *ip_address, directprint_callback callback);
+void directprint_job_free(directprint_job *print_job);
+void *directprint_job_get_caller_data(directprint_job *print_job);
+void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
+
+// Utility functions
 int can_start_print(directprint_job *print_job);
 int connect_to_port(const char *ip_address, const char *port);
 void notify_callback(directprint_job *print_job, int status);
+int is_cancelled(directprint_job *print_job);
+
+// Thread functions
 void *do_lpr_print(void *parameter);
 
 /**
@@ -72,7 +93,7 @@ directprint_job *directprint_job_new(const char *job_name, const char *filename,
     print_job->ip_address = strdup(ip_address);
     print_job->callback = callback;
     
-    print_job->is_printing = 0;
+    print_job->cancel_print = 0;
     print_job->progress = 0.0f;
     pthread_mutex_init(&print_job->mutex, 0);
     
@@ -100,18 +121,24 @@ void directprint_job_set_caller_data(directprint_job *print_job, void *caller_da
     print_job->caller_data = caller_data;
 }
 
-int lpr_print(directprint_job *print_job)
+int directprint_job_lpr_print(directprint_job *print_job)
 {
     if (can_start_print(print_job) != 1)
     {
         return kJobStatusError;
     }
     
-    print_job->is_printing = 1;
-    pthread_t thread;
-    pthread_create(&thread, 0, do_lpr_print, (void *)print_job);
+    pthread_create(&print_job->main_thread, 0, do_lpr_print, (void *)print_job);
     
     return kJobStatusStarted;
+}
+
+void directprint_job_cancel(directprint_job *print_job)
+{
+    pthread_mutex_lock(&print_job->mutex);
+    print_job->cancel_print = 1;
+    pthread_mutex_unlock(&print_job->mutex);
+    pthread_join(print_job->main_thread, 0);
 }
 
 /**
@@ -135,7 +162,7 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
-    if (print_job->print_settings == 0 || strlen(print_job->ip_address) <= 0)
+    if (print_job->ip_address == 0 || strlen(print_job->ip_address) <= 0)
     {
         return 0;
     }
@@ -232,6 +259,14 @@ void notify_callback(directprint_job *print_job, int status)
     }
 }
 
+int is_cancelled(directprint_job *print_job)
+{
+    pthread_mutex_lock(&print_job->mutex);
+    int cancelled = print_job->cancel_print;
+    pthread_mutex_unlock(&print_job->mutex);
+    return cancelled;
+}
+
 /**
  Thread functions
  */
@@ -239,42 +274,59 @@ void *do_lpr_print(void *parameter)
 {
     directprint_job *print_job = (directprint_job *)parameter;
     
+    // Prepare PJL header
     char pjl_header[2048];
     pjl_header[0] = 0;
     strcat(pjl_header, PJL_ESCAPE);
     create_pjl(pjl_header, print_job->print_settings);
     strcat(pjl_header, PJL_LANGUAGE);
-    printf("%s", pjl_header);
+    int pjl_header_size = strlen(pjl_header);
     
+    // Prepare PJL footer
     char pjl_footer[256];
     pjl_footer[0] = 0;
     strcat(pjl_footer, PJL_ESCAPE);
     strcat(pjl_footer, PJL_EOJ);
     strcat(pjl_footer, PJL_ESCAPE);
-    printf("%s", pjl_footer);
-    //return 0;
+    int pjl_footer_size = strlen(pjl_footer);
     
+    if (is_cancelled(print_job) == 1)
+    {
+        return 0;
+    }
     
     int sock_fd = -1;
+    FILE *fd = 0;
     unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
+    
+    // Setup receive timeout
+    struct timeval tv;
+    tv.tv_sec = TIMEOUT_RECEIVE;
+    tv.tv_usec = 0;
+    setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
+    
     do
     {
         notify_callback(print_job, kJobStatusConnecting);
         sock_fd = connect_to_port(print_job->ip_address, PORT_LPR);
         if (sock_fd < 0)
         {
-            printf("Unable to connect \n");
             notify_callback(print_job, kJobStatusErrorConnecting);
             break;
         }
         notify_callback(print_job, kJobStatusConnected);
         
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+        
         // Open file
-        FILE *fd = fopen(print_job->filename, "rb");
+        fd = fopen(print_job->filename, "rb");
         if (!fd)
         {
-            printf("Error file\n");
             notify_callback(print_job, kJobStatusErrorFile);
+            break;
         }
         
         // Prepare flags
@@ -284,7 +336,6 @@ void *do_lpr_print(void *parameter)
         int pos;
         int len;
         int i;
-        
         
         notify_callback(print_job, kJobStatusSending);
         // Send queue info
@@ -296,6 +347,12 @@ void *do_lpr_print(void *parameter)
             buffer[pos++] = QUEUE_NAME[i];
         }
         buffer[pos++] = '\n';
+        
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+    
         send_size = send(sock_fd, buffer, pos, 0);
         if (send_size != pos)
         {
@@ -335,12 +392,21 @@ void *do_lpr_print(void *parameter)
         }
         buffer[pos++] = '\n';
 
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+    
         // CONTROL FILE INFO : Send
         send_size = send(sock_fd, buffer, pos, 0);
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
+            break;
         }
+        
+        print_job->progress += LPR_PREP_PROGRESS_STEP;
+        notify_callback(print_job, kJobStatusSending);
 
         // CONTROL FILE INFO : Acknowledgement
         recv_size = recv(sock_fd, &response, sizeof(response), 0);
@@ -358,11 +424,21 @@ void *do_lpr_print(void *parameter)
             buffer[pos++] = control_file[i];
         }
         buffer[pos++] = 0;
+
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+    
         send_size = send(sock_fd, buffer, pos, 0);
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
         }
+        
+        print_job->progress += LPR_PREP_PROGRESS_STEP;
+        notify_callback(print_job, kJobStatusSending);
+
 
         // CONTROL FILE : Acknowledgement
         recv_size = recv(sock_fd, &response, sizeof(response), 0);
@@ -378,8 +454,9 @@ void *do_lpr_print(void *parameter)
         fseek(fd, 0L, SEEK_SET);
         
         // DATA FILE INFO : Prepare
+        size_t total_data_size = file_size + pjl_header_size + pjl_footer_size;
         char data_file_len_str[32];
-        sprintf(data_file_len_str, "%ld", file_size + strlen(pjl_header) + strlen(pjl_footer));
+        sprintf(data_file_len_str, "%ld", (long)total_data_size);
         len = strlen(data_file_len_str);
         pos = 0;
         buffer[pos++] = 0x3;
@@ -394,13 +471,21 @@ void *do_lpr_print(void *parameter)
             buffer[pos++] = dname[i];
         }
         buffer[pos++] = '\n';
-        
+
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+    
         // DATA FILE INFO : Send
         send_size = send(sock_fd, buffer, pos, 0);
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
         }
+        
+        print_job->progress += LPR_PREP_PROGRESS_STEP;
+        notify_callback(print_job, kJobStatusSending);
 
         recv_size = recv(sock_fd, &response, sizeof(response), 0);
         if (recv_size <= 0 || response != 0)
@@ -409,15 +494,42 @@ void *do_lpr_print(void *parameter)
             break;
         }
 
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+        
+        print_job->progress = LPR_PREP_END_PROGRESS;
+        
+        // Calculate progress step
+        float data_step = (70.0f / ((float)file_size / BUFFER_SIZE));
+    
         // DATA FILE : Send
         size_t read = 0;
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
+        print_job->progress += 5.0f;
+        notify_callback(print_job, kJobStatusSending);
         while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
         {
+            if (is_cancelled(print_job) == 1)
+            {
+                break;
+            }
+    
             send(sock_fd, buffer, read, 0);
+            print_job->progress += data_step;
             notify_callback(print_job, kJobStatusSending);
         }
+        
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+        
         send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+        print_job->progress += 4.0f;
+        notify_callback(print_job, kJobStatusSending);
+        
         pos = 0;
         buffer[pos++] = 0;
         send(sock_fd, buffer, pos, 0);
@@ -431,9 +543,14 @@ void *do_lpr_print(void *parameter)
         }
         
         // Notify success
+        print_job->progress = 100.0f;
         notify_callback(print_job, kJobStatusSent);
     } while (0);
     
+    if (fd != 0)
+    {
+        fclose(fd);
+    }
     close(sock_fd);
     free(buffer);
     return 0;

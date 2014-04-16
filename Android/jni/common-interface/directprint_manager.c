@@ -53,7 +53,17 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_lprPrint(JNIEnv *env, j
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
     directprint_job *job = (directprint_job *)m_job;
     
-    lpr_print(job);
+    directprint_job_lpr_print(job);
+}
+
+JNIEXPORT void
+Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_cancel(JNIEnv *env, jobject object)
+{
+    // Get job reference to Java object
+    jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
+    directprint_job *job = (directprint_job *)m_job;
+
+    directprint_job_cancel(job);
 }
 
 // Callback
