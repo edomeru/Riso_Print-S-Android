@@ -38,8 +38,9 @@ directprint_job *directprint_job_new(const char *job_name, const char *filename,
 void directprint_job_free(directprint_job *print_job);
 void *directprint_job_get_caller_data(directprint_job *print_job);
 void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
-int lpr_print(directprint_job *print_job);
-int raw_print(directprint_job *print_job);
+void directprint_job_cancel(directprint_job *print_job);
+int directprint_job_lpr_print(directprint_job *print_job);
+int directprint_job_raw_print(directprint_job *print_job);
 
 
 /**

@@ -92,7 +92,34 @@ public class Preview {
     }
     
     public enum ImpositionOrder {
-        R_L, L_R, TL_B, TL_R, TR_B, TR_L;
+        L_R (true, true, true),
+        R_L (false, false, true),
+        TL_R (true, true, true),
+        TR_L (false, true, true),
+        TL_B (true, true, false),
+        TR_B (false, true, false);
+
+        private boolean mLeftToRight;
+        private boolean mTopToBottom;
+        private boolean mHorizontalFlow;
+
+        ImpositionOrder(boolean leftToRight, boolean topToBottom, boolean horizontalFlow) {
+            mLeftToRight = leftToRight;
+            mTopToBottom = topToBottom;
+            mHorizontalFlow = horizontalFlow;
+        }
+        
+        public boolean isLeftToRight() {
+            return mLeftToRight;
+        }
+        
+        public boolean isTopToBottom() {
+            return mTopToBottom;
+        }
+        
+        public boolean isHorizontalFlow() {
+            return mHorizontalFlow;
+        }
     }
     
     public enum Sort {

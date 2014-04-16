@@ -26,6 +26,9 @@
 
 #define SYS_OBJ_ID_VALUE "1.3.6.1.4.1.8072.3.2.10"
 
+#define SNMPV3_USER "risosnmp"
+#define SNMPV3_PASS "risosnmp"
+
 typedef struct
 {
     snmp_device *first;
@@ -165,18 +168,41 @@ void *do_discovery(void *parameter)
     
     // Setup session information
     session.peername = strdup(context->ip_address);
-    session.flags |= SNMP_FLAGS_UDP_BROADCAST;
-    
-    
-    // Initialize SNMPv1
-    session.version = SNMP_VERSION_1;
     session.community = (u_char *) strdup(COMMUNITY_NAME);
     session.community_len = strlen(COMMUNITY_NAME);
-    
     session.timeout = SESSION_TIMEOUT;
-    
     session.callback = snmp_discovery_callback;
     session.callback_magic = context;
+    
+    if (strcmp(context->ip_address, BROADCAST_ADDRESS) != 0)
+    {
+        // Use V3 for Unicast
+        session.version = SNMP_VERSION_3;
+        session.securityLevel = SNMP_SEC_LEVEL_AUTHNOPRIV;
+        session.securityName = strdup(SNMPV3_USER);
+        session.securityNameLen = strlen(SNMPV3_USER);
+        session.securityAuthProto = usmHMACMD5AuthProtocol;
+        session.securityAuthProtoLen = USM_AUTH_PROTO_MD5_LEN;
+        session.securityAuthKeyLen = USM_AUTH_KU_LEN;
+        char *password = strdup(SNMPV3_PASS);
+        if (generate_Ku(session.securityAuthProto, session.securityAuthProtoLen, (u_char *)password, strlen(SNMPV3_PASS), session.securityAuthKey, &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
+        {
+            free(session.peername);
+            free(session.community);
+            free(password);
+            snmp_context_set_state(context, kSnmpStateEnded);
+            context->discovery_ended_callback(context, -1);
+            
+            return 0;
+        }
+        free(password);
+    }
+    else
+    {
+        // Use V1 for Broadcast
+        session.flags |= SNMP_FLAGS_UDP_BROADCAST;
+        session.version = SNMP_VERSION_1;
+    }
     
     snmp_context_set_state(context, kSnmpStateStarted);
     pthread_t caps_thread;

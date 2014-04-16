@@ -15,7 +15,7 @@ endif
 # compiler flags
 CFLAGS = -Wall -Iinclude -I$(NETSNMP)/include -std=c99
 
-CMNLIBSRC = src/directprint.c src/snmp.c
+CMNLIBSRC = src/directprint.c src/snmp.c src/printsettings.c
 CMNLIBOBJ = $(CMNLIBSRC:.c=.o)
 CMNLIBOUT = lib/libcommon.a
 CMNLIBDEP = $(CMNLIBOBJ:.o=.d)

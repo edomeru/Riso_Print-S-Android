@@ -34,7 +34,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private Printer mPrinter = null;
-    private PrintSettings mPrintSettings = null;
+    
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
     private TextView mStatus = null;
@@ -84,16 +84,6 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         
-        Bundle extras = getArguments();
-        
-        if (extras == null) {
-            extras = getActivity().getIntent().getExtras();
-        }
-        mPrinter = extras.getParcelable(KEY_PRINTER_INFO);
-        mPrintSettings = mPrinter.getPrintSettings();
-        if (mPrintSettings == null) {
-            mPrintSettings = new PrintSettings();
-        }
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
@@ -103,6 +93,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
             mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
         }
         
+    }
+    
+    public void setPrinter(Printer printer) {
+        mPrinter = printer;
     }
     
     // ================================================================================
@@ -127,8 +121,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                             ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
                             ft.commit();
                         }
+                        mPrintSettingsFragment.setPrinterId(mPrinter.getId());
+                        // use new print settings retrieved from the database
+                        mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId()));
                         
-                        mPrintSettingsFragment.setPrintSettings(mPrintSettings);
                         PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
                         mPrintSettingsFragment.setTargetFragment(printersFragment, 0);
                         activity.openDrawer(Gravity.RIGHT, true);
