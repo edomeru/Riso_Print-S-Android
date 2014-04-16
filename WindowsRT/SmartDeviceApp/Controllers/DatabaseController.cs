@@ -129,15 +129,19 @@ namespace SmartDeviceApp.Controllers
                     string script = await FileIO.ReadTextAsync(file);
 
                     // Loop each commands
-                    string[] commands = script.Split(new char[] { ';' },
+                    string[] lines = script.Split(new char[] { ';' },
                         StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string command in commands)
+                    foreach (string line in lines)
                     {
                         try
                         {
                             // Since each parameter in the script is in each line,
                             // convert them into a single line statement
-                            db.Execute(command.Replace("\r\n", " ").Trim());
+                            string sqlStatement = line.Replace("\r\n", string.Empty).Trim();
+                            if (!string.IsNullOrEmpty(sqlStatement))
+                            {
+                                db.Execute(sqlStatement);
+                            }
                         }
                         catch (SQLiteException)
                         {
