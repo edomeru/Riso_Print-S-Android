@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -227,14 +226,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         
         switch (v.getId()) {
             case R.id.img_disclosure:
-                Activity activity = (Activity) getContext();
                 Printer printer = (Printer) v.getTag();
-                
-                Intent intent = activity.getIntent();
-                intent.putExtra(PrinterInfoFragment.KEY_PRINTER_INFO, printer);
-                activity.setIntent(intent);
-                
-                BaseFragment fragment = new PrinterInfoFragment();
+                PrinterInfoFragment fragment = new PrinterInfoFragment();
+                fragment.setPrinter(printer);
                 switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
                 break;
             case R.id.printerListRow:

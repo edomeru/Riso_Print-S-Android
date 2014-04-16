@@ -73,6 +73,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade - End");
     }
     
+    public static String getStringFromCursor(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
+    }
+    
+    public static int getIntFromCursor(Cursor cursor, String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
+    }
+    
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -80,9 +88,34 @@ public class DatabaseManager extends SQLiteOpenHelper {
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
-            Log.e(TAG, "failed insert to " + table);
+            Log.e(TAG, "failed insert to " + table + ". Error: " + e.getMessage());
         }
         
+        db.close();
+        
+        return (rowId > -1);
+    }
+    
+    public long insertOrReplace(String table, String nullColumnHack, ContentValues values) {
+        long rowId = -1;
+        SQLiteDatabase db = this.getWritableDatabase();
+        
+        try {
+            rowId = db.insertWithOnConflict(table, nullColumnHack, values, SQLiteDatabase.CONFLICT_REPLACE);
+        } catch (SQLException e) {
+            Log.e(TAG, "failed insert to " + table + ". Error: " + e.getMessage());
+        }
+        
+        db.close();
+        
+        return rowId;
+    }
+    
+    public boolean update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        long rowId = -1;
+        SQLiteDatabase db = this.getWritableDatabase();
+        
+        rowId = db.update(table, values, whereClause, whereArgs);
         db.close();
         
         return (rowId > -1);
