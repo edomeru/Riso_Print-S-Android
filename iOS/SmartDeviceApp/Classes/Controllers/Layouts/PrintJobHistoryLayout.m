@@ -115,7 +115,7 @@
         //iPhone
         //will only support portrait
         
-        self.interGroupSpacingY = 5.0f;
+        self.interGroupSpacingY = 2.0f;
         self.interGroupSpacingX = 0.0f;
         self.numberOfColumns = 1;
         self.groupInsets = UIEdgeInsetsMake(0.0f,  //T

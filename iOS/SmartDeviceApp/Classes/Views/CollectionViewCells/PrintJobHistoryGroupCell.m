@@ -213,9 +213,11 @@
         
         // create the delete button
         UIButton* deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [deleteButton setTitle:@"DELETE" forState:UIControlStateNormal]; //TODO: localize DELETE
+        [deleteButton setTitle:NSLocalizedString(IDS_LBL_DELETE, @"Delete")
+                      forState:UIControlStateNormal]; 
+        [deleteButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
         [deleteButton setTitleEdgeInsets:UIEdgeInsetsMake(10.0f, 15.0f, 10.0f, 15.0f)];
-        [deleteButton setBackgroundColor:[UIColor redThemeColor]];
+        [deleteButton setBackgroundColor:[UIColor whiteThemeColor]];
         [deleteButton setUserInteractionEnabled:YES];
         deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
         deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
@@ -231,6 +233,8 @@
         
         // add to the view
         printJobCell.detailTextLabel.hidden = YES;
+        [printJobCell.textLabel setTextColor:[UIColor whiteThemeColor]];
+        [printJobCell setBackgroundColor:[UIColor purple2ThemeColor]];
         [printJobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
         
         // slide the button from offscreen to its place
@@ -266,6 +270,11 @@
     {
         [deleteButton removeFromSuperview];
         printJobCell.detailTextLabel.hidden = NO;
+        [printJobCell.textLabel setTextColor:[UIColor blackThemeColor]];
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+            [printJobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
+        else
+            [printJobCell setBackgroundColor:[UIColor gray1ThemeColor]];
     }];
     
     self.jobWithDelete = nil;
@@ -277,7 +286,7 @@
     // (to avoid the DELETE button appearing on another cell, since the cells are reusable)
     if (self.jobWithDelete != nil)
         [self removeDeleteButton];
-    
+       
     [self.printJobsView reloadData];
 }
 

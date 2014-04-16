@@ -12,6 +12,7 @@
 #import "PrintJob.h"
 #import "PListHelper.h"
 #import "AlertHelper.h"
+#import "UIColor+Theme.h"
 
 @interface PrintJobHistoryViewController ()
 
@@ -25,6 +26,9 @@
 
 /** The custom UICollectionViewLayout for arranging the PrintJobHistoryGroups. */
 @property (weak, nonatomic) IBOutlet PrintJobHistoryLayout* groupsViewLayout;
+
+/** Reference to the Delete All button. */
+@property (weak, nonatomic) UIButton* tappedDeleteAllButton;
 
 #pragma mark - Data Properties
 
@@ -97,6 +101,8 @@
     }
     
     self.groupWithDelete = nil;
+    
+    self.tappedDeleteAllButton = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -236,6 +242,10 @@
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
         NSLog(@"[INFO][PrintJobCtrl] tapped delete all button=%ld", (long)groupIndex);
 #endif
+
+        [sender setBackgroundColor:[UIColor purple2ThemeColor]];
+        [sender setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
+        self.tappedDeleteAllButton = sender;
         
         [AlertHelper displayConfirmation:kAlertConfirmationDeleteAllJobs
                                forScreen:self
@@ -389,6 +399,10 @@
                            withDetails:nil];
         }
     }
+    
+    [self.tappedDeleteAllButton setBackgroundColor:[UIColor whiteThemeColor]];
+    [self.tappedDeleteAllButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
+    self.tappedDeleteAllButton = nil;
 }
 
 #pragma mark - Segue
