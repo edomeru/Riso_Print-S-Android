@@ -300,8 +300,7 @@ void parse(char *settings, setting_value values[])
     while (next != 0)
     {
         int line_length = next - current_line + 1;
-        char *line = (char *)malloc((line_length) * sizeof(char));
-        memset(line, 0, line_length);
+        char *line = calloc(line_length, sizeof(char));
         strncpy(line, current_line, line_length - 1);
         line[line_length] = 0;
         
