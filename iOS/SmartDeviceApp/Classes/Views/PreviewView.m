@@ -143,12 +143,27 @@
     NSLayoutConstraint *aspectRatioConstraint;
     if (orientation == kPreviewViewOrientationPortrait)
     {
-        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
+        if((self.frame.size.height * self.aspectRatio) > self.frame.size.width)// should not exceed width of parent view
+        {
+            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f]; //keep the width constant
+        }
+        else
+        {
+            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f]; //keep the height constant
+        }
         aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeHeight multiplier:self.aspectRatio constant:0.0f];
     }
     else
     {
-        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
+        if((self.frame.size.width * self.aspectRatio) > self.frame.size.height) //should not exceed height of parent view
+        {
+            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f]; //keep the height constant
+        }
+        else
+        {
+            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];//keep the width constant
+        }
+        
         aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeWidth multiplier:self.aspectRatio constant:0.0f];
     }
     
@@ -330,6 +345,16 @@
     {
         self.position = position;
         [self snap];
+    }
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    //if other layout of views the content exceeds bounds of parent view but is not zoomed, recompute constraints of view
+    if((self.frame.size.height < self.contentView.frame.size.height || self.frame.size.width < self.contentView.frame.size.width) && self.scale <= 1.0f)
+    {
+        [self setPreviewWithOrientation:self.orientation aspectRatio:self.aspectRatio];
     }
 }
 

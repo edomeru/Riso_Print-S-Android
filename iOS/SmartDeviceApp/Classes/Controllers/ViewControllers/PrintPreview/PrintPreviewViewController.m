@@ -102,6 +102,11 @@
 - (void)setupPageLabel;
 
 /**
+ Setup display aspect ratio to match paper size and finishing
+ */
+- (void)setupDisplayAspectRatio;
+
+/**
  Loads next view controller of the page view controller
  @param index
         Index of current view controller
@@ -255,17 +260,8 @@
     [self setupTotalPageNum];
     [self setupPageLabel];
     
-    // Get aspect ratio and orientation
-    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
-    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
-    kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
-    if(isLandscape == YES)
-    {
-        orientation = kPreviewViewOrientationLandscape;
-    }
-    
     self.previewView.hidden = NO;
-    [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
+    [self setupDisplayAspectRatio];
 
     self.currentPage = 0;
     [self setupPageviewControllerWithBindSetting];
@@ -348,6 +344,14 @@
             navOrientation = UIPageViewControllerNavigationOrientationVertical;
         }
     }
+    else if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
+    {
+        spineLocation = UIPageViewControllerSpineLocationMid;
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        {
+            navOrientation = UIPageViewControllerNavigationOrientationVertical;
+        }
+    }
     else if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight)
     {
         spineLocation = UIPageViewControllerSpineLocationMax;
@@ -375,6 +379,33 @@
     }
 }
 
+- (void)setupDisplayAspectRatio
+{
+    //ratio is width / height
+    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
+    if(isLandscape == YES)
+    {
+        orientation = kPreviewViewOrientationLandscape;
+    }
+    
+    //Duplex 2 page view display area computation
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.printDocument.previewSetting.booklet == NO)
+    {
+        if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
+           (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
+        {
+            aspectRatio/=2; //twice the height for 2 papers, 1 on top of the other
+        }
+        else
+        {
+            aspectRatio*= 2; //twice the width for 2 papers side by side
+        }
+    }
+    
+    [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
+}
 - (void)goToPage:(NSInteger)pageIndex
 {
     PDFPageContentViewController *current = [self viewControllerAtIndex:pageIndex];
@@ -525,6 +556,7 @@
                 size.height/= 2;
             }
         }
+
         PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:size delegate:self];
         [self.renderArray addObject:renderOperation];
         [self.renderQueue addOperation:renderOperation];
@@ -639,14 +671,7 @@
     [self.renderCache removeAllItems];
     
     // Recompute aspect ratio
-    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
-    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
-    kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
-    if(isLandscape == YES)
-    {
-        orientation = kPreviewViewOrientationLandscape;
-    }
-    [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
+    [self setupDisplayAspectRatio];
     
     //recompute total page number
     [self setupTotalPageNum];

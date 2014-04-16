@@ -392,19 +392,26 @@
     }
     
     //For duplex, adjust the context  for the correct location of the staple and punch in the backside of the paper
-    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.isFrontPage == NO)
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
     {
-        if([self shouldInvertImage] == NO)
+        if(self.isFrontPage == NO)
         {
-            //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
-            CGContextTranslateCTM(contextRef, self.size.width, 0);
-            CGContextScaleCTM(contextRef, -1.0f, 1.0f);
+            if([self shouldInvertImage] == NO)
+            {
+                //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
+                CGContextTranslateCTM(contextRef, self.size.width, 0);
+                CGContextScaleCTM(contextRef, -1.0f, 1.0f);
+            }
+            if([self shouldInvertImage] == YES || self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+            {
+                //flip context vertically so that finishing at the top will be drawn at the bottom
+                CGContextTranslateCTM(contextRef, 0, self.size.height);
+                CGContextScaleCTM(contextRef, 1.0f, -1.0f);
+            }
         }
-        if([self shouldInvertImage] == YES || self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        else
         {
-            //flip context vertically so that finishing at the top will be drawn at the bottom
-            CGContextTranslateCTM(contextRef, 0, self.size.height);
-            CGContextScaleCTM(contextRef, 1.0f, -1.0f);
+            [self drawPaperEdgeLine:contextRef];
         }
     }
     
@@ -584,6 +591,32 @@
         }
     }
     return NO;
+}
+
+- (void)drawPaperEdgeLine:(CGContextRef)contextRef
+{
+    CGFloat lineWidth = 2.0f;
+    CGContextSetStrokeColorWithColor(contextRef, [UIColor blackColor].CGColor);
+    CGContextSetLineWidth(contextRef, lineWidth);
+    
+    if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+    {
+        CGContextMoveToPoint(contextRef, 0, self.size.height - lineWidth);
+        CGContextAddLineToPoint(contextRef, self.size.width, self.size.height - lineWidth);
+    }
+    else if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight)
+    {
+        CGContextMoveToPoint(contextRef, self.size.width - lineWidth, 0);
+        CGContextAddLineToPoint(contextRef, self.size.width - lineWidth, self.size.height);
+    }
+    else
+    {
+        CGContextMoveToPoint(contextRef, 0, 0);
+        CGContextAddLineToPoint(contextRef, 0, self.size.height);
+    }
+    
+    
+    CGContextStrokePath(contextRef);
 }
 
 @end
