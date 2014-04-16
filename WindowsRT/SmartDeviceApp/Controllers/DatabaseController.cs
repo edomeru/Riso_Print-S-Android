@@ -301,7 +301,7 @@ namespace SmartDeviceApp.Controllers
                 int defaultPrinterCount = await db.Table<DefaultPrinter>().CountAsync();
                 if (defaultPrinterCount > 0)
                 {
-                    return await (db.Table<DefaultPrinter>().FirstAsync());
+                    return await (db.Table<DefaultPrinter>().FirstOrDefaultAsync());
                 }
             }
             catch
@@ -343,7 +343,10 @@ namespace SmartDeviceApp.Controllers
             try
             {
                 Printer printer = await db.GetAsync<Printer>(id);
-                return printer.Name;
+                if (printer != null)
+                {
+                    return printer.Name;
+                }
             }
             catch
             {
@@ -363,6 +366,11 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; print settings if found, null otherwise</returns>
         public async Task<PrintSettings> GetPrintSettings(int id)
         {
+            if (id < 0)
+            {
+                return null;
+            }
+
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
             try
@@ -389,13 +397,14 @@ namespace SmartDeviceApp.Controllers
             var printJobsList = new List<PrintJob>();
 
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
             try
             {
-                printJobsList = await (db.Table<PrintJob>().ToListAsync());
+                printJobsList = await db.Table<PrintJob>().ToListAsync();
             }
             catch
             {
-                return null;
+                // Error handling here
             }
 
             return printJobsList;
@@ -413,12 +422,11 @@ namespace SmartDeviceApp.Controllers
                 return 0;
             }
 
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
             try
             {
-                var db = new SQLite.SQLiteAsyncConnection(_databasePath);
-
-                await db.InsertAsync(printJob);
-                return 1;
+                return await db.InsertAsync(printJob);
             }
             catch
             {
@@ -435,14 +443,16 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; number of deleted items</returns>
         public async Task<int> DeletePrintJob(PrintJob printJob)
         {
+            if (printJob == null)
+            {
+                return 0;
+            }
+
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
             try
             {
-                // Delete row
-                await db.DeleteAsync(printJob);
-
-                return 1;
+                return await db.DeleteAsync(printJob);
             }
             catch
             {
@@ -456,6 +466,10 @@ namespace SmartDeviceApp.Controllers
 
         #region Dummy - Initial Data
 
+        /// <summary>
+        /// Inserts sample data on first run of app after installation
+        /// </summary>
+        /// <returns>task</returns>
         private async Task InsertSampleData()
         {
             bool isPreviouslyLoaded = false;
