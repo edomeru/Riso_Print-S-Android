@@ -62,7 +62,6 @@ typedef enum
  Setup preview with desired orientation mode and aspect ratio
  */
 - (void)setPreviewWithOrientation:(kPreviewViewOrientation)orientation aspectRatio:(CGFloat)ratio;
-
 @end
 
 @protocol PreviewViewDelegate <NSObject>
@@ -72,5 +71,4 @@ typedef enum
  Notifies the delegate that the zoom level has changed
  */
 - (void)previewView:(PreviewView *) previewView didChangeZoomMode:(BOOL)zoomed;
-
 @end

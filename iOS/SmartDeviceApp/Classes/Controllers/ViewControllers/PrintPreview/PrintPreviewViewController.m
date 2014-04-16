@@ -60,6 +60,11 @@
 @property (nonatomic) NSInteger totalPageNum;
 
 /**
+ Number of pages
+ */
+@property (nonatomic) NSInteger layoutPageNum;
+
+/**
  Render queue
  */
 @property (atomic, strong) NSOperationQueue *renderQueue;
@@ -297,6 +302,7 @@
         //booklet number of pages is always a multiple of 4 (1 paper folded in half = 2 leaves * 2 sides per leaf = 4 pages)
         //total number of pages is the actual number of pdf pages  + padding pages to make number of pages multiple by 4
         self.totalPageNum = self.printDocument.pageCount  +  self.printDocument.pageCount % 4;
+        self.layoutPageNum = self.totalPageNum + 2;
         [self.pageScroll setMaximumValue:self.totalPageNum - 1]; //the last page that can be visited for the slider should be the second to the last page  which is the front page of the last sheet
     }
     else
@@ -307,6 +313,15 @@
         if((self.printDocument.pageCount % numPagesPerSheet) > 0)
         {
             self.totalPageNum++;
+        }
+        
+        if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
+        {
+            self.layoutPageNum = self.totalPageNum + self.totalPageNum % 2 + 2;
+        }
+        else
+        {
+            self.layoutPageNum = self.totalPageNum;
         }
         [self.pageScroll setMaximumValue:self.totalPageNum];
     }
@@ -414,21 +429,46 @@
     //if Spine is in mid location, must provide 2 controllers always. This occurs for booklet bind setting
     if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
     {
+        BOOL isReversed = (self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+                           (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft));
         if(pageIndex == 0)//if first index, provide last page(back cover) as the left side page of the first page (front cover)
         {
-            NSInteger lastPageIndex = self.totalPageNum - 1;
+            NSInteger lastPageIndex = self.layoutPageNum - 1;
             PDFPageContentViewController *lastPage = [self viewControllerAtIndex:lastPageIndex];
-            [viewControllerArray insertObject:lastPage atIndex:0];
+            if(isReversed == YES)
+            {
+                [viewControllerArray addObject:lastPage];
+            }
+            else
+            {
+                [viewControllerArray insertObject:lastPage atIndex:0];
+            }
         }
         else if((pageIndex % 2) == 0) //if page index is even but not the first index, provide the page before it
         {
             PDFPageContentViewController *previous = [self viewControllerAtIndex:pageIndex - 1];
-            [viewControllerArray insertObject:previous atIndex:0];
+            if(isReversed == YES)
+            {
+                [viewControllerArray addObject:previous];
+                
+            }
+            else
+            {
+                [viewControllerArray insertObject:previous atIndex:0];
+                
+            }
         }
         else // if the page index is odd, provide the page next to it
         {
             PDFPageContentViewController *next = [self viewControllerAtIndex:pageIndex + 1];
-            [viewControllerArray addObject:next];
+            if(isReversed == YES)
+            {
+                 [viewControllerArray insertObject:next atIndex:0];
+            }
+            else
+            {
+                [viewControllerArray addObject:next];
+            }
         }
     }
     
@@ -439,12 +479,12 @@
 {
     if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
     {
-        if(index >= (self.totalPageNum - 2))//page turn for spine location mid is always by 2, when page shown is second to the last (The front of the last sheet), do not turn;
+        if(index >= (self.layoutPageNum  - 2))//page turn for spine location mid is always by 2, when page shown is second to the last (The front of the last sheet), do not turn;
         {
             return nil;
         }
     }
-    if((self.totalPageNum - 1) <= index)
+    if((self.layoutPageNum  - 1) <= index)
     {
         return nil;
     }
@@ -458,10 +498,10 @@
     {
         if(index== 0)//put the last page (back cover) at left side of the first page (front cover)
         {
-            return [self viewControllerAtIndex:self.totalPageNum - 1];
+            return [self viewControllerAtIndex:self.layoutPageNum  - 1];
         }
         
-        if(index == (self.totalPageNum - 1))// the last page (back cover) should not flip back to the previous pages since it is placed beside the first page (front cover)
+        if(index >= (self.layoutPageNum  - 1))// the last page (back cover) should not flip back to the previous pages since it is placed beside the first page (front cover)
         {
             return nil;
         }
@@ -477,6 +517,20 @@
 
 - (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index
 {
+    
+    if(self.totalPageNum < self.layoutPageNum) //pages are padded as ends
+    {
+        //no need to render
+        NSInteger lastIndex = self.layoutPageNum - 1;
+        if(index >= lastIndex - 1)
+        {
+            PDFPageContentViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+            viewController.isPaddedPage = YES;
+            viewController.pageIndex = index;
+            return viewController;
+        }
+    }
+    
     // Check if page needs to be created
     RenderCacheItem *renderCacheItem = [self.renderCache itemWithIndex:index];
     if (renderCacheItem == nil)
@@ -496,6 +550,8 @@
         }
         renderCacheItem.viewController.image = renderCacheItem.image;
     }
+    
+    renderCacheItem.viewController.isPaddedPage = NO;
     
     NSMutableArray *activeIndices = [[NSMutableArray alloc] init];
     // Obtain list of pages that is currently being rendered in the background
@@ -574,7 +630,9 @@
     {
         return nil;
     }
-    if(pageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+       (self.printDocument.previewSetting.booklet == YES &&
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
     {
         return [self nextViewController:index];
     }
@@ -588,7 +646,9 @@
     {
         return nil;
     }
-    if(pageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+       (self.printDocument.previewSetting.booklet == YES &&
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
     {
         return [self previousViewController:index];
     }
@@ -611,7 +671,21 @@
     if(completed == YES)
     {
         PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
-        self.currentPage = viewController.pageIndex;
+        if(viewController.pageIndex < self.totalPageNum - 1)
+        {
+            self.currentPage = viewController.pageIndex;
+        }
+        else
+        {
+            if(viewController.pageIndex == self.layoutPageNum - 1)
+            {
+                self.currentPage = 0;
+            }
+            else
+            {
+                self.currentPage = self.totalPageNum - 1;
+            }
+        }
         [self setupPageLabel];
         [self.pageScroll setValue:self.currentPage + 1];
     }

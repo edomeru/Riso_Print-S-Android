@@ -19,6 +19,6 @@
  Rendered image of the PDF page
  */
 @property (nonatomic) UIImage *image;
-
+@property (nonatomic) BOOL isPaddedPage;
 
 @end

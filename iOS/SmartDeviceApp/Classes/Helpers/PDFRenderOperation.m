@@ -411,7 +411,10 @@
         }
         else
         {
-            [self drawPaperEdgeLine:contextRef];
+            if(self.currentPage > 0) //don't draw on the first page
+            {
+                [self drawPaperEdgeLine:contextRef];
+            }
         }
     }
     

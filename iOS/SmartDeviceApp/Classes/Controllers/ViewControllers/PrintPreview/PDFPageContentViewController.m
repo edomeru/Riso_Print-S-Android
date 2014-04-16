@@ -37,13 +37,19 @@
     [super viewDidLoad];
     
     // Show activity indicator if an image is not available
-    if (self.image == nil)
+    if (self.image == nil && self.isPaddedPage == NO)
     {
         [self.activityIndicatorView startAnimating];
     }
     else
     {
         self.imageView.image = self.image;
+    }
+    
+    if(self.isPaddedPage == YES)
+    {
+        self.imageView.hidden = YES;
+        [self.view setBackgroundColor:[UIColor clearColor]];
     }
 }
 
