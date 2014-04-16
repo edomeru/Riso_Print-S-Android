@@ -98,8 +98,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private ScrollView mMainScrollView;
     private LinearLayout mMainLayout;
     
+    private LinearLayout mSubView;
     private ScrollView mSubScrollView;
-    private LinearLayout mSubLayout;
+    private LinearLayout mSubOptionsLayout;
     
     private LinearLayout mPrintControls;
     
@@ -174,7 +175,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         // If main scroll is visible, then sub view is displayed
         if (mMainScrollView.getVisibility() != View.VISIBLE) {
-            outState.putString(KEY_SUBVIEW_DISPLAYED, mSubLayout.getTag().toString());
+            outState.putString(KEY_SUBVIEW_DISPLAYED, mSubView.getTag().toString());
             outState.putInt(KEY_SUB_SCROLL_POSITION, mSubScrollView.getScrollY());
         }
     }
@@ -686,7 +687,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         animIn.setDuration(duration);
         animIn.setInterpolator(interpolator);
         animIn.setFillAfter(true);
-        mSubScrollView.startAnimation(animIn);
+        mSubView.startAnimation(animIn);
         
         TranslateAnimation animOut = new TranslateAnimation(0, -width, 0, 0);
         animOut.setDuration(duration);
@@ -745,7 +746,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         });
         
-        mSubScrollView.startAnimation(animOut);
+        mSubView.startAnimation(animOut);
     }
     
     private void addSubviewOptionsList(String str, int value, int tagValue, boolean withSeparator, int itemId) {
@@ -778,7 +779,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         item.setTag(Integer.valueOf(tagValue));
         item.setOnClickListener(this);
         
-        mSubLayout.addView(item);
+        mSubOptionsLayout.addView(item);
     }
     
     private void addSubviewOptionsTitle(String str, boolean showIcon, int iconId) {
@@ -786,11 +787,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         title.setId(ID_HIDE_SUBVIEW_CONTAINER);
         title.setOnClickListener(this);
         
-        mSubLayout.addView(title);
+        mSubView.addView(title);
     }
     
     private void createSubview(View v) {
-        mSubLayout.setTag(v.getTag());
+        mSubView.setTag(v.getTag());
         
         if (v.getTag().toString().equals(KEY_TAG_PRINTER)) {
             String title = getResources().getString(R.string.ids_lbl_printer);
@@ -805,9 +806,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
             }
         } else {
-            mSubLayout.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT));
-            mSubLayout.setTag(ID_TAG_ICON, v.getTag(ID_TAG_ICON));
-            mSubLayout.setTag(ID_TAG_OPTIONS, v.getTag(ID_TAG_OPTIONS));
+            mSubView.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT));
+            mSubView.setTag(ID_TAG_ICON, v.getTag(ID_TAG_ICON));
+            mSubView.setTag(ID_TAG_OPTIONS, v.getTag(ID_TAG_OPTIONS));
             
             String name = (String) v.getTag();
             String text = (String) v.getTag(ID_TAG_TEXT);
@@ -835,8 +836,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
             
             // hide the separator of the last item added
-            if (mSubLayout.findViewWithTag(lastIdx) != null) {
-                View container = mSubLayout.findViewWithTag(lastIdx);
+            if (mSubView.findViewWithTag(lastIdx) != null) {
+                View container = mSubView.findViewWithTag(lastIdx);
                 container.findViewById(R.id.menuSeparator).setVisibility(View.GONE);
             }
             
@@ -844,46 +845,54 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void displayOptionsSubview(View v, boolean animate) {
-        if (mSubLayout == null) {
-            mSubLayout = new LinearLayout(getContext());
-            mSubLayout.setOrientation(LinearLayout.VERTICAL);
+        if (mSubOptionsLayout == null) {
+            mSubOptionsLayout = new LinearLayout(getContext());
+            mSubOptionsLayout.setOrientation(LinearLayout.VERTICAL);
         } else {
-            mSubLayout.removeAllViews();
+            mSubOptionsLayout.removeAllViews();
         }
         
         if (mSubScrollView == null) {
             mSubScrollView = new ScrollView(getContext());
         }
-        
         if (mSubScrollView.getChildCount() == 0) {
-            mSubScrollView.addView(mSubLayout, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            mSubScrollView.addView(mSubOptionsLayout, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        }
+
+        if (mSubView == null) {
+            mSubView = new LinearLayout(getContext());
+            mSubView.setOrientation(LinearLayout.VERTICAL);
+        } else {
+            mSubView.removeAllViews();
         }
         
         createSubview(v);
         
-        if (mSubScrollView.getParent() == null) {
-            addView(mSubScrollView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        mSubView.addView(mSubScrollView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        
+        if (mSubView.getParent() == null) {
+            addView(mSubView, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
         
         mMainScrollView.setEnabled(false);
-        mSubScrollView.setEnabled(true);
+        mSubView.setEnabled(true);
         if (animate) {
             animateDisplaySubview();
         } else {
             mMainScrollView.setVisibility(View.GONE);
         }
         
-        AppUtils.changeChildrenFont(mSubScrollView, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(mSubView, SmartDeviceApp.getAppFont());
     }
     
     private void dismissOptionsSubview(boolean animate) {
         mMainScrollView.setEnabled(true);
         mMainScrollView.setVisibility(View.VISIBLE);
-        mSubScrollView.setEnabled(false);
+        mSubView.setEnabled(false);
         if (animate) {
             animateDismissSubview();
         } else {
-            removeView(mSubScrollView);
+            removeView(mSubView);
         }
     }
     
@@ -891,17 +900,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         int id = (Integer) v.getTag();
         
         if (v.getId() == ID_SUBVIEW_OPTION_ITEM) {
-            if (updateValue((String) mSubLayout.getTag(), id)) {
+            if (updateValue((String) mSubView.getTag(), id)) {
                 if (mListener != null) {
                     mListener.onPrintSettingsValueChanged(mPrintSettings);
                 }
                 
                 // Update UI
-                updateDisplayedValue((String) mSubLayout.getTag());
+                updateDisplayedValue((String) mSubView.getTag());
                 
-                Object[] options = (Object[]) mSubLayout.getTag(ID_TAG_OPTIONS);
+                Object[] options = (Object[]) mSubView.getTag(ID_TAG_OPTIONS);
                 for (int i = 0; i < options.length; i++) {
-                    View view = mSubLayout.findViewWithTag(Integer.valueOf(i));
+                    View view = mSubView.findViewWithTag(Integer.valueOf(i));
                     // Some views may be hidden
                     if (view != null) {
                         View subView = view.findViewById(ID_SUBVIEW_STATUS);
@@ -923,7 +932,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 // Update UI
                 for (int i = 0; i < mPrintersList.size(); i++) {
                     Printer printer = mPrintersList.get(i);
-                    View view = mSubLayout.findViewWithTag(Integer.valueOf(printer.getId()));
+                    View view = mSubView.findViewWithTag(Integer.valueOf(printer.getId()));
                     View subView = view.findViewById(ID_SUBVIEW_STATUS);
                     subView.setSelected(id == printer.getId());
                 }
@@ -1248,7 +1257,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
                 break;
             case ID_HIDE_SUBVIEW_CONTAINER:
-                if (mSubScrollView.isEnabled()) {
+                if (mSubView.isEnabled()) {
                     dismissOptionsSubview(true);
                 }
                 break;
@@ -1289,7 +1298,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 mMainScrollView.setVisibility(View.GONE);
                 return true;
             case MSG_SLIDE_OUT:
-                removeView(mSubScrollView);
+                removeView(mSubView);
                 return true;
             case MSG_SET_SUB_SCROLL:
                 mSubScrollView.scrollTo(0, msg.arg1);
