@@ -86,7 +86,7 @@
 
                             <controls:KeyValueControl x:Name="port" 
                                                           Text="Port"
-                                                          LeftButtonVisibility="Collapsed"/>
+                                                          LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>
                             <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
                                                                  Text="Set as Default Printer"
                                                                  RightButtonVisibility="Collapsed"

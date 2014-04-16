@@ -1,5 +1,4 @@
-﻿using SmartDeviceApp.Common.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,8 +13,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
@@ -24,7 +23,6 @@ namespace SmartDeviceApp.Controls
         public KeyValueControl()
         {
             this.InitializeComponent();
-            RightImage = new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_submenu.png"));
         }
 
         public static readonly DependencyProperty LeftButtonVisibilityProperty =
@@ -44,6 +42,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty IconImageProperty =
             DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyValueControl), null);
+			
+		public static readonly DependencyProperty RightImageProperty =
+            DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyValueControl), null);
@@ -53,23 +54,6 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
-        
-        public static readonly DependencyProperty SetFocusProperty =
-            DependencyProperty.Register("SetFocus", typeof(bool), typeof(KeyValueControl), 
-            new PropertyMetadata(false, FocusChanged));
-
-        public static readonly DependencyProperty RightImageProperty =
-            DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
-
-
-        public static readonly DependencyProperty BackgroundColorProperty =
-            DependencyProperty.Register("BackgroundColor", typeof(SolidColorBrush), typeof(KeyValueControl), null);
-
-        //public int Index
-        //{
-        //    get { return (int)GetValue(IndexProperty); }
-        //    set { SetValue(IndexProperty, value); }
-        //}
 
         public string LeftButtonVisibility
         {
@@ -106,6 +90,12 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
+		
+		public ImageSource RightImage
+        {
+            get { return (ImageSource)GetValue(RightImageProperty); }
+            set { SetValue(RightImageProperty, value); }
+        }
 
         public string Text
         {
@@ -124,38 +114,6 @@ namespace SmartDeviceApp.Controls
             get { return (string)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
         }
-        public bool SetFocus
-        {
-            get { return (bool)GetValue(SetFocusProperty); }
-            set { SetValue(SetFocusProperty, value); }
-        }
 
-        private static void FocusChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            var targetElement = obj.GetValue(ValueContentProperty) as Control;
-            if (targetElement == null || e.NewValue == null || (!((bool)e.NewValue)))
-            {
-                return;
-            }
-            targetElement.Focus(FocusState.Programmatic);
-            obj.SetValue(SetFocusProperty, false);
-        }
-
-        private void ContentPresenter_GotFocus(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        public ImageSource RightImage
-        {
-            get { return (ImageSource)GetValue(RightImageProperty); }
-            set { SetValue(RightImageProperty, value); }
-        }
-
-        public SolidColorBrush BackgroundColor
-        {
-            get { return (SolidColorBrush)GetValue(BackgroundColorProperty); }
-            set { SetValue(BackgroundColorProperty, value); }
-        }
     }
 }

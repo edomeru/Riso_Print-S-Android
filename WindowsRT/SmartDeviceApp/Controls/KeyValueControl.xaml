@@ -48,19 +48,16 @@
                         Style="{StaticResource STYLE_AlignLeft}" Stretch="None"/>
             <TextBlock x:Name="key" 
                        Text="{Binding Text, ElementName=keyValueControl}" 
-                       Style="{StaticResource STYLE_TextKey}"
-                       />
+                       Style="{StaticResource STYLE_TextKey}"/>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
             <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" Style="{StaticResource STYLE_AlignRight}"/>
             <TextBlock x:Name="value" 
                        Text="{Binding ValueText, ElementName=keyValueControl}"
-                       Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"  
-                       
-                       Style="{StaticResource STYLE_TextValue}"
-                       MaxWidth="250"/>
-            <!--Style="{StaticResource STYLE_TextValue}"-->
-            <Image x:Name="rightButton" Source="{Binding RightImage, ElementName=keyValueControl}"
+                       Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"                       
+                       Style="{StaticResource STYLE_TextValue}"/>
+            <Image x:Name="rightButton" 
+	                Source="{Binding RightImage, ElementName=keyValueControl}"
                         Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
                         Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
         </StackPanel>
