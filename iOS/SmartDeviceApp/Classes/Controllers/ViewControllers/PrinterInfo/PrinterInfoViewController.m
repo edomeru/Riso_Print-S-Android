@@ -126,15 +126,6 @@
 - (IBAction)printSettingsAction:(id)sender
 {
     [self.delegate segueToPrintSettings];
-    //[self performSegueTo:[PrintSettingsViewController class]];
-}
-
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if([segue.identifier isEqualToString:@"PrintersIphone-PrintSettings"])
-    {
-        ((PrintSettingsViewController *)segue.destinationViewController).printerIndex = [NSNumber numberWithInteger:self.indexPath.row];
-    }
 }
 
 #pragma mark - PrinterStatusHelper method

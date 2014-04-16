@@ -135,6 +135,11 @@
  */
 -(Printer*) getDefaultPrinter;
 
+/**
+ Call to save the changes done to printer objects to database.
+ 
+ @return YES if successful; NO otherwise
+ */
 -(BOOL) savePrinterChanges;
 
 #pragma mark - Printers in Network (SNMP)

@@ -19,6 +19,10 @@
  Rendered image of the PDF page
  */
 @property (nonatomic) UIImage *image;
-@property (nonatomic) BOOL isPaddedPage;
+
+/**
+ Flag to indicate that page is used as book end
+ */
+@property (nonatomic) BOOL isBookendPage;
 
 @end

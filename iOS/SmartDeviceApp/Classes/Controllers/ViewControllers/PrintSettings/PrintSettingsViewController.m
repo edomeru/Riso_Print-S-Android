@@ -16,6 +16,8 @@
 #import "PrintSettingsHelper.h"
 #import "UIView+Localization.h"
 
+#define SEGUE_TO_PRINTSETTINGS_TABLE @"PrintSettings-PrintSettingsTable"
+
 @interface PrintSettingsViewController ()
 
 - (void)initialize;
@@ -77,7 +79,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if([segue.identifier isEqualToString:@"PrintSettings-PrintSettingsTable"] == YES)
+    if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS_TABLE] == YES)
     {
         Printer *printer = nil;
         PreviewSetting *previewSetting = nil;

@@ -25,7 +25,7 @@
 @property (nonatomic, strong) PreviewSetting *previewSetting;
 
 /**
- Current Printer Setting
+ Current Printer
  */
 @property (nonatomic, weak) Printer *printer;
 

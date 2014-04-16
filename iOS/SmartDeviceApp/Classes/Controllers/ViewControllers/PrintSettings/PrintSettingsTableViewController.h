@@ -14,5 +14,9 @@
 @property (nonatomic, strong) PreviewSetting *previewSetting;
 @property (nonatomic, weak) Printer *printer;
 @property (nonatomic) BOOL isDefaultSettingsMode;
+
+/**
+ Action when the printer list view controller unwinds to the print settings table
+ */
 - (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender;
 @end

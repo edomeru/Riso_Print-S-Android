@@ -135,22 +135,14 @@
 {
     // Return the number of sections.
     NSInteger sections = [[self.printSettingsTree objectForKey:@"group"] count];
-    /*if (self.showPrinterSelection)
-    {
-        sections++;
-    }*/
-    return sections + 1;
+
+    return sections + 1;//print settings sections + the printer section
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
     NSInteger logicalSection = section;
-    
-    /*if (self.showPrinterSelection == NO)
-    {
-        logicalSection++;
-    }*/
     
     if (logicalSection == 0)
     {
@@ -182,11 +174,6 @@
     UITableViewCell *cell;
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
-    
-    /*if (self.showPrinterSelection == NO)
-    {
-        section++;
-    }*/
     
     if (section == 0)
     {
@@ -301,11 +288,7 @@
 {
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
-    /*if (self.showPrinterSelection == NO)
-    {
-        section++;
-    }*/
-    
+
     if (section > 0)
     {
         NSArray *settings = [[[self.printSettingsTree objectForKey:@"group"] objectAtIndex:section - 1] objectForKey:@"setting"];

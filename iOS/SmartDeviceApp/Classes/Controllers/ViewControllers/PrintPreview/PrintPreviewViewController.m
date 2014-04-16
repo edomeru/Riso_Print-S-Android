@@ -60,7 +60,7 @@
 @property (nonatomic) NSInteger totalPageNum;
 
 /**
- Number of pages
+ Number of pages needed the needed layout. Includes the padded pages used as book ends.
  */
 @property (nonatomic) NSInteger layoutPageNum;
 
@@ -300,8 +300,10 @@
     if(self.printDocument.previewSetting.booklet == YES)
     {
         //booklet number of pages is always a multiple of 4 (1 paper folded in half = 2 leaves * 2 sides per leaf = 4 pages)
-        //total number of pages is the actual number of pdf pages  + padding pages to make number of pages multiple by 4
-        self.totalPageNum = self.printDocument.pageCount  +  self.printDocument.pageCount % 4;
+        //total number of pages is the actual number of pdf pages  + additional pages to make number of pages multiple by 4
+        self.totalPageNum = self.printDocument.pageCount  +  (4 - self.printDocument.pageCount % 4);
+        
+        //add two pages for the book ends
         self.layoutPageNum = self.totalPageNum + 2;
         [self.pageScroll setMaximumValue:self.totalPageNum - 1]; //the last page that can be visited for the slider should be the second to the last page  which is the front page of the last sheet
     }
@@ -317,11 +319,12 @@
         
         if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
         {
+            //if duplex and the number of pages is odd, still include the back of the last page, then add 2 pages for book ends
             self.layoutPageNum = self.totalPageNum + self.totalPageNum % 2 + 2;
         }
         else
         {
-            self.layoutPageNum = self.totalPageNum;
+            self.layoutPageNum = self.totalPageNum; //on other cases, the total page number is the total pages needed for the layout
         }
         [self.pageScroll setMaximumValue:self.totalPageNum];
     }
@@ -426,12 +429,14 @@
     PDFPageContentViewController *current = [self viewControllerAtIndex:pageIndex];
     NSMutableArray *viewControllerArray = [NSMutableArray arrayWithObject:current];
     
-    //if Spine is in mid location, must provide 2 controllers always. This occurs for booklet bind setting
+    //if Spine is in mid location, must provide 2 controllers always. This occurs for booklet bind setting and duplex
     if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
     {
+        //the two pages provided are reversed if right side finishing or booklet with right to left layout
         BOOL isReversed = (self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
                            (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft));
-        if(pageIndex == 0)//if first index, provide last page(back cover) as the left side page of the first page (front cover)
+        
+        if(pageIndex == 0)//if first index, provide the last bookend page as the other half
         {
             NSInteger lastPageIndex = self.layoutPageNum - 1;
             PDFPageContentViewController *lastPage = [self viewControllerAtIndex:lastPageIndex];
@@ -458,7 +463,7 @@
                 
             }
         }
-        else // if the page index is odd, provide the page next to it
+        else //if the page index is odd, provide the page next to it
         {
             PDFPageContentViewController *next = [self viewControllerAtIndex:pageIndex + 1];
             if(isReversed == YES)
@@ -496,12 +501,12 @@
 {
     if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
     {
-        if(index== 0)//put the last page (back cover) at left side of the first page (front cover)
+        if(index== 0)//put the book end as the previous page of the first page
         {
             return [self viewControllerAtIndex:self.layoutPageNum  - 1];
         }
         
-        if(index >= (self.layoutPageNum  - 1))// the last page (back cover) should not flip back to the previous pages since it is placed beside the first page (front cover)
+        if(index >= (self.layoutPageNum  - 1))//if already the book end page, do not turn
         {
             return nil;
         }
@@ -517,15 +522,16 @@
 
 - (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index
 {
-    
-    if(self.totalPageNum < self.layoutPageNum) //pages are padded as ends
+    // if the total page num is less than the layout page num, the index must be checked if it is the bookend page index
+    // the bookend page indices are the last 2 indices
+    if(self.totalPageNum < self.layoutPageNum)
     {
-        //no need to render
         NSInteger lastIndex = self.layoutPageNum - 1;
-        if(index >= lastIndex - 1)
+        if(index >= (lastIndex - 1))
         {
+            //if a bookend page, no need to add to render cache since it is just a PDFPageContentViewController with a transparent view
             PDFPageContentViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
-            viewController.isPaddedPage = YES;
+            viewController.isBookendPage = YES;
             viewController.pageIndex = index;
             return viewController;
         }
@@ -551,7 +557,7 @@
         renderCacheItem.viewController.image = renderCacheItem.image;
     }
     
-    renderCacheItem.viewController.isPaddedPage = NO;
+    renderCacheItem.viewController.isBookendPage = NO;
     
     NSMutableArray *activeIndices = [[NSMutableArray alloc] init];
     // Obtain list of pages that is currently being rendered in the background
@@ -630,6 +636,7 @@
     {
         return nil;
     }
+    //if right to left paging, reverse provided pages
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
        (self.printDocument.previewSetting.booklet == YES &&
         self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
@@ -646,6 +653,7 @@
     {
         return nil;
     }
+   //if right to left paging, reverse provided pages
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
        (self.printDocument.previewSetting.booklet == YES &&
         self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
@@ -796,7 +804,7 @@
     NSInteger pageNumber = slider.value;
     
     //update the current page  and page number label
-    // if double sided and page is at the back (even pages)
+    // if double sided and page is at the back (even pages)  - always navigate to the next front page
     if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) == 0)
     {
         //go to the next front page
@@ -826,7 +834,7 @@
     //multiply the the percentage with the total number of pages in view to get the current page index;
     NSInteger pageNumber = (self.totalPageNum * scrollPercentage);
    
-    // if double sided and page is at the back (even pages)
+    // if double sided and page is at the back (even pages) - always navigate to the next front page
     if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2)== 0)
     {
         if(pageNumber < self.totalPageNum)
