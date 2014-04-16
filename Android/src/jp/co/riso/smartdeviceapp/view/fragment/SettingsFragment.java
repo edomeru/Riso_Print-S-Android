@@ -9,7 +9,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import jp.co.riso.android.text.AlphaNumericFilter;
-import jp.co.riso.android.text.InvalidCharacterFilter;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
@@ -20,16 +19,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class SettingsFragment extends BaseFragment {
     
-    public static final int CARD_ID_LIMIT = 128;
-    public static final int READ_COMM_NAME_LIMIT = 15;
-    public static final String READ_COMM_INVALID_CHARS = " \\'\"#";
+    public static final int LOGIN_ID_LIMIT = 128;
+    public static final int PIN_CODE_LIMIT = 8;
     
     /** {@inheritDoc} */
     @Override
@@ -49,22 +49,25 @@ public class SettingsFragment extends BaseFragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         InputFilter[] filterArray;
         
-        EditText editText = (EditText) view.findViewById(R.id.cardIdEditText);
-        editText.setText(prefs.getString(AppConstants.PREF_KEY_CARD_ID, AppConstants.PREF_DEFAULT_CARD_ID));
-        editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_CARD_ID));
+        EditText editText = (EditText) view.findViewById(R.id.loginIdEditText);
+        
+        editText.setText(prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID));
+        editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_LOGIN_ID));
 
         filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(CARD_ID_LIMIT),
+                new InputFilter.LengthFilter(LOGIN_ID_LIMIT),
                 new AlphaNumericFilter()
         };
         editText.setFilters(filterArray);
         
-        editText = (EditText) view.findViewById(R.id.readCommNameEditText);
-        editText.setText(prefs.getString(AppConstants.PREF_KEY_READ_COMM_NAME, AppConstants.PREF_DEFAULT_READ_COMM_NAME));
-        editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_READ_COMM_NAME));
+        editText = (EditText) view.findViewById(R.id.pinCodeEditText);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        
+        editText.setText(prefs.getString(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE));
+        editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_PIN_CODE));
         filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(READ_COMM_NAME_LIMIT),
-                new InvalidCharacterFilter(READ_COMM_INVALID_CHARS)
+                new InputFilter.LengthFilter(PIN_CODE_LIMIT)
         };
         editText.setFilters(filterArray);
     }
