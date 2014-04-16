@@ -21,7 +21,8 @@ public class Setting extends XmlNode {
     public static final String ATTR_VAL_LIST = "list";
     public static final String ATTR_VAL_BOOLEAN = "boolean";
     public static final String ATTR_VAL_NUMERIC = "numeric";
-
+    public static final String ATTR_DBKEY = "dbkey";
+    
     public static final int TYPE_INVALID = -1;
     public static final int TYPE_LIST = 0;
     public static final int TYPE_BOOLEAN = 1;
@@ -33,10 +34,10 @@ public class Setting extends XmlNode {
         super(settingNode);
         
         mOptions = new ArrayList<Option>();
-
+        
         NodeList optionsList = settingNode.getChildNodes();
         for (int i = 1; i < optionsList.getLength(); i += 2) {
-            mOptions.add(new Option(optionsList.item(i)));    
+            mOptions.add(new Option(optionsList.item(i)));
         }
     }
     
@@ -70,5 +71,9 @@ public class Setting extends XmlNode {
         }
         
         return -1;
+    }
+    
+    public String getDbKey() {
+        return getAttributeValue(ATTR_DBKEY);
     }
 }

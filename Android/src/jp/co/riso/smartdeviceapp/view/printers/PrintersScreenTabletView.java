@@ -551,8 +551,9 @@ public class PrintersScreenTabletView extends LinearLayout implements OnLongClic
                             ft.replace(R.id.rightLayout, fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
                             ft.commit();
                         }
-                        
-                        fragment.setPrintSettings(mSelectedPrinter.getPrintSettings());
+                        fragment.setPrinterId(mSelectedPrinter.getId());
+                        // use new print settings retrieved from the database
+                        fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
                         activity.openDrawer(Gravity.RIGHT, true);
                     } else {
                         activity.closeDrawers();
