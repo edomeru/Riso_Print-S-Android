@@ -10,9 +10,34 @@
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     DataContext="{Binding HomeViewModel, Source={StaticResource Locator}}">
+
+    <base:PageBase.Resources>
+        <Style x:Key="STYLE_Line" TargetType="Line">
+            <Style.Setters>
+                <Setter Property="X1" Value="0"/>
+                <Setter Property="X2" Value="600"/>
+                <Setter Property="Stroke" Value="{StaticResource BRUSH_Purple2}"/>
+                <Setter Property="StrokeThickness" Value="1"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_Text" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
+            <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>
+        </Style>
+    </base:PageBase.Resources>
         
     <controls:ViewControl 
+        ChildrenDataContext="{Binding DataContext, ElementName=homePage}"
         Text="{Binding Source=IDS_LBL_HOME, Converter={StaticResource ResourceStringToTextConverter}}" >
+        <StackPanel HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    Style="{StaticResource STYLE_StackTop}">
+            <Image Source="ms-appx:///Resources/Dummy/Logo_Riso_temp.png" Width="600" Margin="0,0,0,30"/>
+            <Line Style="{StaticResource STYLE_Line}" Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding Source=IDS_LBL_OPEN_IN_WINRT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                       Style="{StaticResource STYLE_Text}"
+                       Margin="0,0,0,10"/>
+            <Line Style="{StaticResource STYLE_Line}"/>
+        </StackPanel>        
     </controls:ViewControl>
 </base:PageBase>
 

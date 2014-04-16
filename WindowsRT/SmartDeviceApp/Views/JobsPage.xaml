@@ -23,7 +23,7 @@
                 </controls:GroupListControl.Margin>
                 <controls:GroupListControl.Content>
                     <ListView x:Name="jobsGroupListView"
-                              ItemsSource="{Binding Jobs}"
+                              ItemsSource="{Binding Jobs, Mode=TwoWay}"
                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                               ScrollViewer.HorizontalScrollMode="Disabled"
                               ScrollViewer.VerticalScrollMode="Disabled"
@@ -91,13 +91,11 @@
                     <ListView x:Name="column2" Grid.Column="1"
                               ItemsSource="{Binding PrintJobsColumn2}" 
                               ItemContainerStyle="{StaticResource STYLE_PrintJobsListViewItem}"
-                              ItemTemplate="{StaticResource TEMPLATE_PrintJobItem}"
                               Style="{StaticResource STYLE_PrintJobsListView}">
                     </ListView>
                     <ListView x:Name="column3" Grid.Column="2"
                               ItemsSource="{Binding PrintJobsColumn3}" 
                               ItemContainerStyle="{StaticResource STYLE_PrintJobsListViewItem}"
-                              ItemTemplate="{StaticResource TEMPLATE_PrintJobItem}"
                               Style="{StaticResource STYLE_PrintJobsListView}">
                     </ListView>
                 </Grid>

@@ -40,6 +40,7 @@ namespace SmartDeviceApp.Controllers
 
         private Document _document;
         private bool _isFileLoaded;
+        private bool _isFromFilePicker = true;
 
         /// <summary>
         /// Number of pages of the actual PDF file
@@ -59,7 +60,16 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Flag to determine if document is loaded from FilePicker
         /// </summary>
-        public bool IsFromFilePicker { get; private set; }
+        public bool IsFromFilePicker { 
+            get
+            {
+                return _isFromFilePicker;
+            }
+            private set
+            {
+                _isFromFilePicker = value;
+            }
+        }
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit

@@ -14,6 +14,7 @@ using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Views;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -358,11 +359,18 @@ namespace SmartDeviceApp.ViewModels
 
         private void GoToHomePageExecute()
         {
-            // TODO: Logic for choosing home or previw page
-            _frame.Navigate(typeof(PrintPreviewPage));
-            ScreenMode = ScreenMode.PrintPreview;
+            if (DocumentController.Instance.IsFromFilePicker)
+            {
+                _frame.Navigate(typeof(HomePage));
+                ScreenMode = ScreenMode.Home;
+            }
+            else
+            {
+                _frame.Navigate(typeof(PrintPreviewPage));
+                ScreenMode = ScreenMode.PrintPreview;
+                //new ViewModelLocator().PrintPreviewViewModel.InitializeGestures();
+            }
             ViewMode = ViewMode.FullScreen;
-            //new ViewModelLocator().PrintPreviewViewModel.InitializeGestures();
         }
 
         private void GoToPrintersPageExecute()
