@@ -88,7 +88,8 @@
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
 
-    [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.printerStatus setStatus:NO];
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
     if (indexPath.row == self.printerManager.countSavedPrinters-1)

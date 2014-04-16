@@ -127,9 +127,15 @@
     cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.statusView.statusHelper.delegate = cell.statusView;
 
-    [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.statusView setStatus:NO];
     [cell.statusView.statusHelper startPrinterStatusPolling];
     return cell;
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
