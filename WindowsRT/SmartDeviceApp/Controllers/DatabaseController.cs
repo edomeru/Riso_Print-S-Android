@@ -458,7 +458,22 @@ namespace SmartDeviceApp.Controllers
 
         private async Task InsertSampleData()
         {
-            await ExecuteScript("Resources/Dummy/SampleData.sql");
+            bool isPreviouslyLoaded = false;
+            string key = "IsSampleDataAlreadyLoaded";
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.ContainsKey(key))
+            {
+                isPreviouslyLoaded = (bool)localSettings.Values[key];
+            }
+            else
+            {
+                localSettings.Values[key] = true;
+            }
+
+            if (!isPreviouslyLoaded)
+            {
+                await ExecuteScript("Resources/Dummy/SampleData.sql");
+            }
         }
 
         #endregion Dummy - Initial Data
