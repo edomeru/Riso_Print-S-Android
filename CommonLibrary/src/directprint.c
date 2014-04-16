@@ -163,7 +163,7 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
-    if (print_job->print_settings == 0 || strlen(print_job->ip_address) <= 0)
+    if (print_job->ip_address == 0 || strlen(print_job->ip_address) <= 0)
     {
         return 0;
     }

@@ -60,7 +60,8 @@ typedef void (*snmp_printer_added_callback)(snmp_context *context, snmp_device *
 // SNMP state
 typedef enum
 {
-    kSnmpStateCancelled = 0,
+    kSnmpStateCancelled = -1,
+    kSnmpStateInitialized = 0,
     kSnmpStateStarted = 1,
     kSnmpStateEnded = 2
 } kSnmpState;
