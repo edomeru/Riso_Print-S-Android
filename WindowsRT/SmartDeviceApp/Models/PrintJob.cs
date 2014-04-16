@@ -119,7 +119,6 @@ namespace SmartDeviceApp.Models
     public class PrintJobGroup : ObservableObject
     {
         private List<PrintJob> _jobs;
-        public int PrinterId { get; set; }
         public string PrinterName { get; set; }
         public List<PrintJob> Jobs
         {
