@@ -34,7 +34,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Printer ID, used by Printer table as primary key
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.PrimaryKey]
+        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.PrimaryKey, SQLite.AutoIncrement]
         public int Id { get; set; }
 
         /// <summary>
@@ -72,49 +72,49 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Printer post setting, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_port_setting")]
+        [SQLite.Column("prn_port_setting"), SQLite.NotNull]
         public int PortSetting { get; set; }
 
         /// <summary>
         /// Printer support for LPR, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_lpr")]
+        [SQLite.Column("prn_enabled_lpr"), SQLite.NotNull]
         public bool EnabledLpr { get; set; }
 
         /// <summary>
         /// Printer support for RAW, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_raw")]
+        [SQLite.Column("prn_enabled_raw"), SQLite.NotNull]
         public bool EnabledRaw { get; set; }
 
         /// <summary>
         /// Printer support for pagination, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_pagination")]
+        [SQLite.Column("prn_enabled_pagination"), SQLite.NotNull]
         public bool EnabledPagination { get; set; }
 
         /// <summary>
         /// Printer support for duplex, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_duplex")]
+        [SQLite.Column("prn_enabled_duplex"), SQLite.NotNull]
         public bool EnabledDuplex { get; set; }
 
         /// <summary>
         /// Printer support for booklet binding, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_booklet_binding")]
+        [SQLite.Column("prn_enabled_booklet_binding"), SQLite.NotNull]
         public bool EnabledBookletBinding { get; set; }
 
         /// <summary>
         /// Printer support for staple, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_staple")]
+        [SQLite.Column("prn_enabled_staple"), SQLite.NotNull]
         public bool EnabledStaple { get; set; }
 
         /// <summary>
         /// Printer support for bind, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_bind")]
+        [SQLite.Column("prn_enabled_bind"), SQLite.NotNull]
         public bool EnabledBind { get; set; }
 
         /// <summary>

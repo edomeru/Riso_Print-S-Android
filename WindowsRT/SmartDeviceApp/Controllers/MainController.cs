@@ -27,17 +27,15 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initialization
         /// </summary>
-
         public static async void Initialize()
         {
             await InitializeDataStorage();
-            
+            await InitializeControllers();
         }
 
         /// <summary>
         /// Initiates loading of PDF document
         /// </summary>
-
         /// <param name="file">PDF file</param>
         /// <returns>task</returns>
         public async static Task FileActivationHandler(StorageFile file)
@@ -50,7 +48,6 @@ namespace SmartDeviceApp.Controllers
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 
-
             await DocumentController.Instance.Load(file, false);
             await PrintPreviewController.Instance.Initialize();
         }
@@ -58,17 +55,25 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initializes the database and other data storage
         /// </summary>
-
+        /// <returns>task</returns>
         private static async Task InitializeDataStorage()
         {
             await DatabaseController.Instance.Initialize();
-
         }
 
         public async static Task InitializePrintersController()
         {
             await PrinterController.Instance.Initialize();
             
+        }
+
+        /// <summary>
+        /// Other initializations (TBD)
+        /// </summary>
+        /// <returns>task</returns>
+        private static async Task InitializeControllers()
+        {
+            await JobController.Instance.Initialize();
         }
 
         #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
@@ -83,9 +88,7 @@ namespace SmartDeviceApp.Controllers
             await PrintPreviewController.Instance.Cleanup();
 
             StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
-
             await DocumentController.Instance.Load(samplePdf, false);
-
             await PrintPreviewController.Instance.Initialize();
         }
 
