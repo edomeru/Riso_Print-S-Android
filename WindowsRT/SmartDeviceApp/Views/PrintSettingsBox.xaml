@@ -38,6 +38,7 @@
                                       utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                       LeftButtonVisibility="Collapsed"
                                       IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                      RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
                                       SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                       Width="{Binding Width, ElementName=printSettingsBox}"/>
         </DataTemplate>
