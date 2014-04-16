@@ -35,6 +35,10 @@
     [super viewDidLoad];
 
     self.printerManager = [PrinterManager sharedPrinterManager];
+    if(self.selectedPrinter == nil)
+    {
+        self.selectedIndex = -1;
+    } 
 }
 
 - (void)didReceiveMemoryWarning
@@ -100,7 +104,7 @@
     }
     
     int index = indexPath.row - 1;
-    if (index != self.selectedIndex || self.selectedPrinter == nil)
+    if (index != self.selectedIndex)
     {
         self.selectedIndex = index;
         self.selectedPrinter = [self.printerManager getPrinterAtIndex:index];

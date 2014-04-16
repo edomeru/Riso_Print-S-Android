@@ -135,25 +135,34 @@
 {
     // Return the number of sections.
     NSInteger sections = [[self.printSettingsTree objectForKey:@"group"] count];
-    if (self.showPrinterSelection)
+    /*if (self.showPrinterSelection)
     {
         sections++;
-    }
-    return sections;
+    }*/
+    return sections + 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
     NSInteger logicalSection = section;
-    if (self.showPrinterSelection == NO)
+    
+    /*if (self.showPrinterSelection == NO)
     {
         logicalSection++;
-    }
+    }*/
     
     if (logicalSection == 0)
     {
-        return 2;
+        if(self.showPrinterSelection == NO)
+        {
+            return 1; //show only printer name not printer button header
+
+        }
+        else
+        {
+            return 2;
+        }
     }
     else if (logicalSection >= 1)
     {
@@ -174,10 +183,10 @@
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
     
-    if (self.showPrinterSelection == NO)
+    /*if (self.showPrinterSelection == NO)
     {
         section++;
-    }
+    }*/
     
     if (section == 0)
     {
@@ -292,10 +301,10 @@
 {
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
-    if (self.showPrinterSelection == NO)
+    /*if (self.showPrinterSelection == NO)
     {
         section++;
-    }
+    }*/
     
     if (section > 0)
     {
@@ -346,9 +355,13 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0 && indexPath.row == 1)
+    if (indexPath.section == 0)
     {
-        return ROW_HEIGHT_DOUBLE;
+        NSInteger printerDisplayRow = (self.showPrinterSelection == YES) ? 1: 0;
+        if(indexPath.row == printerDisplayRow)
+        {
+            return ROW_HEIGHT_DOUBLE;
+        }
     }
     return ROW_HEIGHT_SINGLE;
 }

@@ -14,10 +14,12 @@
 #import "Printer.h"
 #import "PreviewSetting.h"
 #import "PrintSettingsHelper.h"
+#import "UIView+Localization.h"
 
 @interface PrintSettingsViewController ()
 
 - (void)initialize;
+@property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
 @end
 
@@ -60,6 +62,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    if(self.printerIndex != nil)
+    {
+       self.printSettingsScreenTitle.localizationId = @"IDS_LBL_DEFAULT_PRINT_SETTINGS";
+    }
 }
 
 - (void)didReceiveMemoryWarning

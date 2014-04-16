@@ -28,4 +28,7 @@
 @dynamic printjob;
 @dynamic printsetting;
 
+-(void)dealloc
+{
+}
 @end

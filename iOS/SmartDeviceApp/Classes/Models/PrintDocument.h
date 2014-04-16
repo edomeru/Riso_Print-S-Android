@@ -27,7 +27,7 @@
 /**
  Current Printer Setting
  */
-@property (nonatomic, strong) Printer *printer;
+@property (nonatomic, weak) Printer *printer;
 
 /**
  Delegate that will handle Preview Setting changes

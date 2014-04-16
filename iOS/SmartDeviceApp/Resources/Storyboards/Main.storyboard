@@ -1415,6 +1415,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="printSettingsScreenTitle" destination="7VB-SO-uD9" id="tgH-Ss-VSM"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintPreview" unwindAction="unwindToPrintPreview:" id="W5A-uc-DU4"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="iQ2-0T-cMH"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="y6B-GG-Ywz"/>
