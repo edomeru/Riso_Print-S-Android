@@ -20,6 +20,9 @@ namespace SmartDeviceApp.ViewModels
 {
     public class JobsViewModel : ViewModelBase
     {
+        public event SmartDeviceApp.Controllers.JobController.RemoveJobEventHandler RemoveJobEventHandler;
+        public event SmartDeviceApp.Controllers.JobController.RemoveGroupedJobsEventHandler RemoveGroupedJobsEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -36,7 +39,7 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
 
-            //Initialize();            
+            //Initialize();
         }
         
         public ICommand DeleteAllJobsCommand
@@ -124,12 +127,18 @@ namespace SmartDeviceApp.ViewModels
 
         private void DeleteAllJobsExecute(int printerId)
         {
-            // TODO
+            if (RemoveGroupedJobsEventHandler != null)
+            {
+                RemoveGroupedJobsEventHandler(printerId);
+            }
         }
 
         private void DeleteJobExecute(PrintJob printJob)
         {
-            // TODO
+            if (RemoveJobEventHandler != null)
+            {
+                RemoveJobEventHandler(printJob);
+            }
         }
 
         private void SortPrintJobsListToColumns()
@@ -172,7 +181,7 @@ namespace SmartDeviceApp.ViewModels
         {
             var printJobsList = new PrintJobList();
 
-            var jobs = new List<PrintJob>();            
+            var jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0101, 1, "Job1", DateTime.Now, 0));
             printJobsList = new PrintJobList();
             printJobsList.Add(new PrintJobGroup("Printer1", jobs));
