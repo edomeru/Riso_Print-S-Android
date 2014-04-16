@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false" >
+
+    <include layout="@layout/actionbar_main" />
+
+    <ScrollView
+        android:id="@+id/rootView"
+        android:layout_width="@dimen/settings_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/theme_light_3" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/cardReaderGroup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_menu_height"
+                android:background="@drawable/selector_printsettings_title"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/home_title_padding"
+                android:text="@string/ids_lbl_card_reader_group"
+                android:textAllCaps="true"
+                android:textColor="@color/theme_light_1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_menu_height"
+                android:background="@drawable/selector_printsettings_item"
+                android:duplicateParentState="true"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/home_title_padding"
+                android:paddingRight="@dimen/printsettings_menu_padding" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:duplicateParentState="true"
+                    android:paddingRight="@dimen/printsettings_menu_padding"
+                    android:maxLines="2"
+                    android:text="@string/ids_lbl_card_id"
+                    android:textColor="@color/theme_dark_1"
+                    android:textSize="@dimen/home_text_size" />
+
+                <EditText
+                    style="@style/BorderedEditText"
+                    android:id="@+id/cardIdEditText"
+                    android:layout_width="@dimen/settings_card_id_input_width"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0"
+                    android:singleLine="true" >
+                </EditText>
+            </LinearLayout>
+            
+            <TextView
+                android:id="@+id/printerSearchGroup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_menu_height"
+                android:background="@drawable/selector_printsettings_title"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/home_title_padding"
+                android:text="@string/ids_lbl_printer_search_group"
+                android:textAllCaps="true"
+                android:textColor="@color/theme_light_1" />
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_menu_height"
+                android:background="@drawable/selector_printsettings_item"
+                android:duplicateParentState="true"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/home_title_padding"
+                android:paddingRight="@dimen/printsettings_menu_padding" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:duplicateParentState="true"
+                    android:paddingRight="@dimen/printsettings_menu_padding"
+                    android:maxLines="2"
+                    android:text="@string/ids_lbl_read_comm_name"
+                    android:textColor="@color/theme_dark_1"
+                    android:textSize="@dimen/home_text_size" />
+
+                <EditText
+                    style="@style/BorderedEditText"
+                    android:id="@+id/readCommNameEditText"
+                    android:layout_width="@dimen/settings_read_comm_name_input_width"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0"
+                    android:singleLine="true"
+                    android:hint="@string/ids_lbl_read_comm_name_hint" >
+                </EditText>
+            </LinearLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,37 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SDALinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:splitMotionEvents="false" >
+    android:orientation="vertical" >
 
     <include layout="@layout/actionbar_main" />
 
-    <ScrollView
+    <jp.co.riso.smartdeviceapp.view.printers.PrintersListView
+        android:id="@+id/printer_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        android:divider="@null" >
+    </jp.co.riso.smartdeviceapp.view.printers.PrintersListView>
 
-        <LinearLayout
-            android:id="@+id/rootView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/tempPrinterSearchButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/ids_lbl_search_printers" />
-
-            <Button
-                android:id="@+id/tempAddPrinterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/ids_lbl_add_printer" />
-
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout>
+</jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>

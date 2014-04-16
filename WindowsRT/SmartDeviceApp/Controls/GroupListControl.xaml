@@ -25,7 +25,7 @@
             </Style.Setters>
         </Style>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
-            <Grid Background="{StaticResource BRUSH_White}" Width="130" Height="60">
+            <Grid Background="{StaticResource BRUSH_White}" Width="150" Height="60">
                 <TextBlock Text="DELETE ALL" Style="{StaticResource STYLE_TextBody}"></TextBlock>
             </Grid>
         </ControlTemplate>
@@ -82,11 +82,10 @@
         		</StackPanel>
                 <Button x:Name="deleteButton" Grid.Column="1" 
                         Template="{StaticResource TEMPLATE_DeleteButton}"
-                        Visibility="{Binding DeleteButtonVisibility, ElementName=groupListControl}"/>
+                        Visibility="{Binding DeleteButtonVisibility, ElementName=groupListControl}"
+                        Command="{Binding DeleteCommand, ElementName=groupListControl}"/>
             </Grid>
         </ControlTemplate>
-       
-            
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>
@@ -97,7 +96,6 @@
         <ToggleButton x:Name="header" Grid.Row="0" 
                       Width="{Binding Width, ElementName=groupListControl}"
                       Template="{StaticResource TEMPLATE_ToggleButton}" 
-                      ManipulationMode="TranslateInertia"
                       Style="{StaticResource STYLE_ListToggleButton}"/>
         <ContentPresenter Grid.Row="2" 
                           Content="{Binding Content, ElementName=groupListControl}" 

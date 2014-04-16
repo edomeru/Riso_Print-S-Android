@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="html_folder">html</string>
+    <string name="help_html">help.html</string>
+    <string name="legal_html">legal.html</string>
+</resources>

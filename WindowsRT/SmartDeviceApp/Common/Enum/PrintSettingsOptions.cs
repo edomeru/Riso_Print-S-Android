@@ -45,6 +45,7 @@ namespace SmartDeviceApp.Common.Enum
         A6,
         B4,
         B5,
+        B6,
         Foolscap,
         Tabloid,
         Legal,

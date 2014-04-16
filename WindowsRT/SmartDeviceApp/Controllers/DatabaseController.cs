@@ -10,14 +10,13 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Models;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using SQLite;
-using SmartDeviceApp.Models;
 using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
@@ -28,6 +27,8 @@ namespace SmartDeviceApp.Controllers
 
         private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
         private const string FILE_PATH_DATABASE_SCRIPT = "Assets/SmartDeviceAppDB.sql";
+
+        private string _databasePath;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -41,34 +42,96 @@ namespace SmartDeviceApp.Controllers
             get { return _instance; }
         }
 
-        // public async Task Initialize() // Used for create database from script
-        public void Initialize()
+        public async Task Initialize()
         {
             // await CreateDatabase();  // Used for create database from script
             CreateDatabase();
+
+            // TODO: Remove after testing (or create an initial data manager)
+            await InsertSampleData();
         }
 
         // private async Task CreateDatabase() // Used for create database from script
         private void CreateDatabase()
         {
+#if CREATE_TABLES_USING_SCRIPT
+            #region Create Tables Using Script File
+
+            await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
+
+            #endregion Create Create Tables Using Script File
+#else // CREATE_TABLES_USING_SCRIPT
+            #region Create Tables Using Model Classes
+
             try
             {
-                var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
-                    FILE_NAME_DATABASE);
-                using (var db = new SQLite.SQLiteConnection(dbpath))
+                // TODO: Handling when database file does not exist
+
+                _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
+                using (var db = new SQLite.SQLiteConnection(_databasePath))
                 {
-                    #region Create Tables Using Script File
                     /*
-                    // Read script from Assets and create tables
-                    string dbScriptPath = Path.Combine(Package.Current.InstalledLocation.Path,
-                        FILE_PATH_DATABASE_SCRIPT);
-                    StorageFile file =await StorageFileUtility.GetFileFromAppResource(dbScriptPath);
+                    // DeleteAll is for testing purposes only PrintersModule
+                    db.DeleteAll<Printer>();
+                    db.Commit();
+
+                    db.DeleteAll<DefaultPrinter>();
+                    db.Commit();
+                     * */
+
+                    // Create the tables if they don't exist
+
+                    // Printer table
+                    db.CreateTable<Printer>();
+                    db.Commit();
+
+                    // DefaultPrinter Table
+                    db.CreateTable<DefaultPrinter>();
+                    db.Commit();
+
+                    // PrintSettings Table
+                    db.CreateTable<PrintSettings>();
+                    db.Commit();
+
+                    // PrintJob Table
+                    db.CreateTable<PrintJob>();
+                    db.Commit();
+
+                    db.Dispose();
+                    db.Close();
+
+                    // insertPrinters(); //for testing PrintersModule
+                }
+            }
+            catch
+            {
+                // Error in creating tables
+            }
+
+            #endregion Create Tables Using Model Classes
+#endif // CREATE_TABLES_USING_SCRIPT
+        }
+
+        /// <summary>
+        /// Executes all commands in a script file
+        /// </summary>
+        /// <param name="filePath">file path of the script; assumed to be a resource file</param>
+        /// <returns>task</returns>
+        private async Task ExecuteScript(string filePath)
+        {
+            try
+            {
+                _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
+                using (var db = new SQLite.SQLiteConnection(_databasePath))
+                {
+                    // Read script from Dummy Resources and create tables
+                    StorageFile file = await StorageFileUtility.GetFileFromAppResource(filePath);
                     string script = await FileIO.ReadTextAsync(file);
-                        
+
                     // Loop each commands
-                    string[] commands = script.Split(new char[]{';'},
+                    string[] commands = script.Split(new char[] { ';' },
                         StringSplitOptions.RemoveEmptyEntries);
-                    foreach(string command in commands)
+                    foreach (string command in commands)
                     {
                         try
                         {
@@ -78,101 +141,63 @@ namespace SmartDeviceApp.Controllers
                         }
                         catch (SQLiteException)
                         {
-                            // Table already exists
-                            // Coninue execution just to create other empty tables
+                            // Error handling
                         }
                     }
-                    */
-                    #endregion Create Create Tables Using Script File
-
-                    
-                    // DeleteAll is for testing purposes only PrintersModule
-                    //db.DeleteAll<Printer>();
-                    //db.Commit();
-
-                    //db.DeleteAll<DefaultPrinter>();
-                    //db.Commit();
-                    
-
-                    #region Create Tables Using Model Classes
-
-                    // Create the tables if they don't exist
-
-                    //Printer table
-                    db.CreateTable<Printer>();
-                    db.Commit();
-
-                    //DefaultPrinter Table
-                    db.CreateTable<DefaultPrinter>();
-                    db.Commit();
-
-                    //PrintSettings Table
-                    db.CreateTable<PrintSettings>();
-                    db.Commit();
-
-                    //PrintJob Table
-                    db.CreateTable<PrintJob>();
-                    db.Commit();
-
-                    db.Dispose();
-                    db.Close();
-
-                    #endregion Create Tables Using Model Classes
-
-                    //insertPrinters(); //for testing PrintersModule
                 }
             }
             catch
             {
-                // Error in creating tables
+                // Error handling
             }
         }
 
         #region Printer Table Operations
 
-        
-        //private void insertPrinters()
-        //{
-        //    Printer printer = new Printer(1, 1, "192.168.0.170", "RISO_Printer1", 1, true, true,
-        //        true, true, true, true, true);
-        //    Printer printer2 = new Printer(2, 2, "192.168.0.189", "RISO_Printer2", 1, true, true,
-        //        true, true, true, true, true);
-        //    Printer printer3 = new Printer(3, 3, "192.168.0.22", "RISO_Printer3", 1, true, true,
-        //        true, true, true, true, true);
+        /*
+        private void insertPrinters()
+        {
+            Printer printer = new Printer(1, 1, "192.168.0.22", "RISO_Printer1", 1, true, true,
+                true, true, true, true, true);
+            Printer printer2 = new Printer(2, 2, "192.168.0.2", "RISO_Printer2", 1, true, true,
+                true, true, true, true, true);
+            Printer printer3 = new Printer(3, 3, "192.168.0.3", "RISO_Printer3", 1, true, true,
+                true, true, true, true, true);
 
-        //    DefaultPrinter dp = new DefaultPrinter(printer3.Id);
+            DefaultPrinter dp = new DefaultPrinter(printer.Id);
 
-        //    var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
-        //        FILE_NAME_DATABASE);
-        //    using (var db = new SQLite.SQLiteConnection(dbpath))
-        //    {
-        //        // Create the tables if they don't exist
-        //        db.Insert(printer);
-        //        db.Commit();
+            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
+                DATABASE_FILE_NAME);
+            using (var db = new SQLite.SQLiteConnection(dbpath))
+            {
+                // Create the tables if they don't exist
+                db.Insert(printer);
+                db.Commit();
 
-        //        db.Insert(printer2);
-        //        db.Commit();
+                db.Insert(printer2);
+                db.Commit();
 
-        //        db.Insert(printer3);
-        //        db.Commit();
+                db.Insert(printer3);
+                db.Commit();
 
-        //        db.Insert(dp);
-        //        db.Commit();
+                db.Insert(dp);
+                db.Commit();
 
-        //        db.Dispose();
-        //        db.Close();
-        //    }
+                db.Dispose();
+                db.Close();
+            }
 
 
-        //}
-        
+        }
+        */
 
         public async Task<int> InsertPrinter(Printer printer)
         {
             var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            try{
-            var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            
+            try
+            {
+                var db = new SQLite.SQLiteAsyncConnection(dbpath);
+
                 // Create the tables if they don't exist
                 return await db.InsertAsync(printer);
             }
@@ -189,9 +214,7 @@ namespace SmartDeviceApp.Controllers
             var printerList = new List<Printer>();
             try
             {
-                var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-
-                var db = new SQLite.SQLiteAsyncConnection(dbpath);
+                var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
                 printerList = await (db.Table<Printer>().ToListAsync());
             }
@@ -204,8 +227,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> SetDefaultPrinter(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            var db = new SQLite.SQLiteAsyncConnection(dbpath);
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
             try
             {
                 if (printerId < 0)
@@ -219,13 +241,13 @@ namespace SmartDeviceApp.Controllers
                     if (existingDefault != null)
                     {
                         // update default printer id
-                        existingDefault.PrinterId = printerId;
+                        existingDefault.PrinterId = (uint)printerId;
                     }
                     else
                     {
                         // no default printer, insert new
                         DefaultPrinter dp = new DefaultPrinter();
-                        dp.PrinterId = printerId;
+                        dp.PrinterId = (uint)printerId;
 
                         int success = await db.InsertAsync(dp);
                     }
@@ -240,8 +262,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<int> DeletePrinterFromDB(int printerId)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            var db = new SQLite.SQLiteAsyncConnection(dbpath);
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
             try
             {
@@ -255,8 +276,7 @@ namespace SmartDeviceApp.Controllers
                 if (printer.Id == defaultPrinter.PrinterId)
                 {
                     //update default printer in DB
-                    //await db.DeleteAsync(defaultPrinter);
-                    await SetDefaultPrinter(-1);
+                    await db.DeleteAsync(defaultPrinter);
                 }
 
                 //delete in Printer table
@@ -271,51 +291,195 @@ namespace SmartDeviceApp.Controllers
             return 0;
         }
 
-        public async Task<Printer> GetDefaultPrinter()
+        /// <summary>
+        /// Retrieves the default printer
+        /// </summary>
+        /// <returns>task; DefaultPrinter object if found, null otherwise</returns>
+        public async Task<DefaultPrinter> GetDefaultPrinter()
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            DefaultPrinter defaultPrinter = new DefaultPrinter();
-            Printer printer = new Printer();
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
             try
             {
                 int defaultPrinterCount = await db.Table<DefaultPrinter>().CountAsync();
                 if (defaultPrinterCount > 0)
                 {
-                    defaultPrinter = await (db.Table<DefaultPrinter>().FirstAsync());
-                    printer = await (db.GetAsync<Printer>(defaultPrinter.PrinterId));
-                    printer.IsDefault = true;
+                    return await (db.Table<DefaultPrinter>().FirstAsync());
                 }
             }
             catch
             {
                 // Error handling here
             }
-            return printer;
+            return null;
+        }
+
+        /// <summary>
+        /// Retrives the Printer from the database
+        /// </summary>
+        /// <param name="id">printer ID</param>
+        /// <returns>task; Printer object if found, null otherwise</returns>
+        public async Task<Printer> GetPrinter(int id)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                return await db.GetAsync<Printer>(id);
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves the printer name
+        /// </summary>
+        /// <param name="id">printer ID</param>
+        /// <returns>task; printer name if found, empty string otherwise</returns>
+        public async Task<string> GetPrinterName(int id)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                Printer printer = await db.GetAsync<Printer>(id);
+                return printer.Name;
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return string.Empty;
         }
 
         #endregion Printer Table Operations
 
         #region PrintSetting Table Operations
 
-        public async Task<PrintSettings> GetPrintSetting(int printerId)
+        /// <summary>
+        /// Retrives print settings
+        /// </summary>
+        /// <param name="id">print setting ID</param>
+        /// <returns>task; print settings if found, null otherwise</returns>
+        public async Task<PrintSettings> GetPrintSettings(int id)
         {
-            var dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            var db = new SQLite.SQLiteAsyncConnection(dbpath);
-            PrintSettings printSetting = null;
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
             try
             {
-                printSetting = await db.GetAsync<PrintSettings>(printerId);
+                return await db.GetAsync<PrintSettings>(id);
             }
             catch
             {
                 // Error handling here
             }
-            return printSetting;
+            return null;
         }
 
         #endregion PrintSetting Table Operations
+
+        #region PrintJob Table Operations
+
+        /// <summary>
+        /// Retrieves all print jobs
+        /// </summary>
+        /// <returns>task; list of all print jobs</returns>
+        public async Task<List<PrintJob>> GetPrintJobs()
+        {
+            var printJobsList = new List<PrintJob>();
+
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+            try
+            {
+                printJobsList = await (db.Table<PrintJob>().ToListAsync());
+            }
+            catch
+            {
+                return null;
+            }
+
+            return printJobsList;
+        }
+
+        /// <summary>
+        /// Insert an item into PrintJob table
+        /// </summary>
+        /// <param name="printJob">print job to be added</param>
+        /// <returns>task; number for added rows</returns>
+        public async Task<int> InsertPrintJob(PrintJob printJob)
+        {
+            if (printJob == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+                await db.InsertAsync(printJob);
+                return 1;
+            }
+            catch
+            {
+                // Error handling
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Deletes a print job from the database
+        /// </summary>
+        /// <param name="printJob">print job to be deleted</param>
+        /// <returns>task; number of deleted items</returns>
+        public async Task<int> DeletePrintJob(PrintJob printJob)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                // Delete row
+                await db.DeleteAsync(printJob);
+
+                return 1;
+            }
+            catch
+            {
+                // Error handling
+            }
+
+            return 0;
+        }
+
+        #endregion PrintJob Table Operations
+
+        #region Dummy - Initial Data
+
+        private async Task InsertSampleData()
+        {
+            bool isPreviouslyLoaded = false;
+            string key = "IsSampleDataAlreadyLoaded";
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.ContainsKey(key))
+            {
+                isPreviouslyLoaded = (bool)localSettings.Values[key];
+            }
+            else
+            {
+                localSettings.Values[key] = true;
+            }
+
+            if (!isPreviouslyLoaded)
+            {
+                await ExecuteScript("Resources/Dummy/SampleData.sql");
+            }
+        }
+
+        #endregion Dummy - Initial Data
 
     }
 }

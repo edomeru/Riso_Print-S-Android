@@ -151,13 +151,13 @@ namespace SmartDeviceApp.Models
         #region Properties
 
         /// <summary>
-        /// Print setting ID, used by PrintSetting table as primary key
+        /// Print Settings ID, used by PrintSetting table as primary key
         /// </summary>
-        [SQLite.Column("pst_id"), SQLite.PrimaryKey]
+        [SQLite.Column("pst_id"), SQLite.NotNull, SQLite.PrimaryKey, SQLite.AutoIncrement]
         public int Id { get; set; }
 
         /// <summary>
-        /// Printer ID, used by PrintSetting table as primary key and is indexed
+        /// Printer ID, used by PrintSetting table and is indexed
         /// </summary>
         [SQLite.Column("prn_id"), SQLite.Indexed(Name = "PrintSetting_FKIndex1")]
         public int PrinterId { get; set; }
@@ -165,110 +165,110 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Color mode setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_color_mode")]
+        [SQLite.Column("pst_color_mode"), SQLite.NotNull]
         public int ColorMode { get; set; }
 
         /// <summary>
         /// Orientation setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_orientation")]
+        [SQLite.Column("pst_orientation"), SQLite.NotNull]
         public int Orientation { get; set; }
 
         /// <summary>
         /// Copies setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_copies")]
+        [SQLite.Column("pst_copies"), SQLite.NotNull]
         public int Copies { get; set; }
 
         /// <summary>
         /// Duplex setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_duplex")]
+        [SQLite.Column("pst_duplex"), SQLite.NotNull]
         public int Duplex { get; set; }
 
         /// <summary>
         /// Paper size setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_paper_size")]
+        [SQLite.Column("pst_paper_size"), SQLite.NotNull]
         public int PaperSize { get; set; }
 
         /// <summary>
         /// Scale to fit setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_scale_to_fit")]
+        [SQLite.Column("pst_scale_to_fit"), SQLite.NotNull]
         public bool ScaleToFit { get; set; }
 
         /// <summary>
         /// Paper type setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_paper_type")]
+        [SQLite.Column("pst_paper_type"), SQLite.NotNull]
         public int PaperType { get; set; }
 
         /// <summary>
         /// Input tray setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_input_tray")]
+        [SQLite.Column("pst_input_tray"), SQLite.NotNull]
         public int InputTray { get; set; }
 
         /// <summary>
         /// Imposition setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_imposition")]
+        [SQLite.Column("pst_imposition"), SQLite.NotNull]
         public int Imposition { get; set; }
 
         /// <summary>
         /// Imposition order setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_imposition_order")]
+        [SQLite.Column("pst_imposition_order"), SQLite.NotNull]
         public int ImpositionOrder { get; set; }
 
 
         /// <summary>
         /// Color mode setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_sort")]
+        [SQLite.Column("pst_sort"), SQLite.NotNull]
         public int Sort { get; set; }
 
         /// <summary>
         /// Booklet setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_booklet")]
+        [SQLite.Column("pst_booklet"), SQLite.NotNull]
         public bool Booklet { get; set; }
 
         /// <summary>
         /// Booklet finishing setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_booklet_finishing")]
+        [SQLite.Column("pst_booklet_finishing"), SQLite.NotNull]
         public int BookletFinishing { get; set; }
 
         /// <summary>
         /// Booklet layout setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_booklet_layout")]
+        [SQLite.Column("pst_booklet_layout"), SQLite.NotNull]
         public int BookletLayout { get; set; }
 
         /// <summary>
         /// Finishing side setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_finishing_side")]
+        [SQLite.Column("pst_finishing_side"), SQLite.NotNull]
         public int FinishingSide { get; set; }
 
         /// <summary>
         /// Staple setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_staple")]
+        [SQLite.Column("pst_staple"), SQLite.NotNull]
         public int Staple { get; set; }
 
         /// <summary>
         /// Punch setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_punch")]
+        [SQLite.Column("pst_punch"), SQLite.NotNull]
         public int Punch { get; set; }
 
         /// <summary>
         /// Output tray setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_output_tray")]
+        [SQLite.Column("pst_output_tray"), SQLite.NotNull]
         public int OutputTray { get; set; }
 
         #endregion Properties
@@ -278,8 +278,8 @@ namespace SmartDeviceApp.Models
         /// </summary>
         public PrintSettings()
         {
-            PrinterId = -1;
             Id = -1;
+            PrinterId = -1;
             ColorMode = -1;
             Orientation = -1;
             Copies = -1;
@@ -302,8 +302,8 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// PrintSettings class constructor
         /// </summary>
-        /// <param name="printerId">printer ID</param>
         /// <param name="id">print setting ID</param>
+        /// <param name="printerId">printer ID</param>
         /// <param name="colorMode">color mode</param>
         /// <param name="orientation">orientation</param>
         /// <param name="copies">copies</param>
@@ -322,13 +322,13 @@ namespace SmartDeviceApp.Models
         /// <param name="staple">staple</param>
         /// <param name="punch">punch</param>
         /// <param name="outputTray">output tray</param>
-        public PrintSettings(int printerId, int id, int colorMode, int orientation, int copies,
+        public PrintSettings(int id, int printerId, int colorMode, int orientation, int copies,
             int duplex, int paperSize, bool scaleToFit, int paperType, int inputTray,
             int imposition, int impositionOrder, int sort, bool booklet, int bookletFinishing,
             int bookletLayout, int finishingSide, int staple, int punch, int outputTray)
         {
-            PrinterId = printerId;
             Id = id;
+            PrinterId = printerId;
             ColorMode = colorMode;
             Orientation = orientation;
             Copies = copies;

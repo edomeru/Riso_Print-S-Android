@@ -27,19 +27,22 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initialization
         /// </summary>
-        public static void Initialize()
+
+        public static async void Initialize()
         {
-            InitializeDataStorage();
+            await InitializeDataStorage();
+            
         }
 
         /// <summary>
         /// Initiates loading of PDF document
         /// </summary>
-        /// <param name="e">event argument</param>
-        public async static Task FileActivationHandler(FileActivatedEventArgs e)
+
+        /// <param name="file">PDF file</param>
+        /// <returns>task</returns>
+        public async static Task FileActivationHandler(StorageFile file)
         {
-            // Should handle only one file
-            if (e.Files.Count != 1)
+            if (file == null)
             {
                 return;
             }
@@ -47,33 +50,42 @@ namespace SmartDeviceApp.Controllers
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 
-            await DocumentController.Instance.Load(e.Files[0] as StorageFile);
+
+            await DocumentController.Instance.Load(file, false);
             await PrintPreviewController.Instance.Initialize();
         }
 
         /// <summary>
         /// Initializes the database and other data storage
         /// </summary>
-        private static void InitializeDataStorage()
+
+        private static async Task InitializeDataStorage()
         {
-            DatabaseController.Instance.Initialize();
+            await DatabaseController.Instance.Initialize();
+
         }
 
         public async static Task InitializePrintersController()
         {
             await PrinterController.Instance.Initialize();
-            NetworkController.Instance.Initialize(); // remove if no initialization
+            
         }
 
         #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
 
         public async static Task InitializeSamplePdf()
         {
+
+            // TODO: Put in proper initialization location
+            await JobController.Instance.Initialize();
+
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 
             StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
-            await DocumentController.Instance.Load(samplePdf);
+
+            await DocumentController.Instance.Load(samplePdf, false);
+
             await PrintPreviewController.Instance.Initialize();
         }
 

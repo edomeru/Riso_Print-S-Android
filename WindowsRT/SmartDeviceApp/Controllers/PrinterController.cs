@@ -131,7 +131,7 @@ namespace SmartDeviceApp.Controllers
                 //check
                 //if default printer
 
-                if (defaultPrinter.Id == printerFromDB.Id)
+                if (defaultPrinter.PrinterId == printerFromDB.Id)
                 {
                     printerFromDB.IsDefault = true;
                     indexOfDefaultPrinter = _printerList.Count();

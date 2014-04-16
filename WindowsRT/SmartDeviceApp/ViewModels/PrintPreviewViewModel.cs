@@ -44,7 +44,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private Grid _pageAreaGrid;
-        public GestureController _gestureController; // TODO: Set to private after removing easter egg!!
+        public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
         private bool _isPageNumberSliderEnabled;
         private ICommand _goToPage;
         private ICommand _goToPreviousPage;
@@ -90,10 +90,10 @@ namespace SmartDeviceApp.ViewModels
                 var scalingFactor = _pageAreaGrid.ActualHeight / RightPageActualSize.Height;
 
                 var pageAreaScrollViewer = (UIElement)_pageAreaGrid.Parent;
-                _gestureController = new GestureController(_pageAreaGrid, pageAreaScrollViewer,
+                _gestureController = new PreviewGestureController(_pageAreaGrid, pageAreaScrollViewer,
                     RightPageActualSize, scalingFactor,
-                    new GestureController.SwipeRightDelegate(SwipeRight),
-                    new GestureController.SwipeLeftDelegate(SwipeLeft));
+                    new PreviewGestureController.SwipeRightDelegate(SwipeRight),
+                    new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
 
                 // TODO: Two-page view handling
             }
@@ -294,11 +294,15 @@ namespace SmartDeviceApp.ViewModels
             {
                 GoToPageEventHandler((int)index);
             }
+            UpdatePageIndexes(index);
+        }
+
+        public void UpdatePageIndexes(uint index)
+        {
             _rightPageIndex = index;
             SetPageIndexes();
         }
 
-        
         // TODO: Two-page view
         private void GoToPreviousPageExecute()
         {

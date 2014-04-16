@@ -4,38 +4,86 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
-using System.Collections.ObjectModel;
+using SmartDeviceApp.Controllers;
+using Windows.Foundation;
+using System.Diagnostics;
 
 namespace SmartDeviceApp.ViewModels
 {
     public class JobsViewModel : ViewModelBase
     {
+        public event SmartDeviceApp.Controllers.JobController.RemoveJobEventHandler RemoveJobEventHandler;
+        public event SmartDeviceApp.Controllers.JobController.RemoveGroupedJobsEventHandler RemoveGroupedJobsEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
-        public JobsViewModel(IDataService dataService, INavigationService navigationService)
-        {
-            _dataService = dataService;
-            _navigationService = navigationService;
-
-            Initialize();
-            SortPrintJobsListToColumns();
-        }
+        private ICommand _deleteAllJobsCommand;
+        private ICommand _deleteJobCommand;
 
         private PrintJobList _printJobsList;
         private PrintJobList _printJobsColumn1;
         private PrintJobList _printJobsColumn2;
         private PrintJobList _printJobsColumn3;
 
+        public JobsViewModel(IDataService dataService, INavigationService navigationService)
+        {
+            _dataService = dataService;
+            _navigationService = navigationService;
+
+            //Initialize();
+        }
+        
+        public ICommand DeleteAllJobsCommand
+        {
+            get
+            {
+                if (_deleteAllJobsCommand == null)
+                {
+                    _deleteAllJobsCommand = new RelayCommand<int>(
+                        (printerId) => DeleteAllJobsExecute(printerId),
+                        (printerId) => true
+                    );
+                }
+                return _deleteAllJobsCommand;
+            }
+        }
+
+        public ICommand DeleteJobCommand
+        {
+            get
+            {
+                if (_deleteJobCommand == null)
+                {
+                    _deleteJobCommand = new RelayCommand<PrintJob>(
+                        (printJob) => DeleteJobExecute(printJob),
+                        (printJob) => true
+                    );
+                }
+                return _deleteJobCommand;
+            }
+        }
+
         public PrintJobList PrintJobsList
         {
             get { return _printJobsList; }
-            set { _printJobsList = value; }
+            set
+            {
+                if (_printJobsList != value)
+                {
+                    _printJobsList = value;
+                    //SortPrintJobsListToColumns();
+                    //RaisePropertyChanged("PrintJobsList");
+                }
+            }
         }
 
         public PrintJobList PrintJobsColumn1
@@ -77,7 +125,23 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void SortPrintJobsListToColumns()
+        private void DeleteAllJobsExecute(int printerId)
+        {
+            if (RemoveGroupedJobsEventHandler != null)
+            {
+                RemoveGroupedJobsEventHandler(printerId);
+            }
+        }
+
+        private void DeleteJobExecute(PrintJob printJob)
+        {
+            if (RemoveJobEventHandler != null)
+            {
+                RemoveJobEventHandler(printJob);
+            }
+        }
+
+        public void SortPrintJobsListToColumns()
         {
             var column1 = new PrintJobList();
             var column2 = new PrintJobList();
@@ -114,29 +178,31 @@ namespace SmartDeviceApp.ViewModels
 
         // TODO: REMOVE AFTER TESTING
         private void Initialize()
-        {   
+        {
+            var printJobsList = new PrintJobList();
+
             var jobs = new List<PrintJob>();
-            jobs.Add(new PrintJob(0101, 1, "Job1", DateTime.Now, 0));            
-            PrintJobsList = new PrintJobList();
-            PrintJobsList.Add(new PrintJobGroup("Printer1", jobs));
+            jobs.Add(new PrintJob(0101, 1, "Job1", DateTime.Now, 0));
+            printJobsList = new PrintJobList();
+            printJobsList.Add(new PrintJobGroup("Printer1", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0201, 2, "Job1", DateTime.Now, 0));
             jobs.Add(new PrintJob(0102, 2, "Job2", DateTime.Now, 0));
-            PrintJobsList.Add(new PrintJobGroup("Printer2", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer2", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0301, 3, "Job1", DateTime.Now, 0));
             jobs.Add(new PrintJob(0302, 3, "Job2", DateTime.Now, 0));
             jobs.Add(new PrintJob(0303, 3, "Job3", DateTime.Now, 0));
-            PrintJobsList.Add(new PrintJobGroup("Printer3", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer3", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0401, 4, "Job1", DateTime.Now, 0));
             jobs.Add(new PrintJob(0402, 4, "Job2", DateTime.Now, 0));
             jobs.Add(new PrintJob(0403, 4, "Job3", DateTime.Now, 0));
             jobs.Add(new PrintJob(0404, 4, "Job4", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer4", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer4", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0501, 5, "Job1", DateTime.Now, 0));
@@ -144,7 +210,7 @@ namespace SmartDeviceApp.ViewModels
             jobs.Add(new PrintJob(0503, 5, "Job3", DateTime.Now, 0));
             jobs.Add(new PrintJob(0504, 5, "Job4", DateTime.Now, 1));
             jobs.Add(new PrintJob(0505, 5, "Job5", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer5", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer5", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0601, 6, "Job1", DateTime.Now, 0));
@@ -153,7 +219,7 @@ namespace SmartDeviceApp.ViewModels
             jobs.Add(new PrintJob(0604, 6, "Job4", DateTime.Now, 1));
             jobs.Add(new PrintJob(0605, 6, "Job5", DateTime.Now, 1));
             jobs.Add(new PrintJob(0606, 6, "Job6", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer6", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer6", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0701, 7, "Job1", DateTime.Now, 0));
@@ -163,7 +229,7 @@ namespace SmartDeviceApp.ViewModels
             jobs.Add(new PrintJob(0705, 7, "Job5", DateTime.Now, 1));
             jobs.Add(new PrintJob(0706, 7, "Job6", DateTime.Now, 1));
             jobs.Add(new PrintJob(0707, 7, "Job7", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer7", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer7", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0801, 8, "Job1", DateTime.Now, 0));
@@ -174,7 +240,7 @@ namespace SmartDeviceApp.ViewModels
             jobs.Add(new PrintJob(0806, 8, "Job6", DateTime.Now, 1));
             jobs.Add(new PrintJob(0807, 8, "Job7", DateTime.Now, 1));
             jobs.Add(new PrintJob(0808, 8, "Job8", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer8", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer8", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(0901, 9, "Job1", DateTime.Now, 0));
@@ -186,7 +252,7 @@ namespace SmartDeviceApp.ViewModels
             jobs.Add(new PrintJob(0907, 9, "Job7", DateTime.Now, 1));
             jobs.Add(new PrintJob(0908, 9, "Job8", DateTime.Now, 1));
             jobs.Add(new PrintJob(0909, 9, "Job9", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer9", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer9", jobs));
 
             jobs = new List<PrintJob>();
             jobs.Add(new PrintJob(1001, 10, "Job1", DateTime.Now, 0));
@@ -199,7 +265,9 @@ namespace SmartDeviceApp.ViewModels
             jobs.Add(new PrintJob(1008, 10, "Job8", DateTime.Now, 1));
             jobs.Add(new PrintJob(1009, 10, "Job9", DateTime.Now, 1));
             jobs.Add(new PrintJob(1010, 10, "Job10", DateTime.Now, 1));
-            PrintJobsList.Add(new PrintJobGroup("Printer10", jobs));
+            printJobsList.Add(new PrintJobGroup("Printer10", jobs));
+
+            PrintJobsList = printJobsList;
         }
     }
 }

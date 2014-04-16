@@ -167,6 +167,9 @@ namespace SmartDeviceApp.Converters
                     case (int)PaperSize.B5:
                         paperSize = PrintSettingConstant.PAPER_SIZE_B5;
                         break;
+                    case (int)PaperSize.B6:
+                        paperSize = PrintSettingConstant.PAPER_SIZE_B6;
+                        break;
                     case (int)PaperSize.Foolscap:
                         paperSize = PrintSettingConstant.PAPER_SIZE_FOOLSCAP;
                         break;

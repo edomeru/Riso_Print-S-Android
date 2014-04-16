@@ -32,7 +32,7 @@
         </StackPanel>
         <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
             <Button x:Name="button" Visibility="{Binding ButtonVisibility, ElementName=sidepaneTitle}"
-                        Template="{StaticResource TEMPLATE_Button}" Command="{Binding ButtonCommand, ElementName=sidepaneTitle}"/>
+                        Template="{StaticResource TEMPLATE_Button}"/>
         </StackPanel>
     </Grid>
 </UserControl>

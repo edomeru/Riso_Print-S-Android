@@ -45,31 +45,65 @@
                                                ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"
                                                ListViewItemTextBoxTemplate="{StaticResource TEMPLATE_ListViewItemTextBox}"
                                                ListViewItemListTemplate="{StaticResource TEMPLATE_ListViewItemList}"/>
+
+        <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
+            <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Style="{StaticResource STYLE_StackLeft}" Grid.Column="0">
+                    <TextBlock x:Name="key" 
+                            Text="{Binding Path=Content, ElementName=printButton}" 
+                            Style="{StaticResource STYLE_TextListHeader}" />
+                </StackPanel>
+                <StackPanel Style="{StaticResource STYLE_StackRight}" Grid.Column="1">
+                    <Image x:Name="rightButton" Source="ms-appx:///Resources/Images/img_btn_submenu.png"
+                        Stretch="None"/>
+                </StackPanel>
+            </Grid>
+        </ControlTemplate>
     </Grid.Resources>
 
-    <ListView ItemsSource="{Binding Path=PrintSettingsList}"
-              ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <controls:GroupListControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
-                                           Width="{Binding Width, ElementName=printSettingsBox}"
-                                           DeleteButtonVisibility="Collapsed">
-                    <controls:GroupListControl.Content>
-                        <ListView x:Name="printSettingGroupListView" 
-                                  ItemsSource="{Binding PrintSettings}" 
-                                  ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
-                                  ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-                                  IsItemClickEnabled="True" 
-                                  SelectionMode="None">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="ItemClick">
-                                    <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}" InputConverter="{StaticResource ItemClickedConverter}"/>
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </ListView>
-                    </controls:GroupListControl.Content>
-                </controls:GroupListControl>
-            </DataTemplate>
-        </ListView.ItemTemplate>
+    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+        
+        <Button x:Name="printButton"
+                Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                Command="{Binding PrintCommand}" 
+                Template="{StaticResource TEMPLATE_HeaderButton}"
+                Width="{Binding Width, ElementName=printSettingsBox}"/>
+        <controls:KeyValueControl x:Name="printerButton"
+                                  Text="{Binding Source=IDS_LBL_PRINTER_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
+                                  ValueText="{Binding PrinterName}"
+                                  LeftButtonVisibility="Collapsed"
+                                  IconVisibility="Collapsed"
+                                  RightButtonVisibility="Collapsed"
+                                  SeparatorVisibility="Collapsed"
+                                  Width="{Binding Width, ElementName=printSettingsBox}"/>
+        <ListView ItemsSource="{Binding Path=PrintSettingsList}"
+                  ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <controls:GroupListControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                                               Width="{Binding Width, ElementName=printSettingsBox}"
+                                               DeleteButtonVisibility="Collapsed">
+                        <controls:GroupListControl.Content>
+                            <ListView x:Name="printSettingGroupListView" 
+                                      ItemsSource="{Binding PrintSettings}" 
+                                      ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
+                                      ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
+                                      IsItemClickEnabled="True" 
+                                      SelectionMode="None">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="ItemClick">
+                                        <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}" InputConverter="{StaticResource ItemClickedConverter}"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                        </controls:GroupListControl.Content>
+                    </controls:GroupListControl>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </ListView>
 </Grid>

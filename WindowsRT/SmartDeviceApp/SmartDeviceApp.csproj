@@ -122,7 +122,6 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Common\Utilities\BindingProxy.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\LogUtility.cs" />
@@ -133,7 +132,6 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
-    <Compile Include="Common\Utilities\UIPropertyMetadata.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
     <Compile Include="Controls\KeyImageControl.xaml.cs">
       <DependentUpon>KeyImageControl.xaml</DependentUpon>
@@ -174,6 +172,7 @@
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PagePrintSettingToValueConverter.cs" />
+    <Compile Include="Converters\PrintSettingToValueConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
@@ -182,6 +181,11 @@
     <Compile Include="Converters\ItemClickedConverter.cs" />
     <Compile Include="Converters\ItemSelectedConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
+    <Compile Include="Controllers\JobController.cs" />
+    <Compile Include="Controllers\JobGestureController.cs" />
+    <Compile Include="Controls\JobListItemControl.xaml.cs">
+      <DependentUpon>JobListItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\Utilities\DialogService.cs" />
     <Compile Include="Common\Utilities\DisplayOrientationsHelper.cs" />
     <Compile Include="Common\Utilities\IDialogService.cs" />
@@ -196,11 +200,12 @@
     <Compile Include="Common\Utilities\SQLiteAsync.cs" />
     <Compile Include="Common\Utilities\SuspensionManager.cs" />
     <Compile Include="Common\Base\UserControlBase.cs" />
-    <Compile Include="Controllers\DatabaseController.cs" />
-    <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\GestureController.cs" />
     <Compile Include="Controllers\PrinterController.cs" />
     <Compile Include="Controllers\SNMPController.cs" />
+    <Compile Include="Controllers\DatabaseController.cs" />
+    <Compile Include="Controllers\DocumentController.cs" />
+    <Compile Include="Controllers\PreviewGestureController.cs" />
     <Compile Include="Controls\PageControl.xaml.cs">
       <DependentUpon>PageControl.xaml</DependentUpon>
     </Compile>
@@ -270,7 +275,10 @@
     </Compile>
     <Compile Include="Views\PullToRefreshListView.cs" />
     <!--<Compile Include="Views\RightPane.xaml.cs">
-      <DependentUpon>RightPane.xaml</DependentUpon>-->
+    <Compile Include="Views\PrintSettingsPane.xaml.cs">
+      <DependentUpon>PrintSettingsPane.xaml</DependentUpon>
+      <DependentUpon>RightPane.xaml</DependentUpon>
+    </Compile>-->
     <Compile Include="Views\PrintSettingsPane.xaml.cs">
       <DependentUpon>PrintSettingsPane.xaml</DependentUpon>
     </Compile>
@@ -296,6 +304,7 @@
     </None>
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
+    <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
     <Content Include="Resources\Dummy\RZ1070.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
@@ -319,6 +328,7 @@
     <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
+    <Content Include="Resources\Dummy\SampleData.sql" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-180.png" />
@@ -404,6 +414,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\JobListItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\KeyRadioButtonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -472,10 +486,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PrintersPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\HelpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -489,6 +499,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\MainMenuPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

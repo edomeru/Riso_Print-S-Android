@@ -28,13 +28,13 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Print job ID, used by PrintJob table as primary key
         /// </summary>
-        [SQLite.Column("pjb_id"), SQLite.PrimaryKey]
+        [SQLite.Column("pjb_id"), SQLite.NotNull, SQLite.PrimaryKey, SQLite.AutoIncrement]
         public int Id { get; set; }
 
         /// <summary>
         /// Printer ID, used by PrintJob table and is indexed
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.Indexed(Name = "PrintJob_FKIndex1")]
+        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.Indexed(Name = "PrintJob_FKIndex1")]
         public int PrinterId { get; set; }
 
         /// <summary>
@@ -68,6 +68,7 @@ namespace SmartDeviceApp.Models
             Date = DateTime.MinValue;
             Result = -1;
         }
+
         /// <summary>
         /// PrintJob class constructor
         /// </summary>
@@ -115,10 +116,22 @@ namespace SmartDeviceApp.Models
         }
     }
 
-    public class PrintJobGroup
+    public class PrintJobGroup : ObservableObject
     {
+        private List<PrintJob> _jobs;
         public string PrinterName { get; set; }
-        public List<PrintJob> Jobs { get; set; }
+        public List<PrintJob> Jobs
+        {
+            get { return _jobs; }
+            set
+            {
+                if (_jobs != value)
+                {
+                    _jobs = value;
+                    RaisePropertyChanged("Jobs");
+                }
+            }
+        }
 
         public PrintJobGroup(string printerName, List<PrintJob> jobs)
         {

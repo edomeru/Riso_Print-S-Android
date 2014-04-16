@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2014 All rights reserved.
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
  * PauseableHandlerCallback.java
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
+
 package jp.co.riso.android.os.pauseablehandler;
 
 import android.os.Message;

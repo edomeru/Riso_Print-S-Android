@@ -26,27 +26,10 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Printer ID, used by DefaultPrinter table and is indexed
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.Indexed(Name = "DefaultPrinter_FKIndex1")]
-        public int PrinterId { get; set; }
+        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.PrimaryKey, SQLite.Indexed(Name = "DefaultPrinter_FKIndex1")]
+        public uint PrinterId { get; set; }
 
         #endregion Properties
-
-        /// <summary>
-        /// DefaultPrinter default class constructor
-        /// </summary>
-        public DefaultPrinter()
-        {
-            PrinterId = -1;
-        }
-
-        /// <summary>
-        /// DefaultPrinter class constructor
-        /// </summary>
-        /// <param name="printerId">Printer id of the selected default printer</param>
-        public DefaultPrinter(int printerId)
-        {
-            PrinterId = printerId;
-        }
 
     }
 }

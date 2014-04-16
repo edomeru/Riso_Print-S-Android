@@ -12,74 +12,101 @@
     DataContext="{Binding JobsViewModel, Source={StaticResource Locator}}">
     
     <base:PageBase.Resources>
-        <DataTemplate x:Key="TEMPLATE_PrintJobItem">            
-            <controls:GroupListControl x:Name="groupListControl"
-                                        Text="{Binding PrinterName}" Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
+        <Style x:Name="STYLE_PrintJobsListViewItem" TargetType="ListViewItem" BasedOn="{StaticResource STYLE_ListViewItem}">
+            <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>
+        </Style>        
+        <DataTemplate x:Key="TEMPLATE_PrintJobItem">  
+            <controls:GroupListControl Text="{Binding PrinterName}" 
+                                       Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
                 <controls:GroupListControl.Margin>
                     <Thickness Bottom="{StaticResource MARGIN_Default}"></Thickness>
                 </controls:GroupListControl.Margin>
                 <controls:GroupListControl.Content>
                     <ListView x:Name="jobsGroupListView"
-                                            ItemsSource="{Binding Jobs}"
-                                            ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                                            IsItemClickEnabled="True"
-                                            SelectionMode="None">
+                              ItemsSource="{Binding Jobs, Mode=TwoWay}"
+                              ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                              ScrollViewer.HorizontalScrollMode="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
+                              ScrollViewer.ZoomMode="Disabled"
+                              IsItemClickEnabled="False"
+                              SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <controls:KeyValueControl Text="{Binding Name}"
-                                                                        ValueText="{Binding Date, Converter={StaticResource DateTimeToStringConverter}}"
-                                                                        LeftButtonVisibility="Collapsed"
-                                                                        RightButtonVisibility="Collapsed"
-                                                                        SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
-                                                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
-                                    <controls:KeyValueControl.IconImage>
-                                        <BitmapImage UriSource="{Binding Result, Converter={StaticResource PrintJobResultToImageSourceConverter}}"/>
-                                    </controls:KeyValueControl.IconImage>
-                                </controls:KeyValueControl>
+                                <controls:JobListItemControl />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </controls:GroupListControl.Content>
             </controls:GroupListControl>
         </DataTemplate>
-
+        <Style x:Name="STYLE_PrintJobsListView" TargetType="ListView">
+            <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>
+            <Setter Property="ItemTemplate" Value="{StaticResource TEMPLATE_PrintJobItem}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="IsItemClickEnabled" Value="False"/>
+            <Setter Property="SelectionMode" Value="None"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
+            <Setter Property="Margin">
+                <Setter.Value>
+                    <Thickness Right="{StaticResource MARGIN_Default}"></Thickness>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </base:PageBase.Resources>
 
     <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=jobsPage}"
                           Text="{Binding Source=IDS_LBL_JOBS, Converter={StaticResource ResourceStringToTextConverter}}" 
                           Button1Visibility="Collapsed"
                           Button2Visibility="Collapsed">
-        <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel.Margin>
-                    <Thickness Top="{StaticResource MARGIN_Default}"
-                               Bottom="{StaticResource MARGIN_Default}"
-                               Left="{StaticResource MARGIN_Default}"
-                               Right="{StaticResource MARGIN_Default}">
-                    </Thickness>
-                </StackPanel.Margin>
-                <ListView x:Name="column1"
-                          ItemsSource="{Binding PrintJobsColumn1}" 
-                          ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                          ItemTemplate="{StaticResource TEMPLATE_PrintJobItem}"
-                          Style="{StaticResource STYLE_AlignLeft}"
-                          Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
-                </ListView>
-                <ListView x:Name="column2"
-                          ItemsSource="{Binding PrintJobsColumn2}" 
-                          ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                          ItemTemplate="{StaticResource TEMPLATE_PrintJobItem}"
-                          Style="{StaticResource STYLE_AlignLeft}"
-                          Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
-                </ListView>
-                <ListView x:Name="column3"
-                          ItemsSource="{Binding PrintJobsColumn3}" 
-                          ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                          ItemTemplate="{StaticResource TEMPLATE_PrintJobItem}"
-                          Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
-                </ListView>
-            </StackPanel>
+        <ScrollViewer x:Name="jobsScrollViewer"
+                      HorizontalScrollMode="Disabled" VerticalScrollMode="Enabled"
+                      ZoomMode="Disabled" 
+                      Loaded="OnJobsScrollViewerLoaded">
+            <Grid>
+                <Grid x:Name="jobsGrid" Loaded="OnJobsGridLoaded" Grid.Row="0"
+                      Width="Auto"
+                      Height="Auto"
+                      Background="Transparent"
+                      ManipulationMode="None">
+                    <Grid.Margin>
+                        <Thickness Top="{StaticResource MARGIN_Default}"
+                                   Bottom="{StaticResource MARGIN_Default}"
+                                   Left="{StaticResource MARGIN_Default}"
+                                   Right="{StaticResource MARGIN_Default}">
+                        </Thickness>
+                    </Grid.Margin>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ListView x:Name="column1" Grid.Column="0"
+                              ItemsSource="{Binding PrintJobsColumn1}" 
+                              ItemContainerStyle="{StaticResource STYLE_PrintJobsListViewItem}"
+                              Style="{StaticResource STYLE_PrintJobsListView}">
+                    </ListView>
+                    <ListView x:Name="column2" Grid.Column="1"
+                              ItemsSource="{Binding PrintJobsColumn2}" 
+                              ItemContainerStyle="{StaticResource STYLE_PrintJobsListViewItem}"
+                              Style="{StaticResource STYLE_PrintJobsListView}">
+                    </ListView>
+                    <ListView x:Name="column3" Grid.Column="2"
+                              ItemsSource="{Binding PrintJobsColumn3}" 
+                              ItemContainerStyle="{StaticResource STYLE_PrintJobsListViewItem}"
+                              Style="{StaticResource STYLE_PrintJobsListView}">
+                    </ListView>
+                </Grid>
+                <Grid x:Name="jobGesturesGrid" Loaded="OnJobGesturesGridLoaded" Grid.Row="0"
+                    Width="Auto"
+                    Height="Auto"
+                    Background="Transparent"
+                    ManipulationMode="All"/>
+            </Grid>
         </ScrollViewer>
+
     </controls:ViewControl>
 </base:PageBase>
 

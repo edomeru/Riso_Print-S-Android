@@ -92,6 +92,7 @@ namespace SmartDeviceApp.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+
         public PrintersViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -111,6 +112,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _rightPaneMode = value;
                     OnPropertyChanged("RightPaneMode");
+
                 }
             }
         }
@@ -127,8 +129,6 @@ namespace SmartDeviceApp.ViewModels
                     break;
             }
         }
-
-
 
         public ICommand DeletePrinter
         {
