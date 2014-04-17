@@ -2,20 +2,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/printers_view_tablet_padding"
-    android:background="@color/theme_light_2" >
+    android:background="@color/theme_light_2"
+    android:padding="@dimen/printers_view_tablet_padding" >
 
     <LinearLayout
-        android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/theme_light_3"
+        android:duplicateParentState="true"
         android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/theme_light_4" >
+            android:background="@color/theme_light_4"
+            android:duplicateParentState="true" >
 
             <jp.co.riso.smartdeviceapp.view.printers.PrintersContainer
                 android:id="@+id/PrintersContainerItem1"
@@ -32,6 +33,7 @@
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
                     android:layout_weight="0"
                     android:contentDescription="@string/default_content_description"
+                    android:duplicateParentState="true"
                     android:src="@drawable/selector_printers_onlinestatus" />
 
                 <TextView

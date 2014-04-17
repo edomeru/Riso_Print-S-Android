@@ -14,6 +14,8 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
@@ -33,19 +35,18 @@ import android.view.View;
 public class PrinterManager implements SNMPManagerCallback {
     public static final int EMPTY_ID = -1;
     public static final int MAX_PRINTER_COUNT = 10;
-    public static final int PING_TIMEOUT = 10000; // 10 seconds
-    public static final int UPDATE_TIMEOUT = 60000; // 1 minute
+    public static final int PING_TIMEOUT = 100;
+    public static final int UPDATE_TIMEOUT = 5000; // 5 seconds
     private static final Pattern IPV6_LINK_LOCAL_PATTERN;
     private static final List<String> IPV6_INTERFACE_NAMES;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList = null;
     private Context mContext = null;
-    private boolean mDefaultExists = false;
     private boolean mIsSearching = false;
     private SNMPManager mSNMPManager = null;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
-    private Thread mUpdateStatusThread = null;
+    private Timer mUpdateStatusTimer = null;
     
     private PrinterManager(Context context) {
         mContext = context;
@@ -86,9 +87,12 @@ public class PrinterManager implements SNMPManagerCallback {
             return false;
         }
         
-        if (mDefaultExists == false) {
+        if (!setPrinterId(printer)) {
+            return false;
+        }
+        
+        if (mPrinterList.size() == 0) {
             setDefaultPrinter(printer);
-            mDefaultExists = true;
         }
         
         if (mPrintersCallback != null && mPrintersCallback.get() != null) {
@@ -161,7 +165,6 @@ public class PrinterManager implements SNMPManagerCallback {
         if (cursor.getCount() < 1) {
             dbManager.close();
             cursor.close();
-            mDefaultExists = false;
             return mPrinterList;
         }
         if (cursor.moveToFirst()) {
@@ -195,7 +198,6 @@ public class PrinterManager implements SNMPManagerCallback {
             } while (cursor.moveToNext());
             
         }
-        mDefaultExists = true;
         dbManager.close();
         cursor.close();
         
@@ -220,30 +222,15 @@ public class PrinterManager implements SNMPManagerCallback {
         clearDefaultPrinter();
         
         DatabaseManager dbManager = new DatabaseManager(mContext);
-        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
-                + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
-        
-        if (cursor.getCount() != 1) {
-            dbManager.close();
-            cursor.close();
-            return;
-        }
-        
         ContentValues newDefaultPrinter = new ContentValues();
         
-        if (cursor.moveToFirst()) {
-            printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
-            newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, printer.getId());
-            cursor.close();
-        } else {
-            dbManager.close();
-            return;
-        }
+        newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, printer.getId());
         
         if (!dbManager.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter)) {
             dbManager.close();
             return;
         }
+        
         dbManager.close();
     }
     
@@ -264,16 +251,17 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param printer
      *            The Printer object selected for deletion
      */
-    public void removePrinter(Printer printer) {
-        
+    public boolean removePrinter(Printer printer) {
+        boolean ret = false;
         if (printer == null) {
-            return;
+            return false;
         }
         DatabaseManager dbManager = new DatabaseManager(mContext);
         
-        dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
+        ret = dbManager.delete(KeyConstants.KEY_SQL_PRINTER_TABLE, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printer.getId()));
         
         dbManager.close();
+        return ret;
     }
     
     /**
@@ -414,26 +402,19 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     public void createUpdateStatusThread() {
-        if (mUpdateStatusThread != null) {
+        if (mUpdateStatusTimer != null) {
             return;
         }
-        mUpdateStatusThread = new Thread() {
+        mUpdateStatusTimer = new Timer();
+        mUpdateStatusTimer.schedule(new TimerTask() {
+            
+            @Override
             public void run() {
-                while (true) {
-                    try {
-                        while (true) {
-                            if (mPrintersCallback != null && mPrintersCallback.get() != null) {
-                                mPrintersCallback.get().updateOnlineStatus();
-                            }
-                            sleep(UPDATE_TIMEOUT);
-                        }
-                    } catch (Exception e) {
-                        mUpdateStatusThread = null;
-                    }
+                if (mPrintersCallback != null && mPrintersCallback.get() != null) {
+                    mPrintersCallback.get().updateOnlineStatus();
                 }
             }
-        };
-        mUpdateStatusThread.start();
+        }, 0, UPDATE_TIMEOUT);
     }
     
     // ================================================================================
@@ -506,6 +487,32 @@ public class PrinterManager implements SNMPManagerCallback {
     
     private void getPrintSettings(Printer printer) {
         // TODO: Get Print Settings
+    }
+    
+    private boolean setPrinterId(Printer printer) {
+        
+        if (printer == null) {
+            return false;
+        }
+        
+        DatabaseManager dbManager = new DatabaseManager(mContext);
+        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
+                + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
+        
+        if (cursor.getCount() != 1) {
+            dbManager.close();
+            cursor.close();
+            return false;
+        }
+        
+        if (cursor.moveToFirst()) {
+            printer.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_ID)));
+            cursor.close();
+            dbManager.close();
+            return true;
+        }
+        dbManager.close();
+        return false;
     }
     
     // ================================================================================

@@ -246,7 +246,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void updateOnlineStatus() {
         for (int i = 0; i < mPrinter.size(); i++) {
             if (isTablet()) {
-                
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mPrinterTabletView.getChildAt(i));                
             } else {
                 mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mListView.getChildAt(i));
             }

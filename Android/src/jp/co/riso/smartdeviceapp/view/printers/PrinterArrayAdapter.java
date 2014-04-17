@@ -261,9 +261,10 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         switch (msg.what) {
             case MSG_REMOVE_PRINTER:
                 Printer printer = (Printer) msg.obj;
-                mPrinterManager.removePrinter(printer);
-                remove(printer);
-                notifyDataSetChanged();
+                if (mPrinterManager.removePrinter(printer)) {
+                    remove(printer);
+                    notifyDataSetChanged();
+                }
                 return true;
         }
         return false;
