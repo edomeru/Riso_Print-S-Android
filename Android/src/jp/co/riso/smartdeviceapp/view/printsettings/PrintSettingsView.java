@@ -933,7 +933,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     private void executePrint() {
-        if (mPrinterId != PrinterManager.EMPTY_ID) {
+        if (mListener != null) {
             mListener.onPrint(getPrinterFromList(mPrinterId), mPrintSettings);
         }
     }
