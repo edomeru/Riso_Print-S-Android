@@ -625,7 +625,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         // Create disclosure for item
         View view = LayoutInflater.from(getContext()).inflate(R.layout.printsettings_disclosure_withvalue, null);
         view.setActivated(true);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 0.0f);
+
+        int viewWidth = getResources().getDimensionPixelSize(R.dimen.printsettings_list_value_width);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(viewWidth, LayoutParams.MATCH_PARENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         view.setLayoutParams(params);
         
@@ -1129,6 +1131,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
+            
+            int width = getResources().getDimensionPixelSize(R.dimen.printsettings_list_value_width);
+            params.width = width;
             
             View view = li.inflate(R.layout.printsettings_disclosure_withvalue, null);
             view.setActivated(true);
