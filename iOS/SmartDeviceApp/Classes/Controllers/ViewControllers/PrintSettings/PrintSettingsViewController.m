@@ -81,25 +81,8 @@
 {
     if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS_TABLE] == YES)
     {
-        Printer *printer = nil;
-        PreviewSetting *previewSetting = nil;
-        UIViewController *destController = [segue.destinationViewController topViewController];
-        if(self.printerIndex == nil)
-        {
-            ((PrintSettingsTableViewController *)destController).previewSetting = [[[PDFFileManager sharedManager] printDocument] previewSetting];
-            ((PrintSettingsTableViewController *)destController).printer = [[[PDFFileManager sharedManager] printDocument] printer];
-            ((PrintSettingsTableViewController *)destController).isDefaultSettingsMode = NO;
-        }
-        else
-        {
-            PrinterManager *printerManager =  [PrinterManager sharedPrinterManager];
-            printer = [printerManager getPrinterAtIndex:[self.printerIndex unsignedIntegerValue]];
-            ((PrintSettingsTableViewController *)destController).printer = printer;
-            previewSetting = [[PreviewSetting alloc] init];
-            [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting: &previewSetting];
-            ((PrintSettingsTableViewController *)destController).previewSetting = previewSetting;
-            ((PrintSettingsTableViewController *)destController).isDefaultSettingsMode = YES;
-        }
+        PrintSettingsTableViewController *viewController = (PrintSettingsTableViewController *)[segue.destinationViewController topViewController];
+        viewController.printerIndex = self.printerIndex;
     }
 }
 @end

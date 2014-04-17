@@ -26,6 +26,7 @@
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
+#define PRINTER_ITEM_DEFAULT_CELL @"PrinterItemDefaultCell"
 #define SETTING_HEADER_CELL @"SettingHeaderCell"
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
@@ -38,10 +39,14 @@
 #define ROW_HEIGHT_SINGLE 44
 #define ROW_HEIGHT_DOUBLE 66
 
+static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
+
 @interface PrintSettingsTableViewController ()
 
-@property (nonatomic) BOOL showPrinterSelection;
+@property (nonatomic) BOOL isDefaultSettingsMode;
 
+@property (nonatomic, strong) PreviewSetting *previewSetting;
+@property (nonatomic, weak) Printer *printer;
 @property (nonatomic, weak) NSDictionary *printSettingsTree;
 @property (nonatomic, strong) NSMutableArray *expandedSections;
 @property (nonatomic, weak) NSDictionary *currentSetting;
@@ -67,9 +72,28 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Get printer and print settings data to display
+    if (self.printerIndex == nil)
+    {
+        // Launched from preview - load current print settings and selected printer
+        PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
+        self.printer = printDocument.printer;
+        self.previewSetting = printDocument.previewSetting;
+        [printDocument addObserver:self forKeyPath:@"printer" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&printSettingsPrinterContext];
+        self.isDefaultSettingsMode = NO;
+    }
+    else
+    {
+        // Launched from printers - load from default print settings and selected printer
+        self.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:[self.printerIndex unsignedIntegerValue]];
+        PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+        [PrintSettingsHelper copyPrintSettings:self.printer.printsetting toPreviewSetting:&previewSetting];
+        self.previewSetting = previewSetting;
+        self.isDefaultSettingsMode = YES;
+    }
 
-    self.showPrinterSelection = YES;
-        
+    
     // Get print settings tree
     self.printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     
@@ -79,11 +103,6 @@
     for (id section in sections)
     {
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
-    }
-    
-    if(self.isDefaultSettingsMode == YES)
-    {
-        self.showPrinterSelection = NO;
     }
     
     PreviewSetting *previewSetting = self.previewSetting;
@@ -146,10 +165,9 @@
     
     if (logicalSection == 0)
     {
-        if(self.showPrinterSelection == NO)
+        if(self.isDefaultSettingsMode == YES)
         {
             return 1; //show only printer name not printer button header
-
         }
         else
         {
@@ -177,13 +195,18 @@
     
     if (section == 0)
     {
-        if (row == 0 && self.showPrinterSelection == YES)
+        if (row == 0 && self.isDefaultSettingsMode == NO)
         {
             cell = [tableView dequeueReusableCellWithIdentifier:PRINTER_HEADER_CELL forIndexPath:indexPath];
         }
         else
         {
-            PrintSettingsPrinterItemCell *printerItemCell = [tableView dequeueReusableCellWithIdentifier:PRINTER_ITEM_CELL forIndexPath:indexPath];
+            NSString *cellIdentifier = PRINTER_ITEM_CELL;
+            if (self.isDefaultSettingsMode == YES)
+            {
+                cellIdentifier = PRINTER_ITEM_DEFAULT_CELL;
+            }
+            PrintSettingsPrinterItemCell *printerItemCell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
             
             if(self.printer != nil)
             {
@@ -329,7 +352,7 @@
     }
     else
     {
-        if(row > 0 && self.showPrinterSelection == YES)
+        if(row > 0 && self.isDefaultSettingsMode == NO)
         {
             [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
         }
@@ -340,10 +363,12 @@
 {
     if (indexPath.section == 0)
     {
-        NSInteger printerDisplayRow = (self.showPrinterSelection == YES) ? 1: 0;
-        if(indexPath.row == printerDisplayRow)
+        if (self.isDefaultSettingsMode == NO)
         {
-            return ROW_HEIGHT_DOUBLE;
+            if (indexPath.row == 1)
+            {
+                return ROW_HEIGHT_DOUBLE;
+            }
         }
     }
     return ROW_HEIGHT_SINGLE;
@@ -385,38 +410,16 @@
         optionsController.setting = self.currentSetting;
         optionsController.previewSetting = self.previewSetting;
     }
-    if ([segue.identifier isEqualToString:@"PrintSettings-PrinterList"])
+    /*if ([segue.identifier isEqualToString:@"PrintSettings-PrinterList"])
     {
         PrintSettingsPrinterListTableViewController *printerListController = segue.destinationViewController;
         printerListController.selectedPrinter = self.printer;
-    }
+    }*/
 }
 
 - (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender
 {
-    if([sender.sourceViewController isKindOfClass:[PrintSettingsPrinterListTableViewController class]])
-    {
-        self.printer = ((PrintSettingsPrinterListTableViewController *)sender.sourceViewController).selectedPrinter;
-        
-        if(self.printer != nil)
-        {
-            [[[PDFFileManager sharedManager] printDocument] setPrinter:self.printer];
-        }
-        
-        NSIndexPath *printerIndexPath = [NSIndexPath indexPathForRow:PRINTER_SECTION_ITEM_ROW inSection:PRINTER_SECTION];
-        if(self.printer != nil)
-        {
-            PrintSettingsPrinterItemCell * printerItemCell = (PrintSettingsPrinterItemCell *)[self.tableView cellForRowAtIndexPath:printerIndexPath];
-        
-            printerItemCell.printerNameLabel.hidden = NO;
-            printerItemCell.printerIPLabel.hidden = NO;
-            printerItemCell.selectPrinterLabel.hidden = YES;
-            printerItemCell.printerNameLabel.text = self.printer.name;
-            printerItemCell.printerIPLabel.text = self.printer.ip_address;
-        }
-    }
 }
-
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -434,7 +437,28 @@
         
         NSInteger previousVal = (NSInteger)[[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         [self applySettingsConstraintForKey:keyPath withPreviousValue:previousVal];
-    } 
+    }
+    else if (context == &printSettingsPrinterContext)
+    {
+        int changeKind = [[change objectForKey:NSKeyValueChangeKindKey] intValue];
+        if (changeKind == NSKeyValueChangeSetting)
+        {
+            Printer* previous = [change objectForKey:NSKeyValueChangeOldKey];
+            Printer* current = [change objectForKey:NSKeyValueChangeNewKey];
+            if (![previous isEqual:current])
+            {
+                PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
+                self.printer = printDocument.printer;
+                PrintSettingsPrinterItemCell * printerItemCell = (PrintSettingsPrinterItemCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+            
+                printerItemCell.printerNameLabel.hidden = NO;
+                printerItemCell.printerIPLabel.hidden = NO;
+                printerItemCell.selectPrinterLabel.hidden = YES;
+                printerItemCell.printerNameLabel.text = self.printer.name;
+                printerItemCell.printerIPLabel.text = self.printer.ip_address;
+            }
+        }
+    }
 }
 
 - (void)applySettingsConstraintForKey:(NSString*)key withPreviousValue:(NSInteger)previousValue
