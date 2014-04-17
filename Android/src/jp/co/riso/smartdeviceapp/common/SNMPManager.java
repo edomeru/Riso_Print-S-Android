@@ -23,16 +23,15 @@ public class SNMPManager {
     public native void deviceDiscovery();
     public native void manualDiscovery(String ipAddress);
     public native void cancel();
-    
-    public enum SNMPCapability{
-        BOOKLET,
-        STAPLER,
-        FINISH_2_4,
-        FINISH_2_3,
-        TRAY_FACE_DOWN,
-        TRAY_AUTO_STACK,
-        TRAY_STACK
-    }
+
+    public static final int SNMP_CAPABILITY_BOOKLET = 0;
+    public static final int SNMP_CAPABILITY_STAPLER = 1;
+    public static final int SNMP_CAPABILITY_FINISH_2_3 = 2;
+    public static final int SNMP_CAPABILITY_FINISH_2_4 = 3;
+    public static final int SNMP_CAPABILITY_TRAY_FACE_DOWN = 4;
+    public static final int SNMP_CAPABILITY_TRAY_AUTO_STACK = 5;
+    public static final int SNMP_CAPABILITY_TRAY_TOP = 6;
+    public static final int SNMP_CAPABILITY_TRAY_STACK = 7;
     
     public void setCallback(SNMPManagerCallback callback) {
         mCallbackRef = new WeakReference<SNMPManagerCallback>(callback);

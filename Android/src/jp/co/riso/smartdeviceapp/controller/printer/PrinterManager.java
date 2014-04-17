@@ -409,6 +409,16 @@ public class PrinterManager implements SNMPManagerCallback {
         return true;
     }
     
+    private static void setupPrinterConfig(Printer printer, boolean[] capabilities) {
+        printer.getConfig().setBookletAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_BOOKLET]);
+        printer.getConfig().setStaplerAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_STAPLER]);
+        printer.getConfig().setPunch4Available(capabilities[SNMPManager.SNMP_CAPABILITY_FINISH_2_4]);
+        printer.getConfig().setTrayFaceDownAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_FACE_DOWN]);
+        printer.getConfig().setTrayTopAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_TOP]);
+        printer.getConfig().setTrayStackAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_STACK]);
+        
+    }
+    
     // ================================================================================
     // Interface - SNMPManagerCallback
     // ================================================================================
@@ -426,6 +436,7 @@ public class PrinterManager implements SNMPManagerCallback {
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
         Printer printer = new Printer(name, ipAddress);
+        PrinterManager.setupPrinterConfig(printer, capabilities);
         Log.d("PrinterManager", "onFoundDevice");
         if (isSearching()) {
             if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
