@@ -41,6 +41,14 @@
 		2D232D9618E57DB0008D06C8 /* PrintSettingsItemInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9518E57DB0008D06C8 /* PrintSettingsItemInputCell.m */; };
 		2D232D9918E580D1008D06C8 /* PrintSettingsItemSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9818E580D1008D06C8 /* PrintSettingsItemSwitchCell.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
+		2D6324D618FFBDF20023DB94 /* CXAlertBackgroundWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324C818FFBDF20023DB94 /* CXAlertBackgroundWindow.m */; };
+		2D6324D718FFBDF20023DB94 /* CXAlertButtonContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324CA18FFBDF20023DB94 /* CXAlertButtonContainerView.m */; };
+		2D6324D818FFBDF20023DB94 /* CXAlertButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324CC18FFBDF20023DB94 /* CXAlertButtonItem.m */; };
+		2D6324D918FFBDF20023DB94 /* CXAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324CE18FFBDF20023DB94 /* CXAlertView.m */; };
+		2D6324DA18FFBDF20023DB94 /* CXAlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324D018FFBDF20023DB94 /* CXAlertViewController.m */; };
+		2D6324DB18FFBDF20023DB94 /* LFDisplayBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324D218FFBDF20023DB94 /* LFDisplayBridge.m */; };
+		2D6324DC18FFBDF20023DB94 /* LFGlassView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324D418FFBDF20023DB94 /* LFGlassView.m */; };
+		2D6324DF18FFBFA00023DB94 /* DirectPrintManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6324DE18FFBFA00023DB94 /* DirectPrintManager.m */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
 		2D6C913618F51257002A7F48 /* directprint.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6C913518F51257002A7F48 /* directprint.c */; };
@@ -177,6 +185,23 @@
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2D6324C718FFBDF20023DB94 /* CXAlertBackgroundWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertBackgroundWindow.h; sourceTree = "<group>"; };
+		2D6324C818FFBDF20023DB94 /* CXAlertBackgroundWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertBackgroundWindow.m; sourceTree = "<group>"; };
+		2D6324C918FFBDF20023DB94 /* CXAlertButtonContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertButtonContainerView.h; sourceTree = "<group>"; };
+		2D6324CA18FFBDF20023DB94 /* CXAlertButtonContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertButtonContainerView.m; sourceTree = "<group>"; };
+		2D6324CB18FFBDF20023DB94 /* CXAlertButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertButtonItem.h; sourceTree = "<group>"; };
+		2D6324CC18FFBDF20023DB94 /* CXAlertButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertButtonItem.m; sourceTree = "<group>"; };
+		2D6324CD18FFBDF20023DB94 /* CXAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertView.h; sourceTree = "<group>"; };
+		2D6324CE18FFBDF20023DB94 /* CXAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertView.m; sourceTree = "<group>"; };
+		2D6324CF18FFBDF20023DB94 /* CXAlertViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertViewController.h; sourceTree = "<group>"; };
+		2D6324D018FFBDF20023DB94 /* CXAlertViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertViewController.m; sourceTree = "<group>"; };
+		2D6324D118FFBDF20023DB94 /* LFDisplayBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDisplayBridge.h; sourceTree = "<group>"; };
+		2D6324D218FFBDF20023DB94 /* LFDisplayBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFDisplayBridge.m; sourceTree = "<group>"; };
+		2D6324D318FFBDF20023DB94 /* LFGlassView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFGlassView.h; sourceTree = "<group>"; };
+		2D6324D418FFBDF20023DB94 /* LFGlassView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFGlassView.m; sourceTree = "<group>"; };
+		2D6324D518FFBDF20023DB94 /* LiveFrost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveFrost.h; sourceTree = "<group>"; };
+		2D6324DD18FFBFA00023DB94 /* DirectPrintManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectPrintManager.h; sourceTree = "<group>"; };
+		2D6324DE18FFBFA00023DB94 /* DirectPrintManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManager.m; sourceTree = "<group>"; };
 		2D6C90FB18F4FA57002A7F48 /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D6C913218F51099002A7F48 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		2D6C913518F51257002A7F48 /* directprint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = directprint.c; sourceTree = "<group>"; };
@@ -483,6 +508,28 @@
 			path = Locales;
 			sourceTree = "<group>";
 		};
+		2D6324C618FFBDF20023DB94 /* CXAlertView */ = {
+			isa = PBXGroup;
+			children = (
+				2D6324C718FFBDF20023DB94 /* CXAlertBackgroundWindow.h */,
+				2D6324C818FFBDF20023DB94 /* CXAlertBackgroundWindow.m */,
+				2D6324C918FFBDF20023DB94 /* CXAlertButtonContainerView.h */,
+				2D6324CA18FFBDF20023DB94 /* CXAlertButtonContainerView.m */,
+				2D6324CB18FFBDF20023DB94 /* CXAlertButtonItem.h */,
+				2D6324CC18FFBDF20023DB94 /* CXAlertButtonItem.m */,
+				2D6324CD18FFBDF20023DB94 /* CXAlertView.h */,
+				2D6324CE18FFBDF20023DB94 /* CXAlertView.m */,
+				2D6324CF18FFBDF20023DB94 /* CXAlertViewController.h */,
+				2D6324D018FFBDF20023DB94 /* CXAlertViewController.m */,
+				2D6324D118FFBDF20023DB94 /* LFDisplayBridge.h */,
+				2D6324D218FFBDF20023DB94 /* LFDisplayBridge.m */,
+				2D6324D318FFBDF20023DB94 /* LFGlassView.h */,
+				2D6324D418FFBDF20023DB94 /* LFGlassView.m */,
+				2D6324D518FFBDF20023DB94 /* LiveFrost.h */,
+			);
+			path = CXAlertView;
+			sourceTree = "<group>";
+		};
 		2D6C911D18F4FB55002A7F48 /* CommonLibrary */ = {
 			isa = PBXGroup;
 			children = (
@@ -543,6 +590,7 @@
 		2DA1AE6C18E278B000085F27 /* OpenSource */ = {
 			isa = PBXGroup;
 			children = (
+				2D6324C618FFBDF20023DB94 /* CXAlertView */,
 				2DA1AE6D18E278B000085F27 /* Reachability */,
 			);
 			path = OpenSource;
@@ -776,6 +824,8 @@
 			children = (
 				2DA1AF2918E2EF9C00085F27 /* DatabaseManager.h */,
 				2DA1AF2A18E2EF9C00085F27 /* DatabaseManager.m */,
+				2D6324DD18FFBFA00023DB94 /* DirectPrintManager.h */,
+				2D6324DE18FFBFA00023DB94 /* DirectPrintManager.m */,
 				2DA1AF2B18E2EF9C00085F27 /* NetworkManager.h */,
 				2DA1AF2C18E2EF9C00085F27 /* NetworkManager.m */,
 				2DA1AF2D18E2EF9C00085F27 /* PDFFileManager.h */,
@@ -969,13 +1019,17 @@
 				2D232D9618E57DB0008D06C8 /* PrintSettingsItemInputCell.m in Sources */,
 				2D232D7818E517E3008D06C8 /* PrintSettingsPrinterItemCell.m in Sources */,
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
+				2D6324DB18FFBDF20023DB94 /* LFDisplayBridge.m in Sources */,
 				2DA1AEC618E2EF7D00085F27 /* PrintJob.m in Sources */,
 				2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */,
+				2D6324DF18FFBFA00023DB94 /* DirectPrintManager.m in Sources */,
 				2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */,
 				2DA1AF1E18E2EF9600085F27 /* UIViewController+Segue.m in Sources */,
 				2DA1AF1C18E2EF9600085F27 /* RootViewController.m in Sources */,
 				2DA1AF5B18E2F02A00085F27 /* PrinterCollectionViewCell.m in Sources */,
 				31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */,
+				2D6324D618FFBDF20023DB94 /* CXAlertBackgroundWindow.m in Sources */,
+				2D6324DA18FFBDF20023DB94 /* CXAlertViewController.m in Sources */,
 				2DA1AF1618E2EF9600085F27 /* AppDelegate.m in Sources */,
 				2DA1AF2518E2EF9600085F27 /* PDFPageContentViewController.m in Sources */,
 				2DA1AF2318E2EF9600085F27 /* PrintersViewController.m in Sources */,
@@ -999,6 +1053,7 @@
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
 				2DA1AF2418E2EF9600085F27 /* PrinterSearchViewController.m in Sources */,
 				2D232D8D18E56C5D008D06C8 /* PrintSettingsOptionsItemCell.m in Sources */,
+				2D6324D818FFBDF20023DB94 /* CXAlertButtonItem.m in Sources */,
 				2DA1AEE118E2EF8500085F27 /* MenuButton.m in Sources */,
 				2DA1AF2718E2EF9600085F27 /* PrintSettingsViewController.m in Sources */,
 				2DA1AF5318E2EFCB00085F27 /* Printer+Log.m in Sources */,
@@ -1011,10 +1066,13 @@
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
 				2D157BFB18ED5B580034F953 /* XMLParser.m in Sources */,
 				2DA1AF3618E2EF9C00085F27 /* PrinterManager.m in Sources */,
+				2D6324D718FFBDF20023DB94 /* CXAlertButtonContainerView.m in Sources */,
 				2DA1AF6618E2F08900085F27 /* AlertHelper.m in Sources */,
 				2DA1AEE018E2EF8500085F27 /* UIView+Localization.m in Sources */,
+				2D6324D918FFBDF20023DB94 /* CXAlertView.m in Sources */,
 				2D0D74C218F2887B002B5E40 /* RenderCache.m in Sources */,
 				2DA1AF1B18E2EF9600085F27 /* AddPrinterViewController.m in Sources */,
+				2D6324DC18FFBDF20023DB94 /* LFGlassView.m in Sources */,
 				2D232D7218E511D4008D06C8 /* PrintSettingsTableViewController.m in Sources */,
 				2DA1AF3318E2EF9C00085F27 /* DatabaseManager.m in Sources */,
 				2DA1AF1918E2EF9600085F27 /* SlideOverSegue.m in Sources */,

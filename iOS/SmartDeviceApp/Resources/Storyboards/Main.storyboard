@@ -1708,10 +1708,20 @@
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="p46-KB-71v">
+                                            <rect key="frame" x="296" y="14" width="16" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="16" id="aIm-eT-Vfo"/>
+                                                <constraint firstAttribute="height" constant="16" id="qjW-F7-rld"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="centerY" secondItem="u8g-bi-oaK" secondAttribute="centerY" id="MnD-bP-WJK"/>
+                                        <constraint firstAttribute="trailing" secondItem="p46-KB-71v" secondAttribute="trailing" constant="8" id="bp2-xt-fU6"/>
+                                        <constraint firstAttribute="centerY" secondItem="p46-KB-71v" secondAttribute="centerY" id="e2l-4x-x7b"/>
                                         <constraint firstItem="u8g-bi-oaK" firstAttribute="leading" secondItem="viE-f7-RK3" secondAttribute="leading" constant="12" id="efH-Ti-aNU"/>
                                     </constraints>
                                 </tableViewCellContentView>

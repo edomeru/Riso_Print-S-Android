@@ -7,6 +7,7 @@
 //
 
 #import "AlertHelper.h"
+#import "CXAlertView.h"
 
 @interface AlertHelper ()
 
@@ -80,11 +81,12 @@
     }
     
     //TODO: if using a custom AlertView, implement it here
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:alertTitle
+    /*UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:alertTitle
                                                         message:alertMsg
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
+                                              otherButtonTitles:nil];*/
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle message:alertMsg cancelButtonTitle:@"OK"];
     [alertView show];
 }
 

@@ -23,6 +23,8 @@
 #import "Printer.h"
 #import "PrintPreviewHelper.h"
 #import "PrintSetting.h"
+#import "DirectPrintManager.h"
+#import "AlertHelper.h"
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
@@ -56,6 +58,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 @property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
 @property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
+
+- (void)executePrint;
+
 @end
 
 @implementation PrintSettingsTableViewController
@@ -134,6 +139,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 -(void)dealloc
 {
     PreviewSetting *previewSetting = self.previewSetting;
+    if (self.printerIndex == nil)
+    {
+        PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
+        [printDocument removeObserver:self forKeyPath:@"printer"];
+    }
     [PrintSettingsHelper removeObserver:self fromPreviewSetting:&previewSetting];
 }
 
@@ -352,9 +362,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
     else
     {
-        if(row > 0 && self.isDefaultSettingsMode == NO)
+        if (self.isDefaultSettingsMode == NO)
         {
-            [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
+            if (row == 0)
+            {
+                [self executePrint];
+            }
+            else
+            {
+                [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
+            }
         }
     }
 }
@@ -750,6 +767,20 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
         [self.indexPathsToUpdate removeAllObjects];
     }
+}
+
+- (void)executePrint
+{
+    // Check if printer is selected
+    if (self.printer == nil)
+    {
+        [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
+        return;
+    }
+    
+    //[[DirectPrintManager sharedManager] printDocumentViaLPR];
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    [manager printDocumentViaLPR];
 }
 
 @end
