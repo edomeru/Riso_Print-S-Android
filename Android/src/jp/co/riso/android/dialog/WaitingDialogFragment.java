@@ -28,6 +28,7 @@ public class WaitingDialogFragment extends DialogFragment {
     public static final String KEY_TITLE = "title";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_CANCELABLE = "cancelable";
+    public static final String KEY_NEG_BUTTON = "negButton";
     
     public static final OnKeyListener sCancelBackButtonListener;
     
@@ -44,7 +45,7 @@ public class WaitingDialogFragment extends DialogFragment {
         };
     }
     
-    public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable) {
+    public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable, String buttonTitle) {
         WaitingDialogFragment dialog = new WaitingDialogFragment();
         
         // Supply num input as an argument.
@@ -52,6 +53,7 @@ public class WaitingDialogFragment extends DialogFragment {
         args.putString(KEY_TITLE, title);
         args.putString(KEY_MESSAGE, message);
         args.putBoolean(KEY_CANCELABLE, cancelable);
+        args.putString(KEY_NEG_BUTTON, buttonTitle);
         dialog.setArguments(args);
         
         return dialog;
@@ -68,6 +70,7 @@ public class WaitingDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
         String message = getArguments().getString(KEY_MESSAGE);
+        String negButton = getArguments().getString(KEY_NEG_BUTTON);
         
         boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
         
@@ -82,12 +85,19 @@ public class WaitingDialogFragment extends DialogFragment {
         }
         
         dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(cancelable);
         dialog.setCancelable(cancelable);
         
         if (!cancelable) {
             // Disable the back button
             dialog.setOnKeyListener(sCancelBackButtonListener);
+        } else {
+            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, negButton, new DialogInterface.OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            
         }
         
         return dialog;
