@@ -23,7 +23,7 @@ typedef enum {
     kPaperSizeA6,
     kPaperSizeB4,
     kPaperSizeB5,
-    //kPaperSizeB6,
+    kPaperSizeB6,
     kPaperSizeFoolscap,
     kPaperSizeTabloid,
     kPaperSizeLegal,

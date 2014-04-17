@@ -23,11 +23,9 @@
 "IDS_LBL_LAST_UPDATED" = "Updated: %@";
 "IDS_LBL_SET_DEFAULT_PRINTER" = "Set as Default Printer";
 "IDS_LBL_ADD_SUCCESSFUL" = "Added Successfully";
-"IDS_LBL_EXPAND" = "Expand Print Jobs Group";
-"IDS_LBL_COLLAPSE" = "Collapse Print Jobs Group";
 "IDS_LBL_DELETE_ALL" = "Delete All";
-"IDS_LBL_DELETE_JOBS_TITLE" = "Delete Print Job";
-"IDS_LBL_DELETE_JOBS_MSG" = "Are you sure you want to delete the print jobs?";
+"IDS_LBL_DELETE_JOBS_TITLE" = "Delete Print Job History";
+"IDS_LBL_DELETE_JOBS_MSG" = "Are you sure you want to delete?";
 "IDS_LBL_PRINTER_INFO" = "Printer Info";
 "IDS_LBL_PRINTER_NAME" = "Printer Name";
 "IDS_LBL_IP_ADDRESS" = "IP Address";
@@ -58,6 +56,7 @@
 "IDS_LBL_DUPLEX_LONG_EDGE" = "Long Edge";
 "IDS_LBL_DUPLEX_SHORT_EDGE" = "Short Edge";
 "IDS_LBL_PAPERSIZE" = "Paper Size";
+"IDS_LBL_PAPERSIZE_A3" = "A3";
 "IDS_LBL_PAPERSIZE_A3W" = "A3W";
 "IDS_LBL_PAPERSIZE_A4" = "A4";
 "IDS_LBL_PAPERSIZE_A5" = "A5";
@@ -110,13 +109,13 @@
 "IDS_LBL_BOOKLET_LAYOUT_TB" = "Top to bottom";
 "IDS_LBL_FINISHINGSIDE" = "Binding side";
 "IDS_LBL_FINISHINGSIDE_LEFT" = "Left";
-"IDS_LBL_FINISHINGSIDE_TOP" = "Upper";
+"IDS_LBL_FINISHINGSIDE_TOP" = "Top";
 "IDS_LBL_FINISHINGSIDE_RIGHT" = "Right";
 "IDS_LBL_STAPLE" = "Staple";
-"IDS_LBL_STAPLE_UPPERLEFT" = "Left 1";
-"IDS_LBL_STAPLE_UPPERRIGHT" = "Right 1";
-"IDS_LBL_STAPLE_2" = "2 pos.";
-"IDS_LBL_STAPLE_1" = "1 pos.";
+"IDS_LBL_STAPLE_UPPERLEFT" = "1 (Upper-left)";
+"IDS_LBL_STAPLE_UPPERRIGHT" = "1 (Upper-right)";
+"IDS_LBL_STAPLE_2" = "2.0";
+"IDS_LBL_STAPLE_1" = "1.0";
 "IDS_LBL_PUNCH" = "Punch";
 "IDS_LBL_PUNCH_2HOLES" = "2 holes";
 "IDS_LBL_PUNCH_3HOLES" = "3 holes";
@@ -143,6 +142,6 @@
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "File size is too large";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device";
 "IDS_ERR_MSG_PDF_ENCRYPTED" = "PDF Encryption is not supported";
-"IDS_ERR_MSG_DELETE_FAILED" = "Error deleting Print Job";
+"IDS_ERR_MSG_DELETE_FAILED" = "Unable to delete.";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";
 

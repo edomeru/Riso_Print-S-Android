@@ -48,6 +48,9 @@
  */
 @property (nonatomic, weak) NSLayoutConstraint *yAlignConstraint;
 
+@property (nonatomic, weak) NSLayoutConstraint *maxWidthConstraint;
+@property (nonatomic, weak) NSLayoutConstraint *maxHeightConstraint;
+
 /**
  Pinch gesture recognizer for scaling
  */
@@ -78,6 +81,8 @@
  */
 @property (nonatomic) BOOL zooming;
 
+@property (nonatomic) CGFloat sizeOffset;
+
 /**
  Initializes the content view and property values
  */
@@ -87,6 +92,9 @@
  Snap dimensions and position to nearest valid value
  */
 - (void)snap;
+
+- (void)enableMaxDimensionRules;
+- (void)disableMaxDimensionRules;
 
 /**
  Action when content view is pinched/being pinched
@@ -136,6 +144,8 @@
     [self removeConstraint:self.sizeConstraint];
     [self removeConstraint:self.xAlignConstraint];
     [self removeConstraint:self.yAlignConstraint];
+    [self removeConstraint:self.maxWidthConstraint];
+    [self removeConstraint:self.maxHeightConstraint];
     
     // Create new constraints
     // Size constraint
@@ -143,43 +153,34 @@
     NSLayoutConstraint *aspectRatioConstraint;
     if (orientation == kPreviewViewOrientationPortrait)
     {
-        if((self.frame.size.height * self.aspectRatio) > self.frame.size.width)// should not exceed width of parent view
-        {
-            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f]; //keep the width constant
-        }
-        else
-        {
-            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f]; //keep the height constant
-        }
+        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
         aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeHeight multiplier:self.aspectRatio constant:0.0f];
     }
     else
     {
-        if((self.frame.size.width * self.aspectRatio) > self.frame.size.height) //should not exceed height of parent view
-        {
-            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f]; //keep the height constant
-        }
-        else
-        {
-            sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];//keep the width constant
-        }
-        
+        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
         aspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeWidth multiplier:self.aspectRatio constant:0.0f];
     }
     
     NSLayoutConstraint *xAlignConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f];
     NSLayoutConstraint *yAlignConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0.0f];
     
+    NSLayoutConstraint *maxWidthConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *maxHeightConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
+                                               
     // Add new constraints
     //[self addSubview:self.contentView];
+    sizeConstraint.priority = UILayoutPriorityDefaultLow;
     [self.contentView addConstraint:aspectRatioConstraint];
-    [self addConstraints:@[sizeConstraint, xAlignConstraint, yAlignConstraint]];
+    [self addConstraints:@[sizeConstraint, xAlignConstraint, yAlignConstraint, maxWidthConstraint, maxHeightConstraint]];
     
     // Save references
     self.aspectRatioConstraint = aspectRatioConstraint;
     self.sizeConstraint = sizeConstraint;
     self.xAlignConstraint = xAlignConstraint;
     self.yAlignConstraint = yAlignConstraint;
+    self.maxWidthConstraint = maxWidthConstraint;
+    self.maxHeightConstraint = maxHeightConstraint;
     
     // Reset flags
     self.scale = 1.0f;
@@ -229,7 +230,13 @@
     {
         referenceSize = self.frame.size.width;
     }
-    self.sizeConstraint.constant = referenceSize * (self.scale - 1.0f);
+    
+    if (self.scale == 1.0f)
+    {
+        [self enableMaxDimensionRules];
+    }
+    
+    self.sizeConstraint.constant = referenceSize * (self.scale - 1.0f) + self.sizeOffset;
     [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^
      {
          [self layoutIfNeeded];
@@ -265,6 +272,55 @@
      } completion:nil];
 }
 
+- (void)enableMaxDimensionRules
+{
+    [self removeConstraint:self.sizeConstraint];
+    
+    NSLayoutConstraint *sizeConstraint;
+    if (self.orientation == kPreviewViewOrientationPortrait)
+    {
+        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
+    }
+    else
+    {
+        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
+    }
+    sizeConstraint.priority = UILayoutPriorityDefaultLow;
+    
+    NSLayoutConstraint *maxWidthConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *maxHeightConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
+    
+    [self addConstraints:@[sizeConstraint, maxWidthConstraint, maxHeightConstraint]];
+    
+    self.sizeConstraint = sizeConstraint;
+    self.maxWidthConstraint = maxWidthConstraint;
+    self.maxHeightConstraint = maxHeightConstraint;
+}
+
+
+- (void)disableMaxDimensionRules
+{
+    [self removeConstraint:self.sizeConstraint];
+    [self removeConstraint:self.maxWidthConstraint];
+    [self removeConstraint:self.maxHeightConstraint];
+    
+    NSLayoutConstraint *sizeConstraint;
+    if (self.orientation == kPreviewViewOrientationPortrait)
+    {
+        //CGFloat difference =
+        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
+    }
+    else
+    {
+        sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
+    }
+    
+    sizeConstraint.priority = UILayoutPriorityRequired;
+    [self addConstraint:sizeConstraint];
+    
+    self.sizeConstraint = sizeConstraint;
+}
+
 #pragma - UIGestureRecognizerDelegate Methods
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -281,6 +337,21 @@
     if (pincher.state == UIGestureRecognizerStateBegan)
     {
         self.zooming = YES;
+        if (self.scale == 1.0f)
+        {
+            CGRect containerFrame = self.frame;
+            CGRect contentFrame = self.contentView.frame;
+            if (self.orientation == kPreviewViewOrientationPortrait)
+            {
+                self.sizeOffset = contentFrame.size.height - containerFrame.size.height;
+            }
+            else
+            {
+                self.sizeOffset = contentFrame.size.width - containerFrame.size.width;
+            }
+            [self disableMaxDimensionRules];
+            [self layoutIfNeeded];
+        }
         [self.delegate previewView:self didChangeZoomMode:YES];
     }
     
@@ -294,7 +365,7 @@
         referenceSize = self.frame.size.width;
     }
     CGFloat scale = self.scale * pincher.scale;
-    self.sizeConstraint.constant =referenceSize * scale - referenceSize;
+    self.sizeConstraint.constant = referenceSize * scale - referenceSize + self.sizeOffset;
     [self layoutIfNeeded];
     
     if (pincher.state == UIGestureRecognizerStateBegan)
@@ -322,6 +393,7 @@
         [self.delegate previewView:self didChangeZoomMode:(self.scale > 1.0f)];
         
         [self snap];
+        self.sizeOffset = 0.0f;
     }
 }
 
@@ -345,16 +417,6 @@
     {
         self.position = position;
         [self snap];
-    }
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    //if other layout of views the content exceeds bounds of parent view but is not zoomed, recompute constraints of view
-    if((self.frame.size.height < self.contentView.frame.size.height || self.frame.size.width < self.contentView.frame.size.width) && self.scale <= 1.0f)
-    {
-        [self setPreviewWithOrientation:self.orientation aspectRatio:self.aspectRatio];
     }
 }
 
