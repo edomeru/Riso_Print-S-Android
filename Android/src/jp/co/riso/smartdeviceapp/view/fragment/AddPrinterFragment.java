@@ -8,6 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.util.regex.Pattern;
+
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
@@ -21,25 +23,35 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.Spanned;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnKeyListener {
+public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnKeyListener, Callback {
+    private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int ERR_INVALID_IP_ADDRESS = -1;
     private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
-    private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
-    private static final InputFilter[] IP_ADDRESS_FILTER;
+    private static final int ERR_PRINTER_ADDED_WARNING = -3;
+    private static final int MSG_ERR_DB = 0;
     
-    private EditText mIpAddress = null;
+    private static final Pattern IPV4_PATTERN;
+    private static final Pattern IPV4_MULTICAST_PATTERN;
+    private static final Pattern IPV6_STD_PATTERN;
+    private static final Pattern IPV6_HEX_COMPRESSED_PATTERN;
+    private static final Pattern IPV6_LINK_LOCAL_PATTERN;
+    private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
+    
+    private ViewHolder mAddPrinterView = null;
     private PrinterManager mPrinterManager = null;
     private boolean mAdded = false;
+    private Handler mHandler = null;
     
     @Override
     public int getViewLayout() {
@@ -51,14 +63,21 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mAdded = false;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mPrinterManager.setPrinterSearchCallback(this);
+        mAddPrinterView = new ViewHolder();
+        mHandler = new Handler(this);
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
-        mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
-        mIpAddress.setFilters(IP_ADDRESS_FILTER);
-        mIpAddress.setOnKeyListener(this);
+        mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
+        mAddPrinterView.mIpAddressLabel = (TextView) view.findViewById(R.id.ipAddressLabel);
+        
+        mAddPrinterView.mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
+        mAddPrinterView.mIpAddress.setOnKeyListener(this);
+        
+        if (mPrinterManager.isSearching()) {
+            setViewToDisable(mAddPrinterView);
+        }
     }
     
     @Override
@@ -76,12 +95,45 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
         }
         addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.selector_addprinter_save, this);
-        
+        mAddPrinterView.mSaveButton = view.findViewById(ID_MENU_SAVE_BUTTON);
+        mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
+    }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
+    
+    public boolean isIPv4Address(final String ipAddress) {
+        return IPV4_PATTERN.matcher(ipAddress).matches();
+    }
+    
+    public boolean isIPv4MulticastAddress(final String ipAddress) {
+        return IPV4_MULTICAST_PATTERN.matcher(ipAddress).matches();
+    }
+    
+    public boolean isIPv6Address(final String ipAddress) {
+        return isIPv6StdAddress(ipAddress) || isIPv6HexCompressedAddress(ipAddress) || isIPv6LinkLocalAddress(ipAddress) || isIPv6Ipv4DerivedAddress(ipAddress);
     }
     
     // ================================================================================
     // Private Methods
     // ================================================================================
+    
+    private boolean isIPv6StdAddress(final String ipAddress) {
+        return IPV6_STD_PATTERN.matcher(ipAddress).matches();
+    }
+    
+    private boolean isIPv6HexCompressedAddress(final String ipAddress) {
+        return IPV6_HEX_COMPRESSED_PATTERN.matcher(ipAddress).matches();
+    }
+    
+    private boolean isIPv6LinkLocalAddress(final String ipAddress) {
+        return IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches();
+    }
+    
+    private boolean isIPv6Ipv4DerivedAddress(final String ipAddress) {
+        return IPV6_IPv4_DERIVED_PATTERN.matcher(ipAddress).matches();
+    }
     
     private void findPrinter(String ipAddress) {
         mPrinterManager.searchPrinter(ipAddress);
@@ -101,6 +153,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
         } else if (err == ERR_CAN_NOT_ADD_PRINTER) {
             errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+        } else if (err == ERR_PRINTER_ADDED_WARNING) {
+            errMsg = getResources().getString(R.string.ids_err_msg_warning_cannot_find_printer);
+            errMsg += mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_lbl_add_successful);
         }
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
@@ -127,6 +182,46 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 ft.commit();
             }
         }
+        AppUtils.hideSoftKeyboard(getActivity());
+    }
+    
+    private void setViewToDisable(ViewHolder viewHolder) {
+        if (viewHolder == null) {
+            return;
+        }
+        
+        viewHolder.mSaveButton.setVisibility(View.GONE);
+        viewHolder.mProgressBar.setVisibility(View.VISIBLE);
+        viewHolder.mIpAddressLabel.setTextColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mIpAddress.setTextColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mIpAddress.setFocusable(false);
+        
+    }
+    
+    private void setViewToNormal(ViewHolder viewHolder) {
+        if (viewHolder == null) {
+            return;
+        }
+        
+        viewHolder.mSaveButton.setVisibility(View.VISIBLE);
+        viewHolder.mProgressBar.setVisibility(View.GONE);
+        viewHolder.mIpAddressLabel.setTextColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mIpAddress.setTextColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mIpAddress.setFocusableInTouchMode(true);
+    }
+    
+    // ================================================================================
+    // INTERFACE - Callback
+    // ================================================================================
+    
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+            case MSG_ERR_DB:
+                dialogErrCb(msg.arg1);
+                return true;
+        }
+        return false;
     }
     
     // ================================================================================
@@ -141,18 +236,27 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 closeScreen();
                 break;
             case ID_MENU_SAVE_BUTTON:
-                String ipAddress = mIpAddress.getText().toString();
+                String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
                 
+                if (isIPv4MulticastAddress(ipAddress)) {
+                    dialogErrCb(ERR_INVALID_IP_ADDRESS);
+                    return;
+                }
+                if (!isIPv4Address(ipAddress) && !isIPv6Address(ipAddress)) {
+                    dialogErrCb(ERR_INVALID_IP_ADDRESS);
+                    return;
+                }
                 if (mPrinterManager.isExists(ipAddress)) {
                     dialogErrCb(ERR_CAN_NOT_ADD_PRINTER);
                     return;
                 }
-                if (!mPrinterManager.isSearching() && !ipAddress.isEmpty()) {
-                    findPrinter(mIpAddress.getText().toString());
+                if (!mPrinterManager.isSearching()) {
+                    setViewToDisable(mAddPrinterView);
+                    findPrinter(mAddPrinterView.mIpAddress.getText().toString());
                 }
+                AppUtils.hideSoftKeyboard(getActivity());
                 break;
         }
-        AppUtils.hideSoftKeyboard(getActivity());
     }
     
     // ================================================================================
@@ -172,10 +276,27 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     
     @Override
     public void onSearchEnd() {
-        String ipAddress = mIpAddress.getText().toString();
+        String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
-        if (!mAdded && !ipAddress.isEmpty()) {
-            dialogErrCb(ERR_INVALID_IP_ADDRESS);
+        final MainActivity activity = (MainActivity) getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setViewToNormal(mAddPrinterView);
+            }
+        });
+        
+        if (!mAdded) {
+            // Create Printer object
+            Printer printer = new Printer(ipAddress, ipAddress, null);
+            if (mPrinterManager.savePrinterToDB(printer)) {                                
+                Message newWarningMsg = new Message();
+                
+                newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;                
+                mHandler.sendMessage(newWarningMsg);
+                closeScreen();
+                mAdded = true;
+            }
         }
     }
     
@@ -192,34 +313,40 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         return false;
     }
     
-    // ================================================================================
-    // Internal Classes
-    // ================================================================================
-    
-    private static class Ipv4Filter implements InputFilter {
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String regEx = "^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?";
-            
-            if (end > start) {
-                String destTxt = dest.toString();
-                String ipv4Address = destTxt.substring(0, dstart) + source.subSequence(start, end) + destTxt.substring(dend);
-                if (!ipv4Address.matches(regEx)) {
-                    return "";
-                } else {
-                    String[] splits = ipv4Address.split("\\.");
-                    for (int i = 0; i < splits.length; i++) {
-                        if (Integer.valueOf(splits[i]) > 255) {
-                            return "";
-                        }
-                    }
-                }
-            }
-            return null;
-        }
+    static {
+        String ipV4Segment = "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
+        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        
+        IPV4_PATTERN = Pattern.compile(ipV4Segment);
+        
+        // 224.0.0.0 - 239.255.255.250 Multicast address
+        // 224.0.0.0 to 224.0.0.255, 224.0.1.0 to 238.255.255.255, 239.0.0.0 to 239.255.255.255
+        // 255.255.255.255 Broadcast address
+        IPV4_MULTICAST_PATTERN = Pattern.compile("(2(?:2[4-9]|3\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)){3}|(255.){3}255)");
+        
+        IPV6_STD_PATTERN = Pattern.compile("((" + ipV6Segment + ":){7,7}" + ipV6Segment + ")"); // Pattern # 1
+        IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile("((" + ipV6Segment + ":){1,7}:" + // Pattern # 2
+                "|" + "(" + ipV6Segment + ":){1,6}:" + ipV6Segment + // Pattern # 3
+                "|" + "(" + ipV6Segment + ":){1,5}(:" + ipV6Segment + "){1,2}" + // Pattern # 4
+                "|" + "(" + ipV6Segment + ":){1,4}(:" + ipV6Segment + "){1,3}" + // Pattern # 5
+                "|" + "(" + ipV6Segment + ":){1,3}(:" + ipV6Segment + "){1,4}" + // Pattern # 6
+                "|" + "(" + ipV6Segment + ":){1,2}(:" + ipV6Segment + "){1,5}" + // Pattern # 7
+                "|" + ipV6Segment + ":((:" + ipV6Segment + "){1,6})" + // Pattern # 8
+                "|" + ":((:" + ipV6Segment + "){1,7}|:)" + // Pattern # 9
+                ")");
+        IPV6_LINK_LOCAL_PATTERN = Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10
+        IPV6_IPv4_DERIVED_PATTERN = Pattern.compile("(::(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
+                "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
     }
     
-    static {
-        IP_ADDRESS_FILTER = new InputFilter[] { new InputFilter.LengthFilter(15), new Ipv4Filter() };
+    // ================================================================================
+    // INTENAL Classes
+    // ================================================================================
+    
+    public class ViewHolder {
+        private TextView mIpAddressLabel;
+        private EditText mIpAddress;
+        private View mProgressBar;
+        private View mSaveButton;
     }
 }
