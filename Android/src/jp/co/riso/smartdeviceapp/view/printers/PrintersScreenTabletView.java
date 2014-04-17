@@ -326,7 +326,6 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         viewHolder.mPrintSettings.setTag(printer);
         viewHolder.mOnlineIndcator.setTag(pView);
         
-        mPrinterManager.updateOnlineStatus(printer.getIpAddress(), viewHolder.mOnlineIndcator);
         setPrinterView(viewHolder);
     }
     
@@ -354,10 +353,11 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
             case R.id.btn_delete:
                 viewHolder = (ViewHolder) v.getTag();
                 printer = (Printer) viewHolder.mIpAddress.getTag();
-                mPrinterManager.removePrinter(printer);
-                mPrinterList.remove(printer);
-                removeView((View) viewHolder.mOnlineIndcator.getTag());
-                mDefaultViewHolder = null;
+                if (mPrinterManager.removePrinter(printer)) {
+                    mPrinterList.remove(printer);
+                    removeView((View) viewHolder.mOnlineIndcator.getTag());
+                    mDefaultViewHolder = null;
+                }
                 mDeleteItem = -1;
                 break;
             case R.id.default_printer_switch:

@@ -61,7 +61,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         if (convertView == null) {
             convertView = inflater.inflate(mLayoutId, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mOnlineIndcator = (ImageView) convertView.findViewById(R.id.img_onOff);
             viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.txt_printerName);
             viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.txt_ipAddress);
             viewHolder.mPrinterName.setText(printer.getName());
@@ -99,6 +98,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             viewHolder.mDiscloseImage.setTag(printer);
             viewHolder.mPrinterName.setTag(printer);
             viewHolder.mDeleteButton.setTag(convertView);
+            convertView.setActivated(false);
         }
         
         separator = convertView.findViewById(R.id.printers_separator);
@@ -108,7 +108,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             separator.setVisibility(View.VISIBLE);
         }
         setPrinterRow(viewHolder);
-        mPrinterManager.updateOnlineStatus(printer.getIpAddress(), viewHolder.mOnlineIndcator);
         
         return convertView;
     }
@@ -262,9 +261,10 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         switch (msg.what) {
             case MSG_REMOVE_PRINTER:
                 Printer printer = (Printer) msg.obj;
-                mPrinterManager.removePrinter(printer);
-                remove(printer);
-                notifyDataSetChanged();
+                if (mPrinterManager.removePrinter(printer)) {
+                    remove(printer);
+                    notifyDataSetChanged();
+                }
                 return true;
         }
         return false;
@@ -275,7 +275,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     public class ViewHolder {
-        private ImageView mOnlineIndcator;
         private TextView mPrinterName;
         private TextView mIpAddress;
         private Button mDeleteButton;

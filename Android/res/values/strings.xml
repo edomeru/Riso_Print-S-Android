@@ -155,4 +155,5 @@
     <string name="ids_err_msg_delete_failed">Error deleting Print Job</string>
     <string name="ids_err_msg_network_error">No network available.</string>
     <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
+    <string name="ids_err_msg_warning_cannot_find_printer">Warning, Cannot find Printer.\n</string>
 </resources>

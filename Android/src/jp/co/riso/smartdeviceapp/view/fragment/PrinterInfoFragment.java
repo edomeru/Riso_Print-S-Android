@@ -30,6 +30,9 @@ import android.widget.TextView;
 public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
+    public static final String KEY_PRINTER_INFO_NAME = "fragment_printer_info_name";
+    public static final String KEY_PRINTER_INFO_ADDRESS = "fragment_printer_info_address";
+    public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_defualt";
     private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
@@ -83,20 +86,55 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+        if (savedInstanceState != null) {
+            if (mPrinter == null) {
+                mPrinter = mPrinterManager.getSavedPrintersList().get(savedInstanceState.getInt(KEY_PRINTER_INFO_ID) - 1);
+            }
+        }
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
         }
-        if (mPrinter.getOnlineStatus()) {
-            mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
-        }
         
+        updateOnlineStatus();
     }
+    
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString(KEY_PRINTER_INFO_NAME, mPrinter.getName());
+        savedInstanceState.putString(KEY_PRINTER_INFO_ADDRESS, mPrinter.getName());
+        savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
     
     public void setPrinter(Printer printer) {
         mPrinter = printer;
+    }
+    
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    public void updateOnlineStatus() {
+        
+        Thread updateStatus = new Thread() {
+            public void run() {
+                try {
+                    if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
+                        mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
+                    }
+                } catch (Exception e) {
+                    mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
+                }
+            }
+        };
+        updateStatus.start();
+        
     }
     
     // ================================================================================
