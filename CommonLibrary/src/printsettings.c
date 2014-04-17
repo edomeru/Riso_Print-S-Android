@@ -5,6 +5,9 @@
 //  Created by Seph on 4/14/14.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
