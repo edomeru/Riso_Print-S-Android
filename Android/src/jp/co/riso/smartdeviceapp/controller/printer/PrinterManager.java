@@ -417,6 +417,21 @@ public class PrinterManager implements SNMPManagerCallback {
         }, 0, UPDATE_TIMEOUT);
     }
     
+    public void cancelUpdateStatusThread() {
+        if (mUpdateStatusTimer == null) {
+            return;
+        }
+        mUpdateStatusTimer.cancel();
+        mUpdateStatusTimer = null;
+    }
+    
+    public void runUpdateStatusThread() {
+        if (mUpdateStatusTimer == null) {
+            return;
+        }
+        ((Runnable) mUpdateStatusTimer).run();
+    }
+    
     // ================================================================================
     // Private Methods
     // ================================================================================

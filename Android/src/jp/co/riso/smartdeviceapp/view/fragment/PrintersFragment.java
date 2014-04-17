@@ -133,6 +133,15 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         AppUtils.hideSoftKeyboard(getActivity());
     }
     
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mPrinterManager.isSearching()) {
+            mPrinterManager.cancelPrinterSearch();
+        }
+        mPrinterManager.cancelUpdateStatusThread();
+    }
+    
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -246,7 +255,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void updateOnlineStatus() {
         for (int i = 0; i < mPrinter.size(); i++) {
             if (isTablet()) {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mPrinterTabletView.getChildAt(i));                
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mPrinterTabletView.getChildAt(i));
             } else {
                 mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mListView.getChildAt(i));
             }
