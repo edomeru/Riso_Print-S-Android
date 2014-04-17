@@ -8,6 +8,10 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -121,8 +125,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // ================================================================================
     
     public void updateOnlineStatus() {
-        
-        Thread updateStatus = new Thread() {
+        Timer updateStatus = new Timer();
+        updateStatus.schedule(new TimerTask() {
+            
+            @Override
             public void run() {
                 try {
                     if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
@@ -132,9 +138,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
                 }
             }
-        };
-        updateStatus.start();
-        
+        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
     }
     
     // ================================================================================

@@ -10,14 +10,13 @@ package jp.co.riso.smartdeviceapp.controller.printer;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Pattern;
 
+import jp.co.riso.android.util.NetUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -34,15 +33,11 @@ import android.view.View;
 
 public class PrinterManager implements SNMPManagerCallback {
     public static final int EMPTY_ID = -1;
-    public static final int MAX_PRINTER_COUNT = 10;
-    public static final int PING_TIMEOUT = 100;
-    public static final int UPDATE_TIMEOUT = 5000; // 5 seconds
-    private static final Pattern IPV6_LINK_LOCAL_PATTERN;
-    private static final List<String> IPV6_INTERFACE_NAMES;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList = null;
     private Context mContext = null;
     private boolean mIsSearching = false;
+    private boolean mIsCancelled = false;
     private SNMPManager mSNMPManager = null;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
@@ -302,6 +297,7 @@ public class PrinterManager implements SNMPManagerCallback {
      */
     public void startPrinterSearch() {
         mIsSearching = true;
+        mIsCancelled = false;
         mSNMPManager.initializeSNMPManager();
         mSNMPManager.deviceDiscovery();
         Log.d("PrinterManager", "Auto");
@@ -322,6 +318,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         
         mIsSearching = true;
+        mIsCancelled = false;
         mSNMPManager.initializeSNMPManager();
         mSNMPManager.manualDiscovery(ipAddress);
         Log.d("PrinterManager", "Manual");
@@ -334,6 +331,7 @@ public class PrinterManager implements SNMPManagerCallback {
      */
     public void cancelPrinterSearch() {
         mIsSearching = false;
+        mIsCancelled = true;
         mSNMPManager.cancel();
         Log.d("PrinterManager", "Cancel");
     }
@@ -344,6 +342,14 @@ public class PrinterManager implements SNMPManagerCallback {
      */
     public boolean isSearching() {
         return mIsSearching;
+    }
+    
+    /**
+     * <p>
+     * Checks if the printer search was cancelled.
+     */
+    public boolean isCancelled() {
+        return mIsCancelled;
     }
     
     /**
@@ -388,15 +394,13 @@ public class PrinterManager implements SNMPManagerCallback {
     public boolean isOnline(String ipAddress) {
         InetAddress inetIpAddress = null;
         try {
-            if (IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches()) {
-                return connectToIpv6Address(ipAddress, inetIpAddress);
+            if (NetUtils.isIPv6Address(ipAddress)) {
+                return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
             } else {
                 inetIpAddress = InetAddress.getByName(ipAddress);
             }
-            return inetIpAddress.isReachable(PING_TIMEOUT);
+            return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
         } catch (Exception e) {
-            Log.d("PrinterManager", "Exception");
-            e.printStackTrace();
             return false;
         }
     }
@@ -414,7 +418,7 @@ public class PrinterManager implements SNMPManagerCallback {
                     mPrintersCallback.get().updateOnlineStatus();
                 }
             }
-        }, 0, UPDATE_TIMEOUT);
+        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
     }
     
     public void cancelUpdateStatusThread() {
@@ -435,32 +439,6 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     // Private Methods
     // ================================================================================
-    
-    private boolean connectToIpv6Address(String ipAddress, InetAddress inetIpAddress) {
-        try {
-            String ip = ipAddress;
-            
-            if (ipAddress.contains("%")) {
-                String[] newIpString = ipAddress.split("%");
-                if (newIpString != null) {
-                    ip = newIpString[0];
-                    if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
-                        inetIpAddress = InetAddress.getByName(ipAddress);
-                        return inetIpAddress.isReachable(PING_TIMEOUT);
-                    }
-                }
-            }
-            for (int i = 0; i < IPV6_INTERFACE_NAMES.size(); i++) {
-                inetIpAddress = InetAddress.getByName(ip + "%" + IPV6_INTERFACE_NAMES.get(i));
-                if (inetIpAddress.isReachable(PING_TIMEOUT)) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
     
     private boolean savePrinterInfo(Printer printer) {
         if (printer == null || isExists(printer)) {
@@ -607,24 +585,4 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         
     }
-    
-    static {
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
-        String localInterface = "wlan0";
-        IPV6_LINK_LOCAL_PATTERN = Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}(%[0-9a-zA-Z]{1,}){0,1})");
-        IPV6_INTERFACE_NAMES = new ArrayList<String>();
-        
-        try {
-            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (int i = 0; i < interfaces.size(); i++) {
-                IPV6_INTERFACE_NAMES.add(interfaces.get(i).getName());
-            }
-        } catch (Exception e) {
-            IPV6_INTERFACE_NAMES.add(localInterface);
-        }
-        if (IPV6_INTERFACE_NAMES.contains(localInterface)) {
-            IPV6_INTERFACE_NAMES.set(0, localInterface);
-        }
-    }
-    
 }

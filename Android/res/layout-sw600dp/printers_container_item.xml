@@ -18,7 +18,7 @@
             android:background="@color/theme_light_4"
             android:duplicateParentState="true" >
 
-            <jp.co.riso.smartdeviceapp.view.printers.PrintersContainer
+            <jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView
                 android:id="@+id/PrintersContainerItem1"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/printers_view_row_height"
@@ -58,7 +58,7 @@
                     android:contentDescription="@string/default_content_description"
                     android:src="@drawable/img_btn_delete_printer_tablet"
                     android:visibility="gone" />
-            </jp.co.riso.smartdeviceapp.view.printers.PrintersContainer>
+            </jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView>
         </LinearLayout>
 
         <LinearLayout

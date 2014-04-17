@@ -216,7 +216,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         if (viewHolder == null) {
             return;
         }
-        PrintersContainer printerItem = (PrintersContainer) viewHolder.mDeleteButton.getParent();
+        PrintersContainerView printerItem = (PrintersContainerView) viewHolder.mDeleteButton.getParent();
         
         if (printerItem.getDefault()) {
             printerItem.setDefault(false);
@@ -238,7 +238,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         if (mDefaultViewHolder != null) {
             setPrinterViewToNormal(mDefaultViewHolder);
         }
-        PrintersContainer printerItem = ((PrintersContainer) viewHolder.mPrinterName.getParent());
+        PrintersContainerView printerItem = ((PrintersContainerView) viewHolder.mPrinterName.getParent());
         
         if (printerItem.getDelete()) {
             printerItem.setDelete(false);
@@ -262,7 +262,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         if (viewHolder == null) {
             return;
         }
-        PrintersContainer printerItem = ((PrintersContainer) viewHolder.mPrinterName.getParent());
+        PrintersContainerView printerItem = ((PrintersContainerView) viewHolder.mPrinterName.getParent());
         
         if (printerItem.getDelete()) {
             return;

@@ -8,11 +8,10 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import java.util.regex.Pattern;
-
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -40,13 +39,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
     private static final int ERR_PRINTER_ADDED_WARNING = -3;
     private static final int MSG_ERR_DB = 0;
-    
-    private static final Pattern IPV4_PATTERN;
-    private static final Pattern IPV4_MULTICAST_PATTERN;
-    private static final Pattern IPV6_STD_PATTERN;
-    private static final Pattern IPV6_HEX_COMPRESSED_PATTERN;
-    private static final Pattern IPV6_LINK_LOCAL_PATTERN;
-    private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
     
     private ViewHolder mAddPrinterView = null;
     private PrinterManager mPrinterManager = null;
@@ -100,40 +92,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
-    public boolean isIPv4Address(final String ipAddress) {
-        return IPV4_PATTERN.matcher(ipAddress).matches();
-    }
-    
-    public boolean isIPv4MulticastAddress(final String ipAddress) {
-        return IPV4_MULTICAST_PATTERN.matcher(ipAddress).matches();
-    }
-    
-    public boolean isIPv6Address(final String ipAddress) {
-        return isIPv6StdAddress(ipAddress) || isIPv6HexCompressedAddress(ipAddress) || isIPv6LinkLocalAddress(ipAddress) || isIPv6Ipv4DerivedAddress(ipAddress);
-    }
-    
-    // ================================================================================
     // Private Methods
     // ================================================================================
-    
-    private boolean isIPv6StdAddress(final String ipAddress) {
-        return IPV6_STD_PATTERN.matcher(ipAddress).matches();
-    }
-    
-    private boolean isIPv6HexCompressedAddress(final String ipAddress) {
-        return IPV6_HEX_COMPRESSED_PATTERN.matcher(ipAddress).matches();
-    }
-    
-    private boolean isIPv6LinkLocalAddress(final String ipAddress) {
-        return IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches();
-    }
-    
-    private boolean isIPv6Ipv4DerivedAddress(final String ipAddress) {
-        return IPV6_IPv4_DERIVED_PATTERN.matcher(ipAddress).matches();
-    }
     
     private void findPrinter(String ipAddress) {
         mPrinterManager.searchPrinter(ipAddress);
@@ -238,11 +198,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             case ID_MENU_SAVE_BUTTON:
                 String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
                 
-                if (isIPv4MulticastAddress(ipAddress)) {
+                if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
                     dialogErrCb(ERR_INVALID_IP_ADDRESS);
                     return;
                 }
-                if (!isIPv4Address(ipAddress) && !isIPv6Address(ipAddress)) {
+                if (!NetUtils.isIPv4Address(ipAddress) && !NetUtils.isIPv6Address(ipAddress)) {
                     dialogErrCb(ERR_INVALID_IP_ADDRESS);
                     return;
                 }
@@ -289,6 +249,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (!mAdded) {
             // Create Printer object
             Printer printer = new Printer(ipAddress, ipAddress, null);
+            
+            if(mPrinterManager.isCancelled()) {
+                return;
+            }
+            
             if (mPrinterManager.savePrinterToDB(printer)) {                                
                 Message newWarningMsg = new Message();
                 
@@ -311,32 +276,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             return true;
         }
         return false;
-    }
-    
-    static {
-        String ipV4Segment = "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
-        
-        IPV4_PATTERN = Pattern.compile(ipV4Segment);
-        
-        // 224.0.0.0 - 239.255.255.250 Multicast address
-        // 224.0.0.0 to 224.0.0.255, 224.0.1.0 to 238.255.255.255, 239.0.0.0 to 239.255.255.255
-        // 255.255.255.255 Broadcast address
-        IPV4_MULTICAST_PATTERN = Pattern.compile("(2(?:2[4-9]|3\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)){3}|(255.){3}255)");
-        
-        IPV6_STD_PATTERN = Pattern.compile("((" + ipV6Segment + ":){7,7}" + ipV6Segment + ")"); // Pattern # 1
-        IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile("((" + ipV6Segment + ":){1,7}:" + // Pattern # 2
-                "|" + "(" + ipV6Segment + ":){1,6}:" + ipV6Segment + // Pattern # 3
-                "|" + "(" + ipV6Segment + ":){1,5}(:" + ipV6Segment + "){1,2}" + // Pattern # 4
-                "|" + "(" + ipV6Segment + ":){1,4}(:" + ipV6Segment + "){1,3}" + // Pattern # 5
-                "|" + "(" + ipV6Segment + ":){1,3}(:" + ipV6Segment + "){1,4}" + // Pattern # 6
-                "|" + "(" + ipV6Segment + ":){1,2}(:" + ipV6Segment + "){1,5}" + // Pattern # 7
-                "|" + ipV6Segment + ":((:" + ipV6Segment + "){1,6})" + // Pattern # 8
-                "|" + ":((:" + ipV6Segment + "){1,7}|:)" + // Pattern # 9
-                ")");
-        IPV6_LINK_LOCAL_PATTERN = Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10
-        IPV6_IPv4_DERIVED_PATTERN = Pattern.compile("(::(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
-                "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
     }
     
     // ================================================================================
