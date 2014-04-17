@@ -67,11 +67,16 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         textView.setText(R.string.ids_lbl_add_printer);
         
         if (isTablet()) {
-            int left = (int) getResources().getDimension(R.dimen.preview_view_margin);
+            int left = (int) getResources().getDimension(R.dimen.printers_subview_margin);
+            int leftTextPadding = (int) getResources().getDimension(R.dimen.home_title_padding);
+            
             view.setPadding(left, 0, 0, 0);
+            textView.setPadding(leftTextPadding, 0, 0, 0);
+        } else {
+            addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
         }
         addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.selector_addprinter_save, this);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+        
     }
     
     // ================================================================================

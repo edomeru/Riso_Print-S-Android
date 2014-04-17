@@ -99,6 +99,13 @@
     <dimen name="printers_separator_padding">40dp</dimen>
     <dimen name="printers_row_left_icon_margin">5dp</dimen>
     <dimen name="printers_view_row_height">40dp</dimen>
+    <dimen name="printers_view_width">400dp</dimen>    
+    <dimen name="printers_view_height">250dp</dimen>    
+    
     <dimen name="printers_port_spinner_size">105dp</dimen>    
+    
+    <dimen name="printers_sub_separator_padding">20dp</dimen>
+    <dimen name="printers_subview_margin">2dp</dimen>
+    
     
 </resources>

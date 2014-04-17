@@ -77,14 +77,17 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        if (isTablet()) {
-            int left = (int) getResources().getDimension(R.dimen.preview_view_margin);
-            view.setPadding(left, 0, 0, 0);
-        }
-        
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+        if (isTablet()) {
+            int leftViewPadding = (int) getResources().getDimension(R.dimen.printers_subview_margin);
+            int leftTextPadding = (int) getResources().getDimension(R.dimen.home_title_padding);
+            
+            view.setPadding(leftViewPadding, 0, 0, 0);
+            textView.setPadding(leftTextPadding, 0, 0, 0);
+        } else {
+            addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+        }
     }
     
     @Override
