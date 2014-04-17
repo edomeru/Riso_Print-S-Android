@@ -150,15 +150,15 @@ public class Printer {
     // ================================================================================
     
     public class Config {
-        public boolean mLprAvailable;
-        public boolean mRawAvailable;
-        public boolean mBookletAvailable;
-        public boolean mStaplerAvailable;
-        public boolean mPunch4Available;
-        public boolean mTrayFaceDownAvailable;
-        public boolean mTrayAutoStackAvailable;
-        public boolean mTrayTopAvailable;
-        public boolean mTrayStackAvailable;
+        private boolean mLprAvailable;
+        private boolean mRawAvailable;
+        private boolean mBookletAvailable;
+        private boolean mStaplerAvailable;
+        private boolean mPunch4Available;
+        private boolean mTrayFaceDownAvailable;
+        private boolean mTrayAutoStackAvailable;
+        private boolean mTrayTopAvailable;
+        private boolean mTrayStackAvailable;
         
         public Config() {
             mBookletAvailable = true;

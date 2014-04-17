@@ -218,7 +218,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // Set Constraints
     // ================================================================================
     
-    private boolean shouldHideOptionFromConstraints(String tag, int value) {
+    private boolean shouldDisplayOptionFromConstraints(String tag, int value) {
         if (tag.equals(PrintSettings.TAG_STAPLE)) {
             boolean isTop = (mPrintSettings.getValue(PrintSettings.TAG_FINISHING_SIDE) == FinishingSide.TOP.ordinal());
             switch (Staple.values()[value]) {
@@ -515,15 +515,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             return;
         }
         
-        Printer targetPrinter = null;
-        if (mPrintersList != null) {
-            for (Printer printer : mPrintersList) {
-                if (printer.getId() == printerId) {
-                    targetPrinter = printer;
-                    break;
-                }
-            }
-        }
+        Printer targetPrinter = getPrinter();
         
         View v = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
         TextView disclosureTextView = (TextView)v.findViewById(R.id.listValueTextView);
@@ -532,6 +524,58 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         } else {
             disclosureTextView.setText(targetPrinter.getName());
         }
+    }
+    
+    private void setViewVisible(String name, boolean visible) {
+        View view = mMainLayout.findViewWithTag(name);
+        View targetView = (View) view.getTag(ID_TAG_TARGET_VIEW);
+        targetView.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+    
+    private void hideDisabledPrintSettings() {
+        Printer printer = getPrinter();
+
+        boolean isStapleAvailable = printer == null || printer.getConfig().isStaplerAvailable();
+        setViewVisible(PrintSettings.TAG_STAPLE, isStapleAvailable);
+        
+        boolean isBookletAvailable = printer == null || printer.getConfig().isBookletAvailable();
+        setViewVisible(PrintSettings.TAG_BOOKLET, isBookletAvailable);
+        setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletAvailable);
+        setViewVisible(PrintSettings.TAG_BOOKLET_LAYOUT, isBookletAvailable);
+        
+    }
+    
+    private boolean shouldDisplayOptionFromPrinter(String name, int value) {
+        if (getPrinter() != null) {
+            if (name.equals(PrintSettings.TAG_OUTPUT_TRAY)) {
+                switch (OutputTray.values()[value]) {
+                    case AUTO:
+                        return true;
+                    case FACEDOWN:
+                        return getPrinter().getConfig().isTrayFaceDownAvailable();
+                    case FACEUP:
+                        return true;
+                    case TOP:
+                        return getPrinter().getConfig().isTrayTopAvailable();
+                    case STACKING:
+                        return getPrinter().getConfig().isTrayStackAvailable();
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    private int getUpdatedStringId(String name, int id) {
+        if (getPrinter() != null) {
+            if (name.equals(PrintSettings.TAG_PUNCH)) {
+                if (id == R.string.ids_lbl_punch_3holes && getPrinter().getConfig().isPunch4Available()) {
+                    return R.string.ids_lbl_punch_4holes;
+                }
+            }
+        }
+        
+        return id;
     }
     
     private boolean updateValue(String tag, int newValue) {
@@ -593,6 +637,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mPrinterId = printerId;
         
         updateHighlightedPrinter(mPrinterId);
+        hideDisabledPrintSettings();
+    }
+    
+    public Printer getPrinter() {
+        for (int i = 0; i < mPrintersList.size(); i++) {
+            Printer printer = mPrintersList.get(i);
+            if (mPrinterId == printer.getId()) {
+                return printer;                
+            } 
+        }
+        return null;
     }
     
     public void setPrintSettings(PrintSettings printSettings) {
@@ -646,13 +701,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // Print settings controls functions
     // ================================================================================
     
-    private Object[] getOptionsStrings(List<Option> options) {
+    private Object[] getOptionsStrings(String name, List<Option> options) {
         ArrayList<String> optionsStrings = new ArrayList<String>();
         
         for (Option option : options) {
             String value = option.getTextContent();
             
             int id = AppUtils.getResourseId(value, R.string.class, -1);
+            id = getUpdatedStringId(name, id);
+            
             if (id != -1) {
                 optionsStrings.add(getResources().getString(id));
             } else {
@@ -687,7 +744,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             item.setTag(name);
             item.setTag(ID_TAG_ICON, icon);
             item.setTag(ID_TAG_TEXT, text);
-            item.setTag(ID_TAG_OPTIONS, getOptionsStrings(setting.getOptions()));
+            item.setTag(ID_TAG_OPTIONS, getOptionsStrings(name, setting.getOptions()));
             item.setTag(ID_TAG_TARGET_VIEW, item);
             item.setOnClickListener(this);
         } else {
@@ -899,7 +956,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             
             int lastIdx = -1;
             for (int i = 0; i < options.length; i++) {
-                if (shouldHideOptionFromConstraints(name, i)) {
+                if (shouldDisplayOptionFromConstraints(name, i) && shouldDisplayOptionFromPrinter(name, i)) {
                     addSubviewOptionsList(options[i].toString(), value, i, true, ID_SUBVIEW_OPTION_ITEM);
                     lastIdx = i;
                 }
@@ -998,13 +1055,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     mListener.onPrinterIdSelectedChanged(mPrinterId);
                     mListener.onPrintSettingsValueChanged(mPrintSettings);
                 }
-                
-                // Update UI
+
                 for (int i = 0; i < mPrintersList.size(); i++) {
                     Printer printer = mPrintersList.get(i);
                     View view = mSubView.findViewWithTag(Integer.valueOf(printer.getId()));
                     View subView = view.findViewById(ID_SUBVIEW_STATUS);
-                    subView.setSelected(id == printer.getId());
+                    subView.setSelected(mPrinterId == printer.getId());
                 }
             }
             
