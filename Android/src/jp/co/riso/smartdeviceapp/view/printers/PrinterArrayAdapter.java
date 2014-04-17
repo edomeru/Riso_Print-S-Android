@@ -82,7 +82,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             
         } else {
-            PrintersContainer printerItem = (PrintersContainer) convertView;
+            PrintersContainerView printerItem = (PrintersContainerView) convertView;
             
             viewHolder = (ViewHolder) convertView.getTag();
             viewHolder.mPrinterName.setText(printer.getName());
@@ -131,7 +131,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         if (convertView == null) {
             return;
         }
-        PrintersContainer printerItem = (PrintersContainer) convertView;
+        PrintersContainerView printerItem = (PrintersContainerView) convertView;
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         
         if (printerItem.getDelete()) {
@@ -163,7 +163,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         if (viewHolder == null) {
             return;
         }
-        PrintersContainer printerItem = (PrintersContainer) viewHolder.mDeleteButton.getTag();
+        PrintersContainerView printerItem = (PrintersContainerView) viewHolder.mDeleteButton.getTag();
         
         if (printerItem.getDefault()) {
             printerItem.setDefault(false);
@@ -179,7 +179,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         if (viewHolder == null) {
             return;
         }
-        PrintersContainer printerItem = (PrintersContainer) viewHolder.mDeleteButton.getTag();
+        PrintersContainerView printerItem = (PrintersContainerView) viewHolder.mDeleteButton.getTag();
         
         if (printerItem.getDelete()) {
             printerItem.setDelete(false);
@@ -241,7 +241,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 mPrinterManager.setDefaultPrinter(printer);
                 break;
             case R.id.btn_delete:
-                PrintersContainer printerContainer = (PrintersContainer) v.getTag();
+                PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
                 viewHolder = (ViewHolder) printerContainer.getTag();
                 printer = (Printer) viewHolder.mDiscloseImage.getTag();
                 

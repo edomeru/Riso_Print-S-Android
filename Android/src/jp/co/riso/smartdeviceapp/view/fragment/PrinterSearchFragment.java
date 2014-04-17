@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -221,7 +222,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public boolean isMaxPrinterCountReached() {
-        if (mPrinterManager.getPrinterCount() == PrinterManager.MAX_PRINTER_COUNT) {
+        if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printer_info);
             String errMsg = null;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);

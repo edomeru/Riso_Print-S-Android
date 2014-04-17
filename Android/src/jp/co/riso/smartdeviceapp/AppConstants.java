@@ -22,4 +22,8 @@ public class AppConstants {
     
     public static final String PREF_KEY_READ_COMM_NAME = "pref_key_read_comm_name";
     public static final String PREF_DEFAULT_READ_COMM_NAME = "public";
+    
+    public static final int CONST_MAX_PRINTER_COUNT = 10;
+    public static final int CONST_TIMEOUT_PING = 100;
+    public static final int CONST_UPDATE_INTERVAL = 5000; // 5 seconds
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -39,11 +40,11 @@ import android.widget.TextView;
 
 public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
+    public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     // private static final String KEY_PRINTER_LIST = "printers_list";
     private static final String KEY_PRINTER_LIST_DELETE = "printers_list_delete";
     private static final String KEY_PRINTER_LIST_STATE = "printers_list_state";
-    public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     private static final int MSG_SET_POPULATE_PRINTERS_LIST = 0x0;
     private static final int MSG_ADD_NEW_PRINTER = 0x1;
     private static final int MSG_INITIALIZE_ONLINE_STATUS = 0x2;
@@ -137,7 +138,12 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void onPause() {
         super.onPause();
         if (mPrinterManager.isSearching()) {
-            mPrinterManager.cancelPrinterSearch();
+            Thread cancelThread = new Thread() {
+                public void run() {
+                    mPrinterManager.cancelPrinterSearch();
+                }
+            };
+            cancelThread.start();            
         }
         mPrinterManager.cancelUpdateStatusThread();
     }
@@ -191,7 +197,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     private boolean isMaxPrinterCountReached() {
-        if (mPrinterManager.getPrinterCount() == PrinterManager.MAX_PRINTER_COUNT) {
+        if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printer_info);
             String errMsg = null;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);

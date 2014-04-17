@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jp.co.riso.smartdeviceapp.view.printers.PrintersContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/printerListRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -90,4 +90,4 @@
         android:layout_marginLeft="@dimen/printers_separator_padding"
         android:background="@color/theme_light_1" />
 
-</jp.co.riso.smartdeviceapp.view.printers.PrintersContainer>
+</jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView>

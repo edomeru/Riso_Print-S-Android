@@ -8,6 +8,11 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -30,9 +35,7 @@ import android.widget.TextView;
 public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
-    public static final String KEY_PRINTER_INFO_NAME = "fragment_printer_info_name";
-    public static final String KEY_PRINTER_INFO_ADDRESS = "fragment_printer_info_address";
-    public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_defualt";
+    public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
     private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
@@ -46,6 +49,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
+    Timer mUpdateStatusTimer = null;
     
     @Override
     public int getViewLayout() {
@@ -88,24 +92,39 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             if (mPrinter == null) {
-                mPrinter = mPrinterManager.getSavedPrintersList().get(savedInstanceState.getInt(KEY_PRINTER_INFO_ID) - 1);
+                List<Printer> printersList = mPrinterManager.getSavedPrintersList();
+                int printerId = savedInstanceState.getInt(KEY_PRINTER_INFO_ID);
+                for (Printer printer : printersList) {
+                    if (printer.getId() == printerId) {
+                        mPrinter = printer;
+                    }
+                }
             }
         }
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
-        }
-        
-        updateOnlineStatus();
+        }        
     }
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(KEY_PRINTER_INFO_NAME, mPrinter.getName());
-        savedInstanceState.putString(KEY_PRINTER_INFO_ADDRESS, mPrinter.getName());
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
         super.onSaveInstanceState(savedInstanceState);
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        mUpdateStatusTimer.cancel();
+        mUpdateStatusTimer = null;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateOnlineStatus();
     }
     
     // ================================================================================
@@ -122,7 +141,14 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     public void updateOnlineStatus() {
         
-        Thread updateStatus = new Thread() {
+        if (mUpdateStatusTimer != null) {
+            return;
+        }
+        
+        mUpdateStatusTimer = new Timer();
+        mUpdateStatusTimer.schedule(new TimerTask() {
+            
+            @Override
             public void run() {
                 try {
                     if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
@@ -132,9 +158,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
                 }
             }
-        };
-        updateStatus.start();
-        
+        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
     }
     
     // ================================================================================
