@@ -48,7 +48,7 @@
     <string name="ids_lbl_card_reader_group">カードリーダー</string>
     <string name="ids_lbl_card_id">ID</string>
     <string name="ids_lbl_printer_search_group">プリンター検索</string>
-    <string name="ids_lbl_printing">印刷中&#8230; Tapでキャンセルします</string>
+    <string name="ids_lbl_printing">印刷中&#8230;</string>
     <string name="ids_lbl_print_settings">プリント設定</string>
     <string name="ids_lbl_print">プリント</string>
     <string name="ids_lbl_printer">プリンター</string>

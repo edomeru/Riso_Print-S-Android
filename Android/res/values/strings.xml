@@ -48,7 +48,7 @@
     <string name="ids_lbl_printer_search_group">PRINTER SEARCH</string>
     <string name="ids_lbl_read_comm_name">Read Community Name</string>
     <string name="ids_lbl_read_comm_name_hint">public</string>
-    <string name="ids_lbl_printing">Printing&#8230; Tap to Cancel</string>
+    <string name="ids_lbl_printing">Printing&#8230;</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
