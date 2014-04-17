@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -22,6 +23,20 @@ public final class ImageUtils {
     }
     
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, Rect rect) {
+        int x = rect.centerX();
+        int y = rect.centerY();
+        
+        float scaleX = rect.width() / (float) bmp.getWidth();
+        float scaleY = rect.height() / (float) bmp.getHeight();
+        
+        renderBmpToCanvas(bmp, canvas, color, x, y, 0, scaleX, scaleY);
+    }
+    
+    public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scale) {
+        renderBmpToCanvas(bmp, canvas, color, x, y, rotate, scale, scale);
+    }
+    
+    public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scaleX, float scaleY) {
         Paint paint = new Paint();
         
         if (!color) {
@@ -31,7 +46,13 @@ public final class ImageUtils {
             paint.setColorFilter(filter);            
         }
         
-        canvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()),
-                rect, paint);
+        Matrix mtx = new Matrix();
+        
+        mtx.preTranslate(-(bmp.getWidth() >> 1), -(bmp.getHeight() >> 1));
+        mtx.preRotate(rotate, bmp.getWidth() >> 1, bmp.getHeight() >> 1);
+        mtx.postScale(scaleX, scaleY);
+        mtx.postTranslate(x, y);
+        
+        canvas.drawBitmap(bmp, mtx, paint);
     }
 }

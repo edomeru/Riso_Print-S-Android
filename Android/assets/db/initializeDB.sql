@@ -1,5 +1,5 @@
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (1,"myprintername", "192.168.0.1"); 
-INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (2,"riso", "192.168.0.1");
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (2,"riso", "192.168.0.2");
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (3,"long printer nameeeee", "192.168.0.3"); 
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (4,"printer4", "192.168.0.4"); 
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (5,"5th printer", "192.168.0.5"); 

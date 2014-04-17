@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/printJobItem"
     android:layout_width="match_parent"
     android:layout_height="@dimen/printjob_row_height"
-    android:background="@color/theme_light_3"
+    android:background="@drawable/selector_jobs_deleterow"
     android:orientation="horizontal" >
 
     <FrameLayout
@@ -44,14 +45,14 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_gravity="left|center_vertical"
-            android:layout_toLeftOf="@+id/FrameLayout1"
+            android:layout_toLeftOf="@+id/dateAndButtonContainer"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:textColor="@color/theme_dark_2" />
+            android:textColor="@drawable/selector_jobs_textcolor" />
 
         <FrameLayout
-            android:id="@+id/FrameLayout1"
+            android:id="@+id/dateAndButtonContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -71,15 +72,15 @@
                 android:id="@+id/printJobDeleteBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical|right"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_margin="@dimen/printjob_delbtn_margin"
-                android:background="@color/bg_delete_button"
+                android:background="@drawable/selector_jobs_deletebutton"
                 android:gravity="center"
                 android:paddingLeft="@dimen/printjob_delbtn_padding_side"
                 android:paddingRight="@dimen/printjob_delbtn_padding_side"
                 android:text="@string/ids_lbl_delete"
                 android:textAllCaps="true"
-                android:textColor="@color/theme_light_1"
+                android:textColor="@drawable/selector_jobs_deletetextcolor"
                 android:visibility="invisible" />
         </FrameLayout>
 

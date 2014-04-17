@@ -19,7 +19,6 @@ public class PrintJob {
     private JobResult mResult;
     
     public PrintJob(int mId, int mPrinterId, String mName, Date mDate, JobResult mResult) {
-        super();
         this.mId = mId;
         this.mPrinterId = mPrinterId;
         this.mName = mName;
@@ -28,7 +27,6 @@ public class PrintJob {
     }
     
     public PrintJob(int mPrinterId, String mName, Date mDate, JobResult mResult) {
-        super();
         this.mPrinterId = mPrinterId;
         this.mName = mName;
         this.mDate = mDate;

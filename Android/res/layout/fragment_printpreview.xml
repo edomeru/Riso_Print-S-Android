@@ -17,26 +17,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/preview_logo_margin"
+            android:paddingRight="@dimen/preview_logo_margin" >
 
             <ImageView
-                android:layout_width="@dimen/temp_splash_logo_width"
-                android:layout_height="@dimen/temp_splash_logo_height"
-           		android:layout_weight="0.5"
+                android:layout_width="@dimen/splash_logo_width"
+                android:layout_height="@dimen/splash_logo_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.5"
                 android:contentDescription="@string/default_content_description"
                 android:src="@drawable/temp_img_riso_splash" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-           		android:layout_weight="0.5"
                 android:layout_gravity="center_horizontal"
+                android:layout_weight="0.5"
                 android:background="@drawable/border_topbottom"
                 android:gravity="center"
-                android:textAllCaps="true"
-                android:textSize="@dimen/actionbar_title_text_size"
                 android:text="@string/ids_lbl_open_in_android"
-                android:textColor="@color/theme_color_2" />
+                android:textAllCaps="true"
+                android:textColor="@color/theme_color_2"
+                android:textSize="@dimen/actionbar_title_text_size" />
         </LinearLayout>
 
         <jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
@@ -53,7 +56,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
+        <include
+            android:id="@+id/previewControls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/preview_controls_margin_bottom"
+            android:layout_marginLeft="@dimen/preview_controls_margin_side"
+            android:layout_marginRight="@dimen/preview_controls_margin_side"
+            layout="@layout/preview_controls" />
+
     </FrameLayout>
-    
 
 </LinearLayout>
