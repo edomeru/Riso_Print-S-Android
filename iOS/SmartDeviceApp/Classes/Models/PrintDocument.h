@@ -15,6 +15,11 @@
 @interface PrintDocument : NSObject
 
 /**
+ File name of the PDF file
+ */
+@property (nonatomic, readonly) NSString *name;
+
+/**
  URL of the PDF File
  */
 @property (nonatomic, readonly) NSURL *url;
@@ -44,7 +49,7 @@
  @param url
         URL of the PDF File
  */
-- (id)initWithURL:(NSURL *)url;
+- (id)initWithURL:(NSURL *)url name:(NSString *)name;
 
 @end
 

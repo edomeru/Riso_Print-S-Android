@@ -256,7 +256,7 @@
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
     self.printDocument.delegate = self;
     self.currentPage = 0;
-    self.titleLabel.text = [[PDFFileManager sharedManager] fileName];
+    self.titleLabel.text = self.printDocument.name;
     self.printSettingsButton.hidden = NO;
     self.splashView.hidden = YES;
     self.previewView.hidden = NO;

@@ -41,12 +41,11 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
     
     NSString *fullPath = [printDocument.url path];
-    NSString *fileName = [fullPath lastPathComponent];
+    NSString *fileName = printDocument.name;
     NSString *ipAddress = [printDocument.printer ip_address];
     NSString *printSettings = [printDocument.previewSetting formattedString];
     
     directprint_job *job = directprint_job_new([fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
-    //directprint_job_set_caller_data(job, (__bridge void *)self);
     directprint_job_set_caller_data(job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:@"Printing..." contentView:progressView cancelButtonTitle:nil];
