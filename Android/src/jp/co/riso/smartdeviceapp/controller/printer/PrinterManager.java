@@ -9,8 +9,12 @@
 package jp.co.riso.smartdeviceapp.controller.printer;
 
 import java.lang.ref.WeakReference;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
@@ -22,12 +26,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
 public class PrinterManager implements SNMPManagerCallback {
     public static final int EMPTY_ID = -1;
     public static final int MAX_PRINTER_COUNT = 10;
+    public static final int PING_TIMEOUT = 10000; // 10 seconds
+    public static final int UPDATE_TIMEOUT = 60000; // 1 minute
+    private static final Pattern IPV6_LINK_LOCAL_PATTERN;
+    private static final List<String> IPV6_INTERFACE_NAMES;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList = null;
     private Context mContext = null;
@@ -36,6 +45,7 @@ public class PrinterManager implements SNMPManagerCallback {
     private SNMPManager mSNMPManager = null;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
+    private Thread mUpdateStatusThread = null;
     
     private PrinterManager(Context context) {
         mContext = context;
@@ -157,7 +167,8 @@ public class PrinterManager implements SNMPManagerCallback {
         if (cursor.moveToFirst()) {
             do {
                 Printer printer = new Printer(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_NAME),
-                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP), new PrintSettings(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID)));
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP), new PrintSettings(DatabaseManager.getIntFromCursor(
+                                cursor, KeyConstants.KEY_SQL_PRINTER_ID)));
                 printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
                 printer.setPortSetting(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT));
                 
@@ -357,8 +368,11 @@ public class PrinterManager implements SNMPManagerCallback {
      *            View of the online indicator
      */
     public void updateOnlineStatus(String ipAddress, View view) {
-        // TODO: update implementation
-        // new UpdateOnlineStatusTask().execute(ipAddress, view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            new UpdateOnlineStatusTask(view, ipAddress).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            new UpdateOnlineStatusTask(view, ipAddress).execute();
+        }
     }
     
     /**
@@ -383,9 +397,74 @@ public class PrinterManager implements SNMPManagerCallback {
         return mPrinterList.size();
     }
     
+    public boolean isOnline(String ipAddress) {
+        InetAddress inetIpAddress = null;
+        try {
+            if (IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches()) {
+                return connectToIpv6Address(ipAddress, inetIpAddress);
+            } else {
+                inetIpAddress = InetAddress.getByName(ipAddress);
+            }
+            return inetIpAddress.isReachable(PING_TIMEOUT);
+        } catch (Exception e) {
+            Log.d("PrinterManager", "Exception");
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public void createUpdateStatusThread() {
+        if (mUpdateStatusThread != null) {
+            return;
+        }
+        mUpdateStatusThread = new Thread() {
+            public void run() {
+                while (true) {
+                    try {
+                        while (true) {
+                            if (mPrintersCallback != null && mPrintersCallback.get() != null) {
+                                mPrintersCallback.get().updateOnlineStatus();
+                            }
+                            sleep(UPDATE_TIMEOUT);
+                        }
+                    } catch (Exception e) {
+                        mUpdateStatusThread = null;
+                    }
+                }
+            }
+        };
+        mUpdateStatusThread.start();
+    }
+    
     // ================================================================================
     // Private Methods
     // ================================================================================
+    
+    private boolean connectToIpv6Address(String ipAddress, InetAddress inetIpAddress) {
+        try {
+            String ip = ipAddress;
+            
+            if (ipAddress.contains("%")) {
+                String[] newIpString = ipAddress.split("%");
+                if (newIpString != null) {
+                    ip = newIpString[0];
+                    if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
+                        inetIpAddress = InetAddress.getByName(ipAddress);
+                        return inetIpAddress.isReachable(PING_TIMEOUT);
+                    }
+                }
+            }
+            for (int i = 0; i < IPV6_INTERFACE_NAMES.size(); i++) {
+                inetIpAddress = InetAddress.getByName(ip + "%" + IPV6_INTERFACE_NAMES.get(i));
+                if (inetIpAddress.isReachable(PING_TIMEOUT)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     
     private boolean savePrinterInfo(Printer printer) {
         if (printer == null || isExists(printer)) {
@@ -399,7 +478,7 @@ public class PrinterManager implements SNMPManagerCallback {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.getName());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting());
         
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_LPR, printer.getConfig().isLprAvailable() );
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_LPR, printer.getConfig().isLprAvailable());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_RAW, printer.getConfig().isRawAvailable());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_BOOKLET, printer.getConfig().isBookletAvailable());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_STAPLER, printer.getConfig().isStaplerAvailable());
@@ -432,7 +511,7 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     // Interface - SNMPManagerCallback
     // ================================================================================
-
+    
     @Override
     public void onEndDiscovery(SNMPManager manager, int result) {
         mIsSearching = false;
@@ -442,7 +521,7 @@ public class PrinterManager implements SNMPManagerCallback {
             mPrinterSearchCallback.get().onSearchEnd();
         }
     }
-
+    
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
         Printer printer = new Printer(name, ipAddress, null);
@@ -471,6 +550,8 @@ public class PrinterManager implements SNMPManagerCallback {
     
     public interface PrintersCallback {
         public void onAddedNewPrinter(Printer printer);
+        
+        public void updateOnlineStatus();
     }
     
     // ================================================================================
@@ -491,28 +572,37 @@ public class PrinterManager implements SNMPManagerCallback {
             if (mIpAddress.isEmpty()) {
                 return false;
             }
-            return true;
+            return isOnline(mIpAddress);
         }
         
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-
+            
             if (mViewRef != null && mViewRef.get() != null) {
                 mViewRef.get().setActivated(result);
             }
-            /*
-            if (mView != null && mView.get() != null && mipAddress != null && mipAddress.get() != null) {
-                if (mSNMPManager.isOnline(mipAddress.get())) {
-                    mView.get().setActivated(true);
-                } else {
-                    mView.get().setActivated(false);
-                }
-            }
-            */
         }
         
     }
-
+    
+    static {
+        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        String localInterface = "wlan0";
+        IPV6_LINK_LOCAL_PATTERN = Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}(%[0-9a-zA-Z]{1,}){0,1})");
+        IPV6_INTERFACE_NAMES = new ArrayList<String>();
+        
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (int i = 0; i < interfaces.size(); i++) {
+                IPV6_INTERFACE_NAMES.add(interfaces.get(i).getName());
+            }
+        } catch (Exception e) {
+            IPV6_INTERFACE_NAMES.add(localInterface);
+        }
+        if (IPV6_INTERFACE_NAMES.contains(localInterface)) {
+            IPV6_INTERFACE_NAMES.set(0, localInterface);
+        }
+    }
     
 }

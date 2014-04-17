@@ -89,14 +89,37 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
         }
-        if (mPrinter.getOnlineStatus()) {
-            mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
-        }
         
+        updateOnlineStatus();
     }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
     
     public void setPrinter(Printer printer) {
         mPrinter = printer;
+    }
+    
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    public void updateOnlineStatus() {
+        
+        Thread updateStatus = new Thread() {
+            public void run() {
+                try {
+                    if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
+                        mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
+                    }
+                } catch (Exception e) {
+                    mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
+                }
+            }
+        };
+        updateStatus.start();
+        
     }
     
     // ================================================================================

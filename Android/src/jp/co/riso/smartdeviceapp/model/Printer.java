@@ -18,7 +18,6 @@ public class Printer {
     private int mPortSetting;
     
     private Config mConfig;
-    private boolean mOnline;
     
     public Printer(String name, String ipAddress, PrintSettings printSettings) {
         mName = name;
@@ -136,14 +135,7 @@ public class Printer {
      */
     public void setPrintSettings(PrintSettings printSettings) {
         this.mPrintSettings = new PrintSettings(printSettings);
-    }
-    
-    /**
-     * @return the online status (mOnline)
-     */
-    public boolean getOnlineStatus() {
-        return mOnline;
-    }
+    }    
     
     // ================================================================================
     // Internal Class - Printer Config
