@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -34,7 +35,7 @@ import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
 public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback {
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    //private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
+    private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int MSG_UPDATE_REFRESH_BAR = 0x0;
@@ -54,8 +55,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            // TODO: change implementation - compile error since Printer is not parcelable
-            // mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
+            mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
         } else {
             mPrinter = new ArrayList<Printer>();
         }
@@ -77,14 +77,17 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        if (isTablet()) {
-            int left = (int) getResources().getDimension(R.dimen.preview_view_margin);
-            view.setPadding(left, 0, 0, 0);
-        }
-        
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+        if (isTablet()) {
+            int leftViewPadding = (int) getResources().getDimension(R.dimen.printers_subview_margin);
+            int leftTextPadding = (int) getResources().getDimension(R.dimen.home_title_padding);
+            
+            view.setPadding(leftViewPadding, 0, 0, 0);
+            textView.setPadding(leftTextPadding, 0, 0, 0);
+        } else {
+            addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+        }
     }
     
     @Override
@@ -102,8 +105,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // TODO: change implementation - compile error since Printer is not parcelable
-        // savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
+        savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
         super.onSaveInstanceState(savedInstanceState);
     }
     
@@ -218,7 +220,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public boolean isMaxPrinterCountReached() {
-        if (mPrinterManager.getPrinterCount() == PrinterManager.MAX_PRINTER_COUNT) {
+        if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printer_info);
             String errMsg = null;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
