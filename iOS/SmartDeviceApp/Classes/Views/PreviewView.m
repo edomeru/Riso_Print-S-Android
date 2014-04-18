@@ -48,7 +48,14 @@
  */
 @property (nonatomic, weak) NSLayoutConstraint *yAlignConstraint;
 
+/**
+ Constraint that ensures that the width of the content view is not greater than the container
+ */
 @property (nonatomic, weak) NSLayoutConstraint *maxWidthConstraint;
+
+/**
+ Constraint that ensures that the height of the content view is not greater than the container
+ */
 @property (nonatomic, weak) NSLayoutConstraint *maxHeightConstraint;
 
 /**
@@ -352,6 +359,11 @@
             [self disableMaxDimensionRules];
             [self layoutIfNeeded];
         }
+        // Center of pinch (relative to center of the container
+        CGPoint contentMid = CGPointMake(self.frame.size.width / 2.0f, self.frame.size.height / 2.0f);
+        CGPoint contentPinchMid = [pincher locationInView:self];
+        self.zoomAnchor = CGPointMake(-(contentPinchMid.x - contentMid.x), -(contentPinchMid.y - contentMid.y));
+        
         [self.delegate previewView:self didChangeZoomMode:YES];
     }
     
@@ -368,25 +380,18 @@
     self.sizeConstraint.constant = referenceSize * scale - referenceSize + self.sizeOffset;
     [self layoutIfNeeded];
     
-    if (pincher.state == UIGestureRecognizerStateBegan)
-    {
-        CGPoint position = [pincher locationInView:self.contentView];
-        CGSize contentSize = self.contentView.frame.size;
-        CGPoint center = CGPointMake(contentSize.width / 2.0f, contentSize.height / 2.0f);
-        
-        self.zoomAnchor = CGPointMake((center.x - position.x) / 2.0f, (center.y - position.y) / 2.0f);
-    }
-    CGPoint zoomAnchor = CGPointMake(self.zoomAnchor.x * pincher.scale, self.zoomAnchor.y * pincher.scale);
-    CGPoint position = CGPointMake(self.position.x + zoomAnchor.x - self.zoomAnchor.x, self.position.y + zoomAnchor.y - self.zoomAnchor.y);
-    self.xAlignConstraint.constant = position.x;
-    self.yAlignConstraint.constant = position.y;
+    CGPoint scaledAnchor = CGPointMake(self.zoomAnchor.x * pincher.scale, self.zoomAnchor.y * pincher.scale);
+    CGPoint adjustedAnchor = CGPointMake(scaledAnchor.x - self.zoomAnchor.x, scaledAnchor.y - self.zoomAnchor.y);
+    CGPoint newPosition = CGPointMake(adjustedAnchor.x, adjustedAnchor.y);
+    self.xAlignConstraint.constant = newPosition.x;
+    self.yAlignConstraint.constant = newPosition.y;
     
     [self layoutIfNeeded];
     
     if (pincher.state == UIGestureRecognizerStateEnded)
     {
         self.scale = scale;
-        self.position = position;
+        self.position = newPosition;
         self.zooming = NO;
         self.zoomAnchor = CGPointZero;
         
