@@ -2,8 +2,8 @@
 //  AppDelegate.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 12/17/13.
-//  Copyright (c) 2013 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "AppDelegate.h"

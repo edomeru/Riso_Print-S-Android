@@ -2,8 +2,8 @@
 //  SettingsValidationHelper.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/28/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "SettingsValidationHelper.h"
