@@ -27,26 +27,24 @@ import android.database.Cursor;
 import android.util.Log;
 
 public class PrintJobManager {
-    
     private static final String TAG = "PrintJobManager";
-    private static final String TABLE = "PrintJob";
-    private static final String C_PJB_ID = "pjb_id";
-    private static final String C_PRN_ID = "prn_id";
-    private static final String C_PJB_NAME = "pjb_name";
-    private static final String C_PJB_DATE = "pjb_date";
-    private static final String C_PJB_RESULT = "pjb_result";
-    private static final String C_WHERE_PJB_ID = C_PJB_ID + "=?";
-    private static final String C_WHERE_PRN_ID = C_PRN_ID + "=?";
-    private static final String C_ORDERBY_DATE = C_PRN_ID + " ASC ," + C_PJB_DATE + " DESC";
-    private static final String TABLE_PRINTER = "Printer";
-    private static final String C_SEL_PRN_ID = TABLE_PRINTER + "." + C_PRN_ID + " IN (SELECT DISTINCT " + C_PRN_ID + " FROM " + TABLE + ")";
+    private static final String C_WHERE_PJB_ID = KeyConstants.KEY_SQL_PRINTJOB_ID + "=?";
+    private static final String C_WHERE_PRN_ID = KeyConstants.KEY_SQL_PRINTER_ID + "=?";
+    private static final String C_ORDERBY_DATE = KeyConstants.KEY_SQL_PRINTER_ID + " ASC ,"
+            + KeyConstants.KEY_SQL_PRINTJOB_DATE + " DESC";
+    private static final String C_SEL_PRN_ID = KeyConstants.KEY_SQL_PRINTER_TABLE + "."
+            + KeyConstants.KEY_SQL_PRINTER_ID + " IN (SELECT DISTINCT "
+            + KeyConstants.KEY_SQL_PRINTER_ID + " FROM " + KeyConstants.KEY_SQL_PRINTJOB_TABLE + ")";
     private static final String C_SQL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String C_TIMEZONE = "UTC";
     
-    private static DatabaseManager sManager;
     private static PrintJobManager sInstance;
     
+    private DatabaseManager mManager;
+    private boolean mRefreshFlag;
+    
     private PrintJobManager(Context context) {
-        sManager = new DatabaseManager(context);
+        mManager = new DatabaseManager(context);
     }
     
     public static PrintJobManager getInstance(Context context) {
@@ -56,85 +54,166 @@ public class PrintJobManager {
         return sInstance;
     }
     
-    public static List<PrintJob> getPrintJobs() {
+    public void setRefreshFlag(boolean refreshFlag) {
+        this.mRefreshFlag = refreshFlag;
+    }
+    
+    public boolean isRefreshFlag() {
+        return mRefreshFlag;
+    }
+    
+    /**
+     * Returns a list of PrintJob objects
+     * <p>
+     * This method retrieves the PrintJob objects from the database sorted according to printer ID (in ascending order)
+     * and print job date (from latest to oldest).
+     * 
+     * @return list of PrintJob objects
+     */
+    public List<PrintJob> getPrintJobs() {
         List<PrintJob> printJobs = new ArrayList<PrintJob>();
-        Cursor c = sManager.query(TABLE, null, null, null, null, null, C_ORDERBY_DATE);
+        Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, C_ORDERBY_DATE);
         
         while (c.moveToNext()) {
-            int pjb_id = c.getInt(c.getColumnIndex(C_PJB_ID));
-            int prn_id = c.getInt(c.getColumnIndex(C_PRN_ID));
-            String pjb_name = c.getString(c.getColumnIndex(C_PJB_NAME));
-            Date pjb_date = convertSQLToDate(c.getString(c.getColumnIndex(C_PJB_DATE)));
+            int pjb_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_ID);
+            int prn_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
+            String pjb_name = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_NAME);
+            Date pjb_date = convertStringToDate(DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_DATE));
             
-            JobResult pjb_result = JobResult.values()[c.getInt(c.getColumnIndex(C_PJB_RESULT))];
+            JobResult pjb_result = JobResult.values()[DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTJOB_RESULT)];
             
             printJobs.add(new PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result));
         }
         
         c.close();
-        sManager.close();
+        mManager.close();
         return printJobs;
     }
     
-    public static boolean deleteWithPrinterId(int prn_id) {
-        return sManager.delete(TABLE, C_WHERE_PRN_ID, String.valueOf(prn_id));
-    }
-    
-    public static boolean deleteWithJobId(int pjb_id) {
-        return sManager.delete(TABLE, C_WHERE_PJB_ID, String.valueOf(pjb_id));
-        
-    }
-    
-    public static boolean createPrintJob(int prn_id, String PDFfilename, Date pjb_date, JobResult pjb_result) {
-        PrintJob pj = new PrintJob(prn_id, PDFfilename, pjb_date, pjb_result);
-        return insertPrintJob(pj);
-    }
-    
-    private static boolean insertPrintJob(PrintJob printJob) {
-        ContentValues pjvalues = new ContentValues();
-        pjvalues.put(C_PRN_ID, printJob.getPrinterId());
-        pjvalues.put(C_PJB_NAME, printJob.getName());
-        pjvalues.put(C_PJB_RESULT, printJob.getResult().ordinal());
-        pjvalues.put(C_PJB_DATE, formatSQLDateTime(printJob.getDate()));
-        return sManager.insert(TABLE, null, pjvalues);
-        
-    }
-    
-    private static String formatSQLDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return sdf.format(date);
-    }
-    
-    private static Date convertSQLToDate(String strDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date date = null;
-        
-        try {
-            date = sdf.parse(strDate);
-        } catch (ParseException e) {
-            Log.e(TAG, "convertSQLToDate parsing error.");
-        }
-        return date;
-    }
-    
-    public static List<Printer> getPrintersWithJobs() {
+    /**
+     * Returns a list of Printer objects with Print Jobs
+     * <p>
+     * This method retrieves the Printer objects from the database if it has corresponding print jobs sorted according
+     * to printer ID.
+     * 
+     * @return list of Printer objects
+     */
+    public List<Printer> getPrintersWithJobs() {
         List<Printer> printers = new ArrayList<Printer>();
         
-        Cursor c = sManager.query(TABLE_PRINTER, null, C_SEL_PRN_ID, null, null, null, C_PRN_ID);
+        Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, C_SEL_PRN_ID, null, null, null, KeyConstants.KEY_SQL_PRINTER_ID);
         
         while (c.moveToNext()) {
-            int prn_id = c.getInt(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_ID));
-            String prn_name = c.getString(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_NAME));
-            String prn_ip = c.getString(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTER_IP));
-            Printer printer = new Printer(prn_name, prn_ip, false, null);
+            int prn_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
+            String prn_name = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_NAME);
+            String prn_ip = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_IP);
+            Printer printer = new Printer(prn_name, prn_ip);
             
             printer.setId(prn_id);
             printers.add(printer);
         }
         c.close();
-        sManager.close();
+        mManager.close();
         return printers;
+    }
+    
+    /**
+     * Delete all print jobs with Printer ID
+     * <p>
+     * This method deletes all print jobs with printer id in the database.
+     * 
+     * @param prn_id
+     *            printer ID of the print jobs to be deleted
+     * @return boolean result of delete in the database
+     */
+    public boolean deleteWithPrinterId(int prn_id) {
+        return mManager.delete(KeyConstants.KEY_SQL_PRINTJOB_TABLE, C_WHERE_PRN_ID, String.valueOf(prn_id));
+    }
+    
+    /**
+     * Delete print job with the given print job id
+     * <p>
+     * This method deletes the print job with print job id in the database.
+     * 
+     * @param pjb_id
+     *            ID of the print job to be deleted
+     * @return boolean result of deletee in the database
+     */
+    public boolean deleteWithJobId(int pjb_id) {
+        return mManager.delete(KeyConstants.KEY_SQL_PRINTJOB_TABLE, C_WHERE_PJB_ID, String.valueOf(pjb_id));
+    }
+    
+    /**
+     * This method creates a print job and inserts the value to the database.
+     * 
+     * @param prn_id
+     *            printer ID
+     * @param PDFfilename
+     *            PDF filename to be used as job name
+     * @param pjb_date
+     *            date when job is created
+     * @param pjb_result
+     *            the status of print job (SUCCESSFUL, ERROR)
+     * @return boolean result of insert to the database
+     */
+    public boolean createPrintJob(int prn_id, String PDFfilename, Date pjb_date, JobResult pjb_result) {
+        PrintJob pj = new PrintJob(prn_id, PDFfilename, pjb_date, pjb_result);
+        boolean result = insertPrintJob(pj);
+        
+        if (result) {
+            setRefreshFlag(true);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * This method inserts the value of the print job to the database.
+     * 
+     * @param printJob
+     *            the PrintJob object containing the values to be inserted
+     * @return boolean result of insert to the database
+     */
+    private boolean insertPrintJob(PrintJob printJob) {
+        ContentValues pjvalues = new ContentValues();
+        pjvalues.put(KeyConstants.KEY_SQL_PRINTER_ID, printJob.getPrinterId());
+        pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_NAME, printJob.getName());
+        pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_RESULT, printJob.getResult().ordinal());
+        pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_DATE, convertDateToString(printJob.getDate()));
+        return mManager.insert(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, pjvalues);
+    }
+    
+    /**
+     * This method converts the date into String using the UTC/GMT timezone
+     * 
+     * @param date
+     *            the date to be converted to String
+     * @return converted string
+     */
+    private String convertDateToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
+        return sdf.format(date);
+    }
+    
+    /**
+     * This method converts the String into Date using the UTC/GMT timezone
+     * 
+     * @param strDate
+     *            the string to be converted to Date
+     * @return converted date
+     */
+    private Date convertStringToDate(String strDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
+        Date date = null;
+        
+        try {
+            date = sdf.parse(strDate);
+        } catch (ParseException e) {
+            Log.w(TAG, String.format("convertStringToDate cannot parse %s to string.", strDate));
+            date = new Date(0);
+        }
+        return date;
     }
 }

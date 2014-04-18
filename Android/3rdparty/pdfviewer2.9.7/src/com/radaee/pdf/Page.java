@@ -284,6 +284,15 @@ public class Page
 			return Page.getAnnotURI(page.hand, hand);
 		}
 		/**
+		 * get annotation's file link path string.<br/>
+		 * this method valid in professional or premium version
+		 * @return string of link path, or null
+		 */
+		public String GetFileLink()
+		{
+			return Page.getAnnotFileLink(page.hand, hand);
+		}
+		/**
 		 * get annotation's 3D object name.<br/>
 		 * this method valid in professional or premium version
 		 * @return name of the 3D object, or null
@@ -871,6 +880,8 @@ public class Page
 		}
 	}
 	protected int hand = 0;
+	static private native float[] getCropBox( int hand );
+	static private native float[] getMediaBox( int hand );
 	static private native void close( int hand );
 	static private native void renderPrepare( int hand, int dib );
 	static private native boolean render( int hand, int dib, int matrix, int quality );
@@ -928,6 +939,7 @@ public class Page
 	static private native boolean setAnnotPopupSubject( int hand, int annot, String val );
 	static private native int getAnnotDest( int hand, int annot );
 	static private native String getAnnotURI( int hand, int annot );
+	static private native String getAnnotFileLink( int hand, int annot );
 	static private native String getAnnot3D( int hand, int annot );
 	static private native String getAnnotMovie( int hand, int annot );
 	static private native String getAnnotSound( int hand, int annot );
@@ -983,14 +995,14 @@ public class Page
 	static private native boolean addAnnotLine( int hand, int matrix, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor );
 	static private native boolean addAnnotRect( int hand, int matrix, float[] rect, float width, int color, int fill_color );
 	static private native boolean addAnnotEllipse( int hand, int matrix, float[] rect, float width, int color, int fill_color );
-	static private native boolean addAnnotEditbox( int hand, int matrix, float[] rect, float tsize, int color );
+	static private native boolean addAnnotEditbox( int hand, int matrix, float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr );
+	static private native boolean addAnnotEditbox2( int hand, float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr );
 	static private native boolean addAnnotMarkup( int hand, int matrix, float[] rects, int color, int type );
 
 	static private native boolean addAnnotInk2( int hand, int ink );
 	static private native boolean addAnnotLine2( int hand, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor );
 	static private native boolean addAnnotRect2( int hand, float[] rect, float width, int color, int fill_color );
 	static private native boolean addAnnotEllipse2( int hand, float[] rect, float width, int color, int fill_color );
-	static private native boolean addAnnotEditbox2( int hand, float[] rect, float tsize, int color );
 	static private native boolean addAnnotMarkup2( int hand, int cindex1, int cindex2, int color, int type );
 	static private native boolean addAnnotBitmap( int hand, Bitmap bitmap, boolean has_alpha, float[] rect );
 	static private native boolean addAnnotAttachment( int hand, String path, int icon, float[] rect );
@@ -1004,7 +1016,25 @@ public class Page
 	static private native int addResFont( int hand, int font );
 	static private native int addResImage( int hand, int image );
 	static private native int addResGState( int hand, int gstate );
-	static private native boolean addContent( int hand, int content );
+	static private native boolean addContent( int hand, int content, boolean flush );
+
+	/**
+	 * get rotated CropBox, this method need an any type of license.
+	 * @return float array as [left, top, right, bottom] in PDF coordinate.
+	 */
+	public float[] GetCropBox()
+	{
+		return getCropBox( hand );
+	}
+	/**
+	 * get rotated MediaBox, this method need an any type of license.
+	 * @return float array as [left, top, right, bottom] in PDF coordinate.
+	 */
+	public float[] GetMediaBox()
+	{
+		return getMediaBox( hand );
+	}
+
 	/**
 	 * Close page object and free memory.
 	 */
@@ -1487,14 +1517,17 @@ public class Page
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
 	 * this method valid in premium version.
 	 * @param rect 4 elements: left, top, right, bottom in PDF coordinate system.
+	 * @param line_clr color of border line, formated as 0xAARRGGBB.
+	 * @param line_w width of border line.
+	 * @param fill_clr color of background, formated as 0xAARRGGBB.
 	 * @param tsize text size in DIB coordinate system.
-	 * @param color text color, formated as 0xAARRGGBB.
+	 * @param text_clr text color, formated as 0xAARRGGBB.
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotEditbox( float[] rect, float tsize, int color )
+	public boolean AddAnnotEditbox( float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr )
 	{
-		return addAnnotEditbox2( hand, rect, tsize, color );
+		return addAnnotEditbox2( hand, rect, line_clr, line_w, fill_clr, tsize, text_clr );
 	}
 	/**
 	 * add polygon to page.<br/>
@@ -1616,16 +1649,19 @@ public class Page
 	 * the font of edit box is set by Global.setTextFont in Global.Init().
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
 	 * this method valid in premium version.
-	 * @param matrix Matrix object that passed to Render or RenderToBmp function.
-	 * @param rect 4 elements: left, top, right, bottom in DIB coordinate system.
+	 * @param mat Matrix object that passed to Render or RenderToBmp function.
+	 * @param rect 4 elements: left, top, right, bottom in PDF coordinate system.
+	 * @param line_clr color of border line, formated as 0xAARRGGBB.
+	 * @param line_w width of border line.
+	 * @param fill_clr color of background, formated as 0xAARRGGBB.
 	 * @param tsize text size in DIB coordinate system.
-	 * @param color text color, formated as 0xAARRGGBB.
+	 * @param text_clr text color, formated as 0xAARRGGBB.
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotEditbox( Matrix mat, float[] rect, float tsize, int color )
+	public boolean AddAnnotEditbox( Matrix mat, float[] rect, int line_clr, float line_w, int fill_clr, int text_clr, float tsize )
 	{
-		return addAnnotEditbox( hand, mat.hand, rect, tsize, color );
+		return addAnnotEditbox( hand, mat.hand, rect, line_clr, line_w, fill_clr, tsize, text_clr );
 	}
 	/**
 	 * Start Reflow.<br/>
@@ -1828,12 +1864,15 @@ public class Page
 	 * add content stream to this page.<br/>
 	 * a premium license is needed for this method.
 	 * @param content PageContent object called PageContent.create().
+	 * @param flush does need flush all resources?<br/>
+	 * true, if you want render page after this method, or false.<br/>
+	 * if false, added texts won't displayed till Document.Save() or Document.SaveAs() invoked. 
 	 * @return true or false.
 	 */
-	public boolean AddContent( PageContent content )
+	public boolean AddContent( PageContent content, boolean flush )
 	{
 		if( content == null ) return false;
-		return addContent( hand, content.hand );
+		return addContent( hand, content.hand, flush );
 	}
 	/**
 	 * clone an annotation object to this page.<br/>

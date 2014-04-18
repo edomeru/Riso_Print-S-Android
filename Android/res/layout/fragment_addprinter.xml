@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SDALinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -12,37 +13,46 @@
         android:background="@color/theme_light_3"
         android:orientation="vertical" >
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/printers_row_height"
+            android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+            android:layout_marginRight="@dimen/printers_sub_separator_padding"
+            android:orientation="horizontal" >
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/ipAddressLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
                 android:gravity="left"
-                android:padding="@dimen/printers_row_left_padding"
                 android:text="@string/ids_lbl_ip_address"
-                android:textColor="@color/theme_dark_1" />
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" />
 
             <EditText
                 android:id="@+id/inputIpAddress"
+                style="@style/BorderedEditText"
                 android:layout_width="@dimen/addprinter_edit_box_width"
-                android:layout_height="@dimen/printers_edit_box_height"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="0"
                 android:background="@color/theme_light_1"
-                android:hint=""
-                android:padding="@dimen/printers_row_left_padding"
-                android:textColor="@color/theme_dark_1" />
-        </RelativeLayout>
+                android:gravity="center"
+                android:hint="@string/ids_lbl_ip_address"
+                android:singleLine="true"
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/printers_name_font_size" >
+            </EditText>
+        </LinearLayout>
 
         <View
+            android:id="@+id/printers_separator"
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_size"
-            android:layout_marginLeft="@dimen/printers_row_left_padding"
-            android:background="@color/theme_light_2"
-            android:visibility="visible" />
+            android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+            android:background="@color/theme_light_1" />
     </LinearLayout>
 
-</LinearLayout>
+</jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>

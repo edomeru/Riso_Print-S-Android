@@ -11,27 +11,32 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
+import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView.LoadingViewListener;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView.ReloadViewListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView;
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.JobDeleteListener;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView;
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class PrintJobsFragment extends BaseFragment implements JobDeleteListener, OnClickListener, LoadingViewListener, ReloadViewListener {
+public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
     
-    private PrintJobsColumnView mPrintJobColumnView;
+    private static final String TAG = "PrintJobsFragment";
+    private PrintJobsView mPrintJobsView;
     private PrintJobsGroupView mPrintGroupToDelete;
     // TODO: use of loading indicator
     // private ProgressBar mPrintJobsLoadIndicator;
@@ -39,6 +44,12 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
     private LoadPrintJobsTask mLoadPrintJobsTask;
     private List<PrintJob> mPrintJobs;
     private List<Printer> mPrinters;
+    private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
+    private PrintJob mPrintJobToDelete;
+    private Printer mPrinterToDelete;
+    private ConfirmDialogFragment mConfirmDialog;
+    private ScrollView mScrollView;
+    private int mScrollPosition;
     
     public PrintJobsFragment() {
         super();
@@ -51,19 +62,22 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        setRetainInstance(true);
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        setRetainInstance(true);
         
         // mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
+        mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
+        mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
         
-        view.setOnClickListener(this);
-        mPrintJobContainer.setOnClickListener(this);
+        mPrintJobContainer.setOnTouchListener(this);
         
-        mPrintJobColumnView = (PrintJobsColumnView) view.findViewById(R.id.printJobsColumnView);
+        // mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
+        mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
+        mLoadPrintJobsTask.execute();
     }
     
     @Override
@@ -74,42 +88,31 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
     }
     
     @Override
-    public void onResume() {
-        super.onResume();
-        
-        //        mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
-        mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
-        mLoadPrintJobsTask.execute();
+    public void onDestroyView() {
+        super.onDestroyView();
+        mScrollPosition = mScrollView.getScrollY();
     }
     
     // ================================================================================
-    // INTERFACE - View.OnClickListener
+    // INTERFACE - View.onTouchListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
-    public void onClick(View v) {
-        super.onClick(v);
-        
-        if (mPrintGroupToDelete != null) {
-            mPrintGroupToDelete.clearDeleteButton();
+    public boolean onTouch(View v, MotionEvent e) {
+        if (v.getId() == R.id.printJobContainer) {
+            mPrintJobsView.endDelete(true);
         }
+        return true;
     }
     
     // ================================================================================
-    // INTERFACE - JobDeleteListener
+    // INTERFACE - PrintJobsGroupViewListener
     // ================================================================================
     
     @Override
-    public void setPrintJobsGroupView(PrintJobsGroupView printJobsGroupView) {
+    public void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer) {
         this.mPrintGroupToDelete = printJobsGroupView;
-    }
-    
-    @Override
-    public void clearButton() {
-        if (mPrintGroupToDelete != null) {
-            mPrintGroupToDelete.clearDeleteButton();
-        }
+        this.mPrinterToDelete = printer;
     }
     
     @Override
@@ -122,32 +125,75 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
         mPrintJobs.remove(printJob);
     }
     
+    @Override
+    public boolean showDeleteDialog() {
+        String title = getResources().getString(R.string.ids_lbl_delete_jobs_title);
+        String message = getResources().getString(R.string.ids_lbl_delete_jobs_msg);
+        String confirmMsg = getResources().getString(R.string.ids_lbl_ok);
+        String cancelMsg = getResources().getString(R.string.ids_lbl_cancel);
+        
+        if (mConfirmDialog != null) {
+            return false;
+        } else {
+            mConfirmDialog = ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg);
+            mConfirmDialog.setTargetFragment(this, 0);
+            DialogUtils.displayDialog(getActivity(), TAG, mConfirmDialog);
+            return true;
+        }
+    }
+    
+    @Override
+    public void setCollapsed(Printer printer, boolean isCollapsed) {
+        if (isCollapsed) {
+            mCollapsedPrinters.add(printer);
+        } else {
+            mCollapsedPrinters.remove(printer);
+        }
+    }
+    
+    @Override
+    public void setDeletePrintJob(PrintJob job) {
+        mPrintJobToDelete = job;
+    }
+    
     // ================================================================================
-    // INTERFACE - LoadingViewListener
+    // INTERFACE - PrintJobsViewListener
     // ================================================================================
     
     @Override
     public void hideLoading() {
         if (!isTablet()) {
             getView().setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+            mScrollView.scrollTo(0, mScrollPosition);
         }
         
-        // AppUtils.changeChildrenFont((ViewGroup) mPrintJobsView, SmartDeviceApp.getAppFont());
-        
-        mPrintJobColumnView.setVisibility(View.VISIBLE);
-        
-        //        mPrintJobsLoadIndicator.setVisibility(View.GONE);
-        
+        // mPrintJobsView.setVisibility(View.VISIBLE);
+        // mPrintJobsLoadIndicator.setVisibility(View.GONE);
     }
     
     // ================================================================================
-    // INTERFACE - ReloadViewListener
+    // INTERFACE - ConfirmationDialogListener
     // ================================================================================
     
     @Override
-    public void reloadView() {
-        mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
-        mLoadPrintJobsTask.execute();
+    public void onConfirm() {
+        if (mPrintGroupToDelete != null) {
+            mPrintGroupToDelete.onDeleteJobGroup();
+            mPrintGroupToDelete = null;
+            mPrinterToDelete = null;
+            mConfirmDialog = null;
+        }
+    }
+    
+    @Override
+    public void onCancel() {
+        if (mPrintGroupToDelete != null) {
+            mPrintGroupToDelete.onCancelDeleteGroup();
+            mPrintGroupToDelete = null;
+            mPrinterToDelete = null;
+            mConfirmDialog = null;
+        }
+        
     }
     
     // ================================================================================
@@ -156,27 +202,42 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
     
     private class LoadPrintJobsTask extends AsyncTask<Void, Void, Void> {
         private WeakReference<Context> mContextRef;
-        private List<PrintJob> mPrintJobsList = new ArrayList<PrintJob>();
-        private List<Printer> mPrintersList = new ArrayList<Printer>();
+        private List<PrintJob> mPrintJobsList;
+        private List<Printer> mPrintersList;
         
         public LoadPrintJobsTask(Context context, List<PrintJob> printJobs, List<Printer> printers) {
             mContextRef = new WeakReference<Context>(context);
-            mPrintJobsList = printJobs;
-            mPrintersList = printers;
-            
+            if (printJobs != null) {
+                mPrintJobsList = new ArrayList<PrintJob>(printJobs);
+            }
+            if (printers != null) {
+                mPrintersList = new ArrayList<Printer>(printers);
+            }
         }
         
         @Override
         protected Void doInBackground(Void... arg0) {
             if (mContextRef != null && mContextRef.get() != null) {
-                PrintJobManager.getInstance(mContextRef.get());
+                PrintJobManager pm = PrintJobManager.getInstance(mContextRef.get());
+                List<Printer> printers = pm.getPrintersWithJobs();
+                boolean printersChanged = false;
                 
-                if (mPrintJobsList == null || mPrintersList == null) {
-                    
-                    mPrintJobsList = PrintJobManager.getPrintJobs();
-                    
-                    mPrintersList = PrintJobManager.getPrintersWithJobs();
-                    
+                if (mPrintersList != null) {
+                    if (mPrintersList.size() != printers.size()) {
+                        printersChanged = true;
+                    } else {
+                        for (int i = 0; i < printers.size(); i++){
+                            if (printers.get(i).getId() != mPrintersList.get(i).getId()) {
+                                printersChanged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag() || printersChanged) {
+                    mPrintJobsList = pm.getPrintJobs();
+                    mPrintersList = printers;
+                    pm.setRefreshFlag(false);
                 }
             }
             return null;
@@ -186,21 +247,21 @@ public class PrintJobsFragment extends BaseFragment implements JobDeleteListener
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             
-            //            if (mPrintJobsList.isEmpty() || isCancelled()) {
-            //                mPrintJobsLoadIndicator.setVisibility(View.GONE);
-            //            } else {
-            mPrintJobs = mPrintJobsList;
-            mPrinters = mPrintersList;
-            if (mContextRef != null && mContextRef.get() != null) {
-                mPrintJobColumnView.setData(mPrintJobsList, mPrintersList, isTablet() ? isTabletLand() ? 3 : 2 : 1, PrintJobsFragment.this,
-                        PrintJobsFragment.this, PrintJobsFragment.this);
+            // if (mPrintJobsList.isEmpty() || isCancelled()) {
+            // mPrintJobsLoadIndicator.setVisibility(View.GONE);
+            // } else {
+            
+            mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
+            mPrinters = new ArrayList<Printer>(mPrintersList);
+            
+            if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
+                mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this, mCollapsedPrinters, mPrintJobToDelete,
+                        mPrinterToDelete);
             }
-            //mPrintJobColumnView.setVisibility(View.INVISIBLE);
+            // mPrintJobColumnView.setVisibility(View.INVISIBLE);
             
-            //            }
-            
+            // }
         }
-        
     }
     
 }

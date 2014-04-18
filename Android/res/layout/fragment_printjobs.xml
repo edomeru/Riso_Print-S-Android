@@ -8,13 +8,13 @@
 
     <include layout="@layout/actionbar_main" />
 
-    <FrameLayout
+<!--     <FrameLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
+ -->
         <ScrollView
-            android:id="@+id/scrollView1"
+            android:id="@+id/printJobScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true" >
@@ -25,11 +25,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
-                <jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView
-                    android:id="@+id/printJobsColumnView"
+                <jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
+                    android:id="@+id/printJobsView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
-                </jp.co.riso.smartdeviceapp.view.jobs.PrintJobsColumnView>
+                </jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView>
                 
             </LinearLayout>
         </ScrollView>
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" 
-            android:visibility="gone" /> -->
-    </FrameLayout>
+            android:visibility="gone" /> 
+    </FrameLayout>-->
 
 </LinearLayout>

@@ -31,13 +31,19 @@ public class PDFFileManager {
     
     public static final int PDF_OK = 0;
     public static final int PDF_ENCRYPTED = -1;
-    public static final int PDF_UNKNOWN_ENCRYPTION = -2;
-    public static final int PDF_DAMAGED = -3;
-    public static final int PDF_INVALID_PATH = -10;
-    public static final int UNKNOWN_ERROR = -100;
+    public static final int PDF_PRINT_RESTRICTED = -2;
+    public static final int PDF_OPEN_FAILED = -3;
+    
+    private static final int RADAEE_OK = 0;
+    private static final int RADAEE_ENCRYPTED = -1;
+    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2;
+    @SuppressWarnings("unused") // Radaee error with general error handling
+    private static final int RADAEE_DAMAGED = -3;
+    @SuppressWarnings("unused") // Radaee error with general error handling
+    private static final int RADAEE_INVALID_PATH = -10;
     
     // For design consideration
-    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = true;
+    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false;
     
     private Document mDocument;
     private String mPath;
@@ -284,19 +290,33 @@ public class PDFFileManager {
         }
         
         if (mPath == null || mPath.length() == 0) {
-            return PDF_INVALID_PATH;
+            return PDF_OPEN_FAILED;
         }
         
         int status = mDocument.Open(mPath, null);
         
-        if (status == PDF_OK) {
-            mIsInitialized = true;
-            mPageCount = mDocument.GetPageCount();
-            mPageWidth = mDocument.GetPageWidth(0);
-            mPageHeight = mDocument.GetPageHeight(0);
+        switch (status) {
+            case RADAEE_OK:
+                int permission = mDocument.GetPermission();
+                // check if (permission != 0) means that license is not standard. if standard license, just display.
+                if (permission != 0) {
+                    if ((permission & 0x4) == 0) {
+                        mDocument.Close();
+                        return PDF_PRINT_RESTRICTED;
+                    }
+                }
+                
+                mIsInitialized = true;
+                mPageCount = mDocument.GetPageCount();
+                mPageWidth = mDocument.GetPageWidth(0);
+                mPageHeight = mDocument.GetPageHeight(0);
+                return PDF_OK;
+            case RADAEE_ENCRYPTED:
+            case RADAEE_UNKNOWN_ENCRYPTION:
+                return PDF_ENCRYPTED;
+            default:
+                return PDF_OPEN_FAILED;
         }
-        
-        return status;
     }
     
     /**
@@ -320,7 +340,7 @@ public class PDFFileManager {
         @Override
         protected Integer doInBackground(Void... params) {
             if (SmartDeviceApp.getAppContext() == null) {
-                return UNKNOWN_ERROR;
+                return PDF_OPEN_FAILED;
             }
             
             int status = openDocument();
@@ -340,7 +360,7 @@ public class PDFFileManager {
                     try {
                         FileUtils.copy(new File(mPath), new File(mSandboxPath));
                     } catch (Exception e) {
-                        return PDF_INVALID_PATH;
+                        return PDF_OPEN_FAILED;
                     }
                 }
             }

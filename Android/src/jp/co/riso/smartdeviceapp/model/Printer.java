@@ -8,142 +8,47 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Printer implements Parcelable {
-    private int mId;
-    private String mName;
-    private String mIpAddress;
-    private int mPortSetting;
-    private boolean mLpr;
-    private boolean mRaw;
-    private boolean mPagination;
-    private boolean mDuplex;
-    private boolean mBookletBinding;
-    private boolean mStaple;
-    private boolean mBind;
+    private String mName = null;
+    private String mIpAddress = null;
+    private int mId = PrinterManager.EMPTY_ID;
+    private int mPortSetting = 0;
     
-    public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
-        super();
+    private Config mConfig = null;
+    
+    public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
         mPortSetting = 0;
-        mLpr = true;
-        mRaw = true;
-        mPagination = true;
-        mDuplex = true;
-        mBookletBinding = true;
-        mStaple = true;
-        mBind = true;
         
+        mConfig = new Config();
     }
     
-    public Printer(Parcel source) {
-        if (source != null) {
-            mName = source.readString();
-            mIpAddress = source.readString();
-        }
-    }
-    
-    public static final Parcelable.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
-        @Override
-        public Printer createFromParcel(Parcel source) {
-            return new Printer(source);
+    public static final Printer.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
+        public Printer createFromParcel(Parcel in) {
+            return new Printer(in);
         }
         
-        @Override
         public Printer[] newArray(int size) {
             return new Printer[size];
         }
     };
     
-    public int getId() {
-        return mId;
-    }
-    
-    public void setId(int id) {
-        this.mId = id;
-    }
-    
-    public String getName() {
-        return mName;
-    }
-    
-    public void setName(String name) {
-        this.mName = name;
-    }
-    
-    public String getIpAddress() {
-        return mIpAddress;
-    }
-    
-    public void setIpAddress(String ipAddress) {
-        this.mIpAddress = ipAddress;
-    }
-    
-    public int getPortSetting() {
-        return mPortSetting;
-    }
-    
-    public void setPortSetting(int portSetting) {
-        this.mPortSetting = portSetting;
-    }
-    
-    public boolean getLpr() {
-        return mLpr;
-    }
-    
-    public void setLpr(boolean lpr) {
-        this.mLpr = lpr;
-    }
-    
-    public boolean getRaw() {
-        return mRaw;
-    }
-    
-    public void setRaw(boolean raw) {
-        this.mRaw = raw;
-    }
-    
-    public boolean getPagination() {
-        return mPagination;
-    }
-    
-    public void setPagination(boolean pagination) {
-        this.mPagination = pagination;
-    }
-    
-    public boolean getDuplex() {
-        return mDuplex;
-    }
-    
-    public void setDuplex(boolean duplex) {
-        this.mDuplex = duplex;
-    }
-    
-    public boolean getBookletBinding() {
-        return mBookletBinding;
-    }
-    
-    public void setBookletBinding(boolean bookletBinding) {
-        this.mBookletBinding = bookletBinding;
-    }
-    
-    public boolean getStaple() {
-        return mStaple;
-    }
-    
-    public void setStaple(boolean staple) {
-        this.mStaple = staple;
-    }
-    
-    public boolean getBind() {
-        return mBind;
-    }
-    
-    public void setBind(boolean bind) {
-        this.mBind = bind;
+    public Printer(Parcel in) {
+        if (mConfig == null) {
+            mConfig = new Config();
+        }
+        
+        mName = in.readString();
+        mIpAddress = in.readString();
+        mId = in.readInt();
+        mPortSetting = in.readInt();
+        mConfig.readFromParcel(in);
     }
     
     @Override
@@ -152,7 +57,302 @@ public class Printer implements Parcelable {
     }
     
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        return;
+    public void writeToParcel(Parcel out, int flags) {
+        if (mConfig == null) {
+            mConfig = new Config();
+        }
+        
+        out.writeString(mName);
+        out.writeString(mIpAddress);
+        out.writeInt(mId);
+        out.writeInt(mPortSetting);
+        mConfig.writeToParcel(out);
+    }
+    
+    // ================================================================================
+    // Getter/Setters
+    // ================================================================================
+    
+    /**
+     * @return the ID (mId)
+     */
+    public int getId() {
+        return mId;
+    }
+    
+    /**
+     * updates the value of mId
+     * 
+     * @param id
+     */
+    public void setId(int id) {
+        this.mId = id;
+    }
+    
+    /**
+     * @return the name (mName)
+     */
+    public String getName() {
+        return mName;
+    }
+    
+    /**
+     * updates the value of mName
+     * 
+     * @param name
+     */
+    public void setName(String name) {
+        this.mName = name;
+    }
+    
+    /**
+     * @return the IP address (mIpAddress)
+     */
+    public String getIpAddress() {
+        return mIpAddress;
+    }
+    
+    /**
+     * updates the value of mIpAddress
+     * 
+     * @param ipAddress
+     */
+    public void setIpAddress(String ipAddress) {
+        this.mIpAddress = ipAddress;
+    }
+    
+    /**
+     * @return the port setting (mPortSetting)
+     */
+    public int getPortSetting() {
+        return mPortSetting;
+    }
+    
+    /**
+     * updates the value of mPortSetting
+     * 
+     * @param portSetting
+     */
+    public void setPortSetting(int portSetting) {
+        this.mPortSetting = portSetting;
+    }
+    
+    /**
+     * @return the printer configuration (mConfig)
+     */
+    public Config getConfig() {
+        return mConfig;
+    }
+    
+    /**
+     * updates the value of mConfig
+     * 
+     * @param config
+     */
+    public void setConfig(Config config) {
+        mConfig = config;
+    }
+
+    /**
+     * Gets the print settings corresponding to the Printer
+     * 
+     * @return Printer's print settings
+     */
+    // TODO: For update
+    public PrintSettings getPrintSettings() {
+        return new PrintSettings(getId());
+    }
+    
+    // ================================================================================
+    // Internal Class - Printer Config
+    // ================================================================================
+    
+    public class Config {
+        private boolean mLprAvailable;
+        private boolean mRawAvailable;
+        private boolean mBookletAvailable;
+        private boolean mStaplerAvailable;
+        private boolean mPunch4Available;
+        private boolean mTrayFaceDownAvailable;
+        private boolean mTrayAutoStackAvailable;
+        private boolean mTrayTopAvailable;
+        private boolean mTrayStackAvailable;
+        
+        public Config() {
+            mBookletAvailable = true;
+            mStaplerAvailable = true;
+            mPunch4Available = true;
+            mTrayFaceDownAvailable = true;
+            mTrayAutoStackAvailable = true;
+            mTrayTopAvailable = true;
+            mTrayStackAvailable = true;
+        }
+        
+        /**
+         * @return the mLprAvailable
+         */
+        public boolean isLprAvailable() {
+            return mLprAvailable;
+        }
+        
+        /**
+         * updates the value of mLprAvailable
+         * 
+         * @param lprAvailable
+         */
+        public void setLprAvailable(boolean lprAvailable) {
+            this.mLprAvailable = lprAvailable;
+        }
+        
+        /**
+         * @return the mRawAvailable
+         */
+        public boolean isRawAvailable() {
+            return mRawAvailable;
+        }
+        
+        /**
+         * updates the value of mRawAvailable
+         * 
+         * @param rawAvailable
+         */
+        public void setRawAvailable(boolean rawAvailable) {
+            this.mRawAvailable = rawAvailable;
+        }
+        
+        /**
+         * @return the mBookletAvailable
+         */
+        public boolean isBookletAvailable() {
+            return mBookletAvailable;
+        }
+        
+        /**
+         * updates the value of mBookletAvailable
+         * 
+         * @param bookletAvailable
+         */
+        public void setBookletAvailable(boolean bookletAvailable) {
+            this.mBookletAvailable = bookletAvailable;
+        }
+        
+        /**
+         * @return the mStaplerAvailable
+         */
+        public boolean isStaplerAvailable() {
+            return mStaplerAvailable;
+        }
+        
+        /**
+         * updates the value of mStaplerAvailable
+         * 
+         * @param staplerAvailable
+         */
+        public void setStaplerAvailable(boolean staplerAvailable) {
+            this.mStaplerAvailable = staplerAvailable;
+        }
+        
+        /**
+         * @return the mPunch4Available
+         */
+        public boolean isPunch4Available() {
+            return mPunch4Available;
+        }
+        
+        /**
+         * updates the value of mPunch4Available
+         * 
+         * @param punch4Available
+         */
+        public void setPunch4Available(boolean punch4Available) {
+            this.mPunch4Available = punch4Available;
+        }
+        
+        /**
+         * @return the mTrayFaceDownAvailable
+         */
+        public boolean isTrayFaceDownAvailable() {
+            return mTrayFaceDownAvailable;
+        }
+        
+        /**
+         * updates the value of mTrayFaceDownAvailable
+         * 
+         * @param trayFaceDownAvailable
+         */
+        public void setTrayFaceDownAvailable(boolean trayFaceDownAvailable) {
+            this.mTrayFaceDownAvailable = trayFaceDownAvailable;
+        }
+        
+        /**
+         * @return the mTrayAutoStackAvailable
+         */
+        public boolean isTrayAutoStackAvailable() {
+            return mTrayAutoStackAvailable;
+        }
+        
+        /**
+         * updates the value of mTrayAutoStackAvailable
+         * 
+         * @param trayAutoStackAvailable
+         */
+        public void setTrayAutoStackAvailable(boolean trayAutoStackAvailable) {
+            this.mTrayAutoStackAvailable = trayAutoStackAvailable;
+        }
+        
+        /**
+         * @return the mTrayTopAvailable
+         */
+        public boolean isTrayTopAvailable() {
+            return mTrayTopAvailable;
+        }
+        
+        /**
+         * updates the value of mTrayTopAvailable
+         * 
+         * @param trayTopAvailable
+         */
+        public void setTrayTopAvailable(boolean trayTopAvailable) {
+            this.mTrayTopAvailable = trayTopAvailable;
+        }
+        
+        /**
+         * @return the mTrayStackAvailable
+         */
+        public boolean isTrayStackAvailable() {
+            return mTrayStackAvailable;
+        }
+        
+        /**
+         * updates the value of mTrayStackAvailable
+         * 
+         * @param trayStackAvailable
+         */
+        public void setTrayStackAvailable(boolean trayStackAvailable) {
+            this.mTrayStackAvailable = trayStackAvailable;
+        }
+        
+        public void writeToParcel(Parcel out) {
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
+                    mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
+            
+            out.writeBooleanArray(config);
+        }
+        
+        public void readFromParcel(Parcel in) {
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
+                    mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
+            
+            in.readBooleanArray(config);
+            mConfig.mLprAvailable = config[0];
+            mConfig.mRawAvailable = config[1];
+            mConfig.mBookletAvailable = config[2];
+            mConfig.mStaplerAvailable = config[3];
+            mConfig.mPunch4Available = config[4];
+            mConfig.mTrayFaceDownAvailable = config[5];
+            mConfig.mTrayAutoStackAvailable = config[6];
+            mConfig.mTrayTopAvailable = config[7];
+            mConfig.mTrayStackAvailable = config[8];
+        }
     }
 }

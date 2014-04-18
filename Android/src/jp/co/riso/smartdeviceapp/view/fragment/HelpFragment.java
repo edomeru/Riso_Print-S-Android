@@ -8,42 +8,24 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
+import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
-public class HelpFragment extends BaseFragment {
+public class HelpFragment extends BaseWebFragment {
     public static final String TAG = "HelpFragment";
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_helplegal;
     }
     
-    @Override
-    public void initializeFragment(Bundle savedInstanceState) {
-    }
-    
-    @Override
-    public void initializeView(View view, Bundle savedInstanceState) {
-        // Set version text
-        try {
-            PackageManager packageManager = getActivity().getPackageManager();
-            String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
-            
-            TextView textView = (TextView) view.findViewById(R.id.tempVersionLabel);
-            textView.setText(versionName);
-            textView.setVisibility(View.VISIBLE);
-        } catch (NameNotFoundException e) {
-            Log.w(TAG, "No version name found");
-        }
-    }
-    
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -52,4 +34,17 @@ public class HelpFragment extends BaseFragment {
         addActionMenuButton(view);
     }
     
+    /** {@inheritDoc} */
+    @Override
+    public void configureWebView(WebView webView) {
+        
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String getUrlString() {
+        String htmlFolder = getString(R.string.html_folder);
+        String helpHtml = getString(R.string.help_html);
+        return AppUtils.getLocalizedAssetFullPath(getActivity(), htmlFolder, helpHtml);
+    }
 }
