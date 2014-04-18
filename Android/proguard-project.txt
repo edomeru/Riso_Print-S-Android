@@ -28,6 +28,6 @@
     public static int e(...);
 }
 
--keep public class jp.co.riso.smartdeviceapp.controller.snmp.** {
+-keep public class jp.co.riso.smartdeviceapp.common.** {
     public protected private *;
 }
