@@ -10,7 +10,7 @@ import android.webkit.WebView;
 public abstract class BaseWebFragment extends BaseFragment {
     public static final String TAG = "HelpFragment";
     
-    protected SDAWebView mWebView;
+    protected SDAWebView mWebView = null;
     
     /** {@inheritDoc} */
     @Override
