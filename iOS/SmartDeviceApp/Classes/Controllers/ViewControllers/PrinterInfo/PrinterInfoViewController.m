@@ -11,6 +11,7 @@
 #import "PrinterManager.h"
 #import "UIViewController+Segue.h"
 #import "PrintSettingsViewController.h"
+#import "UIView+Localization.h"
 
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
@@ -47,7 +48,17 @@
     {
         self.printerName.text = self.printer.name;
         self.ipAddress.text = self.printer.ip_address;
-        self.port.text = [self.printer.port stringValue];
+        
+        // Port
+        if ([self.printer.port integerValue] == 0)
+        {
+            self.port.localizationId = IDS_LBL_PORT_LPR;
+        }
+        else
+        {
+            self.port.localizationId = IDS_LBL_PORT_RAW;
+        }
+        
         [self setStatus:self.onlineStatus];
         if(self.isDefaultPrinter == YES)
         {

@@ -14,6 +14,7 @@
 #import "PrinterStatusView.h"
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
+#import "UIView+Localization.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -114,7 +115,17 @@
     }
     cell.nameLabel.text = printer.name;
     cell.ipAddressLabel.text = printer.ip_address;
-    cell.portLabel.text = [printer.port stringValue];
+    
+    // Port
+    if ([printer.port integerValue] == 0)
+    {
+        cell.portLabel.localizationId = IDS_LBL_PORT_LPR;
+    }
+    else
+    {
+        cell.portLabel.localizationId = IDS_LBL_PORT_RAW;
+    }
+    
     cell.defaultSettingsButton.tag = indexPath.row;
 
     // fix for the unconnected helper still polling when the
