@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
+import android.util.Log;
 
 public class NetUtils {
+    private static final String TAG = "NetUtils";
     private static final Pattern IPV4_PATTERN;
     private static final Pattern IPV4_MULTICAST_PATTERN;
     private static final Pattern IPV6_STD_PATTERN;
@@ -100,9 +102,9 @@ public class NetUtils {
                 }
             }
         } catch (UnknownHostException e) {
-            return false;
+            Log.w(TAG, "UnknownHostException");
         } catch (IOException e) {
-            return false;
+            Log.w(TAG, "IOException");
         }
         return false;
     }
@@ -160,6 +162,7 @@ public class NetUtils {
                 IPV6_INTERFACE_NAMES.add(interfaces.get(i).getName());
             }
         } catch (SocketException e) {
+            Log.w(TAG, "SocketException");
             IPV6_INTERFACE_NAMES.add(localInterface);
         }
         if (IPV6_INTERFACE_NAMES.contains(localInterface)) {
