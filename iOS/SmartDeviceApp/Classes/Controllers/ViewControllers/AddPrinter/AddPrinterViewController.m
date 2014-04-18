@@ -40,12 +40,6 @@
 /** Input TextField for the IP Address. */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
 
-/** Input TextField for the Username. */
-@property (weak, nonatomic) IBOutlet UITextField *textUsername;
-
-/** Input TextField for the Password. */
-@property (weak, nonatomic) IBOutlet UITextField *textPassword;
-
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
@@ -285,10 +279,6 @@
 {
     if (self.textIP.isEditing)
         [self.textIP resignFirstResponder];
-    else if (self.textUsername.isEditing)
-        [self.textUsername resignFirstResponder];
-    else if (self.textPassword.isEditing)
-        [self.textPassword resignFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
