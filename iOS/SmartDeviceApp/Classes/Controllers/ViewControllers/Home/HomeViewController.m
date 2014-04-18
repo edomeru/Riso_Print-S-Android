@@ -10,6 +10,7 @@
 #import "PrintPreviewViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "PrintersIpadViewController.h"
+#import "PrintJobHistoryViewController.h"
 #import "RootViewController.h"
 #import "SettingsViewController.h"
 #import "UIViewController+Segue.h"
@@ -74,6 +75,10 @@
     {
         self.selectedButton = self.printersButton;
     }
+    else if (container.mainController.class == [PrintJobHistoryViewController class])
+    {
+        self.selectedButton = self.printJobHistoryButton;
+    }
     
     self.selectedButton.selected = YES;
 }
@@ -127,6 +132,10 @@
 
 - (IBAction)printJobHistoryAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[PrintJobHistoryViewController class]];
+    }
 }
 
 - (IBAction)settingsAction:(id)sender

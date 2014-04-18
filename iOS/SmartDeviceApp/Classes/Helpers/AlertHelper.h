@@ -13,6 +13,7 @@ typedef enum
     kAlertTitlePrinters,
     kAlertTitlePrintersAdd,
     kAlertTitlePrintersSearch,
+    kAlertTitlePrintJobHistory,
     
     kAlertTitleDefault
     
@@ -40,10 +41,16 @@ typedef enum
     
 } kAlertResult;
 
+typedef enum
+{
+    kAlertConfirmationDeleteAllJobs
+    
+} kAlertConfirmation;
+
 @interface AlertHelper : NSObject
 
 /**
- Displays an AlertView.
+ Displays an AlertView informing the user of a result.
  
  @param result
         one of the defined kAlertResult values
@@ -57,5 +64,19 @@ typedef enum
         failed)
  */
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details;
+
+/**
+ Displays an AlertView asking for user confirmation.
+ 
+ @param confirmation
+        one of the defined kAlertConfirmation values
+        (use kAlertConfirmation*)
+ @param screen
+        the screen that will handle the user response
+ @param details
+        array of extra information optionally needed when displaying
+        the alert, with the first element required to be a unique tag
+ */
++ (void)displayConfirmation:(kAlertConfirmation)confirmation forScreen:(id)screen withDetails:(NSArray*)details;
 
 @end

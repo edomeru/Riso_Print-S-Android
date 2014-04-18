@@ -32,7 +32,7 @@ static NSDictionary* sharedSettingsDict = nil;
     NSString* pathToSettingsPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
     if (pathToSettingsPlist == nil)
     {
-#if DEBUG_LOG_PLIST_UTILS
+#if DEBUG_LOG_PLIST_HELPER
         NSLog(@"[ERROR][PListUtils] plist file (%@) not found", SDA_PROP_LIST);
 #endif
         //TODO: to prevent possible crashes, set sharedSettingsDict to an empty dictionary?
@@ -41,7 +41,7 @@ static NSDictionary* sharedSettingsDict = nil;
     sharedSettingsDict = [[NSDictionary alloc] initWithContentsOfFile:pathToSettingsPlist];
     if (sharedSettingsDict == nil)
     {
-#if DEBUG_LOG_PLIST_UTILS
+#if DEBUG_LOG_PLIST_HELPER
         NSLog(@"[ERROR][PListUtils] plist file error or invalid contents for dictionary (%@)", SDA_PROP_LIST);
 #endif
         //TODO: to prevent possible crashes, set sharedSettingsDict to an empty dictionary?
@@ -85,6 +85,9 @@ static NSDictionary* sharedSettingsDict = nil;
             
         case kPlistBoolValUseSNMPTimeout:
             return [[sharedSettingsDict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
+            
+        case kPlistBoolValUsePrintJobTestData:
+            return [[sharedSettingsDict objectForKey:@"Use_PrintJobHistoryTestData"] boolValue];
             
         default:
             return NO;
