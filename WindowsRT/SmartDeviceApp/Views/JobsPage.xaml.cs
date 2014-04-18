@@ -16,17 +16,30 @@ using System.Windows.Input;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
     public sealed partial class JobsPage : PageBase
     {
         private JobGestureController _gestureController;
+        private bool _isJobsGridLoaded;
+        private bool _isJobGesturesGridLoaded;
+        private bool _isJobsScrollViewerLoaded;
 
         public JobsPage()
         {
             this.InitializeComponent();
             _gestureController = new JobGestureController();
+            ViewModel.GestureController = _gestureController;
+        }
+
+        public JobsViewModel ViewModel
+        {
+            get
+            {
+                return (JobsViewModel)DataContext;
+            }
         }
 
         public static readonly DependencyProperty DeleteAllJobsCommandProperty =
@@ -49,17 +62,29 @@ namespace SmartDeviceApp.Views
 
         private void OnJobsGridLoaded(object sender, RoutedEventArgs e)
         {
-            _gestureController.TargetControl = (Grid)sender;
+            if (!_isJobsGridLoaded)
+            {
+                _gestureController.TargetControl = (Grid)sender;
+                _isJobsGridLoaded = true;
+            }
         }
 
         private void OnJobGesturesGridLoaded(object sender, RoutedEventArgs e)
         {
-            _gestureController.Control = (Grid)sender;
+            if (!_isJobGesturesGridLoaded)
+            {
+                _gestureController.Control = (Grid)sender;
+                _isJobGesturesGridLoaded = true;
+            }
         }
 
         private void OnJobsScrollViewerLoaded(object sender, RoutedEventArgs e)
         {
-            _gestureController.ControlReference = (ScrollViewer)sender;
+            if (!_isJobsScrollViewerLoaded)
+            {
+                _gestureController.ControlReference = (ScrollViewer)sender;
+                _isJobsScrollViewerLoaded = true;
+            }
         }
     }
 }

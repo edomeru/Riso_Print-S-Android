@@ -84,7 +84,7 @@ namespace SmartDeviceApp.ViewModels
 
         public void InitializeGestures()
         {
-            if (_pageAreaGrid != null && _gestureController == null)
+            //if (_pageAreaGrid != null && _gestureController == null)
             {
                 // Save page height to be used in resizing page images
                 var scalingFactor = _pageAreaGrid.ActualHeight / RightPageActualSize.Height;
@@ -110,6 +110,21 @@ namespace SmartDeviceApp.ViewModels
         }
 
         #region PANE VISIBILITY
+
+        private bool _isLoadPageActive;
+
+        public bool IsLoadPageActive
+        {
+            get { return _isLoadPageActive; }
+            set
+            {
+                //if (_isLoadPageActive != value)
+                {
+                    _isLoadPageActive = value;
+                    RaisePropertyChanged("IsLoadPageActive");
+                }
+            }
+        }
                 
         private void SetViewMode(ViewMode viewMode)
         {

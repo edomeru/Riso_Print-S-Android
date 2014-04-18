@@ -29,6 +29,8 @@
                                         utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
+                                        TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
+                                        TextBoxAlignment="Right"
                                         Width="{Binding Width, ElementName=printSettingsBox}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">

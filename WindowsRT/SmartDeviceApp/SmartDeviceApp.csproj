@@ -152,6 +152,7 @@
       <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
+    <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobToSeparatorVisibilityConverter.cs" />
@@ -273,6 +274,10 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Assets\en-US\help.html" />
+    <Content Include="Assets\en-US\legal.html" />
+    <Content Include="Assets\ja-JP\help.html" />
+    <Content Include="Assets\ja-JP\legal.html" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
     <Content Include="Resources\Dummy\RZ1070.pdf" />
@@ -283,8 +288,6 @@
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\en-US\Help.html" />
-    <Content Include="Assets\ja-JP\Help.html" />
     <Content Include="Assets\printsettings.xml" />
     <Content Include="Resources\Dummy\RZ1070-page1.jpg" />
     <Content Include="Resources\Dummy\RZ1070-page10.jpg" />

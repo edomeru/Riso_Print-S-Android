@@ -27,11 +27,30 @@ namespace SmartDeviceApp.Controls
         public new static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyTextBoxControl), new PropertyMetadata(false, SetValueText));
 
+        public static readonly DependencyProperty TextBoxWidthProperty =
+            DependencyProperty.Register("TextBoxWidth", typeof(double), typeof(KeyTextBoxControl), null);
+
+        public static readonly DependencyProperty TextBoxAlignmentProperty =
+            DependencyProperty.Register("TextBoxAlignment", typeof(TextAlignment), typeof(KeyTextBoxControl), null);
+
         public new string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
         }
+
+        public double TextBoxWidth
+        {
+            get { return (double)GetValue(TextBoxWidthProperty); }
+            set { SetValue(TextBoxWidthProperty, value); }
+        }
+
+        public TextAlignment TextBoxAlignment
+        {
+            get { return (TextAlignment)GetValue(TextBoxAlignmentProperty); }
+            set { SetValue(TextBoxAlignmentProperty, value); }
+        }
+
 
         // Updates the value source binding every time the text is changed
         private static void TextChanged(object sender, KeyTextBoxControl control)

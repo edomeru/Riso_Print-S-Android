@@ -28,6 +28,7 @@
     <GridLength x:Key="SIZE_PageNumberSliderHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberTextHeight">20</GridLength>
     <x:Double x:Key="SIZE_SidePaneWidth">400</x:Double>
+    <x:Double x:Key="SIZE_SettingsPaneWidth">500</x:Double>
     <x:Double x:Key="SIZE_ListItemHeight">60</x:Double>
     <x:Double x:Key="SIZE_ListIconWidth">48</x:Double>
     <x:Double x:Key="SIZE_ListIconHeight">48</x:Double>
@@ -35,7 +36,10 @@
     <x:Double x:Key="SIZE_ListButton1Height">20</x:Double>
     <x:Double x:Key="SIZE_ListButton2Width">22</x:Double>
     <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
-    <x:Double x:Key="SIZE_ListValue_TextboxWidth">50</x:Double>
+    <x:Double x:Key="SIZE_ListValue_ToggleWidth">50</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Short">50</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Long">250</x:Double>
+    <x:Double x:Key="SIZE_ProgressRing">50</x:Double>
     <!-- APP THEME CONSTANTS END-->
 
     <!-- APP CONVERTERS START -->
@@ -48,6 +52,7 @@
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
+    <conv:PrintJobListToGroupVisibilityConverter x:Key="PrintJobListToGroupVisibilityConverter"/>
     <conv:PrintJobListWidthConverter x:Key="PrintJobListWidthConverter"/>
     <conv:PrintJobResultToImageSourceConverter x:Key="PrintJobResultToImageSourceConverter"/>
     <conv:PrintJobToSeparatorVisibilityConverter x:Key="PrintJobToSeparatorVisibilityConverter"/>

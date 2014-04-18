@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media.Imaging;
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.Models;
 
 namespace SmartDeviceApp.Converters
 {
-    public class BooleanToVisibilityConverter : IValueConverter
+    public class PrintJobListToGroupVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (!(value is bool))
-                return Visibility.Collapsed;
-            var isInvert = false;
-            if (parameter != null) isInvert = System.Convert.ToBoolean(parameter);
-
-            bool objValue = (bool)value;
-            if (isInvert) objValue = !objValue;
-            if (objValue)
-            {
-                return Visibility.Visible;
-            }
+            if (value == null || !(value is int)) return Visibility.Collapsed;
+            var jobCount = (int)value;
+            if (jobCount > 0) return Visibility.Visible;
             return Visibility.Collapsed;
         }
 

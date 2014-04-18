@@ -13,17 +13,18 @@
     
     <base:PageBase.Resources>
         <Style x:Name="STYLE_PrintJobsListViewItem" TargetType="ListViewItem" BasedOn="{StaticResource STYLE_ListViewItem}">
-            <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>
+            <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>            
         </Style>        
         <DataTemplate x:Key="TEMPLATE_PrintJobItem">  
             <controls:GroupListControl Text="{Binding PrinterName}" 
-                                       Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
+                                       Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
+                                       Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}">
                 <controls:GroupListControl.Margin>
-                    <Thickness Bottom="{StaticResource MARGIN_Default}"></Thickness>
+                    <Thickness Bottom="{StaticResource MARGIN_Default}" Right="{StaticResource MARGIN_Default}"></Thickness>
                 </controls:GroupListControl.Margin>
                 <controls:GroupListControl.Content>
                     <ListView x:Name="jobsGroupListView"
-                              ItemsSource="{Binding Jobs, Mode=TwoWay}"
+                              ItemsSource="{Binding Jobs}"
                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                               ScrollViewer.HorizontalScrollMode="Disabled"
                               ScrollViewer.VerticalScrollMode="Disabled"
@@ -49,11 +50,6 @@
             <Setter Property="SelectionMode" Value="None"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
-            <Setter Property="Margin">
-                <Setter.Value>
-                    <Thickness Right="{StaticResource MARGIN_Default}"></Thickness>
-                </Setter.Value>
-            </Setter>
         </Style>
     </base:PageBase.Resources>
 
@@ -106,7 +102,5 @@
                     ManipulationMode="All"/>
             </Grid>
         </ScrollViewer>
-
     </controls:ViewControl>
 </base:PageBase>
-

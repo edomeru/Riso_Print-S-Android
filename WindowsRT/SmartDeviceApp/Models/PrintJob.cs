@@ -118,9 +118,9 @@ namespace SmartDeviceApp.Models
 
     public class PrintJobGroup : ObservableObject
     {
-        private List<PrintJob> _jobs;
+        private ObservableCollection<PrintJob> _jobs;
         public string PrinterName { get; set; }
-        public List<PrintJob> Jobs
+        public ObservableCollection<PrintJob> Jobs
         {
             get { return _jobs; }
             set
@@ -133,7 +133,7 @@ namespace SmartDeviceApp.Models
             }
         }
 
-        public PrintJobGroup(string printerName, List<PrintJob> jobs)
+        public PrintJobGroup(string printerName, ObservableCollection<PrintJob> jobs)
         {
             PrinterName = printerName;
             Jobs = jobs;

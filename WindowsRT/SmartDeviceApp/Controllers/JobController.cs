@@ -13,6 +13,7 @@
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -100,8 +101,7 @@ namespace SmartDeviceApp.Controllers
                     string printerName = await DatabaseController.Instance.GetPrinterName(
                         group.First().PrinterId);
 
-                    PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(),
-                        group.ToList());
+                    PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(), new ObservableCollection<PrintJob>(group));
                     list.Add(printJobGroup);
                 }
             }
@@ -144,7 +144,12 @@ namespace SmartDeviceApp.Controllers
                 }
 
                 // TODO: Parameter check!!!
-                _jobsViewModel.PrintJobsList.First(group => group.Jobs[0].PrinterId == printJob.PrinterId).Jobs.Remove(printJob);
+                var printJobGroup = _jobsViewModel.PrintJobsList.First(group => group.Jobs[0].PrinterId == printJob.PrinterId);
+                printJobGroup.Jobs.Remove(printJob);
+                if (printJobGroup.Jobs.Count == 0)
+                {
+                    _jobsViewModel.PrintJobsList.Remove(printJobGroup);
+                }
             }
         }
 
@@ -158,19 +163,20 @@ namespace SmartDeviceApp.Controllers
             PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList.First(group => group.Jobs[0].PrinterId == printerId);
 
             int deleted = 0;
-            foreach(PrintJob printJob in printJobGroup.Jobs)
+            foreach (PrintJob printJob in printJobGroup.Jobs)
             {
-                deleted += await DatabaseController.Instance.InsertPrintJob(printJob);
+                //deleted += await DatabaseController.Instance.InsertPrintJob(printJob);
+                RemoveJob(printJob);
             }
 
-            if (deleted != printJobGroup.Jobs.Count)
-            {
-                // TODO: Notify view model to display error message
-                return;
-            }
+            //if (deleted != printJobGroup.Jobs.Count)
+            //{
+            //    // TODO: Notify view model to display error message
+            //    return;
+            //}
 
-            // TODO: Verify bindings
-            _jobsViewModel.PrintJobsList.Remove(printJobGroup);
+            //// TODO: Verify bindings
+            //_jobsViewModel.PrintJobsList.Remove(printJobGroup);
         }
 
     }
