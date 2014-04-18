@@ -63,7 +63,14 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             setContentView(R.layout.activity_splash);
             
             if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
-                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+                boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
+                
+                if (dbIsOK && !AppConstants.APP_SHOW_SPLASH) {
+                    runMainActivity();
+                } else {
+                    mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);                    
+                }
             }
         } else {
             mDatabaseInitialized = true; //initialized if splash activity is not task root
@@ -205,6 +212,9 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             DatabaseManager manager = new DatabaseManager(SplashActivity.this);
             manager.getWritableDatabase();
             manager.close();
+            
+            saveToPrefs();
+            
             return null;
         }
 
@@ -219,6 +229,14 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                     runMainActivity();
                 }
             }
+        }
+        
+        private void saveToPrefs() {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+            SharedPreferences.Editor editor = prefs.edit();
+
+            editor.putInt(AppConstants.PREF_KEY_DB_VERSION, DatabaseManager.DATABASE_VERSION);
+            editor.commit();
         }
     }
 }
