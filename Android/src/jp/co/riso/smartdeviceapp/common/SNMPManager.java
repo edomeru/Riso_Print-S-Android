@@ -16,7 +16,7 @@ public class SNMPManager {
     private static final String TAG = "SNMPManager";
     
     public long mContext = 0;
-    private WeakReference<SNMPManagerCallback> mCallbackRef;
+    private WeakReference<SNMPManagerCallback> mCallbackRef = null;
     
     public native void initializeSNMPManager();
     public native void finalizeSNMPManager();

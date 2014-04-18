@@ -15,7 +15,7 @@ import android.os.AsyncTask;
 public class DirectPrintManager {
     private static final String TAG = "DirectPrintManager";
     private long mJob = 0;
-    private WeakReference<DirectPrintCallback>mCallbackRef;
+    private WeakReference<DirectPrintCallback> mCallbackRef = null;
     
     public static final int PRINT_STATUS_ERROR_CONNECTING = -4;
     public static final int PRINT_STATUS_ERROR_SENDING = -3;

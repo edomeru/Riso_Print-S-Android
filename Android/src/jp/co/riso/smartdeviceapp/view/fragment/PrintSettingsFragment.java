@@ -21,6 +21,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
@@ -43,7 +44,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     private boolean mFragmentForPrinting = false;
     
-    private int mPrinterId;
+    private int mPrinterId = PrinterManager.EMPTY_ID;
     private PrintSettings mPrintSettings;
     private PrintSettingsView mPrintSettingsView;
     private Bundle mPrintSettingsBundle = null;
@@ -186,7 +187,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        mWaitingDialog = WaitingDialogFragment.newInstance(null, getResources().getString(R.string.ids_lbl_printing), true, "Cancel");
+        String strMsg = getResources().getString(R.string.ids_lbl_printing);
+        String btnMsg = getResources().getString(R.string.ids_lbl_cancel);
+        mWaitingDialog = WaitingDialogFragment.newInstance(null, strMsg, true, btnMsg);
         mWaitingDialog.setTargetFragment(this, 0);
         DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         
