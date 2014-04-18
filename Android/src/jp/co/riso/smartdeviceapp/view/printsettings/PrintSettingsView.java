@@ -1193,7 +1193,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             EditText editText = (EditText) li.inflate(R.layout.printsettings_input_numeric, null);
             editText.setLayoutParams(params);
             editText.setTag(tag);
-            editText.addTextChangedListener(new EditTextWatcher(tag));
+            editText.addTextChangedListener(new EditTextWatcher(tag, 1));
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
@@ -1480,10 +1480,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private class EditTextWatcher implements TextWatcher {
         private String mTag;
         private boolean mEditing;
+        private int mMinValue;
         
-        public EditTextWatcher(String tag) {
+        public EditTextWatcher(String tag, int minValue) {
             mTag = tag;
             mEditing = false;
+            mMinValue = minValue;
         }
         
         @Override
@@ -1498,6 +1500,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     s.replace(0, s.length(), formatted);
                 } catch (NumberFormatException nfe) {
                     s.replace(0, s.length(), "0");
+                }
+                
+                if (Integer.parseInt(s.toString()) <= mMinValue) {
+                    s.replace(0, s.length(), Integer.toString(mMinValue));
                 }
                 
                 if (updateValue(mTag, Integer.parseInt(s.toString()))) {
