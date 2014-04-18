@@ -1172,6 +1172,8 @@
 				2DA1AF5D18E2F08900085F27 /* AlertHelper.m */,
 				2DA1AF5E18E2F08900085F27 /* InputHelper.h */,
 				2DA1AF5F18E2F08900085F27 /* InputHelper.m */,
+				28D7B31418EE48D300FE15BA /* NSDate+Format.h */,
+				28D7B31518EE48D300FE15BA /* NSDate+Format.m */,
 				2D157BF318ED5A960034F953 /* PDFRenderOperation.h */,
 				2D157BF418ED5A960034F953 /* PDFRenderOperation.m */,
 				2DA1AF6018E2F08900085F27 /* PListHelper.h */,
@@ -1184,16 +1186,14 @@
 				2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */,
 				2D157BF618ED5B3E0034F953 /* PrintSettingsHelper.h */,
 				2D157BF718ED5B3E0034F953 /* PrintSettingsHelper.m */,
+				2D0D74C018F2887B002B5E40 /* RenderCache.h */,
+				2D0D74C118F2887B002B5E40 /* RenderCache.m */,
 				2D1F23251900D58800301D1E /* SettingsValidationHelper.h */,
 				2D1F23261900D58800301D1E /* SettingsValidationHelper.m */,
 				2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */,
 				2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */,
 				2D157BF918ED5B580034F953 /* XMLParser.h */,
 				2D157BFA18ED5B580034F953 /* XMLParser.m */,
-				2D0D74C018F2887B002B5E40 /* RenderCache.h */,
-				2D0D74C118F2887B002B5E40 /* RenderCache.m */,
-				28D7B31418EE48D300FE15BA /* NSDate+Format.h */,
-				28D7B31518EE48D300FE15BA /* NSDate+Format.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
