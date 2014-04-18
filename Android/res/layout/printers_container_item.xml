@@ -20,9 +20,9 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/printers_row_left_icon_margin"
             android:layout_marginRight="@dimen/printers_row_left_icon_margin"
+            android:background="@drawable/img_btn_printer_status_offline"
             android:contentDescription="@string/default_content_description"
-            android:duplicateParentState="true"
-            android:src="@drawable/selector_printers_onlinestatus" />
+            android:duplicateParentState="true" />
 
         <LinearLayout
             android:layout_width="match_parent"

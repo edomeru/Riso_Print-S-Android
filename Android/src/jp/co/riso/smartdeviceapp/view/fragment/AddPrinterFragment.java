@@ -115,7 +115,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else if (err == ERR_PRINTER_ADDED_WARNING) {
             errMsg = getResources().getString(R.string.ids_err_msg_warning_cannot_find_printer);
-            errMsg += mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+            errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_lbl_add_successful);
         }
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);

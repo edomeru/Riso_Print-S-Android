@@ -17,6 +17,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -36,12 +37,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
+public class PrintersFragment extends BaseFragment implements PrintersCallback, UpdateStatusCallback, Callback {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    private static final String KEY_PRINTER_LIST_DELETE = "printers_list_delete";
-    private static final String KEY_PRINTER_LIST_STATE = "printers_list_state";
     private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     private static final int MSG_ADD_NEW_PRINTER = 0x1;
     private static final int MSG_INITIALIZE_ONLINE_STATUS = 0x2;
@@ -58,6 +57,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private PrintersScreenTabletView mPrinterTabletView = null;
     // Printer Manager
     private PrinterManager mPrinterManager = null;
+    private int mDeleteItem = PrinterManager.EMPTY_ID;
+    private Parcelable mScrollState = null;
     
     @Override
     public int getViewLayout() {
@@ -66,22 +67,21 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        setRetainInstance(true);
+        
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
-        if (isTablet()) {
-            setTargetFragment(this, 0);
-        }
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
+        
         Message newMessage = Message.obtain(mHandler, MSG_POPULATE_PRINTERS_LIST);
-        if (savedInstanceState != null) {
-            newMessage.obj = savedInstanceState.getParcelable(KEY_PRINTER_LIST_STATE);
-            newMessage.arg1 = savedInstanceState.getInt(KEY_PRINTER_LIST_DELETE, -1);
-        } else if (isTablet()) {
-            newMessage.arg1 = -1;
+        if (!isTablet()) {
+            newMessage.obj = mScrollState;
         }
+        newMessage.arg1 = mDeleteItem;
+        
         if (mPrinter == null) {
             mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
         }
@@ -91,6 +91,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mListView = (ListView) view.findViewById(R.id.printer_list);
         }
         mPrinterManager.setPrintersCallback(this);
+        mPrinterManager.setUpdateStatusCallback(this);
         mHandler.sendMessage(newMessage);
         mHandler.sendEmptyMessageDelayed(MSG_INITIALIZE_ONLINE_STATUS, 10);
     }
@@ -106,15 +107,16 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        
         if (isTablet()) {
-            savedInstanceState.putInt(KEY_PRINTER_LIST_DELETE, mPrinterTabletView.getDeleteItemPosition());
+            mDeleteItem = mPrinterTabletView.getDeleteItemPosition();
         } else {
             if (mListView != null) {
-                savedInstanceState.putParcelable(KEY_PRINTER_LIST_STATE, mListView.onSaveInstanceState());
-                savedInstanceState.putInt(KEY_PRINTER_LIST_DELETE, ((PrintersListView) mListView).getDeleteItemPosition());
+                mScrollState = mListView.onSaveInstanceState();
+                mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
             }
         }
-        super.onSaveInstanceState(savedInstanceState);
     }
     
     @Override
@@ -218,7 +220,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             default:
                 break;
         }
-        
     }
     
     // ================================================================================
@@ -232,17 +233,29 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mHandler.sendMessage(newMessage);
     }
     
+    // ================================================================================
+    // INTERFACE - UpdateStatusCallback
+    // ================================================================================
+    
     @Override
     public void updateOnlineStatus() {
         for (int i = 0; i < mPrinter.size(); i++) {
+            View targetView = null;
             if (isTablet()) {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mPrinterTabletView.getChildAt(i));
+                if (mPrinterTabletView != null && mPrinterTabletView.getChildAt(i) != null) {
+                    targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
             } else {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mListView.getChildAt(i));
+                if (mListView != null && mListView.getChildAt(i) != null) {
+                    targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
+            }
+            if (targetView != null) {
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
             }
         }
     }
-    
+
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================

@@ -34,6 +34,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -43,7 +45,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrintersScreenTabletView extends ViewGroup implements OnLongClickListener, View.OnClickListener, OnCheckedChangeListener, Callback {
+public class PrintersScreenTabletView extends ViewGroup implements OnLongClickListener, View.OnClickListener, OnCheckedChangeListener, Callback,
+        OnItemSelectedListener {
     private static final int MSG_ADD_PRINTER = 0x01;
     private static final int MSG_SET_UPDATE_VIEWS = 0x02;
     private static final int MIN_COLUMN = 2;
@@ -305,12 +308,14 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         
         viewHolder.mPrinterName.setText(printer.getName());
         viewHolder.mIpAddress.setText(printer.getIpAddress());
+        viewHolder.mPort.setSelection(printer.getPortSetting());
         
         ((View) viewHolder.mPrinterName.getParent()).setOnLongClickListener(this);
         viewHolder.mDeleteButton.setOnClickListener(this);
         viewHolder.mPrintSettings.setOnClickListener(this);
         viewHolder.mDefaultPrinter.setOnCheckedChangeListener(this);
         viewHolder.mPrintSettings.findViewById(R.id.print_settings).setClickable(false);
+        viewHolder.mPort.setOnItemSelectedListener(this);
         
         pView.setTag(viewHolder);
         viewHolder.mPrinterName.setTag(viewHolder);
@@ -319,6 +324,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         viewHolder.mIpAddress.setTag(printer);
         viewHolder.mPrintSettings.setTag(printer);
         viewHolder.mOnlineIndcator.setTag(pView);
+        viewHolder.mPort.setTag(printer);
         
         setPrinterView(viewHolder);
     }
@@ -433,6 +439,21 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
                 return true;
         }
         return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - onCheckedChanged
+    // ================================================================================
+    
+    @Override
+    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        Printer printer = (Printer) parentView.getTag();
+        printer.setPortSetting(position);
+    }
+    
+    @Override
+    public void onNothingSelected(AdapterView<?> parentView) {
+        // Do nothing
     }
     
     // ================================================================================

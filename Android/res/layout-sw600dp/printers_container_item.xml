@@ -32,9 +32,9 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
                     android:layout_weight="0"
+                    android:background="@drawable/img_btn_printer_status_offline"
                     android:contentDescription="@string/default_content_description"
-                    android:duplicateParentState="true"
-                    android:src="@drawable/selector_printers_onlinestatus" />
+                    android:duplicateParentState="true" />
 
                 <TextView
                     android:id="@+id/txt_printerName"

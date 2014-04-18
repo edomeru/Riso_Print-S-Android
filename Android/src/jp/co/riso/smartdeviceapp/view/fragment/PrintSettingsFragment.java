@@ -110,6 +110,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     @Override
     public void onPause() {
         super.onPause();
+        
+        PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();        
         mPauseableHandler.pause();
     }
     

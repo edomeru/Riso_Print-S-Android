@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity {
             
             ft.commit();
         } else {
-            mResizeView = savedInstanceState.getBoolean(KEY_RIGHT_OPEN, false);
+            mResizeView = savedInstanceState.getBoolean(KEY_RESIZE_VIEW, false);
             float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
             if (mResizeView && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
@@ -208,6 +208,9 @@ public class MainActivity extends BaseActivity {
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
+            if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
+                getFragmentManager().findFragmentById(R.id.rightLayout).onPause();
+            }
             getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
         }
         
@@ -218,6 +221,9 @@ public class MainActivity extends BaseActivity {
             super.onDrawerOpened(drawerView);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
+            if (mDrawerLayout.findViewById(R.id.rightLayout) == drawerView) {
+                getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
+            }
             getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
         }
     }

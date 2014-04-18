@@ -17,6 +17,7 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -29,6 +30,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 public class PrinterManager implements SNMPManagerCallback {
     public static final int EMPTY_ID = -1;
@@ -40,6 +42,7 @@ public class PrinterManager implements SNMPManagerCallback {
     private SNMPManager mSNMPManager = null;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
+    private WeakReference<UpdateStatusCallback> mUpdateStatusCallback = null;
     private Timer mUpdateStatusTimer = null;
     private int mDefaultPrintId = EMPTY_ID;
     
@@ -435,6 +438,15 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
+     * Set Update Status Callback
+     * <p>
+     * Set the Callback for Updating Printer Status. Changes status from online to off-line or vice-versa.
+     */
+    public void setUpdateStatusCallback(UpdateStatusCallback updateStatusCallback) {
+        mUpdateStatusCallback = new WeakReference<UpdateStatusCallback>(updateStatusCallback);
+    }
+    
+    /**
      * Get Printer Count
      * <p>
      * Gets the number of Saved Printer.
@@ -476,8 +488,8 @@ public class PrinterManager implements SNMPManagerCallback {
             
             @Override
             public void run() {
-                if (mPrintersCallback != null && mPrintersCallback.get() != null) {
-                    mPrintersCallback.get().updateOnlineStatus();
+                if (mUpdateStatusCallback != null && mUpdateStatusCallback.get() != null) {
+                    mUpdateStatusCallback.get().updateOnlineStatus();
                 }
             }
         }, 0, AppConstants.CONST_UPDATE_INTERVAL);
@@ -610,7 +622,13 @@ public class PrinterManager implements SNMPManagerCallback {
     
     public interface PrintersCallback {
         public void onAddedNewPrinter(Printer printer);
-        
+    }
+    
+    // ================================================================================
+    // Interface - UpdateStatusCallback
+    // ================================================================================
+    
+    public interface UpdateStatusCallback {
         public void updateOnlineStatus();
     }
     
@@ -640,7 +658,12 @@ public class PrinterManager implements SNMPManagerCallback {
             super.onPostExecute(result);
             
             if (mViewRef != null && mViewRef.get() != null) {
-                mViewRef.get().setActivated(result);
+                ImageView view = (ImageView) mViewRef.get();
+                if (result) {
+                    view.setImageResource(R.drawable.img_btn_printer_status_online);
+                } else {
+                    view.setImageResource(R.drawable.img_btn_printer_status_offline);
+                }
             }
         }
         
