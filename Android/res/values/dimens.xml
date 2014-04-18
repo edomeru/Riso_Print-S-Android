@@ -22,6 +22,8 @@
     <dimen name="settings_login_id_input_width">200dp</dimen>
     <dimen name="settings_pin_code_input_width">120dp</dimen>
     
+    <dimen name="settings_separator_padding">24dp</dimen>
+    
     <dimen name="printsettings_option_with_sub_text_size">14dp</dimen>
     <dimen name="printsettings_option_with_sub_height">56dp</dimen>
     
