@@ -21,6 +21,7 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 
 @interface PrintDocument()
 
+@property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSURL *url;
 
 /**
@@ -39,13 +40,13 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 
 #pragma mark - Public Methods
 
-- (id)initWithURL:(NSURL *)url
+- (id)initWithURL:(NSURL *)url name:(NSString *)name
 {
     self = [super init];
     if (self)
     {
         _url = url;
-        
+        _name = name;
     }
     return self;
 }

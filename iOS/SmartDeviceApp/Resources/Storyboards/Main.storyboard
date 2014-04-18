@@ -1938,11 +1938,24 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINT"/>
+                                            </userDefinedRuntimeAttributes>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="p46-KB-71v">
+                                            <rect key="frame" x="296" y="14" width="16" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="16" id="aIm-eT-Vfo"/>
+                                                <constraint firstAttribute="height" constant="16" id="qjW-F7-rld"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="centerY" secondItem="u8g-bi-oaK" secondAttribute="centerY" id="MnD-bP-WJK"/>
+                                        <constraint firstAttribute="trailing" secondItem="p46-KB-71v" secondAttribute="trailing" constant="8" id="bp2-xt-fU6"/>
+                                        <constraint firstAttribute="centerY" secondItem="p46-KB-71v" secondAttribute="centerY" id="e2l-4x-x7b"/>
                                         <constraint firstItem="u8g-bi-oaK" firstAttribute="leading" secondItem="viE-f7-RK3" secondAttribute="leading" constant="12" id="efH-Ti-aNU"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -1959,6 +1972,9 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER"/>
+                                            </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TrI-5d-Ckr">
                                             <rect key="frame" x="96" y="8" width="200" height="17"/>
@@ -1989,6 +2005,9 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value=""/>
+                                            </userDefinedRuntimeAttributes>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="snH-FX-2u1">
                                             <rect key="frame" x="300" y="25" width="16" height="16"/>
@@ -2018,8 +2037,47 @@
                                     <outlet property="selectPrinterLabel" destination="yWu-wf-2np" id="tnn-Es-vWy"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SettingHeaderCell" id="tJf-2Q-7WE" customClass="PrintSettingsHeaderCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItemDefaultCell" rowHeight="44" id="qGb-vh-QrR" customClass="PrintSettingsPrinterItemCell">
                                 <rect key="frame" x="0.0" y="132" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qGb-vh-QrR" id="RVS-Z8-EAf">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printer Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="33h-C4-tys">
+                                            <rect key="frame" x="12" y="14" width="85" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <nil key="highlightedColor"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER_NAME"/>
+                                            </userDefinedRuntimeAttributes>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3L1-1z-ULp">
+                                            <rect key="frame" x="112" y="8" width="200" height="28"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="200" id="Z5b-tM-T3u"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="centerY" secondItem="33h-C4-tys" secondAttribute="centerY" id="PTM-KI-VH0"/>
+                                        <constraint firstAttribute="trailing" secondItem="3L1-1z-ULp" secondAttribute="trailing" constant="8" id="UXQ-XA-EoN"/>
+                                        <constraint firstItem="33h-C4-tys" firstAttribute="leading" secondItem="RVS-Z8-EAf" secondAttribute="leading" constant="12" id="cDA-q1-Ipm"/>
+                                        <constraint firstAttribute="centerY" secondItem="3L1-1z-ULp" secondAttribute="centerY" id="dec-Y2-DEM"/>
+                                        <constraint firstItem="3L1-1z-ULp" firstAttribute="top" secondItem="RVS-Z8-EAf" secondAttribute="top" constant="8" id="nyN-Uh-4Lx"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="printerNameLabel" destination="3L1-1z-ULp" id="ss2-kJ-VUt"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SettingHeaderCell" id="tJf-2Q-7WE" customClass="PrintSettingsHeaderCell">
+                                <rect key="frame" x="0.0" y="176" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tJf-2Q-7WE" id="wrx-wK-2jR">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -2057,7 +2115,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SettingItemOptionCell" id="A7i-B4-4I1" customClass="PrintSettingsItemOptionCell">
-                                <rect key="frame" x="0.0" y="176" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="220" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="A7i-B4-4I1" id="Kqj-Sj-EN9">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -2113,7 +2171,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SettingItemInputCell" id="v1C-rw-Lfv" customClass="PrintSettingsItemInputCell">
-                                <rect key="frame" x="0.0" y="220" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="264" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="v1C-rw-Lfv" id="7nR-pU-sU9">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -2162,7 +2220,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SettingItemSwitchCell" id="aeJ-Eq-DIr" customClass="PrintSettingsItemSwitchCell">
-                                <rect key="frame" x="0.0" y="264" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="308" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aeJ-Eq-DIr" id="wqO-QN-Eok">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -2208,7 +2266,7 @@
                     <navigationItem key="navigationItem" title="Root View Controller" id="cDb-W3-FfX"/>
                     <connections>
                         <segue destination="hZX-Ok-b3V" kind="push" identifier="PrintSettings-PrintOptions" id="FPj-fn-eAX"/>
-                        <segue destination="0Ud-GD-5mk" kind="push" identifier="PrintSettings-PrinterList" id="YEd-tz-F0Z"/>
+                        <segue destination="Wn7-PG-C0p" kind="push" identifier="PrintSettings-PrinterList" id="ITV-mu-qgi"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXq-ID-FWW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3096,6 +3154,90 @@
             </objects>
             <point key="canvasLocation" x="651" y="1457"/>
         </scene>
+        <!--PrintSettingsPrinterListViewController-->
+        <scene sceneID="OqI-sM-V51">
+            <objects>
+                <viewController id="Wn7-PG-C0p" userLabel="PrintSettingsPrinterListViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Xeg-4B-OTa"/>
+                        <viewControllerLayoutGuide type="bottom" id="iek-zZ-OvX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="KCy-ln-vCZ" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0jn-TH-TiD" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4yB-Lj-o7Y" userLabel="Back Button">
+                                        <rect key="frame" x="8" y="10" width="24" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="LMP-t7-oTX"/>
+                                            <constraint firstAttribute="height" constant="24" id="ilG-8L-Qhp"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="img_btn_back_normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" image="img_btn_back_pressed"/>
+                                        <connections>
+                                            <segue destination="TsJ-Cb-eB7" kind="unwind" unwindAction="unwindToPrintSettings:" id="WK7-Fq-WPc"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PRINTERS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EvQ-hO-qme">
+                                        <rect key="frame" x="40" y="14" width="272" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="4yB-Lj-o7Y" firstAttribute="leading" secondItem="0jn-TH-TiD" secondAttribute="leading" constant="8" id="7Zu-2s-1ZL"/>
+                                    <constraint firstAttribute="centerY" secondItem="EvQ-hO-qme" secondAttribute="centerY" id="Jj0-kR-chv"/>
+                                    <constraint firstAttribute="centerY" secondItem="4yB-Lj-o7Y" secondAttribute="centerY" id="N2d-Id-xF3"/>
+                                    <constraint firstAttribute="trailing" secondItem="EvQ-hO-qme" secondAttribute="trailing" constant="8" id="PRc-Wl-Cya"/>
+                                    <constraint firstItem="EvQ-hO-qme" firstAttribute="leading" secondItem="4yB-Lj-o7Y" secondAttribute="trailing" constant="8" id="SDt-XA-CLN"/>
+                                    <constraint firstAttribute="height" constant="44" id="f9Z-ea-Xln"/>
+                                </constraints>
+                            </view>
+                            <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6qU-x8-RIP">
+                                <rect key="frame" x="0.0" y="44" width="320" height="416"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <connections>
+                                    <segue destination="0Ud-GD-5mk" kind="embed" id="uKq-oh-kh0"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="6qU-x8-RIP" secondAttribute="bottom" id="7gQ-x6-6Ch"/>
+                            <constraint firstItem="6qU-x8-RIP" firstAttribute="top" secondItem="0jn-TH-TiD" secondAttribute="bottom" id="Fq9-oa-czR"/>
+                            <constraint firstAttribute="trailing" secondItem="6qU-x8-RIP" secondAttribute="trailing" id="MXr-ks-iwJ"/>
+                            <constraint firstItem="0jn-TH-TiD" firstAttribute="top" secondItem="Xeg-4B-OTa" secondAttribute="bottom" id="O47-AV-fHF"/>
+                            <constraint firstItem="0jn-TH-TiD" firstAttribute="leading" secondItem="KCy-ln-vCZ" secondAttribute="leading" id="SSO-v0-LxB"/>
+                            <constraint firstItem="6qU-x8-RIP" firstAttribute="leading" secondItem="KCy-ln-vCZ" secondAttribute="leading" id="dyd-1j-Zex"/>
+                            <constraint firstAttribute="trailing" secondItem="0jn-TH-TiD" secondAttribute="trailing" id="jQw-3n-FCO"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="u8c-pA-ukF"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xdI-5I-Tjc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="TsJ-Cb-eB7" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2219" y="145"/>
+        </scene>
         <!--Print Settings Printer List Table View Controller-->
         <scene sceneID="DR0-l5-2bT">
             <objects>
@@ -3105,49 +3247,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrintersHeaderCell" id="W08-tE-f25">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="W08-tE-f25" id="6nj-tN-Pwr">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9jH-aY-Y1f">
-                                            <rect key="frame" x="4" y="10" width="24" height="24"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="24" id="2Mv-Qh-LI5"/>
-                                                <constraint firstAttribute="height" constant="24" id="Vxz-uv-8pa"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                            <state key="normal" image="img_btn_back_normal">
-                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                            </state>
-                                            <state key="highlighted" image="img_btn_back_pressed"/>
-                                            <connections>
-                                                <segue destination="Eiw-FX-08l" kind="unwind" unwindAction="unwindToPrintSettings:" id="dQ1-Af-LHw"/>
-                                            </connections>
-                                        </button>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PRINTERS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OkN-1W-gbf">
-                                            <rect key="frame" x="32" y="13" width="284" height="17"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="OkN-1W-gbf" secondAttribute="trailing" constant="4" id="5OJ-Wm-C65"/>
-                                        <constraint firstAttribute="centerY" secondItem="9jH-aY-Y1f" secondAttribute="centerY" id="PB2-Wt-Cs5"/>
-                                        <constraint firstItem="OkN-1W-gbf" firstAttribute="leading" secondItem="9jH-aY-Y1f" secondAttribute="trailing" constant="4" id="Vv8-rV-MEB"/>
-                                        <constraint firstItem="9jH-aY-Y1f" firstAttribute="leading" secondItem="6nj-tN-Pwr" secondAttribute="leading" constant="4" id="XGX-cb-Y5B"/>
-                                        <constraint firstAttribute="centerY" secondItem="OkN-1W-gbf" secondAttribute="centerY" id="ija-64-LBQ"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                            </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItem" id="IcU-f9-Hy1" customClass="PrintSettingsOptionsItemCell">
-                                <rect key="frame" x="0.0" y="66" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="IcU-f9-Hy1" id="Kut-VV-L7j">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -3204,9 +3305,8 @@
                     <nil key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oie-sE-6Ww" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="Eiw-FX-08l" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2219" y="11"/>
+            <point key="canvasLocation" x="2661" y="125"/>
         </scene>
         <!--Print Job History View Controller-->
         <scene sceneID="qwz-Ol-TAm">
@@ -3752,8 +3852,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="oE4-lZ-OOf"/>
-        <segue reference="ax2-Mn-NH0"/>
         <segue reference="JPo-5o-n9C"/>
+        <segue reference="suq-fU-kcs"/>
+        <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

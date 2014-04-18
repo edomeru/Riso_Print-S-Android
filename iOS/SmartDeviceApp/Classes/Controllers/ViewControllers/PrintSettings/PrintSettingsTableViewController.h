@@ -11,9 +11,7 @@
 @class Printer;
 
 @interface PrintSettingsTableViewController : UITableViewController<UITextFieldDelegate>
-@property (nonatomic, strong) PreviewSetting *previewSetting;
-@property (nonatomic, weak) Printer *printer;
-@property (nonatomic) BOOL isDefaultSettingsMode;
+@property (nonatomic, strong) NSNumber *printerIndex;
 
 /**
  Action when the printer list view controller unwinds to the print settings table

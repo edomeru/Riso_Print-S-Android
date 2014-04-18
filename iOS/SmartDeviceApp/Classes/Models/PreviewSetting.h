@@ -38,4 +38,7 @@
 @property (nonatomic) NSInteger staple;
 @property (nonatomic) NSInteger punch;
 @property (nonatomic) NSInteger outputTray;
+
+@property (nonatomic, weak, readonly) NSString *formattedString;
+
 @end

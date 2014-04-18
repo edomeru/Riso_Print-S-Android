@@ -7,8 +7,10 @@
 //
 
 #import "PrintSettingsPrinterListTableViewController.h"
-#import "PrinterManager.h"
 #import "PrintSettingsOptionsItemCell.h"
+#import "PDFFileManager.h"
+#import "PrinterManager.h"
+#import "PrintDocument.h"
 #import "Printer.h"
 
 #define PRINTERS_HEADER_CELL @"PrintersHeaderCell"
@@ -16,7 +18,8 @@
 
 @interface PrintSettingsPrinterListTableViewController ()
 @property (weak, nonatomic) PrinterManager *printerManager;
-@property (nonatomic) NSInteger selectedIndex;
+@property (weak, nonatomic) PrintDocument *printDocument;
+@property (nonatomic) NSUInteger selectedIndex;
 @end
 
 @implementation PrintSettingsPrinterListTableViewController
@@ -35,10 +38,18 @@
     [super viewDidLoad];
 
     self.printerManager = [PrinterManager sharedPrinterManager];
-    if(self.selectedPrinter == nil)
+    self.printDocument = [[PDFFileManager sharedManager] printDocument];
+    
+    NSUInteger printerCount = self.printerManager.countSavedPrinters;
+    for (NSUInteger i = 0; i < printerCount; i++)
     {
-        self.selectedIndex = -1;
-    } 
+        Printer *printer = [self.printerManager getPrinterAtIndex:i];
+        if ([self.printDocument.printer isEqual:printer])
+        {
+            self.selectedIndex = i;
+            break;
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -58,56 +69,37 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.printerManager countSavedPrinters] + 1;
+    return [self.printerManager countSavedPrinters];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell;
-    
-    if (indexPath.row == 0)
+    PrintSettingsOptionsItemCell *itemCell = [tableView dequeueReusableCellWithIdentifier:PRINTER_ITEM_CELL forIndexPath:indexPath];
+    Printer *printer = [self.printerManager getPrinterAtIndex:indexPath.row];
+    itemCell.optionLabel.text = printer.name;
+    itemCell.separator.hidden = NO;
+    if (indexPath.row == [self.printerManager countSavedPrinters])
     {
-        UITableViewCell *headerCell = [tableView dequeueReusableCellWithIdentifier:PRINTERS_HEADER_CELL forIndexPath:indexPath];
-        headerCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell = headerCell;
-    }
-    else
-    {
-        PrintSettingsOptionsItemCell *itemCell = [tableView dequeueReusableCellWithIdentifier:PRINTER_ITEM_CELL forIndexPath:indexPath];
-        Printer *printer = [self.printerManager getPrinterAtIndex:indexPath.row - 1];
-        itemCell.optionLabel.text = printer.name;
-        itemCell.separator.hidden = NO;
-        if (indexPath.row == [self.printerManager countSavedPrinters])
-        {
-            itemCell.separator.hidden = YES;
-        }
-        
-        if(printer == self.selectedPrinter)
-        {
-            self.selectedIndex = indexPath.row - 1;
-            [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-        }
-        
-        cell = itemCell;
+        itemCell.separator.hidden = YES;
     }
     
+    if ([self.printDocument.printer isEqual:printer])
+    {
+        self.selectedIndex = indexPath.row;
+        [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    }
     
-    return cell;
+    return itemCell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0)
-    {
-        [tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex + 1 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-        return;
-    }
-    
-    int index = (int)indexPath.row - 1;
-    if (index != self.selectedIndex)
+    NSUInteger index = indexPath.row;
+    if (index != self.selectedIndex || self.printDocument.printer == nil)
     {
         self.selectedIndex = index;
-        self.selectedPrinter = [self.printerManager getPrinterAtIndex:index];
+        Printer *printer = [self.printerManager getPrinterAtIndex:index];
+        self.printDocument.printer = printer;
     }
 }
 

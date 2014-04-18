@@ -59,11 +59,6 @@ typedef enum
 @property (nonatomic, strong) NSURL *fileURL;
 
 /**
- File name (without full path) of the PDF File
- */
-@property (nonatomic, weak, readonly) NSString *fileName;
-
-/**
  Print Document object
  */
 @property (nonatomic, strong, readonly) PrintDocument *printDocument;

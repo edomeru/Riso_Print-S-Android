@@ -79,19 +79,13 @@
     {
         self.fileAvailableForPreview = YES;
         self.fileAvailableForLoad = NO;
-        self.printDocument = [[PrintDocument alloc] initWithURL:documentURL];
+        NSString *fileName = [self.fileURL lastPathComponent];
+        self.printDocument = [[PrintDocument alloc] initWithURL:documentURL name:fileName];
         self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
         self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
     }
     
     return result;
-}
-
-#pragma mark - Getter/Setter Methods
-
-- (NSString *)fileName
-{
-    return [[NSFileManager defaultManager] displayNameAtPath:[self.fileURL path]];
 }
 
 #pragma mark - Helper Methods
