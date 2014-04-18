@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * NetUtils.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.android.util;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,18 +33,52 @@ public class NetUtils {
     // Public Methods
     // ================================================================================
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv4 Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     public static boolean isIPv4Address(final String ipAddress) {
         return IPV4_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv4 Multicast Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     public static boolean isIPv4MulticastAddress(final String ipAddress) {
         return IPV4_MULTICAST_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     public static boolean isIPv6Address(final String ipAddress) {
         return isIPv6StdAddress(ipAddress) || isIPv6HexCompressedAddress(ipAddress) || isIPv6LinkLocalAddress(ipAddress) || isIPv6Ipv4DerivedAddress(ipAddress);
     }
     
+    /**
+     * Check an IP Address if it is reachable.
+     * <p>
+     * Checks if the IPv6 Address is reachable.
+     * 
+     * @param ipAddress
+     *            IPv6 Address
+     * @param inetIpAddress
+     *            IP Address object
+     */
     public static boolean connectToIpv6Address(String ipAddress, InetAddress inetIpAddress) {
         try {
             String ip = ipAddress;
@@ -54,14 +99,16 @@ public class NetUtils {
                     return true;
                 }
             }
+        } catch (UnknownHostException e) {
             return false;
-        } catch (Exception e) {
+        } catch (IOException e) {
             return false;
         }
+        return false;
     }
     
     // ================================================================================
-    // Public Methods
+    // Private Methods
     // ================================================================================
     
     private static boolean isIPv6StdAddress(final String ipAddress) {
@@ -112,7 +159,7 @@ public class NetUtils {
             for (int i = 0; i < interfaces.size(); i++) {
                 IPV6_INTERFACE_NAMES.add(interfaces.get(i).getName());
             }
-        } catch (Exception e) {
+        } catch (SocketException e) {
             IPV6_INTERFACE_NAMES.add(localInterface);
         }
         if (IPV6_INTERFACE_NAMES.contains(localInterface)) {

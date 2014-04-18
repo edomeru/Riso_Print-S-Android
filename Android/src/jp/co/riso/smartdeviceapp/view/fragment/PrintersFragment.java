@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
-import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -42,10 +41,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    // private static final String KEY_PRINTER_LIST = "printers_list";
     private static final String KEY_PRINTER_LIST_DELETE = "printers_list_delete";
     private static final String KEY_PRINTER_LIST_STATE = "printers_list_state";
-    private static final int MSG_SET_POPULATE_PRINTERS_LIST = 0x0;
+    private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     private static final int MSG_ADD_NEW_PRINTER = 0x1;
     private static final int MSG_INITIALIZE_ONLINE_STATUS = 0x2;
     
@@ -79,10 +77,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        Message newMessage = Message.obtain(mHandler, MSG_SET_POPULATE_PRINTERS_LIST);
+        Message newMessage = Message.obtain(mHandler, MSG_POPULATE_PRINTERS_LIST);
         if (savedInstanceState != null) {
-            // TODO: change implementation - compile error since Printer is not parcelable
-            // mPrinter = savedInstanceState.getParcelableArrayList(KEY_PRINTER_LIST);
             newMessage.obj = savedInstanceState.getParcelable(KEY_PRINTER_LIST_STATE);
             newMessage.arg1 = savedInstanceState.getInt(KEY_PRINTER_LIST_DELETE, -1);
         } else if (isTablet()) {
@@ -112,8 +108,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // TODO: change implementation - compile error since Printer is not parcelable
-        // savedInstanceState.putParcelableArrayList(KEY_PRINTER_LIST, mPrinter);
         if (isTablet()) {
             savedInstanceState.putInt(KEY_PRINTER_LIST_DELETE, mPrinterTabletView.getDeleteItemPosition());
         } else {
@@ -128,23 +122,16 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onResume() {
         super.onResume();
-        if (mPrinterManager.isSearching()) {
+        MainActivity activity = (MainActivity) getActivity();
+        
+        if (!activity.isDrawerOpen(Gravity.RIGHT) && mPrinterManager.isSearching()) {
             mPrinterManager.cancelPrinterSearch();
         }
-        AppUtils.hideSoftKeyboard(getActivity());
     }
     
     @Override
     public void onPause() {
         super.onPause();
-        if (mPrinterManager.isSearching()) {
-            Thread cancelThread = new Thread() {
-                public void run() {
-                    mPrinterManager.cancelPrinterSearch();
-                }
-            };
-            cancelThread.start();            
-        }
         mPrinterManager.cancelUpdateStatusThread();
     }
     
@@ -275,7 +262,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
-            case MSG_SET_POPULATE_PRINTERS_LIST:
+            case MSG_POPULATE_PRINTERS_LIST:
                 if (isTablet()) {
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1);
                 } else {

@@ -201,6 +201,8 @@ public class MainActivity extends BaseActivity {
         public void onDrawerClosed(View view) {
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            
+            getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
         }
         
         /**
@@ -209,6 +211,8 @@ public class MainActivity extends BaseActivity {
         public void onDrawerOpened(View drawerView) {
             super.onDrawerOpened(drawerView);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            
+            getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
         }
     }
 }
