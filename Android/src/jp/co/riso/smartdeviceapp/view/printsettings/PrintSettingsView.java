@@ -1452,6 +1452,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 return true;
             case MSG_SHOW_SUBVIEW:
                 displayOptionsSubview(mMainLayout.findViewWithTag(msg.obj), false);
+                if (msg.obj.toString().equals(KEY_TAG_PRINTER)) {
+                    mPrinterManager.createUpdateStatusThread();
+                }
                 return true;
         }
         return false;
