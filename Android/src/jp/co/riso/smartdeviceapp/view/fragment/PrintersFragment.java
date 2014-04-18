@@ -66,7 +66,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).mPrintPreviewScreen = false;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
         if (isTablet()) {

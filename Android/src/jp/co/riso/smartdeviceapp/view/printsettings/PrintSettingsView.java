@@ -277,6 +277,16 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         return defaultValue;
     }
     
+    private boolean isViewEnabled(String tag) {
+        if (mMainLayout != null) {
+            if (mMainLayout.findViewWithTag(tag) != null) {
+                return mMainLayout.findViewWithTag(tag).isEnabled();
+            }
+        }
+        
+        return false;
+    }
+    
     private void setViewEnabledWithConstraints(String tag, boolean enabled) {
         if (mMainLayout != null) {
             if (mMainLayout.findViewWithTag(tag) != null) {
@@ -315,7 +325,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         // Constraint #5 Imposition
         if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
-            boolean enabled = (value != Imposition.OFF.ordinal());
+            boolean enabled = (value != Imposition.OFF.ordinal()) && isViewEnabled(tag);
             setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled);
         }
     }
@@ -469,8 +479,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private boolean updateValue(String tag, int newValue) {
         int prevValue = mPrintSettings.getValue(tag);
         if (mPrintSettings.setValue(tag, newValue)) {
-            applyViewConstraints(tag);
             applyValueConstraints(tag, prevValue);
+            applyViewConstraints(tag);
             return true;
         }
         
