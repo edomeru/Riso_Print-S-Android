@@ -11,6 +11,7 @@
 #import "PrintersIphoneViewController.h"
 #import "PrintersIpadViewController.h"
 #import "RootViewController.h"
+#import "SettingsViewController.h"
 #import "UIViewController+Segue.h"
 
 @interface HomeViewController ()
@@ -130,6 +131,7 @@
 
 - (IBAction)settingsAction:(id)sender
 {
+    [self performSegueTo:[SettingsViewController class]];
 }
 
 - (IBAction)helpAction:(id)sender
