@@ -91,7 +91,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         
         mPdfManager.setPDF(null);
         int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
         assertFalse(mPdfManager.isInitialized());
     }
     
@@ -109,14 +109,14 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     public void testGetPageCount_InvalidPath() {
         mPdfManager.setPDF(null);
         int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
         assertEquals(mPdfManager.getPageCount(), 0);
     }
 
     public void testGetPageCount_invalidPath() {
         mPdfManager.setPDF(null);
         int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
         assertEquals(mPdfManager.getPageCount(), 0);
     }
     
@@ -193,19 +193,19 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     public void testOpenDocument_NullPdfPath() {
         mPdfManager.setPDF(null);
         int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
     }
     
     public void testOpenDocument_EmptyPdfPath() {
         mPdfManager.setPDF("");
         int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
     }
     
     public void testOpenDocument_InvalidPdfPath() {
         mPdfManager.setPDF("not_a_valid_path");
         int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
     }
 
     public void testOpenDocument_Valid() {
@@ -281,7 +281,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
 
         getInstrumentation().waitForIdleSync();
         
-        assertEquals(PDFFileManager.PDF_INVALID_PATH, mStatus);
+        assertEquals(PDFFileManager.PDF_OPEN_FAILED, mStatus);
     }
     
     public void testOpenAsync_EmptyPdfPath() {
@@ -298,7 +298,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
 
         getInstrumentation().waitForIdleSync();
         
-        assertEquals(mStatus, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(mStatus, PDFFileManager.PDF_OPEN_FAILED);
     }
     
     public void testOpenAsync_InvalidPdfPath() {
@@ -315,7 +315,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
 
         getInstrumentation().waitForIdleSync();
         
-        assertEquals(mStatus, PDFFileManager.PDF_INVALID_PATH);
+        assertEquals(mStatus, PDFFileManager.PDF_OPEN_FAILED);
     }
     
     public void testOpenAsync_Consecutive() {

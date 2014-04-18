@@ -90,7 +90,8 @@
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
 
-    [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.printerStatus setStatus:NO];
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
     if (indexPath.row == self.printerManager.countSavedPrinters-1)
@@ -176,8 +177,7 @@
         }
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.onlineStatus = cell.printerStatus.onlineStatus;
-        destController.delegate = self;
-        cell.printerStatus.statusHelper.delegate = destController;
+        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
     }
     else if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])
     {

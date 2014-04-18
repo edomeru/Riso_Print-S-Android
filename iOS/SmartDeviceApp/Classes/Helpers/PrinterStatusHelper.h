@@ -7,19 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SimplePing.h"
+
 @protocol PrinterStatusHelperDelegate
 
 -(void)statusDidChange:(BOOL)isOnline;
 
 @end
 
-@interface PrinterStatusHelper : NSObject
+@interface PrinterStatusHelper : NSObject <SimplePingDelegate>
 
 @property (weak, nonatomic) id <PrinterStatusHelperDelegate> delegate;
-@property NSString *ipAddress;
+@property (strong, nonatomic) NSString *ipAddress;
 
 -(id) initWithPrinterIP:(NSString *) ipAddress;
 -(void) stopPrinterStatusPolling;
 -(void) startPrinterStatusPolling;
+- (BOOL)isPolling;
 
 @end

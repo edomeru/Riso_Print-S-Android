@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/home_menu_height"
     android:background="@drawable/selector_printsettings_title"
+    android:paddingRight="@dimen/printsettings_icon_setting_padding"
     android:orientation="horizontal" >
 
     <LinearLayout
@@ -15,12 +16,12 @@
         android:layout_weight="0" >
         
 	    <ImageView
-        	android:id="@+id/returnButtonIndicator"
-	        android:layout_width="@dimen/printsettings_icon_width"
-	        android:layout_height="@dimen/printsettings_icon_width"
+	        android:id="@+id/returnButtonIndicator"
+	        android:layout_width="@dimen/printsettings_disclosure_size"
+	        android:layout_height="@dimen/printsettings_disclosure_size"
 	        android:layout_gravity="center_vertical"
 	        android:contentDescription="@string/default_content_description"
-	        android:src="@drawable/temp_img_disclosure"
+	        android:src="@drawable/img_btn_submenu_back"
 	        android:visibility="gone" />
         
 	    <ImageView
@@ -39,9 +40,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:maxLines="1"
         android:text="@string/default_textview"
         android:textAllCaps="true"
         android:textColor="@color/theme_light_1"
         android:textSize="@dimen/home_text_size" />
+
+    <ImageView
+        android:id="@+id/disclosureView"
+        android:layout_width="@dimen/printsettings_disclosure_size"
+        android:layout_height="@dimen/printsettings_disclosure_size"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0"
+        android:visibility="gone"
+        android:src="@drawable/img_btn_submenu"
+        android:contentDescription="@string/default_content_description" />
 
 </LinearLayout>

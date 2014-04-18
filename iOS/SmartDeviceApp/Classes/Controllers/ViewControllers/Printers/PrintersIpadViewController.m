@@ -117,12 +117,29 @@
     cell.portLabel.text = [printer.port stringValue];
     cell.defaultSettingsButton.tag = indexPath.row;
 
+    // fix for the unconnected helper still polling when the
+    // cell and the PrinterStatusViews are reused on reload
+    // (the status view is not dealloc'd and it still sets
+    // the status on its previous cell)
+    if ([cell.statusView.statusHelper isPolling])
+    {
+        [cell.statusView.statusHelper stopPrinterStatusPolling];
+        cell.statusView.statusHelper.delegate = nil;
+    }
+    
+    // since cells may be reused, create a new helper for this cell
     cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.statusView.statusHelper.delegate = cell.statusView;
 
-    [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.statusView setStatus:NO];
     [cell.statusView.statusHelper startPrinterStatusPolling];
     return cell;
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -220,6 +237,7 @@
         //set the view of the cell to stop polling for printer status
         PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
         [cell.statusView.statusHelper stopPrinterStatusPolling];
+        cell.statusView.statusHelper.delegate = nil;
         
         cell.indexPath = nil;
         //set view to non default printer cell style

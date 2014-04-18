@@ -8,14 +8,14 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
-import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
@@ -94,6 +94,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // Public Methods
     // ================================================================================
     
+    /**
+     * This method updates the selected state fragment to "Print Job History" (STATE_PRINTJOBS)
+     */
+    public void goToJobsFragment(){
+        setCurrentState(STATE_PRINTJOBS);
+    }
     // ================================================================================
     // Private Methods
     // ================================================================================
@@ -133,7 +139,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private void switchToFragment(int state, boolean animate) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-
+        
         Fragment container = fm.findFragmentById(R.id.mainLayout);
         if (container != null) {
             if (container.getRetainInstance()) {

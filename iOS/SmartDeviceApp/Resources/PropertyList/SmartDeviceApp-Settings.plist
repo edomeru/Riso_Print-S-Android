@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Use_SNMPCommonLib</key>
-	<false/>
+	<true/>
 	<key>Use_SNMPUnicastTimeout</key>
 	<false/>
 	<key>Printer_MaxCount</key>

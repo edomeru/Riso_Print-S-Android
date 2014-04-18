@@ -35,4 +35,13 @@
 @property (assign, nonatomic) BOOL enLPR;
 @property (assign, nonatomic) BOOL enRAW;
 
+@property (assign, nonatomic) BOOL capBooklet;
+@property (assign, nonatomic) BOOL capStapler;
+@property (assign, nonatomic) BOOL capFin24Holes;
+@property (assign, nonatomic) BOOL capFin23Holes;
+@property (assign, nonatomic) BOOL capTrayFaceDown;
+@property (assign, nonatomic) BOOL capTrayAutoStack;
+@property (assign, nonatomic) BOOL capTrayTop;
+@property (assign, nonatomic) BOOL capTrayStack;
+
 @end

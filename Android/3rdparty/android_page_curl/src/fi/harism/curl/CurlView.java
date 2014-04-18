@@ -87,7 +87,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	// One page is the default.
 	private int mViewMode = SHOW_ONE_PAGE;
 
-    public static final int BIND_LEFT = 0;
+	public static final int BIND_LEFT = 0;
 	public static final int BIND_RIGHT = 1;
 	public static final int BIND_TOP = 2;
 
@@ -309,6 +309,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			mPointerPos.mPressure = 0.8f;
 		}
 
+		boolean cancelAction = false;
+
 		switch (me.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
 
@@ -439,6 +441,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			break;
 		}
 		case MotionEvent.ACTION_CANCEL:
+			cancelAction = true;
 		case MotionEvent.ACTION_UP: {
 			if (mCurlState == CURL_LEFT || mCurlState == CURL_RIGHT) {
 				// Animation source is the point from where animation starts.
@@ -454,9 +457,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				if (mBindPosition == BIND_LEFT) {
 					// Given the explanation, here we decide whether to simulate
 					// drag to left or right end.
-					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
-							&& mPointerPos.mPos.x > rightRect.left) {
+							&& mPointerPos.mPos.x > rightRect.left)) {
 						// On right side target is always right page's right border.
 						mAnimationTarget.set(mDragStartPos);
 						mAnimationTarget.x = mRenderer
@@ -477,9 +480,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				if (mBindPosition == BIND_RIGHT) {
 					// Given the explanation, here we decide whether to simulate
 					// drag to left or right end.
-					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
-							&& mPointerPos.mPos.x < rightRect.right) {
+							&& mPointerPos.mPos.x < rightRect.right)) {
 						// On left side target is always right page's left border.
 						mAnimationTarget.set(mDragStartPos);
 						mAnimationTarget.x = mRenderer
@@ -498,9 +501,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				}
 
 				if (mBindPosition == BIND_TOP) {
-					if ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
-							&& mPointerPos.mPos.y < rightRect.top) {
+							&& mPointerPos.mPos.y < rightRect.top)) {
 						// On right side target is always right page's right border.
 						mAnimationTarget.set(mDragStartPos);
 						mAnimationTarget.y = mRenderer
@@ -820,6 +823,14 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageCurl.setBindPosition(bindPosition);
 	}
 
+	public void adjustPan(float x, float y) {
+		mRenderer.tryAdjustPan(x / (float) getWidth(), y / (float) getHeight());
+	}
+
+	public void setZoomLevel(float zoomLevel) {
+		mRenderer.setZoomLevel(zoomLevel);
+	}
+
 	public void setDropShadowSize(float dropShadowSize) {
 		mRenderer.setDropShadowSize(dropShadowSize);
 	}
@@ -1008,10 +1019,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					if (mViewMode == SHOW_TWO_PAGES) {
 						mCurlPos.x -= mCurlDir.x * translate / dist;
 					} else {
-                        float pageLeftX = mRenderer
-                                .getPageRect(CurlRenderer.PAGE_RIGHT).left;
-                        radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius),
-                                0f);
+						float pageLeftX = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).left;
+						radius = Math.max(Math.min(mCurlPos.x - pageLeftX, radius),
+								0f);
 					}
 					mCurlPos.y -= mCurlDir.y * translate / dist;
 				} else {
