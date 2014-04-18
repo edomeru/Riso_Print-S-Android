@@ -17,11 +17,11 @@ public class AppConstants {
     // Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
     public static final int APP_BMP_CACHE_PART = 4;
     
-    public static final String PREF_KEY_CARD_ID = "pref_key_card_id";
-    public static final String PREF_DEFAULT_CARD_ID = "";
+    public static final String PREF_KEY_LOGIN_ID = "pref_key_card_id";
+    public static final String PREF_DEFAULT_LOGIN_ID = "";
     
-    public static final String PREF_KEY_READ_COMM_NAME = "pref_key_read_comm_name";
-    public static final String PREF_DEFAULT_READ_COMM_NAME = "public";
+    public static final String PREF_KEY_PIN_CODE = "pref_key_pin_code";
+    public static final String PREF_DEFAULT_PIN_CODE = "";
     
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     public static final int CONST_TIMEOUT_PING = 100;

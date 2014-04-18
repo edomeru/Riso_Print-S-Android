@@ -8,6 +8,8 @@
 
 package jp.co.riso.smartdeviceapp;
 
+import java.util.HashMap;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,12 +45,18 @@ public class SmartDeviceApp extends Application {
     private void initializeSharedPrefs() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
-        if (!prefs.contains(AppConstants.PREF_KEY_CARD_ID)) {
-            editor.putString(AppConstants.PREF_KEY_CARD_ID, AppConstants.PREF_DEFAULT_CARD_ID);
+        
+        HashMap<String, String> hashMap = new HashMap<String, String>();
+        hashMap.put(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+        hashMap.put(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE);
+        
+        for (String key : hashMap.keySet()) {
+            String val = hashMap.get(key);
+            if (!prefs.contains(key)) {
+                editor.putString(key, val);
+            }
         }
-        if (!prefs.contains(AppConstants.PREF_KEY_READ_COMM_NAME)) {
-            editor.putString(AppConstants.PREF_KEY_READ_COMM_NAME, AppConstants.PREF_DEFAULT_READ_COMM_NAME);
-        }
+        
         editor.commit();
     }
 }
