@@ -61,7 +61,14 @@
                     android:singleLine="true" >
                 </EditText>
             </LinearLayout>
-            
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_size"
+                android:layout_marginLeft="@dimen/settings_separator_padding"
+                android:background="@color/theme_light_1"
+                android:duplicateParentState="true" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/home_menu_height"
