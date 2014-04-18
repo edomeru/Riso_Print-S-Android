@@ -1,0 +1,74 @@
+//
+//  PreviewView.h
+//  SmartDeviceApp
+//
+//  Created by Seph on 4/3/14.
+//  Copyright (c) 2014 aLink. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol PreviewViewDelegate;
+
+@interface PreviewView : UIView<UIGestureRecognizerDelegate>
+
+/**
+ Orientation Modes
+ */
+typedef enum
+{
+    /**
+     Portrait
+     */
+    kPreviewViewOrientationPortrait,
+    
+    /**
+     Landscape
+     */
+    kPreviewViewOrientationLandscape
+} kPreviewViewOrientation;
+
+/**
+ Container of the preview page
+ */
+@property (nonatomic, strong, readonly) UIView *contentView;
+
+/**
+ Orientation mode
+ */
+@property (nonatomic, readonly) kPreviewViewOrientation orientation;
+
+/**
+ Aspect ratio (W:H)
+ */
+@property (nonatomic, readonly) CGFloat aspectRatio;
+
+/**
+ Maximum allowed scale value
+ */
+@property (nonatomic) CGFloat maxScale;
+
+/**
+ Minimum allowed scale value
+ */
+@property (nonatomic) CGFloat minScale;
+
+/**
+ Delegate
+ */
+@property (nonatomic, weak) id<PreviewViewDelegate> delegate;
+
+/**
+ Setup preview with desired orientation mode and aspect ratio
+ */
+- (void)setPreviewWithOrientation:(kPreviewViewOrientation)orientation aspectRatio:(CGFloat)ratio;
+@end
+
+@protocol PreviewViewDelegate <NSObject>
+
+@optional
+/**
+ Notifies the delegate that the zoom level has changed
+ */
+- (void)previewView:(PreviewView *) previewView didChangeZoomMode:(BOOL)zoomed;
+@end

@@ -7,10 +7,21 @@
 //
 
 #import "PrintSettingsViewController.h"
+#import "PrintSettingsTableViewController.h"
+#import "PDFFileManager.h"
+#import "PrinterManager.h"
+#import "PrintDocument.h"
+#import "Printer.h"
+#import "PreviewSetting.h"
+#import "PrintSettingsHelper.h"
+#import "UIView+Localization.h"
+
+#define SEGUE_TO_PRINTSETTINGS_TABLE @"PrintSettings-PrintSettingsTable"
 
 @interface PrintSettingsViewController ()
 
 - (void)initialize;
+@property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
 @end
 
@@ -53,6 +64,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    if(self.printerIndex != nil)
+    {
+       self.printSettingsScreenTitle.localizationId = @"IDS_LBL_DEFAULT_PRINT_SETTINGS";
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,4 +77,29 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS_TABLE] == YES)
+    {
+        Printer *printer = nil;
+        PreviewSetting *previewSetting = nil;
+        UIViewController *destController = [segue.destinationViewController topViewController];
+        if(self.printerIndex == nil)
+        {
+            ((PrintSettingsTableViewController *)destController).previewSetting = [[[PDFFileManager sharedManager] printDocument] previewSetting];
+            ((PrintSettingsTableViewController *)destController).printer = [[[PDFFileManager sharedManager] printDocument] printer];
+            ((PrintSettingsTableViewController *)destController).isDefaultSettingsMode = NO;
+        }
+        else
+        {
+            PrinterManager *printerManager =  [PrinterManager sharedPrinterManager];
+            printer = [printerManager getPrinterAtIndex:[self.printerIndex unsignedIntegerValue]];
+            ((PrintSettingsTableViewController *)destController).printer = printer;
+            previewSetting = [[PreviewSetting alloc] init];
+            [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting: &previewSetting];
+            ((PrintSettingsTableViewController *)destController).previewSetting = previewSetting;
+            ((PrintSettingsTableViewController *)destController).isDefaultSettingsMode = YES;
+        }
+    }
+}
 @end

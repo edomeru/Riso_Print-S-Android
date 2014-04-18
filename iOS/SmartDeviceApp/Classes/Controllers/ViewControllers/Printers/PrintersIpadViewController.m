@@ -13,9 +13,11 @@
 #import "PrinterManager.h"
 #import "PrinterStatusView.h"
 #import "AlertHelper.h"
+#import "PrintSettingsViewController.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
+#define SEGUE_TO_PRINTSETTINGS @"PrintersIpad-PrintSettings"
 
 @interface PrintersIpadViewController ()
 
@@ -26,6 +28,7 @@
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
+@property (nonatomic, strong) NSNumber *selectedPrinterIndex;
 
 #pragma mark - Instance Methods
 
@@ -112,6 +115,7 @@
     cell.nameLabel.text = printer.name;
     cell.ipAddressLabel.text = printer.ip_address;
     cell.portLabel.text = [printer.port stringValue];
+    cell.defaultSettingsButton.tag = indexPath.row;
 
     cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.statusView.statusHelper.delegate = cell.statusView;
@@ -234,6 +238,13 @@
     }
 }
 
+- (IBAction)defaultSettingsButtonAction:(id)sender
+{
+    UIButton* button = (UIButton *) sender;
+    self.selectedPrinterIndex = [NSNumber numberWithInteger:button.tag];
+    [self performSegueTo:[PrintSettingsViewController class]];
+}
+
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue*)segue sender:(id)sender
@@ -248,7 +259,11 @@
         PrinterSearchViewController* searchScreen = (PrinterSearchViewController*)segue.destinationViewController;
         searchScreen.printersViewController = self;
     }
-    
+    else if ([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])
+    {
+        PrintSettingsViewController* settingsScreen = (PrintSettingsViewController*)segue.destinationViewController;
+        settingsScreen.printerIndex = self.selectedPrinterIndex;
+    }
 }
 
 #pragma mark - Reload

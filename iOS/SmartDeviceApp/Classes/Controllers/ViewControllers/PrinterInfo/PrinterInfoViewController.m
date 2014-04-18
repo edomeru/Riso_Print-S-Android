@@ -10,6 +10,7 @@
 #import "Printer.h"
 #import "PrinterManager.h"
 #import "UIViewController+Segue.h"
+#import "PrintSettingsViewController.h"
 
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
@@ -17,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *port;
 @property (weak, nonatomic) IBOutlet UILabel *printerStatus;
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *defaultPrinterAction;
 
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) PrinterManager *printerManager;
@@ -121,6 +123,10 @@
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
+- (IBAction)printSettingsAction:(id)sender
+{
+    [self.delegate segueToPrintSettings];
+}
 
 #pragma mark - PrinterStatusHelper method
 - (void) statusDidChange: (BOOL) isOnline

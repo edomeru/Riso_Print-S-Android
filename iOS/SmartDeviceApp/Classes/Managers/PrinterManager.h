@@ -128,6 +128,20 @@
  */
 - (BOOL)isDefaultPrinter:(Printer*)printer;
 
+/**
+ Returns the printer object of the default printer
+ 
+ @return Printer object
+ */
+-(Printer*) getDefaultPrinter;
+
+/**
+ Call to save the changes done to printer objects to database.
+ 
+ @return YES if successful; NO otherwise
+ */
+-(BOOL) savePrinterChanges;
+
 #pragma mark - Printers in Network (SNMP)
 
 /**
@@ -176,5 +190,4 @@
  @return YES if the specified printer IP is a duplicate, NO otherwise.
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
-
 @end

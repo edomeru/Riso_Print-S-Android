@@ -23,6 +23,4 @@
 @property (nonatomic, weak) UIViewController *mainController;
 @property (nonatomic, weak) SlidingViewController *sideController;
 
-
-- (void) loadPDFView;
 @end

@@ -10,6 +10,7 @@
 #import "PrintersViewController.h"
 #import "PrinterCollectionViewCell.h"
 
+
 @interface PrintersIpadViewController : PrintersViewController<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PrinterCollectionViewCellDelegate>
 
 @end

@@ -31,7 +31,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    
+    // Show Print Preview Screen
     [self performSegueTo:[PrintPreviewViewController class]];
 }
 
@@ -63,20 +64,6 @@
     }
     
     return nil;
-}
-
-- (void) loadPDFView
-{
-    if (self.childViewControllers.count == 0)
-    {
-        return; //pdf set-up finished first before view was loaded
-    }
-    
-    UIViewController *currentController = [self.childViewControllers objectAtIndex:0];
-    if([currentController isKindOfClass:[PrintPreviewViewController class]])
-    {
-        [(PrintPreviewViewController *)currentController loadPrintPreview];
-    }
 }
 
 @end

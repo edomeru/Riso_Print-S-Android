@@ -16,7 +16,7 @@
 #import "SNMPManager.h"
 #import "PListHelper.h"
 #import "NotificationNames.h"
-#import "PrintSettingNames.h"
+#import "PrintSettingsHelper.h"
 
 static PrinterManager* sharedPrinterManager = nil;
 
@@ -46,7 +46,7 @@ static PrinterManager* sharedPrinterManager = nil;
  If this object exists, this PrinterManager will keep a
  reference to this DefaultPrinter object.
  */
-- (void)getDefaultPrinter;
+- (void)retrieveDefaultPrinter;
 
 @end
 
@@ -71,7 +71,7 @@ static PrinterManager* sharedPrinterManager = nil;
 #if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting default printer from DB");
 #endif
-        [self getDefaultPrinter];
+        [self retrieveDefaultPrinter];
     }
     return self;
 }
@@ -94,7 +94,7 @@ static PrinterManager* sharedPrinterManager = nil;
     PrintSetting* defaultPrintSettings = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
     if (defaultPrintSettings == nil)
         return NO;
-    [self copyDefaultPrintSettings:&defaultPrintSettings];
+    [PrintSettingsHelper copyDefaultPrintSettings:&defaultPrintSettings];
     
     // create a Printer object
     Printer* newPrinter = (Printer*)[DatabaseManager addObject:E_PRINTER];
@@ -167,7 +167,7 @@ static PrinterManager* sharedPrinterManager = nil;
     self.countSavedPrinters = [self.listSavedPrinters count];
 }
 
-- (void)getDefaultPrinter
+- (void)retrieveDefaultPrinter
 {
     NSArray* results = [DatabaseManager getObjects:E_DEFAULTPRINTER];
     if ((results != nil) && [results count] > 0)
@@ -268,6 +268,16 @@ static PrinterManager* sharedPrinterManager = nil;
         return YES;
     else
         return NO;
+}
+
+-(Printer*) getDefaultPrinter
+{
+    return self.defaultPrinter.printer;
+}
+
+-(BOOL) savePrinterChanges
+{
+    return [DatabaseManager saveChanges];
 }
 
 #pragma mark - Printers in Network (SNMP)
@@ -376,27 +386,6 @@ static PrinterManager* sharedPrinterManager = nil;
 }
 
 #pragma mark - Printer Utilities
-
-- (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
-{
-    NSDictionary* defaultPrintSettings = [PListHelper readDefaultPrintSettings];
-    (*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
-    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
-    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];
-    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:PS_CATCH_TRAY];
-    (*printSetting).color_mode = [defaultPrintSettings objectForKey:PS_COLOR_MODE];
-    (*printSetting).copies = [defaultPrintSettings objectForKey:PS_COPIES];
-    (*printSetting).duplex = [defaultPrintSettings objectForKey:PS_DUPLEX];
-    (*printSetting).image_quality = [defaultPrintSettings objectForKey:PS_IMAGE_QUALITY];
-    (*printSetting).pagination = [defaultPrintSettings objectForKey:PS_PAGINATION];
-    (*printSetting).paper_size = [defaultPrintSettings objectForKey:PS_PAPER_SIZE];
-    (*printSetting).paper_type = [defaultPrintSettings objectForKey:PS_PAPER_TYPE];
-    (*printSetting).punch = [defaultPrintSettings objectForKey:PS_PUNCH];
-    (*printSetting).sort = [defaultPrintSettings objectForKey:PS_SORT];
-    (*printSetting).staple = [defaultPrintSettings objectForKey:PS_STAPLE];
-    (*printSetting).zoom = [defaultPrintSettings objectForKey:PS_ZOOM];
-    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];
-}
 
 - (BOOL)isAtMaximumPrinters
 {

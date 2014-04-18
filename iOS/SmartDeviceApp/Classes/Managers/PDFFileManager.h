@@ -8,35 +8,75 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ PDF Error types
+ */
 typedef enum
 {
-    PDF_ERROR_NONE,
-    PDF_ERROR_ENCRYPTED,
-    PDF_ERROR_OPEN,
-    PDF_ERROR_LOCKED,
-    PDF_ERROR_PRINTING_NOT_ALLOWED,
-    PDF_ERROR_PROCESSING_FAILED
-} T_PDF_ERROR;
+    /**
+     No error
+     */
+    kPDFErrorNone,
+    
+    /**
+     PDF File cannot be opened
+     */
+    kPDFErrorOpen,
+    
+    /**
+     PDF File is locked/has open password
+     */
+    kPDFErrorLocked,
+    
+    /**
+     PDF File does not allow printing
+     */
+    kPDFErrorPrintingNotAllowed,
+    
+    /**
+     PDF File was not copied succesfully
+     */
+    kPDFErrorProcessingFailed
+} kPDFError;
+
+@class PrintDocument;
 
 @interface PDFFileManager : NSObject
-@property (strong, nonatomic) NSURL *pdfURL;
-@property (nonatomic, assign) CGPDFDocumentRef pdfDocument;
-@property (nonatomic, assign) BOOL pdfFileAvailable;
+
+/**
+ Indicates whether or not a file is available for loading (Open In...)
+ */
+@property (nonatomic) BOOL fileAvailableForLoad;
+
+/**
+ Indicates whether or not a file ready for preview
+ */
+@property (nonatomic, readonly) BOOL fileAvailableForPreview;
+
+/**
+ URL of the PDF File
+ */
+@property (nonatomic, strong) NSURL *fileURL;
+
+/**
+ File name (without full path) of the PDF File
+ */
+@property (nonatomic, weak, readonly) NSString *fileName;
+
+/**
+ Print Document object
+ */
+@property (nonatomic, strong, readonly) PrintDocument *printDocument;
+
 /**
  Returns the single instance of the PDFFileManager
  @return shared PDFFileManager instance
  **/
 + (id)sharedManager;
-/**
- Set up the PDF for preview
- @return T_PDF_ERROR
- **/
-- (T_PDF_ERROR) setUpPDF:(NSURL *)fileURL;
-/**
- Clean up PDF for preview
- @return PDF_ERROR_NONE if no error. Error ID if there is Error
- **/
-- (void) cleanUp;
 
+/**
+ Prepares the document for preview
+ */
+- (kPDFError)setupDocument;
 
 @end
