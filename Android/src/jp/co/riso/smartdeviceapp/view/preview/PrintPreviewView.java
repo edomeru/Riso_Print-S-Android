@@ -70,21 +70,21 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private static final int SMALL_BMP_SIZE = 64;
     private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.RGB_565;
     
-    private CurlView mCurlView;
+    private CurlView mCurlView = null;
     private PDFFileManager mPdfManager = null;
     private PDFPageProvider mPdfPageProvider = new PDFPageProvider();
-    private PrintSettings mPrintSettings;
+    private PrintSettings mPrintSettings = null;
     private LruCache<String, Bitmap> mBmpCache = null;
     
-    private Bitmap mStapleBmp;
-    private Bitmap mPunchBmp;
+    private Bitmap mStapleBmp = null;
+    private Bitmap mPunchBmp = null;
     
     private float mMarginLeft = 0;
     private float mMarginRight = 0;
     private float mMarginTop = 0;
     private float mMarginBottom = 0;
     
-    private PreviewControlsListener mListener;
+    private PreviewControlsListener mListener = null;
     
     // Zoom/pan related variables
     
@@ -106,7 +106,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     public PrintPreviewView(Context context) {
         super(context);
-
         init();
     }
     

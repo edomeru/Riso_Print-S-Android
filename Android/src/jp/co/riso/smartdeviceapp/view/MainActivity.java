@@ -34,11 +34,11 @@ public class MainActivity extends BaseActivity {
     public static final String KEY_RIGHT_OPEN = "right_drawer_open";
     public static final String KEY_RESIZE_VIEW = "resize_view";
     
-    private SDADrawerLayout mDrawerLayout;
-    private ViewGroup mMainLayout;
-    private ViewGroup mLeftLayout;
-    private ViewGroup mRightLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private SDADrawerLayout mDrawerLayout = null;
+    private ViewGroup mMainLayout = null;
+    private ViewGroup mLeftLayout = null;
+    private ViewGroup mRightLayout = null;
+    private ActionBarDrawerToggle mDrawerToggle = null;
     private boolean mResizeView = false;
     
     @Override
