@@ -208,6 +208,9 @@ public class MainActivity extends BaseActivity {
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
+            if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
+                getFragmentManager().findFragmentById(R.id.rightLayout).onPause();
+            }
             getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
         }
         
@@ -218,6 +221,9 @@ public class MainActivity extends BaseActivity {
             super.onDrawerOpened(drawerView);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
+            if (mDrawerLayout.findViewById(R.id.rightLayout) == drawerView) {
+                getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
+            }
             getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
         }
     }

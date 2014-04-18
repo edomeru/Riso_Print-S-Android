@@ -17,6 +17,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -36,7 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
+public class PrintersFragment extends BaseFragment implements PrintersCallback, UpdateStatusCallback, Callback {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
@@ -90,6 +91,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mListView = (ListView) view.findViewById(R.id.printer_list);
         }
         mPrinterManager.setPrintersCallback(this);
+        mPrinterManager.setUpdateStatusCallback(this);
         mHandler.sendMessage(newMessage);
         mHandler.sendEmptyMessageDelayed(MSG_INITIALIZE_ONLINE_STATUS, 10);
     }
@@ -231,14 +233,20 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mHandler.sendMessage(newMessage);
     }
     
+    // ================================================================================
+    // INTERFACE - UpdateStatusCallback
+    // ================================================================================
+    
     @Override
     public void updateOnlineStatus() {
         for (int i = 0; i < mPrinter.size(); i++) {
+            View targetView = null;
             if (isTablet()) {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mPrinterTabletView.getChildAt(i));
+                targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
             } else {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), mListView.getChildAt(i));
+                targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
             }
+            mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
         }
     }
     

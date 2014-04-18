@@ -25,6 +25,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -32,7 +34,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
+public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
@@ -70,6 +72,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
         mStatus = (TextView) view.findViewById(R.id.inputStatus);
         mPort = (Spinner) view.findViewById(R.id.inputPort);
+        mPort.setOnItemSelectedListener(this);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
         portAdapter.add(getString(R.string.ids_lbl_port_raw));
@@ -106,6 +109,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
         }        
+        mPort.setSelection(mPrinter.getPortSetting());
     }
     
     @Override
@@ -218,5 +222,19 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         } else {
             mPrinterManager.clearDefaultPrinter();
         }
+    }
+    
+    // ================================================================================
+    // INTERFACE - onCheckedChanged
+    // ================================================================================
+    
+    @Override
+    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        mPrinter.setPortSetting(position);
+    }
+    
+    @Override
+    public void onNothingSelected(AdapterView<?> parentView) {
+        // Do nothing
     }
 }

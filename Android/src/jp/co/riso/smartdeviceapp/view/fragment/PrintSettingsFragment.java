@@ -119,6 +119,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPauseableHandler.resume();
     }
     
+    @Override
+    public void onDestroyView() {
+        PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();        
+        super.onDestroyView();        
+    }
+    
     // ================================================================================
     // Public functions
     // ================================================================================
