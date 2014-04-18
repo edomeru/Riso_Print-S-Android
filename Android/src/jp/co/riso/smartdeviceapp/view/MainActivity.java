@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity {
             
             ft.commit();
         } else {
-            mResizeView = savedInstanceState.getBoolean(KEY_RIGHT_OPEN, false);
+            mResizeView = savedInstanceState.getBoolean(KEY_RESIZE_VIEW, false);
             float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
             if (mResizeView && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
                 mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
