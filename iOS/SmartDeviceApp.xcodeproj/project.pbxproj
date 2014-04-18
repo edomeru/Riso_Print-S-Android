@@ -149,6 +149,14 @@
 		2D1F23B41900FF5800301D1E /* LFGlassView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A51900FF5800301D1E /* LFGlassView.m */; };
 		2D1F23B71900FF6E00301D1E /* DirectPrintManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23B61900FF6E00301D1E /* DirectPrintManager.m */; };
 		2D1F23B81900FF6E00301D1E /* DirectPrintManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23B61900FF6E00301D1E /* DirectPrintManager.m */; };
+		2D1F23BC1901049400301D1E /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23BB1901049400301D1E /* HelpViewController.m */; };
+		2D1F23BD1901049400301D1E /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23BB1901049400301D1E /* HelpViewController.m */; };
+		2D1F23C11901049C00301D1E /* LegalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23C01901049C00301D1E /* LegalViewController.m */; };
+		2D1F23C21901049C00301D1E /* LegalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23C01901049C00301D1E /* LegalViewController.m */; };
+		2D1F23CA190104D900301D1E /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F23C4190104D900301D1E /* help.html */; };
+		2D1F23CB190104D900301D1E /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F23C4190104D900301D1E /* help.html */; };
+		2D1F23CC190104D900301D1E /* legal.html in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F23C6190104D900301D1E /* legal.html */; };
+		2D1F23CD190104D900301D1E /* legal.html in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F23C6190104D900301D1E /* legal.html */; };
 		2D232D7218E511D4008D06C8 /* PrintSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D7118E511D4008D06C8 /* PrintSettingsTableViewController.m */; };
 		2D232D7518E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D7418E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m */; };
 		2D232D7818E517E3008D06C8 /* PrintSettingsPrinterItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D7718E517E3008D06C8 /* PrintSettingsPrinterItemCell.m */; };
@@ -323,6 +331,14 @@
 		2D1F23A61900FF5800301D1E /* LiveFrost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveFrost.h; sourceTree = "<group>"; };
 		2D1F23B51900FF6E00301D1E /* DirectPrintManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectPrintManager.h; sourceTree = "<group>"; };
 		2D1F23B61900FF6E00301D1E /* DirectPrintManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManager.m; sourceTree = "<group>"; };
+		2D1F23BA1901049400301D1E /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
+		2D1F23BB1901049400301D1E /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
+		2D1F23BF1901049C00301D1E /* LegalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegalViewController.h; sourceTree = "<group>"; };
+		2D1F23C01901049C00301D1E /* LegalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegalViewController.m; sourceTree = "<group>"; };
+		2D1F23C5190104D900301D1E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/help.html; sourceTree = "<group>"; };
+		2D1F23C7190104D900301D1E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/legal.html; sourceTree = "<group>"; };
+		2D1F23C8190104D900301D1E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/help.html; sourceTree = "<group>"; };
+		2D1F23C9190104D900301D1E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/legal.html; sourceTree = "<group>"; };
 		2D232D7018E511D4008D06C8 /* PrintSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsTableViewController.h; sourceTree = "<group>"; };
 		2D232D7118E511D4008D06C8 /* PrintSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsTableViewController.m; sourceTree = "<group>"; };
 		2D232D7318E51247008D06C8 /* PrintSettingsPrinterHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterHeaderCell.h; sourceTree = "<group>"; };
@@ -684,6 +700,7 @@
 			children = (
 				2D6C913718F535BD002A7F48 /* Test */,
 				2828312F18C70699008B127C /* Database */,
+				2D1F23C3190104D900301D1E /* HTML */,
 				2D0AEC47185FDE8100810455 /* Images */,
 				2D0AEC49185FDE8100810455 /* Locales */,
 				2828313218C70699008B127C /* PropertyList */,
@@ -819,6 +836,33 @@
 				2D1F23A61900FF5800301D1E /* LiveFrost.h */,
 			);
 			path = CXAlertView;
+			sourceTree = "<group>";
+		};
+		2D1F23B91901049400301D1E /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				2D1F23BA1901049400301D1E /* HelpViewController.h */,
+				2D1F23BB1901049400301D1E /* HelpViewController.m */,
+			);
+			path = Help;
+			sourceTree = "<group>";
+		};
+		2D1F23BE1901049C00301D1E /* Legal */ = {
+			isa = PBXGroup;
+			children = (
+				2D1F23BF1901049C00301D1E /* LegalViewController.h */,
+				2D1F23C01901049C00301D1E /* LegalViewController.m */,
+			);
+			path = Legal;
+			sourceTree = "<group>";
+		};
+		2D1F23C3190104D900301D1E /* HTML */ = {
+			isa = PBXGroup;
+			children = (
+				2D1F23C4190104D900301D1E /* help.html */,
+				2D1F23C6190104D900301D1E /* legal.html */,
+			);
+			path = HTML;
 			sourceTree = "<group>";
 		};
 		2D6C911D18F4FB55002A7F48 /* CommonLibrary */ = {
@@ -999,7 +1043,9 @@
 			children = (
 				2DA1AEF418E2EF9600085F27 /* AddPrinter */,
 				2DA1AEF718E2EF9600085F27 /* General */,
+				2D1F23B91901049400301D1E /* Help */,
 				2DA1AEFE18E2EF9600085F27 /* Home */,
+				2D1F23BE1901049C00301D1E /* Legal */,
 				2DA1AF0118E2EF9600085F27 /* PrinterInfo */,
 				2DA1AF0418E2EF9600085F27 /* Printers */,
 				2DA1AF0B18E2EF9600085F27 /* PrinterSearch */,
@@ -1282,8 +1328,10 @@
 				2D6C913918F535DA002A7F48 /* TestPage.pdf in Resources */,
 				2D1F23301900F86A00301D1E /* printsettings.xml in Resources */,
 				2D1F232C1900D69A00301D1E /* Main.storyboard in Resources */,
+				2D1F23CA190104D900301D1E /* help.html in Resources */,
 				2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */,
 				2D0AEC4F185FDE8100810455 /* Images.xcassets in Resources */,
+				2D1F23CC190104D900301D1E /* legal.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1292,6 +1340,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
+				2D1F23CB190104D900301D1E /* help.html in Resources */,
+				2D1F23CD190104D900301D1E /* legal.html in Resources */,
 				2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1351,6 +1401,7 @@
 				28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */,
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
 				2DA1AF2418E2EF9600085F27 /* PrinterSearchViewController.m in Sources */,
+				2D1F23C11901049C00301D1E /* LegalViewController.m in Sources */,
 				2D232D8D18E56C5D008D06C8 /* PrintSettingsOptionsItemCell.m in Sources */,
 				2DA1AEE118E2EF8500085F27 /* MenuButton.m in Sources */,
 				2DA1AF2718E2EF9600085F27 /* PrintSettingsViewController.m in Sources */,
@@ -1363,6 +1414,7 @@
 				28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */,
 				2DA1AF3418E2EF9C00085F27 /* NetworkManager.m in Sources */,
 				2D1F23AD1900FF5800301D1E /* CXAlertView.m in Sources */,
+				2D1F23BC1901049400301D1E /* HelpViewController.m in Sources */,
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
 				2D157BFB18ED5B580034F953 /* XMLParser.m in Sources */,
 				2D1F23271900D58800301D1E /* SettingsValidationHelper.m in Sources */,
@@ -1417,6 +1469,7 @@
 				2D1F238A1900FC2000301D1E /* PrintJob+Log.m in Sources */,
 				2D1F23711900FBEB00301D1E /* PreviewView.m in Sources */,
 				2D1F23871900FC1B00301D1E /* PrintJobHistoryGroup.m in Sources */,
+				2D1F23BD1901049400301D1E /* HelpViewController.m in Sources */,
 				2D1F234C1900FB1100301D1E /* RenderCache.m in Sources */,
 				2D1F234E1900FB1700301D1E /* UIColor+Theme.m in Sources */,
 				2D1F233C1900FAD000301D1E /* PListHelperTest.m in Sources */,
@@ -1475,6 +1528,7 @@
 				2D1F237E1900FC0D00301D1E /* PrintSettingsOptionsItemCell.m in Sources */,
 				2D1F23791900FC0D00301D1E /* PrintSettingsHeaderCell.m in Sources */,
 				2D1F23691900FBDA00301D1E /* PrintSettingsOptionTableViewController.m in Sources */,
+				2D1F23C21901049C00301D1E /* LegalViewController.m in Sources */,
 				2D1F23B21900FF5800301D1E /* LFDisplayBridge.m in Sources */,
 				2D1F234F1900FB1D00301D1E /* SettingsValidationHelper.m in Sources */,
 				2D1F23501900FB2200301D1E /* PrintSettingsHelper.m in Sources */,
@@ -1525,6 +1579,24 @@
 				2D0AEC87185FE50000810455 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2D1F23C4190104D900301D1E /* help.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D1F23C5190104D900301D1E /* en */,
+				2D1F23C8190104D900301D1E /* ja */,
+			);
+			name = help.html;
+			sourceTree = "<group>";
+		};
+		2D1F23C6190104D900301D1E /* legal.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2D1F23C7190104D900301D1E /* en */,
+				2D1F23C9190104D900301D1E /* ja */,
+			);
+			name = legal.html;
 			sourceTree = "<group>";
 		};
 		2D5FC7B518DA79EB00459B92 /* Localizable.strings */ = {

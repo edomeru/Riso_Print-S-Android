@@ -347,12 +347,10 @@
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="sGm-hI-lJr"/>
                         <segue destination="jTA-Cg-WoR" kind="custom" identifier="Home-PrintersIphone" customClass="ReplaceSegue" id="tJh-Ye-iSk"/>
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="rDR-Jk-2JO"/>
-                        <segue destination="aXK-h5-CS8" kind="custom" identifier="Home-Settings" customClass="ReplaceSegue" id="J5g-cb-rxc"/>
-                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToSettings" unwindAction="unwindToSettings:" id="xMM-Z1-jwK"/>
-                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="Home-PrintJobHistory" customClass="ReplaceSegue" id="5Tt-yI-Lo5"/>
-                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintJobHistory" unwindAction="unwindToPrintJobHistory:" id="1w4-Kz-5Ny"/>
-                        <segue destination="k93-fC-OMI" kind="custom" identifier="Home-PrintJobHistory" customClass="ReplaceSegue" id="vgT-y7-WM8"/>
-                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintJobHistory" unwindAction="unwindToPrintJobHistory:" id="FBf-cs-FLH"/>
+                        <segue destination="q52-no-4j2" kind="custom" identifier="Home-Help" customClass="ReplaceSegue" id="H0h-lG-4no"/>
+                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToHelp" unwindAction="unwindToHelp:" id="JC1-fU-iYo"/>
+                        <segue destination="CcX-hU-zgH" kind="custom" identifier="Home-Legal" customClass="ReplaceSegue" id="dLV-ea-A15"/>
+                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToLegal" unwindAction="unwindToLegal:" id="ku2-2L-0b3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QfQ-io-bCa" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1188,6 +1186,177 @@
                 <exit id="flo-EE-x3p" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1215" y="2188"/>
+        </scene>
+        <!--Help View Controller-->
+        <scene sceneID="PdT-lF-sgl">
+            <objects>
+                <viewController id="q52-no-4j2" customClass="HelpViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Gn1-L5-1jQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="hbg-Ha-3vk"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6f1-MJ-epR" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Oxb-gf-Ajo" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FUI-6T-A5e">
+                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="tDX-3h-8Y6"/>
+                                            <constraint firstAttribute="width" constant="32" id="xy7-JX-A5h"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="img_btn_main_menu_normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" image="img_btn_main_menu_pressed"/>
+                                        <connections>
+                                            <action selector="mainMenuAction:" destination="q52-no-4j2" eventType="touchUpInside" id="Vlp-jM-duf"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Help" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L80-Qa-EtJ">
+                                        <rect key="frame" x="48" y="14" width="264" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_HELP"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.52156862745098043" green="0.25490196078431371" blue="0.84705882352941175" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="L80-Qa-EtJ" firstAttribute="leading" secondItem="FUI-6T-A5e" secondAttribute="trailing" constant="8" id="1wH-1b-raT"/>
+                                    <constraint firstAttribute="trailing" secondItem="L80-Qa-EtJ" secondAttribute="trailing" constant="8" id="Any-Pu-aRW"/>
+                                    <constraint firstItem="FUI-6T-A5e" firstAttribute="leading" secondItem="Oxb-gf-Ajo" secondAttribute="leading" constant="8" id="GTO-qE-Jtx"/>
+                                    <constraint firstAttribute="height" constant="48" id="Kte-Dx-0xW"/>
+                                    <constraint firstAttribute="centerY" secondItem="L80-Qa-EtJ" secondAttribute="centerY" id="pD1-1B-Vfc"/>
+                                    <constraint firstAttribute="centerY" secondItem="FUI-6T-A5e" secondAttribute="centerY" id="v8f-Ke-jzh"/>
+                                </constraints>
+                            </view>
+                            <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9XV-Rp-02s">
+                                <rect key="frame" x="0.0" y="48" width="320" height="500"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="9XV-Rp-02s" firstAttribute="leading" secondItem="6f1-MJ-epR" secondAttribute="leading" id="FQD-Wc-Yte"/>
+                            <constraint firstAttribute="bottom" secondItem="9XV-Rp-02s" secondAttribute="bottom" id="Hn2-ny-igh"/>
+                            <constraint firstAttribute="trailing" secondItem="9XV-Rp-02s" secondAttribute="trailing" id="PLe-dW-cQa"/>
+                            <constraint firstAttribute="trailing" secondItem="Oxb-gf-Ajo" secondAttribute="trailing" id="Q7G-vP-6h4"/>
+                            <constraint firstItem="Oxb-gf-Ajo" firstAttribute="top" secondItem="Gn1-L5-1jQ" secondAttribute="bottom" id="YPO-zU-YRQ"/>
+                            <constraint firstItem="9XV-Rp-02s" firstAttribute="top" secondItem="Oxb-gf-Ajo" secondAttribute="bottom" id="p04-RC-JAV"/>
+                            <constraint firstItem="Oxb-gf-Ajo" firstAttribute="leading" secondItem="6f1-MJ-epR" secondAttribute="leading" id="ung-fn-w36"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="mainMenuButton" destination="FUI-6T-A5e" id="mph-Gh-c6S"/>
+                        <outlet property="webView" destination="9XV-Rp-02s" id="lxk-nh-PJo"/>
+                        <segue destination="v0J-sN-35H" kind="custom" identifier="Help-Home" customClass="SlideSegue" id="gq1-XZ-ede"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ByH-ue-HgY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="128" y="3143"/>
+        </scene>
+        <!--Legal View Controller-->
+        <scene sceneID="ohX-Ah-x1t">
+            <objects>
+                <viewController id="CcX-hU-zgH" customClass="LegalViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="msJ-ja-NcJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="k3G-pV-CDD"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="UPc-UI-5eb" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rGy-xL-30g" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GNk-12-Xr8">
+                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="bVn-1I-UNi"/>
+                                            <constraint firstAttribute="height" constant="32" id="l5C-Q7-TAC"/>
+                                        </constraints>
+                                        <state key="normal" image="img_btn_main_menu_normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" image="img_btn_main_menu_pressed"/>
+                                        <connections>
+                                            <action selector="mainMenuAction:" destination="CcX-hU-zgH" eventType="touchUpInside" id="b2g-mI-FoZ"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Legal" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZND-J7-bp4">
+                                        <rect key="frame" x="48" y="14" width="264" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_LEGAL"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="GNk-12-Xr8" firstAttribute="leading" secondItem="rGy-xL-30g" secondAttribute="leading" constant="8" id="972-qi-kH8"/>
+                                    <constraint firstAttribute="centerY" secondItem="GNk-12-Xr8" secondAttribute="centerY" id="XG5-ct-x6T"/>
+                                    <constraint firstAttribute="centerY" secondItem="ZND-J7-bp4" secondAttribute="centerY" id="Y7Z-sV-xIn"/>
+                                    <constraint firstItem="ZND-J7-bp4" firstAttribute="leading" secondItem="GNk-12-Xr8" secondAttribute="trailing" constant="8" id="bUW-ee-fTT"/>
+                                    <constraint firstAttribute="trailing" secondItem="ZND-J7-bp4" secondAttribute="trailing" constant="8" id="kx7-pt-d22"/>
+                                    <constraint firstAttribute="height" constant="48" id="ts8-vB-htP"/>
+                                </constraints>
+                            </view>
+                            <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JWb-Bs-Kp2">
+                                <rect key="frame" x="0.0" y="48" width="320" height="500"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
+                                <dataDetectorType key="dataDetectorTypes"/>
+                                <connections>
+                                    <outlet property="delegate" destination="CcX-hU-zgH" id="pu2-9c-7KJ"/>
+                                </connections>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="rGy-xL-30g" firstAttribute="leading" secondItem="UPc-UI-5eb" secondAttribute="leading" id="01e-rZ-Y7g"/>
+                            <constraint firstItem="rGy-xL-30g" firstAttribute="top" secondItem="msJ-ja-NcJ" secondAttribute="bottom" id="NMj-ja-Vwc"/>
+                            <constraint firstAttribute="trailing" secondItem="JWb-Bs-Kp2" secondAttribute="trailing" id="Vjw-Aq-jqk"/>
+                            <constraint firstItem="JWb-Bs-Kp2" firstAttribute="top" secondItem="rGy-xL-30g" secondAttribute="bottom" id="WZe-yJ-g1c"/>
+                            <constraint firstAttribute="bottom" secondItem="JWb-Bs-Kp2" secondAttribute="bottom" id="im8-iH-yu9"/>
+                            <constraint firstAttribute="trailing" secondItem="rGy-xL-30g" secondAttribute="trailing" id="lbY-Jy-pxu"/>
+                            <constraint firstItem="JWb-Bs-Kp2" firstAttribute="leading" secondItem="UPc-UI-5eb" secondAttribute="leading" id="ytz-x9-5uo"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="mainMenuButton" destination="GNk-12-Xr8" id="RIc-My-kl2"/>
+                        <outlet property="webView" destination="JWb-Bs-Kp2" id="XJz-lG-qXC"/>
+                        <segue destination="v0J-sN-35H" kind="custom" identifier="Legal-Home" customClass="SlideSegue" id="6HN-Y0-69S"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jPV-Tq-Qu5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="587" y="3143"/>
         </scene>
         <!--Printer Search View Controller-->
         <scene sceneID="mQk-ox-nKu">
@@ -3834,8 +4003,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="JPo-5o-n9C"/>
-        <segue reference="suq-fU-kcs"/>
+        <segue reference="6HN-Y0-69S"/>
         <segue reference="ax2-Mn-NH0"/>
+        <segue reference="JPo-5o-n9C"/>
     </inferredMetricsTieBreakers>
 </document>
