@@ -64,8 +64,8 @@ public class PrintSettings {
     public static final String TAG_PUNCH = "punch";
     public static final String TAG_OUTPUT_TRAY = "outputTray";
     
-    public static List<Group> sGroupList;
-    public static HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
+    public static final List<Group> sGroupList;
+    public static final HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
     
     private HashMap<String, Integer> mSettingValues;
     
@@ -130,9 +130,6 @@ public class PrintSettings {
         if (printSettingsContent == null) {
             return;
         }
-        
-        sGroupList = new ArrayList<Group>();
-        sSettingMap = new HashMap<String, Setting>();
         
         NodeList groupList = printSettingsContent.getElementsByTagName(XmlNode.NODE_GROUP);
         
@@ -286,6 +283,9 @@ public class PrintSettings {
     }
     
     static {
+        sGroupList = new ArrayList<Group>();
+        sSettingMap = new HashMap<String, Setting>();
+        
         initializeStaticObjects();
     }
 }

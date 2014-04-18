@@ -94,21 +94,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private static final int ID_DISCLOSURE_VIEW = 0x1100000E;
     
-    private boolean mShowPrintControls;
-    private PrintSettings mPrintSettings;
-    private int mPrinterId;
-    private List<Printer> mPrintersList;
+    private boolean mShowPrintControls = false;
+    private PrintSettings mPrintSettings = null;
+    private int mPrinterId = PrinterManager.EMPTY_ID;
+    private List<Printer> mPrintersList = null;
     
-    private ScrollView mMainScrollView;
-    private LinearLayout mMainLayout;
+    private ScrollView mMainScrollView = null;
+    private LinearLayout mMainLayout = null;
     
-    private LinearLayout mSubView;
-    private ScrollView mSubScrollView;
-    private LinearLayout mSubOptionsLayout;
+    private LinearLayout mSubView = null;
+    private ScrollView mSubScrollView = null;
+    private LinearLayout mSubOptionsLayout = null;
     
-    private LinearLayout mPrintControls;
+    private LinearLayout mPrintControls = null;
     
-    private Handler mHandler;
+    private Handler mHandler = null;
     private ArrayList<LinearLayout> mPrintSettingsTitles = null;
     
     private ValueChangedListener mListener = null;
