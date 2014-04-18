@@ -242,14 +242,20 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         for (int i = 0; i < mPrinter.size(); i++) {
             View targetView = null;
             if (isTablet()) {
-                targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
+                if (mPrinterTabletView != null && mPrinterTabletView.getChildAt(i) != null) {
+                    targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
             } else {
-                targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
+                if (mListView != null && mListView.getChildAt(i) != null) {
+                    targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
             }
-            mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
+            if (targetView != null) {
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
+            }
         }
     }
-    
+
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================

@@ -110,6 +110,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     @Override
     public void onPause() {
         super.onPause();
+        
+        PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();        
         mPauseableHandler.pause();
     }
     
@@ -117,12 +119,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void onResume() {
         super.onResume();
         mPauseableHandler.resume();
-    }
-    
-    @Override
-    public void onDestroyView() {
-        PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();        
-        super.onDestroyView();        
     }
     
     // ================================================================================

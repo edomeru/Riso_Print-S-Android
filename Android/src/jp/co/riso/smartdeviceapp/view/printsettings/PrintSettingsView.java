@@ -1483,10 +1483,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     public void updateOnlineStatus() {
         for (int i = 0; i < mPrintersList.size(); i++) {
             Printer printer = mPrintersList.get(i);
+            if (mSubView == null) {
+                return;
+            }
             View view = mSubView.findViewWithTag(Integer.valueOf(printer.getId()));
-            View imageView = view.findViewById(R.id.menuIcon);
-            mPrinterManager.updateOnlineStatus(printer.getIpAddress(), imageView);
-        }        
+            if (view != null) {
+                View imageView = view.findViewById(R.id.menuIcon);
+                mPrinterManager.updateOnlineStatus(printer.getIpAddress(), imageView);
+            }
+        }
     }
     
     // ================================================================================
