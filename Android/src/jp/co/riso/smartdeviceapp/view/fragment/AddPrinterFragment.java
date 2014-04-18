@@ -248,7 +248,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         if (!mAdded) {
             // Create Printer object
-            Printer printer = new Printer(ipAddress, ipAddress, null);
+            Printer printer = new Printer(ipAddress, ipAddress);
             
             if(mPrinterManager.isCancelled()) {
                 return;

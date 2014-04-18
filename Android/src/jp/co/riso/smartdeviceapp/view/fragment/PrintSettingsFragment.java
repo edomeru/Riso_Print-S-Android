@@ -11,12 +11,19 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import java.util.Date;
 
 import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.dialog.WaitingDialogFragment;
+import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
+import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
@@ -25,15 +32,19 @@ import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
-public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.ValueChangedListener, PauseableHandlerCallback {
+public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.PrintSettingsViewInterface, PauseableHandlerCallback, DirectPrintCallback, WaitingDialogListener {
     public static final String TAG = "PrintSettingsFragment";
     
+    private static final String TAG_WAITING_DIALOG = "dialog_printing";
+    private static final String TAG_MESSAGE_DIALOG = "dialog_message";
+    
+    private DirectPrintManager mDirectPrintManager = null;
+    
     private static final int MSG_PRINT = 0;
-    private static final int MSG_PRINT_DELAY = 10000; // TODO: remove delay in actual printing
     
     private boolean mFragmentForPrinting = false;
     
-    private int mPrinterId;
+    private int mPrinterId = PrinterManager.EMPTY_ID;
     private PrintSettings mPrintSettings;
     private PrintSettingsView mPrintSettingsView;
     private Bundle mPrintSettingsBundle = null;
@@ -166,12 +177,28 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
      * This method is triggered when the print button is pressed and displays the waiting dialog.
      */
     @Override
-    public void onPrintExecution() {
-        // TODO: add actual printing execution and change sendMessageDelayed
-        mWaitingDialog = WaitingDialogFragment.newInstance(null, getResources().getString(R.string.ids_lbl_printing), null);
-        DialogUtils.displayDialog(getActivity(), TAG, mWaitingDialog);
-        Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
-        mPauseableHandler.sendMessageDelayed(newMessage, MSG_PRINT_DELAY);
+    public void onPrint(Printer printer, PrintSettings printSettings) {
+        if (printer == null || printSettings == null){
+
+            String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+            String btnMsg = getString(R.string.ids_lbl_ok);
+            InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+            return;
+        }
+        
+        String strMsg = getResources().getString(R.string.ids_lbl_printing);
+        String btnMsg = getResources().getString(R.string.ids_lbl_cancel);
+        mWaitingDialog = WaitingDialogFragment.newInstance(null, strMsg, true, btnMsg);
+        mWaitingDialog.setTargetFragment(this, 0);
+        DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
+        
+        String jobname = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
+        
+        mDirectPrintManager = new DirectPrintManager();
+        mDirectPrintManager.setCallback(this);
+        mDirectPrintManager.initializeDirectPrint(jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        mDirectPrintManager.lprPrint();
     }
     
     // ================================================================================
@@ -187,12 +214,68 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void processMessage(Message message) {
         switch (message.what) {
             case MSG_PRINT:
-                // TODO: change implementation using actual print result
-                PrintJobManager pm = PrintJobManager.getInstance(getActivity());
-                String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
-                pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
                 mWaitingDialog.dismiss();
-                ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
+                
+                PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
+                String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
+                
+                if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
+                    pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
+                    ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
+
+                    // Show dialog
+                    String strMsg = getString(R.string.ids_lbl_print_job_successful);
+                    String btnMsg = getString(R.string.ids_lbl_ok);
+                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                }
+                else {
+                    pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
+                    
+                    // Show dialog
+                    String strMsg = getString(R.string.ids_lbl_print_job_failed);
+                    String btnMsg = getString(R.string.ids_lbl_ok);
+                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                }
+                break;
+        }
+    }
+    
+    // ================================================================================
+    // INTERFACE - DirectPrintCallback
+    // ================================================================================
+    
+    @Override
+    public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
+        switch (status) {
+            case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
+            case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
+            case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
+            case DirectPrintManager.PRINT_STATUS_ERROR:
+                Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
+                newMessage.arg1 = status;
+                mPauseableHandler.sendMessage(newMessage);
+                manager.finalizeDirectPrint();
+                break;
+            case DirectPrintManager.PRINT_STATUS_STARTED:
+            case DirectPrintManager.PRINT_STATUS_CONNECTING:
+            case DirectPrintManager.PRINT_STATUS_CONNECTED:
+            case DirectPrintManager.PRINT_STATUS_SENDING:
+            case DirectPrintManager.PRINT_STATUS_SENT:
+                break;
+        }
+    }
+    
+    // ================================================================================
+    // INTERFACE - WaitingDialogListener
+    // ================================================================================
+    
+    @Override
+    public void onCancel() {
+        if (mDirectPrintManager != null) {
+            mDirectPrintManager.sendCancelCommand();
+            mDirectPrintManager = null;
         }
     }
 }

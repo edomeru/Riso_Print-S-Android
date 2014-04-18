@@ -14,7 +14,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Printer implements Parcelable {
-    private PrintSettings mPrintSettings = null;
     private String mName = null;
     private String mIpAddress = null;
     private int mId = PrinterManager.EMPTY_ID;
@@ -22,22 +21,12 @@ public class Printer implements Parcelable {
     
     private Config mConfig = null;
     
-    public Printer(String name, String ipAddress, PrintSettings printSettings) {
+    public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
         mPortSetting = 0;
         
         mConfig = new Config();
-        
-        if (printSettings == null) {
-            mPrintSettings = new PrintSettings();
-        } else {
-            mPrintSettings = new PrintSettings(printSettings);
-        }
-    }
-    
-    public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
-        this(name, ipAddress, printSettings);
     }
     
     public static final Printer.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
@@ -163,21 +152,15 @@ public class Printer implements Parcelable {
     public void setConfig(Config config) {
         mConfig = config;
     }
-    
+
     /**
-     * @return the print settings (mPrintSettings)
-     */
-    public PrintSettings getPrintSettings() {
-        return mPrintSettings;
-    }
-    
-    /**
-     * updates the value of mPrintSettings
+     * Gets the print settings corresponding to the Printer
      * 
-     * @param printSettings
+     * @return Printer's print settings
      */
-    public void setPrintSettings(PrintSettings printSettings) {
-        this.mPrintSettings = new PrintSettings(printSettings);
+    // TODO: For update
+    public PrintSettings getPrintSettings() {
+        return new PrintSettings(getId());
     }
     
     // ================================================================================

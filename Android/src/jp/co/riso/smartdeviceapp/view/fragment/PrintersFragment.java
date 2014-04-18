@@ -18,7 +18,6 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter;
@@ -133,16 +132,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void onPause() {
         super.onPause();
         mPrinterManager.cancelUpdateStatusThread();
-    }
-    
-    // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
-    public void setPrintSettings(PrintSettings printSettings) {
-        if (isTablet()) {
-            mPrinterTabletView.updatePrintSettings(printSettings);
-        }
     }
     
     // ================================================================================

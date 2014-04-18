@@ -107,7 +107,7 @@ public class PrintJobManager {
             int prn_id = DatabaseManager.getIntFromCursor(c,KeyConstants.KEY_SQL_PRINTER_ID);
             String prn_name = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_NAME);
             String prn_ip = DatabaseManager.getStringFromCursor(c,KeyConstants.KEY_SQL_PRINTER_IP);
-            Printer printer = new Printer(prn_name, prn_ip, false, null);
+            Printer printer = new Printer(prn_name, prn_ip);
             
             printer.setId(prn_id);
             printers.add(printer);

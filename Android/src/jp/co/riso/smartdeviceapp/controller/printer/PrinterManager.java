@@ -22,7 +22,6 @@ import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -84,10 +83,6 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         
         if (!savePrinterInfo(printer)) {
-            return false;
-        }
-        
-        if (!savePrintSettings(printer)) {
             return false;
         }
         
@@ -202,8 +197,7 @@ public class PrinterManager implements SNMPManagerCallback {
         if (cursor.moveToFirst()) {
             do {
                 Printer printer = new Printer(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_NAME),
-                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP), new PrintSettings(DatabaseManager.getIntFromCursor(
-                                cursor, KeyConstants.KEY_SQL_PRINTER_ID)));
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP));
                 printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
                 printer.setPortSetting(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT));
                 
@@ -232,10 +226,6 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         dbManager.close();
         cursor.close();
-        
-        for (int i = 0; i < mPrinterList.size(); i++) {
-            getPrintSettings(mPrinterList.get(i));
-        }
         
         return mPrinterList;
     }
@@ -541,15 +531,14 @@ public class PrinterManager implements SNMPManagerCallback {
         return true;
     }
     
-    private boolean savePrintSettings(Printer printer) {
-        if (printer == null || printer.getPrintSettings() == null) {
-            return false;
-        }
-        return true;
-    }
-    
-    private void getPrintSettings(Printer printer) {
-        // TODO: Get Print Settings
+    private static void setupPrinterConfig(Printer printer, boolean[] capabilities) {
+        printer.getConfig().setBookletAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_BOOKLET]);
+        printer.getConfig().setStaplerAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_STAPLER]);
+        printer.getConfig().setPunch4Available(capabilities[SNMPManager.SNMP_CAPABILITY_FINISH_2_4]);
+        printer.getConfig().setTrayFaceDownAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_FACE_DOWN]);
+        printer.getConfig().setTrayTopAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_TOP]);
+        printer.getConfig().setTrayStackAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_STACK]);
+        
     }
     
     private boolean setPrinterId(Printer printer) {
@@ -594,7 +583,8 @@ public class PrinterManager implements SNMPManagerCallback {
     
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
-        Printer printer = new Printer(name, ipAddress, null);
+        Printer printer = new Printer(name, ipAddress);
+        PrinterManager.setupPrinterConfig(printer, capabilities);
         Log.d("PrinterManager", "onFoundDevice");
         if (isSearching()) {
             if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
