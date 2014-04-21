@@ -1,119 +1,182 @@
 //
 //  PrintPreviewViewController.m
-//  SmartDeviceApp
+//  Tester
 //
-//  Created by Seph on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrintPreviewViewController.h"
-#import "RootViewController.h"
-#import "SlideSegue.h"
+#import "UIViewController+Segue.h"
 #import "HomeViewController.h"
 #import "PrintSettingsViewController.h"
-#import "UIViewController+Segue.h"
 #import "PDFFileManager.h"
+#import "PreviewSetting.h"
 #import "PDFPageContentViewController.h"
-#import "PDFPageView.h"
-#import "DefaultView.h"
+#import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
 
-
-#define PREVIEW_MIN_MARGIN  10.0
-#define MAX_ZOOM_SCALE 3.0
-#define MIN_ZOOM_SCALE 1.0
-#define NORMAL_SCALE 1.0
+#define PREVIEW_MARGIN 10.0f
 
 @interface PrintPreviewViewController ()
-@property (strong, nonatomic) UIPageViewController *pdfPageViewController; //the page view controller
-@property (strong, nonatomic) PreviewSetting *previewSetting; //object to hold the preview setting values
-@property (weak, nonatomic) IBOutlet UILabel *screenTitle;  //title of the screen set to the title of the previewed pdf
-@property (weak, nonatomic) IBOutlet UIScrollView *previewArea; //area where the preview is contained
-@property (weak, nonatomic) IBOutlet UIView *pageNavArea; //area where the slider and page number display is shown
-@property (weak, nonatomic) IBOutlet UISlider *pageNavigationSlider; //slider used to jump or navigate to pages
-@property (weak, nonatomic) IBOutlet UILabel *pageNumberDisplay; //current page number display over total number of pages
 
+/**
+ IBOutlets
+ */
+@property (nonatomic, weak) IBOutlet UILabel *titleLabel;
+@property (nonatomic, weak) IBOutlet UIButton *mainMenuButton;
+@property (nonatomic, weak) IBOutlet UIButton *printSettingsButton;
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, weak) IBOutlet UIView *previewArea;
+@property (weak, nonatomic) IBOutlet UIView *pageNavArea;
+@property (weak, nonatomic) IBOutlet UISlider *pageScroll;
+@property (weak, nonatomic) IBOutlet UILabel *pageLabel;
+@property (weak, nonatomic) IBOutlet UIView *splashView;
+@property (nonatomic, weak) IBOutlet PreviewView *previewView;
 
-/*Constraints to adjust the position of slider and page number display in the page navigation area
- when in Phone landscape*/
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *sliderLeftConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeight;
+/**
+ Page view controller
+ */
+@property (nonatomic, weak) UIPageViewController *pageViewController;
 
-/*Class Private Methods*/
 /**
- Set UI used in print preview to hidden or shown
- **/
--(void) hidePrintPreviewControls: (BOOL) isHidden;
-/**
- Initialize Print Preview Settings from default Print settings
- **/
--(void) loadPrintPreviewSettings;
-/**
- Compute total number of view pages based on number of PDF pages and imposition setting
- **/
--(void) computeNumViewPages;
-/**
- Initialize the page view controller
- **/
--(void) loadPageViewController;
-/**
- Set up the page view controller based on preview settings
- **/
--(void) setUpPageViewController;
-/**
- Adjust the page view controller frame to ratio of paper height and width based on selected paper size setting
- **/
--(void) setPageSize;
-/**
- Set the current page shown by the view controller
- @note This is used for page view controller initialization and in page jumps during slider actions.
- It is NOT used in page turns. 
- The data source methods of the page view controller implements the setting of page for page curl turn
- **/
--(void) setViewControllerToCurrentPage: (NSUInteger) pageIndex;
-/**
- Sets up the look and feel of the slider
- **/
--(void) setUpPageNavigationSlider;
-/**
- Updates the page number display with the current page index and total number of view pages
- **/
--(void) updatePageNumberDisplay;
-/**
- Creates and provide the page content view controller for each page in the page view controller
- **/
--(PDFPageContentViewController *) pageContentViewControllerAtIndex:(NSUInteger) pageIndex;
+ Document object:
+ */
+@property (nonatomic, weak) PrintDocument *printDocument;
 
-/*Actions*/
 /**
- Action when slider is dragged
- **/
-- (IBAction)dragSliderAction:(id)sender;
+ Current page
+ */
+@property (nonatomic) NSInteger currentPage;
+
 /**
- Action when slider is tapped
- **/
-- (IBAction)tapSliderAction:(id)sender;
+ Indicates whether or not the page view controller is currently being animated (page curl)
+ */
+@property (nonatomic) BOOL pageIsAnimating;
+
+/**
+ Number of pages
+ */
+@property (nonatomic) NSInteger totalPageNum;
+
+/**
+ Number of pages needed the needed layout. Includes the padded pages used as book ends.
+ */
+@property (nonatomic) NSInteger layoutPageNum;
+
+/**
+ Render queue
+ */
+@property (atomic, strong) NSOperationQueue *renderQueue;
+
+/**
+ List of active render operations
+ */
+@property (atomic, strong) NSMutableArray *renderArray;
+
+/**
+ Cache of pages and rendered images
+ */
+@property (atomic, strong) RenderCache *renderCache;
+
+/**
+ Prepares PDF document
+ */
+- (void)loadPDF;
+
+/**
+ Setup views for preview
+ */
+- (void)setupPreview;
+
+/**
+ Setup page view controller based on spine location
+ */
+- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation;;
+
+- (void)setupPageviewControllerWithBindSetting;
+
+/**
+ Calculate total page number based on print settings
+ */
+- (void)setupTotalPageNum;
+
+/**
+ Setup page label view
+ */
+- (void)setupPageLabel;
+
+/**
+ Setup display aspect ratio to match paper size and finishing
+ */
+- (void)setupDisplayAspectRatio;
+
+/**
+ Loads next view controller of the page view controller
+ @param index
+        Index of current view controller
+ @return Next view controller
+ */
+- (UIViewController *)nextViewController:(NSInteger)index;
+
+/**
+ Loads previous view controlller of the page view controller
+ @param index
+        Index of the current view controller
+ @return Previous view controller
+ */
+- (UIViewController *)previousViewController:(NSInteger)index;
+
+/**
+ Loads view controller for the specified index
+ @param index
+        Index of the view controller to be loaded
+ @return View controller for the specified index
+ */
+- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index;
+
+/**
+ Change current page to specified page
+ @param pageNum
+        Index of the page
+ */
+- (void)goToPage:(NSInteger)pageNum;
+
+/**
+ Action when view unwinds back to print preview
+ */
+- (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue;
+
+/**
+ Action when main menu button is tapped
+ */
+- (IBAction)mainMenuAction:(id)sender;
+
+/**
+ Action when print settings button is tapped
+ */
+- (IBAction)printSettingsAction:(id)sender;
+
+/**
+ Action when page scroller thumb is dragged
+ */
+- (IBAction)dragPageScrollAction:(id)sender;
+
+/**
+ Action when page scroller is tapped
+ */
+- (IBAction)tapPageScrollAction:(id)sender;
+
 @end
 
 @implementation PrintPreviewViewController
-{
-    CGPDFDocumentRef pdfDocument; //PDF document object reference
-    NSUInteger numPDFPages; // number of pages in the PDF document
-    NSUInteger currentIndex; //current view page index (not pertaining to pdf page number)
-    NSUInteger numViewPages; // number of view pages, NOT pdf pages
-    CGFloat currentScale; //current scale
-}
 
+#pragma mark - Public Methods
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
+    if (self) {
         // Custom initialization
-        pdfDocument = nil;
-        numPDFPages = 0;
     }
     return self;
 }
@@ -121,27 +184,43 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    /*If view is already in preview mode, show print preview*/
-    BOOL isPDFForPreviewAvailable = [[PDFFileManager sharedManager] pdfFileAvailable];
-    if(isPDFForPreviewAvailable == YES)
+    
+    self.splashView.hidden = NO;
+    self.printSettingsButton.hidden = YES;
+    self.previewView.hidden = YES;
+    self.previewView.delegate = self;
+    self.pageIsAnimating = NO;
+    
+    NSOperationQueue *renderQueue = [[NSOperationQueue alloc] init];
+    renderQueue.maxConcurrentOperationCount = 2;
+    renderQueue.name = @"RenderQueue";
+    self.renderQueue = renderQueue;
+    self.renderArray = [[NSMutableArray alloc] init];
+    self.renderCache = [[RenderCache alloc] initWithMaxItemCount:20];
+    self.renderCache.delegate = self;
+    
+    //set theme of UISlider
+    [[UISlider appearance] setMaximumTrackImage:[[UIImage imageNamed:@"img_slider_maximum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 5)]forState: UIControlStateNormal];
+    [[UISlider appearance]  setMinimumTrackImage:[[UIImage imageNamed:@"img_slider_minimum"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 5, 0, 0) ] forState: UIControlStateNormal];
+    [[UISlider appearance]  setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateNormal];
+    [[UISlider appearance]  setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState: UIControlStateHighlighted];
+    
+    if ([[PDFFileManager sharedManager] fileAvailableForLoad])
     {
-        [self loadPrintPreview];
+        [self loadPDF];
     }
-    else
+    else if([[PDFFileManager sharedManager] fileAvailableForPreview])
     {
-        //TODO: Show replacement image for blank home screen
-        //hide UI related to preview
-#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
-        NSLog(@"Load SDA Home");
-#endif
-        [self hidePrintPreviewControls:YES];
+        [self setupPreview];
     }
 }
 
--(void) viewDidAppear:(BOOL)animated
+- (void)dealloc
 {
-    [super viewDidAppear:animated];
-    [self setPageSize];
+    if (self.printDocument.delegate == self)
+    {
+        self.printDocument.delegate = nil;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -150,428 +229,548 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*Detect event before rotation*/
--(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+#pragma mark - Private Methods
+
+- (void)loadPDF
 {
-    [self.previewArea setContentOffset:CGPointZero];
-    [self.previewArea setZoomScale:MIN_ZOOM_SCALE];
-}
-/*Overriden to handle device rotation*/
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    //adjust position of slider and page label for phone when in landscape
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+    [self.activityIndicator startAnimating];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
-        if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) == YES)
+        kPDFError error = [[PDFFileManager sharedManager] setupDocument];
+        if (error == kPDFErrorNone)
         {
-            self.pageNavAreaHeight.constant = 40;
-            //adjust
-            self.pageLabelTopConstraint.constant = 20 ;
-            self.pageLabelRightConstraint.constant =  self.previewArea.frame.size.width - 100;
-            self.sliderLeftConstraint.constant = 120;
+            dispatch_async(dispatch_get_main_queue(), ^
+            {
+                [self setupPreview];
+            });
         }
         else
         {
-            //Original values
-            self.pageNavAreaHeight.constant = 60;
-            self.pageLabelRightConstraint.constant  = 20;
-            self.pageLabelTopConstraint.constant = 40;
-            self.sliderLeftConstraint.constant = 20;
+            // TODO: Error message
         }
-    }
-    //adjust the page view controller frame size
-    [self setPageSize];
+    });
+}
+
+- (void)setupPreview
+{
+    self.printDocument = [[PDFFileManager sharedManager] printDocument];
+    self.printDocument.delegate = self;
+    self.currentPage = 0;
+    self.titleLabel.text = self.printDocument.name;
+    self.printSettingsButton.hidden = NO;
+    self.splashView.hidden = YES;
+    self.previewView.hidden = NO;
+    self.pageNavArea.hidden = NO;
+    [self.activityIndicator stopAnimating];
+    [self setupTotalPageNum];
+    [self setupPageLabel];
     
+    self.previewView.hidden = NO;
+    [self setupDisplayAspectRatio];
+
+    self.currentPage = 0;
+    [self setupPageviewControllerWithBindSetting];
+    [self goToPage:self.currentPage];
 }
 
-#pragma mark - Class Private Methods
-
--(void) hidePrintPreviewControls: (BOOL) isHidden
+- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation
 {
-    [self.printSettingsButton setHidden:isHidden];
-    [self.pageNavArea setHidden: isHidden];
-    [self.previewArea setHidden: isHidden];
-}
-
-- (void) loadPrintPreview
-{
-#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
-    NSLog(@"Load Print Preview");
-#endif
-    //get PDF document
-    PDFFileManager *manager = [PDFFileManager sharedManager];
-    pdfDocument = manager.pdfDocument;
-    if(pdfDocument == nil)
+    if(self.pageViewController != nil && self.pageViewController.view.superview != nil)
     {
-#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
-        NSLog(@"Document is Nil");
-#endif
-        return;
-    }
-    //Get number of PDF pages
-    numPDFPages = CGPDFDocumentGetNumberOfPages(pdfDocument);
-    //Set current index to first page
-    currentIndex = 0;
-    currentScale = NORMAL_SCALE;
-    
-    self.previewArea.delegate = self;
-    self.previewArea.maximumZoomScale = MAX_ZOOM_SCALE;
-    self.previewArea.minimumZoomScale = MIN_ZOOM_SCALE;
-    
-    
-    //set screen title to file name of PDF
-    NSString *screenTitle = [[[manager pdfURL] pathComponents] lastObject];
-    [self.screenTitle setText:screenTitle];
-    
-    //unhide print preview controls
-    [self hidePrintPreviewControls:NO];
-    
-    //get the initial preview settings
-    [self loadPrintPreviewSettings];
-    
-    //compute number of pages in view taking into account imposition
-    [self computeNumViewPages];
-    
-    //setup the page view controller
-    [self loadPageViewController];
-    
-    //setup the page navigation slider
-    [self setUpPageNavigationSlider];
-}
-
--(void) loadPrintPreviewSettings
-{
-     self.previewSetting = [[PreviewSetting alloc] init];
-    
-    //TODO: get from print settings
-    self.previewSetting.duplex = DUPLEX_OFF;
-    self.previewSetting.pagination = PAGINATION_OFF;
-    self.previewSetting.paperSize = PAPERSIZE_A4;
-    self.previewSetting.colorMode = COLORMODE_AUTO;
-    self.previewSetting.bind = BIND_LEFT;
-    self.previewSetting.orientation = ORIENTATION_PORTRAIT;
-    self.previewSetting.isBookletBind = NO;
-    self.previewSetting.isScaleToFit = YES;
-}
-
--(void) computeNumViewPages
-{
-    //Number of view pages is number of PDF pages divided by number of pages in sheet with respect to the pagination setting
-    NSUInteger numPagesPerSheet = [PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting: self.previewSetting.pagination];
-    numViewPages = numPDFPages/numPagesPerSheet;
-    
-    if((numPDFPages % numPagesPerSheet) > 0)
-    {
-        numViewPages++;
+        [self.pageViewController.view removeFromSuperview];
+        [self.pageViewController removeFromParentViewController];
     }
     
-    //update slider maximum value and page number label after computation of number of pages
-    [self.pageNavigationSlider setMaximumValue: numViewPages];
-    [self updatePageNumberDisplay];
+    UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:navigationOrientation options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:spineLocation]}];
+    pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addChildViewController:pageViewController];
+    [self.previewView.contentView addSubview:pageViewController.view];
+    
+    NSDictionary *views = @{@"pageView": pageViewController.view};
+    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
+    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
+    pageViewController.dataSource = self;
+    pageViewController.delegate = self;
+    
+    self.pageViewController = pageViewController;
 }
 
--(void) loadPageViewController
+- (void)setupTotalPageNum
 {
-    [self setUpPageViewController];
-}
-
--(void) setUpPageViewController
-{
-    //remove from view if already existing
-    if(self.pdfPageViewController != nil)
+    if(self.printDocument.previewSetting.booklet == YES)
     {
-        [self.pdfPageViewController.view removeFromSuperview];
-        [self.pdfPageViewController removeFromParentViewController];
-    }
-    
-    //consider bind setting for spine location and navigation orientation
-    UIPageViewControllerSpineLocation spineLocation =
-            [PrintPreviewHelper spineLocationForBindSetting: self.previewSetting.bind
-                                              duplexSetting: self.previewSetting.duplex
-                                       bookletBindSettingOn: self.previewSetting.isBookletBind];
-    
-    UIPageViewControllerNavigationOrientation navigationOrientation = [PrintPreviewHelper navigationOrientationForBindSetting:self.previewSetting.bind];
-    
-    NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithInteger:spineLocation] forKey: UIPageViewControllerOptionSpineLocationKey];
-    
-    //create page view controller
-    self.pdfPageViewController = [[UIPageViewController alloc]
-                                  initWithTransitionStyle: UIPageViewControllerTransitionStylePageCurl
-                                  navigationOrientation: navigationOrientation
-                                  options:options];
-    
-    [self.pdfPageViewController.view setClipsToBounds:true];
-
-    //set self as delegate and datasource
-    self.pdfPageViewController.dataSource = self;
-    self.pdfPageViewController.delegate =self;
-    
-    //set the current page of the page view controller
-    [self setViewControllerToCurrentPage:currentIndex];
-    
-    [self setPageSize];
-}
-
--(void) setPageSize
-{
-    if(self.pdfPageViewController == nil)
-    {
-        return;
-    }
-    
-    //get ratio of width and height based on paper size
-    float heightToWidthRatio =[PrintPreviewHelper heightToWidthRatioForPaperSizeSetting:self.previewSetting.paperSize];
-    
-    //check if paper should be in landscape orientation
-    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
-    
-    //set margins
-    CGFloat horizontalMargin = PREVIEW_MIN_MARGIN;
-    CGFloat verticalMargin = horizontalMargin;
-    
-    //intial width and height is dimension of superview minus the margins
-    CGFloat width = self.previewArea.frame.size.width - (horizontalMargin * 2);
-    CGFloat height = self.previewArea.frame.size.height - (verticalMargin * 2);
-    CGFloat temp = 0;
-    
-    //if paper is in landscape. set the width to be the height
-    if(isLandscape == YES)
-    {
-        temp = width / heightToWidthRatio;
-        verticalMargin += (height -temp)/2;
-        height = temp;
+        //booklet number of pages is always a multiple of 4 (1 paper folded in half = 2 leaves * 2 sides per leaf = 4 pages)
+        //total number of pages is the actual number of pdf pages  + additional pages to make number of pages multiple by 4
+        self.totalPageNum = self.printDocument.pageCount  +  (4 - self.printDocument.pageCount % 4);
+        
+        //add two pages for the book ends
+        self.layoutPageNum = self.totalPageNum + 2;
+        [self.pageScroll setMaximumValue:self.totalPageNum - 1]; //the last page that can be visited for the slider should be the second to the last page  which is the front page of the last sheet
     }
     else
     {
-        //first set width as constant and adjust height using ratio
-        temp = width * heightToWidthRatio;
-        
-        //if height is more than initial height (superview height - margins), set the height to constant and adjust the width instead
-        if(temp > height)
+        //consider imposition setting for the total number of pages of the page view controller
+        NSUInteger numPagesPerSheet =[PrintPreviewHelper getNumberOfPagesPerSheetForImpostionSetting:self.printDocument.previewSetting.imposition];
+        self.totalPageNum = self.printDocument.pageCount/numPagesPerSheet;
+        if((self.printDocument.pageCount % numPagesPerSheet) > 0)
         {
-            temp = height / heightToWidthRatio;
-            horizontalMargin += (width -temp)/2; //adjust margins according to the new width to center page view controller in superview
-            width = temp;
+            self.totalPageNum++;
+        }
+        
+        if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
+        {
+            //if duplex and the number of pages is odd, still include the back of the last page, then add 2 pages for book ends
+            self.layoutPageNum = self.totalPageNum + self.totalPageNum % 2 + 2;
         }
         else
         {
-            verticalMargin += (height - temp)/2; //adjust margins according to the new height to center page view controller in superview
-            height = temp;
+            self.layoutPageNum = self.totalPageNum; //on other cases, the total page number is the total pages needed for the layout
+        }
+        [self.pageScroll setMaximumValue:self.totalPageNum];
+    }
+    //reset current page if it is now way past the computed total page number
+    if(self.currentPage >= self.totalPageNum)
+    {
+        self.currentPage = 0;
+    }
+}
+
+- (void)setupPageLabel
+{
+    NSString *pageString = @"PAGE";
+    NSInteger totalSheets = self.totalPageNum;
+    NSInteger currentSheet = self.currentPage + 1;
+    if(self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)
+    {
+        currentSheet = self.currentPage/2 + 1;
+        totalSheets = self.totalPageNum/2 + self.totalPageNum % 2;
+    }
+    self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)currentSheet, (long)totalSheets];
+}
+
+- (void)setupPageviewControllerWithBindSetting
+{
+    //Determine the spine location and navigation direction considering the finishing side and booklet bind setting
+    UIPageViewControllerSpineLocation spineLocation = UIPageViewControllerSpineLocationMin;
+    UIPageViewControllerNavigationOrientation navOrientation = UIPageViewControllerNavigationOrientationHorizontal;
+    
+    if(self.printDocument.previewSetting.booklet == YES)
+    {
+        spineLocation = UIPageViewControllerSpineLocationMid;
+        if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
+        {
+            navOrientation = UIPageViewControllerNavigationOrientationVertical;
+        }
+    }
+    else if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
+    {
+        spineLocation = UIPageViewControllerSpineLocationMid;
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        {
+            navOrientation = UIPageViewControllerNavigationOrientationVertical;
+        }
+    }
+    else if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight)
+    {
+        spineLocation = UIPageViewControllerSpineLocationMax;
+    }
+    else if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+    {
+        navOrientation = UIPageViewControllerNavigationOrientationVertical;
+    }
+
+    //set-up page view controller if initial or if the spine location and navigation direction changed
+    //don't resetup page view controller is existing and the spine location and navigationOrientation are still the same
+    if(!(self.pageViewController!= nil && self.pageViewController.spineLocation == spineLocation && self.pageViewController.navigationOrientation == navOrientation))
+    {
+        [self setupPageviewControllerWithSpineLocation:spineLocation navigationOrientation:navOrientation];
+    }
+    
+    //apply double sided setting for duplex and booklet bind setting
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff || self.printDocument.previewSetting.booklet == YES)
+    {
+        [self.pageViewController setDoubleSided:YES];
+    }
+    else
+    {
+        [self.pageViewController setDoubleSided:NO];
+    }
+}
+
+- (void)setupDisplayAspectRatio
+{
+    //ratio is width / height
+    CGFloat aspectRatio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)self.printDocument.previewSetting.paperSize];
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+    kPreviewViewOrientation orientation = kPreviewViewOrientationPortrait;
+    if(isLandscape == YES)
+    {
+        orientation = kPreviewViewOrientationLandscape;
+    }
+    
+    //Duplex 2 page view display area computation
+    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.printDocument.previewSetting.booklet == NO)
+    {
+        if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
+           (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
+        {
+            aspectRatio/=2; //twice the height for 2 papers, 1 on top of the other
+        }
+        else
+        {
+            aspectRatio*= 2; //twice the width for 2 papers side by side
         }
     }
     
-    //For compatibility iOS 6.1 to be able to resize frame of page view controller, must remove first from view
-    //set new frame size and add back to view
-    if(self.pdfPageViewController.view.superview != nil)
+    [self.previewView setPreviewWithOrientation:orientation aspectRatio:aspectRatio];
+}
+- (void)goToPage:(NSInteger)pageIndex
+{
+    PDFPageContentViewController *current = [self viewControllerAtIndex:pageIndex];
+    NSMutableArray *viewControllerArray = [NSMutableArray arrayWithObject:current];
+    
+    //if Spine is in mid location, must provide 2 controllers always. This occurs for booklet bind setting and duplex
+    if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
     {
-        [self.pdfPageViewController.view removeFromSuperview];
-        [self.pdfPageViewController removeFromParentViewController];
+        //the two pages provided are reversed if right side finishing or booklet with right to left layout
+        BOOL isReversed = (self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+                           (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft));
+        
+        if(pageIndex == 0)//if first index, provide the last bookend page as the other half
+        {
+            NSInteger lastPageIndex = self.layoutPageNum - 1;
+            PDFPageContentViewController *lastPage = [self viewControllerAtIndex:lastPageIndex];
+            if(isReversed == YES)
+            {
+                [viewControllerArray addObject:lastPage];
+            }
+            else
+            {
+                [viewControllerArray insertObject:lastPage atIndex:0];
+            }
+        }
+        else if((pageIndex % 2) == 0) //if page index is even but not the first index, provide the page before it
+        {
+            PDFPageContentViewController *previous = [self viewControllerAtIndex:pageIndex - 1];
+            if(isReversed == YES)
+            {
+                [viewControllerArray addObject:previous];
+                
+            }
+            else
+            {
+                [viewControllerArray insertObject:previous atIndex:0];
+                
+            }
+        }
+        else //if the page index is odd, provide the page next to it
+        {
+            PDFPageContentViewController *next = [self viewControllerAtIndex:pageIndex + 1];
+            if(isReversed == YES)
+            {
+                 [viewControllerArray insertObject:next atIndex:0];
+            }
+            else
+            {
+                [viewControllerArray addObject:next];
+            }
+        }
     }
     
-    //set the page controller view frame to new dimensions
-    [self.pdfPageViewController.view setFrame: CGRectMake(horizontalMargin, verticalMargin, width, height)];
-    
-    //add page controller to preview area view
-    [self.previewArea addSubview:self.pdfPageViewController.view];
-    [self.pdfPageViewController didMoveToParentViewController:self];
-    
-    
-#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
-    NSLog(@"Pageview controller height = %f. width = %f", self.pdfPageViewController.view.frame.size.height, self.pdfPageViewController.view.frame.size.width);
-#endif
+    [self.pageViewController setViewControllers:viewControllerArray direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
-
--(void) setViewControllerToCurrentPage: (NSUInteger) pageIndex
+- (UIViewController *)nextViewController:(NSInteger)index
 {
-    //set initial view controllers to show
-    UIViewController *firstPageViewController = [self pageContentViewControllerAtIndex:pageIndex];
-    NSMutableArray *initialViewControllers = [NSMutableArray arrayWithObjects:firstPageViewController, nil];
-    
-    if(self.previewSetting.duplex > DUPLEX_OFF || self.previewSetting.isBookletBind == YES)
+    if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
     {
-        [self.pdfPageViewController setDoubleSided:YES];
-        [initialViewControllers addObject:[self pageContentViewControllerAtIndex:pageIndex + 1]];
+        if(index >= (self.layoutPageNum  - 2))//page turn for spine location mid is always by 2, when page shown is second to the last (The front of the last sheet), do not turn;
+        {
+            return nil;
+        }
     }
-  
-    [self.pdfPageViewController setViewControllers:initialViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    if((self.layoutPageNum  - 1) <= index)
+    {
+        return nil;
+    }
+    index++;
+    return [self viewControllerAtIndex:index];
 }
 
-
--(void) setUpPageNavigationSlider
+- (UIViewController *)previousViewController:(NSInteger)index
 {
-    [self.pageNavigationSlider setMinimumValue: 1];
-    [self.pageNavigationSlider setValue:currentIndex];
-    [self.pageNavigationSlider setMinimumTrackImage:[UIImage imageNamed:@"img_slider_minimum"] forState:UIControlStateNormal];
-    [self.pageNavigationSlider setMaximumTrackImage:[UIImage imageNamed:@"img_slider_maximum"] forState:UIControlStateNormal];
-    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState:UIControlStateNormal];
-    [self.pageNavigationSlider setThumbImage:[UIImage imageNamed:@"img_slider_thumb"] forState:UIControlStateHighlighted];
-}
-
-
--(void) updatePageNumberDisplay
-{
-    self.pageNumberDisplay.text = [NSString stringWithFormat:@"PAGE %lu/%lu", (unsigned long)(currentIndex + 1), (unsigned long)numViewPages];
-}
-
-
--(PDFPageContentViewController *) pageContentViewControllerAtIndex:(NSUInteger) pageIndex
-{
-    PDFPageContentViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+    if(self.pageViewController.spineLocation == UIPageViewControllerSpineLocationMid)
+    {
+        if(index== 0)//put the book end as the previous page of the first page
+        {
+            return [self viewControllerAtIndex:self.layoutPageNum  - 1];
+        }
+        
+        if(index >= (self.layoutPageNum  - 1))//if already the book end page, do not turn
+        {
+            return nil;
+        }
+    }
     
-    controller.datasource = self;
-    controller.pageIndex = pageIndex;
-    return controller;
+    if(index == 0)
+    {
+        return nil;
+    }
+    index--;
+    return [self viewControllerAtIndex:index];
 }
 
+- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index
+{
+    // if the total page num is less than the layout page num, the index must be checked if it is the bookend page index
+    // the bookend page indices are the last 2 indices
+    if(self.totalPageNum < self.layoutPageNum)
+    {
+        NSInteger lastIndex = self.layoutPageNum - 1;
+        if(index >= (lastIndex - 1))
+        {
+            //if a bookend page, no need to add to render cache since it is just a PDFPageContentViewController with a transparent view
+            PDFPageContentViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+            viewController.isBookendPage = YES;
+            viewController.pageIndex = index;
+            return viewController;
+        }
+    }
+    
+    // Check if page needs to be created
+    RenderCacheItem *renderCacheItem = [self.renderCache itemWithIndex:index];
+    if (renderCacheItem == nil)
+    {
+        renderCacheItem = [[RenderCacheItem alloc] init];
+        renderCacheItem.viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+        renderCacheItem.viewController.pageIndex = index;
+        [self.renderCache addItem:renderCacheItem withIndex:index];
+    }
+    else if (renderCacheItem.image != nil)
+    {
+        // Use cache if it is available
+        if (renderCacheItem.viewController == nil)
+        {
+            renderCacheItem.viewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PDFPageContentViewController"];
+            renderCacheItem.viewController.pageIndex = index;
+        }
+        renderCacheItem.viewController.image = renderCacheItem.image;
+    }
+    
+    renderCacheItem.viewController.isBookendPage = NO;
+    
+    NSMutableArray *activeIndices = [[NSMutableArray alloc] init];
+    // Obtain list of pages that is currently being rendered in the background
+    for (PDFRenderOperation *renderOperation in self.renderArray)
+    {
+        [activeIndices addObjectsFromArray:renderOperation.pageIndices];
+    }
+    
+    NSMutableArray *indices = [[NSMutableArray alloc] init];
+    // Add current page only if it is not already being rendered in the background or if it is already rendered
+    if (renderCacheItem.image == nil && [activeIndices indexOfObject:[NSNumber numberWithUnsignedInteger:index]] == NSNotFound)
+    {
+        [indices addObject:[NSNumber numberWithUnsignedInteger:index]];
+    }
+    
+    // Add pages -5.. and ..+5 of the current page
+    for (int i = 1; i <= 5; i++)
+    {
+        NSInteger forwardIndex = index + i;
+        NSInteger backwardIndex = index - i;
+        
+        // Add only valid pages and if the page is not already being rendered in the background or if it is already rendered
+        if (forwardIndex < self.totalPageNum)
+        {
+            //RenderCacheItem *forwardCacheItem = [self.renderCache objectForKey:[NSNumber numberWithUnsignedInteger:forwardIndex]];
+            RenderCacheItem *forwardCacheItem = [self.renderCache itemWithIndex:forwardIndex];
+            if ((forwardCacheItem == nil || forwardCacheItem.image == nil) && [activeIndices indexOfObject:[NSNumber numberWithUnsignedInteger:forwardIndex]] == NSNotFound)
+            {
+                [indices addObject:[NSNumber numberWithUnsignedInteger:forwardIndex]];
+            }
+        }
+        if (backwardIndex >= 0)
+        {
+            //RenderCacheItem *backwardCacheItem = [self.renderCache objectForKey:[NSNumber numberWithUnsignedInteger:backwardIndex]];
+            RenderCacheItem *backwardCacheItem = [self.renderCache itemWithIndex:backwardIndex];
+            if ((backwardCacheItem == nil || backwardCacheItem.image == nil) && [activeIndices indexOfObject:[NSNumber numberWithUnsignedInteger:backwardIndex]] == NSNotFound)
+            {
+                [indices addObject:[NSNumber numberWithUnsignedInteger:backwardIndex]];
+            }
+        }
+    }
+    
+    // Create a render operation only if there is a page to render
+    if (indices.count > 0)
+    {
+        BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.printDocument.previewSetting];
+        CGSize size = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.printDocument.previewSetting.paperSize isLandscape:isLandscape];
+        
+        // For booklet bind, 1 page will only occupy half of the paper. Divide the paper size by 2
+        if(self.printDocument.previewSetting.booklet == YES)
+        {
+            if(isLandscape == YES) // if paper is in landscape, paper fold runs along the width else it runs along the height
+            {
+                size.width /= 2;
+            }
+            else
+            {
+                size.height/= 2;
+            }
+        }
 
-#pragma mark UIPageViewController Datasource methods
+        PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:size delegate:self];
+        [self.renderArray addObject:renderOperation];
+        [self.renderQueue addOperation:renderOperation];
+    }
+    
+    return renderCacheItem.viewController;
+}
+
+#pragma mark - UIPageViewControllerDataSource Methods
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
-    if(currentScale > MIN_ZOOM_SCALE)
+    NSInteger index = ((PDFPageContentViewController *) viewController).pageIndex;
+    if (self.pageIsAnimating || index == NSNotFound )
     {
-        return nil; // do not turn if zoomed in
+        return nil;
     }
-    NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
-    
-    UIViewController * controller = nil;
-    //page navigation is reversed for right bind
-    if(self.pdfPageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
+    //if right to left paging, reverse provided pages
+    if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+       (self.printDocument.previewSetting.booklet == YES &&
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
     {
-        controller = [self goToNextPage:index];
+        return [self nextViewController:index];
     }
-    else
-    {
-        controller = [self goToPreviousPage:index];
-    }
-    return controller;
+    return [self previousViewController:index];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
-    
-    if(currentScale > MIN_ZOOM_SCALE)
-    {
-        return nil; // do not turn if zoomed in
-    }
-    
-    NSUInteger index = ((PDFPageContentViewController*) viewController).pageIndex;
-    UIViewController * controller = nil;
-    //page navigation is reversed for right bind
-    if(self.pdfPageViewController.spineLocation == UIPageViewControllerSpineLocationMax)
-    {
-        controller = [self goToPreviousPage:index];
-    }
-    else
-    {
-        controller = [self goToNextPage:index];
-    }
-    return controller;
-}
-
-/*Helper methods for the UIPageViewController datasource methods*/
--(UIViewController *) goToNextPage:(NSUInteger) index
-{
-    if (index == NSNotFound)
+    NSInteger index = ((PDFPageContentViewController *) viewController).pageIndex;
+    if (self.pageIsAnimating || index == NSNotFound )
     {
         return nil;
     }
-    
-    index++;
-    
-    
-    if ((index + 1) > numViewPages)
+   //if right to left paging, reverse provided pages
+    if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+       (self.printDocument.previewSetting.booklet == YES &&
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
     {
-        return nil;
+        return [self previousViewController:index];
     }
-    return [self pageContentViewControllerAtIndex:index];
+    return [self nextViewController:index];
 }
--(UIViewController *) goToPreviousPage:(NSUInteger) index
+
+
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
 {
-    if ((index == 0) || (index == NSNotFound)) {
-        return nil;
-    }
-    
-    index--;
-    return [self pageContentViewControllerAtIndex:index];
+    self.pageIsAnimating = YES;
 }
 
-
-#pragma mark - UIPageViewController Delegate methods
-
-/*Returns the spine location based on an orientation*/
-- (UIPageViewControllerSpineLocation) pageViewController:(UIPageViewController *)pageViewController spineLocationForInterfaceOrientation:(UIInterfaceOrientation)orientation
-{
-    return [PrintPreviewHelper spineLocationForBindSetting: self.previewSetting.bind
-                                             duplexSetting: self.previewSetting.duplex
-                                      bookletBindSettingOn: self.previewSetting.isBookletBind];;
-}
-
-/*Detect the page turns.*/
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
 {
+    if (completed || finished)
+    {
+        self.pageIsAnimating = NO;
+    }
+    
     if(completed == YES)
     {
-        //if page is turned completely, update the page number label and the slider position
         PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
-        currentIndex = viewController.pageIndex;
-        [self updatePageNumberDisplay];
-        [self.pageNavigationSlider setValue:currentIndex];
+        if(viewController.pageIndex < self.totalPageNum - 1)
+        {
+            self.currentPage = viewController.pageIndex;
+        }
+        else
+        {
+            if(viewController.pageIndex == self.layoutPageNum - 1)
+            {
+                self.currentPage = 0;
+            }
+            else
+            {
+                self.currentPage = self.totalPageNum - 1;
+            }
+        }
+        [self setupPageLabel];
+        [self.pageScroll setValue:self.currentPage + 1];
     }
 }
 
-#pragma mark - PDFPageViewContentControllerDatasource methods
+#pragma mark - PDFRenderOperationDelegate Methods
 
-/*Returns the PDF page according to the page index of the page view controller. Takes into consideration imposition/pagination.*/
--(CGPDFPageRef) pdfPageForPageIndex:(NSUInteger)pageIndex withPageOffset:(NSUInteger)pageOffset
+- (void)renderOperation:(PDFRenderOperation *)pdfRenderOperation didFinishRenderingImageForPage:(NSNumber *)pageIndex
 {
-    NSUInteger numPagesPerSheet = [PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting:self.previewSetting.pagination];
-    NSUInteger actualPDFPageNum = (pageIndex * numPagesPerSheet) + 1; // the actual PDF page number of the first PDF page in the sheet
-    //the pageOffset is the Nth page in the sheet. To get Nth PDF page in a sheet, add the offset to the actual pdf page number of the first page in the sheet
-    if((actualPDFPageNum + pageOffset) > numPDFPages)
+    UIImage *image = [pdfRenderOperation.images objectForKey:pageIndex];
+    //RenderCacheItem *renderCacheItem = [self.renderCache objectForKey:pageIndex];
+    RenderCacheItem *renderCacheItem = [self.renderCache itemWithIndex:[pageIndex unsignedIntegerValue]];
+    if (renderCacheItem == nil)
     {
-        return nil;
+        renderCacheItem = [[RenderCacheItem alloc] init];
+        //[self.renderCache setObject:renderCacheItem forKey:pageIndex];
+        [self.renderCache addItem:renderCacheItem withIndex:[pageIndex unsignedIntegerValue]];
     }
-
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfDocument, actualPDFPageNum + pageOffset);
-    return pdfPage;
+    renderCacheItem.image = image;
+    renderCacheItem.viewController.image = image;
 }
 
-/*Returns the preview setting object*/
--(PreviewSetting *) getPreviewSetting
+- (void)renderDidDFinish:(PDFRenderOperation *)pdfRenderOperation
 {
-    return self.previewSetting;
+    [self.renderArray removeObject:pdfRenderOperation];
 }
 
-#pragma mark UIScrollViewDelegateMethods
-- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+#pragma mark - PreviewViewDelegate Methods
+
+- (void)previewView:(PreviewView *)previewView didChangeZoomMode:(BOOL)zoomed
 {
-    return self.pdfPageViewController.view;
+    [self.pageViewController.view setUserInteractionEnabled:!zoomed];
 }
 
--(void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
+#pragma mark - RenderCacheDelegate Methods
+
+- (void)cache:(NSCache *)cache willEvictObject:(id)obj
 {
-#if DEBUG_LOG_PRINT_PREVIEW_SCREEN
-    NSLog(@"Scale = %f", scale);
-#endif
-    currentScale = scale;
+    RenderCacheItem *renderCacheItem = obj;
+    NSLog(@"**Releasing: %ld **", (long)renderCacheItem.viewController.pageIndex);
 }
 
-#pragma mark - IBActions
-
-- (IBAction)mainMenuAction:(id)sender
+- (NSUInteger) currentIndex
 {
-    [self.mainMenuButton setEnabled:NO];
-    [self performSegueTo:[HomeViewController class]];
+    return self.currentPage;
 }
 
-- (IBAction)printSettingsAction:(id)sender
+#pragma mark - PrintDocument Delegate Methods
+
+- (void)previewSettingDidChange
 {
-    [self.printSettingsButton setEnabled:NO];
-    [self performSegueTo:[PrintSettingsViewController class]];
+    // Cancel all operations
+    [self.renderQueue cancelAllOperations];
+    [self.renderArray removeAllObjects];
+    
+    // Clear cache
+    [self.renderCache removeAllItems];
+    
+    // Recompute aspect ratio
+    [self setupDisplayAspectRatio];
+    
+    //recompute total page number
+    [self setupTotalPageNum];
+    
+    //set page label and page scroll based on the new total page number
+    [self setupPageLabel];
+    [self.pageScroll setValue:self.currentPage + 1];
+    
+    //reset-up page view controller with new bind setting
+    [self setupPageviewControllerWithBindSetting];
+    
+    [self goToPage:self.currentPage];
 }
+
+
+#pragma mark - IBAction Methods
+
 
 - (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue
 {
@@ -587,30 +786,88 @@
     }
 }
 
-/*Action when slider is dragged*/
-- (IBAction)dragSliderAction:(id)sender
+- (IBAction)mainMenuAction:(id)sender
+{
+    [self.mainMenuButton setEnabled:NO];
+    [self performSegueTo:[HomeViewController class]];
+}
+
+- (IBAction)printSettingsAction:(id)sender
+{
+    [self.printSettingsButton setEnabled:NO];
+    [self performSegueTo:[PrintSettingsViewController class]];
+}
+
+- (IBAction)dragPageScrollAction:(id)sender
 {
     UISlider *slider  = (UISlider *) sender;
     NSInteger pageNumber = slider.value;
-    currentIndex = pageNumber - 1;
-    [self setViewControllerToCurrentPage: currentIndex];
-    [self updatePageNumberDisplay];
+    
+    //update the current page  and page number label
+    // if double sided and page is at the back (even pages)  - always navigate to the next front page
+    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) == 0)
+    {
+        //go to the next front page
+        if(pageNumber < self.totalPageNum)
+        {
+            pageNumber++;
+        }
+        else //if there are no more front pages, go the previous front page
+        {
+            pageNumber--;
+        }
+    }
+    
+    self.currentPage = pageNumber - 1;
+    [self goToPage:self.currentPage];
+    [self setupPageLabel];
 }
 
-/*Action when slider is tapped*/
-- (IBAction)tapSliderAction:(id)sender
+- (IBAction)tapPageScrollAction:(id)sender
 {
     UIGestureRecognizer *tap =  (UIGestureRecognizer *)sender;
     //get point in slider where it is tapped
-    CGPoint point = [tap locationInView:self.pageNavigationSlider];
+    CGPoint point = [tap locationInView:self.pageScroll];
     //Get how many percent of the total slider length is the distance of the tapped point from the start point of the slider
-    CGFloat sliderPercentage = point.x/self.pageNavigationSlider.bounds.size.width;
-    //multiply the the percentage with the total number of pages in view to get the current page index;
-    currentIndex = (numViewPages * sliderPercentage)-1;;
+    CGFloat scrollPercentage = point.x/self.pageScroll.bounds.size.width;
     
+    //multiply the the percentage with the total number of pages in view to get the current page index;
+    NSInteger pageNumber = (self.totalPageNum * scrollPercentage);
+   
+    // if double sided and page is at the back (even pages) - always navigate to the next front page
+    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2)== 0)
+    {
+        if(pageNumber < self.totalPageNum)
+        {
+            pageNumber++;
+        }
+        else
+        {
+            pageNumber--;
+        }
+    }
+    
+    if(pageNumber <= 0)
+    {
+        pageNumber = 1;
+    }
+    else if(pageNumber > self.totalPageNum)
+    {
+        if(self.pageViewController.isDoubleSided == YES && (self.totalPageNum % 2 == 0)) // double sided with even number of pages, give the front page of the last sheet
+        {
+            pageNumber = self.totalPageNum - 1;
+        }
+        else
+        {
+           pageNumber =  self.totalPageNum; // give the last page
+        }
+    }
+    
+    self.currentPage = pageNumber - 1;
     //update page in view, page number label. slider thumb position
-    [self setViewControllerToCurrentPage:currentIndex];
-    [self updatePageNumberDisplay];
-    [self.pageNavigationSlider setValue:currentIndex];
+    [self goToPage:self.currentPage];
+    [self setupPageLabel];
+    [self.pageScroll setValue:pageNumber];
 }
+
 @end

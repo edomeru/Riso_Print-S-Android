@@ -2,8 +2,8 @@
 //  RootViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "RootViewController.h"
@@ -31,7 +31,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    
+    // Show Print Preview Screen
     [self performSegueTo:[PrintPreviewViewController class]];
 }
 
@@ -63,20 +64,6 @@
     }
     
     return nil;
-}
-
-- (void) loadPDFView
-{
-    if (self.childViewControllers.count == 0)
-    {
-        return; //pdf set-up finished first before view was loaded
-    }
-    
-    UIViewController *currentController = [self.childViewControllers objectAtIndex:0];
-    if([currentController isKindOfClass:[PrintPreviewViewController class]])
-    {
-        [(PrintPreviewViewController *)currentController loadPrintPreview];
-    }
 }
 
 @end

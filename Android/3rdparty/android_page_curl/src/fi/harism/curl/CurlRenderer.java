@@ -27,9 +27,11 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.util.Log;
 
 /**
  * Actual renderer class.
@@ -62,9 +64,18 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	private int mViewportWidth, mViewportHeight;
 	// Rect for render area.
 	private RectF mViewRect = new RectF();
-	
-	private int mBindPosition = CurlView.BIND_LEFT;
 
+	private int mBindPosition = CurlView.BIND_LEFT;
+	private float mZoomLevel = 1.0f;
+
+	private float mPanX = 0.0f;
+	private float mPanY = 0.0f;
+	private float mMinPanX = 0.0f;
+	private float mMaxPanX = 0.0f;
+	private float mMinPanY = 0.0f;
+	private float mMaxPanY = 0.0f;
+
+	// Set to true to enable the border.
 	private static final boolean RENDER_DROP_SHADOW = true;
 
 	/*
@@ -206,6 +217,11 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				Color.alpha(mBackgroundColor) / 255f);
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		gl.glLoadIdentity();
+		gl.glScalef(mZoomLevel, mZoomLevel, 1.0f);
+
+		float panX = mPanX / mZoomLevel;
+		float panY = mPanY / mZoomLevel;
+		gl.glTranslatef(-panX, panY, 0);
 
 		if (USE_PERSPECTIVE_PROJECTION) {
 			gl.glTranslatef(0, 0, -6f);
@@ -277,6 +293,57 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	
 	public void setBindPosition(int bindPosition) {
 		mBindPosition = bindPosition;
+	}
+
+	public void tryAdjustPan(float deltaX, float deltaY) {
+		float tempPanX = mPanX - (deltaX);
+		float tempPanY = mPanY - (deltaY);
+		
+		if (tempPanX < mMinPanX) {
+			tempPanX = mMinPanX;
+		}
+		if (tempPanX > mMaxPanX) {
+			tempPanX = mMaxPanX;
+		}
+		if (tempPanY < mMinPanY) {
+			tempPanY = mMinPanY;
+		}
+		if (tempPanY > mMaxPanY) {
+			tempPanY = mMaxPanY;
+		}
+		
+		mPanX = tempPanX;
+		mPanY = tempPanY;
+	}
+
+	public void setZoomLevel(float zoomLevel) {
+		mPanX = (mPanX * mZoomLevel) / zoomLevel;
+		mPanY = (mPanY * mZoomLevel) / zoomLevel;
+		
+		mZoomLevel = zoomLevel;
+		
+		float minMargin = Math.min(mMargins.left, mMargins.right);
+		minMargin = Math.min(minMargin, mMargins.top);
+		minMargin = Math.min(minMargin, mMargins.bottom);
+
+		RectF rect = mObserver.getDropShadowRect();
+
+		rect.left -= minMargin;
+		rect.right += minMargin;
+		rect.top += minMargin;
+		rect.bottom -= minMargin;
+
+		rect.left *= mZoomLevel;
+		rect.right *= mZoomLevel;
+		rect.top *= mZoomLevel;
+		rect.bottom *= mZoomLevel;
+
+		mMinPanX = Math.min(0, rect.left - mViewRect.left);
+		mMaxPanX = Math.max(0, rect.right - mViewRect.right);
+		mMinPanY = Math.min(0, mViewRect.top - rect.top);
+		mMaxPanY = Math.max(0, mViewRect.bottom - rect.bottom);
+
+		tryAdjustPan(0, 0);
 	}
 
 	/**

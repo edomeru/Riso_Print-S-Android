@@ -2,8 +2,8 @@
 //  PListHelper.h
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/10/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -44,4 +44,16 @@ typedef enum
  */
 + (BOOL)readBool:(kPlistBoolVal)type;
 
+/**
+ Wrapper for reading the Generic Settings of the Application
+ @return NSDictionary*
+ */
++ (NSDictionary*)readApplicationSettings;
+
+/**
+ Wrapper for setting the new values for the Application Settings
+ @param settings dictionary
+
+ */
++(void) setApplicationSettings:(NSDictionary *) appSettingsDict;
 @end

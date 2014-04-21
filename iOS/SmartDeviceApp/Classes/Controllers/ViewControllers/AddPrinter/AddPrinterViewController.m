@@ -2,12 +2,13 @@
 //  AddPrinterScreenController.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "AddPrinterViewController.h"
 #import "PrinterDetails.h"
+#import "PrinterManager.h"
 #import "NetworkManager.h"
 #import "AlertHelper.h"
 #import "InputHelper.h"
@@ -199,6 +200,10 @@
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
         return;
+        
+        //TODO: the printer should still be added to the list
+        //  - blank printer name
+        //  - full capabilities
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
@@ -224,8 +229,12 @@
     if (self.willEndWithoutAdd)
     {
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil];
+                        withTitle:kAlertTitlePrintersSearch
+                      withDetails:nil];
+        
+        //TODO: the printer should still be added to the list
+        //  - blank printer name
+        //  - full capabilities
     }
 
     // hide the searching indicator

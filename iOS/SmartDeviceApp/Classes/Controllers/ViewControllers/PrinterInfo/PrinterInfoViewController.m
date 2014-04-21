@@ -1,15 +1,16 @@
 //
-//  PrinterInfoScreenController.m
+//  PrinterInfoViewController.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/6/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrinterInfoViewController.h"
 #import "Printer.h"
 #import "PrinterManager.h"
 #import "UIViewController+Segue.h"
+#import "PrintSettingsViewController.h"
 
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
@@ -17,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *port;
 @property (weak, nonatomic) IBOutlet UILabel *printerStatus;
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *defaultPrinterAction;
 
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) PrinterManager *printerManager;
@@ -67,6 +69,7 @@
 {
     [super viewDidDisappear:animated];
     [self.statusHelper stopPrinterStatusPolling];
+    self.statusHelper.delegate = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -80,11 +83,11 @@
     self.onlineStatus = isOnline;
     if(isOnline)
     {
-        self.printerStatus.text = @"Online";    //TODO: should use localized strings
+        self.printerStatus.text = NSLocalizedString(IDS_LBL_PRINTER_STATUS_ONLINE, @"Online");
     }
     else
     {
-        self.printerStatus.text = @"Offline";   //TODO: should use localized strings
+        self.printerStatus.text = NSLocalizedString(IDS_LBL_PRINTER_STATUS_OFFLINE, @"Offline");
     }
 }
 
@@ -121,6 +124,10 @@
     [self unwindFromOverTo:[self.parentViewController class]];
 }
 
+- (IBAction)printSettingsAction:(id)sender
+{
+    [self.delegate segueToPrintSettings];
+}
 
 #pragma mark - PrinterStatusHelper method
 - (void) statusDidChange: (BOOL) isOnline

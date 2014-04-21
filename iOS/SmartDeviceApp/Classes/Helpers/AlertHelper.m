@@ -2,11 +2,12 @@
 //  AlertHelper.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/12/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "AlertHelper.h"
+#import "CXAlertView.h"
 
 @interface AlertHelper ()
 
@@ -24,24 +25,24 @@
     switch (title)
     {
         case kAlertTitlePrinters:
-            alertTitle = @"Printer Info";
+            alertTitle = NSLocalizedString(IDS_LBL_PRINTER_INFO, @"");
             break;
         
         case kAlertTitlePrintersAdd:
-            alertTitle = @"Printer Add Info";
+            alertTitle = NSLocalizedString(IDS_LBL_ADD_PRINTER, @"");
             break;
             
         case kAlertTitlePrintersSearch:
-            alertTitle = @"Printer Search Info";
+            alertTitle = NSLocalizedString(IDS_LBL_SEARCH_PRINTERS, @"");
             break;
             
         case kAlertTitlePrintJobHistory:
-            alertTitle = @"Print Job History Info";
+            alertTitle = NSLocalizedString(IDS_LBL_PRINT_JOB_HISTORY, @"");
             break;
         
         case kAlertTitleDefault:
         default:
-            alertTitle = @"SmartDeviceApp";
+            alertTitle = NSLocalizedString(IDS_APP_NAME, @"");
             break;
     }
     
@@ -50,15 +51,15 @@
     switch (result)
     {
         case kAlertResultInfoPrinterAdded:
-            alertMsg = @"The new printer was added successfully.";
+            alertMsg = NSLocalizedString(IDS_LBL_ADD_SUCCESSFUL, @"");
             break;
             
         case kAlertResultErrNoNetwork:
-            alertMsg = @"The device is not connected to the network.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_NETWORK_ERROR, @"");
             break;
             
         case kAlertResultErrInvalidIP:
-            alertMsg = @"The IP address format is invalid.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_INVALID_IP_ADDRESS, @"");
             break;
         
         case kAlertResultErrMaxPrinters:
@@ -70,7 +71,7 @@
             break;
             
         case kAlertResultErrPrinterDuplicate:
-            alertMsg = @"The printer has already been added.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_CANNOT_ADD_PRINTER, @"");
             break;
             
         case kAlertResultErrPrinterCannotBeAdded:
@@ -85,11 +86,12 @@
     }
     
     //TODO: if using a custom AlertView, implement it here
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:alertTitle
+    /*UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:alertTitle
                                                         message:alertMsg
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
+                                              otherButtonTitles:nil];*/
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle message:alertMsg cancelButtonTitle:NSLocalizedString(IDS_LBL_OK, @"")];
     [alertView show];
 }
 

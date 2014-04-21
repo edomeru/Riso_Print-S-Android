@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/printsettings_radiobutton_size"
+    android:layout_height="@dimen/printsettings_radiobutton_size"
+    android:contentDescription="@string/default_content_description"
+    android:src="@drawable/selector_printsettings_radiobutton" >
     
 
-</RadioButton>
+</ImageView>

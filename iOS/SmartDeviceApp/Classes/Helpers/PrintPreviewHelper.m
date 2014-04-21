@@ -2,58 +2,64 @@
 //  PrintPreviewHelper.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/12/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrintPreviewHelper.h"
-//Paper size reference: http://en.wikipedia.org/wiki/Paper_size
-struct {
-    float width;
-    float height;
-} paperDimensionsMM[] = {
-    {297.0, 420.0}, //A3
-    {210.0, 297.0}, //A4
-    {215.9, 279.4}, //Letter
-    {215.9, 355.6}, //Legal
-    {110.0, 220.0}  //Envelope
+
+#define POINTS_PER_INCH 72.0f //PDF API converts PDF dimensions from actual size to points at 72 ppi
+#define MM_PER_INCH 25.4f //1 inch == ~25.4 mm
+
+CGSize paperDimensionsMM[] = {
+    {306.0f, 460.0f}, // A3W
+    {297.0f, 420.0f}, // A3
+    {210.0f, 297.0f}, // A4
+    {148.0f, 210.0f}, // A5
+    {105.0f, 148.0f}, // A6
+    {257.0f, 364.0f}, // B4
+    {182.0f, 257.0f}, // B5
+    {128.0f, 182.0f}, // B6
+    {216.0f, 340.0f}, // Foolscap
+    {280.0f, 432.0f}, // Tabloid
+    {216.0f, 356.0f}, // Legal
+    {216.0f, 280.0f}, // Letter
+    {140.0f, 216.0f}, // Statement
 };
+
 
 @implementation PrintPreviewHelper
 
-+(BOOL) isGrayScaleColorForColorModeSetting : (NSUInteger) colorMode
++(BOOL) isGrayScaleColorForColorModeSetting : (kColorMode) colorMode
 {
-    if(colorMode == COLORMODE_MONO)
+    if(colorMode == kColorModeBlack)
     {
         return YES;
     }
     return NO;
 }
 
-+(UIPageViewControllerSpineLocation) spineLocationForBindSetting: (NSUInteger) bind
-                                    duplexSetting: (NSUInteger)  duplex
-                                    bookletBindSettingOn: (BOOL) isBookletBind
++(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize
 {
-    if(duplex > DUPLEX_OFF || isBookletBind == YES)
-    {
-        return UIPageViewControllerSpineLocationMid;
-    }
-    if(bind == BIND_RIGHT)
-    {
-        return UIPageViewControllerSpineLocationMax;
-    }
-    
-    return UIPageViewControllerSpineLocationMin;
-    
+    //return ratio for portrait
+    CGFloat ratio = paperDimensionsMM[paperSize].width / paperDimensionsMM[paperSize].height ;
+    return ratio;
 }
 
-+(UIPageViewControllerNavigationOrientation) navigationOrientationForBindSetting : (NSUInteger) bind
++ (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape:(BOOL)isLandscape
 {
-    if(bind == BIND_TOP)
+    CGSize size = paperDimensionsMM[paperSize];
+    //To have paper size in actual proportion to size of PDF in points, convert paper mm dimensions to points at 72 PPI
+    size.width = (size.width/MM_PER_INCH) * POINTS_PER_INCH;
+    size.height = (size.height/MM_PER_INCH) * POINTS_PER_INCH;
+    //Sizes are in portrait, for Landscape, interchange height and width
+    if(isLandscape == YES)
     {
-        return UIPageViewControllerNavigationOrientationVertical;
+        CGFloat temp = size.width;
+        size.width = size.height;
+        size.height = temp;
     }
-    return UIPageViewControllerNavigationOrientationHorizontal;
+    return size;
 }
 
 +(BOOL) isPaperLandscapeForPreviewSetting:(PreviewSetting*) setting
@@ -63,17 +69,26 @@ struct {
         return NO;
     }
     
-    if(setting.isBookletBind == YES && setting.bind != BIND_TOP)
+    if(setting.booklet == YES)
+    {
+        if(setting.orientation == kOrientationPortrait)
+        {
+            return YES;
+        }
+        return NO;
+    }
+    
+    if(setting.imposition == kImposition2Pages && setting.orientation == kOrientationPortrait)
     {
         return YES;
     }
     
-    if(setting.pagination == PAGINATION_2IN1 || setting.pagination == PAGINATION_6IN1)
+    if(setting.imposition == kImposition2Pages && setting.orientation == kOrientationLandscape)
     {
-        return YES;
+        return NO;
     }
     
-    if(setting.orientation == ORIENTATION_LANDSCAPE)
+    if(setting.orientation == kOrientationLandscape)
     {
         return YES;
     }
@@ -81,26 +96,16 @@ struct {
     return NO;
 }
 
-+(CGFloat) heightToWidthRatioForPaperSizeSetting:(NSUInteger) paperSize
++ (NSUInteger)getNumberOfPagesPerSheetForImpostionSetting:(NSUInteger)imposition
 {
-    CGFloat ratio = paperDimensionsMM[paperSize].height / paperDimensionsMM[paperSize].width;
-    return ratio;
-}
-
-+(NSUInteger) numberOfPagesPerSheetForPaginationSetting: (NSUInteger) pagination
-{
-    switch(pagination)
+    switch(imposition)
     {
-        case PAGINATION_2IN1:
+        case kImposition2Pages:
             return 2;
-        case PAGINATION_4IN1:
+        case kImposition4pages:
             return 4;
-        case PAGINATION_6IN1:
-            return 6;
-        case PAGINATION_9IN1 :
-            return 9;
-        case PAGINATION_16IN1:
-            return 16;
+        default:
+            break;
     }
     return 1;
 }

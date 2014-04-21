@@ -2,8 +2,8 @@
 //  PrintJobHistoryGroupTest.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 4/10/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <GHUnitIOS/GHUnit.h>
@@ -115,7 +115,7 @@
     
     NSString* groupName = @"Group X";
     
-    testGroup = [PrintJobHistoryGroup initWithGroupName:groupName];
+    testGroup = [PrintJobHistoryGroup initWithGroupName:groupName withGroupTag:0];
     GHAssertNotNil(testGroup, @"could not initialize a PrintJobHistoryGroup");
     GHAssertEqualStrings(testGroup.groupName, groupName, @"groupName should be %@", groupName);
     GHAssertTrue(testGroup.countPrintJobs == 0, @"group initially should have no jobs");

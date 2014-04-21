@@ -2,8 +2,8 @@
 //  PrintersScreenController.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrintersIphoneViewController.h"
@@ -11,8 +11,10 @@
 #import "PrinterManager.h"
 #import "PrinterCell.h"
 #import "AlertHelper.h"
+#import "PrintSettingsViewController.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
+#define SEGUE_TO_PRINTSETTINGS  @"PrintersIphone-PrintSettings"
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersIphoneViewController ()
@@ -88,7 +90,8 @@
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
 
-    [cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.printerStatus setStatus:NO];
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
     if (indexPath.row == self.printerManager.countSavedPrinters-1)
@@ -174,8 +177,18 @@
         }
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.onlineStatus = cell.printerStatus.onlineStatus;
-        cell.printerStatus.statusHelper.delegate = destController;
+        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
     }
+    else if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])
+    {
+        ((PrintSettingsViewController *)segue.destinationViewController).printerIndex = [NSNumber numberWithInteger:self.selectedPrinterIndexPath.row];
+    }
+}
+
+-(void) segueToPrintSettings
+{
+    //The PrintersiPhoneViewController is the main controller in the root view controller so it is the one that should call a slide segue to the PrintSettingsViewController
+    [self performSegueTo:[PrintSettingsViewController class]];
 }
 
 - (IBAction)unwindFromPrinterInfo:(UIStoryboardSegue*)unwindSegue

@@ -2,14 +2,15 @@
 //  PrintersScreenController.h
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "PrintersViewController.h"
 #import "PrinterInfoViewController.h"
+#import "PrinterInfoViewController.h"
 
-@interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate>
+@interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate, PrinterInfoDelegate>
 
 @end

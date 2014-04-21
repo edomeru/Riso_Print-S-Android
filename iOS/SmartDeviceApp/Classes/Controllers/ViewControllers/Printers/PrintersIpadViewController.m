@@ -2,8 +2,8 @@
 //  PrintersIpadViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/7/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrintersIpadViewController.h"
@@ -13,9 +13,11 @@
 #import "PrinterManager.h"
 #import "PrinterStatusView.h"
 #import "AlertHelper.h"
+#import "PrintSettingsViewController.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
+#define SEGUE_TO_PRINTSETTINGS @"PrintersIpad-PrintSettings"
 
 @interface PrintersIpadViewController ()
 
@@ -26,6 +28,7 @@
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
+@property (nonatomic, strong) NSNumber *selectedPrinterIndex;
 
 #pragma mark - Instance Methods
 
@@ -112,13 +115,31 @@
     cell.nameLabel.text = printer.name;
     cell.ipAddressLabel.text = printer.ip_address;
     cell.portLabel.text = [printer.port stringValue];
+    cell.defaultSettingsButton.tag = indexPath.row;
 
+    // fix for the unconnected helper still polling when the
+    // cell and the PrinterStatusViews are reused on reload
+    // (the status view is not dealloc'd and it still sets
+    // the status on its previous cell)
+    if ([cell.statusView.statusHelper isPolling])
+    {
+        [cell.statusView.statusHelper stopPrinterStatusPolling];
+        cell.statusView.statusHelper.delegate = nil;
+    }
+    
+    // since cells may be reused, create a new helper for this cell
     cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.statusView.statusHelper.delegate = cell.statusView;
 
-    [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    [cell.statusView setStatus:NO];
     [cell.statusView.statusHelper startPrinterStatusPolling];
     return cell;
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -216,6 +237,7 @@
         //set the view of the cell to stop polling for printer status
         PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
         [cell.statusView.statusHelper stopPrinterStatusPolling];
+        cell.statusView.statusHelper.delegate = nil;
         
         cell.indexPath = nil;
         //set view to non default printer cell style
@@ -234,6 +256,13 @@
     }
 }
 
+- (IBAction)defaultSettingsButtonAction:(id)sender
+{
+    UIButton* button = (UIButton *) sender;
+    self.selectedPrinterIndex = [NSNumber numberWithInteger:button.tag];
+    [self performSegueTo:[PrintSettingsViewController class]];
+}
+
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue*)segue sender:(id)sender
@@ -248,7 +277,11 @@
         PrinterSearchViewController* searchScreen = (PrinterSearchViewController*)segue.destinationViewController;
         searchScreen.printersViewController = self;
     }
-    
+    else if ([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])
+    {
+        PrintSettingsViewController* settingsScreen = (PrintSettingsViewController*)segue.destinationViewController;
+        settingsScreen.printerIndex = self.selectedPrinterIndex;
+    }
 }
 
 #pragma mark - Reload

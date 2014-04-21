@@ -2,8 +2,8 @@
 //  PrinterCollectionViewCell.h
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/14/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -22,6 +22,7 @@
 @property (nonatomic, weak) IBOutlet UISwitch *defaultSwitch;
 @property (nonatomic, weak) IBOutlet PrinterStatusView *statusView;
 @property (weak, nonatomic) IBOutlet UIView *cellHeader;
+@property (weak, nonatomic) IBOutlet UIButton *defaultSettingsButton;
 
 @property (nonatomic, weak) id <PrinterCollectionViewCellDelegate> delegate;
 @property (nonatomic, weak) NSIndexPath *indexPath;

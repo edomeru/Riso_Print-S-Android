@@ -22,14 +22,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
+    
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
+    private static final boolean INITIALIZE_DATA = true; // set to true for testing
     
     private static final int DATABASE_VERSION = 1;
+    
     private Context mContext;
     
     public DatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
+    }
+    
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
+        db.execSQL("PRAGMA foreign_keys = ON;");
     }
     
     @Override
@@ -44,11 +53,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         
         /* for testing only */
-        sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
-        separated = sqlString.split(";");
-        
-        for (int i = 0; i < separated.length; i++) {
-            db.execSQL(separated[i]);
+        if (INITIALIZE_DATA) {
+            sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
+            separated = sqlString.split(";");
+            
+            for (int i = 0; i < separated.length; i++) {
+                db.execSQL(separated[i]);
+            }
         }
         /* end of for testing only */
         
@@ -62,6 +73,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade - End");
     }
     
+    public static String getStringFromCursor(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
+    }
+    
+    public static int getIntFromCursor(Cursor cursor, String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
+    }
+    
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -69,9 +88,34 @@ public class DatabaseManager extends SQLiteOpenHelper {
         try {
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
-            Log.e(TAG, "failed insert to " + table);
+            Log.e(TAG, "failed insert to " + table + ". Error: " + e.getMessage());
         }
         
+        db.close();
+        
+        return (rowId > -1);
+    }
+    
+    public long insertOrReplace(String table, String nullColumnHack, ContentValues values) {
+        long rowId = -1;
+        SQLiteDatabase db = this.getWritableDatabase();
+        
+        try {
+            rowId = db.insertWithOnConflict(table, nullColumnHack, values, SQLiteDatabase.CONFLICT_REPLACE);
+        } catch (SQLException e) {
+            Log.e(TAG, "failed insert to " + table + ". Error: " + e.getMessage());
+        }
+        
+        db.close();
+        
+        return rowId;
+    }
+    
+    public boolean update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        long rowId = -1;
+        SQLiteDatabase db = this.getWritableDatabase();
+        
+        rowId = db.update(table, values, whereClause, whereArgs);
         db.close();
         
         return (rowId > -1);
@@ -83,18 +127,21 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return cur;
     }
     
-    public boolean deleteMultiple(String table, String whereClause, String[] whereArgs) {
+    public boolean delete(String table, String whereClause, String whereArg) {
+        String whereArgs[] = null;
+        if (whereArg != null && !whereArg.isEmpty()) {
+            whereArgs = new String[] { whereArg };
+        }
+        
+        return delete(table, whereClause, whereArgs);
+    }
+    
+    private boolean delete(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         rowsNum = db.delete(table, whereClause, whereArgs);
         db.close();
         
         return (rowsNum > 0);
-        
-    }
-    
-    public boolean delete(String table, String whereClause, String whereArg) {
-        String[] whereArgs = (whereArg == null || whereArg.isEmpty()) ? null : new String[] { whereArg };
-        return deleteMultiple(table, whereClause, whereArgs);
     }
 }
