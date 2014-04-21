@@ -227,6 +227,8 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
     if ([DatabaseManager deleteObject:printerToDelete])
     {
+        Printer *printer = [self.listSavedPrinters objectAtIndex:index];
+        printer = nil;
         [self.listSavedPrinters removeObjectAtIndex:index];
         self.countSavedPrinters--;
         return YES;

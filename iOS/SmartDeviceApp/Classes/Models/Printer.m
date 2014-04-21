@@ -27,8 +27,4 @@
 @dynamic defaultprinter;
 @dynamic printjob;
 @dynamic printsetting;
-
--(void)dealloc
-{
-}
 @end

@@ -48,6 +48,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 @property (nonatomic) BOOL isDefaultSettingsMode;
 
 @property (nonatomic, strong) PreviewSetting *previewSetting;
+@property (nonatomic, strong) PrintDocument *printDocument;
 @property (nonatomic, weak) Printer *printer;
 @property (nonatomic, weak) NSDictionary *printSettingsTree;
 @property (nonatomic, strong) NSMutableArray *expandedSections;
@@ -55,9 +56,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
 @property (nonatomic, strong) NSMutableDictionary *textFieldBindings;
 @property (nonatomic, strong) NSMutableDictionary *switchBindings;
+@property (nonatomic, strong) NSMutableArray *supportedSettings;
 
 @property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
 @property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
+@property (nonatomic) BOOL isRedrawFullSettingsTable;
 
 - (void)executePrint;
 
@@ -82,15 +85,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if (self.printerIndex == nil)
     {
         // Launched from preview - load current print settings and selected printer
-        PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
-        self.printer = printDocument.printer;
-        self.previewSetting = printDocument.previewSetting;
-        [printDocument addObserver:self forKeyPath:@"printer" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&printSettingsPrinterContext];
+        self.printDocument = [[PDFFileManager sharedManager] printDocument];
+        self.printer = self.printDocument.printer;
+        self.previewSetting = self.printDocument.previewSetting;
+        [self.printDocument addObserver:self forKeyPath:@"printer" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&printSettingsPrinterContext];
         self.isDefaultSettingsMode = NO;
     }
     else
     {
         // Launched from printers - load from default print settings and selected printer
+        self.printDocument = nil;
         self.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:[self.printerIndex unsignedIntegerValue]];
         PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
         [PrintSettingsHelper copyPrintSettings:self.printer.printsetting toPreviewSetting:&previewSetting];
@@ -109,6 +113,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
     }
+    
+    [self fillSupportedSettings];
     
     PreviewSetting *previewSetting = self.previewSetting;
     [PrintSettingsHelper addObserver:self toPreviewSetting: &previewSetting];
@@ -139,17 +145,29 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 -(void)dealloc
 {
     PreviewSetting *previewSetting = self.previewSetting;
-    if (self.printerIndex == nil)
+    if (self.printerIndex == nil && self.printDocument != nil)
     {
-        PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
-        [printDocument removeObserver:self forKeyPath:@"printer"];
+        //PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
+        [self.printDocument removeObserver:self forKeyPath:@"printer"];
     }
     [PrintSettingsHelper removeObserver:self fromPreviewSetting:&previewSetting];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [self reloadRowsForIndexPathsToUpdate];
+    if(self.isRedrawFullSettingsTable == YES)
+    {
+        [self fillSupportedSettings];
+        [self.indexPathsToUpdate removeAllObjects];
+        [self.indexPathsForSettings removeAllObjects];
+        [self.tableView reloadData];
+        self.isRedrawFullSettingsTable = NO;
+    }
+    else
+    {
+        [self reloadRowsForIndexPathsToUpdate];
+    }
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -191,8 +209,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             return 1;
         }
         
-        NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:logicalSection - 1];
-        return [[group objectForKey:@"setting"] count] + 1;
+        NSArray *settings =[self.supportedSettings objectAtIndex:logicalSection - 1];
+        NSInteger rowCount = [settings count];
+        if(rowCount > 0)
+        {
+            rowCount++; //add the header row
+        }
+        return rowCount;
     }
     return 0;
 }
@@ -248,13 +271,14 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
         else
         {
-            NSArray *settings = [group objectForKey:@"setting"];
+            NSArray *settings = [self.supportedSettings objectAtIndex:section - 1]; 
+
             NSDictionary *setting = [settings objectAtIndex:row - 1];
             
             NSString *type = [setting objectForKey:@"type"];
             NSString *key = [setting objectForKey:@"name"];
-            //keep track of index of each setting for easy access
             
+	    //keep track of index of each setting for easy access
             [self.indexPathsForSettings setObject:indexPath forKey:key];
             if ([type isEqualToString:@"list"])
             {
@@ -324,7 +348,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
     if (section > 0)
     {
-        NSArray *settings = [[[self.printSettingsTree objectForKey:@"group"] objectAtIndex:section - 1] objectForKey:@"setting"];
+        NSArray *settings = [self.supportedSettings objectAtIndex:section - 1];
         if (row == 0)
         {
             BOOL isExpanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
@@ -466,13 +490,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             {
                 PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
                 self.printer = printDocument.printer;
-                PrintSettingsPrinterItemCell * printerItemCell = (PrintSettingsPrinterItemCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-            
-                printerItemCell.printerNameLabel.hidden = NO;
-                printerItemCell.printerIPLabel.hidden = NO;
-                printerItemCell.selectPrinterLabel.hidden = YES;
-                printerItemCell.printerNameLabel.text = self.printer.name;
-                printerItemCell.printerIPLabel.text = self.printer.ip_address;
+
+                //set to redraw the whole settings table to remove settings that are not supported by new printer
+                self.isRedrawFullSettingsTable = YES;
             }
         }
     }
@@ -692,7 +712,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
--(BOOL) isSettingEnabled:(NSString*) settingKey
+- (BOOL)isSettingEnabled:(NSString*)settingKey
 {
     if([settingKey isEqualToString:KEY_DUPLEX])
     {
@@ -752,6 +772,38 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     return YES;
 }
 
+- (BOOL)isSettingSupported:(NSString*)settingKey
+{
+    if([settingKey isEqualToString:KEY_DUPLEX])
+    {
+        [self.printer.enabled_duplex boolValue];
+    }
+    
+    if([settingKey isEqualToString:KEY_FINISHING_SIDE])
+    {
+        [self.printer.enabled_bind boolValue];
+    }
+    
+    if([settingKey isEqualToString:KEY_STAPLE])
+    {
+        [self.printer.enabled_staple boolValue];
+    }
+    
+    if([settingKey isEqualToString:KEY_IMPOSITION] ||
+       [settingKey isEqualToString:KEY_IMPOSITION_ORDER])
+    {
+        [self.printer.enabled_pagination boolValue];
+    }
+    
+    if([settingKey isEqualToString:KEY_BOOKLET] ||
+       [settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
+       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
+    {
+        return [self.printer.enabled_booklet_binding boolValue];
+    }
+    return YES;
+}
+
 - (void)addToIndexToUpdate:(NSIndexPath *)indexPath
 {
     if([self.indexPathsToUpdate containsObject:indexPath] == NO)
@@ -760,12 +812,34 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
-- (void) reloadRowsForIndexPathsToUpdate
+- (void)reloadRowsForIndexPathsToUpdate
 {
     if([self.indexPathsToUpdate count] > 0)
     {
         [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
         [self.indexPathsToUpdate removeAllObjects];
+    }
+}
+
+-(void) fillSupportedSettings
+{
+    self.supportedSettings = [[NSMutableArray alloc] init];
+    NSArray *sections = [self.printSettingsTree objectForKey:@"group"];
+    
+    for(NSDictionary *section in sections)
+    {
+        NSMutableArray *settings =[[section objectForKey:@"setting"] mutableCopy];
+        NSMutableArray *effectiveSettings = [[NSMutableArray alloc] init];
+        for(NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            if([self isSettingSupported:key] == YES)
+            {
+                [effectiveSettings addObject:setting];
+            }
+            
+        }
+        [self.supportedSettings addObject:effectiveSettings];
     }
 }
 
