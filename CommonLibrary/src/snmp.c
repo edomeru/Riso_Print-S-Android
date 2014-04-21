@@ -133,6 +133,8 @@ int snmp_device_get_capability_status(snmp_device *device, int capability);
 int snmp_extract_ip_address(netsnmp_pdu *pdu, char *ip_address);
 int snmp_handle_pdu_response(char *ip_address, netsnmp_variable_list *var_list, snmp_context *context);
 int snmp_get_capabilities(snmp_context *context, snmp_device *device);
+void snmp_call_add_callback(snmp_context *context, snmp_device *device);
+void snmp_call_end_callback(snmp_context *context, int count);
 
 void snmp_device_discovery(snmp_context *context)
 {
@@ -194,8 +196,7 @@ void *do_discovery(void *parameter)
             free(session.peername);
             free(session.community);
             free(password);
-            snmp_context_set_state(context, kSnmpStateEnded);
-            context->discovery_ended_callback(context, -1);
+            snmp_call_end_callback(context, -1);
             
             return 0;
         }
@@ -221,8 +222,7 @@ void *do_discovery(void *parameter)
         
         free(session.peername);
         free(session.community);
-        snmp_context_set_state(context, kSnmpStateEnded);
-        context->discovery_ended_callback(context, -1);
+        snmp_call_end_callback(context, -1);
         
         return 0;
     }
@@ -245,8 +245,7 @@ void *do_discovery(void *parameter)
         snmp_close(ss);
         free(session.peername);
         free(session.community);
-        snmp_context_set_state(context, kSnmpStateEnded);
-        context->discovery_ended_callback(context, -1);
+        snmp_call_end_callback(context, -1);
         
         return 0;
     }
@@ -304,7 +303,7 @@ void *do_discovery(void *parameter)
     if (snmp_context_get_state(context) != kSnmpStateCancelled)
     {
         int count = snmp_context_device_count(context);
-        context->discovery_ended_callback(context, count);
+        snmp_call_end_callback(context, count);
     }
     
     return 0;
@@ -348,7 +347,7 @@ void *do_capability_check(void *parameter)
         }
         
         snmp_context_device_add(context, device);
-        context->printer_added_callback(context, device);
+        snmp_call_add_callback(context, device);
     }
     
     return 0;
@@ -715,10 +714,30 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
             snmp_free_pdu(pdu_response);
         }
     }
-    printf("IP: %s\n", device->ip_address);
+    
     snmp_close(ss);
     free(session.peername);
     free(session.community);
     return 1;
 }
 
+void snmp_call_add_callback(snmp_context *context, snmp_device *device)
+{
+    if (snmp_context_get_state(context) == kSnmpStateCancelled)
+    {
+        return;
+    }
+    
+    context->printer_added_callback(context, device);
+}
+
+void snmp_call_end_callback(snmp_context *context, int count)
+{
+    if (snmp_context_get_state(context) == kSnmpStateCancelled)
+    {
+        return;
+    }
+    
+    snmp_context_set_state(context, count);
+    context->discovery_ended_callback(context, count);
+}
