@@ -7,6 +7,7 @@
 //
 
 #import "InputHelper.h"
+#include <arpa/inet.h>
 
 @implementation InputHelper
 
@@ -32,39 +33,19 @@
 
 + (BOOL)isIPValid:(NSString*)inputIP;
 {
-    // quick check : # of characters must be 7-15
-    NSUInteger numChars = [inputIP length];
-    if (numChars < 7 || numChars > 15)
-        return NO;
+    const char *cString = [inputIP UTF8String];
+    struct in_addr ipv4;
     
-    // create the IP Address regex pattern
-    NSMutableString* pattern = [NSMutableString stringWithString:@""];
-    [pattern appendString:@"^"];                                //start
-    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //1st digit
-    [pattern appendString:@"\\."];                              //dot separator
-    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //2nd digit
-    [pattern appendString:@"\\."];                              //dot separator
-    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //3rd digit
-    [pattern appendString:@"\\."];                              //dot separator
-    [pattern appendString:@"([01]?\\d\\d?|2[0-4]\\d|25[0-5])"]; //4th digit
-    [pattern appendString:@"$"];                                //end
+    // Check if valid IPv4 address
+    int result = inet_pton(AF_INET, cString, &ipv4);
+    if (result != 1)
+    {
+        // Check if valid IPv6 address
+        struct in6_addr ipv6;
+        result = inet_pton(AF_INET6, cString, &ipv6);
+    }
     
-    // create the regex
-    NSError* error = nil;
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:pattern
-                                                                           options:0
-                                                                             error:&error];
-    
-    // find the pattern in the input string
-    NSRange matches = [regex rangeOfFirstMatchInString:inputIP
-                                               options:NSMatchingReportProgress
-                                                 range:NSMakeRange(0, [inputIP length])];
-    
-    // check if input matched the pattern
-    if (matches.location == NSNotFound)
-        return NO;
-    else
-        return YES;
+    return (result == 1);
 }
 
 @end
