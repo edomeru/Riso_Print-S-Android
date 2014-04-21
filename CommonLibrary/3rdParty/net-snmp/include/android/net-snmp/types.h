@@ -27,9 +27,9 @@
 
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
-#include <sys/select.h>
 #endif
 #include <sys/types.h>
+#include <sys/select.h>
 #if 1
 /*
  * If neither the Microsoft winsock header file nor the MinGW winsock header
@@ -72,6 +72,10 @@ typedef pid_t netsnmp_pid_t;
 #include <netinet/in.h>		/* For definition of in_addr_t */
 #endif
 
+#if HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+
 #include <net-snmp/library/oid.h>
 
 #ifdef __cplusplus
@@ -87,7 +91,7 @@ typedef u_int socklen_t;
    * The type in_addr_t must match the type of sockaddr_in::sin_addr.
    * For MSVC and MinGW32, this is u_long.
    */
-typedef u_int32_t in_addr_t;
+typedef u_long in_addr_t;
 #endif
 
 #ifndef HAVE_SSIZE_T
