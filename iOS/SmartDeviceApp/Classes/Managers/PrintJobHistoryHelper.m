@@ -115,36 +115,48 @@
 + (void)populateWithTestData
 {
     // TEST DATA CONSTANTS
+    NSString* TEST_PRINTER_NAME = @"PrintJob Test Printer";
+    NSString* TEST_PRINTER_IP = @"999.99.9";
+    NSString* TEST_JOB_NAME = @"Test Job";
     const NSUInteger TEST_NUM_PRINTERS = 8;
-    const NSUInteger TEST_NUM_JOBS[8] = {5, 8, 10, 1, 4, 10, 3, 7}; 
+    const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {5, 8, 10, 1, 4, 10, 3, 7};
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     
-    // delete first all existing printers
-    while (pm.countSavedPrinters != 0)
+    // remove existing test printers
+    NSUInteger printerIdx = 0;
+    while (printerIdx < pm.countSavedPrinters)
     {
-        if (![pm deletePrinterAtIndex:0])
-            break;
-    }
-    if (pm.countSavedPrinters != 0)
-    {
+        Printer* printer = [pm getPrinterAtIndex:printerIdx];
+        if ([printer.name hasPrefix:TEST_PRINTER_NAME])
+        {
+            if (![pm deletePrinterAtIndex:printerIdx])
+            {
 #if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-        NSLog(@"[ERROR][PrintJobHelper] unable to delete all printers from DB");
+                NSLog(@"[ERROR][PrintJobHelper] unable to delete existing test printer");
 #endif
-        return;
+                return;
+            }
+        }
+        else
+        {
+            printerIdx++;
+        }
     }
     
-    // replace with test printers
-    for (int i = 0; i < TEST_NUM_PRINTERS; i++)
+    NSUInteger numNonTestPrinters = pm.countSavedPrinters;
+    
+    // add the test printers
+    for (int printerIdx = 0; printerIdx < TEST_NUM_PRINTERS; printerIdx++)
     {
         PrinterDetails* testPrinterDetails = [[PrinterDetails alloc] init];
-        testPrinterDetails.name = [NSString stringWithFormat:@"Test Printer %d", i+1];
-        testPrinterDetails.ip = [NSString stringWithFormat:@"999.99.9.%d", i+1];
-        testPrinterDetails.port = [NSNumber numberWithUnsignedInt:(i+1)*100];
+        testPrinterDetails.name = [NSString stringWithFormat:@"%@ %d", TEST_PRINTER_NAME, printerIdx+1];
+        testPrinterDetails.ip = [NSString stringWithFormat:@"%@.%d", TEST_PRINTER_IP, printerIdx+1];
+        testPrinterDetails.port = [NSNumber numberWithUnsignedInt:(printerIdx+1)*100];
         if (![pm registerPrinter:testPrinterDetails])
             break;
     }
-    if (pm.countSavedPrinters != TEST_NUM_PRINTERS)
+    if (pm.countSavedPrinters != (numNonTestPrinters + TEST_NUM_PRINTERS))
     {
 #if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
         NSLog(@"[ERROR][PrintJobHelper] unable to add test printers to DB");
@@ -153,10 +165,14 @@
     }
     
     // create print jobs and attach to the test printers
-    for (int printerIdx = 0; printerIdx < TEST_NUM_PRINTERS; printerIdx++)
+    int testPrinterIdx = 0;
+    for (int printerIdx = 0; printerIdx < pm.countSavedPrinters; printerIdx++)
     {
         Printer* testPrinter = [pm getPrinterAtIndex:printerIdx];
-        for (int jobIdx = 0; jobIdx < TEST_NUM_JOBS[printerIdx]; jobIdx++)
+        if (![testPrinter.name hasPrefix:TEST_PRINTER_NAME])
+            continue; // this is not a test printer
+        
+        for (int jobIdx = 0; jobIdx < TEST_NUM_JOBS[testPrinterIdx]; jobIdx++)
         {
             PrintJob* newPrintJob = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
             if (newPrintJob == nil)
@@ -166,7 +182,7 @@
 #endif
                 break;
             }
-            newPrintJob.name = [NSString stringWithFormat:@"Test Job %d-%d", printerIdx+1, jobIdx+1];
+            newPrintJob.name = [NSString stringWithFormat:@"%@ %d-%d", TEST_JOB_NAME, printerIdx+1, jobIdx+1];
             newPrintJob.result = [NSNumber numberWithInt:jobIdx%2]; //alternate OK and NG
             newPrintJob.date = [NSDate dateWithTimeIntervalSinceNow:(arc4random()%60)*1000]; //random times
             newPrintJob.printer = testPrinter;
@@ -174,6 +190,7 @@
             [newPrintJob log];
 #endif
         }
+        testPrinterIdx++;
     }
     
     if (![DatabaseManager saveChanges])
