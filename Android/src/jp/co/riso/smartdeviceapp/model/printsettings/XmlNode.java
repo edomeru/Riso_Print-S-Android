@@ -22,10 +22,18 @@ public abstract class XmlNode {
     
     public NamedNodeMap mAttributes;
     
+    /**
+     * Constructor
+     * 
+     * @param node
+     */
     public XmlNode(Node node) {
         mAttributes = node.getAttributes();
     }
     
+    /**
+     * @return Attribute
+     */
     public String getAttributeValue(String key) {
         if (mAttributes.getNamedItem(key) == null) {
             return "";

@@ -13,6 +13,9 @@ import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Printer object
+ */
 public class Printer implements Parcelable {
     private String mName = null;
     private String mIpAddress = null;
@@ -21,6 +24,16 @@ public class Printer implements Parcelable {
     
     private Config mConfig = null;
     
+    /**
+     * Printer Constructor
+     * <p>
+     * Create a printer instance
+     * 
+     * @param name
+     *            Device Name
+     * @param ipAddress
+     *            IP address
+     */
     public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
@@ -29,16 +42,27 @@ public class Printer implements Parcelable {
         mConfig = new Config();
     }
     
+    /** {@inheritDoc} */
     public static final Printer.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
+        /** {@inheritDoc} */
         public Printer createFromParcel(Parcel in) {
             return new Printer(in);
         }
         
+        /** {@inheritDoc} */
         public Printer[] newArray(int size) {
             return new Printer[size];
         }
     };
     
+    /**
+     * Printer Constructor
+     * <p>
+     * Create a printer instance
+     * 
+     * @param in
+     *            Parcel containing the printer information.
+     */
     public Printer(Parcel in) {
         if (mConfig == null) {
             mConfig = new Config();
@@ -51,11 +75,13 @@ public class Printer implements Parcelable {
         mConfig.readFromParcel(in);
     }
     
+    /** {@inheritDoc} */
     @Override
     public int describeContents() {
         return 0;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void writeToParcel(Parcel out, int flags) {
         if (mConfig == null) {
@@ -167,6 +193,9 @@ public class Printer implements Parcelable {
     // Internal Class - Printer Config
     // ================================================================================
     
+    /**
+     * Printer Capabilities
+     */
     public class Config {
         private boolean mLprAvailable;
         private boolean mRawAvailable;
@@ -178,6 +207,11 @@ public class Printer implements Parcelable {
         private boolean mTrayTopAvailable;
         private boolean mTrayStackAvailable;
         
+        /**
+         * Config Constructor
+         * <p>
+         * Create a config instance.
+         */
         public Config() {
             mBookletAvailable = true;
             mStaplerAvailable = true;
@@ -332,6 +366,11 @@ public class Printer implements Parcelable {
             this.mTrayStackAvailable = trayStackAvailable;
         }
         
+        /**
+         * saves the value of all class members to a Parcel
+         * 
+         * @param out
+         */
         public void writeToParcel(Parcel out) {
             boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
                     mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
@@ -339,6 +378,11 @@ public class Printer implements Parcelable {
             out.writeBooleanArray(config);
         }
         
+        /**
+         * retrieves the value of all the class members from a Parcel
+         * 
+         * @param in
+         */
         public void readFromParcel(Parcel in) {
             boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
                     mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };

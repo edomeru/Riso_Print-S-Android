@@ -32,10 +32,26 @@ public class DirectPrintManager {
     public native void lprPrint();
     public native void cancel();
     
+    /**
+     * Set Callback.
+     * <p>
+     * Sets the callback for the DirectPrint Manager.
+     * 
+     * @param callback
+     *            Callback function
+     */
     public void setCallback(DirectPrintCallback callback) {
         mCallbackRef = new WeakReference<DirectPrintCallback>(callback);
     }
     
+    /**
+     * Send cancel command
+     * <p>
+     * Cancel Print task.
+     * 
+     * @param callback
+     *            Callback function
+     */
     public void sendCancelCommand() {
         setCallback(null);
         (new DirectPrintCancelTask(this)).execute();
@@ -45,6 +61,14 @@ public class DirectPrintManager {
         System.loadLibrary("common");
     }
     
+    /**
+     * Send cancel command
+     * <p>
+     * Cancel Print task.
+     * 
+     * @param callback
+     *            Callback function
+     */
     private void onNotifyProgress(int status, float progress) {
         if (mCallbackRef != null && mCallbackRef.get() != null) {
             mCallbackRef.get().onNotifyProgress(this, status, progress);
@@ -52,6 +76,16 @@ public class DirectPrintManager {
     }
     
     public interface DirectPrintCallback {
+        /**
+         * Notify progress callback
+         * 
+         * @param manager
+         *            DirectPrint Manager
+         * @param status
+         *            Print status
+         * @param progress
+         *            Printing progress
+         */
         public void onNotifyProgress(DirectPrintManager manager, int status, float progress);
     }
 
@@ -60,13 +94,20 @@ public class DirectPrintManager {
     // Internal classes
     // ================================================================================
     
+    /**
+     * Async Task for Canceling Direct Print
+     */
     public class DirectPrintCancelTask extends AsyncTask<Void, Void, Void> {
         private DirectPrintManager mManager;
         
+        /**
+         * Instantiate DirectPrintCancelTask
+         */
         public DirectPrintCancelTask(DirectPrintManager manager) {
             mManager = manager;
         }
 
+        /** {@inheritDoc} */
         @Override
         protected Void doInBackground(Void... params) {
             mManager.cancel();
@@ -74,6 +115,7 @@ public class DirectPrintManager {
             return null;
         }
 
+        /** {@inheritDoc} */
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);

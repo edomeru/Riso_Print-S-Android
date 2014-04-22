@@ -30,6 +30,9 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     private int layoutId;
     private PrinterManager mPrinterManager = null;
     
+    /**
+     * Constructor
+     */
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
         this.mContext = context;
@@ -37,6 +40,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
     
+    /** {@inheritDoc} */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Printer printer = getItem(position);
@@ -78,6 +82,9 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         return convertView;
     }
     
+    /**
+     * Set Printer Search Screen Adapter Interface
+     */
     public void setSearchAdapterInterface(PrinterSearchAdapterInterface searchAdapterInterface) {
         mSearchAdapterInterface = searchAdapterInterface;
     }
@@ -86,6 +93,9 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // Internal Classes
     // ================================================================================
     
+    /**
+     * Printer Search Screen view holder
+     */
     public class ViewHolder {
         public ImageView mAddedIndicator;
         public TextView mPrinterName;
@@ -95,8 +105,23 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // Interface
     // ================================================================================
     
+    /**
+     * Printer Search Screen interface
+     */
     public interface PrinterSearchAdapterInterface {
+        /**
+         * On add printer callback.
+         * <p>
+         * Callback called to add a searched printer to the Printers Screen.
+         * 
+         * @param printer
+         *            searched printer
+         */
         public int onAddPrinter(Printer printer);
+        
+        /**
+         * Checks if the maximum printer count is reached
+         */
         public boolean isMaxPrinterCountReached();
     }
     
@@ -104,6 +129,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // Interface View.OnClick
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.addPrinterButton) {

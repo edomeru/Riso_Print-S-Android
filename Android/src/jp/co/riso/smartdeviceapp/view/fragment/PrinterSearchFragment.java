@@ -47,11 +47,13 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private PrinterManager mPrinterManager = null;
     private Handler mHandler = null;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printersearch;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -66,6 +68,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mHandler = new Handler(this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
@@ -75,6 +78,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mListView.setOnRefreshListener(this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -90,6 +94,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -103,6 +108,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
@@ -113,6 +119,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // Private Methods
     // ================================================================================
     
+    /**
+     * Updates the status of the refresh bar
+     */
     public void updateRefreshBar() {
         Message newMessage = Message.obtain(mHandler, MSG_UPDATE_REFRESH_BAR);
         
@@ -123,6 +132,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - onRefresh()
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onRefresh() {
         mPrinter.clear();
@@ -133,6 +143,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         // Back Button
@@ -156,6 +167,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - OnPrinterSearchCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(final Printer printer) {
         if (getActivity() == null) {
@@ -173,6 +185,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         });
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
         updateRefreshBar();
@@ -182,6 +195,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - PrinterSearchAdapterInterface
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public int onAddPrinter(Printer printer) {
         int ret = 0;
@@ -204,6 +218,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         return ret;
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -218,6 +233,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         return false;
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {

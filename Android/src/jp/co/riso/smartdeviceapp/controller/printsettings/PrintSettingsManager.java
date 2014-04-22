@@ -21,10 +21,19 @@ public class PrintSettingsManager {
     
     private DatabaseManager mManager;
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     */
     private PrintSettingsManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
+    /**
+     * @param context
+     * @return PrintSettingsManager instance
+     */
     public static PrintSettingsManager getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new PrintSettingsManager(context);

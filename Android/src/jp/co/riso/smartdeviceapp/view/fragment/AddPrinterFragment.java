@@ -45,11 +45,13 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private boolean mAdded = false;
     private Handler mHandler = null;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_addprinter;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mAdded = false;
@@ -59,6 +61,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mHandler = new Handler(this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
@@ -72,6 +75,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -95,10 +99,22 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // Private Methods
     // ================================================================================
     
+    /**
+     * Search for printer device
+     * 
+     * @param ipAddress
+     *            Printer IP Address
+     */
     private void findPrinter(String ipAddress) {
         mPrinterManager.searchPrinter(ipAddress);
     }
     
+    /**
+     * Dialog which is displayed during successful printer search
+     * 
+     * @param printer
+     *            Searched printer
+     */
     private void dialogCb(Printer printer) {
         String title = getResources().getString(R.string.ids_lbl_printer_info);
         String msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
@@ -106,6 +122,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
+    /**
+     * Dialog which is displayed during failed printer search
+     * 
+     * @param err
+     *            Error code
+     */
     private void dialogErrCb(int err) {
         String title = getResources().getString(R.string.ids_lbl_printer_info);
         String errMsg = null;
@@ -121,6 +143,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
+    /**
+     * Close Add Printer screen
+     */
     private void closeScreen() {
         
         if (isTablet()) {
@@ -145,6 +170,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         AppUtils.hideSoftKeyboard(getActivity());
     }
     
+    /**
+     * Set the Add Printer Screen to disabled mode to prevent changes from user input
+     * 
+     * @param viewHolder
+     *            Add Printer Screen view holder
+     */
     private void setViewToDisable(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -158,6 +189,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
     }
     
+    /**
+     * Set the Add Printer Screen to normal
+     * 
+     * @param viewHolder
+     *            Add Printer Screen view holder
+     */
     private void setViewToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -174,6 +211,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -188,6 +226,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -223,6 +262,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - OnPrinterSearch
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(Printer printer) {
         if (mPrinterManager.isExists(printer)) {
@@ -234,6 +274,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
@@ -269,6 +310,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - OnKeyListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -282,6 +324,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTENAL Classes
     // ================================================================================
     
+    /**
+     * Add Printer Screen view holder
+     */
     public class ViewHolder {
         private TextView mIpAddressLabel;
         private EditText mIpAddress;

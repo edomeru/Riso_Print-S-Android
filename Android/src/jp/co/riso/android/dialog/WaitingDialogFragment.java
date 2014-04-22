@@ -45,6 +45,9 @@ public class WaitingDialogFragment extends DialogFragment {
         };
     }
     
+    /**
+     * @return WaitingDialogFragment instance
+     */
     public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable, String buttonTitle) {
         WaitingDialogFragment dialog = new WaitingDialogFragment();
         
@@ -59,6 +62,7 @@ public class WaitingDialogFragment extends DialogFragment {
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,7 @@ public class WaitingDialogFragment extends DialogFragment {
         setRetainInstance(true);
     }
     
+    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
@@ -103,6 +108,7 @@ public class WaitingDialogFragment extends DialogFragment {
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onDestroyView() {
         Dialog dialog = getDialog();
@@ -116,6 +122,7 @@ public class WaitingDialogFragment extends DialogFragment {
         super.onDestroyView();
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
@@ -130,6 +137,9 @@ public class WaitingDialogFragment extends DialogFragment {
     // ================================================================================
     
     public interface WaitingDialogListener {
+        /**
+         * Cancel listener
+         */
         public void onCancel();
     }
 }

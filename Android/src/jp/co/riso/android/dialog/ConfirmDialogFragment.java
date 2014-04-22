@@ -31,10 +31,16 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
     
+    /**
+     * @return ConfirmDialogFragment instance
+     */
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
         return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
     }
     
+    /**
+     * @return ConfirmDialogFragment instance
+     */
     public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {
         ConfirmDialogFragment dialog = new ConfirmDialogFragment();
         
@@ -51,11 +57,13 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
     
+    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
@@ -87,6 +95,7 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (getTargetFragment() instanceof ConfirmDialogListener) {
@@ -107,8 +116,14 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     // ================================================================================
     
     public interface ConfirmDialogListener {
+        /**
+         * Confirm listener
+         */
         public void onConfirm();
         
+        /**
+         * Cancel listener
+         */
         public void onCancel();
     }
 }

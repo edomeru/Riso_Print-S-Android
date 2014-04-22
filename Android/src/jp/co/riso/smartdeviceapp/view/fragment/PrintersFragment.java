@@ -60,11 +60,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private int mDeleteItem = PrinterManager.EMPTY_ID;
     private Parcelable mScrollState = null;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printers;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -73,6 +75,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mHandler = new Handler(this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
@@ -96,6 +99,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mHandler.sendEmptyMessageDelayed(MSG_INITIALIZE_ONLINE_STATUS, 10);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -105,6 +109,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         addActionMenuButton(view);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -119,6 +124,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
@@ -129,6 +135,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
@@ -139,6 +146,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // Private Methods
     // ================================================================================
     
+    /**
+     * Displays the Printer Search Screen
+     */
     private void displayPrinterSearchFragment() {
         if (isMaxPrinterCountReached()) {
             return;
@@ -147,6 +157,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH);
     }
     
+    /**
+     * Displays the Add Printer Screen
+     */
     private void displayAddPrinterFragment() {
         if (isMaxPrinterCountReached()) {
             return;
@@ -155,6 +168,14 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
     }
     
+    /**
+     * Switch to a fragment
+     * 
+     * @param fragment
+     *            Fragment object
+     * @param tag
+     *            Fragment tag
+     */
     private void switchToFragment(BaseFragment fragment, String tag) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -173,6 +194,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /**
+     * Determines if the maximum number of saved printers is reached
+     */
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printer_info);
@@ -189,6 +213,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -226,6 +251,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - PrintersCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onAddedNewPrinter(Printer printer) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_NEW_PRINTER);
@@ -237,6 +263,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - UpdateStatusCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void updateOnlineStatus() {
         for (int i = 0; i < mPrinter.size(); i++) {
@@ -260,6 +287,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {

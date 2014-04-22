@@ -9,8 +9,32 @@
 package jp.co.riso.smartdeviceapp.view.preview;
 
 public interface PreviewControlsListener {
+    /**
+     * Called when the index page is updated
+     * 
+     * @param index
+     *            page index
+     */
     public void onIndexChanged(int index);
+    
+    /**
+     * @return controls height
+     */
     public int getControlsHeight();
+    
+    /**
+     * zoom level changed listener
+     * 
+     * @param zoomLevel
+     *            new zoom level
+     */
     public void zoomLevelChanged(float zoomLevel);
+    
+    /**
+     * Set controls Enabled state
+     * 
+     * @param enabled
+     *            new controls enabled state
+     */
     public void setControlsEnabled(boolean enabled);
 }

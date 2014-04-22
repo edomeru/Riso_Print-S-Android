@@ -53,11 +53,13 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private PauseableHandler mPauseableHandler;
     private WaitingDialogFragment mWaitingDialog;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printsettings;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -70,6 +72,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
@@ -93,10 +96,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -107,6 +112,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
@@ -115,6 +121,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPauseableHandler.pause();
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
@@ -125,14 +132,23 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // Public functions
     // ================================================================================
     
+    /**
+     * Set fragment for printing
+     */
     public void setFragmentForPrinting(boolean fragmentForPrinting) {
         mFragmentForPrinting = fragmentForPrinting;
     }
     
+    /**
+     * Set printer ID
+     */
     public void setPrinterId(int printerId) {
         mPrinterId = printerId;
     }
     
+    /**
+     * Set print settings
+     */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
     }
@@ -151,6 +167,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - ValueChangedListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onPrinterIdSelectedChanged(int printerId) {
         setPrinterId(printerId);
@@ -161,6 +178,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onPrintSettingsValueChanged(PrintSettings printSettings) {
         setPrintSettings(printSettings);
@@ -207,11 +225,13 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return message.what == MSG_PRINT;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void processMessage(Message message) {
         switch (message.what) {
@@ -248,6 +268,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - DirectPrintCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
         switch (status) {
@@ -273,6 +294,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - WaitingDialogListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         if (mDirectPrintManager != null) {

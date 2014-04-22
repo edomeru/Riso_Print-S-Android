@@ -46,6 +46,14 @@ public class PrinterManager implements SNMPManagerCallback {
     private Timer mUpdateStatusTimer = null;
     private int mDefaultPrintId = EMPTY_ID;
     
+    /**
+     * Printer Manager Constructor
+     * <p>
+     * Printer Manager Constructor
+     * 
+     * @param context
+     *            Context of the SmartDeviceApp
+     */
     private PrinterManager(Context context) {
         mContext = context;
         mPrinterList = new ArrayList<Printer>();
@@ -512,6 +520,14 @@ public class PrinterManager implements SNMPManagerCallback {
     // Private Methods
     // ================================================================================
     
+    /**
+     * Save Printer Information
+     * <p>
+     * Saves the printer information to the database
+     * 
+     * @param printer
+     *            Printer object
+     */
     private boolean savePrinterInfo(Printer printer) {
         if (printer == null || isExists(printer)) {
             return false;
@@ -543,6 +559,14 @@ public class PrinterManager implements SNMPManagerCallback {
         return true;
     }
     
+    /**
+     * Setup printer configuration
+     * <p>
+     * Saves the printer configuration/capabilities
+     * 
+     * @param capabilities
+     *            Printer capabilities
+     */
     private static void setupPrinterConfig(Printer printer, boolean[] capabilities) {
         printer.getConfig().setBookletAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_BOOKLET]);
         printer.getConfig().setStaplerAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_STAPLER]);
@@ -553,6 +577,14 @@ public class PrinterManager implements SNMPManagerCallback {
         
     }
     
+    /**
+     * Set Printer ID
+     * <p>
+     * Set the Printer ID of the Printer object. 
+     * 
+     * @param printer
+     *            Printer object
+     */
     private boolean setPrinterId(Printer printer) {
         
         if (printer == null) {
@@ -583,6 +615,7 @@ public class PrinterManager implements SNMPManagerCallback {
     // Interface - SNMPManagerCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onEndDiscovery(SNMPManager manager, int result) {
         mIsSearching = false;
@@ -593,6 +626,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
         Printer printer = new Printer(name, ipAddress);
@@ -609,10 +643,27 @@ public class PrinterManager implements SNMPManagerCallback {
     // Interface - PrinterSearchCallback
     // ================================================================================
     
+    /**
+     * Printers Search Screen Interface
+     * <p>
+     * Interface for Printers Search Screen. Used for updating view in the Printers Search Screen.
+     */
     public interface PrinterSearchCallback {
-        
+        /**
+         * On Printer Add callback.
+         * <p>
+         * Callback called when a printer is to be added as a result of Printers Search (Manual/Auto)
+         * 
+         * @param printer
+         *            Printer object
+         */
         public void onPrinterAdd(Printer printer);
         
+        /**
+         * On Search End callback.
+         * <p>
+         * Callback called at the end of Printer Search
+         */
         public void onSearchEnd();
     }
     
@@ -620,7 +671,18 @@ public class PrinterManager implements SNMPManagerCallback {
     // Interface - PrintersCallback
     // ================================================================================
     
+    /**
+     * Printers Screen Interface
+     * <p>
+     * Interface for Printers Screen. Used for updating view in the Printers Screen.
+     */
     public interface PrintersCallback {
+        /**
+         * Adds printer to the Printers Screen
+         * 
+         * @param printer
+         *            printer object
+         */
         public void onAddedNewPrinter(Printer printer);
     }
     
@@ -628,7 +690,15 @@ public class PrinterManager implements SNMPManagerCallback {
     // Interface - UpdateStatusCallback
     // ================================================================================
     
+    /**
+     * Update Online Status Interface
+     * <p>
+     * Interface for updating the online status.
+     */
     public interface UpdateStatusCallback {
+        /**
+         * Callback to update the online status
+         */
         public void updateOnlineStatus();
     }
     
@@ -636,15 +706,24 @@ public class PrinterManager implements SNMPManagerCallback {
     // Internal Classes
     // ================================================================================
     
+    /**
+     * Update Online Status Task
+     * <p>
+     * AsyncTask that updates changes the online status image.
+     */
     class UpdateOnlineStatusTask extends AsyncTask<Object, View, Boolean> {
         private WeakReference<View> mViewRef = null;
         private String mIpAddress = null;
         
+        /**
+         * Instantiate UpdateOnlineStatusTask
+         */
         public UpdateOnlineStatusTask(View view, String ipAddress) {
             mViewRef = new WeakReference<View>(view);
             mIpAddress = ipAddress;
         }
         
+        /** {@inheritDoc} */
         @Override
         protected Boolean doInBackground(Object... arg) {
             if (mIpAddress.isEmpty()) {
@@ -653,6 +732,7 @@ public class PrinterManager implements SNMPManagerCallback {
             return isOnline(mIpAddress);
         }
         
+        /** {@inheritDoc} */
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);

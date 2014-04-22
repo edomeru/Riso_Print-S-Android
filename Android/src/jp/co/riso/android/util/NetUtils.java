@@ -113,18 +113,50 @@ public class NetUtils {
     // Private Methods
     // ================================================================================
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Standard Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     private static boolean isIPv6StdAddress(final String ipAddress) {
         return IPV6_STD_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Compressed Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     private static boolean isIPv6HexCompressedAddress(final String ipAddress) {
         return IPV6_HEX_COMPRESSED_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Link Local Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     private static boolean isIPv6LinkLocalAddress(final String ipAddress) {
         return IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Address derived from IPv4 Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     */
     private static boolean isIPv6Ipv4DerivedAddress(final String ipAddress) {
         return IPV6_IPv4_DERIVED_PATTERN.matcher(ipAddress).matches();
     }

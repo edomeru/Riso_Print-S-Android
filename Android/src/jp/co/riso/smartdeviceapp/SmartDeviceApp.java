@@ -21,6 +21,7 @@ public class SmartDeviceApp extends Application {
     private static volatile Context sContext;
     private static volatile Typeface sAppFont;
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate() {
         SmartDeviceApp.sContext = getApplicationContext();
@@ -30,10 +31,16 @@ public class SmartDeviceApp extends Application {
         initializeSharedPrefs();
     }
 
+    /**
+     * @return SmartDeviceAPP context
+     */
     public static Context getAppContext() {
         return SmartDeviceApp.sContext;
     }
 
+    /**
+     * @return SmartDeviceAPP font
+     */
     public static Typeface getAppFont() {
         return SmartDeviceApp.sAppFont;
     }

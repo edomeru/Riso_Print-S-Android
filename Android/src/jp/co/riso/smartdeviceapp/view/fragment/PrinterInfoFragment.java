@@ -53,16 +53,19 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private PrintSettingsFragment mPrintSettingsFragment = null;
     Timer mUpdateStatusTimer = null;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printerinfo;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mDefaultPrinter = (Switch) view.findViewById(R.id.default_printer_switch);
@@ -81,6 +84,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mPort.setAdapter(portAdapter);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -90,6 +94,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -112,12 +117,14 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mPort.setSelection(mPrinter.getPortSetting());
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
@@ -125,6 +132,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mUpdateStatusTimer = null;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
@@ -135,6 +143,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // Public Methods
     // ================================================================================
     
+    /**
+     * Sets the printer object to be displayed by the Printer Info Screen
+     */
     public void setPrinter(Printer printer) {
         mPrinter = printer;
     }
@@ -143,6 +154,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // Private Methods
     // ================================================================================
     
+    /**
+     * Updates the online/off-line status of the Printer
+     */
     public void updateOnlineStatus() {
         
         if (mUpdateStatusTimer != null) {
@@ -169,6 +183,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -215,6 +230,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
@@ -228,11 +244,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         mPrinter.setPortSetting(position);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * BaseWebFragment.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.smartdeviceapp.view.base;
 
 import jp.co.riso.smartdeviceapp.R;

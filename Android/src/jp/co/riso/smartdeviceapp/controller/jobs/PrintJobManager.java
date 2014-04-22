@@ -43,10 +43,16 @@ public class PrintJobManager {
     private DatabaseManager mManager;
     private boolean mRefreshFlag;
     
+    /**
+     * Constructor
+     */
     private PrintJobManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
+    /**
+     * @return instance of PrintJobManager
+     */
     public static PrintJobManager getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new PrintJobManager(context);
@@ -54,10 +60,19 @@ public class PrintJobManager {
         return sInstance;
     }
     
+    /**
+     * set Refresh flag
+     * 
+     * @param refreshFlag
+     *            refresh flag
+     */
     public void setRefreshFlag(boolean refreshFlag) {
         this.mRefreshFlag = refreshFlag;
     }
     
+    /**
+     * @return mRefreshFlag
+     */
     public boolean isRefreshFlag() {
         return mRefreshFlag;
     }

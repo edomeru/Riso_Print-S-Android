@@ -19,10 +19,17 @@ public class InfoDialogFragment extends DialogFragment {
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_BUTTON = "button";
     
+    
+    /**
+     * @return InfoDialogFragment instance
+     */
     public static InfoDialogFragment newInstance(String message, String buttonTitle) {
         return InfoDialogFragment.newInstance(null, message, buttonTitle);
     }
     
+    /**
+     * @return InfoDialogFragment instance
+     */
     public static InfoDialogFragment newInstance(String title, String message, String buttonTitle) {
         InfoDialogFragment dialog = new InfoDialogFragment();
         
@@ -37,11 +44,13 @@ public class InfoDialogFragment extends DialogFragment {
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
     
+    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);

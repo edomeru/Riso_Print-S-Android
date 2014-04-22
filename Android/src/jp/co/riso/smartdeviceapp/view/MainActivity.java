@@ -41,6 +41,7 @@ public class MainActivity extends BaseActivity {
     private ActionBarDrawerToggle mDrawerToggle = null;
     private boolean mResizeView = false;
     
+    /** {@inheritDoc} */
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
         Global.Init(this);
@@ -90,6 +91,7 @@ public class MainActivity extends BaseActivity {
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -97,6 +99,7 @@ public class MainActivity extends BaseActivity {
         mDrawerToggle.syncState();
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -106,6 +109,7 @@ public class MainActivity extends BaseActivity {
         outState.putBoolean(KEY_RIGHT_OPEN, mDrawerLayout.isDrawerOpen(Gravity.RIGHT));
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -119,11 +123,25 @@ public class MainActivity extends BaseActivity {
     // Public Functions
     // ================================================================================
 
+    /**
+     * Open Drawer
+     * 
+     * @param gravity
+     *            Drawer gravity
+     */
     public void openDrawer(int gravity) {
         closeDrawers();
         openDrawer(gravity, false);
     }
         
+    /**
+     * Open Drawer
+     * 
+     * @param gravity
+     *            Drawer gravity
+     * @param preventIntercept
+     *            Prevent layout from touches
+     */
     public void openDrawer(int gravity, boolean preventIntercept) {
         if (gravity == Gravity.RIGHT) {
             mResizeView = preventIntercept;
@@ -132,11 +150,20 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout.openDrawer(gravity);
     }
     
+    /**
+     * Close drawers
+     */
     public void closeDrawers() {
         mDrawerLayout.setPreventInterceptTouches(false);
         mDrawerLayout.closeDrawers();
     }
     
+    /**
+     * Determines if the drawer indicated by gravity is open
+     * 
+     * @param gravity
+     *            Drawer gravity
+     */
     public boolean isDrawerOpen(int gravity) {
         return mDrawerLayout.isDrawerOpen(gravity);
     }
@@ -147,12 +174,26 @@ public class MainActivity extends BaseActivity {
     
     private class SDAActionBarDrawerToggle extends ActionBarDrawerToggle {
         
+        /**
+         * Constructor
+         * 
+         * @param activity
+         *            activity
+         * @param drawerLayout
+         *            drawer layout
+         * @param drawerImageRes
+         *            drawer image resources
+         * @param openDrawerContentDescRes
+         *            drawer content description
+         * @param closeDrawerContentDescRes
+         *            drawer content description
+         */
         public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
             super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
         }
         
-        
+        /** {@inheritDoc} */
         @Override
         public void syncState() {
             super.syncState();
@@ -163,6 +204,7 @@ public class MainActivity extends BaseActivity {
             }
         }
         
+        /** {@inheritDoc} */
         @Override
         public void onDrawerSlide(View drawerView, float slideOffset) {
             float moveFactor = (mLeftLayout.getWidth() * slideOffset);
@@ -182,6 +224,7 @@ public class MainActivity extends BaseActivity {
             }
         }
         
+        /** {@inheritDoc} */
         @Override
         public void onDrawerStateChanged(int newState) {
             

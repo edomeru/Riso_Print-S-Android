@@ -40,6 +40,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     private DBInitTask mInitTask = null;
     private boolean mDatabaseInitialized;
     
+    /** {@inheritDoc} */
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
 
@@ -89,11 +90,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onResume() {
         super.onResume();
@@ -101,6 +104,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         mHandler.resume();
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onPause() {
         super.onPause();
@@ -108,6 +112,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         mHandler.pause();
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -116,6 +121,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         setIntent(intent);
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -132,6 +138,9 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // Private Functions
     // ================================================================================
 
+    /*
+     * Run MainActivity
+     */
     private void runMainActivity() {
         Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
@@ -186,11 +195,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return message.what == MESSAGE_RUN_MAINACTIVITY;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void processMessage(Message message) {
         if (message.what == MESSAGE_RUN_MAINACTIVITY) {
@@ -207,6 +218,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     
     private class DBInitTask extends AsyncTask<Void, Void, Void> {
         
+        /** {@inheritDoc} */
         @Override
         protected Void doInBackground(Void... params) {
             DatabaseManager manager = new DatabaseManager(SplashActivity.this);
@@ -218,6 +230,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             return null;
         }
 
+        /** {@inheritDoc} */
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
@@ -231,6 +244,9 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             }
         }
         
+        /**
+         * Save to database version to shared preference
+         */
         private void saveToPrefs() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
             SharedPreferences.Editor editor = prefs.edit();

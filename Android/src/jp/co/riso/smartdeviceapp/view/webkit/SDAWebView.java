@@ -14,16 +14,31 @@ import android.webkit.WebView;
 
 public class SDAWebView extends WebView {
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate custom WebView
+     */
     public SDAWebView(Context context) {
         super(context);
         init();
     }
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate custom WebView
+     */
     public SDAWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate custom WebView
+     */
     public SDAWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
