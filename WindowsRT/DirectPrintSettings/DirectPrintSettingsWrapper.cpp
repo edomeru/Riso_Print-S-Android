@@ -17,5 +17,8 @@ DirectPrintSettingsWrapper::DirectPrintSettingsWrapper()
 void DirectPrintSettingsWrapper::create_pjl_wrapper(String^ pjl, String^ settings){
 
 	//create_pjl(0, 0);
-	create_pjl(0, 0);
+	//char* pjl_c = pjl.getBytes();
+	//char* settings_c;
+
+	create_pjl("", "");
 };

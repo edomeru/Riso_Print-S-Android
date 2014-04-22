@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Windows.Networking;
@@ -7,6 +8,10 @@ namespace SNMP
 {
     public class SNMPDevice
     {
+
+        public Action<string, bool> snmpControllerCallBackGetStatus { get; set; } //PrintersModule
+        public Action<string, string, bool, List<string>> snmpControllerCallBackGetCapability { get; set; }
+
         //NSString *ipAddress;
         private string ipAddress;
         //NSString *sysId;
@@ -110,6 +115,8 @@ namespace SNMP
         //- (void) beginRetrieveCapabilities
         public void beginRetrieveCapabilities()
         {
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice Begin Capability Retrieval for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
             //[tempCapabilities removeAllObjects];
             tempCapabilities.Clear();
             //[tempCapabilyLevels removeAllObjects];
@@ -118,6 +125,8 @@ namespace SNMP
             //udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
             udpSocket = new UDPSocket();
             udpSocket.assignDelegate(receiveData);
+
+            udpSocket.assignTimeoutDelegate(timeout);
 
             //[udpSocket enableBroadcast:YES error:nil];
     
@@ -147,6 +156,7 @@ namespace SNMP
         //- (void) endRetrieveCapabilitiesSuccess
         void endRetrieveCapabilitiesSuccess()
         {
+            
             //[udpSocket pauseReceiving];
     
             //[capabilitiesList removeAllObjects];
@@ -174,11 +184,24 @@ namespace SNMP
     
             [udpSocket close];
             */
+            //callback to SNMPController
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
+            if (snmpControllerCallBackGetStatus != null)
+                snmpControllerCallBackGetStatus(ipAddress, true);
+
+
+            if (snmpControllerCallBackGetCapability != null)
+                snmpControllerCallBackGetCapability(ipAddress, sysName, true, capabilitiesList);
         }
 
         //- (void) endRetrieveCapabilitiesFailed:(NSError *)error
         void endRetrieveCapabilitiesFailed()
         {
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice failed for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
+            //callback to SNMPController
+            snmpControllerCallBackGetStatus(ipAddress, false);
             /*
             [udpSocket pauseReceiving];
     
@@ -213,6 +236,8 @@ namespace SNMP
 
         private void receiveData(HostName sender, byte[] responsedata)
         {
+            System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
+            System.Diagnostics.Debug.WriteLine(ipAddress);
             //SNMPMessage *response = [[SNMPMessage alloc] initWithResponse:data];
             SNMPMessage response = new SNMPMessage(responsedata);
     
@@ -267,19 +292,32 @@ namespace SNMP
                         else
                         {
                             //[self endRetrieveCapabilitiesSuccess];
+                            this.endRetrieveCapabilitiesSuccess();
                         }
                     }
                     else {
                         //[self endRetrieveCapabilitiesSuccess];
+                        this.endRetrieveCapabilitiesSuccess();
                     }
                 }
                 else {
                     //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Unexpected Result" code:SNMPRequestUnexpectedResponseError userInfo:nil]];
+                    this.endRetrieveCapabilitiesFailed();
                 }
             }
             else
             {
                 //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Invalid Data" code:SNMPRequestInvalidDataError userInfo:nil]];
+                this.endRetrieveCapabilitiesFailed();
+            }
+        }
+
+        private void timeout(HostName sender, byte[] responsedata)
+        {
+            if (udpSocket != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Closing udpSocket");
+                udpSocket.close();
             }
         }
 
@@ -317,6 +355,41 @@ namespace SNMP
         public void setCommunityName(string s)
         {
             communityName = s;
+        }
+
+        public string getIpAddress()
+        {
+            return ipAddress;
+        }
+
+        public string getSysId()
+        {
+            return sysId;
+        }
+
+        public string getLocation()
+        {
+            return location;
+        }
+
+        public string getDescription()
+        {
+            return description;
+        }
+
+        public string getMacAddress()
+        {
+            return macAddress;
+        }
+
+        public string getSysName()
+        {
+            return sysName;
+        }
+
+        public string getCommunityName()
+        {
+            return communityName;
         }
     }
 }

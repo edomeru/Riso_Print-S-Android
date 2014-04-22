@@ -11,4 +11,10 @@
     <UseAuthentication>True</UseAuthentication>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|AnyCPU'">
+    <RemoteDebugMachine>V4-WINRT</RemoteDebugMachine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|ARM'">
+    <RemoteDebugMachine>V4-WINRT</RemoteDebugMachine>
+  </PropertyGroup>
 </Project>

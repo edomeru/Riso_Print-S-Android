@@ -1,0 +1,84 @@
+﻿<UserControl
+    x:Class="SmartDeviceApp.Views.AddPrinterPane"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Views"
+    xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:utilities="using:SmartDeviceApp.Common.Utilities"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="400"
+    x:Name="AddPrinterPaneControl"
+    Height="{Binding Converter={StaticResource HeightConverter}}"
+    DataContext="{Binding AddPrinterViewModel, Source={StaticResource Locator}}">
+
+    <!--TODO: Localize title!!-->
+
+    <UserControl.Resources>
+        <Style x:Key="STYLE_RootGrid" TargetType="Grid">
+            <Style.Setters>
+                <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
+            </Style.Setters>
+        </Style>
+
+        <Style x:Key="STYLE_List_Separator" TargetType="Line">
+            <Style.Setters>
+                <Setter Property="X1" Value="{StaticResource MARGIN_List}"/>
+                <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
+                <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
+                <Setter Property="StrokeThickness" Value="2"/>
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Style="{StaticResource STYLE_RootGrid}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <controls:SidePaneTitleControl Title="Add Printer" ButtonVisibility="Visible"
+                                       ButtonImage="ms-appx:///Resources/Images/img_btn_add_printer_ok_normal.png"
+                                       ButtonCommand="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}"/>
+        <Grid Margin="0,0,0,10" Grid.Row="1">
+            <!--CONTENTS HERE-->
+            <Grid Margin="0,0,0,0">
+                <Grid Margin="0,0,0,639" Height="75">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="8*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Uid="IDS_LBL_IP_ADDRESS" Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                               Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
+                    <utilities:IPAddressTextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay}" />
+                    <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
+                </Grid>
+                <Grid Margin="0,75,0,564" Height="75">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="8*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
+                    <!--TODO: Use string from resource-->
+                    
+					<TextBlock Text="Username" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
+					<TextBox x:Name="usernameTextBox" Margin="165,10,10,15" Text="{Binding Username, Mode=TwoWay}"/>
+                    <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
+                </Grid>
+				<Grid Margin="0,150,0,489" Height="75">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="8*"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+                    
+                    <!--TODO: Use string from resource-->
+                    
+					<TextBlock Text="Password" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
+					<PasswordBox x:Name="passwordTextBox" Margin="165,10,10,15" Password="{Binding Password, Mode=TwoWay}"/>
+				</Grid>
+			</Grid>
+        </Grid>
+    </Grid>
+
+</UserControl>

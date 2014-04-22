@@ -15,9 +15,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -25,39 +28,12 @@ namespace SmartDeviceApp.ViewModels
     {
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
-        
+                
         public HomeViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            Initialize();
         }
 
-        ////public override void Cleanup()
-        ////{
-        ////    // Clean up if needed
-
-        ////    base.Cleanup();
-        ////}
-        public void Load(DateTime lastVisit)
-        {
-            if (lastVisit > DateTime.MinValue)
-            {
-                // TODO
-            }
-        }
-
-        private async Task Initialize()
-        {
-            try
-            {
-                var item = await _dataService.GetData();
-                // TODO
-            }
-            catch (Exception ex)
-            {
-                // Report error here
-            }
-        }
     }
 }

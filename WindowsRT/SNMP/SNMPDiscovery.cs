@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking;
+using Windows.System.Threading;
 
 namespace SNMP
 {
@@ -26,6 +27,13 @@ namespace SNMP
         string broadcastAddress;
 
 
+        ThreadPoolTimer timer;
+
+        public Action<SNMPDevice> snmpControllerDiscoverCallback { get; set; }
+        public Action<string> snmpControllerDiscoverTimeOut { get; set; }
+
+        public bool FromPrinterSearch{ get; set; }
+
         //- (id) initWithDelegate:(id<SNMPDiscoveryDelegate>)toDelegate readCommunityName:(NSString *)readCommunityName
         public SNMPDiscovery()
         {
@@ -41,6 +49,7 @@ namespace SNMP
                 //[udpSocket setPreferIPv4];
                 udpSocket = new UDPSocket();
                 udpSocket.assignDelegate(receiveData);
+                udpSocket.assignTimeoutDelegate(timeout);
         
                 //NSError *err;
                 /*
@@ -107,6 +116,12 @@ namespace SNMP
             udpSocket.sendData(data,broadcastAddress,SNMPConstants.SNMP_PORT,SNMPConstants.SNMP_BROADCAST_SEND_TIMEOUT,0);
     
             //LOG_PRINTER_SEARCH(@"SNMP Discovery Started");
+
+            ////start timer
+            //int period = 30000;
+            //var timerHandler = new TimerElapsedHandler(handleTimeOut);
+
+            //timer = ThreadPoolTimer.CreatePeriodicTimer(timerHandler, TimeSpan.FromMilliseconds(period));
         }
 
 
@@ -194,9 +209,19 @@ namespace SNMP
                     
                             //[snmpDevices addObject:snmpDevice];
                             snmpDevices.Add(snmpDevice);
+
+                            
+
                             //[snmpDevice beginRetrieveCapabilities];
                             snmpDevice.beginRetrieveCapabilities();
                             //LOG_PRINTER_SEARCH(@"Began retrieving capabilities of SNMP Device");
+
+                            if (!FromPrinterSearch)
+                            {
+                                snmpControllerDiscoverTimeOut = null;
+                            }
+                            //call callback
+                            snmpControllerDiscoverCallback(snmpDevice);
                         }
                     }
 
@@ -209,6 +234,24 @@ namespace SNMP
 
             return;
 
+        }
+
+        private void timeout(HostName sender, byte[] responsedata)
+        {
+            if (udpSocket != null)
+            {
+
+
+
+                System.Diagnostics.Debug.WriteLine("Closing udpSocket");
+                udpSocket.close();
+                //call callback if timedout during search or add
+                if (snmpControllerDiscoverTimeOut != null)
+                {
+                    snmpControllerDiscoverTimeOut(sender.ToString());
+                }
+
+            }
         }
     }
 }

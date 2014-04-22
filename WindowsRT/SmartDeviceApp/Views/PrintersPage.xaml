@@ -1,0 +1,106 @@
+﻿<base:PageBase
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="using:SmartDeviceApp.Views"
+    xmlns:utilities="using:SmartDeviceApp.Common.Utilities"
+    xmlns:base="using:SmartDeviceApp.Common.Base"
+    xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:sel="using:SmartDeviceApp.Selectors"
+    xmlns:converters="using:SmartDeviceApp.Converters"
+    xmlns:common="using:SmartDeviceApp.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    x:Name="printersPage"
+    x:Class="SmartDeviceApp.Views.PrintersPage"
+    
+    mc:Ignorable="d"
+    DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
+
+    <base:PageBase.Resources>
+        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
+
+        <DataTemplate x:Key="TEMPLATE_AddPrinterPane">
+            <local:AddPrinterPane/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_SearchPrinterPane">
+
+            <local:SearchPrinterPane x:Name="SearchPrinterPaneControl"/>
+        </DataTemplate>
+        <sel:PrintersRightPaneTemplateSelector x:Key="PrintersRightPaneTemplateSelector"
+                                     AddPrinterPaneTemplate="{StaticResource TEMPLATE_AddPrinterPane}"
+                                     SearchPrinterPaneTemplate="{StaticResource TEMPLATE_SearchPrinterPane}"/>
+   
+    </base:PageBase.Resources>
+    
+    <controls:ViewControl x:Name="printersView" ChildrenDataContext="{Binding DataContext, ElementName=printersPage}"
+                          Text="{Binding Source=IDS_LBL_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                          Button1Image="ms-appx:///Resources/Images/img_btn_search_printer_normal.png" 
+                          Button2Image="ms-appx:///Resources/Images/img_btn_add_printer_normal.png"
+                          
+                          RightPaneContent="{Binding DataContext.RightPaneMode, ElementName=printersPage}"
+                          RightPaneContentTemplateSelector="{StaticResource PrintersRightPaneTemplateSelector}" Grid.Row="0" Tag="{Binding}">
+        <Grid Tag="{Binding}">
+            <local:AdaptableGridView x:Name="printerInfoView" ItemWidth="400"
+						ScrollViewer.VerticalScrollMode="Enabled"
+						ScrollViewer.VerticalScrollBarVisibility="Visible"
+						SelectionMode="None"
+						IsItemClickEnabled="False"  
+                        ItemsSource="{Binding PrinterList}" Margin="0,10,0,0">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid  Orientation="Horizontal" 
+									ItemWidth="{Binding ItemWidth, ElementName=printerInfoView}"
+									MaximumRowsOrColumns="{Binding MaxRowsOrColumns, ElementName=printerInfoView}"
+                                                        />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:Name="DataTemplate">
+                        <ListView x:Name="PrinterInfoList" 
+                                              ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                                              IsItemClickEnabled="True" SelectionMode="None"
+                                              Width="400" DataContext="{Binding}">
+                            <controls:PrinterNameControl x:Name="printerName"  
+                                                                     Text="{Binding Name}"
+                                                                     RightButtonVisibility="Collapsed" 
+                                                                     IsDefault="{Binding IsDefault}"
+                                                                     IsOnline="{Binding IsOnline}"
+                                                                     IconVisibility="Visible"
+                                                                     LeftButtonVisibility="Collapsed"
+                                                                     PrinterIp="{Binding IpAddress}"
+                                                                     WillPerformDelete="{Binding WillPerformDelete, Mode=TwoWay}"
+                                                                     WillBeDeleted ="{Binding WillBeDeleted, Mode=TwoWay}"
+                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printersPage, Converter={StaticResource BooleanToImageSourceConverter}}"/>
+
+                            <controls:KeyImageControl x:Name="printerImage" 
+                                                          PrinterImage="ms-appx:///Resources/Dummy/RZ1070-page1.jpg"/>
+                            <!--TODO: bind this to image data-->
+
+                            <controls:KeyValueControl x:Name="ipAddress" 
+                                                          Text="Ip Address" ValueText="{Binding IpAddress}"
+                                                          RightButtonVisibility="Collapsed"
+                                                          LeftButtonVisibility="Collapsed"
+                                                          ValueVisibility="Visible"/>
+
+                            <controls:KeyValueControl x:Name="port" 
+                                                          Text="Port"
+                                                          LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>
+                            <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
+                                                                 Text="Set as Default Printer"
+                                                                 RightButtonVisibility="Collapsed"
+                                                                 LeftButtonVisibility="Collapsed"
+                                                                 IsOn="{Binding IsDefault, Mode=TwoWay}"/>
+                            <controls:KeyValueControl x:Name="settings" 
+                                                          Text="Default Print Settings"
+                                                          LeftButtonVisibility="Collapsed"
+                                                          RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"/>
+
+                        </ListView>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </local:AdaptableGridView>
+        </Grid>
+    </controls:ViewControl>
+</base:PageBase>
