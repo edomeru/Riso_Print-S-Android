@@ -524,17 +524,25 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         [self applyImpositionConstraintWithPreviousValue:previousValue];
         [self applyFinishingWithOrientationConstraint];
     }
+#if OUTPUT_TRAY_CONSTRAINT_ENABLED
+    if([key isEqualToString:KEY_STAPLE] == YES)
+    {
+        [self applyStapleConstraint];
+    }
+#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 }
 
 - (void)applyBookletConstraints
 {
-    
     [self setState:[self isSettingEnabled:KEY_IMPOSITION] forSettingKey:KEY_IMPOSITION];
     [self setState:[self isSettingEnabled:KEY_IMPOSITION_ORDER] forSettingKey:KEY_IMPOSITION_ORDER];
 
     if(self.previewSetting.booklet == YES)
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
+#if OUTPUT_TRAY_CONSTRAINT_ENABLED
+        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
+#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
     }
     else
     {
@@ -618,7 +626,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
--(void) applyPunchConstraint
+- (void)applyPunchConstraint
 {
     kPunchType punch = (kPunchType)self.previewSetting.punch;
     kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
@@ -635,6 +643,12 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             [self setOptionSettingWithKey:KEY_FINISHING_SIDE toValue:(NSInteger)kFinishingSideLeft];
         }
     }
+#if OUTPUT_TRAY_CONSTRAINT_ENABLED
+    if(punch != kPunchTypeNone && (self.previewSetting.outputTray == kOutputTrayFaceDownTray || self.previewSetting.outputTray == kOutputTrayFaceUpTray))
+    {
+        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger) kOutputTrayAuto];
+    }
+#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 }
 
 -(void) applyImpositionConstraintWithPreviousValue:(NSInteger)previousImpositionValue
@@ -684,6 +698,17 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             break;
     }
 }
+
+#if OUTPUT_TRAY_CONSTRAINT_ENABLED
+- (void)applyStapleConstraint
+{
+    kPunchType staple = (kPunchType)self.previewSetting.staple;
+    if(staple != kStapleTypeNone && self.previewSetting.outputTray == kOutputTrayFaceUpTray)
+    {
+        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
+    }
+}
+#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 
 - (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key
 {
@@ -782,11 +807,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (BOOL)isSettingSupported:(NSString*)settingKey
 {
-	if(self.printer == nil)
-	{
-		return YES;
-	}
-	
+    if(self.printer == nil)
+    {
+        return YES;
+    }
+
     if([settingKey isEqualToString:KEY_DUPLEX])
     {
         return [self.printer.enabled_duplex boolValue];

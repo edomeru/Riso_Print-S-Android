@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PreviewSetting.h"
 
+#define OUTPUT_TRAY_CONSTRAINT_ENABLED 0
+
 typedef enum {
     kColorModeAuto,
     kColorModeFullColor,
@@ -88,6 +90,14 @@ typedef enum {
     kBookletLayoutRightToLeft,
     kBookletLayoutTopToBottom
 } kBookletLayout;
+
+typedef enum {
+    kOutputTrayAuto,
+    kOutputTrayFaceDownTray,
+    kOutputTrayFaceUpTray,
+    kOutputTrayTop,
+    kOutputTrayStacking
+} kOutputTray;
 
 @interface PrintPreviewHelper : NSObject
 /**
