@@ -185,7 +185,6 @@
 		31AAF4B718E948B6001C9E4C /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6F18E278B000085F27 /* Reachability.m */; };
 		31AAF4B818E94985001C9E4C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
 		31AAF4BC18E94995001C9E4C /* SettingsViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AAF4BB18E94995001C9E4C /* SettingsViewControllerTest.m */; };
-		31AAF4BF18E94A4D001C9E4C /* PListHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AAF4BE18E94A4D001C9E4C /* PListHelperTest.m */; };
 		31AAF4C118E94AE4001C9E4C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 /* End PBXBuildFile section */
 
@@ -325,7 +324,6 @@
 		31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsValidationHelper.m; sourceTree = "<group>"; };
 		31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsValidationHelperTest.m; sourceTree = "<group>"; };
 		31AAF4BB18E94995001C9E4C /* SettingsViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerTest.m; sourceTree = "<group>"; };
-		31AAF4BE18E94A4D001C9E4C /* PListHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListHelperTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -922,7 +920,6 @@
 			isa = PBXGroup;
 			children = (
 				31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */,
-				31AAF4BE18E94A4D001C9E4C /* PListHelperTest.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1162,7 +1159,6 @@
 				31AAF47618E94838001C9E4C /* AppDelegate.m in Sources */,
 				31AAF47818E94838001C9E4C /* ReplaceSegue.h in Sources */,
 				31AAF47918E94838001C9E4C /* ReplaceSegue.m in Sources */,
-				31AAF4BF18E94A4D001C9E4C /* PListHelperTest.m in Sources */,
 				31AAF47A18E94838001C9E4C /* SlideOverSegue.h in Sources */,
 				31AAF47B18E94838001C9E4C /* SlideOverSegue.m in Sources */,
 				31AAF47C18E94838001C9E4C /* SlideSegue.h in Sources */,

@@ -14,17 +14,14 @@
 #import "SettingsValidationHelper.h"
 
 
-#define KEY_SETTINGS_CARD_READER_ID     @"CardReaderID"
-#define KEY_SETTINGS_COMMUNITY_NAME     @"CommunityName"
+#define KEY_SETTINGS_CARD_READER_ID     @"SDA_CardReaderID"
 
 @interface SettingsViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *cardId; /**< Reference outlet to Card ID input textfield*/
-@property (weak, nonatomic) IBOutlet UITextField *communityName; /**< Reference outlet to Community Name input textfield*/
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton; /**< Reference outlet to Main Menu button*/
 @property (weak, nonatomic) IBOutlet UIView *contentView; /**< Reference outlet to view that contains the settings inputs fields*/
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;  /**< Reference outlet to the width constraint of the contentView*/
-@property (weak, nonatomic) IBOutlet UIView *communityNameView;  /**< Reference outlet to view that contains the community view input field*/
-@property (strong, nonatomic) NSDictionary* settings;  /**< Dictionary that contains the values of the settings*/
+
 @property (strong, nonatomic) UIAlertView *errorAlert; /**< Alert to use when to notify error in settings input*/
 /**
  Processes the cardId textfield input after editing
@@ -32,26 +29,12 @@
  @return YES if valid; NO otherwise
  */
 - (void) cardIDDidEndEditing:(NSString *)inputString;
-
-/**
- Processes the communityName textfield input after editing
- @param inputString The current string in the communityName textfield
- */
-- (void) communityNameDidEndEditing:(NSString *)inputString;
-
 /**
  Validates the current string in the communityName textfield
  @param inputString The current string in the communityName textfield
  @return kSettingsInputError
  */
 - (void)showValidationError:(kSettingsInputError)error;
-
-/**
- Selector method that receives notification when keyboard is shown
- Temporarily adjusts the contentView position when textfield to edit is covered by keyboard
- @param notif The notification received
- */
-- (void)didKeyboardShow:(NSNotification *)notif;
 
 /**
  Main menu button action
@@ -62,8 +45,6 @@
  Action after menu screen unwinds to settings screen
  */
 - (IBAction)unwindToSettings:(UIStoryboardSegue *)sender;
-
-
 @end
 
 @implementation SettingsViewController
@@ -84,13 +65,18 @@
     [super viewDidLoad];
     
     //init text fields from values in plist
-    //get current value of settings in plist
-    self.settings = [[PListHelper readApplicationSettings] mutableCopy];
-    self.cardId.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_CARD_READER_ID];
-    self.cardId.delegate = self;
-    self.communityName.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_COMMUNITY_NAME];
-    self.communityName.delegate =self;
+    //get current value of settings user defaults
+    NSUserDefaults *appSettings = [NSUserDefaults standardUserDefaults];
+    NSString *cardId = [appSettings objectForKey:KEY_SETTINGS_CARD_READER_ID];
+    if(cardId == nil)
+    {
+        cardId = @"";
+        [appSettings setObject:cardId forKey:KEY_SETTINGS_CARD_READER_ID];
+    }
     
+    self.cardId.text = cardId;
+    self.cardId.delegate = self;
+
     self.errorAlert = [[UIAlertView alloc] initWithTitle:@"Error"
                                             message:@""
                                            delegate:nil
@@ -105,8 +91,6 @@
     {
         self.contentViewWidthConstraint.constant += 200;
     }
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didKeyboardShow:) name:UIKeyboardDidShowNotification object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -115,36 +99,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Keyboard notification selector
-- (void)didKeyboardShow:(NSNotification *)notif
-{
-    if([self.communityName isFirstResponder] == NO)
-    {
-        return;
-    }
-    
-    NSDictionary *kbInfo = [notif userInfo];
-    CGSize keyboardSize = [[kbInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    CGRect visibleRect = self.contentView.frame;
-
-    if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) == YES)
-    {
-        visibleRect.size.height -= keyboardSize.width;
-    }
-    else
-    {
-        visibleRect.size.height -= keyboardSize.height;
-    }
-    
-    CGRect convertedTextRect = [self.view convertRect:self.communityName.frame fromView:self.communityNameView];
-    
-    //handle when keyboard hides community name text field, offset the view to put text field above keyboard view
-    if(CGRectContainsPoint(visibleRect, convertedTextRect.origin) == NO)
-    {
-        self.contentView.frame = CGRectOffset(self.contentView.frame, 0, -100);
-        isContentOffset = YES;
-    }
-}
 
 #pragma mark - IBActions
 - (IBAction)mainMenuAction:(id)sender
@@ -162,10 +116,6 @@
 /*Checks the keyboard input if should be accepted in textfield*/
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if([textField isEqual:self.communityName])
-    {
-        return [SettingsValidationHelper shouldAcceptCommunityNameInput:string];
-    }
     return[SettingsValidationHelper shouldAcceptCardIDInput:string];
 }
 
@@ -173,12 +123,6 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     //auto save after user finished editing text field
-    if([textField isEqual:self.communityName])
-    {
-        [self communityNameDidEndEditing:textField.text];
-        return;
-    }
-
     [self cardIDDidEndEditing:textField.text];
 }
 
@@ -198,32 +142,18 @@
 }
 
 #pragma mark  Class Methods
-- (void)communityNameDidEndEditing:(NSString *)inputString
-{
-    kSettingsInputError validationError = [SettingsValidationHelper validateCommunityNameInput:inputString];
-    if(validationError == kSettingsInputErrorNone)
-    {
-        [self.settings setValue:inputString forKey:KEY_SETTINGS_COMMUNITY_NAME];
-        [PListHelper setApplicationSettings:self.settings];
-    }
-    else
-    {
-        self.communityName.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_COMMUNITY_NAME];
-        [self showValidationError:validationError];
-    }
-}
 
 - (void)cardIDDidEndEditing:(NSString *)inputString
 {
     kSettingsInputError validationError = [SettingsValidationHelper validateCardIDInput:inputString];
+    NSUserDefaults  *appSettings = [NSUserDefaults standardUserDefaults];
     if(validationError == kSettingsInputErrorNone)
     {
-        [self.settings setValue:inputString forKey:KEY_SETTINGS_CARD_READER_ID];
-        [PListHelper setApplicationSettings:self.settings];
+        [appSettings setValue:inputString forKey:KEY_SETTINGS_CARD_READER_ID];
     }
     else
     {
-        self.cardId.text = (NSString *)[self.settings objectForKey:KEY_SETTINGS_CARD_READER_ID];
+        self.cardId.text = (NSString *)[appSettings objectForKey:KEY_SETTINGS_CARD_READER_ID];
         [self showValidationError:validationError];
     }
 }
