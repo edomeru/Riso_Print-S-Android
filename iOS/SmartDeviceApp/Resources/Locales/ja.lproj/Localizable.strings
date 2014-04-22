@@ -39,10 +39,11 @@
 "IDS_LBL_CARD_READER_GROUP" = "カードリーダー";
 "IDS_LBL_CARD_ID" = "ID";
 "IDS_LBL_PRINTER_SEARCH_GROUP" = "プリンター検索";
-"IDS_LBL_PRINTING" = "印刷中… Tapでキャンセルします";
+"IDS_LBL_PRINTING" = "印刷中…";
 "IDS_LBL_PRINT_SETTINGS" = "印刷設定";
 "IDS_LBL_PRINT" = "印刷";
 "IDS_LBL_PRINTER" = "プリンター";
+"IDS_LBL_CHOOSE_PRINTER" = "Choose Printer";
 "IDS_LBL_BASIC" = "基本";
 "IDS_LBL_COLORMODE" = "カラーモー";
 "IDS_LBL_COLORMODE_AUTO" = "オート";
@@ -114,8 +115,8 @@
 "IDS_LBL_STAPLE" = "ステープル";
 "IDS_LBL_STAPLE_UPPERLEFT" = "左1カ所";
 "IDS_LBL_STAPLE_UPPERRIGHT" = "右1カ所";
-"IDS_LBL_STAPLE_2" = "2.0";
-"IDS_LBL_STAPLE_1" = "1.0";
+"IDS_LBL_STAPLE_2" = "2";
+"IDS_LBL_STAPLE_1" = "1";
 "IDS_LBL_PUNCH" = "パンチ";
 "IDS_LBL_PUNCH_2HOLES" = "2穴";
 "IDS_LBL_PUNCH_3HOLES" = "3穴";
@@ -136,6 +137,8 @@
 "IDS_LBL_PRINT_JOB_FAILED" = "失敗しました。";
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "このプリンターはすでに登録されています。";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "IP Addressを確認してください。";
+"IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";
+"IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning, Cannot find Printer.";
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "パスワードが正しくありません。確認してください。";
 "IDS_ERR_MSG_NO_SELECTED_PRINTER" = "プリンターを登録してください。";
 "IDS_ERR_MSG_OPEN_FAILED" = "ファイルが開けません。";
