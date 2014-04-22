@@ -396,13 +396,15 @@
     {
         if(self.isFrontPage == NO)
         {
-            if([self shouldInvertImage] == NO)
+            if(([self shouldInvertImage] == NO && self.printDocument.previewSetting.finishingSide != kFinishingSideTop) ||
+               ([self shouldInvertImage] == YES && self.printDocument.previewSetting.finishingSide == kFinishingSideTop))
             {
                 //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
                 CGContextTranslateCTM(contextRef, self.size.width, 0);
                 CGContextScaleCTM(contextRef, -1.0f, 1.0f);
             }
-            if([self shouldInvertImage] == YES || self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+            if(([self shouldInvertImage] == YES && self.printDocument.previewSetting.finishingSide != kFinishingSideTop) ||
+               ([self shouldInvertImage] == NO && self.printDocument.previewSetting.finishingSide == kFinishingSideTop))
             {
                 //flip context vertically so that finishing at the top will be drawn at the bottom
                 CGContextTranslateCTM(contextRef, 0, self.size.height);
@@ -578,17 +580,25 @@
 
 - (BOOL)shouldInvertImage
 {
-    if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff)
+    if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff
+       && self.printDocument.previewSetting.booklet != YES)
     {
-        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop) //for vertical navigation, ios automatically inverts back image
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop) //for vertical navigation, ios automatically inverts back image so reverse case
         {
-            return NO;
+            if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width > self.size.height)
+            {
+                return YES;
+            }
+            if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width < self.size.height)
+            {
+                return YES;
+            }
         }
-        if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
+        else if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
         {
             return YES;
         }
-        if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width > self.size.height)
+        else if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width > self.size.height)
         {
             return YES;
         }
