@@ -25,6 +25,8 @@
 #import "PrintSetting.h"
 #import "DirectPrintManager.h"
 #import "AlertHelper.h"
+#import "UIViewController+Segue.h"
+#import "PrintJobHistoryViewController.h"
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
@@ -43,7 +45,7 @@
 
 static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
-@interface PrintSettingsTableViewController ()
+@interface PrintSettingsTableViewController ()<DirectPrintManagerDelegate>
 
 @property (nonatomic) BOOL isDefaultSettingsMode;
 
@@ -852,9 +854,17 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         return;
     }
     
-    //[[DirectPrintManager sharedManager] printDocumentViaLPR];
     DirectPrintManager *manager = [[DirectPrintManager alloc] init];
     [manager printDocumentViaLPR];
+    manager.delegate = self;
+}
+
+- (void)documentDidFinishPrinting:(BOOL)successful
+{
+    if (successful)
+    {
+        [self performSegueTo:[PrintJobHistoryViewController class]];
+    }
 }
 
 @end

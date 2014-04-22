@@ -175,7 +175,7 @@ const CGFloat _AnimationDuration = 0.3f;
                 self.container.rightSlidingConstraint.constant = 0;
             }
             
-            [UIView animateWithDuration:_AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^
+            [UIView animateWithDuration:_AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^
              {
                  [self.container.view layoutIfNeeded];
                  self.isAnimating = YES;

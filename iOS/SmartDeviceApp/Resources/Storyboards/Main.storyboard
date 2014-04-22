@@ -989,7 +989,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-236" y="2124"/>
+            <point key="canvasLocation" x="-300" y="2268"/>
         </scene>
         <!--Add Printer View Controller-->
         <scene sceneID="SWa-uh-zo2">
@@ -2439,6 +2439,7 @@
                     <connections>
                         <segue destination="hZX-Ok-b3V" kind="push" identifier="PrintSettings-PrintOptions" id="FPj-fn-eAX"/>
                         <segue destination="Wn7-PG-C0p" kind="push" identifier="PrintSettings-PrinterList" id="ITV-mu-qgi"/>
+                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="PrintSettingsTable-PrintJobHistory" customClass="ReplaceSegue" id="dDZ-0e-JG0"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXq-ID-FWW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3415,7 +3416,7 @@
             <objects>
                 <tableViewController id="0Ud-GD-5mk" customClass="PrintSettingsPrinterListTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uaa-w3-8pN">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -4007,8 +4008,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="5pT-ga-236"/>
         <segue reference="uoe-Al-ug4"/>
-        <segue reference="c8V-UF-iWe"/>
+        <segue reference="oE4-lZ-OOf"/>
+        <segue reference="CWW-vD-UgO"/>
+        <segue reference="dDZ-0e-JG0"/>
     </inferredMetricsTieBreakers>
 </document>

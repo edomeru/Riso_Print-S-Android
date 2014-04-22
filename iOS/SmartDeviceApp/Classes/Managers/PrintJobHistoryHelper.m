@@ -15,6 +15,7 @@
 #import "PrintJob+Log.h"
 #import "PrintJobHistoryGroup.h"
 #import "PListHelper.h"
+#import "PrintDocument.h"
 
 @interface PrintJobHistoryHelper ()
 
@@ -110,6 +111,38 @@
     }
     
     return listPrintJobHistoryGroups;
+}
+
++ (BOOL)createPrintJobFromDocument:(PrintDocument *)printDocument withResult:(NSInteger)result
+{
+    PrintJob *newPrintJob = (PrintJob *)[DatabaseManager addObject:E_PRINTJOB];
+    if (newPrintJob == nil)
+    {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"[ERROR][PrintJobHelper] unable to add print job %d-%d to DB", printerIdx, jobIdx);
+#endif
+        return NO;
+    }
+    
+    // Add details
+    newPrintJob.name = printDocument.name;
+    newPrintJob.printer = printDocument.printer;
+    newPrintJob.result = [NSNumber numberWithInteger:result];
+    newPrintJob.date = [NSDate date];
+    
+#if DEBUG_LOG_PRINT_JOB_MODEL
+    [newPrintJob log];
+#endif
+    
+    if (![DatabaseManager saveChanges])
+    {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"[ERROR][PrintJobHelper] unable to add test print jobs to DB");
+#endif
+        return NO;
+    }
+    
+    return YES;
 }
 
 + (void)populateWithTestData

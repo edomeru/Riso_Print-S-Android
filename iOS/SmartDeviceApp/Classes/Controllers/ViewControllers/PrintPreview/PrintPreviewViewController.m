@@ -802,7 +802,6 @@
 {
     UISlider *slider = sender;
     NSInteger pageNumber = (NSInteger)(slider.value + 0.5f);
-    [slider setValue:pageNumber animated:YES];
     
     //update the current page  and page number label
     // if double sided and page is at the back (even pages)  - always navigate to the next front page
@@ -825,6 +824,7 @@
     UITouch *touch = [event.allTouches anyObject];
     if (touch.phase == UITouchPhaseCancelled || touch.phase == UITouchPhaseEnded)
     {
+        [slider setValue:pageNumber animated:YES];
         [self goToPage:self.currentPage];
     }
 }
