@@ -774,6 +774,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (BOOL)isSettingSupported:(NSString*)settingKey
 {
+	if(self.printer == nil)
+	{
+		return YES;
+	}
+	
     if([settingKey isEqualToString:KEY_DUPLEX])
     {
         return [self.printer.enabled_duplex boolValue];
