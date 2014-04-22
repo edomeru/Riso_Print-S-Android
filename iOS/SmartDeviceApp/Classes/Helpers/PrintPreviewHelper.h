@@ -70,8 +70,7 @@ typedef enum{
 typedef enum{
     kPunchTypeNone,
     kPunchType2Holes,
-    kPunchType3Holes,
-    kPunchType4Holes
+    kPunchType3or4Holes,
 }kPunchType;
 
 typedef enum {

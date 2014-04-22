@@ -20,6 +20,7 @@
 @dynamic enabled_pagination;
 @dynamic enabled_raw;
 @dynamic enabled_staple;
+@dynamic enabled_punch_3holes;
 @dynamic ip_address;
 @dynamic name;
 @dynamic port;

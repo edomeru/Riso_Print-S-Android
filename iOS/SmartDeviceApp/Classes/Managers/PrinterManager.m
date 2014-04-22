@@ -113,6 +113,7 @@ static PrinterManager* sharedPrinterManager = nil;
     newPrinter.enabled_staple = [NSNumber numberWithBool:printerDetails.enStaple];
     newPrinter.enabled_lpr = [NSNumber numberWithBool:printerDetails.enLPR];
     newPrinter.enabled_raw = [NSNumber numberWithBool:printerDetails.enRAW];
+    newPrinter.enabled_punch_3holes = [NSNumber numberWithBool:printerDetails.enPunch3Holes];
     
     // attach the PrintSetting to the Printer
     newPrinter.printsetting = defaultPrintSettings;

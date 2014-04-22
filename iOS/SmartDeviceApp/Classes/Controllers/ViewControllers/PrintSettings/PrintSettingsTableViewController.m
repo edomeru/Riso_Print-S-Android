@@ -595,7 +595,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
     kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
     
-    if(punch == kPunchType3Holes || punch == kPunchType4Holes)
+    if(punch == kPunchType3or4Holes)
     {
         if((finishingSide != kFinishingSideTop  && isPaperLandscape == YES) ||
            (finishingSide == kFinishingSideTop && isPaperLandscape == NO))
@@ -634,7 +634,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
     BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
     
-    if(punch == kPunchType3Holes || punch == kPunchType4Holes)
+    if(punch == kPunchType3or4Holes)
     {
         if(finishingSide != kFinishingSideTop  && isPaperLandscape == YES)
         {
@@ -870,17 +870,49 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         NSMutableArray *settings =[[section objectForKey:@"setting"] mutableCopy];
         NSMutableArray *effectiveSettings = [[NSMutableArray alloc] init];
+
         for(NSDictionary *setting in settings)
         {
             NSString *key = [setting objectForKey:@"name"];
             if([self isSettingSupported:key] == YES)
             {
-                [effectiveSettings addObject:setting];
+                if([key isEqualToString:KEY_PUNCH] == YES)
+                {
+                    NSMutableDictionary *tempSetting = [NSMutableDictionary dictionaryWithDictionary:setting];
+                    NSArray *options = [setting objectForKey:@"option"];
+                    NSMutableArray *tempOptions = [[NSMutableArray alloc] init];
+                    for(NSDictionary *option in options)
+                    {
+                        if([self isSettingOptionSupported:[option objectForKey:@"content-body"]] == YES)
+                        {
+                            [tempOptions addObject:option];
+                        }
+                    }
+                    [tempSetting setValue:tempOptions forKey:@"option"];
+                    [effectiveSettings addObject:tempSetting];
+                }
+                else
+                {
+                    [effectiveSettings addObject:setting];
+                }
             }
-            
         }
         [self.supportedSettings addObject:effectiveSettings];
     }
+}
+
+-(BOOL) isSettingOptionSupported:(NSString *) option
+{
+    if([option isEqualToString:@"ids_lbl_punch_3holes"])
+    {
+        return [self.printer.enabled_punch_3holes boolValue];
+    }
+    
+    if([option isEqualToString:@"ids_lbl_punch_4holes"])
+    {
+        return ![self.printer.enabled_punch_3holes boolValue];
+    }
+    return YES;
 }
 
 - (void)executePrint

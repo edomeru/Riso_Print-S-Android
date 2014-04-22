@@ -11,6 +11,7 @@
 #import "PreviewSetting.h"
 #import "PrintPreviewHelper.h"
 #import "PDFFileManager.h"
+#import "Printer.h"
 
 #define FINISHING_MARGIN  	10.0f
 //approximate staple and punch dimensions in points
@@ -523,19 +524,22 @@
     CGFloat punchDistance = 0;
     NSUInteger numHoles = 0;
 
-    if(punchType == kPunchType3Holes)
+    if(punchType == kPunchType3or4Holes)
     {
-        punchDistance = PUNCH_3HOLE_DISTANCE;
-        //center of the first hole is 1 punch distance from the center of the length of the finishing side
-        startDistanceFromCenter = punchDistance + (PUNCH_WIDTH * 0.5f);
-        numHoles = 3;
-    }
-    else if(punchType == kPunchType4Holes)
-    {
-        punchDistance = PUNCH_4HOLE_DISTANCE;
-        //center of the first hole is 1 and half the punch distance from the center of the length of the finishing side
-        startDistanceFromCenter = (punchDistance * 1.5f) + (PUNCH_WIDTH * 0.5f);
-        numHoles = 4;
+        if([self.printDocument.printer.enabled_punch_3holes boolValue] == YES)
+        {
+            punchDistance = PUNCH_3HOLE_DISTANCE;
+            //center of the first hole is 1 punch distance from the center of the length of the finishing side
+            startDistanceFromCenter = punchDistance + (PUNCH_WIDTH * 0.5f);
+            numHoles = 3;
+        }
+        else
+        {
+            punchDistance = PUNCH_4HOLE_DISTANCE;
+            //center of the first hole is 1 and half the punch distance from the center of the length of the finishing side
+            startDistanceFromCenter = (punchDistance * 1.5f) + (PUNCH_WIDTH * 0.5f);
+            numHoles = 4;
+        }
     }
     else
     {

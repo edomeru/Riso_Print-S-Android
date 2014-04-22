@@ -19,6 +19,7 @@
 @property (nonatomic, retain) NSNumber* enabled_pagination;
 @property (nonatomic, retain) NSNumber* enabled_raw;
 @property (nonatomic, retain) NSNumber* enabled_staple;
+@property (nonatomic, retain) NSNumber * enabled_punch_3holes;
 @property (nonatomic, retain) NSString* ip_address;
 @property (nonatomic, retain) NSString* name;
 @property (nonatomic, retain) NSNumber* port;

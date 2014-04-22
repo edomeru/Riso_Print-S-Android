@@ -202,6 +202,7 @@
             default="0" >
             <option>ids_lbl_off</option>
             <option>ids_lbl_punch_2holes</option>
+            <option>ids_lbl_punch_3holes</option>
             <option>ids_lbl_punch_4holes</option>
         </setting>
         <setting
