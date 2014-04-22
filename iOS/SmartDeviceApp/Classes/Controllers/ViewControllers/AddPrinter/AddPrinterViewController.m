@@ -57,6 +57,11 @@
 - (void)dismissKeypad;
 
 /**
+ Adds a full-capability printer (for failed manual snmp search)
+ */
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress;
+
+/**
  Unwinds back to the Printers screen.
  Cancels any ongoing search operation.
  This is for the iPhone only.
@@ -127,6 +132,24 @@
     [self.saveButton setEnabled:NO];
 }
 
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.capBooklet = YES;
+    pd.capStapler = YES;
+    pd.capFin23Holes = YES;
+    pd.capFin23Holes = YES;
+    pd.capTrayAutoStack = YES;
+    pd.capTrayFaceDown = YES;
+    pd.capTrayStack = YES;
+    pd.capTrayTop = YES;
+    
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
+}
+
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -195,9 +218,7 @@
                        withDetails:nil];
         return;
         
-        //TODO: the printer should still be added to the list
-        //  - blank printer name
-        //  - full capabilities
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
@@ -226,9 +247,8 @@
                         withTitle:kAlertTitlePrintersSearch
                       withDetails:nil];
         
-        //TODO: the printer should still be added to the list
-        //  - blank printer name
-        //  - full capabilities
+        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
     // hide the searching indicator
