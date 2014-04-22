@@ -776,23 +776,23 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     if([settingKey isEqualToString:KEY_DUPLEX])
     {
-        [self.printer.enabled_duplex boolValue];
+        return [self.printer.enabled_duplex boolValue];
     }
     
     if([settingKey isEqualToString:KEY_FINISHING_SIDE])
     {
-        [self.printer.enabled_bind boolValue];
+        return [self.printer.enabled_bind boolValue];
     }
     
     if([settingKey isEqualToString:KEY_STAPLE])
     {
-        [self.printer.enabled_staple boolValue];
+        return [self.printer.enabled_staple boolValue];
     }
     
     if([settingKey isEqualToString:KEY_IMPOSITION] ||
        [settingKey isEqualToString:KEY_IMPOSITION_ORDER])
     {
-        [self.printer.enabled_pagination boolValue];
+        return [self.printer.enabled_pagination boolValue];
     }
     
     if([settingKey isEqualToString:KEY_BOOKLET] ||
