@@ -1881,7 +1881,7 @@ namespace SmartDeviceApp.Controllers
                         }
                     }
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception)
                 {
                     // Error handling
                 }

@@ -145,7 +145,7 @@ namespace SmartDeviceApp.Controllers
                         {
                             // Error handling
                             // Possible cause:
-                            // * table already exists
+                            // * table/item already exists
                         }
                     }
                 }
