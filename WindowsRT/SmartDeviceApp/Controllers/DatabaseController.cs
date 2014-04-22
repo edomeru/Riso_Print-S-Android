@@ -44,17 +44,15 @@ namespace SmartDeviceApp.Controllers
 
         public async Task Initialize()
         {
-            // await CreateDatabase();  // Used for create database from script
-            CreateDatabase();
+            await CreateDatabase();
 
             // TODO: Remove after testing (or create an initial data manager)
             await InsertSampleData();
         }
 
-        // private async Task CreateDatabase() // Used for create database from script
-        private void CreateDatabase()
+        private async Task CreateDatabase()
         {
-#if CREATE_TABLES_USING_SCRIPT
+#if true // CREATE_TABLES_USING_SCRIPT
             #region Create Tables Using Script File
 
             await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
@@ -146,6 +144,8 @@ namespace SmartDeviceApp.Controllers
                         catch (SQLiteException)
                         {
                             // Error handling
+                            // Possible cause:
+                            // * table already exists
                         }
                     }
                 }
