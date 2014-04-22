@@ -30,9 +30,9 @@ namespace SmartDeviceApp.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Print setting ID, used by Printer table and is indexed
+        /// Print setting ID, used by Printer table
         /// </summary>
-        [SQLite.Column("pst_id"), SQLite.Indexed(Name = "Printer_FKIndex1")]
+        [SQLite.Column("pst_id")]
         public int PrintSettingId { get; set; }
 
         /// <summary>
@@ -66,34 +66,46 @@ namespace SmartDeviceApp.Models
         public bool EnabledRaw { get; set; }
 
         /// <summary>
-        /// Printer support for pagination, used by Printer table
+        /// Printer support for booklet, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_pagination"), SQLite.NotNull]
-        public bool EnabledPagination { get; set; }
+        [SQLite.Column("prn_enabled_booklet"), SQLite.NotNull]
+        public bool EnabledBooklet { get; set; }
 
         /// <summary>
-        /// Printer support for duplex, used by Printer table
+        /// Printer support for stapler, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_duplex"), SQLite.NotNull]
-        public bool EnabledDuplex { get; set; }
+        [SQLite.Column("prn_enabled_stapler"), SQLite.NotNull]
+        public bool EnabledStapler { get; set; }
 
         /// <summary>
-        /// Printer support for booklet binding, used by Printer table
+        /// Printer support for four-hole punch, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_booklet_binding"), SQLite.NotNull]
-        public bool EnabledBookletBinding { get; set; }
+        [SQLite.Column("prn_enabled_punch4"), SQLite.NotNull]
+        public bool EnabledPunchFour { get; set; }
 
         /// <summary>
-        /// Printer support for staple, used by Printer table
+        /// Printer support for facedown tray, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_staple"), SQLite.NotNull]
-        public bool EnabledStaple { get; set; }
+        [SQLite.Column("prn_enabled_tray_facedown"), SQLite.NotNull]
+        public bool EnabledTrayFacedown { get; set; }
 
         /// <summary>
-        /// Printer support for bind, used by Printer table
+        /// Printer support for autostack tray, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_bind"), SQLite.NotNull]
-        public bool EnabledBind { get; set; }
+        [SQLite.Column("prn_enabled_tray_autostack"), SQLite.NotNull]
+        public bool EnabledTrayAutostack { get; set; }
+
+        /// <summary>
+        /// Printer support for top tray, used by Printer table
+        /// </summary>
+        [SQLite.Column("prn_enabled_tray_top"), SQLite.NotNull]
+        public bool EnabledTrayTop { get; set; }
+
+        /// <summary>
+        /// Printer support for stack tray, used by Printer table
+        /// </summary>
+        [SQLite.Column("prn_enabled_tray_stack"), SQLite.NotNull]
+        public bool EnabledTrayStack { get; set; }
 
         /// <summary>
         /// Flag that denotes that the printer is the default printer

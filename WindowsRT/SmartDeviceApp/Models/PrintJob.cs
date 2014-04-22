@@ -32,9 +32,9 @@ namespace SmartDeviceApp.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Printer ID, used by PrintJob table and is indexed
+        /// Printer ID, used by PrintJob table
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.Indexed(Name = "PrintJob_FKIndex1")]
+        [SQLite.Column("prn_id"), SQLite.NotNull]
         public int PrinterId { get; set; }
 
         /// <summary>
