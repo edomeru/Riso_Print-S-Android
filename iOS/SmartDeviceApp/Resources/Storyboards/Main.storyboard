@@ -451,7 +451,7 @@
                                                 </constraints>
                                             </imageView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0u8-7h-yuK" userLabel="Bar">
-                                                <rect key="frame" x="60" y="250" width="200" height="1"/>
+                                                <rect key="frame" x="67" y="250" width="186" height="1"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" red="0.52156862745098043" green="0.25490196078431371" blue="0.84705882352941175" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
@@ -459,7 +459,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OPEN-IN DOCUMENT HERE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RdC-XI-grS">
-                                                <rect key="frame" x="60" y="255" width="200" height="17"/>
+                                                <rect key="frame" x="67" y="255" width="186" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -469,7 +469,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tIy-ys-L0J" userLabel="Bar">
-                                                <rect key="frame" x="60" y="276" width="200" height="1"/>
+                                                <rect key="frame" x="67" y="276" width="186" height="1"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
@@ -480,14 +480,13 @@
                                         <constraints>
                                             <constraint firstItem="RdC-XI-grS" firstAttribute="top" secondItem="0u8-7h-yuK" secondAttribute="bottom" constant="4" id="0aU-Xm-RVO"/>
                                             <constraint firstItem="tIy-ys-L0J" firstAttribute="top" secondItem="RdC-XI-grS" secondAttribute="bottom" constant="4" id="5EU-lQ-JYq"/>
+                                            <constraint firstItem="tIy-ys-L0J" firstAttribute="centerX" secondItem="78X-jO-u0e" secondAttribute="centerX" id="5Xf-N8-2hK"/>
                                             <constraint firstAttribute="centerY" secondItem="78X-jO-u0e" secondAttribute="centerY" constant="32" id="C40-BJ-ld4"/>
-                                            <constraint firstItem="78X-jO-u0e" firstAttribute="trailing" secondItem="0u8-7h-yuK" secondAttribute="trailing" id="DSm-3H-hK5"/>
-                                            <constraint firstItem="78X-jO-u0e" firstAttribute="leading" secondItem="0u8-7h-yuK" secondAttribute="leading" id="JZd-DI-9no"/>
-                                            <constraint firstItem="78X-jO-u0e" firstAttribute="leading" secondItem="tIy-ys-L0J" secondAttribute="leading" id="Jix-tL-iV2"/>
+                                            <constraint firstItem="RdC-XI-grS" firstAttribute="centerX" secondItem="78X-jO-u0e" secondAttribute="centerX" id="DN9-Yy-Smb"/>
+                                            <constraint firstItem="0u8-7h-yuK" firstAttribute="width" secondItem="RdC-XI-grS" secondAttribute="width" id="EPx-DP-Q1o"/>
+                                            <constraint firstItem="0u8-7h-yuK" firstAttribute="centerX" secondItem="78X-jO-u0e" secondAttribute="centerX" id="cXr-Ug-9dr"/>
                                             <constraint firstAttribute="centerX" secondItem="78X-jO-u0e" secondAttribute="centerX" id="fEk-v6-8jX"/>
-                                            <constraint firstItem="78X-jO-u0e" firstAttribute="trailing" secondItem="RdC-XI-grS" secondAttribute="trailing" id="hbA-y9-ZTj"/>
-                                            <constraint firstItem="78X-jO-u0e" firstAttribute="trailing" secondItem="tIy-ys-L0J" secondAttribute="trailing" id="kQo-MV-8Mq"/>
-                                            <constraint firstItem="78X-jO-u0e" firstAttribute="leading" secondItem="RdC-XI-grS" secondAttribute="leading" id="rWk-t8-cZh"/>
+                                            <constraint firstItem="tIy-ys-L0J" firstAttribute="width" secondItem="RdC-XI-grS" secondAttribute="width" id="fls-Gu-dra"/>
                                             <constraint firstItem="0u8-7h-yuK" firstAttribute="top" secondItem="78X-jO-u0e" secondAttribute="bottom" constant="4" id="rlr-yD-cwL"/>
                                         </constraints>
                                     </view>
@@ -516,12 +515,12 @@
                                         <rect key="frame" x="0.0" y="440" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
+                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
                                                 <rect key="frame" x="18" y="10" width="284" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
                                                 <connections>
-                                                    <action selector="dragPageScrollAction:" destination="3J8-E3-ZCb" eventType="valueChanged" id="VlY-KG-tht"/>
+                                                    <action selector="dragPageScrollAction:withEvent:" destination="3J8-E3-ZCb" eventType="valueChanged" id="EP2-jB-ZUc"/>
                                                     <outletCollection property="gestureRecognizers" destination="HkB-bW-YX3" appends="YES" id="R2I-1U-0vu"/>
                                                 </connections>
                                             </slider>
@@ -1656,7 +1655,7 @@
                         <viewControllerLayoutGuide type="bottom" id="3f8-yG-Abd"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="7iy-BP-0QH" customClass="DefaultView">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ePG-kT-RdA" userLabel="Header">
@@ -1701,11 +1700,11 @@
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Mc-ty-cvj" userLabel="Content Parent View">
-                                <rect key="frame" x="0.0" y="48" width="320" height="412"/>
+                                <rect key="frame" x="0.0" y="48" width="320" height="432"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dM2-UF-FWF" userLabel="Content" customClass="DefaultView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="412"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="432"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ApG-zv-C5a" userLabel="Row Header - Card Reader">
@@ -3416,7 +3415,7 @@
             <objects>
                 <tableViewController id="0Ud-GD-5mk" customClass="PrintSettingsPrinterListTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uaa-w3-8pN">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -4008,8 +4007,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="JPo-5o-n9C"/>
-        <segue reference="4Gn-3V-oTg"/>
+        <segue reference="5pT-ga-236"/>
         <segue reference="uoe-Al-ug4"/>
+        <segue reference="c8V-UF-iWe"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -160,7 +160,7 @@
 /**
  Action when page scroller thumb is dragged
  */
-- (IBAction)dragPageScrollAction:(id)sender;
+- (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event;
 
 /**
  Action when page scroller is tapped
@@ -798,10 +798,11 @@
     [self performSegueTo:[PrintSettingsViewController class]];
 }
 
-- (IBAction)dragPageScrollAction:(id)sender
+- (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event
 {
-    UISlider *slider  = (UISlider *) sender;
-    NSInteger pageNumber = slider.value;
+    UISlider *slider = sender;
+    NSInteger pageNumber = (NSInteger)(slider.value + 0.5f);
+    [slider setValue:pageNumber animated:YES];
     
     //update the current page  and page number label
     // if double sided and page is at the back (even pages)  - always navigate to the next front page
@@ -819,8 +820,13 @@
     }
     
     self.currentPage = pageNumber - 1;
-    [self goToPage:self.currentPage];
     [self setupPageLabel];
+    
+    UITouch *touch = [event.allTouches anyObject];
+    if (touch.phase == UITouchPhaseCancelled || touch.phase == UITouchPhaseEnded)
+    {
+        [self goToPage:self.currentPage];
+    }
 }
 
 - (IBAction)tapPageScrollAction:(id)sender
@@ -832,7 +838,7 @@
     CGFloat scrollPercentage = point.x/self.pageScroll.bounds.size.width;
     
     //multiply the the percentage with the total number of pages in view to get the current page index;
-    NSInteger pageNumber = (self.totalPageNum * scrollPercentage);
+    NSInteger pageNumber = (self.totalPageNum * scrollPercentage + 1.5f);
    
     // if double sided and page is at the back (even pages) - always navigate to the next front page
     if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2)== 0)
@@ -867,7 +873,8 @@
     //update page in view, page number label. slider thumb position
     [self goToPage:self.currentPage];
     [self setupPageLabel];
-    [self.pageScroll setValue:pageNumber];
+    
+    [self.pageScroll setValue:pageNumber animated:YES];
 }
 
 @end

@@ -598,9 +598,14 @@
 
 - (void)drawPaperEdgeLine:(CGContextRef)contextRef
 {
+    CGContextSaveGState(contextRef);
+    
     CGFloat lineWidth = 2.0f;
     CGContextSetStrokeColorWithColor(contextRef, [UIColor blackColor].CGColor);
     CGContextSetLineWidth(contextRef, lineWidth);
+    
+    float dashLine[] = { 6, 5 };
+    CGContextSetLineDash(contextRef, 0, dashLine, 2);
     
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
     {
@@ -618,8 +623,9 @@
         CGContextAddLineToPoint(contextRef, 0, self.size.height);
     }
     
-    
     CGContextStrokePath(contextRef);
+    
+    CGContextRestoreGState(contextRef);
 }
 
 @end
