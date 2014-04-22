@@ -530,10 +530,18 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (void)applyBookletConstraints
 {
-    [self setState:[self isSettingEnabled:KEY_DUPLEX] forSettingKey:KEY_DUPLEX];
+    
     [self setState:[self isSettingEnabled:KEY_IMPOSITION] forSettingKey:KEY_IMPOSITION];
     [self setState:[self isSettingEnabled:KEY_IMPOSITION_ORDER] forSettingKey:KEY_IMPOSITION_ORDER];
 
+    if(self.previewSetting.booklet == YES)
+    {
+        [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
+    }
+    else
+    {
+        [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingOff];
+    }
     [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
     [self setOptionSettingToDefaultValue:KEY_STAPLE];
     [self setOptionSettingToDefaultValue:KEY_PUNCH];
@@ -776,6 +784,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (BOOL)isSettingSupported:(NSString*)settingKey
 {
+	if(self.printer == nil)
+	{
+		return YES;
+	}
+	
     if([settingKey isEqualToString:KEY_DUPLEX])
     {
         return [self.printer.enabled_duplex boolValue];

@@ -55,8 +55,8 @@ typedef enum{
     kStapleTypeNone,
     kStapleTypeUpperLeft,
     kStapleTypeUpperRight,
-    kStapleType2Pos,
-    kStapleType1Pos
+    kStapleType1Pos,
+    kStapleType2Pos
 }kStapleType;
 
 typedef enum{
