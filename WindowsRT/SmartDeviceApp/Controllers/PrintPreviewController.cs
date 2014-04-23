@@ -53,7 +53,6 @@ namespace SmartDeviceApp.Controllers
 
         private PrintPreviewViewModel _printPreviewViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
-        private PrintSettingList _printSettingList;
         private Printer _selectedPrinter;
         private int _pagesPerSheet = 1;
         private bool _isDuplex = false;
@@ -106,7 +105,7 @@ namespace SmartDeviceApp.Controllers
                 await GetDefaultPrinterAndPrintSetting();
 
                 // Send list to view model
-                _printSettingsViewModel.PrintSettingsList = _printSettingList;
+                //_printSettingsViewModel.PrintSettingsList = _printSettingList;
                 _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
 
                 UpdatePreviewInfo();
@@ -204,7 +203,7 @@ namespace SmartDeviceApp.Controllers
                     if (_selectedPrinter.PrintSettings == null)
                     {
                         _selectedPrinter.PrintSettings =
-                            DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
+                            DefaultsUtility.GetDefaultPrintSettings(_printSettingsViewModel.PrintSettingsList);
                     }
 
                     FilterPrintSettingsUsingCapabilities();
@@ -217,7 +216,7 @@ namespace SmartDeviceApp.Controllers
 
             // Create dummy Printer as current printer
             _selectedPrinter = new Printer();
-            _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
+            _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingsViewModel.PrintSettingsList);
 
             // No need to filter using printer capabilities
             MergePrintSettings();
@@ -468,11 +467,6 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            if (isConstraintAffected)
-            {
-                // Send to UI here
-                _printSettingsViewModel.PrintSettingsList = _printSettingList;
-            }
             // Generate PreviewPages again
             if (isPreviewPageAffected || isPageCountAffected || isConstraintAffected)
             {
@@ -535,11 +529,6 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            if (isConstraintAffected)
-            {
-                // Send to UI here
-                _printSettingsViewModel.PrintSettingsList = _printSettingList;
-            }
             if (isPreviewPageAffected || isConstraintAffected)
             {
                 await ClearPreviewPageListAndImages();
@@ -851,11 +840,11 @@ namespace SmartDeviceApp.Controllers
                 };
             
             // Construct the PrintSettingList
-            _printSettingList = new PrintSettingList();
+            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
             var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
             foreach (PrintSettingGroup group in tempList)
             {
-                _printSettingList.Add(group);
+                _printSettingsViewModel.PrintSettingsList.Add(group);
             }
         }
 
@@ -865,7 +854,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void MergePrintSettings()
         {
-            foreach (var group in _printSettingList)
+            foreach (var group in _printSettingsViewModel.PrintSettingsList)
             {
                 foreach (var printSetting in group.PrintSettings)
                 {
@@ -1079,7 +1068,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>PrintSettingGroup if founf, else null</returns>
         private PrintSettingGroup GetPrintSettingGroup(PrintSetting printSetting)
         {
-            return _printSettingList.FirstOrDefault(group => group.PrintSettings.Contains(printSetting));
+            return _printSettingsViewModel.PrintSettingsList.FirstOrDefault(group => group.PrintSettings.Contains(printSetting));
         }
 
         /// <summary>
@@ -1089,7 +1078,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>PrintSetting if found, else null</returns>
         private PrintSetting GetPrintSetting(string name)
         {
-            var query = _printSettingList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
+            var query = _printSettingsViewModel.PrintSettingsList.SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
                 .Where(ps => ps.Name == name);
             return query.FirstOrDefault();
         }

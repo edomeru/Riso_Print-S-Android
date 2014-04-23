@@ -58,42 +58,45 @@ namespace SmartDeviceApp.Common.Utilities
         {
             PrintSettings defaultPrintSettings = new PrintSettings();
 
-            defaultPrintSettings.ColorMode =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_COLOR_MODE);
-            defaultPrintSettings.Orientation =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_ORIENTATION);
-            defaultPrintSettings.Copies =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_COPIES);
-            defaultPrintSettings.Duplex =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_DUPLEX);
-            defaultPrintSettings.PaperSize =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
-            defaultPrintSettings.ScaleToFit =
-                (bool)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT);
-            defaultPrintSettings.PaperType =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
-            defaultPrintSettings.InputTray =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
-            defaultPrintSettings.Imposition =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_IMPOSITION);
-            defaultPrintSettings.ImpositionOrder =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER);
-            defaultPrintSettings.Sort =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_SORT);
-            defaultPrintSettings.Booklet =
-                (bool)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET);
-            defaultPrintSettings.BookletFinishing =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
-            defaultPrintSettings.BookletLayout =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
-            defaultPrintSettings.FinishingSide =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_FINISHING_SIDE);
-            defaultPrintSettings.Staple =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_STAPLE);
-            defaultPrintSettings.Punch =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PUNCH);
-            defaultPrintSettings.OutputTray =
-                (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+            if (printSettingList != null)
+            {
+                defaultPrintSettings.ColorMode =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_COLOR_MODE);
+                defaultPrintSettings.Orientation =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_ORIENTATION);
+                defaultPrintSettings.Copies =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_COPIES);
+                defaultPrintSettings.Duplex =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_DUPLEX);
+                defaultPrintSettings.PaperSize =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                defaultPrintSettings.ScaleToFit =
+                    (bool)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT);
+                defaultPrintSettings.PaperType =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                defaultPrintSettings.InputTray =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                defaultPrintSettings.Imposition =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_IMPOSITION);
+                defaultPrintSettings.ImpositionOrder =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER);
+                defaultPrintSettings.Sort =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_SORT);
+                defaultPrintSettings.Booklet =
+                    (bool)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET);
+                defaultPrintSettings.BookletFinishing =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
+                defaultPrintSettings.BookletLayout =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
+                defaultPrintSettings.FinishingSide =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_FINISHING_SIDE);
+                defaultPrintSettings.Staple =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_STAPLE);
+                defaultPrintSettings.Punch =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_PUNCH);
+                defaultPrintSettings.OutputTray =
+                    (int)GetDefault(printSettingList, PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+            }
 
             return defaultPrintSettings;
         }
