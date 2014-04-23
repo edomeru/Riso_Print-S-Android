@@ -71,9 +71,9 @@ namespace DirectPrint
         {
             directprint_job job = new directprint_job();
             job.job_name = "jobname";
-            job.filename = "test.pdf";
+            job.filename = "test.pdf";//"PDF-0010pages.pdf";
             job.print_settings = "";
-            job.ip_address = "192.168.1.21";//21
+            job.ip_address = "192.168.1.206";//21//206//119
             job.progress = 0;
             job.cancel_print = 0;
 
@@ -147,10 +147,12 @@ namespace DirectPrint
             }
 
             // CONTROL FILE : Prepare
-            string dname = String.Format("dfA{0}{1}", "001", HOST_NAME);
-            string cname = String.Format("cfA{0}{1}", "001", HOST_NAME);
+            string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
+            string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
                                         HOST_NAME, "User", print_job.job_name, dname, dname, print_job.job_name);
+            //string controlfile = String.Format("H{0}\nP{1}\nf{2}\nU{3}\nN{4}\n",
+            //                HOST_NAME, "User", dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////
             /// SUBCMD: RECEIVE CONTROL FILE
             ///
@@ -178,7 +180,7 @@ namespace DirectPrint
             //***write buffer to socket
             socket.write(buffer, 0, pos);
             {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             }
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -200,7 +202,7 @@ namespace DirectPrint
             //***write buffer to socket
             socket.write(buffer, 0, pos);
             {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             }
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -222,11 +224,11 @@ namespace DirectPrint
             ///      Operand 2 - Name of data file
             ///
             pos = 0;
-            buffer[pos++] = 0x3;
+            buffer[pos++] = 3;
 
 
             // Get file size
-            var uri = new System.Uri("ms-appx:///Resources/Dummy/test.pdf");//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
+            var uri = new System.Uri("ms-appx:///Resources/Dummy/"+print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
             StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
             //Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.;
             //Windows.Storage.StorageFolder localFolder = Windows.ApplicationModel.Package.Current.;
@@ -243,7 +245,7 @@ namespace DirectPrint
 
 
             ulong total_data_size = (ulong)file_size;// +(ulong)pjl_header_size + (ulong)pjl_footer_size;
-            String total_data_size_str = String.Format("{0}", (long)total_data_size);
+            String total_data_size_str = String.Format("{0}", (ulong)total_data_size);
 
             for (i = 0; i < total_data_size_str.Length; i++)
             {
@@ -259,7 +261,7 @@ namespace DirectPrint
             //***write buffer to socket
             socket.write(buffer, 0, pos);
             {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             }
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -272,14 +274,14 @@ namespace DirectPrint
 
 
             //***write buffer to socket
-            socket.write(filebuffer, 0, pos);
+            //socket.write(filebuffer, 0, pos);
             ulong totalbytes = 0;
             int bytesRead = 0;
             MemoryStream fstream = new MemoryStream(filebuffer);
             while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
                 totalbytes += (ulong)bytesRead;
-                socket.write(buffer, 0, bytesRead);
+                socket.write(buffer, 0, bytesRead, false);
             }
             //fstream.Dispose();
 
