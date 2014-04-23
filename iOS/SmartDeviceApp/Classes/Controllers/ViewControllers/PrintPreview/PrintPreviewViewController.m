@@ -679,7 +679,7 @@
         }
         else
         {
-            if(viewController.pageIndex == self.layoutPageNum - 1)
+            if(viewController.pageIndex == self.layoutPageNum - 1 && self.layoutPageNum != self.totalPageNum)
             {
                 self.printDocument.currentPage = 0;
             }
