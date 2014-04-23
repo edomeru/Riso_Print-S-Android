@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +54,19 @@ namespace DirectPrint
 
         TCPSocket socket;
 
+        public DirectPrint(directprint_job job)
+        {
+            socket = new TCPSocket();
+            socket.connect(job.ip_address, PORT_LPR);
+            socket.assignDelegate(receiveData);
+
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            (workItem) =>
+            {
+                startLPRPrint(job);
+            });
+        }
+
         public DirectPrint()
         {
             directprint_job job = new directprint_job();
@@ -66,14 +80,12 @@ namespace DirectPrint
             socket = new TCPSocket();
             socket.connect(job.ip_address, PORT_LPR);
             socket.assignDelegate(receiveData);
-
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
             (workItem) =>
             {
                 startLPRPrint(job);
             });
         }
-
 
         public async void startLPRPrint(directprint_job parameter)
         {
@@ -82,14 +94,14 @@ namespace DirectPrint
             //StorageFile filePickerFile = await openPicker.PickSingleFileAsync();
 
             directprint_job print_job = parameter;
-    
+
             // Prepare PJL header
             string pjl_header = "";
             pjl_header += PJL_ESCAPE;
             //***create_pjl(pjl_header, print_job->print_settings);
             pjl_header += PJL_LANGUAGE;
             int pjl_header_size = pjl_header.Length;
-    
+
             // Prepare PJL footer
             string pjl_footer = "";
             pjl_footer += PJL_ESCAPE;
@@ -106,8 +118,7 @@ namespace DirectPrint
             ////////////////////////////////////////////////////////
             /// LOCAL VARIABLES
             ///
-            const int BUFSIZE = 1024;				// 1KB buffer 
-            byte[] buffer = new byte[BUFSIZE];
+            byte[] buffer = new byte[BUFFER_SIZE];
 
             ////////////////////////////////////////////////////////
             /// COMMAND: Receive a printer job
@@ -136,8 +147,8 @@ namespace DirectPrint
             }
 
             // CONTROL FILE : Prepare
-            string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
-            string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
+            string dname = String.Format("dfA{0}{1}", "001", HOST_NAME);
+            string cname = String.Format("cfA{0}{1}", "001", HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
                                         HOST_NAME, "User", print_job.job_name, dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////
@@ -166,11 +177,14 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
+            {
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            }
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
             {
-                string test = System.Text.Encoding.UTF8.GetString(buffer,0,pos);
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
                 return;
             }
 
@@ -185,6 +199,9 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
+            {
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            }
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -209,7 +226,7 @@ namespace DirectPrint
 
 
             // Get file size
-            var uri = new System.Uri("ms-appx:///Resources/Dummy/test.pdf");//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
+            var uri = new System.Uri("ms-appx:///Resources/Dummy/test.pdf");//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
             StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
             //Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.;
             //Windows.Storage.StorageFolder localFolder = Windows.ApplicationModel.Package.Current.;
@@ -241,6 +258,9 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
+            {
+                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            }
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -249,16 +269,39 @@ namespace DirectPrint
             }
 
             //send file data
-            
+
 
             //***write buffer to socket
             socket.write(filebuffer, 0, pos);
-            /////////////////////////////////////////////////////////
-            /// READ ACK
-            if (waitForAck() != 0)
+            ulong totalbytes = 0;
+            int bytesRead = 0;
+            MemoryStream fstream = new MemoryStream(filebuffer);
+            while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
+            {
+                totalbytes += (ulong)bytesRead;
+                socket.write(buffer, 0, bytesRead);
+            }
+            //fstream.Dispose();
+
+            if (total_data_size != totalbytes)
             {
                 return;
             }
+
+            // close data file with a 0 ..
+            pos = 0;
+            buffer[pos++] = 0;
+            socket.write(buffer, 0, pos);
+
+            /////////////////////////////////////////////////////////
+            /// READ ACK
+            int retval = 0;
+            if ((retval = waitForAck()) != 0)
+            {
+                retval = retval;
+                return;
+            }
+
 
             return;
             //end!
