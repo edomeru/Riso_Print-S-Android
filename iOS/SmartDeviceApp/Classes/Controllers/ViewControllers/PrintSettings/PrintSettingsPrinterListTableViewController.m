@@ -87,6 +87,7 @@
         itemCell.optionLabel.text = printer.name;
     }
     itemCell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+    itemCell.statusView.statusHelper.delegate = itemCell.statusView;
     
     itemCell.separator.hidden = NO;
     if (indexPath.row == [self.printerManager countSavedPrinters])
