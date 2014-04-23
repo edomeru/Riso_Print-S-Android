@@ -45,12 +45,5 @@
 		<key>ZoomRate</key>
 		<integer>100</integer>
 	</dict>
-	<key>ApplicationSettings</key>
-	<dict>
-		<key>CardReaderID</key>
-		<string></string>
-		<key>CommunityName</key>
-		<string>public</string>
-	</dict>
 </dict>
 </plist>
