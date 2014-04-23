@@ -66,7 +66,11 @@ namespace SmartDeviceApp.Controllers
         // http://csharpindepth.com/Articles/General/Singleton.aspx
         static PrintPreviewController() { }
 
-        private PrintPreviewController() { }
+        private PrintPreviewController()
+        {
+            _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
+            _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+        }
 
         /// <summary>
         /// Singleton instance
@@ -86,10 +90,6 @@ namespace SmartDeviceApp.Controllers
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
-            _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
-            _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
-
-            _selectedPrinter = null;
             _previewPages = new Dictionary<int, PreviewPage>();
 
             // Get print settings if document is successfully loaded
@@ -133,6 +133,11 @@ namespace SmartDeviceApp.Controllers
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
             _previewPages = null;
+
+            _pagesPerSheet = 1;
+            _isDuplex = false;
+            _isBooklet = false;
+            _isReversePages = false;
         }
 
         /// <summary>
@@ -211,7 +216,7 @@ namespace SmartDeviceApp.Controllers
             _selectedPrinter = new Printer();
             _selectedPrinter.PrintSettings = DefaultsUtility.GetDefaultPrintSettings(_printSettingList);
 
-            FilterPrintSettingsUsingCapabilities();
+            // No need to filter using printer capabilities
             MergePrintSettings();
             ApplyPrintSettingConstraints();
         }
@@ -912,7 +917,10 @@ namespace SmartDeviceApp.Controllers
             } // foreach group
         }
 
-        private bool FilterPrintSettingsUsingCapabilities()
+        /// <summary>
+        /// Removes print setting and options depending on printer capabilities
+        /// </summary>
+        private void FilterPrintSettingsUsingCapabilities()
         {
             bool enabled = true;
 
@@ -996,10 +1004,12 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
                 }
             }
-
-            return enabled;
         }
 
+        /// <summary>
+        /// Removes a print setting from the group
+        /// </summary>
+        /// <param name="printSetting"></param>
         private void RemovePrintSetting(PrintSetting printSetting)
         {
             PrintSettingGroup printSettingGroup = GetPrintSettingGroup(printSetting);
@@ -1009,6 +1019,11 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Removes a print setting option
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="index">option index</param>
         private void RemovePrintSettingOption(PrintSetting printSetting, int index)
         {
             PrintSettingOption printSettingOption = printSetting.Options
@@ -1041,7 +1056,11 @@ namespace SmartDeviceApp.Controllers
             UpdateConstraintsBasedOnPunch(_selectedPrinter.PrintSettings.Punch);
         }
 
-
+        /// <summary>
+        /// Queries the print setting group based on print setting
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <returns>PrintSettingGroup if founf, else null</returns>
         private PrintSettingGroup GetPrintSettingGroup(PrintSetting printSetting)
         {
             return _printSettingList.FirstOrDefault(group => group.PrintSettings.Contains(printSetting));
@@ -1059,6 +1078,13 @@ namespace SmartDeviceApp.Controllers
             return query.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Queries the print setting option based on print setting and the option index.
+        /// Option index is fixed (should be mapped with Common\Enum\PrintSettingsOptions class)
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="index">option index</param>
+        /// <returns>PrintSettingOption if found, else null</returns>
         private PrintSettingOption GetPrintSettingOption(PrintSetting printSetting, int index)
         {
             return printSetting.Options.FirstOrDefault(option => option.Index == index);
@@ -1093,6 +1119,11 @@ namespace SmartDeviceApp.Controllers
             return value;
         }
 
+        /// <summary>
+        /// Updates print settings dependent on imposition constraints
+        /// </summary>
+        /// <param name="value">new imposition value</param>
+        /// <returns>true when update is done, false otherwise</returns>
         private bool UpdateConstraintsBasedOnImposition(int value)
         {
             bool isUpdated = false;
@@ -1272,6 +1303,11 @@ namespace SmartDeviceApp.Controllers
             return isUpdated;
         }
 
+        /// <summary>
+        /// Updates print settings dependent on booklet constraints
+        /// </summary>
+        /// <param name="value">new booklet value</param>
+        /// <returns>true when update is done, false otherwise</returns>
         private bool UpdateConstraintsBasedOnBooklet(bool value)
         {
             bool isUpdated = false;
@@ -1429,6 +1465,11 @@ namespace SmartDeviceApp.Controllers
             return isUpdated;
         }
 
+        /// <summary>
+        /// Updates print settings dependent on finishing side constraints
+        /// </summary>
+        /// <param name="value">new finishing side value</param>
+        /// <returns>true when update is done, false otherwise</returns>
         private bool UpdateConstraintsBasedOnFinishingSide(int value)
         {
             bool isUpdated = false;
@@ -1517,6 +1558,11 @@ namespace SmartDeviceApp.Controllers
             return isUpdated;
         }
 
+        /// <summary>
+        /// Updates print settings dependent on staple constraints
+        /// </summary>
+        /// <param name="value">new staple value</param>
+        /// <returns>true when update is done, false otherwise</returns>
         private bool UpdateConstraintsBasedOnStaple(int value)
         {
             bool isUpdated = false;
@@ -1565,6 +1611,11 @@ namespace SmartDeviceApp.Controllers
             return isUpdated;
         }
 
+        /// <summary>
+        /// Updates print settings dependent on punch constraints
+        /// </summary>
+        /// <param name="value">new punch value</param>
+        /// <returns>true when update is done, false otherwise</returns>
         private bool UpdateConstraintsBasedOnPunch(int value)
         {
             bool isUpdated = false;
@@ -1631,6 +1682,11 @@ namespace SmartDeviceApp.Controllers
             return isUpdated;
         }
 
+        /// <summary>
+        /// Changes the enable state of a print setting
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="state">desired state</param>
         private void UpdateAllOptionState(PrintSetting printSetting, bool state)
         {
             foreach (PrintSettingOption option in printSetting.Options)
@@ -1640,6 +1696,14 @@ namespace SmartDeviceApp.Controllers
             printSetting.IsEnabled = state;
         }
 
+        /// <summary>
+        /// Changes the enable state of all options in a print setting, except the specified option
+        /// index. Specifying the excluded option index will not change the enable state of the
+        /// print setting option.
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="state">desired state</param>
+        /// <param name="exceptionIndex">option index</param>
         private void UpdateAllOptionStateExcept(PrintSetting printSetting, bool state, int exceptionIndex)
         {
             foreach (PrintSettingOption option in printSetting.Options)
