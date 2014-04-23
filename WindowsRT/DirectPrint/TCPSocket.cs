@@ -41,7 +41,7 @@ namespace DirectPrint
             await socket.ConnectAsync(h, port);
         }
 
-        internal async void write(byte[] data, int a,int b)
+        internal async void write(byte[] data, int a,int b, bool waitresponse = true)
         {
             if (socket != null)
             {
@@ -60,6 +60,7 @@ namespace DirectPrint
                 writer.Dispose();
 
                 // Now try to receive data from server
+                if (waitresponse)
                 try
                 {
                     DataReader reader = new DataReader(socket.InputStream);
