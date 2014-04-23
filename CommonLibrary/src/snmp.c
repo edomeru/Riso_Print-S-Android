@@ -666,7 +666,7 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
     session.version = SNMP_VERSION_1;
     session.community = (u_char *) strdup(COMMUNITY_NAME);
     session.community_len = strlen(COMMUNITY_NAME);
-    session.timeout = SESSION_TIMEOUT;
+    session.timeout = SESSION_TIMEOUT / MIB_INFO_COUNT;
     session.callback = 0;
     session.retries = 0;
     
@@ -726,6 +726,11 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
         if(pdu_response != 0)
         {
             snmp_free_pdu(pdu_response);
+        }
+        
+        if (status != STAT_SUCCESS || pdu_response->errstat != SNMP_ERR_NOERROR)
+        {
+            break;
         }
     }
     
