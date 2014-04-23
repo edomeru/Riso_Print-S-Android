@@ -76,7 +76,15 @@
 {
     PrintSettingsOptionsItemCell *itemCell = [tableView dequeueReusableCellWithIdentifier:PRINTER_ITEM_CELL forIndexPath:indexPath];
     Printer *printer = [self.printerManager getPrinterAtIndex:indexPath.row];
-    itemCell.optionLabel.text = printer.name;
+    if(printer.name == nil || [printer.name isEqualToString:@""])
+    {
+        itemCell.optionLabel.text = printer.ip_address;
+    }
+    else
+    {
+        itemCell.optionLabel.text = printer.name;
+    }
+    
     itemCell.separator.hidden = NO;
     if (indexPath.row == [self.printerManager countSavedPrinters])
     {

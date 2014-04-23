@@ -144,7 +144,7 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     }
     
     // Notify delegate of the change
-    [self.delegate previewSettingDidChange];
+    [self.delegate previewSettingDidChange:keyPath];
 }
 
 

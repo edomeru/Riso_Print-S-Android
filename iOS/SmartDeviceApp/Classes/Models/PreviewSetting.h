@@ -20,6 +20,9 @@
 #define KEY_STAPLE              @"staple"
 #define KEY_PUNCH               @"punch"
 #define KEY_OUTPUT_TRAY         @"outputTray"
+#define KEY_INPUT_TRAY          @"inputTray"
+#define KEY_SORT                @"sort"
+#define KEY_PAPER_TYPE          @"paperType"
 
 @interface PreviewSetting : NSObject
 @property (nonatomic) NSInteger colorMode;
