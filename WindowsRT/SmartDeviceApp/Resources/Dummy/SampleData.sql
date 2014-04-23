@@ -1,15 +1,15 @@
-INSERT INTO Printer VALUES(1, 1, "192.168.0.1", "RISO_Printer1", 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(2, 2, "192.168.0.22", "RISO_Printer2", 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(3, 3, "192.168.0.3", "RISO_Printer3", 1, 0, 1, 0, 1, 0, 1, 0);
-INSERT INTO Printer VALUES(4, 4, "192.168.0.4", "RISO_Printer4", 0, 1, 0, 1, 0, 1, 0, 1);
-INSERT INTO Printer VALUES(5, 5, "192.168.0.5", "RISO_Printer5", 0, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO Printer VALUES(6, 6, "192.168.0.6", "RISO_Printer6", 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(7, 7, "192.168.0.7", "RISO_Printer7", 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(8, 8, "192.168.0.8", "RISO_Printer8", 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(9, 9, "192.168.0.9", "RISO_Printer9", 1, 0, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(10, 10, "192.168.0.10", "RISO_Printer10_with_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_name", 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(11, 11, "192.168.0.11", "RISO Printer11 with very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name", 1, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO Printer VALUES(12, 12, "192.168.0.12", "RISO Printer12 with no matching print settings", 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(1, 1, "192.168.0.1", "RISO_Printer1", 1111, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(2, 2, "192.168.0.22", "RISO_Printer2", 2222, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(3, 3, "192.168.0.3", "RISO_Printer3", 3333, 0, 1, 0, 1, 0, 1, 0, 1, 0);
+INSERT INTO Printer VALUES(4, 4, "192.168.0.4", "RISO_Printer4", 4444, 1, 0, 1, 0, 1, 0, 1, 0, 1);
+INSERT INTO Printer VALUES(5, 5, "192.168.0.5", "RISO_Printer5", 5555, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO Printer VALUES(6, 6, "192.168.0.6", "RISO_Printer6", 6666, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(7, 7, "192.168.0.7", "RISO_Printer7", 7777, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(8, 8, "192.168.0.8", "RISO_Printer8", 8888, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(9, 9, "192.168.0.9", "RISO_Printer9", 9999, 0, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(10, 10, "192.168.0.10", "RISO_Printer10_with_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_name", 1010, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(11, 11, "192.168.0.11", "RISO Printer11 with very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name", 1111, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO Printer VALUES(12, 12, "192.168.0.12", "RISO Printer12 with no matching print settings", 1212, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO PrintSetting VALUES (1, 2, 0, 1, 2, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO PrintSetting VALUES (2, 1, 1, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
