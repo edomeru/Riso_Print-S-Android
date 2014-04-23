@@ -331,9 +331,7 @@ namespace SmartDeviceApp.Controllers
             {
                 
                 //add to printerList
-                Printer printer = new Printer(-1, -1, ip, name, -1,
-            false, false, false, false,
-            false, false, false);
+                Printer printer = new Printer() { IpAddress = ip, Name = name };
                 
 
                 //insert to database
@@ -437,9 +435,7 @@ namespace SmartDeviceApp.Controllers
 
             //add to printerList
 
-            Printer printer = new Printer(-1, -1, ip, "", -1,
-            false, false, false, false,
-            false, false, false);
+            Printer printer = new Printer() { IpAddress = ip };
                 
 
                 //insert to database
