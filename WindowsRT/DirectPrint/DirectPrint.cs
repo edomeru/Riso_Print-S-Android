@@ -292,7 +292,6 @@ namespace DirectPrint
 
             // close data file with a 0 ..
             pos = 0;
-            buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
 
             /////////////////////////////////////////////////////////
