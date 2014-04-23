@@ -40,12 +40,6 @@
 /** Input TextField for the IP Address. */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
 
-/** Input TextField for the Username. */
-@property (weak, nonatomic) IBOutlet UITextField *textUsername;
-
-/** Input TextField for the Password. */
-@property (weak, nonatomic) IBOutlet UITextField *textPassword;
-
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
@@ -61,6 +55,11 @@
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
+
+/**
+ Adds a full-capability printer (for failed manual snmp search)
+ */
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress;
 
 /**
  Unwinds back to the Printers screen.
@@ -133,6 +132,24 @@
     [self.saveButton setEnabled:NO];
 }
 
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.capBooklet = YES;
+    pd.capStapler = YES;
+    pd.capFin23Holes = YES;
+    pd.capFin23Holes = YES;
+    pd.capTrayAutoStack = YES;
+    pd.capTrayFaceDown = YES;
+    pd.capTrayStack = YES;
+    pd.capTrayTop = YES;
+    
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
+}
+
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -201,9 +218,7 @@
                        withDetails:nil];
         return;
         
-        //TODO: the printer should still be added to the list
-        //  - blank printer name
-        //  - full capabilities
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
@@ -232,9 +247,8 @@
                         withTitle:kAlertTitlePrintersSearch
                       withDetails:nil];
         
-        //TODO: the printer should still be added to the list
-        //  - blank printer name
-        //  - full capabilities
+        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
     // hide the searching indicator
@@ -285,10 +299,6 @@
 {
     if (self.textIP.isEditing)
         [self.textIP resignFirstResponder];
-    else if (self.textUsername.isEditing)
-        [self.textUsername resignFirstResponder];
-    else if (self.textPassword.isEditing)
-        [self.textPassword resignFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
