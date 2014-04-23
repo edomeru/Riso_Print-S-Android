@@ -70,7 +70,7 @@ namespace DirectPrint
         public DirectPrint()
         {
             directprint_job job = new directprint_job();
-            job.job_name = "jobname";
+            job.job_name = "SDA job";
             job.filename = "test.pdf";//"PDF-0010pages.pdf";
             job.print_settings = "";
             job.ip_address = "192.168.1.206";//21//206//119
@@ -150,7 +150,7 @@ namespace DirectPrint
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
-                                        HOST_NAME, "User", print_job.job_name, dname, dname, print_job.job_name);
+                                        HOST_NAME, "SDA User", print_job.job_name, dname, dname, print_job.job_name);
             //string controlfile = String.Format("H{0}\nP{1}\nf{2}\nU{3}\nN{4}\n",
             //                HOST_NAME, "User", dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////
@@ -292,6 +292,7 @@ namespace DirectPrint
 
             // close data file with a 0 ..
             pos = 0;
+            buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
 
             /////////////////////////////////////////////////////////
