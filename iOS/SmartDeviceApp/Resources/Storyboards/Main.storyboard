@@ -791,20 +791,25 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g9c-CT-O65" userLabel="Label - Port">
-                                                            <rect key="frame" x="268" y="10" width="42" height="21"/>
+                                                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="uOq-Y8-iQa" userLabel="Port Selection">
+                                                            <rect key="frame" x="154" y="-2" width="156" height="44"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
+                                                            <segments>
+                                                                <segment title="First"/>
+                                                                <segment title="Second"/>
+                                                            </segments>
+                                                            <color key="tintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <connections>
+                                                                <action selector="portSelectionAction:" destination="ZEw-b3-LhF" eventType="valueChanged" id="bts-MY-4sv"/>
+                                                            </connections>
+                                                        </segmentedControl>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="centerY" secondItem="JsL-Ew-m9U" secondAttribute="centerY" id="0Qq-qA-X9g"/>
                                                         <constraint firstItem="JsL-Ew-m9U" firstAttribute="leading" secondItem="oaT-Zo-6Kd" secondAttribute="leading" constant="20" id="2B9-IE-0hb"/>
-                                                        <constraint firstAttribute="trailing" secondItem="g9c-CT-O65" secondAttribute="trailing" constant="10" id="Tqd-DY-mLo"/>
-                                                        <constraint firstAttribute="centerY" secondItem="g9c-CT-O65" secondAttribute="centerY" id="gPw-1G-jFy"/>
+                                                        <constraint firstAttribute="trailing" secondItem="uOq-Y8-iQa" secondAttribute="trailing" constant="10" id="Xue-eS-6Fu"/>
                                                         <constraint firstAttribute="height" constant="40" id="tyA-QX-yPZ"/>
+                                                        <constraint firstAttribute="centerY" secondItem="uOq-Y8-iQa" secondAttribute="centerY" id="yeG-3l-ufa"/>
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uDu-fq-KZK" userLabel="Separator">
@@ -941,7 +946,7 @@
                                             <outlet property="deleteButton" destination="tCl-QS-N9c" id="W5U-Vw-A4c"/>
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
                                             <outlet property="nameLabel" destination="OLl-rF-Cku" id="2wp-TI-eY3"/>
-                                            <outlet property="portLabel" destination="g9c-CT-O65" id="4Um-eL-kLt"/>
+                                            <outlet property="portSelection" destination="uOq-Y8-iQa" id="pAZ-IO-SEv"/>
                                             <outlet property="statusView" destination="zpO-r2-dOD" id="F4I-Sc-WnC"/>
                                             <outletCollection property="gestureRecognizers" destination="ydW-FU-dB5" appends="YES" id="832-ao-Yxo"/>
                                         </connections>
@@ -2619,13 +2624,6 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Port Name" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ric-Ef-txY" userLabel="Label - Port Name">
-                                                <rect key="frame" x="227" y="12" width="83" height="21"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y3x-9G-PvK" userLabel="Separator">
                                                 <rect key="frame" x="20" y="44" width="300" height="1"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2634,14 +2632,26 @@
                                                     <constraint firstAttribute="height" constant="1" id="YB3-ad-q8d"/>
                                                 </constraints>
                                             </view>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="kUh-T9-Pqa" userLabel="Port Selection">
+                                                <rect key="frame" x="154" y="1" width="156" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <segments>
+                                                    <segment title="First"/>
+                                                    <segment title="Second"/>
+                                                </segments>
+                                                <color key="tintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                <connections>
+                                                    <action selector="selectPortAction:" destination="qXF-RA-AFJ" eventType="valueChanged" id="ZtN-jh-KAQ"/>
+                                                </connections>
+                                            </segmentedControl>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="Y3x-9G-PvK" secondAttribute="bottom" id="0I1-H9-hK2"/>
                                             <constraint firstItem="Y3x-9G-PvK" firstAttribute="leading" secondItem="iTG-Lt-qH7" secondAttribute="leading" constant="20" id="41L-sJ-MCS"/>
+                                            <constraint firstAttribute="centerY" secondItem="kUh-T9-Pqa" secondAttribute="centerY" id="6YK-7B-zii"/>
                                             <constraint firstAttribute="centerY" secondItem="HPZ-sV-xv7" secondAttribute="centerY" id="D1q-RS-OgI"/>
-                                            <constraint firstAttribute="trailing" secondItem="Ric-Ef-txY" secondAttribute="trailing" constant="10" id="GXV-QL-0h7"/>
+                                            <constraint firstAttribute="trailing" secondItem="kUh-T9-Pqa" secondAttribute="trailing" constant="10" id="J7d-4K-qqI"/>
                                             <constraint firstAttribute="trailing" secondItem="Y3x-9G-PvK" secondAttribute="trailing" id="U0U-x7-D0E"/>
-                                            <constraint firstAttribute="centerY" secondItem="Ric-Ef-txY" secondAttribute="centerY" id="c31-I0-i36"/>
                                             <constraint firstAttribute="height" constant="45" id="ciz-JV-Vys"/>
                                             <constraint firstItem="HPZ-sV-xv7" firstAttribute="leading" secondItem="iTG-Lt-qH7" secondAttribute="leading" constant="20" id="pna-yW-7ri"/>
                                         </constraints>
@@ -2749,7 +2759,7 @@
                     <connections>
                         <outlet property="defaultPrinterSwitch" destination="V7Y-Ut-ufD" id="PGa-hq-szW"/>
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
-                        <outlet property="port" destination="Ric-Ef-txY" id="u2D-AP-baV"/>
+                        <outlet property="portSelection" destination="kUh-T9-Pqa" id="3R4-3Z-0jS"/>
                         <outlet property="printerName" destination="bq8-54-Npp" id="8Wz-fh-pyx"/>
                         <outlet property="printerStatus" destination="kLg-fl-Snf" id="fd8-jc-Eki"/>
                         <segue destination="pP7-fQ-WfE" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindFromPrinterInfo:" id="faf-6o-f0W"/>
@@ -3868,8 +3878,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="JPo-5o-n9C"/>
-        <segue reference="4Gn-3V-oTg"/>
+        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="CWW-vD-UgO"/>
         <segue reference="uoe-Al-ug4"/>
     </inferredMetricsTieBreakers>
 </document>

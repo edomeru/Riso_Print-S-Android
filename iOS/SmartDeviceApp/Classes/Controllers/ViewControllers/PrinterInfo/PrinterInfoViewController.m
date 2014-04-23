@@ -16,10 +16,9 @@
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet UILabel *ipAddress;
-@property (weak, nonatomic) IBOutlet UILabel *port;
 @property (weak, nonatomic) IBOutlet UILabel *printerStatus;
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
-@property (weak, nonatomic) IBOutlet UIButton *defaultPrinterAction;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
 
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) PrinterManager *printerManager;
@@ -40,6 +39,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_LPR, @"LPR") forSegmentAtIndex:0];
+    [self.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
+    
     self.printerManager = [PrinterManager sharedPrinterManager];
     
     self.printer = [self.printerManager getPrinterAtIndex:self.indexPath.row];
@@ -49,15 +52,7 @@
         self.printerName.text = self.printer.name;
         self.ipAddress.text = self.printer.ip_address;
         
-        // Port
-        if ([self.printer.port integerValue] == 0)
-        {
-            self.port.localizationId = IDS_LBL_PORT_LPR;
-        }
-        else
-        {
-            self.port.localizationId = IDS_LBL_PORT_RAW;
-        }
+        [self.portSelection setSelectedSegmentIndex:[self.printer.port integerValue]];
         
         [self setStatus:self.onlineStatus];
         if(self.isDefaultPrinter == YES)
@@ -138,6 +133,12 @@
 - (IBAction)printSettingsAction:(id)sender
 {
     [self.delegate segueToPrintSettings];
+}
+
+- (IBAction)selectPortAction:(id)sender
+{
+    self.printer.port = [NSNumber numberWithInteger: self.portSelection.selectedSegmentIndex];
+    [self.printerManager savePrinterChanges];
 }
 
 #pragma mark - PrinterStatusHelper method
