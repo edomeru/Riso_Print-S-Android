@@ -967,7 +967,14 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
     
     DirectPrintManager *manager = [[DirectPrintManager alloc] init];
-    [manager printDocumentViaLPR];
+    if ([self.printer.port integerValue] == 0)
+    {
+        [manager printDocumentViaLPR];
+    }
+    else
+    {
+        [manager printDocumentViaRaw];
+    }
     manager.delegate = self;
 }
 
