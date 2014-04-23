@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SNMP", "SNMP\SNMP.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectPrint", "DirectPrint\DirectPrint.csproj", "{6506B581-99AD-4244-BADD-C87D3A79F11A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectPrintSettings", "DirectPrintSettings\DirectPrintSettings.vcxproj", "{2AC765A5-D74D-4C9C-9E2B-C400263176CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -208,6 +210,50 @@ Global
 		{6506B581-99AD-4244-BADD-C87D3A79F11A}.Remote-Debug|x64.Build.0 = Debug|x64
 		{6506B581-99AD-4244-BADD-C87D3A79F11A}.Remote-Debug|x86.ActiveCfg = Debug|x86
 		{6506B581-99AD-4244-BADD-C87D3A79F11A}.Remote-Debug|x86.Build.0 = Debug|x86
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|ARM.ActiveCfg = Debug|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|ARM.Build.0 = Debug|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|Win32.Build.0 = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|x64.ActiveCfg = Debug|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|x64.Build.0 = Debug|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|x86.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Debug|x86.Build.0 = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|Any CPU.ActiveCfg = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|ARM.ActiveCfg = Release|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|ARM.Build.0 = Release|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|Win32.ActiveCfg = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|Win32.Build.0 = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|x64.ActiveCfg = Release|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|x64.Build.0 = Release|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|x86.ActiveCfg = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release|x86.Build.0 = Release|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|Any CPU.ActiveCfg = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|ARM.ActiveCfg = Release-PC|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|ARM.Build.0 = Release-PC|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|Mixed Platforms.ActiveCfg = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|Mixed Platforms.Build.0 = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|Win32.ActiveCfg = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|Win32.Build.0 = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|x64.ActiveCfg = Release-PC|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|x64.Build.0 = Release-PC|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|x86.ActiveCfg = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Release-PC|x86.Build.0 = Release-PC|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|Any CPU.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|ARM.ActiveCfg = Debug|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|ARM.Build.0 = Debug|ARM
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|Win32.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|Win32.Build.0 = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|x64.ActiveCfg = Debug|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|x64.Build.0 = Debug|x64
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|x86.ActiveCfg = Debug|Win32
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF}.Remote-Debug|x86.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
