@@ -79,6 +79,7 @@ namespace SmartDeviceApp.Models
         /// <param name="result">print job result</param>
         public PrintJob(int id, int printerId, string name, DateTime date, int result)
         {
+            // TODO: This constructor should be deleted
             Id = id;
             PrinterId = printerId;
             Name = name;
