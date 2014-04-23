@@ -3422,50 +3422,61 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItem" id="IcU-f9-Hy1" customClass="PrintSettingsOptionsItemCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItem" id="AJT-vD-feq" customClass="PrintSettingsOptionsItemCell">
                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="IcU-f9-Hy1" id="Kut-VV-L7j">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AJT-vD-feq" id="cli-Ny-RSq">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-s3-anH">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_printer_status_offline" highlightedImage="img_btn_printer_status_online" translatesAutoresizingMaskIntoConstraints="NO" id="Vct-aW-lbf" customClass="PrinterStatusView">
+                                            <rect key="frame" x="2" y="6" width="32" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="32" id="F8E-gO-vty"/>
+                                                <constraint firstAttribute="height" constant="32" id="uNh-o8-LFw"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="prd-Az-pMc">
                                             <rect key="frame" x="36" y="15" width="29" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fBD-pd-LUv" userLabel="Separator">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FEG-rf-3Kt" userLabel="Separator">
                                             <rect key="frame" x="36" y="43" width="284" height="1"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="1" id="caH-eS-fz3"/>
+                                                <constraint firstAttribute="height" constant="1" id="vuW-jk-GhD"/>
                                             </constraints>
                                         </view>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_radio_normal" highlightedImage="img_btn_radio_pressed" translatesAutoresizingMaskIntoConstraints="NO" id="Jq0-pK-KGV">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_radio_normal" highlightedImage="img_btn_radio_pressed" translatesAutoresizingMaskIntoConstraints="NO" id="rqq-cM-Far">
                                             <rect key="frame" x="284" y="6" width="32" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="32" id="G7E-ra-EfG"/>
-                                                <constraint firstAttribute="height" constant="32" id="zFU-rq-1yD"/>
+                                                <constraint firstAttribute="width" constant="32" id="9Q8-Oz-gcM"/>
+                                                <constraint firstAttribute="height" constant="32" id="eEL-BT-FXD"/>
                                             </constraints>
                                         </imageView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="centerY" secondItem="Jq0-pK-KGV" secondAttribute="centerY" id="akO-nv-rCp"/>
-                                        <constraint firstAttribute="trailing" secondItem="Jq0-pK-KGV" secondAttribute="trailing" constant="4" id="evD-xg-VP2"/>
-                                        <constraint firstAttribute="centerY" secondItem="kgP-s3-anH" secondAttribute="centerY" id="gLu-ZA-E46"/>
-                                        <constraint firstItem="kgP-s3-anH" firstAttribute="leading" secondItem="Kut-VV-L7j" secondAttribute="leading" constant="36" id="hWD-WO-vnx"/>
-                                        <constraint firstItem="kgP-s3-anH" firstAttribute="leading" secondItem="fBD-pd-LUv" secondAttribute="leading" id="hYH-Y0-bwA"/>
-                                        <constraint firstAttribute="trailing" secondItem="fBD-pd-LUv" secondAttribute="trailing" id="jY3-fZ-VqF"/>
-                                        <constraint firstAttribute="bottom" secondItem="fBD-pd-LUv" secondAttribute="bottom" id="u9G-yU-4QT"/>
+                                        <constraint firstItem="prd-Az-pMc" firstAttribute="leading" secondItem="Vct-aW-lbf" secondAttribute="trailing" constant="2" id="6DI-uQ-DoO"/>
+                                        <constraint firstAttribute="centerY" secondItem="Vct-aW-lbf" secondAttribute="centerY" id="6QT-Yi-eKo"/>
+                                        <constraint firstAttribute="bottom" secondItem="FEG-rf-3Kt" secondAttribute="bottom" id="72D-Kr-7by"/>
+                                        <constraint firstAttribute="centerY" secondItem="prd-Az-pMc" secondAttribute="centerY" id="HMN-4q-Aua"/>
+                                        <constraint firstItem="prd-Az-pMc" firstAttribute="leading" secondItem="FEG-rf-3Kt" secondAttribute="leading" id="Kzy-l0-Eht"/>
+                                        <constraint firstAttribute="trailing" secondItem="FEG-rf-3Kt" secondAttribute="trailing" id="VHA-XI-QRl"/>
+                                        <constraint firstAttribute="trailing" secondItem="rqq-cM-Far" secondAttribute="trailing" constant="4" id="VmV-Lp-UpZ"/>
+                                        <constraint firstAttribute="centerY" secondItem="rqq-cM-Far" secondAttribute="centerY" id="WVI-sg-0Ax"/>
+                                        <constraint firstItem="Vct-aW-lbf" firstAttribute="leading" secondItem="cli-Ny-RSq" secondAttribute="leading" constant="2" id="aXT-yx-rno"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="optionLabel" destination="kgP-s3-anH" id="NIO-SV-7SD"/>
-                                    <outlet property="radioImageView" destination="Jq0-pK-KGV" id="3mF-tN-6yk"/>
-                                    <outlet property="separator" destination="fBD-pd-LUv" id="ZUV-DT-BIw"/>
+                                    <outlet property="optionLabel" destination="prd-Az-pMc" id="ygU-ak-oik"/>
+                                    <outlet property="radioImageView" destination="rqq-cM-Far" id="meW-aP-7RQ"/>
+                                    <outlet property="separator" destination="FEG-rf-3Kt" id="JYF-XK-Dre"/>
+                                    <outlet property="statusView" destination="Vct-aW-lbf" id="gvu-RX-Jri"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

@@ -12,6 +12,8 @@
 #import "PrinterManager.h"
 #import "PrintDocument.h"
 #import "Printer.h"
+#import "PrinterStatusHelper.h"
+#import "PrinterStatusView.h"
 
 #define PRINTERS_HEADER_CELL @"PrintersHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItem"
@@ -84,6 +86,7 @@
     {
         itemCell.optionLabel.text = printer.name;
     }
+    itemCell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     
     itemCell.separator.hidden = NO;
     if (indexPath.row == [self.printerManager countSavedPrinters])
