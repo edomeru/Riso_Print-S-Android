@@ -9,16 +9,40 @@ extern "C"
 using namespace DirectPrint;
 using namespace Platform;
 
+#define BUFFER_SIZE 2048
+
 DirectPrintSettingsWrapper::DirectPrintSettingsWrapper()
 {
 
 };
 
-void DirectPrintSettingsWrapper::create_pjl_wrapper(String^ pjl, String^ settings){
+char* convertWCharToCharArray(const wchar_t* input)
+{
+    size_t length = wcslen(input) + 1;
+    size_t convertedChars = 0;
+    char cString[BUFFER_SIZE];
+    wcstombs_s(&convertedChars, cString, length, input, _TRUNCATE);
 
-	//create_pjl(0, 0);
-	//char* pjl_c = pjl.getBytes();
-	//char* settings_c;
+    return cString;
+}
 
-	create_pjl("", "");
+wchar_t* convertCharArrayToWChar(char* input)
+{
+    size_t length = strlen(input) + 1;
+    const size_t newsize = BUFFER_SIZE;
+    size_t convertedChars = 0;
+    wchar_t wcString[BUFFER_SIZE];
+    mbstowcs_s(&convertedChars, wcString, length, input, _TRUNCATE);
+
+    return wcString;
+}
+
+String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
+{
+    char pjl[BUFFER_SIZE];
+    memset(pjl, 0, BUFFER_SIZE);
+
+    create_pjl(pjl, convertWCharToCharArray(settings->Data()));
+
+    return ref new String(convertCharArrayToWChar(pjl));
 };

@@ -8,6 +8,6 @@ namespace DirectPrint
     {
     public:
 		DirectPrintSettingsWrapper();
-		static void create_pjl_wrapper(String^ pjl, String^ settings);
+		static String^ create_pjl_wrapper(String^ settings);
     };
 }
