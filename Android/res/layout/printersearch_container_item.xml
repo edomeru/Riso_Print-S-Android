@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_sub_separator_padding"
         android:orientation="horizontal" >
 
         <TextView
@@ -25,7 +26,6 @@
             android:layout_width="@dimen/printers_row_right_icon_size"
             android:layout_height="@dimen/printers_row_right_icon_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/printers_row_right_margin"
             android:layout_weight="0"
             android:contentDescription="@string/default_content_description" />
     </LinearLayout>
@@ -34,7 +34,7 @@
         android:id="@+id/printers_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_size"
-        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
         android:background="@color/theme_light_1" />
 
 </LinearLayout>

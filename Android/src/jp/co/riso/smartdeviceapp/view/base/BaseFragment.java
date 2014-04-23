@@ -59,12 +59,12 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         initializeView(view, savedInstanceState);
         
         // set width and height of dialog
-        if (getDialog() != null){
+        if (getDialog() != null) {
             
-            /*set height of item after title bar*/
+            /* set height of item after title bar */
             View mainView = view.findViewById(R.id.rootView);
             
-            if (mainView != null && mainView.getLayoutParams() != null){
+            if (mainView != null && mainView.getLayoutParams() != null) {
                 
                 int width = getResources().getDimensionPixelSize(R.dimen.dialog_width);
                 int height = getResources().getDimensionPixelSize(R.dimen.dialog_height);
@@ -74,9 +74,15 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             }
         }
         
-        AppUtils.changeChildrenFont((ViewGroup)view, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont((ViewGroup) view, SmartDeviceApp.getAppFont());
         
         return view;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppUtils.hideSoftKeyboard(getActivity());
     }
     
     // ================================================================================
@@ -89,7 +95,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      * @return Layout id of the view
      */
     public abstract int getViewLayout();
-
+    
     /**
      * Initialization of the fragment is performed
      */

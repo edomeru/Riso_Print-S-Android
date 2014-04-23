@@ -7,6 +7,7 @@
 
  package jp.co.riso.smartdeviceapp.view.webkit;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.webkit.WebView;
@@ -41,6 +42,7 @@ public class SDAWebView extends WebView {
     /**
      * Sets the settings of the WebView
      */
+    @SuppressLint("SetJavaScriptEnabled") // Javascript is enabled
     private void setSettings() {
         getSettings().setSupportZoom(true);
         getSettings().setBuiltInZoomControls(true);
@@ -48,6 +50,8 @@ public class SDAWebView extends WebView {
         
         getSettings().setUseWideViewPort(true);
         getSettings().setLoadWithOverviewMode(true);
+        
+        getSettings().setJavaScriptEnabled(true);
     }
     
     /**

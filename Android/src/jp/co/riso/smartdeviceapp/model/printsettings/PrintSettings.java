@@ -48,9 +48,12 @@ public class PrintSettings {
     
     public static final String TAG_COLOR_MODE = "colorMode";
     public static final String TAG_ORIENTATION = "orientation";
+    public static final String TAG_COPIES = "copies";
     public static final String TAG_DUPLEX = "duplex";
     public static final String TAG_PAPER_SIZE = "paperSize";
     public static final String TAG_SCALE_TO_FIT = "scaleToFit";
+    public static final String TAG_PAPER_TYPE = "paperType";
+    public static final String TAG_INPUT_TRAY = "inputTray";
     public static final String TAG_IMPOSITION = "imposition";
     public static final String TAG_IMPOSITION_ORDER = "impositionOrder";
     public static final String TAG_SORT = "sort";
@@ -60,9 +63,10 @@ public class PrintSettings {
     public static final String TAG_FINISHING_SIDE = "finishingSide";
     public static final String TAG_STAPLE = "staple";
     public static final String TAG_PUNCH = "punch";
+    public static final String TAG_OUTPUT_TRAY = "outputTray";
     
-    public static List<Group> sGroupList;
-    public static HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
+    public static final List<Group> sGroupList;
+    public static final HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
     
     private HashMap<String, Integer> mSettingValues;
     
@@ -127,9 +131,6 @@ public class PrintSettings {
         if (printSettingsContent == null) {
             return;
         }
-        
-        sGroupList = new ArrayList<Group>();
-        sSettingMap = new HashMap<String, Setting>();
         
         NodeList groupList = printSettingsContent.getElementsByTagName(XmlNode.NODE_GROUP);
         
@@ -301,6 +302,9 @@ public class PrintSettings {
     }
     
     static {
+        sGroupList = new ArrayList<Group>();
+        sSettingMap = new HashMap<String, Setting>();
+        
         initializeStaticObjects();
     }
 }

@@ -5,22 +5,22 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-public class PrintersContainer extends LinearLayout {
+public class PrintersContainerView extends LinearLayout {
     private static final int[] STATE_DELETE = { R.attr.state_delete };
     private static final int[] STATE_DEFAULT = { R.attr.state_default };
     
     private boolean mIsDelete = false;
     private boolean mIsDefault = false;
     
-    public PrintersContainer(Context context) {
+    public PrintersContainerView(Context context) {
         super(context);
     }
     
-    public PrintersContainer(Context context, AttributeSet attrs) {
+    public PrintersContainerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
     
-    public PrintersContainer(Context context, AttributeSet attrs, int defStyle) {
+    public PrintersContainerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
     

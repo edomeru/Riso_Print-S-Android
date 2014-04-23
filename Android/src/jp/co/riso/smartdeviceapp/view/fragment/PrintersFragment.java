@@ -12,12 +12,13 @@ import java.util.ArrayList;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter;
@@ -36,15 +37,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
+public class PrintersFragment extends BaseFragment implements PrintersCallback, UpdateStatusCallback, Callback {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
-    private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    //private static final String KEY_PRINTER_LIST = "printers_list";
-    private static final String KEY_PRINTER_LIST_DELETE = "printers_list_delete";
-    private static final String KEY_PRINTER_LIST_STATE = "printers_list_state";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
-    private static final int MSG_SET_POPULATE_PRINTERS_LIST = 0x0;
+    private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
+    private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     private static final int MSG_ADD_NEW_PRINTER = 0x1;
+    private static final int MSG_INITIALIZE_ONLINE_STATUS = 0x2;
     
     public final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
     public final int ID_MENU_ACTION_ADD_BUTTON = 0x11000003;
@@ -58,6 +57,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private PrintersScreenTabletView mPrinterTabletView = null;
     // Printer Manager
     private PrinterManager mPrinterManager = null;
+    private int mDeleteItem = PrinterManager.EMPTY_ID;
+    private Parcelable mScrollState = null;
     
     @Override
     public int getViewLayout() {
@@ -66,25 +67,21 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).mPrintPreviewScreen = false;
+        setRetainInstance(true);
+        
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
-        if (isTablet()) {
-            setTargetFragment(this, 0);
-        }
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        Message newMessage = Message.obtain(mHandler, MSG_SET_POPULATE_PRINTERS_LIST);
-        if (savedInstanceState != null) {
-            // TODO: change implementation - compile error since Printer is not parcelable
-            //  mPrinter = savedInstanceState.getParcelableArrayList(KEY_PRINTER_LIST);
-            newMessage.obj = savedInstanceState.getParcelable(KEY_PRINTER_LIST_STATE);
-            newMessage.arg1 = savedInstanceState.getInt(KEY_PRINTER_LIST_DELETE, -1);
-        } else if (isTablet()) {
-            newMessage.arg1 = -1;
+        
+        Message newMessage = Message.obtain(mHandler, MSG_POPULATE_PRINTERS_LIST);
+        if (!isTablet()) {
+            newMessage.obj = mScrollState;
         }
+        newMessage.arg1 = mDeleteItem;
+        
         if (mPrinter == null) {
             mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
         }
@@ -94,7 +91,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mListView = (ListView) view.findViewById(R.id.printer_list);
         }
         mPrinterManager.setPrintersCallback(this);
+        mPrinterManager.setUpdateStatusCallback(this);
         mHandler.sendMessage(newMessage);
+        mHandler.sendEmptyMessageDelayed(MSG_INITIALIZE_ONLINE_STATUS, 10);
     }
     
     @Override
@@ -108,27 +107,32 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // TODO: change implementation - compile error since Printer is not parcelable
-        //savedInstanceState.putParcelableArrayList(KEY_PRINTER_LIST, mPrinter);
+        super.onSaveInstanceState(savedInstanceState);
+        
         if (isTablet()) {
-            savedInstanceState.putInt(KEY_PRINTER_LIST_DELETE, mPrinterTabletView.getDeleteItemPosition());
+            mDeleteItem = mPrinterTabletView.getDeleteItemPosition();
         } else {
             if (mListView != null) {
-                savedInstanceState.putParcelable(KEY_PRINTER_LIST_STATE, mListView.onSaveInstanceState());
-                savedInstanceState.putInt(KEY_PRINTER_LIST_DELETE, ((PrintersListView) mListView).getDeleteItemPosition());
+                mScrollState = mListView.onSaveInstanceState();
+                mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
             }
         }
-        super.onSaveInstanceState(savedInstanceState);
     }
     
-    // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
-    public void setPrintSettings(PrintSettings printSettings) {
-        if (isTablet()) {
-            mPrinterTabletView.updatePrintSettings(printSettings);
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity) getActivity();
+        
+        if (!activity.isDrawerOpen(Gravity.RIGHT) && mPrinterManager.isSearching()) {
+            mPrinterManager.cancelPrinterSearch();
         }
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPrinterManager.cancelUpdateStatusThread();
     }
     
     // ================================================================================
@@ -170,7 +174,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     private boolean isMaxPrinterCountReached() {
-        if (mPrinterManager.getPrinterCount() == PrinterManager.MAX_PRINTER_COUNT) {
+        if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printer_info);
             String errMsg = null;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
@@ -216,11 +220,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             default:
                 break;
         }
-        
     }
     
     // ================================================================================
-    // INTERFACE - OnPrintersListChangeCallback
+    // INTERFACE - PrintersCallback
     // ================================================================================
     
     @Override
@@ -231,13 +234,36 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     // ================================================================================
+    // INTERFACE - UpdateStatusCallback
+    // ================================================================================
+    
+    @Override
+    public void updateOnlineStatus() {
+        for (int i = 0; i < mPrinter.size(); i++) {
+            View targetView = null;
+            if (isTablet()) {
+                if (mPrinterTabletView != null && mPrinterTabletView.getChildAt(i) != null) {
+                    targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
+            } else {
+                if (mListView != null && mListView.getChildAt(i) != null) {
+                    targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
+            }
+            if (targetView != null) {
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
+            }
+        }
+    }
+
+    // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
     
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
-            case MSG_SET_POPULATE_PRINTERS_LIST:
+            case MSG_POPULATE_PRINTERS_LIST:
                 if (isTablet()) {
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1);
                 } else {
@@ -256,6 +282,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     mPrinterAdapter.add(printer);
                     mPrinterAdapter.notifyDataSetChanged();
                 }
+                return true;
+            case MSG_INITIALIZE_ONLINE_STATUS:
+                mPrinterManager.createUpdateStatusThread();
+                return true;
         }
         return false;
     }
