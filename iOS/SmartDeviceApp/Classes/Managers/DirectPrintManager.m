@@ -14,18 +14,21 @@
 #import "CXAlertView.h"
 #import "UIColor+Theme.h"
 #import "AlertHelper.h"
+#import "PrintJobHistoryHelper.h"
 #include "common.h"
 
 #define PROGRESS_WIDTH 280.0f
-#define PROGRESS_HEIGHT 2.0f
-#define PROGRESS_MARGIN 40.0f
+#define PROGRESS_HEIGHT 70.0f
+#define PROGRESS_FORMAT @"%.2f%%"
 
 void printProgressCallback(directprint_job *job, int status, float progress);
 
 @interface DirectPrintManager()
 
 @property (nonatomic, weak) CXAlertView *alertView;
-@property (nonatomic, weak) NSLayoutConstraint *progressConstraint;
+@property (nonatomic, weak) UILabel *progressLabel;
+@property (nonatomic, weak) UIActivityIndicatorView *progressIndicator;
+@property (nonatomic, weak) PrintDocument *printDocument;
 
 - (UIView *)createProgressView;
 - (void)updateProgress:(float)progress;
@@ -38,12 +41,12 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)printDocumentViaLPR
 {
-    PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
+    self.printDocument = [[PDFFileManager sharedManager] printDocument];
     
-    NSString *fullPath = [printDocument.url path];
-    NSString *fileName = printDocument.name;
-    NSString *ipAddress = [printDocument.printer ip_address];
-    NSString *printSettings = [printDocument.previewSetting formattedString];
+    NSString *fullPath = [self.printDocument.url path];
+    NSString *fileName = self.printDocument.name;
+    NSString *ipAddress = [self.printDocument.printer ip_address];
+    NSString *printSettings = [self.printDocument.previewSetting formattedString];
     
     directprint_job *job = directprint_job_new([fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
     directprint_job_set_caller_data(job, (void *)CFBridgingRetain(self));
@@ -64,33 +67,39 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (UIView *)createProgressView
 {
-    // Create container
-    UIView *progressView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, PROGRESS_WIDTH, PROGRESS_HEIGHT)];
+    UIView *progressView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, PROGRESS_WIDTH, PROGRESS_HEIGHT)];
     progressView.backgroundColor = [UIColor clearColor];
     
-    // Create progress indicator
-    UIView *indicator = [[UIView alloc] initWithFrame:CGRectZero];
-    indicator.translatesAutoresizingMaskIntoConstraints = NO;
-    indicator.backgroundColor = [UIColor purple1ThemeColor];
-    [progressView addSubview:indicator];
-    NSDictionary *metrics = @{@"margin": @PROGRESS_MARGIN, @"height": @PROGRESS_HEIGHT};
-    [progressView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(margin)-[indicator]" options:0 metrics:metrics views:NSDictionaryOfVariableBindings(indicator)]];
-    [progressView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[indicator(height)]-(0)-|" options:0 metrics:metrics views:NSDictionaryOfVariableBindings(indicator)]];
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:indicator attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:2.0f];
-    [indicator addConstraint:constraint];
-    self.progressConstraint = constraint;
+    // Create progress label
+    UILabel *progressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    progressLabel.textAlignment = NSTextAlignmentCenter;
+    [progressView addSubview:progressLabel];
+    [progressView addConstraint:[NSLayoutConstraint constraintWithItem:progressLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:progressView attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f]];
+    [progressView addConstraint:[NSLayoutConstraint constraintWithItem:progressLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:progressView attribute:NSLayoutAttributeTop multiplier:1.0f constant:8.0f]];
+    progressLabel.text = [NSString stringWithFormat:PROGRESS_FORMAT, 0.0f];
+    self.progressLabel = progressLabel;
+    
+    // Create activity indicator
+    UIActivityIndicatorView *progressIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    progressIndicator.color = [UIColor purple1ThemeColor];
+    progressIndicator.translatesAutoresizingMaskIntoConstraints = NO;
+    [progressView addSubview:progressIndicator];
+    [progressView addConstraint:[NSLayoutConstraint constraintWithItem:progressIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:progressView attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0]];
+    [progressView addConstraint:[NSLayoutConstraint constraintWithItem:progressIndicator attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:progressLabel attribute:NSLayoutAttributeBottom multiplier:1.0f constant:8.0f]];
+    [progressIndicator startAnimating];
+    self.progressIndicator = progressIndicator;
     
     return progressView;
 }
 
 - (void)updateProgress:(float)progress
 {
-    self.progressConstraint.constant = progress * 2.0f;
     dispatch_async(dispatch_get_main_queue(), ^
     {
         [UIView animateWithDuration:0.1f animations:^
          {
-             [self.alertView.contentView layoutSubviews];
+            self.progressLabel.text = [NSString stringWithFormat:PROGRESS_FORMAT, progress];
          }];
     });
 }
@@ -98,12 +107,23 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 - (void)updateSuccess
 {
     [self.alertView dismiss];
+    
+    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
+    
+    [self.delegate documentDidFinishPrinting:YES];
 }
 
 - (void)updateError
 {
     [self.alertView dismiss];
+    
+    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
+    
     [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.delegate documentDidFinishPrinting:NO];
+    });
 }
 
 @end

@@ -11,6 +11,7 @@
 #import "PreviewSetting.h"
 #import "PrintPreviewHelper.h"
 #import "PDFFileManager.h"
+#import "Printer.h"
 
 #define FINISHING_MARGIN  	10.0f
 //approximate staple and punch dimensions in points
@@ -396,13 +397,15 @@
     {
         if(self.isFrontPage == NO)
         {
-            if([self shouldInvertImage] == NO)
+            if(([self shouldInvertImage] == NO && self.printDocument.previewSetting.finishingSide != kFinishingSideTop) ||
+               ([self shouldInvertImage] == YES && self.printDocument.previewSetting.finishingSide == kFinishingSideTop))
             {
                 //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
                 CGContextTranslateCTM(contextRef, self.size.width, 0);
                 CGContextScaleCTM(contextRef, -1.0f, 1.0f);
             }
-            if([self shouldInvertImage] == YES || self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+            if(([self shouldInvertImage] == YES && self.printDocument.previewSetting.finishingSide != kFinishingSideTop) ||
+               ([self shouldInvertImage] == NO && self.printDocument.previewSetting.finishingSide == kFinishingSideTop))
             {
                 //flip context vertically so that finishing at the top will be drawn at the bottom
                 CGContextTranslateCTM(contextRef, 0, self.size.height);
@@ -521,19 +524,22 @@
     CGFloat punchDistance = 0;
     NSUInteger numHoles = 0;
 
-    if(punchType == kPunchType3Holes)
+    if(punchType == kPunchType3or4Holes)
     {
-        punchDistance = PUNCH_3HOLE_DISTANCE;
-        //center of the first hole is 1 punch distance from the center of the length of the finishing side
-        startDistanceFromCenter = punchDistance + (PUNCH_WIDTH * 0.5f);
-        numHoles = 3;
-    }
-    else if(punchType == kPunchType4Holes)
-    {
-        punchDistance = PUNCH_4HOLE_DISTANCE;
-        //center of the first hole is 1 and half the punch distance from the center of the length of the finishing side
-        startDistanceFromCenter = (punchDistance * 1.5f) + (PUNCH_WIDTH * 0.5f);
-        numHoles = 4;
+        if([self.printDocument.printer.enabled_punch_3holes boolValue] == YES)
+        {
+            punchDistance = PUNCH_3HOLE_DISTANCE;
+            //center of the first hole is 1 punch distance from the center of the length of the finishing side
+            startDistanceFromCenter = punchDistance + (PUNCH_WIDTH * 0.5f);
+            numHoles = 3;
+        }
+        else
+        {
+            punchDistance = PUNCH_4HOLE_DISTANCE;
+            //center of the first hole is 1 and half the punch distance from the center of the length of the finishing side
+            startDistanceFromCenter = (punchDistance * 1.5f) + (PUNCH_WIDTH * 0.5f);
+            numHoles = 4;
+        }
     }
     else
     {
@@ -578,17 +584,25 @@
 
 - (BOOL)shouldInvertImage
 {
-    if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff)
+    if(self.isFrontPage == NO && self.printDocument.previewSetting.duplex != kDuplexSettingOff
+       && self.printDocument.previewSetting.booklet != YES)
     {
-        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop) //for vertical navigation, ios automatically inverts back image
+        if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop) //for vertical navigation, ios automatically inverts back image so reverse case
         {
-            return NO;
+            if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width > self.size.height)
+            {
+                return YES;
+            }
+            if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width < self.size.height)
+            {
+                return YES;
+            }
         }
-        if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
+        else if(self.printDocument.previewSetting.duplex == kDuplexSettingShortEdge && self.size.width < self.size.height)
         {
             return YES;
         }
-        if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width > self.size.height)
+        else if(self.printDocument.previewSetting.duplex == kDuplexSettingLongEdge && self.size.width > self.size.height)
         {
             return YES;
         }
@@ -598,9 +612,14 @@
 
 - (void)drawPaperEdgeLine:(CGContextRef)contextRef
 {
+    CGContextSaveGState(contextRef);
+    
     CGFloat lineWidth = 2.0f;
     CGContextSetStrokeColorWithColor(contextRef, [UIColor blackColor].CGColor);
     CGContextSetLineWidth(contextRef, lineWidth);
+    
+    float dashLine[] = { 6, 5 };
+    CGContextSetLineDash(contextRef, 0, dashLine, 2);
     
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
     {
@@ -618,8 +637,9 @@
         CGContextAddLineToPoint(contextRef, 0, self.size.height);
     }
     
-    
     CGContextStrokePath(contextRef);
+    
+    CGContextRestoreGState(contextRef);
 }
 
 @end

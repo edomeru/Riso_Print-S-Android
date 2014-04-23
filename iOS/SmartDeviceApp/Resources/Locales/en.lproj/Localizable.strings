@@ -39,10 +39,11 @@
 "IDS_LBL_CARD_READER_GROUP" = "CARD READER";
 "IDS_LBL_CARD_ID" = "ID";
 "IDS_LBL_PRINTER_SEARCH_GROUP" = "PRINTER SEARCH";
-"IDS_LBL_PRINTING" = "Printing… Tap to Cancel";
+"IDS_LBL_PRINTING" = "Printing…";
 "IDS_LBL_PRINT_SETTINGS" = "Print Settings";
 "IDS_LBL_PRINT" = "Print";
 "IDS_LBL_PRINTER" = "Printer";
+"IDS_LBL_CHOOSE_PRINTER" = "Choose printer";
 "IDS_LBL_BASIC" = "Basic";
 "IDS_LBL_COLORMODE" = "Color Mode";
 "IDS_LBL_COLORMODE_AUTO" = "Auto";
@@ -114,8 +115,8 @@
 "IDS_LBL_STAPLE" = "Staple";
 "IDS_LBL_STAPLE_UPPERLEFT" = "1 (Upper-left)";
 "IDS_LBL_STAPLE_UPPERRIGHT" = "1 (Upper-right)";
-"IDS_LBL_STAPLE_2" = "2.0";
-"IDS_LBL_STAPLE_1" = "1.0";
+"IDS_LBL_STAPLE_2" = "2";
+"IDS_LBL_STAPLE_1" = "1";
 "IDS_LBL_PUNCH" = "Punch";
 "IDS_LBL_PUNCH_2HOLES" = "2 holes";
 "IDS_LBL_PUNCH_3HOLES" = "3 holes";
@@ -136,7 +137,9 @@
 "IDS_LBL_PRINT_JOB_FAILED" = "Failed";
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "Printer already exists in saved printers list.";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "Please enter a valid IP Address.";
-"IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "Please check the password you entered.";
+"IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";
+"IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning, Cannot find Printer.";
+"IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "Please check the password you entered";
 "IDS_ERR_MSG_NO_SELECTED_PRINTER" = "Please register a printer";
 "IDS_ERR_MSG_OPEN_FAILED" = "Please select a valid file.";
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "File size is too large";

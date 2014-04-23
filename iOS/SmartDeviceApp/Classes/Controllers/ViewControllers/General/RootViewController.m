@@ -19,6 +19,18 @@
 
 @implementation RootViewController
 
+static RootViewController *container;
+
++ (RootViewController *)container
+{
+    return container;
+}
+
+- (void)awakeFromNib
+{
+    container = self;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];

@@ -177,6 +177,7 @@
         }
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.onlineStatus = cell.printerStatus.onlineStatus;
+        destController.delegate = self;
         [cell.printerStatus.statusHelper stopPrinterStatusPolling];
     }
     else if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])

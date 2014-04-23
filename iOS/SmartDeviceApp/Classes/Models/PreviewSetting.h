@@ -18,6 +18,7 @@
 #define KEY_FINISHING_SIDE      @"finishingSide"
 #define KEY_STAPLE              @"staple"
 #define KEY_PUNCH               @"punch"
+#define KEY_OUTPUT_TRAY         @"outputTray"
 
 @interface PreviewSetting : NSObject
 @property (nonatomic) NSInteger colorMode;

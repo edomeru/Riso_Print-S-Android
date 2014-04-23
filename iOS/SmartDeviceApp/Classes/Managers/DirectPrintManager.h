@@ -8,8 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol DirectPrintManagerDelegate;
+
 @interface DirectPrintManager : NSObject
 
+@property (nonatomic, weak) id<DirectPrintManagerDelegate> delegate;
+
 - (void)printDocumentViaLPR;
+
+@end
+
+@protocol DirectPrintManagerDelegate <NSObject>
+
+@required
+- (void)documentDidFinishPrinting:(BOOL)successful;
 
 @end

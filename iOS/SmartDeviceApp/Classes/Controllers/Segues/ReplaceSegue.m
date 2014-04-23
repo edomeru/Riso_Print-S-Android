@@ -26,6 +26,10 @@
     {
         container = self.sourceViewController;
     }
+    else
+    {
+        container = [RootViewController container];
+    }
    
     // Unwind if sliding controller is in view
     [container.sideController close];

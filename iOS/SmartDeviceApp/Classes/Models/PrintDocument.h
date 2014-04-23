@@ -44,6 +44,12 @@
  */
 @property (nonatomic, readonly) NSInteger pageCount;
 
+
+/**
+ Current page
+ */
+@property (nonatomic) NSInteger currentPage;
+
 /**
  Initialize Print Document with URL of the PDF File
  @param url
