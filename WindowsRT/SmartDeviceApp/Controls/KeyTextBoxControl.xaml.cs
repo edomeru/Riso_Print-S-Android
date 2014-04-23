@@ -17,20 +17,48 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class KeyTextBoxControl : KeyValueControl
     {
+        private bool _isTextBoxLoaded;
+
         public KeyTextBoxControl()
         {
             this.InitializeComponent();
-            KeyTextBoxControl context = this;
-            textBox.TextChanged += (sender, e) => TextChanged(sender, context);
         }
 
         public new static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyTextBoxControl), new PropertyMetadata(false, SetValueText));
 
+        public static readonly DependencyProperty TextBoxWidthProperty =
+            DependencyProperty.Register("TextBoxWidth", typeof(double), typeof(KeyTextBoxControl), null);
+
+        public static readonly DependencyProperty TextBoxAlignmentProperty =
+            DependencyProperty.Register("TextBoxAlignment", typeof(TextAlignment), typeof(KeyTextBoxControl), null);
+
         public new string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
+        }
+
+        public double TextBoxWidth
+        {
+            get { return (double)GetValue(TextBoxWidthProperty); }
+            set { SetValue(TextBoxWidthProperty, value); }
+        }
+
+        public TextAlignment TextBoxAlignment
+        {
+            get { return (TextAlignment)GetValue(TextBoxAlignmentProperty); }
+            set { SetValue(TextBoxAlignmentProperty, value); }
+        }
+
+        private void OnTextBoxLoaded(object obj, RoutedEventArgs args)
+        {
+            if (!_isTextBoxLoaded)
+            {
+                KeyTextBoxControl context = this;
+                ((TextBox)obj).TextChanged += (sender, e) => TextChanged(sender, context);
+                _isTextBoxLoaded = true;
+            }
         }
 
         // Updates the value source binding every time the text is changed

@@ -37,10 +37,13 @@ using SmartDeviceApp.Common.Enum;
 namespace SmartDeviceApp.Views
 {
     public sealed partial class PrintPreviewPage : PageBase
-    {        
+    {
+        public event PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoaded;
+
         public PrintPreviewPage()
         {
             this.InitializeComponent();
+            PageAreaGridLoaded += PrintPreviewController.PageAreaGridLoaded;
         }
 
         public PrintPreviewViewModel ViewModel
@@ -60,6 +63,8 @@ namespace SmartDeviceApp.Views
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
             ViewModel.SetPageAreaGrid(pageAreaGrid);
+            PrintPreviewController.PageAreaGridLoadedEventHandler handler = PageAreaGridLoaded;
+            handler();
         }
 
         private void ResetTransforms(object sender, RoutedEventArgs e)

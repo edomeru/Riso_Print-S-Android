@@ -22,7 +22,6 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _selectPrintSettingOption;
         private ICommand _backToPrintSettings;
         private PrintSetting _printSetting;
-        private int _selectedIndex;
 
         public PrintSettingOptionsViewModel(IDataService dataService, INavigationService navigationService)
         {

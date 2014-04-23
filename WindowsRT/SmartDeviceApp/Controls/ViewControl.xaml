@@ -71,14 +71,58 @@
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="MainMenuPaneVisibleState">
                     <Storyboard>
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_LeftSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_LeftSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="sidePanesGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="{StaticResource MARGIN_LeftSidePane}"
+                                               Right="0">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="{StaticResource MARGIN_LeftSidePane}"
+                                               Right="0">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_LeftSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>
+                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_LeftSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>-->
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="FullScreen">
                     <Storyboard>
-                        <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>
-                        <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="sidePanesGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="0"
+                                               Right="0">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="0"
+                                               Right="0">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <!--<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>
+                        <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>-->
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="RightPaneVisibleState">
@@ -94,8 +138,19 @@
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="0"
+                                               Right="{StaticResource SIZE_SidePaneWidth}">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
                         <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>-->
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>-->
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="RightPaneVisible_ResizedViewState">
@@ -116,31 +171,31 @@
                                 <DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
                                                Bottom="0"
-                                               Left="{StaticResource SIZE_SidePaneWidth}"
-                                               Right="0">
+                                               Left="0"
+                                               Right="{StaticResource SIZE_SidePaneWidth}">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
                         <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>-->
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>-->
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="sidePanesGrid" Grid.Row="0">
-            <Grid.Projection>
+            <!--<Grid.Projection>
                 <PlaneProjection/>
-            </Grid.Projection>
+            </Grid.Projection>-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid x:Name="mainMenuPaneGrid" Grid.Column="0" 
                   Style="{StaticResource STYLE_MainMenuPaneGrid}">
-            	<Grid.Projection>
+            	<!--<Grid.Projection>
             		<PlaneProjection/>
-            	</Grid.Projection>
+            	</Grid.Projection>-->
                 <local:MainMenuPane x:Name="mainMenuPane" x:Uid="IDS_APP_NAME">
                     <local:MainMenuPane.Projection>
                         <PlaneProjection/>
@@ -156,9 +211,9 @@
                 Style="{StaticResource STYLE_ViewGrid}"
                 Width="{Binding ViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
                 Height="{Binding Converter={StaticResource HeightConverter}}">
-            <Grid.Projection>
+            <!--<Grid.Projection>
                 <PlaneProjection/>
-            </Grid.Projection>
+            </Grid.Projection>-->
             <!--<Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition/>

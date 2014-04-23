@@ -5,9 +5,7 @@
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:controls="using:SmartDeviceApp.Controls"
     xmlns:sel="using:SmartDeviceApp.Selectors"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:utility="using:SmartDeviceApp.Common.Utilities"
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -21,7 +19,8 @@
                                              utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                              IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                              SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                             Width="{Binding Width, ElementName=printSettingsBox}"/>
+                                             Width="{Binding Width, ElementName=printSettingsBox}"
+                                             IsEnabled="{Binding IsEnabled}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemTextBox">
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
@@ -29,17 +28,26 @@
                                         utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                        Width="{Binding Width, ElementName=printSettingsBox}"/>
+                                        TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
+                                        TextBoxAlignment="Right"
+                                        Width="{Binding Width, ElementName=printSettingsBox}"
+                                        IsEnabled="{Binding IsEnabled}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">
             <controls:KeyValueControl x:Name="listViewItemList"
+                                      Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}"
+                                      CommandParameter="{Binding}"
                                       Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                       ValueText="{Binding Path=SelectedOption.Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                       utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                       LeftButtonVisibility="Collapsed"
                                       IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                      RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
+                                      RightPressedImage="ms-appx:///Resources/Images/img_btn_submenu_pressed.png"
+                                      RightDisabledImage="ms-appx:///Resources/Images/img_btn_submenu_disabled.png"
                                       SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                      Width="{Binding Width, ElementName=printSettingsBox}"/>
+                                      Width="{Binding Width, ElementName=printSettingsBox}"
+                                      IsEnabled="{Binding IsEnabled}"/>
         </DataTemplate>
         <sel:PrintSettingsListTemplateSelector x:Key="PrintSettingsListTemplateSelector"
                                                ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"
@@ -64,8 +72,7 @@
         </ControlTemplate>
     </Grid.Resources>
 
-    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
-        
+    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">        
         <Button x:Name="printButton"
                 Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                 Command="{Binding PrintCommand}" 
@@ -90,14 +97,9 @@
                             <ListView x:Name="printSettingGroupListView" 
                                       ItemsSource="{Binding PrintSettings}" 
                                       ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
-                                      ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-                                      IsItemClickEnabled="True" 
-                                      SelectionMode="None">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="ItemClick">
-                                        <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}" InputConverter="{StaticResource ItemClickedConverter}"/>
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
+                                      ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                                      IsItemClickEnabled="False" 
+                                      SelectionMode="Single">
                             </ListView>
                         </controls:GroupListControl.Content>
                     </controls:GroupListControl>

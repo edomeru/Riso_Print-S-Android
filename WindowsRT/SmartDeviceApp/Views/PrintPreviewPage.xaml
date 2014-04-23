@@ -409,6 +409,10 @@
                 <RowDefinition Height="{StaticResource SIZE_PageNumberSliderHeight}"/>
                 <RowDefinition Height="{StaticResource SIZE_PageNumberTextHeight}"/>
             </Grid.RowDefinitions>
+            <ProgressRing x:Name="loadPageProgressRing" Grid.Row="0"
+                          IsActive="{Binding IsLoadPageActive}"
+                          Visibility="{Binding IsLoadPageActive, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Style="{StaticResource STYLE_ProgressRing}"/>
             <controls:TwoPageControl Grid.Row="0" 
                                      RightPageImage="{Binding RightPageImage}" 
                                      LeftPageImage="{Binding LeftPageImage}" 

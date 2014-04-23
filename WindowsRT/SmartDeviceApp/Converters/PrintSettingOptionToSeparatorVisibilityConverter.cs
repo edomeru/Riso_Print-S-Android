@@ -16,7 +16,6 @@ namespace SmartDeviceApp.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null || !(value is int)) return Visibility.Collapsed;
-            var printSetting = value as PrintSetting;
             var options = new ViewModelLocator().PrintSettingsViewModel.SelectedPrintSetting.Options;
             bool isLastItem = ((int)value == options.Count - 1) ? true : false;
             return (isLastItem ? Visibility.Collapsed : Visibility.Visible);

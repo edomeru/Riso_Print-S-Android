@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Enum;
+using GalaSoft.MvvmLight.Command;
 
 namespace SmartDeviceApp.Controls
 {
@@ -24,7 +25,13 @@ namespace SmartDeviceApp.Controls
         {
             this.InitializeComponent();
         }
-
+		
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register("Command", typeof(ICommand), typeof(KeyValueControl), null);
+        
+        public static readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register("CommandParameter", typeof(object), typeof(KeyValueControl), null);
+        
         public static readonly DependencyProperty LeftButtonVisibilityProperty =
             DependencyProperty.Register("LeftButtonVisibility", typeof(Visibility), typeof(KeyValueControl), null);
 
@@ -42,6 +49,15 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty IconImageProperty =
             DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyValueControl), null);
+			
+		public static readonly DependencyProperty RightImageProperty =
+            DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty RightPressedImageProperty =
+            DependencyProperty.Register("RightPressedImage", typeof(ImageSource), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty RightDisabledImageProperty =
+            DependencyProperty.Register("RightDisabledImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyValueControl), null);
@@ -51,6 +67,21 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+
+        public static new readonly DependencyProperty IsEnabledProperty =
+            DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyValueControl), new PropertyMetadata(true, SetIsEnabled));
+
+        public ICommand Command
+        {
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
+        }
+
+        public object CommandParameter
+        {
+            get { return (object)GetValue(CommandParameterProperty); }
+            set { SetValue(CommandParameterProperty, value); }
+        }
 
         public string LeftButtonVisibility
         {
@@ -87,6 +118,24 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
+		
+		public ImageSource RightImage
+        {
+            get { return (ImageSource)GetValue(RightImageProperty); }
+            set { SetValue(RightImageProperty, value); }
+        }
+
+        public ImageSource RightPressedImage
+        {
+            get { return (ImageSource)GetValue(RightPressedImageProperty); }
+            set { SetValue(RightPressedImageProperty, value); }
+        }
+
+        public ImageSource RightDisabledImage
+        {
+            get { return (ImageSource)GetValue(RightDisabledImageProperty); }
+            set { SetValue(RightDisabledImageProperty, value); }
+        }
 
         public string Text
         {
@@ -104,6 +153,27 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
+        }
+
+        public new bool IsEnabled
+        {
+            get { return (bool)GetValue(IsEnabledProperty); }
+            set { SetValue(IsEnabledProperty, value); }
+        }
+
+        private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue == null || !(e.NewValue is bool)) return;
+            if ((bool)e.NewValue)
+            {
+                VisualStateManager.GoToState(((KeyValueControl)obj).button, "Normal", true);
+                ((KeyValueControl)obj).button.IsEnabled = true;
+            }
+            else
+            {
+                VisualStateManager.GoToState(((KeyValueControl)obj).button, "Disabled", true);
+                ((KeyValueControl)obj).button.IsEnabled = false;
+            }
         }
     }
 }

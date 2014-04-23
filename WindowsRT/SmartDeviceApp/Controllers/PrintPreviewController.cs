@@ -41,6 +41,9 @@ namespace SmartDeviceApp.Controllers
         private GoToPageEventHandler _goToPageEventHandler;
         private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
 
+        public delegate void PageAreaGridLoadedEventHandler();
+        public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
+
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
             FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}-{1:yyyyMMddHHmmssffff}.jpg";
@@ -90,6 +93,7 @@ namespace SmartDeviceApp.Controllers
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
+            PageAreaGridLoaded += InitializeGestures;
             _previewPages = new Dictionary<int, PreviewPage>();
 
             // Get print settings if document is successfully loaded
@@ -106,7 +110,6 @@ namespace SmartDeviceApp.Controllers
                 _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
 
                 UpdatePreviewInfo();
-                InitializeGestures();
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
@@ -478,6 +481,10 @@ namespace SmartDeviceApp.Controllers
                 //InitializeGestures();
                 _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
                 await LoadPage(_currPreviewPageIndex, false);
+
+                // Update preview page
+                // TODO: Confirm with lester!
+                InitializeGestures();
             }
         }
 
@@ -539,6 +546,10 @@ namespace SmartDeviceApp.Controllers
                 UpdatePreviewInfo();
                 _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
                 await LoadPage(_currPreviewPageIndex, false);
+
+                // Update preview page
+                // TODO: Confirm with lester!
+                InitializeGestures();
             }
         }
 
@@ -617,6 +628,9 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task LoadPage(int rightPageIndex, bool isSliderEvent)
         {
+            // TODO: Add current page logic
+            _printPreviewViewModel.IsLoadPageActive = true;
+
             if (isSliderEvent)
             {
                 _currPreviewPageIndex = (_isDuplex || _isBooklet) ? rightPageIndex * 2 :
@@ -638,6 +652,8 @@ namespace SmartDeviceApp.Controllers
             }
 
             GenerateNearPreviewPages();
+            // TODO: Add current page logic
+            _printPreviewViewModel.IsLoadPageActive = false;
         }
 
         /// <summary>

@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="60"
     d:DesignWidth="400">
-    
+
     <UserControl.Resources>
         <Style x:Key="STYLE_ListItemGrid" TargetType="Grid">
             <Style.Setters>
@@ -31,37 +31,75 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
         </Style>
-    </UserControl.Resources>
-    <Grid Style="{StaticResource STYLE_ListItemGrid}">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="1" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-            <Image x:Name="icon"
+        <ControlTemplate x:Key="TEMPLATE_Button" TargetType="Button">
+            <Grid x:Name="keyValueControlGrid" Style="{StaticResource STYLE_ListItemGrid}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal"/>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="keyValueControlGrid">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Purple1}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Source" Storyboard.TargetName="rightButton">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RightPressedImage, ElementName=keyValueControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextKeyDisabled}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="value">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextValueDisabled}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Source" Storyboard.TargetName="rightButton">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RightDisabledImage, ElementName=keyValueControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="1" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
+                    <Image x:Name="icon"
                         Visibility="{Binding IconVisibility, ElementName=keyValueControl}" 
                         Source="{Binding IconImage, ElementName=keyValueControl}"
                         Style="{StaticResource STYLE_AlignLeft}" Stretch="None"/>
-            <TextBlock x:Name="key" 
+                    <TextBlock x:Name="key" 
                        Text="{Binding Text, ElementName=keyValueControl}" 
                        Style="{StaticResource STYLE_TextKey}"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-            <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" Style="{StaticResource STYLE_AlignRight}"/>
-            <TextBlock x:Name="value" 
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
+                    <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" Style="{StaticResource STYLE_AlignRight}"/>
+                    <TextBlock x:Name="value" 
                        Text="{Binding ValueText, ElementName=keyValueControl}"
                        Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"                       
                        Style="{StaticResource STYLE_TextValue}"/>
-            <Image x:Name="rightButton" Source="ms-appx:///Resources/Images/img_btn_submenu.png"
-                        Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
-                        Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
-        </StackPanel>
-        <Line Grid.Row="1" Grid.ColumnSpan="2" 
+                    <Image x:Name="rightButton" 
+	               Source="{Binding RightImage, ElementName=keyValueControl}"
+                   Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
+                   Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
+                </StackPanel>
+                <Line Grid.Row="1" Grid.ColumnSpan="2" 
               Visibility="{Binding SeparatorVisibility, ElementName=keyValueControl}"
               Style="{StaticResource STYLE_List_Separator}"></Line>
-    </Grid>
+            </Grid>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <Button x:Name="button" 
+            Command="{Binding Command, ElementName=keyValueControl}"
+            CommandParameter="{Binding CommandParameter, ElementName=keyValueControl}"
+            Template="{StaticResource TEMPLATE_Button}"
+            Width="{Binding Width, ElementName=keyValueControl}">
+    </Button>
 </UserControl>

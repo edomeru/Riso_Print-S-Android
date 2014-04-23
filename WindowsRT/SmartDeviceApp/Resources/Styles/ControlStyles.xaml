@@ -178,54 +178,6 @@
         </Style.Setters>
     </Style>
     
-    <Style x:Key="STYLE_SidePaneListView" TargetType="ListView">
-        <Style.Setters>
-            <Setter Property="ItemContainerStyle" Value="{StaticResource STYLE_ListViewItem}"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
-            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
-            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
-            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListView">
-                        <Border BorderBrush="{TemplateBinding BorderBrush}"
-                        Background="{TemplateBinding Background}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                            <ScrollViewer x:Name="ScrollViewer"
-                                  TabNavigation="{TemplateBinding TabNavigation}"
-                                  HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                  IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
-                                  VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                  IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
-                                  IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                  IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                  ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
-                                  IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                  BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
-                                  AutomationProperties.AccessibilityView="Raw">
-                                <ItemsPresenter
-                            Header="{TemplateBinding Header}" 
-                            HeaderTemplate="{TemplateBinding HeaderTemplate}"
-                            HeaderTransitions="{TemplateBinding HeaderTransitions}"
-                            Footer="{TemplateBinding Footer}" 
-                            FooterTemplate="{TemplateBinding FooterTemplate}"
-                            FooterTransitions="{TemplateBinding FooterTransitions}"
-                            Padding="{TemplateBinding Padding}"/>
-                            </ScrollViewer>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style.Setters>
-    </Style>
-
     <Style  x:Key="STYLE_ListViewItem" TargetType="ListViewItem">
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
@@ -233,8 +185,8 @@
         <Setter Property="TabNavigation" Value="Local"/>
         <Setter Property="IsHoldingEnabled" Value="True"/>
         <Setter Property="Margin" Value="0,0,0,0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
@@ -293,7 +245,7 @@
 										  Content="{TemplateBinding Content}"
 										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
 										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-										  Margin="{TemplateBinding Padding}" />
+										  Margin="0" />
                             <!-- The 'Xg' text simulates the amount of space one line of text will occupy.
 							 In the DataPlaceholder state, the Content is not loaded yet so we
 							 approximate the size of the item using placeholder text. -->
@@ -301,15 +253,17 @@
 								   Opacity="0"
 								   Text="Xg"
 								   Foreground="{x:Null}"
-								   Margin="{TemplateBinding Padding}"
+								   Margin="0"
 								   IsHitTestVisible="False"
-								   AutomationProperties.AccessibilityView="Raw"/>
+								   AutomationProperties.AccessibilityView="Raw"
+                                   Visibility="Collapsed"/>
                             <Rectangle x:Name="PlaceholderRect"
 								   Visibility="Collapsed"
 								   Fill="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"/>
                             <Rectangle x:Name="MultiArrangeOverlayBackground"
 								   IsHitTestVisible="False"
 								   Opacity="0"
+                                   Visibility="Collapsed"
 								   Fill="{ThemeResource ListViewItemDragBackgroundThemeBrush}" />
                         </Grid>
                     </Border>
@@ -319,7 +273,6 @@
     </Style>
 
     <Style x:Key="STYLE_ListValue_TextBox" TargetType="TextBox">
-        <Setter Property="Width" Value="{StaticResource SIZE_ListValue_TextboxWidth}"/>
         <Setter Property="Margin">
             <Setter.Value>
                 <Thickness Top="{StaticResource MARGIN_Medium}"
@@ -327,7 +280,6 @@
             </Setter.Value>
         </Setter>
         <Setter Property="IsReadOnly" Value="False"/>
-        <Setter Property="TextAlignment" Value="Right"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="AcceptsReturn" Value="False"/>
         <Setter Property="TextWrapping" Value="NoWrap"/>
@@ -337,7 +289,7 @@
     </Style>
     
     <Style x:Key="STYLE_ListValue_ToggleSwitch" TargetType="ToggleSwitch">
-        <Setter Property="Width" Value="{StaticResource SIZE_ListValue_TextboxWidth}"/>
+        <Setter Property="Width" Value="{StaticResource SIZE_ListValue_ToggleWidth}"/>
         <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchForegroundThemeBrush}"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
@@ -435,6 +387,14 @@
         <Style.Setters>
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray4}"/>
             <Setter Property="Height" Value="{StaticResource SIZE_ListItemHeight}"/>
+        </Style.Setters>
+    </Style>
+
+    <Style x:Key="STYLE_ProgressRing" TargetType="ProgressRing">
+        <Style.Setters>
+            <Setter Property="Width" Value="{StaticResource SIZE_ProgressRing}"/>
+            <Setter Property="Height" Value="{StaticResource SIZE_ProgressRing}"/>
+            <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>
         </Style.Setters>
     </Style>
 

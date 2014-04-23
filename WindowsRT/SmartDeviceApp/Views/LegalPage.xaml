@@ -13,5 +13,13 @@
 
     <controls:ViewControl 
         Text="{Binding Source=IDS_LBL_LEGAL, Converter={StaticResource ResourceStringToTextConverter}}" >
+        <WebView Source="ms-appx-web:///Assets/legal.html">
+            <WebView.Margin>
+                <Thickness Top="{StaticResource MARGIN_Default}"
+                           Bottom="{StaticResource MARGIN_Default}"
+                           Left="{StaticResource MARGIN_Default}"
+                           Right="{StaticResource MARGIN_Default}"></Thickness>
+            </WebView.Margin>
+        </WebView>
     </controls:ViewControl>
 </base:PageBase>
