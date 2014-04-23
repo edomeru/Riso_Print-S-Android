@@ -48,8 +48,8 @@
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
     <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
-    <conv:ItemCheckedConverter x:Key="ItemCheckedConverter"/>
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
+    <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
     <conv:PrintJobListToGroupVisibilityConverter x:Key="PrintJobListToGroupVisibilityConverter"/>

@@ -11,13 +11,14 @@ using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Converters
 {
-    public class PrintSettingOptionToSeparatorVisibilityConverter : IValueConverter
+    public class MainMenuItemToSeparatorVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || !(value is int)) return Visibility.Collapsed;
-            var options = new ViewModelLocator().PrintSettingsViewModel.SelectedPrintSetting.Options;
-            bool isLastItem = ((int)value == options.Count - 1) ? true : false;
+            if (value == null || !(value is MainMenuItem)) return Visibility.Collapsed;
+            var mainMenuItem = value as MainMenuItem;
+            var mainMenuItems = new ViewModelLocator().ViewControlViewModel.MainMenuItems;
+            bool isLastItem = (mainMenuItem == mainMenuItems[mainMenuItems.Count - 1]) ? true : false;
             return (isLastItem ? Visibility.Collapsed : Visibility.Visible);
         }
 

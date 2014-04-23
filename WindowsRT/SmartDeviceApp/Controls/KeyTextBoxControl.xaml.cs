@@ -17,11 +17,11 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class KeyTextBoxControl : KeyValueControl
     {
+        private bool _isTextBoxLoaded;
+
         public KeyTextBoxControl()
         {
             this.InitializeComponent();
-            KeyTextBoxControl context = this;
-            textBox.TextChanged += (sender, e) => TextChanged(sender, context);
         }
 
         public new static readonly DependencyProperty ValueTextProperty =
@@ -51,6 +51,15 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextBoxAlignmentProperty, value); }
         }
 
+        private void OnTextBoxLoaded(object obj, RoutedEventArgs args)
+        {
+            if (!_isTextBoxLoaded)
+            {
+                KeyTextBoxControl context = this;
+                ((TextBox)obj).TextChanged += (sender, e) => TextChanged(sender, context);
+                _isTextBoxLoaded = true;
+            }
+        }
 
         // Updates the value source binding every time the text is changed
         private static void TextChanged(object sender, KeyTextBoxControl control)

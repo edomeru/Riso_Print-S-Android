@@ -14,9 +14,11 @@
     d:DesignWidth="400">
 
     <controls:KeyValueControl.ValueContent>
-        <TextBox x:Name="textBox" Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
+        <TextBox x:Name="textBox" 
+                 Loaded="OnTextBoxLoaded"
+                 Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
                  Width="{Binding TextBoxWidth, ElementName=keyTextBoxControl}"
-                 TextAlignment="{Binding TextBoxAlignment, ElementName=keyTextBoxControl}"
+                 TextAlignment="{Binding TextBoxAlignment, ElementName=keyTextBoxControl}"                 
                  Style="{StaticResource STYLE_ListValue_TextBox}"/>
     </controls:KeyValueControl.ValueContent>
 </controls:KeyValueControl>

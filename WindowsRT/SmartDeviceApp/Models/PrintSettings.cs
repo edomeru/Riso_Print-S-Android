@@ -63,6 +63,7 @@ namespace SmartDeviceApp.Models
     {
         private object _value;
         private PrintSettingOption _selectedOption;
+        private bool _isEnabled;
         public string Name { get; set; }
         public string Text { get; set; }
         public string Icon { get; set; }
@@ -80,6 +81,7 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
+
         // Should be used only if PrintSettingType = list
         public PrintSettingOption SelectedOption
         {
@@ -100,7 +102,18 @@ namespace SmartDeviceApp.Models
         }
         public object Default { get; set; }
         public List<PrintSettingOption> Options { get; set; }
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    RaisePropertyChanged("IsEnabled");
+                }
+            }
+        }
 
         public override bool Equals(System.Object obj)
         {

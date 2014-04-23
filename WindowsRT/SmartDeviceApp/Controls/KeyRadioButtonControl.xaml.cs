@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -23,6 +24,12 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
         }
 
+        public static new readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register("Command", typeof(ICommand), typeof(KeyRadioButtonControl), null);
+
+        public static new readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register("CommandParameter", typeof(object), typeof(KeyRadioButtonControl), null);
+       
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register("Value", typeof(object), typeof(KeyRadioButtonControl), null);
 
@@ -38,6 +45,18 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyRadioButtonControl), null);
 
+        public new ICommand Command
+        {
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
+        }
+
+        public new object CommandParameter
+        {
+            get { return (object)GetValue(CommandParameterProperty); }
+            set { SetValue(CommandParameterProperty, value); }
+        }
+        
         public object Value
         {
             get { return this.DataContext; }
@@ -66,6 +85,11 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
+        }
+
+        private void OnTapped(object sender, RoutedEventArgs e)
+        {
+            IsChecked = true;
         }
     }
 }

@@ -15,7 +15,8 @@
     
     <controls:KeyValueControl.ValueContent>
         <ToggleSwitch x:Name="toggleSwitch"
-            IsOn="{Binding IsOn, ElementName=keyToggleSwitchControl}"
-            Style="{StaticResource STYLE_ListValue_ToggleSwitch}" />
+                      Loaded="OnToggleSwitchLoaded"
+                      IsOn="{Binding IsOn, ElementName=keyToggleSwitchControl}"
+                      Style="{StaticResource STYLE_ListValue_ToggleSwitch}" />
     </controls:KeyValueControl.ValueContent>
 </controls:KeyValueControl>
