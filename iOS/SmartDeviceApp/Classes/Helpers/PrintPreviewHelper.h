@@ -40,12 +40,12 @@ typedef enum {
 }kImposition;
 
 typedef enum {
-    kImpositionOrderRightToLeft,
     kImpositionOrderLeftToRight,
-    kImpositionOrderUpperLeftToBottom,
+    kImpositionOrderRightToLeft,
     kImpositionOrderUpperLeftToRight,
-    kImpositionOrderUpperRightToBottom,
-    kImpositionOrderUpperRightToLeft
+    kImpositionOrderUpperRightToLeft,
+    kImpositionOrderUpperLeftToBottom,
+    kImpositionOrderUpperRightToBottom
 }kImpositionOrder;
 
 typedef enum {

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #define KEY_ORIENTATION         @"orientation"
+#define KEY_COPIES              @"copies"
 #define KEY_DUPLEX              @"duplex"
 #define KEY_IMPOSITION          @"imposition"
 #define KEY_IMPOSITION_ORDER    @"impositionOrder"

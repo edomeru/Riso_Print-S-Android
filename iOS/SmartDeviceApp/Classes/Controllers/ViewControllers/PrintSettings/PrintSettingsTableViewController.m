@@ -432,7 +432,49 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     NSString *key = [self.textFieldBindings objectForKey:[NSNumber numberWithInteger:textField.tag]];
-    [self.previewSetting setValue:[NSNumber numberWithInteger:[textField.text integerValue]] forKey:key];
+    NSInteger value = [textField.text integerValue];
+    if([key isEqualToString:KEY_COPIES] == YES)
+    {
+        if(value == 0)
+        {
+            //if value in text field will be zero auto correct to minimum
+            value = 1;
+            textField.text = @"1";
+        }
+        else
+        {
+            //if value in text field has leading zeros, remove leading zeros
+            if([textField.text hasPrefix:@"0"] == YES)
+            {
+                textField.text = [NSString stringWithFormat:@"%ld", (long)value];
+            }
+        }
+    }
+    [self.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if([string isEqualToString:@""] == YES) //always accept back space
+    {
+        return YES;
+    }
+    
+    NSString *key = [self.textFieldBindings objectForKey:[NSNumber numberWithInteger:textField.tag]];
+    if([key isEqualToString:KEY_COPIES] == YES)
+    {
+        if((textField.text.length + string.length) > 4)
+        {
+            return NO;
+        }
+        
+        NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+        if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
+        {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification

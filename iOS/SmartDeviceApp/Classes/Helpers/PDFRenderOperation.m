@@ -433,7 +433,6 @@
         {
             [self drawStapleSingle:contextRef withStapleType:stapleType atFinishingSide:finishingSide];
         }
-        return;
     }
     
     kPunchType punchType = (kPunchType)self.printDocument.previewSetting.punch;
