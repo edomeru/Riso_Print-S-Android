@@ -24,9 +24,9 @@ namespace SmartDeviceApp.Models
         #region Properties
 
         /// <summary>
-        /// Printer ID, used by DefaultPrinter table and is indexed
+        /// Printer ID, used by DefaultPrinter table as primary key
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.PrimaryKey, SQLite.Indexed(Name = "DefaultPrinter_FKIndex1")]
+        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.PrimaryKey]
         public uint PrinterId { get; set; }
 
         #endregion Properties
