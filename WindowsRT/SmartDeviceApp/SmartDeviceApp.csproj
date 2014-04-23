@@ -307,6 +307,9 @@
     <Content Include="Resources\Dummy\test.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Dummy\PDF-0010pages.pdf" />
+    <Content Include="Resources\Dummy\PDF-lorem.pdf" />
+    <Content Include="Resources\Dummy\PDF-squarish.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
