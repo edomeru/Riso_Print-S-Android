@@ -13,6 +13,7 @@
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -104,7 +105,7 @@ namespace SmartDeviceApp.Controllers
                 }
 
                 PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(),
-                    group.ToList());
+                    new ObservableCollection<PrintJob>(group));
                 tempList.Add(printJobGroup);
             }
 
@@ -137,32 +138,23 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Deletes a print job
+        /// Event handler for deleting a print job
         /// </summary>
         /// <param name="printJob">item</param>
         public async void RemoveJob(PrintJob printJob)
         {
             if (printJob != null)
             {
-                int deleted = await DatabaseController.Instance.DeletePrintJob(printJob);
+                int deleted = await DeletePrintJob(printJob);
                 if (deleted == 0)
                 {
                     // TODO: Notify view model to display error message
-                    return;
-                }
-
-                // TODO: Verify bindings
-                PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
-                    .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
-                if (printJobGroup != null)
-                {
-                    printJobGroup.Jobs.Remove(printJob);
                 }
             }
         }
 
         /// <summary>
-        /// Deletes a set of print jobs based on printer group
+        /// Event handler for deleting a grouped print job
         /// </summary>
         /// <param name="printerId">printer ID</param>
         public async void RemoveGroupedJobs(int printerId)
@@ -176,18 +168,42 @@ namespace SmartDeviceApp.Controllers
             {
                 foreach (PrintJob printJob in printJobGroup.Jobs)
                 {
-                    deleted += await DatabaseController.Instance.InsertPrintJob(printJob);
+                    deleted += await DeletePrintJob(printJob);
                 }
+            }
+            
+            if (deleted != printJobGroup.Jobs.Count)
+            {
+                // TODO: Notify view model to display error message
+            }
+        }
 
-                if (deleted != printJobGroup.Jobs.Count)
-                {
-                    // TODO: Notify view model to display error message
-                    return;
-                }
+        /// <summary>
+        /// Deletes a print job from the database and updates the list.
+        /// Also, removes the group if the list is empty.
+        /// </summary>
+        /// <param name="printJob">print job to be deleted</param>
+        /// <returns>task; number of deleted print jobs</returns>
+        private async Task<int> DeletePrintJob(PrintJob printJob)
+        {
+            int deleted = await DatabaseController.Instance.DeletePrintJob(printJob);
+            if (deleted == 0)
+            {
+                return deleted;
+            }
 
-                // TODO: Verify bindings
+            PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
+                .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
+            if (printJobGroup != null)
+            {
+                printJobGroup.Jobs.Remove(printJob);
+            }
+            if (printJobGroup.Jobs.Count == 0)
+            {
                 _jobsViewModel.PrintJobsList.Remove(printJobGroup);
             }
+
+            return deleted;
         }
 
     }

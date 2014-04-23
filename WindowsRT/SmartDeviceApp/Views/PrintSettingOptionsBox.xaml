@@ -41,10 +41,13 @@
     <ListView x:Name="printSettingOptionsListView" Grid.Row="1"  
               ItemsSource="{Binding PrintSetting.Options}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-              IsItemClickEnabled="False" SelectionMode="Single">
+              IsItemClickEnabled="False" 
+              SelectionMode="Single">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
+                                                Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
+                                                CommandParameter="{Binding}"
                                                 GroupName="printSettingOptionsGroup"
                                                 Index="{Binding Index}"
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
@@ -52,11 +55,6 @@
                                                 IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
                                                 Width="{Binding Width, ElementName=printSettingOptionsBox}">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="Checked">
-                            <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}" InputConverter="{StaticResource ItemCheckedConverter}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
                 </controls:KeyRadioButtonControl>
             </DataTemplate>
         </ListView.ItemTemplate>

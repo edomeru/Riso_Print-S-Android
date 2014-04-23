@@ -26,7 +26,7 @@
         </Style>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
             <Grid Background="{StaticResource BRUSH_White}" Width="150" Height="60">
-                <TextBlock Text="DELETE ALL" Style="{StaticResource STYLE_TextBody}"></TextBlock>
+                <TextBlock Text="{Binding Source=IDS_LBL_DELETE_ALL_JOBS, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"></TextBlock>
             </Grid>
         </ControlTemplate>
         <ControlTemplate x:Key="TEMPLATE_ToggleButton" TargetType="ToggleButton">

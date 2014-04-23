@@ -17,11 +17,11 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class KeyToggleSwitchControl : KeyValueControl
     {
+        private bool _isToggleSwitchLoaded;
+
         public KeyToggleSwitchControl()
         {
             this.InitializeComponent();
-            KeyToggleSwitchControl context = this;
-            toggleSwitch.Toggled += (sender, e) => Toggled(sender, context);
         }
 
         private static bool _isToggled;
@@ -33,6 +33,16 @@ namespace SmartDeviceApp.Controls
         {
             get { return (bool)GetValue(IsOnProperty); }
             set { SetValue(IsOnProperty, value); }
+        }
+
+        private void OnToggleSwitchLoaded(object obj, RoutedEventArgs args)
+        {
+            if (!_isToggleSwitchLoaded)
+            {
+                KeyToggleSwitchControl context = this;
+                ((ToggleSwitch)obj).Toggled += (sender, e) => Toggled(sender, context);
+                _isToggleSwitchLoaded = true;
+            }
         }
 
         private static void SetIsOn(DependencyObject obj, DependencyPropertyChangedEventArgs e)

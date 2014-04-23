@@ -17,7 +17,7 @@
     <local:KeyValueControl.Resources>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
             <Grid Background="{StaticResource BRUSH_White}" Width="110" Height="50">
-                <TextBlock Text="DELETE" Style="{StaticResource STYLE_TextBody}"></TextBlock>
+                <TextBlock Text="{Binding Source=IDS_LBL_DELETE_JOB, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"/>
             </Grid>
         </ControlTemplate>
     </local:KeyValueControl.Resources>

@@ -37,6 +37,21 @@ namespace SmartDeviceApp.Controllers
         private Point _startPoint;
         private bool _isEnabled;
 
+        public JobGestureController()
+        {
+            _gestureRecognizer = new GestureRecognizer();
+            _gestureRecognizer.GestureSettings =
+                GestureSettings.Tap |
+                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
+                GestureSettings.RightTap |
+                GestureSettings.ManipulationTranslateX |
+                GestureSettings.ManipulationTranslateY |
+                GestureSettings.ManipulationScale |
+                GestureSettings.ManipulationTranslateInertia |
+                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
+                GestureSettings.ManipulationScaleInertia;
+        }
+
         public UIElement Control
         {
             set 
@@ -58,18 +73,6 @@ namespace SmartDeviceApp.Controllers
         
         private void Initialize()
         {
-            _gestureRecognizer = new GestureRecognizer();
-            _gestureRecognizer.GestureSettings =
-                GestureSettings.Tap |
-                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
-                GestureSettings.RightTap |
-                GestureSettings.ManipulationTranslateX |
-                GestureSettings.ManipulationTranslateY |
-                GestureSettings.ManipulationScale |
-                GestureSettings.ManipulationTranslateInertia |
-                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
-                GestureSettings.ManipulationScaleInertia;
-
             EnableGestures();
 
             var transform = _control.TransformToVisual(null);
@@ -78,6 +81,7 @@ namespace SmartDeviceApp.Controllers
 
         public void EnableGestures()
         {
+            if (_control == null) return;
             if (!_isEnabled)
             {
                 _control.PointerCanceled += OnPointerCanceled;
@@ -97,6 +101,7 @@ namespace SmartDeviceApp.Controllers
 
         public void DisableGestures()
         {
+            if (_control == null) return;
             if (_isEnabled)
             {
                 _control.PointerCanceled -= OnPointerCanceled;

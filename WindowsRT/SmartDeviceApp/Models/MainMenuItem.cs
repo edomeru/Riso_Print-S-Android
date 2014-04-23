@@ -14,13 +14,40 @@ namespace SmartDeviceApp.Models
     {
         public string Text { get; set; }
         public ICommand Command { get; set; }
-        public Visibility SeparatorVisibility { get; set; }
 
         public MainMenuItem(string text, ICommand command, Visibility separatorVisibility)
         {
             Text = text;
             Command = command;
-            SeparatorVisibility = separatorVisibility;
+        }
+
+        public override bool Equals(System.Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            MainMenuItem otherItem = obj as MainMenuItem;
+            if ((System.Object)otherItem == null)
+            {
+                return false;
+            }
+            return Text == otherItem.Text;
+        }
+
+        public bool Equals(MainMenuItem otherItem)
+        {
+            if ((object)otherItem == null)
+            {
+                return false;
+            }
+            return (Text == otherItem.Text);
+        }
+
+        public override int GetHashCode()
+        {
+            return Text.GetHashCode();
         }
     }
 
