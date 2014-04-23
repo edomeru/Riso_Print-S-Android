@@ -109,6 +109,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectPrintSettings\DirectPrintSettings.vcxproj">
+      <Project>{2ac765a5-d74d-4c9c-9e2b-c400263176cf}</Project>
+      <Name>DirectPrintSettings</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

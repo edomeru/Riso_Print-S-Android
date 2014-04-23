@@ -400,7 +400,7 @@ void add_pjl(char *pjl, setting_value values[], int command)
         case kPjlCommandDuplexBinding:
         {
             setting_value value = values[kPrintSettingsDuplex];
-            if (value.set == 0 && value.int_value == 0)
+            if (value.set == 0 || value.int_value == 0)
             {
                 return;
             }
