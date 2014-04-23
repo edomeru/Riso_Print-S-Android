@@ -92,7 +92,7 @@ namespace SmartDeviceApp
             Window.Current.Activate();
 
             //temp
-            //DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
+            DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
         }
 
         /// <summary>
