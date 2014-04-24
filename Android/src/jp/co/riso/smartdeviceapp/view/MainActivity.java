@@ -163,6 +163,7 @@ public class MainActivity extends BaseActivity {
      * 
      * @param gravity
      *            Drawer gravity
+     * @return true if the drawer is open
      */
     public boolean isDrawerOpen(int gravity) {
         return mDrawerLayout.isDrawerOpen(gravity);

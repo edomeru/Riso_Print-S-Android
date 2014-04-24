@@ -196,6 +196,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     /**
      * Determines if the maximum number of saved printers is reached
+     * 
+     * @return true if maximum printer count is reached
      */
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {

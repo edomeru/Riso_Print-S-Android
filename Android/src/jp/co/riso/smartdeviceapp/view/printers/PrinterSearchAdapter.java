@@ -32,6 +32,10 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     
     /**
      * Constructor
+     * 
+     * @param context
+     * @param resource
+     * @param values
      */
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);

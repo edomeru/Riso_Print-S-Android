@@ -48,9 +48,6 @@ public class DirectPrintManager {
      * Send cancel command
      * <p>
      * Cancel Print task.
-     * 
-     * @param callback
-     *            Callback function
      */
     public void sendCancelCommand() {
         setCallback(null);
@@ -62,12 +59,10 @@ public class DirectPrintManager {
     }
     
     /**
-     * Send cancel command
-     * <p>
-     * Cancel Print task.
+     * Notify progress
      * 
-     * @param callback
-     *            Callback function
+     * @param status
+     * @param progress
      */
     private void onNotifyProgress(int status, float progress) {
         if (mCallbackRef != null && mCallbackRef.get() != null) {
@@ -101,7 +96,10 @@ public class DirectPrintManager {
         private DirectPrintManager mManager;
         
         /**
-         * Instantiate DirectPrintCancelTask
+         * Constructor
+         * 
+         * @param manager
+         *            DirectPrint Manager
          */
         public DirectPrintCancelTask(DirectPrintManager manager) {
             mManager = manager;

@@ -27,6 +27,8 @@ public class PrintersContainerView extends LinearLayout {
      * Constructor
      * <p>
      * Instantiate LinearLayout with custom states
+     * 
+     * @param context
      */
     public PrintersContainerView(Context context) {
         super(context);
@@ -36,6 +38,9 @@ public class PrintersContainerView extends LinearLayout {
      * Constructor
      * <p>
      * Instantiate LinearLayout with custom states
+     * 
+     * @param context
+     * @param attrs
      */
     public PrintersContainerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,6 +50,10 @@ public class PrintersContainerView extends LinearLayout {
      * Constructor
      * <p>
      * Instantiate LinearLayout with custom states
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
     public PrintersContainerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

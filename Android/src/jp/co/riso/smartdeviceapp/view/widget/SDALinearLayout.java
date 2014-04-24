@@ -19,6 +19,10 @@ public class SDALinearLayout extends LinearLayout {
      * Constructor
      * <p>
      * Instantiate custom LinearLayout
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
     public SDALinearLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -28,6 +32,9 @@ public class SDALinearLayout extends LinearLayout {
      * Constructor
      * <p>
      * Instantiate custom LinearLayout
+     * 
+     * @param context
+     * @param attrs
      */
     public SDALinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -37,6 +44,8 @@ public class SDALinearLayout extends LinearLayout {
      * Constructor
      * <p>
      * Instantiate custom LinearLayout
+     * 
+     * @param context
      */
     public SDALinearLayout(Context context) {
         super(context);
@@ -44,6 +53,8 @@ public class SDALinearLayout extends LinearLayout {
 
     /**
      * Gets a fraction of the visual x position of this view in pixels
+     * 
+     * @return Return x-position
      */
     public float getXFraction() {
         int width = getWidth();
@@ -52,6 +63,8 @@ public class SDALinearLayout extends LinearLayout {
 
     /**
      * Sets the visual x position of this view in pixels
+     * 
+     * @param xFraction
      */
     public void setXFraction(float xFraction) {
         int width = getWidth();

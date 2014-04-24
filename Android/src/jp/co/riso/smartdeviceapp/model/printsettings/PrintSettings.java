@@ -144,6 +144,8 @@ public class PrintSettings {
     
     /**
      * Parse print settings
+     * 
+     * @param printSettingsContent
      */
     private static void parsePrintSettings(Document printSettingsContent) {
         if (printSettingsContent == null) {
@@ -168,7 +170,7 @@ public class PrintSettings {
     // ================================================================================
     
     /**
-     * @return PJL
+     * @return PJL formatted string 
      */
     public String formattedString() {
         StringBuffer strBuf = new StringBuffer();
@@ -210,7 +212,9 @@ public class PrintSettings {
      * Set print settings value to key
      * 
      * @param key
-     *            Print settings key
+     *            Print settings key (colorMode, orientation, copies, duplex, paperSize, scaleToFit, paperType,
+     *            inputTray, imposition, impositionOrder, sort, booklet, bookletFinish, bookletLayout, finishingSide,
+     *            staple, punch, outputTray)
      * @return success
      */
     public boolean setValue(String key, int value) {

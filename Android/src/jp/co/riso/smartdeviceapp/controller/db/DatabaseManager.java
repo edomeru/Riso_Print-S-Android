@@ -32,6 +32,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
     
     /**
      * Constructor
+     * 
+     * @param context
      */
     public DatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -80,6 +82,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
+     * Get the value of the requested column as a String.
      * 
      * @param cursor
      *            cursor
@@ -92,18 +95,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
+     * Get the value of the requested column as an integer.
      * 
      * @param cursor
      *            cursor
      * @param columnName
      *            column name
-     * @return Returns the value of the requested column as an int.
+     * @return Returns the value of the requested column as an integer.
      */
     public static int getIntFromCursor(Cursor cursor, String columnName) {
         return cursor.getInt(cursor.getColumnIndex(columnName));
     }
     
     /**
+     * Convenience method for inserting a row into the database.
      * 
      * @param table
      *            the table to insert the row into
@@ -133,9 +138,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
+     * General method for inserting a row into the database. 
      * 
      * @param table
-     *            General method for inserting a row into the database.
+     *           the table to insert the row into  
      * @param nullColumnHack
      *            optional; may be null. SQL doesn't allow inserting a completely empty row without naming at least one
      *            column name. If your provided values is empty, no column names are known and an empty row can't be
@@ -171,6 +177,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param whereArgs
      *            You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
      *            values will be bound as Strings.
+     * @return update is successful
      */
     public boolean update(String table, ContentValues values, String whereClause, String[] whereArgs) {
         long rowId = -1;
@@ -204,6 +211,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      *            included, and is required when row grouping is not being used.
      * @param orderBy
      *            How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself).
+     * @return cursor
      */
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -222,6 +230,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param whereArgs
      *            You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
      *            values will be bound as Strings.
+     * @return delete is successful
      */
     public boolean delete(String table, String whereClause, String whereArg) {
         String whereArgs[] = null;
@@ -243,6 +252,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param whereArgs
      *            You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
      *            values will be bound as Strings.
+     * @return delete is successful
      */
     private boolean delete(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;

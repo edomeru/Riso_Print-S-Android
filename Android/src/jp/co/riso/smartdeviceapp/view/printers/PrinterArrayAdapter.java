@@ -44,6 +44,10 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     
     /**
      * Constructor
+     * 
+     * @param context
+     * @param resource
+     * @param values
      */
     public PrinterArrayAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);

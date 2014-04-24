@@ -245,7 +245,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         /**
-         * Save to database version to shared preference
+         * Save database version to shared preference
          */
         private void saveToPrefs() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);

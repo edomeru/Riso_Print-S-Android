@@ -32,6 +32,8 @@ public class SmartDeviceApp extends Application {
     }
 
     /**
+     * Retrieve the application context
+     * 
      * @return SmartDeviceAPP context
      */
     public static Context getAppContext() {
@@ -39,6 +41,8 @@ public class SmartDeviceApp extends Application {
     }
 
     /**
+     * Retrieve the application font
+     * 
      * @return SmartDeviceAPP font
      */
     public static Typeface getAppFont() {

@@ -368,6 +368,7 @@ public final class AppUtils {
     }
     
     /**
+     * @param activity
      * @return cache size
      */
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {

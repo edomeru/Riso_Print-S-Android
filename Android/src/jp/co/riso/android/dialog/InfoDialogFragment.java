@@ -21,6 +21,8 @@ public class InfoDialogFragment extends DialogFragment {
     
     
     /**
+     * @param message
+     * @param buttonTitle
      * @return InfoDialogFragment instance
      */
     public static InfoDialogFragment newInstance(String message, String buttonTitle) {
@@ -28,6 +30,9 @@ public class InfoDialogFragment extends DialogFragment {
     }
     
     /**
+     * @param title
+     * @param message
+     * @param buttonTitle
      * @return InfoDialogFragment instance
      */
     public static InfoDialogFragment newInstance(String title, String message, String buttonTitle) {

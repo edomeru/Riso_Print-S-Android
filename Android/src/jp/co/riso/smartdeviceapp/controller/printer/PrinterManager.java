@@ -457,7 +457,8 @@ public class PrinterManager implements SNMPManagerCallback {
     /**
      * Get Printer Count
      * <p>
-     * Gets the number of Saved Printer.
+     * 
+     * @return printer count
      */
     public int getPrinterCount() {
         return mPrinterList.size();

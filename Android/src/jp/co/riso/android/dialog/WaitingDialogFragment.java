@@ -46,6 +46,10 @@ public class WaitingDialogFragment extends DialogFragment {
     }
     
     /**
+     * @param title
+     * @param message
+     * @param cancelable
+     * @param buttonTitle
      * @return WaitingDialogFragment instance
      */
     public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable, String buttonTitle) {

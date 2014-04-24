@@ -45,12 +45,17 @@ public class PrintJobManager {
     
     /**
      * Constructor
+     * 
+     * @param context
      */
     private PrintJobManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
     /**
+     * Get instance of the PrintJob Manager
+     * 
+     * @param context
      * @return instance of PrintJobManager
      */
     public static PrintJobManager getInstance(Context context) {

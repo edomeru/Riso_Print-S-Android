@@ -119,6 +119,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * Constructor
      * <p>
      * Instantiate PrintSettingsView
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -129,6 +133,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * Constructor
      * <p>
      * Instantiate PrintSettingsView
+     * 
+     * @param context
+     * @param attrs
      */
     public PrintSettingsView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -138,6 +145,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * Constructor
      * <p>
      * Instantiate PrintSettingsView
+     * 
+     * @param context
      */
     public PrintSettingsView(Context context) {
         super(context);
@@ -357,6 +366,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * determines if the view is enabled
+     * 
+     * @param tag
+     *            Print settings tag
+     * @return true if view is enabled
      */
     private boolean isViewEnabled(String tag) {
         if (mMainLayout != null) {
@@ -455,6 +468,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * Apply value constraints
+     * 
+     * @param tag
+     *            Print Settings Tag
+     * @param prevValue
      */
     private void applyValueConstraints(String tag, int prevValue) {
         int value = mPrintSettings.getValue(tag);
@@ -654,6 +671,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      *            Print settings tag name
      * @param value
      *            value
+     * @return true if printer option should be displayed for Output tray
      */
     private boolean shouldDisplayOptionFromPrinter(String name, int value) {
         if (getPrinter() != null) {
@@ -683,6 +701,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      *            Print settings tag name
      * @param id
      *            ID
+     * @return updated string id for punch           
      */
     private int getUpdatedStringId(String name, int id) {
         if (getPrinter() != null) {
@@ -703,6 +722,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      *            Print settings tag name
      * @param newValue
      *            new value
+     * @return true update is successful
      */
     private boolean updateValue(String tag, int newValue) {
         int prevValue = mPrintSettings.getValue(tag);
@@ -753,6 +773,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * set value changed listener
+     * 
+     * @param listener
      */
     public void setValueChangedListener(PrintSettingsViewInterface listener) {
         mListener = listener;
@@ -760,6 +782,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * set show print controls
+     * 
+     * @param showPrintControls
      */
     public void setShowPrintControls(boolean showPrintControls) {
         mShowPrintControls = showPrintControls;
@@ -773,6 +797,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * set printer id
+     * 
+     * @param printerId
      */
     public void setPrinterId(int printerId) {
         mPrinterId = printerId;
@@ -782,6 +808,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     /**
+     * get printer specified by mPrinterId
+     * 
      * @return printer object
      */
     public Printer getPrinter() {
@@ -796,6 +824,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * set print settings
+     * 
+     * @param printSettings
      */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
@@ -853,6 +883,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * get options strings
+     * 
+     * @param name
+     * @param options
+     * @return Return option strings
      */
     private Object[] getOptionsStrings(String name, List<Option> options) {
         ArrayList<String> optionsStrings = new ArrayList<String>();
@@ -875,6 +909,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * add settings item view
+     * 
+     * @param ll
+     * @param setting
+     * @param withSeparator
      */
     private void addSettingsItemView(LinearLayout ll, Setting setting, boolean withSeparator) {
         String name = setting.getAttributeValue(XmlNode.ATTR_NAME);
@@ -912,6 +950,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * add settings title view
+     * 
+     * @param group
      */
     private void addSettingsTitleView(Group group) {
         String nameStr = group.getAttributeValue(XmlNode.ATTR_NAME);
@@ -1062,8 +1102,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      *            View has separator
      * @param itemId
      *            Item ID
-     * @param iconId
-     *            Icon resource ID
      */
     private void addSubviewOptionsList(String str, int value, int tagValue, boolean withSeparator, int itemId) {
         addSubviewOptionsList(str, null, value, tagValue, withSeparator, itemId, -1);
@@ -1454,6 +1492,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      *            type (boolean/numeric/list)
      * @param tag
      *            tag
+     * @return Return created view
      */
     private View createControlView(String type, String tag) {
         LayoutInflater li = LayoutInflater.from(getContext());
@@ -1704,6 +1743,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     }
     
     /**
+     * Get printer specified by printerId
+     * 
+     * @param printerId
      * @return printer object
      */
     private Printer getPrinterFromList(int printerId) {

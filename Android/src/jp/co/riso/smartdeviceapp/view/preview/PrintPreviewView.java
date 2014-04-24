@@ -179,6 +179,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Process touch event
+     *
+     * @param ev
      */
     public void processTouchEvent(MotionEvent ev) {
         if (ev.getPointerCount() == 1) {
@@ -364,6 +366,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Checks if last page curl is allowed
+     * 
+     * @return true is last page curl is allowed
      */
     public boolean getAllowLastPageCurl() {
         return mCurlView.getAllowLastPageCurl();
@@ -434,6 +438,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Checks if zoom is base zoom
+     * 
+     * @return true if zoom level is equal to BASE_ZOOM_LEVEL
      */
     public boolean isBaseZoom() {
         return mZoomLevel == BASE_ZOOM_LEVEL;
@@ -519,6 +525,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     /**
+     * @param index
+     * @param side
      * @return cache key
      */
     protected String getCacheKey(int index, int side) {
@@ -548,6 +556,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     /**
+     * @param index
+     * @param width
+     * @param height
      * @return bitmaps from cache
      */
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
@@ -571,6 +582,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     /**
+     * @param dimension
+     * @param bmpWidth
      * @return converted dimension
      */
     protected int convertDimension(float dimension, int bmpWidth) {
@@ -583,6 +596,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Check if should display landscape
+     * 
+     * @return true if should display landscape
      */
     private boolean shouldDisplayLandscape() {
         boolean flipToLandscape = (mPrintSettings.getOrientation() == Orientation.LANDSCAPE);
@@ -684,6 +699,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Check if two page display is enabled
+     * 
+     * @return true if two page display is enabled
      */
     private boolean isTwoPageDisplayed() {
         if (mPrintSettings.isBooklet()) {
@@ -726,6 +743,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Check if colored display is enabled
+     * 
+     * @return true if colored display is enabled
      */
     private boolean shouldDisplayColor() {
         return (mPrintSettings.getColorMode() != ColorMode.MONOCHROME);
@@ -733,6 +752,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * Check if display vertical flip is enabled
+     * 
+     * @return true if display vertical flip is enabled
      */
     private boolean isVerticalFlip() {
         boolean verticalFlip = true;
@@ -959,6 +980,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         /**
          * Draw crease to the canvas
+         * 
+         * @param canvas
          */
         private void drawCrease(Canvas canvas) {
             Paint paint = new Paint();
@@ -993,6 +1016,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
 
         /**
          * Draw staple images to the canvas
+         * 
+         * @param canvas
          */
         private void drawStapleImages(Canvas canvas) {
             int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
@@ -1060,6 +1085,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         /**
          * Draw punch images to the canvas
+         * 
+         * @param canvas
          */
         private void drawPunchImages(Canvas canvas) {
             int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
@@ -1086,6 +1113,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         
         /**
+         * Get begin positions
+         * 
+         * @param paperWidth
+         * @param paperHeight
+         * @param pageWidth
+         * @param pageHeight
          * @return x-axis and y-axis beginning position
          */
         private int[] getBeginPositions(int paperWidth, int paperHeight, int pageWidth, int pageHeight) {
@@ -1106,6 +1139,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         /**
          * Draw PDF pages on bitmap
+         * 
+         * @param bmp
+         * @param beginIndex
+         * @param drawCrease
+         * @param flipX
+         * @param flipY
          */
         private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean drawCrease, boolean flipX, boolean flipY) {
             // get page then draw in bitmap

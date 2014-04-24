@@ -21,6 +21,10 @@ public class SDADrawerLayout extends DrawerLayout {
      * Constructor
      * <p>
      * Instantiate custom DrawerLayout
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
     public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -30,6 +34,9 @@ public class SDADrawerLayout extends DrawerLayout {
      * Constructor
      * <p>
      * Instantiate custom DrawerLayout
+     * 
+     * @param context
+     * @param attrs
      */
     public SDADrawerLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,6 +46,8 @@ public class SDADrawerLayout extends DrawerLayout {
      * Constructor
      * <p>
      * Instantiate custom DrawerLayout
+     * 
+     * @param context
      */
     public SDADrawerLayout(Context context) {
         super(context);

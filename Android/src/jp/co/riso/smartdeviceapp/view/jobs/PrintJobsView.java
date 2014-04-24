@@ -50,6 +50,10 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * Constructor
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
     public PrintJobsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -58,6 +62,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * Constructor
+     * 
+     * @param context
+     * @param attrs
      */
     public PrintJobsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,6 +73,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * Constructor
+     * 
+     * @param context
      */
     public PrintJobsView(Context context) {
         super(context);
@@ -83,6 +92,12 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      *            PrintJobsGroup listener
      * @param listener
      *            PrintJobsView listener
+     * @param collapsedPrinters
+     *            Collapsed Printers
+     * @param printJobToDelete
+     *            Print Job to delete
+     * @param printerToDelete
+     *            Printer to delete
      */
     public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener delListener, PrintJobsViewListener listener,
             List<Printer> collapsedPrinters, PrintJob printJobToDelete, Printer printerToDelete) {
@@ -209,6 +224,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * Creates print jobs view
+     * 
+     * @param jobsList
+     * @param printer
      */
     private void createPrintJobsView(List<PrintJob> jobsList, Printer printer) {
         PrintJobsGroupView pjView = new PrintJobsGroupView(getContext());
@@ -220,6 +238,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * Restores the UI state
+     * 
+     * @param pj
+     * @param printer
      */
     private void restoreUIstate(PrintJobsGroupView pj, Printer printer) {
         boolean isCollapsed = mCollapsedPrinters.contains(printer);
@@ -325,6 +346,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * checks if a view is swiped
+     *
+     * @param ev
      */
     private boolean checkSwipe(MotionEvent ev) {
         int coords[] = new int[2];
@@ -369,6 +392,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /**
      * process swipe
+     *
+     * @param ev
      */
     private boolean processSwipe(MotionEvent ev) {
         boolean ret = false;

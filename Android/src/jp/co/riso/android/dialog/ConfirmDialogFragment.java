@@ -32,6 +32,9 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     private static final String KEY_NEG_BUTTON = "negButton";
     
     /**
+     * @param message
+     * @param buttonPosTitle
+     * @param buttonNegTitle
      * @return ConfirmDialogFragment instance
      */
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
@@ -39,6 +42,10 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     }
     
     /**
+     * @param title
+     * @param message
+     * @param buttonPosTitle
+     * @param buttonNegTitle
      * @return ConfirmDialogFragment instance
      */
     public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {

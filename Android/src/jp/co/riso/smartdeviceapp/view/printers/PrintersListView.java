@@ -36,6 +36,8 @@ public class PrintersListView extends ListView implements Callback {
      * Constructor
      * <p>
      * Instantiate Printers Screen ListView
+     * 
+     * @param context
      */
     public PrintersListView(Context context) {
         super(context);
@@ -47,6 +49,9 @@ public class PrintersListView extends ListView implements Callback {
      * Constructor
      * <p>
      * Instantiate Printers Screen ListView
+     * 
+     * @param context
+     * @param attrs
      */
     public PrintersListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,6 +63,10 @@ public class PrintersListView extends ListView implements Callback {
      * Constructor
      * <p>
      * Instantiate Printers Screen ListView
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
     public PrintersListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -65,6 +74,7 @@ public class PrintersListView extends ListView implements Callback {
         init();
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int coords[] = new int[2];
@@ -194,6 +204,8 @@ public class PrintersListView extends ListView implements Callback {
     
     /**
      * Process swipe event
+     * 
+     * @param ev
      */
     private boolean processSwipe(MotionEvent ev) {
         boolean ret = false;
@@ -213,6 +225,8 @@ public class PrintersListView extends ListView implements Callback {
     
     /**
      * Start delete mode
+     * 
+     * @param view
      */
     private void startDeleteMode(View view) {
         if (!mDeleteMode) {
@@ -225,6 +239,8 @@ public class PrintersListView extends ListView implements Callback {
     
     /**
      * End delete mode
+     * 
+     * @param view
      */
     private void endDeleteMode(View view) {
         if (mDeleteMode) {
@@ -240,6 +256,7 @@ public class PrintersListView extends ListView implements Callback {
     // Interface - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {

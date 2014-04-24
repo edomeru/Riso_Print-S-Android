@@ -68,6 +68,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * Constructor
+     * 
+     * @param context
      */
     public PrintJobsGroupView(Context context) {
         super(context);
@@ -76,7 +78,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * Constructor
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
      */
+
     public PrintJobsGroupView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
@@ -84,6 +91,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * Constructor
+     * 
+     * @param context
+     * @param attrs
      */
     public PrintJobsGroupView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -167,6 +177,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * Set delete button
+     * 
+     * @param v
      */
     public void setDeleteButton(View v) {
         mViewToDelete = v;
@@ -186,6 +198,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
+     * Get swiped JobView
+     * 
+     * @param downPoint
+     * @param ev
      * @return swiped job view
      */
     public View getJobViewSwiped(Point downPoint, MotionEvent ev) {
@@ -272,7 +288,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
-     * Create items
+     * Create list item
+     * 
+     * @param index
      */
     private void createItem(int index) {
         LayoutInflater factory = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -317,6 +335,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * Format date
+     * 
+     * @param date
      */
     private String formatDate(Date date) {
         String dateStr = DateFormat.getDateFormat(getContext()).format(date);
@@ -459,6 +479,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * display delete print jobs dialog when clicked
+     * 
+     * @param v
      */
     private void deleteJobGroup(View v) {
         if (mGroupListener.showDeleteDialog()) {
@@ -481,6 +503,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * delete a print job when clicked
+     * 
+     * @param v
      */
     private void deletePrintJob(View v) {
         PrintJob job = ((PrintJob) v.getTag());
@@ -499,6 +523,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     /**
      * delete a print job view
+     * 
+     * @param v
      */
     private void deletePrintJobView(View v) {
         for (int i = 0; i < mPrintJobViews.size(); i++) {
