@@ -555,7 +555,8 @@ namespace SmartDeviceApp.Controllers
                 _pageViewMode = PageViewMode.SinglePageView;
             }
 
-            _isDuplex = (_selectedPrinter.PrintSettings.Duplex != (int)Duplex.Off);
+            _isDuplex = (_selectedPrinter.PrintSettings.Duplex != (int)Duplex.Off) ||
+                (_isBooklet && _selectedPrinter.PrintSettings.BookletFinishing == (int)BookletFinishing.Off);
 
             _isReversePages = _isBooklet &&
                 _selectedPrinter.PrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
@@ -623,7 +624,9 @@ namespace SmartDeviceApp.Controllers
             // Generate right side
             await GenerateSingleLeaf(_currPreviewPageIndex, true);
 
-            if (_isBooklet)
+            // When booklet is on and booklet finishing is off, act like as duplex (short edge)
+            // so no need for left side
+            if (_isBooklet && _selectedPrinter.PrintSettings.BookletFinishing != (int)BookletFinishing.Off)
             {
                 // Compute left side page index
                 int leftSidePreviewPageIndex = _currPreviewPageIndex - 1;
@@ -2225,7 +2228,7 @@ namespace SmartDeviceApp.Controllers
                 int holeCount = GetPunchHoleCount(_selectedPrinter.PrintSettings.Punch);
                 int staple = _selectedPrinter.PrintSettings.Staple;
 
-                if (_isDuplex)
+                if (_isDuplex) // Also hit when booklet is on and booklet finishing is off
                 {
                     await ApplyDuplex(finalBitmap, _selectedPrinter.PrintSettings.Duplex,
                         finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
