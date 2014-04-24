@@ -129,6 +129,7 @@
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
+    <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
