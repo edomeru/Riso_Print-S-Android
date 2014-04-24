@@ -555,7 +555,7 @@ namespace SmartDeviceApp.Controllers
                 _pageViewMode = PageViewMode.SinglePageView;
             }
 
-            _isDuplex = (_selectedPrinter.PrintSettings.Duplex == (int)Duplex.Off);
+            _isDuplex = (_selectedPrinter.PrintSettings.Duplex != (int)Duplex.Off);
 
             _isReversePages = _isBooklet &&
                 _selectedPrinter.PrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
