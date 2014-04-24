@@ -148,6 +148,8 @@ public class DisplayDeleteAnimation {
         
         /**
          * Set delete view
+         * 
+         * @param view
          */
         public void setView(View view) {
             mViewReference = new WeakReference<View>(view);

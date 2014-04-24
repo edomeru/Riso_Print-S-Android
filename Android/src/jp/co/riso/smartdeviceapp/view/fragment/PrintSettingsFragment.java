@@ -134,6 +134,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     /**
      * Set fragment for printing
+     * 
+     * @param fragmentForPrinting
      */
     public void setFragmentForPrinting(boolean fragmentForPrinting) {
         mFragmentForPrinting = fragmentForPrinting;
@@ -141,6 +143,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     /**
      * Set printer ID
+     * 
+     * @param printerId
      */
     public void setPrinterId(int printerId) {
         mPrinterId = printerId;
@@ -148,6 +152,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     /**
      * Set print settings
+     * 
+     * @param printSettings
      */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);

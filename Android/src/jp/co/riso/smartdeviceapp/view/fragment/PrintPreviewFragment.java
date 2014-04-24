@@ -233,6 +233,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     /**
      * Add print button
+     * 
+     * @param v
      */
     public void addPrintButton(View v) {
         addMenuButton(v, R.id.rightActionLayout, ID_PRINT_BUTTON, R.drawable.selector_actionbar_printsettings, this);
@@ -240,6 +242,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     /**
      * Set printer id
+     * 
+     * @param printerId
      */
     public void setPrintId(int printerId) {
         mPrinterId = printerId;
@@ -247,6 +251,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     /**
      * Set print settings
+     * 
+     * @param printSettings
      */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
@@ -336,6 +342,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     // ================================================================================
     
     /**
+     * @param status
      * @return PDF error message corresponding to status
      */
     private String getPdfErrorMessage(int status) {
@@ -373,6 +380,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     /**
      * Updates the seek bar progress to index
+     * 
+     * @param index
      */
     private void updateSeekBarProgress(int index) {
         mSeekBar.setProgress(index);
