@@ -45,11 +45,6 @@
 @property (nonatomic, weak) PrintDocument *printDocument;
 
 /**
- Current page
- */
-@property (nonatomic) NSInteger currentPage;
-
-/**
  Indicates whether or not the page view controller is currently being animated (page curl)
  */
 @property (nonatomic) BOOL pageIsAnimating;
@@ -160,7 +155,7 @@
 /**
  Action when page scroller thumb is dragged
  */
-- (IBAction)dragPageScrollAction:(id)sender;
+- (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event;
 
 /**
  Action when page scroller is tapped
@@ -255,7 +250,6 @@
 {
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
     self.printDocument.delegate = self;
-    self.currentPage = 0;
     self.titleLabel.text = self.printDocument.name;
     self.printSettingsButton.hidden = NO;
     self.splashView.hidden = YES;
@@ -268,9 +262,9 @@
     self.previewView.hidden = NO;
     [self setupDisplayAspectRatio];
 
-    self.currentPage = 0;
     [self setupPageviewControllerWithBindSetting];
-    [self goToPage:self.currentPage];
+    [self.pageScroll setValue:self.printDocument.currentPage animated:NO];
+    [self goToPage:self.printDocument.currentPage];
 }
 
 - (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation
@@ -329,9 +323,9 @@
         [self.pageScroll setMaximumValue:self.totalPageNum];
     }
     //reset current page if it is now way past the computed total page number
-    if(self.currentPage >= self.totalPageNum)
+    if(self.printDocument.currentPage >= self.totalPageNum)
     {
-        self.currentPage = 0;
+        self.printDocument.currentPage = 0;
     }
 }
 
@@ -339,10 +333,10 @@
 {
     NSString *pageString = @"PAGE";
     NSInteger totalSheets = self.totalPageNum;
-    NSInteger currentSheet = self.currentPage + 1;
+    NSInteger currentSheet = self.printDocument.currentPage + 1;
     if(self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)
     {
-        currentSheet = self.currentPage/2 + 1;
+        currentSheet = self.printDocument.currentPage/2 + 1;
         totalSheets = self.totalPageNum/2 + self.totalPageNum % 2;
     }
     self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)currentSheet, (long)totalSheets];
@@ -681,21 +675,21 @@
         PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
         if(viewController.pageIndex < self.totalPageNum - 1)
         {
-            self.currentPage = viewController.pageIndex;
+            self.printDocument.currentPage = viewController.pageIndex;
         }
         else
         {
             if(viewController.pageIndex == self.layoutPageNum - 1)
             {
-                self.currentPage = 0;
+                self.printDocument.currentPage = 0;
             }
             else
             {
-                self.currentPage = self.totalPageNum - 1;
+                self.printDocument.currentPage = self.totalPageNum - 1;
             }
         }
         [self setupPageLabel];
-        [self.pageScroll setValue:self.currentPage + 1];
+        [self.pageScroll setValue:self.printDocument.currentPage + 1];
     }
 }
 
@@ -738,7 +732,7 @@
 
 - (NSUInteger) currentIndex
 {
-    return self.currentPage;
+    return self.printDocument.currentPage;
 }
 
 #pragma mark - PrintDocument Delegate Methods
@@ -760,12 +754,12 @@
     
     //set page label and page scroll based on the new total page number
     [self setupPageLabel];
-    [self.pageScroll setValue:self.currentPage + 1];
+    [self.pageScroll setValue:self.printDocument.currentPage + 1];
     
     //reset-up page view controller with new bind setting
     [self setupPageviewControllerWithBindSetting];
     
-    [self goToPage:self.currentPage];
+    [self goToPage:self.printDocument.currentPage];
 }
 
 
@@ -798,10 +792,10 @@
     [self performSegueTo:[PrintSettingsViewController class]];
 }
 
-- (IBAction)dragPageScrollAction:(id)sender
+- (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event
 {
-    UISlider *slider  = (UISlider *) sender;
-    NSInteger pageNumber = slider.value;
+    UISlider *slider = sender;
+    NSInteger pageNumber = (NSInteger)(slider.value + 0.5f);
     
     //update the current page  and page number label
     // if double sided and page is at the back (even pages)  - always navigate to the next front page
@@ -818,9 +812,15 @@
         }
     }
     
-    self.currentPage = pageNumber - 1;
-    [self goToPage:self.currentPage];
+    self.printDocument.currentPage = pageNumber - 1;
     [self setupPageLabel];
+    
+    UITouch *touch = [event.allTouches anyObject];
+    if (touch.phase == UITouchPhaseCancelled || touch.phase == UITouchPhaseEnded)
+    {
+        [slider setValue:pageNumber animated:YES];
+        [self goToPage:self.printDocument.currentPage];
+    }
 }
 
 - (IBAction)tapPageScrollAction:(id)sender
@@ -832,7 +832,7 @@
     CGFloat scrollPercentage = point.x/self.pageScroll.bounds.size.width;
     
     //multiply the the percentage with the total number of pages in view to get the current page index;
-    NSInteger pageNumber = (self.totalPageNum * scrollPercentage);
+    NSInteger pageNumber = (self.totalPageNum * scrollPercentage + 1.5f);
    
     // if double sided and page is at the back (even pages) - always navigate to the next front page
     if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2)== 0)
@@ -863,11 +863,12 @@
         }
     }
     
-    self.currentPage = pageNumber - 1;
+    self.printDocument.currentPage = pageNumber - 1;
     //update page in view, page number label. slider thumb position
-    [self goToPage:self.currentPage];
+    [self goToPage:self.printDocument.currentPage];
     [self setupPageLabel];
-    [self.pageScroll setValue:pageNumber];
+    
+    [self.pageScroll setValue:pageNumber animated:YES];
 }
 
 @end

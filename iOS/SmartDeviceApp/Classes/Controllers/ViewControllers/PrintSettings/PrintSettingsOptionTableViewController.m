@@ -188,8 +188,35 @@
                 return NO;
             }
         }
-    }   
-     return YES;
+    }
+
+#if OUTPUT_TRAY_CONSTRAINT_ENABLED
+    if([self.key isEqualToString:KEY_OUTPUT_TRAY] == YES)
+    {
+        if(self.previewSetting.booklet == YES)
+        {
+            if(option != kOutputTrayAuto)
+            {
+                return NO;
+            }
+        }
+        if(self.previewSetting.punch != kPunchTypeNone)
+        {
+            if(option == kOutputTrayFaceDownTray || option == kOutputTrayFaceUpTray)
+            {
+                return NO;
+            }
+        }
+        if(self.previewSetting.staple != kStapleTypeNone)
+        {
+            if(option == kOutputTrayFaceUpTray)
+            {
+                return NO;
+            }
+        }
+    }
+#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
+    return YES;
 }
 
 -(void) fillOptions

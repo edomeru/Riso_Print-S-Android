@@ -218,6 +218,113 @@
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
+		3197B70C18E3D7D500C804FE /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3197B70B18E3D7D500C804FE /* SettingsViewController.m */; };
+		31A24B8C18E54B1F00CF3AF2 /* SettingsValidationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */; };
+		31A24B9018E5531A00CF3AF2 /* SettingsValidationHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */; };
+		31A24B9118E5575500CF3AF2 /* SettingsValidationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */; };
+		31AAF45318E94838001C9E4C /* Printer+Log.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF4F18E2EFCB00085F27 /* Printer+Log.h */; };
+		31AAF45418E94838001C9E4C /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5018E2EFCB00085F27 /* Printer+Log.m */; };
+		31AAF45518E94838001C9E4C /* PrintSetting+Log.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5118E2EFCB00085F27 /* PrintSetting+Log.h */; };
+		31AAF45618E94838001C9E4C /* PrintSetting+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5218E2EFCB00085F27 /* PrintSetting+Log.m */; };
+		31AAF45718E94838001C9E4C /* DefaultPrinter.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB618E2EF7D00085F27 /* DefaultPrinter.h */; };
+		31AAF45818E94838001C9E4C /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */; };
+		31AAF45918E94838001C9E4C /* PreviewSetting.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB818E2EF7D00085F27 /* PreviewSetting.h */; };
+		31AAF45A18E94838001C9E4C /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB918E2EF7D00085F27 /* PreviewSetting.m */; };
+		31AAF45B18E94838001C9E4C /* Printer.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBA18E2EF7D00085F27 /* Printer.h */; };
+		31AAF45C18E94838001C9E4C /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBB18E2EF7D00085F27 /* Printer.m */; };
+		31AAF45D18E94838001C9E4C /* PrinterDetails.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBC18E2EF7D00085F27 /* PrinterDetails.h */; };
+		31AAF45E18E94838001C9E4C /* PrinterDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBD18E2EF7D00085F27 /* PrinterDetails.m */; };
+		31AAF45F18E94838001C9E4C /* PrintJob.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBE18E2EF7D00085F27 /* PrintJob.h */; };
+		31AAF46018E94838001C9E4C /* PrintJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBF18E2EF7D00085F27 /* PrintJob.m */; };
+		31AAF46118E94838001C9E4C /* PrintSetting.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEC018E2EF7D00085F27 /* PrintSetting.h */; };
+		31AAF46218E94838001C9E4C /* PrintSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEC118E2EF7D00085F27 /* PrintSetting.m */; };
+		31AAF46318E94838001C9E4C /* PrinterCollectionViewCell.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5918E2F02A00085F27 /* PrinterCollectionViewCell.h */; };
+		31AAF46418E94838001C9E4C /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5A18E2F02A00085F27 /* PrinterCollectionViewCell.m */; };
+		31AAF46518E94838001C9E4C /* UIView+Localization.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AECF18E2EF8500085F27 /* UIView+Localization.h */; };
+		31AAF46618E94838001C9E4C /* UIView+Localization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED018E2EF8500085F27 /* UIView+Localization.m */; };
+		31AAF46718E94838001C9E4C /* PrinterCell.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEDA18E2EF8500085F27 /* PrinterCell.h */; };
+		31AAF46818E94838001C9E4C /* PrinterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEDB18E2EF8500085F27 /* PrinterCell.m */; };
+		31AAF46918E94838001C9E4C /* SearchResultCell.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEDC18E2EF8500085F27 /* SearchResultCell.h */; };
+		31AAF46A18E94838001C9E4C /* SearchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEDD18E2EF8500085F27 /* SearchResultCell.m */; };
+		31AAF46B18E94838001C9E4C /* DefaultView.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AECC18E2EF8500085F27 /* DefaultView.h */; };
+		31AAF46C18E94838001C9E4C /* DefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AECD18E2EF8500085F27 /* DefaultView.m */; };
+		31AAF46D18E94838001C9E4C /* MenuButton.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED118E2EF8500085F27 /* MenuButton.h */; };
+		31AAF46E18E94838001C9E4C /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED218E2EF8500085F27 /* MenuButton.m */; };
+		31AAF46F18E94838001C9E4C /* MenuScrollView.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED318E2EF8500085F27 /* MenuScrollView.h */; };
+		31AAF47018E94838001C9E4C /* MenuScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED418E2EF8500085F27 /* MenuScrollView.m */; };
+		31AAF47118E94838001C9E4C /* PDFPageView.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED518E2EF8500085F27 /* PDFPageView.h */; };
+		31AAF47218E94838001C9E4C /* PDFPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AED618E2EF8500085F27 /* PDFPageView.m */; };
+		31AAF47318E94838001C9E4C /* PrinterStatusView.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */; };
+		31AAF47418E94838001C9E4C /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
+		31AAF47518E94838001C9E4C /* AppDelegate.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEE918E2EF9600085F27 /* AppDelegate.h */; };
+		31AAF47618E94838001C9E4C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEA18E2EF9600085F27 /* AppDelegate.m */; };
+		31AAF47818E94838001C9E4C /* ReplaceSegue.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEED18E2EF9600085F27 /* ReplaceSegue.h */; };
+		31AAF47918E94838001C9E4C /* ReplaceSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEE18E2EF9600085F27 /* ReplaceSegue.m */; };
+		31AAF47A18E94838001C9E4C /* SlideOverSegue.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEF18E2EF9600085F27 /* SlideOverSegue.h */; };
+		31AAF47B18E94838001C9E4C /* SlideOverSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF018E2EF9600085F27 /* SlideOverSegue.m */; };
+		31AAF47C18E94838001C9E4C /* SlideSegue.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF118E2EF9600085F27 /* SlideSegue.h */; };
+		31AAF47D18E94838001C9E4C /* SlideSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF218E2EF9600085F27 /* SlideSegue.m */; };
+		31AAF47E18E94838001C9E4C /* SettingsViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 3197B70A18E3D7D500C804FE /* SettingsViewController.h */; };
+		31AAF47F18E94838001C9E4C /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3197B70B18E3D7D500C804FE /* SettingsViewController.m */; };
+		31AAF48018E94838001C9E4C /* AddPrinterViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF518E2EF9600085F27 /* AddPrinterViewController.h */; };
+		31AAF48118E94838001C9E4C /* AddPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF618E2EF9600085F27 /* AddPrinterViewController.m */; };
+		31AAF48218E94838001C9E4C /* RootViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF818E2EF9600085F27 /* RootViewController.h */; };
+		31AAF48318E94838001C9E4C /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEF918E2EF9600085F27 /* RootViewController.m */; };
+		31AAF48418E94838001C9E4C /* SlidingViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEFA18E2EF9600085F27 /* SlidingViewController.h */; };
+		31AAF48518E94838001C9E4C /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEFB18E2EF9600085F27 /* SlidingViewController.m */; };
+		31AAF48618E94838001C9E4C /* UIViewController+Segue.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEFC18E2EF9600085F27 /* UIViewController+Segue.h */; };
+		31AAF48718E94838001C9E4C /* UIViewController+Segue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEFD18E2EF9600085F27 /* UIViewController+Segue.m */; };
+		31AAF48818E94838001C9E4C /* HomeViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEFF18E2EF9600085F27 /* HomeViewController.h */; };
+		31AAF48918E94838001C9E4C /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0018E2EF9600085F27 /* HomeViewController.m */; };
+		31AAF48A18E94838001C9E4C /* PrinterInfoViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0218E2EF9600085F27 /* PrinterInfoViewController.h */; };
+		31AAF48B18E94838001C9E4C /* PrinterInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0318E2EF9600085F27 /* PrinterInfoViewController.m */; };
+		31AAF48C18E94838001C9E4C /* PrintersIpadViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0518E2EF9600085F27 /* PrintersIpadViewController.h */; };
+		31AAF48D18E94838001C9E4C /* PrintersIpadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0618E2EF9600085F27 /* PrintersIpadViewController.m */; };
+		31AAF48E18E94838001C9E4C /* PrintersIphoneViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0718E2EF9600085F27 /* PrintersIphoneViewController.h */; };
+		31AAF48F18E94838001C9E4C /* PrintersIphoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0818E2EF9600085F27 /* PrintersIphoneViewController.m */; };
+		31AAF49018E94838001C9E4C /* PrintersViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0918E2EF9600085F27 /* PrintersViewController.h */; };
+		31AAF49118E94838001C9E4C /* PrintersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0A18E2EF9600085F27 /* PrintersViewController.m */; };
+		31AAF49218E94838001C9E4C /* PrinterSearchViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0C18E2EF9600085F27 /* PrinterSearchViewController.h */; };
+		31AAF49318E94838001C9E4C /* PrinterSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0D18E2EF9600085F27 /* PrinterSearchViewController.m */; };
+		31AAF49418E94838001C9E4C /* PDFPageContentViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF0F18E2EF9600085F27 /* PDFPageContentViewController.h */; };
+		31AAF49518E94838001C9E4C /* PDFPageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1018E2EF9600085F27 /* PDFPageContentViewController.m */; };
+		31AAF49618E94838001C9E4C /* PrintPreviewViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1118E2EF9600085F27 /* PrintPreviewViewController.h */; };
+		31AAF49718E94838001C9E4C /* PrintPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1218E2EF9600085F27 /* PrintPreviewViewController.m */; };
+		31AAF49818E94838001C9E4C /* PrintSettingsViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1418E2EF9600085F27 /* PrintSettingsViewController.h */; };
+		31AAF49918E94838001C9E4C /* PrintSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF1518E2EF9600085F27 /* PrintSettingsViewController.m */; };
+		31AAF49A18E94838001C9E4C /* DatabaseManager.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2918E2EF9C00085F27 /* DatabaseManager.h */; };
+		31AAF49B18E94838001C9E4C /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2A18E2EF9C00085F27 /* DatabaseManager.m */; };
+		31AAF49C18E94838001C9E4C /* NetworkManager.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2B18E2EF9C00085F27 /* NetworkManager.h */; };
+		31AAF49D18E94838001C9E4C /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2C18E2EF9C00085F27 /* NetworkManager.m */; };
+		31AAF49E18E94838001C9E4C /* PDFFileManager.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2D18E2EF9C00085F27 /* PDFFileManager.h */; };
+		31AAF49F18E94838001C9E4C /* PDFFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2E18E2EF9C00085F27 /* PDFFileManager.m */; };
+		31AAF4A018E94838001C9E4C /* PrinterManager.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF2F18E2EF9C00085F27 /* PrinterManager.h */; };
+		31AAF4A118E94838001C9E4C /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3018E2EF9C00085F27 /* PrinterManager.m */; };
+		31AAF4A218E94838001C9E4C /* SNMPManager.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3118E2EF9C00085F27 /* SNMPManager.h */; };
+		31AAF4A318E94838001C9E4C /* SNMPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3218E2EF9C00085F27 /* SNMPManager.m */; };
+		31AAF4A418E94838001C9E4C /* AppDebug.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3A18E2EFA400085F27 /* AppDebug.h */; };
+		31AAF4A518E94838001C9E4C /* AppStrings.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3B18E2EFA400085F27 /* AppStrings.h */; };
+		31AAF4A618E94838001C9E4C /* NotificationNames.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3C18E2EFA400085F27 /* NotificationNames.h */; };
+		31AAF4A718E94838001C9E4C /* PrintSettingNames.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF3D18E2EFA400085F27 /* PrintSettingNames.h */; };
+		31AAF4A818E94838001C9E4C /* AlertHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5C18E2F08900085F27 /* AlertHelper.h */; };
+		31AAF4A918E94838001C9E4C /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5D18E2F08900085F27 /* AlertHelper.m */; };
+		31AAF4AA18E94838001C9E4C /* InputHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5E18E2F08900085F27 /* InputHelper.h */; };
+		31AAF4AB18E94838001C9E4C /* InputHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5F18E2F08900085F27 /* InputHelper.m */; };
+		31AAF4AC18E94838001C9E4C /* PListHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6018E2F08900085F27 /* PListHelper.h */; };
+		31AAF4AD18E94838001C9E4C /* PListHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6118E2F08900085F27 /* PListHelper.m */; };
+		31AAF4AE18E94838001C9E4C /* PrinterStatusHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6218E2F08900085F27 /* PrinterStatusHelper.h */; };
+		31AAF4AF18E94838001C9E4C /* PrinterStatusHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6318E2F08900085F27 /* PrinterStatusHelper.m */; };
+		31AAF4B018E94838001C9E4C /* PrintPreviewHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6418E2F08900085F27 /* PrintPreviewHelper.h */; };
+		31AAF4B118E94838001C9E4C /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
+		31AAF4B218E94838001C9E4C /* UIColor+Theme.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */; };
+		31AAF4B318E94838001C9E4C /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
+		31AAF4B418E94838001C9E4C /* SettingsValidationHelper.h in Sources */ = {isa = PBXBuildFile; fileRef = 31A24B8A18E54B1F00CF3AF2 /* SettingsValidationHelper.h */; };
+		31AAF4B518E94858001C9E4C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
+		31AAF4B618E948B6001C9E4C /* Reachability.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6E18E278B000085F27 /* Reachability.h */; };
+		31AAF4B718E948B6001C9E4C /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AE6F18E278B000085F27 /* Reachability.m */; };
+		31AAF4B818E94985001C9E4C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC4E185FDE8100810455 /* Main.storyboard */; };
+		31AAF4BC18E94995001C9E4C /* SettingsViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 31AAF4BB18E94995001C9E4C /* SettingsViewControllerTest.m */; };
+		31AAF4C118E94AE4001C9E4C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -463,6 +570,12 @@
 		2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Theme.m"; sourceTree = "<group>"; };
 		31F32CD718F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListTableViewController.h; sourceTree = "<group>"; };
 		31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListTableViewController.m; sourceTree = "<group>"; };
+		3197B70A18E3D7D500C804FE /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		3197B70B18E3D7D500C804FE /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		31A24B8A18E54B1F00CF3AF2 /* SettingsValidationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsValidationHelper.h; sourceTree = "<group>"; };
+		31A24B8B18E54B1F00CF3AF2 /* SettingsValidationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsValidationHelper.m; sourceTree = "<group>"; };
+		31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsValidationHelperTest.m; sourceTree = "<group>"; };
+		31AAF4BB18E94995001C9E4C /* SettingsViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1233,6 +1346,39 @@
 			path = CollectionViewCells;
 			sourceTree = "<group>";
 		};
+		3197B70918E3D79E00C804FE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3197B70A18E3D7D500C804FE /* SettingsViewController.h */,
+				3197B70B18E3D7D500C804FE /* SettingsViewController.m */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		31A24B8D18E552F900CF3AF2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				31A24B8F18E5531A00CF3AF2 /* SettingsValidationHelperTest.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		31AAF4B918E94995001C9E4C /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				31AAF4BA18E94995001C9E4C /* Settings */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		31AAF4BA18E94995001C9E4C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				31AAF4BB18E94995001C9E4C /* SettingsViewControllerTest.m */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1540,6 +1686,109 @@
 				2D1F23891900FC2000301D1E /* Printer+Log.m in Sources */,
 				2D1F23591900FB6D00301D1E /* ReplaceSegue.m in Sources */,
 				2D1F23561900FB3000301D1E /* PrintJobHistoryHelper.m in Sources */,
+				31AAF4B618E948B6001C9E4C /* Reachability.h in Sources */,
+				31AAF4B718E948B6001C9E4C /* Reachability.m in Sources */,
+				31AAF45318E94838001C9E4C /* Printer+Log.h in Sources */,
+				31AAF45418E94838001C9E4C /* Printer+Log.m in Sources */,
+				31AAF45518E94838001C9E4C /* PrintSetting+Log.h in Sources */,
+				31AAF45618E94838001C9E4C /* PrintSetting+Log.m in Sources */,
+				31AAF45718E94838001C9E4C /* DefaultPrinter.h in Sources */,
+				31AAF45818E94838001C9E4C /* DefaultPrinter.m in Sources */,
+				31AAF45918E94838001C9E4C /* PreviewSetting.h in Sources */,
+				31AAF45A18E94838001C9E4C /* PreviewSetting.m in Sources */,
+				31AAF45B18E94838001C9E4C /* Printer.h in Sources */,
+				31AAF45C18E94838001C9E4C /* Printer.m in Sources */,
+				31AAF45D18E94838001C9E4C /* PrinterDetails.h in Sources */,
+				31AAF45E18E94838001C9E4C /* PrinterDetails.m in Sources */,
+				31AAF45F18E94838001C9E4C /* PrintJob.h in Sources */,
+				31AAF46018E94838001C9E4C /* PrintJob.m in Sources */,
+				31AAF46118E94838001C9E4C /* PrintSetting.h in Sources */,
+				31AAF46218E94838001C9E4C /* PrintSetting.m in Sources */,
+				31AAF46318E94838001C9E4C /* PrinterCollectionViewCell.h in Sources */,
+				31AAF46418E94838001C9E4C /* PrinterCollectionViewCell.m in Sources */,
+				31AAF46518E94838001C9E4C /* UIView+Localization.h in Sources */,
+				31AAF46618E94838001C9E4C /* UIView+Localization.m in Sources */,
+				31AAF46718E94838001C9E4C /* PrinterCell.h in Sources */,
+				31AAF46818E94838001C9E4C /* PrinterCell.m in Sources */,
+				31AAF46918E94838001C9E4C /* SearchResultCell.h in Sources */,
+				31AAF46A18E94838001C9E4C /* SearchResultCell.m in Sources */,
+				31AAF46B18E94838001C9E4C /* DefaultView.h in Sources */,
+				31AAF46C18E94838001C9E4C /* DefaultView.m in Sources */,
+				31AAF46D18E94838001C9E4C /* MenuButton.h in Sources */,
+				31AAF46E18E94838001C9E4C /* MenuButton.m in Sources */,
+				31AAF46F18E94838001C9E4C /* MenuScrollView.h in Sources */,
+				31AAF47018E94838001C9E4C /* MenuScrollView.m in Sources */,
+				31AAF47118E94838001C9E4C /* PDFPageView.h in Sources */,
+				31AAF47218E94838001C9E4C /* PDFPageView.m in Sources */,
+				31AAF47318E94838001C9E4C /* PrinterStatusView.h in Sources */,
+				31AAF47418E94838001C9E4C /* PrinterStatusView.m in Sources */,
+				31AAF47518E94838001C9E4C /* AppDelegate.h in Sources */,
+				31AAF47618E94838001C9E4C /* AppDelegate.m in Sources */,
+				31AAF47818E94838001C9E4C /* ReplaceSegue.h in Sources */,
+				31AAF47918E94838001C9E4C /* ReplaceSegue.m in Sources */,
+				31AAF47A18E94838001C9E4C /* SlideOverSegue.h in Sources */,
+				31AAF47B18E94838001C9E4C /* SlideOverSegue.m in Sources */,
+				31AAF47C18E94838001C9E4C /* SlideSegue.h in Sources */,
+				31AAF47D18E94838001C9E4C /* SlideSegue.m in Sources */,
+				31AAF47E18E94838001C9E4C /* SettingsViewController.h in Sources */,
+				31AAF47F18E94838001C9E4C /* SettingsViewController.m in Sources */,
+				31AAF48018E94838001C9E4C /* AddPrinterViewController.h in Sources */,
+				31AAF48118E94838001C9E4C /* AddPrinterViewController.m in Sources */,
+				31AAF48218E94838001C9E4C /* RootViewController.h in Sources */,
+				31AAF48318E94838001C9E4C /* RootViewController.m in Sources */,
+				31AAF48418E94838001C9E4C /* SlidingViewController.h in Sources */,
+				31AAF48518E94838001C9E4C /* SlidingViewController.m in Sources */,
+				31AAF48618E94838001C9E4C /* UIViewController+Segue.h in Sources */,
+				31AAF48718E94838001C9E4C /* UIViewController+Segue.m in Sources */,
+				31AAF48818E94838001C9E4C /* HomeViewController.h in Sources */,
+				31AAF48918E94838001C9E4C /* HomeViewController.m in Sources */,
+				31AAF48A18E94838001C9E4C /* PrinterInfoViewController.h in Sources */,
+				31AAF48B18E94838001C9E4C /* PrinterInfoViewController.m in Sources */,
+				31AAF48C18E94838001C9E4C /* PrintersIpadViewController.h in Sources */,
+				31AAF48D18E94838001C9E4C /* PrintersIpadViewController.m in Sources */,
+				31AAF48E18E94838001C9E4C /* PrintersIphoneViewController.h in Sources */,
+				31AAF48F18E94838001C9E4C /* PrintersIphoneViewController.m in Sources */,
+				31AAF49018E94838001C9E4C /* PrintersViewController.h in Sources */,
+				31AAF49118E94838001C9E4C /* PrintersViewController.m in Sources */,
+				31AAF49218E94838001C9E4C /* PrinterSearchViewController.h in Sources */,
+				31AAF4BC18E94995001C9E4C /* SettingsViewControllerTest.m in Sources */,
+				31AAF49318E94838001C9E4C /* PrinterSearchViewController.m in Sources */,
+				31AAF49418E94838001C9E4C /* PDFPageContentViewController.h in Sources */,
+				31AAF49518E94838001C9E4C /* PDFPageContentViewController.m in Sources */,
+				31AAF49618E94838001C9E4C /* PrintPreviewViewController.h in Sources */,
+				31AAF49718E94838001C9E4C /* PrintPreviewViewController.m in Sources */,
+				31AAF49818E94838001C9E4C /* PrintSettingsViewController.h in Sources */,
+				31AAF49918E94838001C9E4C /* PrintSettingsViewController.m in Sources */,
+				31AAF49A18E94838001C9E4C /* DatabaseManager.h in Sources */,
+				31AAF49B18E94838001C9E4C /* DatabaseManager.m in Sources */,
+				31AAF49C18E94838001C9E4C /* NetworkManager.h in Sources */,
+				31AAF49D18E94838001C9E4C /* NetworkManager.m in Sources */,
+				31AAF49E18E94838001C9E4C /* PDFFileManager.h in Sources */,
+				31AAF49F18E94838001C9E4C /* PDFFileManager.m in Sources */,
+				31AAF4A018E94838001C9E4C /* PrinterManager.h in Sources */,
+				31AAF4A118E94838001C9E4C /* PrinterManager.m in Sources */,
+				31AAF4A218E94838001C9E4C /* SNMPManager.h in Sources */,
+				31AAF4A318E94838001C9E4C /* SNMPManager.m in Sources */,
+				31AAF4A418E94838001C9E4C /* AppDebug.h in Sources */,
+				31AAF4A518E94838001C9E4C /* AppStrings.h in Sources */,
+				31AAF4A618E94838001C9E4C /* NotificationNames.h in Sources */,
+				31AAF4A718E94838001C9E4C /* PrintSettingNames.h in Sources */,
+				31AAF4A818E94838001C9E4C /* AlertHelper.h in Sources */,
+				31AAF4A918E94838001C9E4C /* AlertHelper.m in Sources */,
+				31AAF4AA18E94838001C9E4C /* InputHelper.h in Sources */,
+				31AAF4AB18E94838001C9E4C /* InputHelper.m in Sources */,
+				31AAF4AC18E94838001C9E4C /* PListHelper.h in Sources */,
+				31AAF4AD18E94838001C9E4C /* PListHelper.m in Sources */,
+				31AAF4AE18E94838001C9E4C /* PrinterStatusHelper.h in Sources */,
+				31AAF4AF18E94838001C9E4C /* PrinterStatusHelper.m in Sources */,
+				31AAF4B018E94838001C9E4C /* PrintPreviewHelper.h in Sources */,
+				31AAF4B118E94838001C9E4C /* PrintPreviewHelper.m in Sources */,
+				31AAF4B218E94838001C9E4C /* UIColor+Theme.h in Sources */,
+				31AAF4B318E94838001C9E4C /* UIColor+Theme.m in Sources */,
+				31AAF4B418E94838001C9E4C /* SettingsValidationHelper.h in Sources */,
+				31A24B9118E5575500CF3AF2 /* SettingsValidationHelper.m in Sources */,
+				2D0AEC62185FE43200810455 /* main.m in Sources */,
+				31A24B9018E5531A00CF3AF2 /* SettingsValidationHelperTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

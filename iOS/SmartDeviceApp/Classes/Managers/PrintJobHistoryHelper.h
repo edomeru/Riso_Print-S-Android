@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class PrintDocument;
+
 @interface PrintJobHistoryHelper : NSObject
 
 /**
@@ -17,5 +19,7 @@
  @return array of PrintJobHistoryGroups
  */
 + (NSMutableArray*)preparePrintJobHistoryGroups;
+
++ (BOOL)createPrintJobFromDocument:(PrintDocument *)printDocument withResult:(NSInteger)result;
 
 @end

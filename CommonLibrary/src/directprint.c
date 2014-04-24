@@ -527,7 +527,7 @@ void *do_lpr_print(void *parameter)
         }
         
         send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
-        print_job->progress += 4.0f;
+        print_job->progress = 99.0f;
         notify_callback(print_job, kJobStatusSending);
         
         pos = 0;

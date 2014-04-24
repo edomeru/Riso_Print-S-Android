@@ -23,4 +23,6 @@
 @property (nonatomic, weak) UIViewController *mainController;
 @property (nonatomic, weak) SlidingViewController *sideController;
 
++ (RootViewController *)container;
+
 @end

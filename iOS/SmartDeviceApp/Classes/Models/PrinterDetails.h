@@ -34,6 +34,7 @@
 @property (assign, nonatomic) BOOL enStaple;
 @property (assign, nonatomic) BOOL enLPR;
 @property (assign, nonatomic) BOOL enRAW;
+@property (assign, nonatomic) BOOL enPunch3Holes;
 
 @property (assign, nonatomic) BOOL capBooklet;
 @property (assign, nonatomic) BOOL capStapler;

@@ -14,6 +14,7 @@
 #import "PrinterStatusView.h"
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
+#import "UIView+Localization.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -114,9 +115,15 @@
     }
     cell.nameLabel.text = printer.name;
     cell.ipAddressLabel.text = printer.ip_address;
-    cell.portLabel.text = [printer.port stringValue];
+    
+    // Port
+    [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_LPR, @"LPR") forSegmentAtIndex:0];
+    [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
+    [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
+    
     cell.defaultSettingsButton.tag = indexPath.row;
-
+    cell.portSelection.tag = indexPath.row;
+    
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
     // (the status view is not dealloc'd and it still sets
@@ -262,6 +269,15 @@
     self.selectedPrinterIndex = [NSNumber numberWithInteger:button.tag];
     [self performSegueTo:[PrintSettingsViewController class]];
 }
+
+- (IBAction)portSelectionAction:(id)sender
+{
+    UISegmentedControl* segmentedControl = (UISegmentedControl *) sender;
+    Printer *printer = [self.printerManager getPrinterAtIndex:segmentedControl.tag];
+    printer.port = [NSNumber numberWithInteger:segmentedControl.selectedSegmentIndex];
+    [self.printerManager savePrinterChanges];
+}
+
 
 #pragma mark - Segue
 
