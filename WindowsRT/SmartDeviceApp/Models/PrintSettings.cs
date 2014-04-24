@@ -114,6 +114,7 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
+        public bool IsValueDisplayed { get; set; }
 
         public override bool Equals(System.Object obj)
         {
