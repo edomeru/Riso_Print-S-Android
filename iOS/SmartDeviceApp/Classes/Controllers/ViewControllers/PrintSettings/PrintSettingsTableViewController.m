@@ -27,6 +27,7 @@
 #import "AlertHelper.h"
 #import "UIViewController+Segue.h"
 #import "PrintJobHistoryViewController.h"
+#import "NetworkManager.h"
 
 #define PRINTER_HEADER_CELL @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItemCell"
@@ -963,6 +964,12 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if (self.printer == nil)
     {
         [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
+        return;
+    }
+    
+    if (![NetworkManager isConnectedToLocalWifi])
+    {
+        [AlertHelper displayResult:kAlertResultErrNoNetwork withTitle:kAlertTitleDefault withDetails:nil];
         return;
     }
     
