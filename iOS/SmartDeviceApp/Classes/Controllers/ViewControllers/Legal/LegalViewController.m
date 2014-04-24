@@ -12,7 +12,13 @@
 
 #define LEGAL_HTML @"legal"
 
-@interface LegalViewController ()
+#define DOC_APP_NAME_ID @"localize_appname"
+#define DOC_VERSION_ID @"localize_version"
+#define DOC_COPYRIGHT_ID @"localize_copyright"
+
+#define DOC_REPLACE_STRING @"document.getElementById('%@').innerHTML = '%@'"
+
+@interface LegalViewController ()<UIWebViewDelegate>
 
 @property (nonatomic, weak) IBOutlet UIWebView *webView;
 @property (nonatomic, weak) IBOutlet UIButton *mainMenuButton;
@@ -58,6 +64,19 @@
 - (IBAction)unwindToLegal:(UIStoryboardSegue *)segue
 {
     self.mainMenuButton.enabled = YES;
+}
+
+#pragma mark - UIWebViewDelegate
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    NSString *appName = NSLocalizedString(IDS_APP_NAME, "");
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *copyright = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHumanReadableCopyright"];
+    
+    [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_APP_NAME_ID, appName]];
+    [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_VERSION_ID, version]];
+    [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_COPYRIGHT_ID, copyright]];
 }
 
 @end

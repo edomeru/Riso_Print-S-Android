@@ -108,10 +108,10 @@
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2D574CA218FE0AC700E52361 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
 		2D574CA318FE0AC700E52361 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
-		2D574CA918FE103800E52361 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/help.html; sourceTree = "<group>"; };
-		2D574CAB18FE104300E52361 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file; name = ja; path = ja.lproj/help.html; sourceTree = "<group>"; };
-		2D574CAF18FE105800E52361 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/legal.html; sourceTree = "<group>"; };
-		2D574CB118FE105D00E52361 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file; name = ja; path = ja.lproj/legal.html; sourceTree = "<group>"; };
+		2D574CA918FE103800E52361 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/help.html; sourceTree = "<group>"; };
+		2D574CAB18FE104300E52361 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/help.html; sourceTree = "<group>"; };
+		2D574CAF18FE105800E52361 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/legal.html; sourceTree = "<group>"; };
+		2D574CB118FE105D00E52361 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/legal.html; sourceTree = "<group>"; };
 		2D574CB318FE150000E52361 /* LegalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegalViewController.h; sourceTree = "<group>"; };
 		2D574CB418FE150000E52361 /* LegalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegalViewController.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
