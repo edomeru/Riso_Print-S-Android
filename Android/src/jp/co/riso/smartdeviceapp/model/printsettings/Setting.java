@@ -30,6 +30,11 @@ public class Setting extends XmlNode {
     
     private List<Option> mOptions;
     
+    /**
+     * Constructor
+     * 
+     * @param settingNode
+     */
     public Setting(Node settingNode) {
         super(settingNode);
         
@@ -41,10 +46,16 @@ public class Setting extends XmlNode {
         }
     }
     
+    /**
+     * @return list of options
+     */
     public List<Option> getOptions() {
         return mOptions;
     }
     
+    /**
+     * @return type
+     */
     public int getType() {
         String type = getAttributeValue(ATTR_TYPE);
         
@@ -59,6 +70,9 @@ public class Setting extends XmlNode {
         return TYPE_INVALID;
     }
     
+    /**
+     * @return default value
+     */
     public Integer getDefaultValue() {
         String value = getAttributeValue(ATTR_DEFAULT);
         
@@ -73,6 +87,9 @@ public class Setting extends XmlNode {
         return -1;
     }
     
+    /**
+     * @return database key
+     */
     public String getDbKey() {
         return getAttributeValue(ATTR_DBKEY);
     }

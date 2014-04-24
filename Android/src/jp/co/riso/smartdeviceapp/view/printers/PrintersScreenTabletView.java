@@ -62,31 +62,58 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     private int mWidth = 0;
     private int mHeight = 0;
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate Printers Screen tablet view
+     * 
+     * @param context
+     */
     public PrintersScreenTabletView(Context context) {
         super(context);
         init(context);
     }
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate Printers Screen tablet view
+     * 
+     * @param context
+     * @param attrs
+     */
     public PrintersScreenTabletView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate Printers Screen tablet view
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
+     */
     public PrintersScreenTabletView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     protected LayoutParams generateLayoutParams(LayoutParams layoutParams) {
         return new MarginLayoutParams(layoutParams);
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -120,6 +147,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         setMeasuredDimension(screenWidth, childHeight * numberOfRow);
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final int childCount = getChildCount();
@@ -146,6 +174,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int coords[] = new int[2];
@@ -175,6 +204,14 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // Public Methods
     // ================================================================================
     
+    /**
+     * Add Printer.
+     * <p>
+     * Add printer to the Printers Screen
+     * 
+     * @param printer
+     *            Printer object
+     */
     public void onAddedNewPrinter(Printer printer) {
         mPrinterList.add(printer);
         Message newMessage = Message.obtain(mHandler, MSG_ADD_PRINTER);
@@ -182,6 +219,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         mHandler.sendMessage(newMessage);
     }
     
+    /**
+     * Restore the Printers Screen previous state
+     * 
+     * @param printer
+     * @param deleteItem
+     */
     public void restoreState(List<Printer> printer, int deleteItem) {
         mPrinterList = printer;
         mDeleteItem = deleteItem;
@@ -193,6 +236,9 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         
     }
     
+    /**
+     * @return delete view index
+     */
     public int getDeleteItemPosition() {
         if (mDeleteViewHolder != null) {
             mDeleteItem = indexOfChild((View) mDeleteViewHolder.mOnlineIndcator.getTag());
@@ -204,11 +250,22 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // Private methods
     // ================================================================================
     
+    /**
+     * Initialize PrinterScreenTabletView
+     * 
+     * @param context
+     */
     private void init(Context context) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
     }
     
+    /**
+     * Set view holder to normal
+     * 
+     * @param viewHolder
+     *            view holder to set as normal
+     */
     private void setPrinterViewToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -227,6 +284,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         }
     }
     
+    /**
+     * Set view holder to default
+     * 
+     * @param viewHolder
+     *            view holder to set as default
+     */
     private void setPrinterViewToDefault(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -255,6 +318,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         mDefaultViewHolder = viewHolder;
     }
     
+    /**
+     * Set view holder to delete
+     * 
+     * @param viewHolder
+     *            view holder to set as delete
+     */
     private void setPrinterViewToDelete(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -269,6 +338,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         mDeleteViewHolder = viewHolder;
     }
     
+    /**
+     * Reset view holder
+     * 
+     * @param viewHolder
+     *            view holder to reset
+     */
     private void setPrinterView(ViewHolder viewHolder) {
         Printer printer = (Printer) viewHolder.mIpAddress.getTag();
         
@@ -279,6 +354,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         }
     }
     
+    /**
+     * Adds printer object to the Printers Screen
+     * 
+     * @param printer
+     *            printer object
+     */
     private void addToTabletPrinterScreen(Printer printer) {
         if (printer == null) {
             return;
@@ -333,6 +414,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onLongClick
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean onLongClick(View v) {
         mDeleteViewHolder = (ViewHolder) v.findViewById(R.id.txt_printerName).getTag();
@@ -344,6 +426,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onClick
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         ViewHolder viewHolder = null;
@@ -404,6 +487,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
@@ -421,6 +505,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -445,12 +530,14 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         Printer printer = (Printer) parentView.getTag();
         printer.setPortSetting(position);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing
@@ -460,6 +547,9 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // Internal Classes
     // ================================================================================
     
+    /**
+     * Printers Screen view holder for tablet
+     */
     public class ViewHolder {
         private ImageView mOnlineIndcator;
         private TextView mPrinterName;

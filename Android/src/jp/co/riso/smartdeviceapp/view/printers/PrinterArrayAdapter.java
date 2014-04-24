@@ -42,6 +42,13 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     private int mLayoutId = 0;
     private Handler mHandler = null;
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     * @param resource
+     * @param values
+     */
     public PrinterArrayAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
         this.mLayoutId = resource;
@@ -121,12 +128,21 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // Public Methods
     // ================================================================================
     
+    /**
+     * Clears the delete view
+     */
     public void hideDeleteButton() {
         if (mDeleteViewHolder != null) {
             setPrinterRow(mDeleteViewHolder);
         }
     }
     
+    /**
+     * Set the view to delete
+     * 
+     * @param convertView
+     *            view to set as delete view
+     */
     public void setPrinterRowToDelete(View convertView) {
         if (convertView == null) {
             return;
@@ -144,6 +160,12 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         mDeleteViewHolder = viewHolder;
     }
     
+    /**
+     * Reset the view
+     * 
+     * @param convertView
+     *            view to reset
+     */
     public void setPrinterRow(View convertView) {
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         Printer printer = (Printer) viewHolder.mPrinterName.getTag();
@@ -159,6 +181,12 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // Private Methods
     // ================================================================================
     
+    /**
+     * Set the view holder to normal
+     * 
+     * @param viewHolder
+     *            view holder to set as normal view
+     */
     private void setPrinterRowToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -175,6 +203,12 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         }
     }
     
+    /**
+     * Set the view holder to default
+     * 
+     * @param viewHolder
+     *            view holder to set as default view
+     */
     private void setPrinterRowToDefault(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -196,6 +230,12 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         mDefaultViewHolder = viewHolder;
     }
     
+    /**
+     * Reset the view holder
+     * 
+     * @param viewHolder
+     *            view holder to reset
+     */
     private void setPrinterRow(ViewHolder viewHolder) {
         Printer printer = (Printer) viewHolder.mPrinterName.getTag();
         
@@ -206,6 +246,14 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         }
     }
     
+    /**
+     * Switch to a fragment
+     * 
+     * @param fragment
+     *            Fragment object
+     * @param tag
+     *            Fragment tag
+     */
     private void switchToFragment(BaseFragment fragment, String tag) {
         FragmentManager fm = ((Activity) getContext()).getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -274,6 +322,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // Internal Classes
     // ================================================================================
     
+    /**
+     * Printers Screen view holder for phone
+     */
     public class ViewHolder {
         private TextView mPrinterName;
         private TextView mIpAddress;

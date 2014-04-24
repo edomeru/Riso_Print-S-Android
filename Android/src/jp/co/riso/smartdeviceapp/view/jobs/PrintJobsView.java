@@ -48,21 +48,57 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private Point mDownPoint;
     private int[] mColumnsHeight;
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
+     */
     public PrintJobsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     * @param attrs
+     */
     public PrintJobsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     */
     public PrintJobsView(Context context) {
         super(context);
         init();
     }
     
+    /**
+     * Set Data
+     * 
+     * @param printJobs
+     *            list of print jobs
+     * @param printer
+     *            list of printer objects
+     * @param delListener
+     *            PrintJobsGroup listener
+     * @param listener
+     *            PrintJobsView listener
+     * @param collapsedPrinters
+     *            Collapsed Printers
+     * @param printJobToDelete
+     *            Print Job to delete
+     * @param printerToDelete
+     *            Printer to delete
+     */
     public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener delListener, PrintJobsViewListener listener,
             List<Printer> collapsedPrinters, PrintJob printJobToDelete, Printer printerToDelete) {
         this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
@@ -76,6 +112,16 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         reset();
     }
     
+    /**
+     * Begin delete mode
+     * 
+     * @param pj
+     *            print jobs group view
+     * @param view
+     *            row layout view
+     * @param animate
+     *            animate delete mode
+     */
     public void beginDelete(PrintJobsGroupView pj, View view, boolean animate) {
         if (!mDeleteMode) {
             mDeleteMode = true;
@@ -86,6 +132,12 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * End delete mode
+     * 
+     * @param animate
+     *            animate delete mode
+     */
     public void endDelete(boolean animate) {
         if (mDeleteMode) {
             mDeleteMode = false;
@@ -95,6 +147,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * Initialize PrintJobsView
+     */
     private void init() {
         if (!isInEditMode()) {
             setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -104,6 +159,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * Reset the PrintJobsView
+     */
     private void reset() {
         mGroupViewCtr = 0;
         mInitialFlag = true;
@@ -113,6 +171,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         groupPrintJobs();
     }
     
+    /**
+     * Groups print jobs
+     */
     private void groupPrintJobs() {
         int jobCtr = 0;
         List<PrintJob> jobs = new ArrayList<PrintJob>();
@@ -144,6 +205,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * @return index of the smallest column
+     */
     private int getSmallestColumn() {
         // initially assign to 1st column
         int smallestColumn = 0;
@@ -158,6 +222,12 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return smallestColumn;
     }
     
+    /**
+     * Creates print jobs view
+     * 
+     * @param jobsList
+     * @param printer
+     */
     private void createPrintJobsView(List<PrintJob> jobsList, Printer printer) {
         PrintJobsGroupView pjView = new PrintJobsGroupView(getContext());
         pjView.setData(jobsList, printer, mGroupListener, this);
@@ -166,6 +236,12 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         mPrintGroupViews.add(pjView);
     }
     
+    /**
+     * Restores the UI state
+     * 
+     * @param pj
+     * @param printer
+     */
     private void restoreUIstate(PrintJobsGroupView pj, Printer printer) {
         boolean isCollapsed = mCollapsedPrinters.contains(printer);
         boolean isDeleteShown = mPrintJobToDelete != null && mPrintJobs.contains(mPrintJobToDelete);
@@ -180,6 +256,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         pj.restoreState(isCollapsed, mPrintJobToDelete, mPrinterToDelete);
     }
     
+    /**
+     * Add PrintJobsGroupView in columns
+     */
     private void placeInColumns() {
         PrintJobsGroupView pjView = mPrintGroupViews.get(mGroupViewCtr);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -195,12 +274,18 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         mColumnsHeight[col] += pjView.getGroupHeight() + lp.topMargin; // update column height
     }
     
+    /**
+     * Add Views in columns
+     */
     private void addViewsToColumns() {
         placeInColumns();
         mGroupViewCtr++;
         post(mRunnable);
     }
     
+    /**
+     * Re-layout columns
+     */
     private void relayoutColumns() {
         if (checkIfNeedsRelayout()) {
             for (int i = 0; i < mColumns.size(); i++) {
@@ -212,6 +297,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * checks if there is a need to re-layout
+     */
     private boolean checkIfNeedsRelayout() {
         boolean isColumnCleared = false;
         boolean isLeftCleared = false;
@@ -234,6 +322,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return isColumnCleared && (childNumExceeds || isLeftCleared);
     }
     
+    /**
+     * creates columns
+     */
     private void createColumns() {
         int colNum = getResources().getBoolean(R.bool.is_tablet) ? getResources().getBoolean(R.bool.is_tablet_land) ? 3 : 2 : 1;
         LayoutParams param = (LayoutParams) getLayoutParams();
@@ -253,6 +344,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * checks if a view is swiped
+     *
+     * @param ev
+     */
     private boolean checkSwipe(MotionEvent ev) {
         int coords[] = new int[2];
         boolean dragged = Math.abs(mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
@@ -294,6 +390,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return false;
     }
     
+    /**
+     * process swipe
+     *
+     * @param ev
+     */
     private boolean processSwipe(MotionEvent ev) {
         boolean ret = false;
         int action = ev.getActionMasked();
@@ -310,6 +411,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return ret;
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
@@ -326,6 +428,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int coords[] = new int[2];
@@ -377,6 +480,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         return super.onTouchEvent(ev);
@@ -386,11 +490,13 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     // INTERFACE - PrintJobsGroupDeleteListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView) {
         mPrintGroupViews.remove(printJobsGroupView);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean isCollapsed) {
         int idx = mPrintGroupViews.indexOf(printJobsGroupView);
@@ -420,6 +526,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onDeleteJob(){
         endDelete(false);
@@ -429,6 +536,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     // Internal Classes
     // ================================================================================
     
+    /**
+     * Add View
+     */
     // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
     private class AddViewRunnable implements Runnable {
         @Override
@@ -442,7 +552,13 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * PrintJobsView Listener
+     */
     public interface PrintJobsViewListener {
+        /**
+         * Hide loading
+         */
         public void hideLoading();
     }
 }

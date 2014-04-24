@@ -101,6 +101,14 @@ public class SettingsFragment extends BaseFragment {
         private Context mContext;
         private String mPrefKey;
         
+        /**
+         * Constructor
+         * 
+         * @param context
+         *            Context
+         * @param prefKey
+         *            Shared preference key
+         */
         public SharedPreferenceTextWatcher(Context context, String prefKey) {
             mContext = context;
             mPrefKey = prefKey;

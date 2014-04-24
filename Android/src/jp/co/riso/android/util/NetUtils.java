@@ -42,6 +42,7 @@ public class NetUtils {
      * 
      * @param ipAddress
      *            IP Address
+     * @return true if the IP Address is a valid IPv4 Address.
      */
     public static boolean isIPv4Address(final String ipAddress) {
         return IPV4_PATTERN.matcher(ipAddress).matches();
@@ -54,6 +55,7 @@ public class NetUtils {
      * 
      * @param ipAddress
      *            IP Address
+     * @return true if the IP Address is a valid IPv4 Multicast Address.
      */
     public static boolean isIPv4MulticastAddress(final String ipAddress) {
         return IPV4_MULTICAST_PATTERN.matcher(ipAddress).matches();
@@ -66,6 +68,7 @@ public class NetUtils {
      * 
      * @param ipAddress
      *            IP Address
+     * @return true if the IP Address is a valid IPv6 Address.
      */
     public static boolean isIPv6Address(final String ipAddress) {
         return isIPv6StdAddress(ipAddress) || isIPv6HexCompressedAddress(ipAddress) || isIPv6LinkLocalAddress(ipAddress) || isIPv6Ipv4DerivedAddress(ipAddress);
@@ -80,6 +83,7 @@ public class NetUtils {
      *            IPv6 Address
      * @param inetIpAddress
      *            IP Address object
+     * @return true if the IPv6 Address is reachable.
      */
     public static boolean connectToIpv6Address(String ipAddress, InetAddress inetIpAddress) {
         try {
@@ -113,18 +117,54 @@ public class NetUtils {
     // Private Methods
     // ================================================================================
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Standard Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     * @return true if the IP Address is a valid IPv6 Standard Address.
+     */
     private static boolean isIPv6StdAddress(final String ipAddress) {
         return IPV6_STD_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Compressed Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     * @return true if the IP Address is a valid IPv6 Compressed Address.
+     */
     private static boolean isIPv6HexCompressedAddress(final String ipAddress) {
         return IPV6_HEX_COMPRESSED_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Link Local Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     * @return true if the IP Address is a valid IPv6 Link Local Address.
+     */
     private static boolean isIPv6LinkLocalAddress(final String ipAddress) {
         return IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches();
     }
     
+    /**
+     * Validates an IP Address.
+     * <p>
+     * Checks if the IP Address is a valid IPv6 Address derived from IPv4 Address.
+     * 
+     * @param ipAddress
+     *            IP Address
+     * @return true if the IP Address is a valid IPv6 Address derived from IPv4 Address.
+     */
     private static boolean isIPv6Ipv4DerivedAddress(final String ipAddress) {
         return IPV6_IPv4_DERIVED_PATTERN.matcher(ipAddress).matches();
     }

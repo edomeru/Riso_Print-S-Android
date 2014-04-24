@@ -66,21 +66,52 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private LinearLayout mJobsLayout;
     private int mRowHeight;
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     */
     public PrintJobsGroupView(Context context) {
         super(context);
         init();
     }
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
+     */
+
     public PrintJobsGroupView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     * @param attrs
+     */
     public PrintJobsGroupView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
     
+    /**
+     * Set Data
+     * 
+     * @param printJobs
+     *            list of print jobs
+     * @param printer
+     *            printer object
+     * @param groupListener
+     *            print job group listener
+     * @param layoutListener
+     *            layout listener
+     */
     public void setData(List<PrintJob> printJobs, Printer printer, PrintJobsGroupListener groupListener, PrintJobsLayoutListener layoutListener) {
         this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
         this.mPrinter = printer;
@@ -89,11 +120,23 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         createView();
     }
     
-    // get expanded height of PrintJobsGroupView
+    /**
+     * @return expanded height of PrintJobsGroupView
+     */
     public int getGroupHeight() {
         return (mPrintJobViews.size() + 1) * mRowHeight;
     }
     
+    /**
+     * Restore state
+     * 
+     * @param isCollapsed
+     *            collapsed state
+     * @param jobToDelete
+     *            print job to delete
+     * @param printerToDelete
+     *            printer to be deleted
+     */
     public void restoreState(boolean isCollapsed, PrintJob jobToDelete, Printer printerToDelete) {
         boolean isDeleteAllClicked = printerToDelete != null && printerToDelete.equals(mPrinter);
         
@@ -108,6 +151,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Deletes Job Group
+     */
     public void onDeleteJobGroup() {
         PrintJobManager pm = PrintJobManager.getInstance(getContext());
         boolean isSuccess = pm.deleteWithPrinterId(mPrinter.getId());
@@ -122,16 +168,27 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Cancels delete Job Group
+     */
     public void onCancelDeleteGroup() {
         mPrintJobGroupLayout.findViewById(R.id.printJobGroupDelete).setSelected(false);
     }
     
+    /**
+     * Set delete button
+     * 
+     * @param v
+     */
     public void setDeleteButton(View v) {
         mViewToDelete = v;
         mViewToDelete.setSelected(true);
         mGroupListener.setDeletePrintJob((PrintJob) mViewToDelete.getTag());
     }
     
+    /**
+     * Clear delete button
+     */
     public void clearDeleteButton() {
         if (mViewToDelete != null) {
             mViewToDelete.setSelected(false);
@@ -140,6 +197,13 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Get swiped JobView
+     * 
+     * @param downPoint
+     * @param ev
+     * @return swiped job view
+     */
     public View getJobViewSwiped(Point downPoint, MotionEvent ev) {
         if (mIsCollapsed) {
             return null;
@@ -165,6 +229,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         return null;
     }
     
+    /**
+     * Initialize PrintJobsGroupView
+     */
     private void init() {
         if (!isInEditMode()) {
             mTitle = getResources().getString(R.string.ids_lbl_delete_jobs_title);
@@ -175,6 +242,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Create views
+     */
     private void createView() {
         // create header
         if (!mPrintJobs.isEmpty()) {
@@ -190,6 +260,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
     }
     
+    /**
+     * Create headers
+     */
     private void createHeader() {
         LayoutInflater factory = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
@@ -214,6 +287,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Create list item
+     * 
+     * @param index
+     */
     private void createItem(int index) {
         LayoutInflater factory = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View tempView = factory.inflate(R.layout.printjobs_item, this, false);
@@ -255,13 +333,23 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Format date
+     * 
+     * @param date
+     */
     private String formatDate(Date date) {
         String dateStr = DateFormat.getDateFormat(getContext()).format(date);
         String timeStr = DateFormat.getTimeFormat(getContext()).format(date);
         return dateStr + C_SPACE + timeStr;
     }
     
-    // toggle collapse/expand of a group view when clicked
+    /**
+     * toggle collapse/expand of a group view when clicked
+     * 
+     * @param v
+     *            view to collapse/expand
+     */
     private void toggleGroupView(View v) {
         v.setClickable(false);
         if (mIsCollapsed) {
@@ -274,6 +362,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mGroupListener.setCollapsed(mPrinter, mIsCollapsed);
     }
     
+    /**
+     * Animate expand
+     * 
+     * @param animate
+     *            animate expand
+     */
     private void animateExpand(boolean animate) {
         mJobsLayout.setVisibility(View.VISIBLE);
         int totalHeight = mPrintJobViews.size() * mRowHeight;
@@ -286,14 +380,17 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 
                 if (i == mPrintJobViews.size() - 1) {
                     animation.setAnimationListener(new Animation.AnimationListener() {
+                        /** {@inheritDoc} */
                         @Override
                         public void onAnimationStart(Animation animation) {
                         }
                         
+                        /** {@inheritDoc} */
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
                         
+                        /** {@inheritDoc} */
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             Message newMessage = Message.obtain(mHandler, MSG_EXPAND);
@@ -310,6 +407,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Animate collapse
+     * 
+     * @param animate
+     *            animate collapse
+     */
     private void animateCollapse(boolean animate) {
         if (animate) {
             int totalHeight = mPrintJobViews.size() * mRowHeight;
@@ -322,16 +425,18 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 if (i == mPrintJobViews.size() - 1) {
                     
                     animation.setAnimationListener(new Animation.AnimationListener() {
-                        
+                        /** {@inheritDoc} */
                         @Override
                         public void onAnimationStart(Animation animation) {
                             
                         }
                         
+                        /** {@inheritDoc} */
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
                         
+                        /** {@inheritDoc} */
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             Message newMessage = Message.obtain(mHandler, MSG_COLLAPSE);
@@ -348,6 +453,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
     }
     
+    /**
+     * Expand view group
+     */
     private void expandGroupView() {
         mPrintJobGroupLayout.setSelected(false);
         if (!getResources().getBoolean(R.bool.is_tablet)) {
@@ -356,6 +464,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mPrintJobGroupLayout.setClickable(true);
     }
     
+    /**
+     * Collapse view group
+     */
     private void collapseGroupView() {
         mJobsLayout.setVisibility(GONE);
         mPrintJobGroupLayout.setSelected(true);
@@ -366,14 +477,21 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mPrintJobGroupLayout.setClickable(true);
     }
     
-    // display delete print jobs dialog when clicked
+    /**
+     * display delete print jobs dialog when clicked
+     * 
+     * @param v
+     */
     private void deleteJobGroup(View v) {
         if (mGroupListener.showDeleteDialog()) {
             mGroupListener.setPrinterToDelete(this, mPrinter);
             v.findViewById(R.id.printJobGroupDelete).setSelected(true);
         }
     }
-    
+
+    /**
+     * delete print job group view
+     */
     private void deletePrintJobGroupView() {
         for (int i = 0; i < mPrintJobViews.size(); i++) {
             mGroupListener.deleteJobFromList((PrintJob) mPrintJobViews.get(i).getTag());
@@ -383,7 +501,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         ((LinearLayout) mPrintGroupView.getParent()).removeView(mPrintGroupView);
     }
     
-    // delete a print job when clicked
+    /**
+     * delete a print job when clicked
+     * 
+     * @param v
+     */
     private void deletePrintJob(View v) {
         PrintJob job = ((PrintJob) v.getTag());
         PrintJobManager pm = PrintJobManager.getInstance(getContext());
@@ -399,6 +521,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mLayoutListener.onDeleteJob();
     }
     
+    /**
+     * delete a print job view
+     * 
+     * @param v
+     */
     private void deletePrintJobView(View v) {
         for (int i = 0; i < mPrintJobViews.size(); i++) {
             if (mPrintJobViews.get(i).equals(v)) {
@@ -478,24 +605,80 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // ================================================================================
     
     public interface PrintJobsGroupListener {
+        /**
+         * Deletes printer from list
+         * 
+         * @param printer
+         *            Printer object to be removed
+         */
         public void deletePrinterFromList(Printer printer);
         
+        /**
+         * Deletes print job from list
+         * 
+         * @param printJob
+         *            printJob object to be removed
+         */
         public void deleteJobFromList(PrintJob printJob);
         
+        /**
+         * Set collapse state of the printer
+         * 
+         * @param printer
+         *            printer object
+         * @param isCollapsed
+         *            Collapse state
+         */
         public void setCollapsed(Printer printer, boolean isCollapsed);
         
+        /**
+         * Set print job to be deleted
+         * 
+         * @param job
+         *            print job to be deleted
+         */
         public void setDeletePrintJob(PrintJob job);
         
+        /**
+         * Set print job group to be deleted
+         * 
+         * @param printer
+         *            print job group to be deleted
+         */
         public void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer);
         
+        /**
+         * Show the delete dialog
+         */
         public boolean showDeleteDialog();
     }
     
     public interface PrintJobsLayoutListener {
+        /**
+         * Deletes print job group from list
+         * 
+         * @param printJobsGroupView
+         *            print job group to be removed
+         */
         public void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView);
         
+        /**
+         * Animate print job group
+         * 
+         * @param printJobsGroupView
+         *            print job group to animate
+         * @param totalHeight
+         *            total height
+         * @param durationMultiplier
+         *            animate duration multiplier
+         * @param isCollapsed
+         *            collapse state of the print jobs group
+         */
         public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean isCollapsed);
         
+        /**
+         * Callback for delete job
+         */
         public void onDeleteJob();
     }
 }

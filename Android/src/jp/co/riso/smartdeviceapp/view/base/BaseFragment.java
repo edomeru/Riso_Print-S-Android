@@ -79,6 +79,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         return view;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();

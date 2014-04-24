@@ -290,6 +290,14 @@ public final class AppUtils {
         return null;
     }
     
+    /**
+     * Change children font
+     * 
+     * @param v
+     *            ViewGroup to be changed
+     * @param font
+     *            font to be set
+     */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
     public static void changeChildrenFont(ViewGroup v, Typeface font) {
         if (font == null) {
@@ -327,6 +335,17 @@ public final class AppUtils {
         }
     }
     
+    /**
+     * Dynamically retrieve resource Id
+     * 
+     * @param variableName
+     *            variable name
+     * @param c
+     *            Class
+     * @param defaultId
+     *            default resource ID
+     * 
+     */
     // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
         if (variableName == null) {
@@ -348,6 +367,10 @@ public final class AppUtils {
         return id;
     }
     
+    /**
+     * @param activity
+     * @return cache size
+     */
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
         ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
         
