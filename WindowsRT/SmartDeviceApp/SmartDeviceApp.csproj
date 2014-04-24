@@ -127,6 +127,7 @@
     <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\JobGestureController.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Controls\JobListItemControl.xaml.cs">
       <DependentUpon>JobListItemControl.xaml</DependentUpon>
     </Compile>
