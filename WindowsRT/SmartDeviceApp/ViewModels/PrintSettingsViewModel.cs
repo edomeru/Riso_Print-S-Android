@@ -41,6 +41,8 @@ namespace SmartDeviceApp.ViewModels
 {
     public class PrintSettingsViewModel : ViewModelBase
     {
+        public event SmartDeviceApp.Controllers.PrintPreviewController.PrintEventHandler ExecutePrintEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -49,7 +51,7 @@ namespace SmartDeviceApp.ViewModels
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
-        private PrintSetting _selectedPrintSetting;        
+        private PrintSetting _selectedPrintSetting;
 
         public PrintSettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -129,7 +131,10 @@ namespace SmartDeviceApp.ViewModels
 
         private void PrintExecute()
         {
-            // TODO
+            if (ExecutePrintEventHandler != null)
+            {
+                ExecutePrintEventHandler();
+            }
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)

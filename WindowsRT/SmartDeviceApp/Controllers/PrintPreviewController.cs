@@ -38,8 +38,10 @@ namespace SmartDeviceApp.Controllers
         public delegate Task GoToPageEventHandler(int pageIndex);
         public delegate void PrintSettingValueChangedEventHandler(PrintSetting printSetting,
             object value);
+        public delegate void PrintEventHandler();
         private GoToPageEventHandler _goToPageEventHandler;
         private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
+        private PrintEventHandler _printEventHandler;
 
         public delegate void PageAreaGridLoadedEventHandler();
         public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
@@ -91,6 +93,7 @@ namespace SmartDeviceApp.Controllers
         {
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
+            _printEventHandler = new PrintEventHandler(Print);
 
             PageAreaGridLoaded += InitializeGestures;
             _previewPages = new Dictionary<int, PreviewPage>();
@@ -111,6 +114,10 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+
+                // TODO: Register to print button event only when there is a selected printer
+                _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
+
                 await GoToPage(0);
             }
             else
@@ -130,6 +137,7 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             }
             PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
             _previewPages = null;
@@ -3223,6 +3231,36 @@ namespace SmartDeviceApp.Controllers
         }
 
         #endregion Apply Print Settings
+
+        #region Print
+
+        private void Print()
+        {
+            // TODO: Check if printer is online (NetworkController)
+            bool isOnline = true;
+
+            if (isOnline)
+            {
+                // TODO: Prepare for printing (DirectPrintController)
+                // Pass DocumentController.Instance.FileName, DocumentController.Instance.PdfFile and _selectedPrinter
+
+                // Save to Jobs
+                PrintJob printJob = new PrintJob()
+                {
+                    PrinterId = _selectedPrinter.Id,
+                    Name = DocumentController.Instance.FileName,
+                    Date = DateTime.Now,
+                    Result = 0 // TODO: Set actual result
+                };
+                JobController.Instance.SavePrintJob(printJob);
+            }
+            else
+            {
+                // TODO: Display error message
+            }
+        }
+
+        #endregion Print
 
     }
 
