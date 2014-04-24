@@ -212,9 +212,9 @@ public class PrintSettings {
      * Set print settings value to key
      * 
      * @param key
-     *            Print settings key (colorMode, orientation, copies, duplex, paperSize, scaleToFit, paperType,
-     *            inputTray, imposition, impositionOrder, sort, booklet, bookletFinish, bookletLayout, finishingSide,
-     *            staple, punch, outputTray)
+     *            Print settings key
+     * @param value
+     *            Value
      * @return success
      */
     public boolean setValue(String key, int value) {

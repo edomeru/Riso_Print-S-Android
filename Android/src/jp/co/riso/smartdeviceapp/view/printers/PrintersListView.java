@@ -160,7 +160,9 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Checks if swipe was performed 
+     * Checks if swipe was performed
+     * 
+     *  @return true if swiped
      */
     private boolean checkSwipe(MotionEvent ev) {
         

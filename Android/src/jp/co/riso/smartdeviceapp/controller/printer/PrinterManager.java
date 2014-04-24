@@ -68,6 +68,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param context
      *            Context of the SmartDeviceApp
+     * @return sSharedMngr
      */
     public static PrinterManager getInstance(Context context) {
         if (sSharedMngr == null) {
@@ -87,6 +88,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            Printer object containing the Printer Information such as Print Settings
+     * @return true if successful
      */
     public boolean savePrinterToDB(Printer printer) {
         if (printer == null || isExists(printer)) {
@@ -121,6 +123,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            Printer object that must contain the IP address and Printer Name.
+     * @return true if exists
      */
     public boolean isExists(Printer printer) {
         if (printer == null) {
@@ -157,6 +160,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param ipAddress
      *            IP address of the Printer.
+     * @return true if exists
      */
     public boolean isExists(String ipAddress) {
         if (ipAddress == null) {
@@ -285,6 +289,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            The Printer object selected for deletion
+     * @return true if successful
      */
     public boolean removePrinter(Printer printer) {
         boolean ret = false;
@@ -397,6 +402,8 @@ public class PrinterManager implements SNMPManagerCallback {
     /**
      * <p>
      * Checks if there is an ongoing printer search.
+     * 
+     * @return mIsSearching
      */
     public boolean isSearching() {
         return mIsSearching;
@@ -405,6 +412,8 @@ public class PrinterManager implements SNMPManagerCallback {
     /**
      * <p>
      * Checks if the printer search was cancelled.
+     * 
+     * @return mIsCancelled
      */
     public boolean isCancelled() {
         return mIsCancelled;
@@ -468,6 +477,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * Check if the Device is online
      * <p>
      * Checks the Device if it is online. This function should not be called from the main thread.
+     * 
+     * @return true if online
      */
     public boolean isOnline(String ipAddress) {
         InetAddress inetIpAddress = null;
@@ -528,6 +539,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            Printer object
+     * @return true if successful
      */
     private boolean savePrinterInfo(Printer printer) {
         if (printer == null || isExists(printer)) {
@@ -585,6 +597,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            Printer object
+     * @return true if successful
      */
     private boolean setPrinterId(Printer printer) {
         
