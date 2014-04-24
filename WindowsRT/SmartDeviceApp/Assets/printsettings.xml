@@ -51,7 +51,7 @@
             <option>ids_lbl_papersize_a6</option>
             <option>ids_lbl_papersize_b4</option>
             <option>ids_lbl_papersize_b5</option>
-			<option>ids_lbl_papersize_b6</option>
+            <option>ids_lbl_papersize_b6</option>
             <option>ids_lbl_papersize_foolscap</option>
             <option>ids_lbl_papersize_tabloid</option>
             <option>ids_lbl_papersize_legal</option>
@@ -142,6 +142,7 @@
             icon="temp_img_printsettings_null"
             type="list"
             default="0" >
+            <option>ids_lbl_off</option>
             <option>ids_lbl_booklet_finishing_fold</option>
             <option>ids_lbl_booklet_finishing_foldstaple</option>
         </setting>
@@ -195,7 +196,6 @@
             default="0" >
             <option>ids_lbl_outputtray_auto</option>
             <option>ids_lbl_outputtray_facedown</option>
-            <option>ids_lbl_outputtray_faceup</option>
             <option>ids_lbl_outputtray_top</option>
             <option>ids_lbl_outputtray_stacking</option>
         </setting>

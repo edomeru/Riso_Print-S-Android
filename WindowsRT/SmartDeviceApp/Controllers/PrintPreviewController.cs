@@ -104,8 +104,6 @@ namespace SmartDeviceApp.Controllers
                 LoadPrintSettingsOptions();
                 await GetDefaultPrinterAndPrintSetting();
 
-                // Send list to view model
-                //_printSettingsViewModel.PrintSettingsList = _printSettingList;
                 _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
 
                 UpdatePreviewInfo();
@@ -1585,32 +1583,30 @@ namespace SmartDeviceApp.Controllers
             if (value == (int)Staple.OneUpperLeft || value == (int)Staple.OneUpperRight ||
                 value == (int)Staple.One || value == (int)Staple.Two)
             {
-                if (currOutputTray == (int)OutputTray.FaceUp)
-                {
-                    int newOutputTray = (int)outputTrayPrintSetting.Default;
-                    outputTrayPrintSetting.Value = newOutputTray;
-                    _selectedPrinter.PrintSettings.OutputTray = newOutputTray;
+                //if (currOutputTray == (int)OutputTray.FaceUp)
+                //{
+                //    int newOutputTray = (int)outputTrayPrintSetting.Default;
+                //    outputTrayPrintSetting.Value = newOutputTray;
+                //    _selectedPrinter.PrintSettings.OutputTray = newOutputTray;
 
-                    isUpdated = true;
-                }
+                //    PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
+                //    if (faceUp != null)
+                //    {
+                //        faceUp.IsEnabled = false;
+                //    }
 
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = false;
-
-                    isUpdated = true;
-                }
+                //    isUpdated = true;
+                //}
             }
             else if (value == (int)Staple.Off)
             {
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = true;
+                //PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
+                //if (faceUp != null)
+                //{
+                //    faceUp.IsEnabled = true;
 
-                    isUpdated = true;
-                }
+                //    isUpdated = true;
+                //}
             }
 
             return isUpdated;
@@ -1637,8 +1633,8 @@ namespace SmartDeviceApp.Controllers
 
             if (value == (int)Punch.TwoHoles || value == (int)Punch.FourHoles)
             {
-                if (currOutputTray == (int)OutputTray.FaceDown ||
-                    currOutputTray == (int)OutputTray.FaceUp)
+                if (currOutputTray == (int)OutputTray.FaceDown) // ||
+                    //currOutputTray == (int)OutputTray.FaceUp)
                 {
                     int newOutputTray = (int)outputTrayPrintSetting.Default;
                     outputTrayPrintSetting.Value = newOutputTray;
@@ -1654,13 +1650,13 @@ namespace SmartDeviceApp.Controllers
 
                     isUpdated = true;
                 }
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = false;
+                //PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
+                //if (faceUp != null)
+                //{
+                //    faceUp.IsEnabled = false;
 
-                    isUpdated = true;
-                }
+                //    isUpdated = true;
+                //}
 
                 isUpdated = true;
             }
@@ -1673,13 +1669,13 @@ namespace SmartDeviceApp.Controllers
 
                     isUpdated = true;
                 }
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = true;
+                //PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
+                //if (faceUp != null)
+                //{
+                //    faceUp.IsEnabled = true;
 
-                    isUpdated = true;
-                }
+                //    isUpdated = true;
+                //}
 
                 isUpdated = true;
             }
@@ -2685,18 +2681,18 @@ namespace SmartDeviceApp.Controllers
             bool isPortrait, bool isBackSide, bool isRightSide)
         {
             // Determine finishing side
-            int bookletFinishingSide = bookletFinishingSide = -1; // Out of range number to denote bottom
+            int bindingSide = -1; // Out of range number to denote bottom
             if (isPortrait && !isBackSide)
             {
-                bookletFinishingSide = (int)FinishingSide.Left;
+                bindingSide = (int)FinishingSide.Left;
             }
             else if (isPortrait && isBackSide)
             {
-                bookletFinishingSide = (int)FinishingSide.Right;
+                bindingSide = (int)FinishingSide.Right;
             }
             else if (!isPortrait && !isBackSide)
             {
-                bookletFinishingSide = (int)FinishingSide.Top;
+                bindingSide = (int)FinishingSide.Top;
             }
 
             // Determine booklet type
@@ -2705,7 +2701,7 @@ namespace SmartDeviceApp.Controllers
             // Apply staple at the edge based on finishing side
             if (applyStaple)
             {
-                await ApplyStaple(canvasBitmap, 0, bookletFinishingSide, _isBooklet,
+                await ApplyStaple(canvasBitmap, 0, bindingSide, _isBooklet,
                     isRightSide);
             }
         }
