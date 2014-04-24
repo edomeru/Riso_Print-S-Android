@@ -6,12 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDeviceApp", "SmartDeviceApp\SmartDeviceApp.csproj", "{75CCCE90-11AA-405D-A128-FEA952708D15}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6506B581-99AD-4244-BADD-C87D3A79F11A} = {6506B581-99AD-4244-BADD-C87D3A79F11A}
-		{2AC765A5-D74D-4C9C-9E2B-C400263176CF} = {2AC765A5-D74D-4C9C-9E2B-C400263176CF}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SNMP", "SNMP\SNMP.csproj", "{A8792925-8347-4B0E-BD5A-C04FDB0BB5B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectPrint", "DirectPrint\DirectPrint.csproj", "{6506B581-99AD-4244-BADD-C87D3A79F11A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2AC765A5-D74D-4C9C-9E2B-C400263176CF} = {2AC765A5-D74D-4C9C-9E2B-C400263176CF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectPrintSettings", "DirectPrintSettings\DirectPrintSettings.vcxproj", "{2AC765A5-D74D-4C9C-9E2B-C400263176CF}"
 EndProject

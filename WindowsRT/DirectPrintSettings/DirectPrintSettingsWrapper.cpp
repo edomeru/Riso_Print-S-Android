@@ -16,25 +16,18 @@ DirectPrintSettingsWrapper::DirectPrintSettingsWrapper()
 
 };
 
-char* convertWCharToCharArray(const wchar_t* input)
+void convertWCharToCharArray(char** output, const wchar_t* input)
 {
     size_t length = wcslen(input) + 1;
     size_t convertedChars = 0;
-    char cString[BUFFER_SIZE];
-    wcstombs_s(&convertedChars, cString, length, input, _TRUNCATE);
-
-    return cString;
+    wcstombs_s(&convertedChars, *output, length, input, _TRUNCATE);
 }
 
-wchar_t* convertCharArrayToWChar(char* input)
+void convertCharArrayToWChar(wchar_t** output, const char* input)
 {
     size_t length = strlen(input) + 1;
-    const size_t newsize = BUFFER_SIZE;
     size_t convertedChars = 0;
-    wchar_t wcString[BUFFER_SIZE];
-    mbstowcs_s(&convertedChars, wcString, length, input, _TRUNCATE);
-
-    return wcString;
+    mbstowcs_s(&convertedChars, *output, length, input, _TRUNCATE);
 }
 
 String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
@@ -42,7 +35,16 @@ String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
     char pjl[BUFFER_SIZE];
     memset(pjl, 0, BUFFER_SIZE);
 
-    create_pjl(pjl, convertWCharToCharArray(settings->Data()));
+    char *strSettings = (char *)calloc(BUFFER_SIZE, sizeof(char));
+    memset(strSettings, 0, BUFFER_SIZE * sizeof(char));
 
-    return ref new String(convertCharArrayToWChar(pjl));
+    convertWCharToCharArray(&strSettings, settings->Data());
+    create_pjl(pjl, strSettings);
+
+    wchar_t *wcPjl = (wchar_t *)calloc(BUFFER_SIZE, sizeof(wchar_t));
+    memset(wcPjl, 0, BUFFER_SIZE * sizeof(wchar_t));
+    free(wcPjl);
+
+    convertCharArrayToWChar(&wcPjl, pjl);
+    return ref new String(wcPjl); // Note: memory used by wcPjl is not released
 };

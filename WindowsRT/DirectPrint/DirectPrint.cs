@@ -16,7 +16,8 @@ namespace DirectPrint
     public class directprint_job
     {
         public string job_name;
-        public string filename;
+        public string filename; // TODO: to be deleted. replaced by file
+        public StorageFile file;
         public string print_settings;
         public string ip_address;
         //directprint_callback callback;
@@ -27,7 +28,7 @@ namespace DirectPrint
         public int cancel_print;
 
         //void* caller_data;
-    };
+    }
 
     public class DirectPrint
     {
