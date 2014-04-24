@@ -9,7 +9,7 @@
 	<key>Use_PrintJobHistoryTestData</key>
 	<true/>
 	<key>Printer_MaxCount</key>
-	<integer>20</integer>
+	<integer>10</integer>
 	<key>PrintSettings_Default</key>
 	<dict>
 		<key>Bind</key>

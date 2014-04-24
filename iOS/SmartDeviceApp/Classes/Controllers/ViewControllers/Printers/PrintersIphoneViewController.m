@@ -85,8 +85,14 @@
         self.defaultPrinterIndexPath = indexPath;
         [cell setCellStyleForDefaultCell];
     }
-    
-    cell.printerName.text = printer.name;
+    if(printer.name == nil || [printer.name isEqualToString:@""] == YES)
+    {
+        cell.printerName.text = printer.ip_address;
+    }
+    else
+    {
+        cell.printerName.text = printer.name;
+    }
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
 
