@@ -23,6 +23,7 @@
 #define KEY_INPUT_TRAY          @"inputTray"
 #define KEY_SORT                @"sort"
 #define KEY_PAPER_TYPE          @"paperType"
+#define KEY_PIN_CODE            @"pinCode"
 
 @interface PreviewSetting : NSObject
 @property (nonatomic) NSInteger colorMode;
@@ -43,6 +44,7 @@
 @property (nonatomic) NSInteger staple;
 @property (nonatomic) NSInteger punch;
 @property (nonatomic) NSInteger outputTray;
+@property (nonatomic) NSString  *pinCode;
 
 @property (nonatomic, weak, readonly) NSString *formattedString;
 
