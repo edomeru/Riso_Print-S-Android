@@ -23,7 +23,7 @@
 #define MIB_STRING_LENGTH 256
 #define TIMEOUT 10
 
-#define SYS_OBJ_ID_VALUE "1.3.6.1.4.1.8072.3.2.10"
+#define PDL_VALUE 54 // PDF
 
 #define SNMPV3_USER "risosnmp"
 #define SNMPV3_PASS "risosnmp"
@@ -55,8 +55,9 @@ struct snmp_context_s
 
 enum
 {
-    MIB_SYS_OBJ_ID = 0,
-    MIB_GENERAL_NAME,
+    MIB_HW_STAT = 0,
+    MIB_PDL,
+    MIB_DEV_DESCR,
     MIB_HW_CAP_1,
     MIB_HW_CAP_2,
     MIB_HW_CAP_3,
@@ -83,12 +84,9 @@ struct caps_queue_s
 };
 
 static const char *MIB_REQUESTS[] = {
-    "1.3.6.1.2.1.1.2.0", // sysObjectId
-#if DETECT_ALL_DEVICES
-    "1.3.6.1.2.1.1.1.0", // sysDescr
-#else
-    "1.3.6.1.4.1.24807.1.2.1.1.1.0", // ijGeneralName
-#endif
+    "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.1", // Finisher 2/4 holes
+    "1.3.6.1.2.1.43.15.1.1.2.1.5",
+    "1.3.6.1.2.1.25.3.2.1.3.1",
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.3", // Booklet unit
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.20", // Stapler
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.1", // Finisher 2/4 holes
@@ -243,8 +241,11 @@ void *do_discovery(void *parameter)
     
     oid oid[MAX_OID_LEN];
     size_t oid_len = MAX_OID_LEN;
-    read_objid(MIB_REQUESTS[MIB_SYS_OBJ_ID], oid, &oid_len);
-    snmp_add_null_var(pdu_request, oid, oid_len);
+    for (int i = MIB_HW_STAT; i <= MIB_PDL; i++)
+    {
+        read_objid(MIB_REQUESTS[i], oid, &oid_len);
+        snmp_add_null_var(pdu_request, oid, oid_len);
+    }
     
     // Send the request
     if (!snmp_send(ss, pdu_request))
@@ -550,7 +551,7 @@ const char *snmp_device_get_ip_address(snmp_device *device)
 
 const char *snmp_device_get_name(snmp_device *device)
 {
-    return device->device_info[MIB_GENERAL_NAME];
+    return device->device_info[MIB_DEV_DESCR];
 }
 
 int snmp_device_get_capability_status(snmp_device *device, int capability)
@@ -601,34 +602,43 @@ int snmp_handle_pdu_response(char *ip_address, netsnmp_variable_list *var_list, 
 
     // Parse information
     int valid = 0;
-    oid oid_val[MAX_OID_LEN];
-    size_t oid_len = MAX_OID_LEN;
-    read_objid(MIB_REQUESTS[MIB_SYS_OBJ_ID], oid_val, &oid_len);
-    oid sys_obj_id_oid[MAX_OID_LEN];
-    size_t sys_obj_id_oid_len = MAX_OID_LEN;
-    read_objid(SYS_OBJ_ID_VALUE, sys_obj_id_oid, &sys_obj_id_oid_len);
+    size_t hw_stat_oid_len = MAX_OID_LEN;
+    oid hw_stat_oid[MAX_OID_LEN];
+    read_objid(MIB_REQUESTS[MIB_HW_STAT], hw_stat_oid, &hw_stat_oid_len);
+    size_t pdl_oid_len = MAX_OID_LEN;
+    oid pdl_oid[MAX_OID_LEN];
+    read_objid(MIB_REQUESTS[MIB_PDL], pdl_oid, &pdl_oid_len);
+    
     for (netsnmp_variable_list *vars = var_list; vars != 0; vars = vars->next_variable)
     {
-        // Check for MIB_SYS_OBJ_ID value
-        if (snmp_oid_compare(vars->name, vars->name_length, oid_val, oid_len) == 0)
+        if (snmp_oid_compare(vars->name, vars->name_length, hw_stat_oid, hw_stat_oid_len) == 0)
         {
-            if (vars->type == ASN_OBJECT_ID)
+            if (vars->type == ASN_INTEGER)
             {
-                size_t len = (vars->val_len < sys_obj_id_oid_len ? vars->val_len : sys_obj_id_oid_len);
-                if (snmp_oid_compare(vars->val.objid, len, sys_obj_id_oid, len) == 0)
+                valid++;
+                continue;
+            }
+        }
+        
+        if (snmp_oid_compare(vars->name, vars->name_length, pdl_oid, pdl_oid_len) == 0)
+        {
+            if (vars->type == ASN_INTEGER)
+            {
+                long value = *vars->val.integer;
+                if (value == PDL_VALUE)
                 {
-                    valid = 1;
+                    valid++;
                     continue;
                 }
-#if DETECT_ALL_DEVICES
-                valid = 1; // TODO: Uncomment code to restrict found printers to Riso printers only
-                continue;
-#endif
             }
         }
     }
     
-    if (valid == 1 && context != 0)
+#if DETECT_ALL_DEVICES
+    if (context != 0)
+#else
+    if (valid == 2 && context != 0)
+#endif
     {
         snmp_get_capabilities(context, device);
         pthread_mutex_lock(&context->queue_mutex);
@@ -679,7 +689,7 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
         return 0;
     }
     
-    for (int i = MIB_GENERAL_NAME; i < MIB_INFO_COUNT; i++)
+    for (int i = MIB_DEV_DESCR; i < MIB_INFO_COUNT; i++)
     {
         if (snmp_context_get_state(context) == kSnmpStateCancelled)
         {

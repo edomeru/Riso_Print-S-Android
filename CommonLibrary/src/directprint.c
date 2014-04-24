@@ -25,7 +25,7 @@
 #define PORT_RAW "9100"
 
 #define TIMEOUT_CONNECT 10
-#define TIMEOUT_RECEIVE 30
+#define TIMEOUT_SEND_RECV 30
 
 #define BUFFER_SIZE 4096
 
@@ -80,6 +80,7 @@ int is_cancelled(directprint_job *print_job);
 
 // Thread functions
 void *do_lpr_print(void *parameter);
+void *do_raw_print(void *parameter);
 
 /**
  Public Methods
@@ -129,6 +130,18 @@ int directprint_job_lpr_print(directprint_job *print_job)
     }
     
     pthread_create(&print_job->main_thread, 0, do_lpr_print, (void *)print_job);
+    
+    return kJobStatusStarted;
+}
+
+int directprint_job_raw_print(directprint_job *print_job)
+{
+    if (can_start_print(print_job) != 1)
+    {
+        return kJobStatusError;
+    }
+    
+    pthread_create(&print_job->main_thread, 0, do_raw_print, (void *)print_job);
     
     return kJobStatusStarted;
 }
@@ -299,11 +312,6 @@ void *do_lpr_print(void *parameter)
     FILE *fd = 0;
     unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
     
-    // Setup receive timeout
-    struct timeval tv;
-    tv.tv_sec = TIMEOUT_RECEIVE;
-    tv.tv_usec = 0;
-    setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
     
     do
     {
@@ -315,6 +323,12 @@ void *do_lpr_print(void *parameter)
             break;
         }
         notify_callback(print_job, kJobStatusConnected);
+        
+        // Setup receive timeout
+        struct timeval tv;
+        tv.tv_sec = TIMEOUT_SEND_RECV;
+        tv.tv_usec = 0;
+        setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
         
         if (is_cancelled(print_job) == 1)
         {
@@ -545,6 +559,119 @@ void *do_lpr_print(void *parameter)
         // Notify success
         print_job->progress = 100.0f;
         notify_callback(print_job, kJobStatusSent);
+    } while (0);
+    
+    if (fd != 0)
+    {
+        fclose(fd);
+    }
+    close(sock_fd);
+    free(buffer);
+    return 0;
+}
+
+void *do_raw_print(void *parameter)
+{
+    directprint_job *print_job = (directprint_job *)parameter;
+    
+    // Prepare PJL header
+    char pjl_header[2048];
+    pjl_header[0] = 0;
+    strcat(pjl_header, PJL_ESCAPE);
+    create_pjl(pjl_header, print_job->print_settings);
+    strcat(pjl_header, PJL_LANGUAGE);
+    
+    // Prepare PJL footer
+    char pjl_footer[256];
+    pjl_footer[0] = 0;
+    strcat(pjl_footer, PJL_ESCAPE);
+    strcat(pjl_footer, PJL_EOJ);
+    strcat(pjl_footer, PJL_ESCAPE);
+    
+    if (is_cancelled(print_job) == 1)
+    {
+        return 0;
+    }
+    
+    int sock_fd = -1;
+    FILE *fd = 0;
+    unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
+    
+    do
+    {
+        notify_callback(print_job, kJobStatusConnecting);
+        sock_fd = connect_to_port(print_job->ip_address, PORT_RAW);
+        if (sock_fd < 0)
+        {
+            notify_callback(print_job, kJobStatusErrorConnecting);
+            break;
+        }
+        notify_callback(print_job, kJobStatusConnected);
+        
+        // Setup receive timeout
+        struct timeval tv;
+        tv.tv_sec = TIMEOUT_SEND_RECV;
+        tv.tv_usec = 0;
+        setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
+        
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+        
+        // Open file
+        fd = fopen(print_job->filename, "rb");
+        if (!fd)
+        {
+            notify_callback(print_job, kJobStatusErrorFile);
+            break;
+        }
+        
+        // Get file size
+        fseek(fd, 0L, SEEK_END);
+        long file_size = ftell(fd);
+        fseek(fd, 0L, SEEK_SET);
+        
+        // Calculate progress step
+        float data_step = (80.0f / ((float)file_size / BUFFER_SIZE));
+        
+        // Send header
+        send(sock_fd, pjl_header, strlen(pjl_header), 0);
+        print_job->progress = 10.0f;
+        notify_callback(print_job, kJobStatusSending);
+        
+        // Send file
+        size_t read;
+        size_t sent;
+        int has_error = 0;
+        while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
+        {
+            if (is_cancelled(print_job) == 1)
+            {
+                break;
+            }
+    
+            sent = send(sock_fd, buffer, read, 0);
+            if (sent != read)
+            {
+                notify_callback(print_job, kJobStatusErrorSending);
+                has_error = 1;
+                break;
+            }
+            
+            print_job->progress += data_step;
+            notify_callback(print_job, kJobStatusSending);
+        }
+        
+        if (has_error == 1 || is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+        
+        send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+        print_job->progress = 100.0f;
+        notify_callback(print_job, kJobStatusSent);
+        
     } while (0);
     
     if (fd != 0)
