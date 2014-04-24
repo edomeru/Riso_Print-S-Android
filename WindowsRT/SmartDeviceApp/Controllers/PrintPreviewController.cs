@@ -61,7 +61,7 @@ namespace SmartDeviceApp.Controllers
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private PageViewMode _pageViewMode;
-        private int _currPreviewPageIndex;
+        private static int _currPreviewPageIndex;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -231,10 +231,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void InitializeGestures()
         {
-            Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
-                _selectedPrinter.PrintSettings.PaperSize);
-            bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
-                        _selectedPrinter.PrintSettings.Orientation);
+            Size paperSize = GetPaperSize(_selectedPrinter.PrintSettings.PaperSize);
+            bool isPortrait = (_selectedPrinter.PrintSettings.Orientation == (int)Orientation.Portrait);
 
             _printPreviewViewModel.RightPageActualSize = GetPreviewPageImageSize(paperSize, isPortrait);
             _printPreviewViewModel.InitializeGestures();
@@ -557,16 +555,14 @@ namespace SmartDeviceApp.Controllers
                 _pageViewMode = PageViewMode.SinglePageView;
             }
 
-            _isDuplex = PrintSettingConverter.DuplexIntToBoolConverter.Convert(
-                _selectedPrinter.PrintSettings.Duplex);
+            _isDuplex = (_selectedPrinter.PrintSettings.Duplex == (int)Duplex.Off);
 
             _isReversePages = _isBooklet &&
                 _selectedPrinter.PrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
 
             if (!_isBooklet)
             {
-                _pagesPerSheet = PrintSettingConverter.ImpositionIntToNumberOfPagesConverter
-                    .Convert(_selectedPrinter.PrintSettings.Imposition);
+                _pagesPerSheet = GetPagesPerSheet(_selectedPrinter.PrintSettings.Imposition);
             }
             else
             {
@@ -2169,11 +2165,9 @@ namespace SmartDeviceApp.Controllers
                 WriteableBitmap finalBitmap = new WriteableBitmap(1, 1); // Size does not matter yet
                 List<WriteableBitmap> pageImages = new List<WriteableBitmap>(); // Ordered list
 
-                Size paperSize = PrintSettingConverter.PaperSizeIntToSizeConverter.Convert(
-                    _selectedPrinter.PrintSettings.PaperSize);
+                Size paperSize = GetPaperSize(_selectedPrinter.PrintSettings.PaperSize);
 
-                bool isPortrait = PrintSettingConverter.OrientationIntToBoolConverter.Convert(
-                    _selectedPrinter.PrintSettings.Orientation);
+                bool isPortrait = (_selectedPrinter.PrintSettings.Orientation == (int)Orientation.Portrait);
 
                 // Loop to each LogicalPage(s) to selected paper size and orientation
                 foreach (LogicalPage logicalPage in logicalPages)
@@ -2228,8 +2222,7 @@ namespace SmartDeviceApp.Controllers
                 }
 
                 int finishingSide = _selectedPrinter.PrintSettings.FinishingSide;
-                int holeCount = PrintSettingConverter.PunchIntToNumberOfHolesConverter.Convert(
-                            _selectedPrinter.PrintSettings.Punch);
+                int holeCount = GetPunchHoleCount(_selectedPrinter.PrintSettings.Punch);
                 int staple = _selectedPrinter.PrintSettings.Staple;
 
                 if (_isDuplex)
@@ -2292,7 +2285,7 @@ namespace SmartDeviceApp.Controllers
 
                     // Check if needs to send the page image
                     // Don't bother to send the old requests
-                    if (enableSend)
+                    if (enableSend && _currPreviewPageIndex == previewPageIndex)
                     {
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
@@ -3015,9 +3008,7 @@ namespace SmartDeviceApp.Controllers
             // Determine punch
             double diameterPunch = PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI;
             double marginPunch = PrintSettingConstant.MARGIN_PUNCH * ImageConstant.BASE_DPI;
-            double distanceBetweenHoles =
-                PrintSettingConverter.PunchIntToDistanceBetweenHolesConverter.Convert(
-                _selectedPrinter.PrintSettings.Punch);
+            double distanceBetweenHoles = GetDistanceBetweenHoles(_selectedPrinter.PrintSettings.Punch);
             if (finishingSide == (int)FinishingSide.Top)
             {
                 double startPos = GetPunchStartPosition(canvasBitmap.PixelWidth, true, holeCount,
@@ -3094,6 +3085,138 @@ namespace SmartDeviceApp.Controllers
                 Rect srcRect = new Rect(0, 0, punchBitmap.PixelWidth, punchBitmap.PixelHeight);
                 WriteableBitmapExtensions.Blit(canvasBitmap, destRect, punchBitmap, srcRect);
             }
+        }
+
+        /// <summary>
+        /// Gets the target size based on paper size
+        /// </summary>
+        /// <param name="paperSize">paper size</param>
+        /// <returns>size</returns>
+        public Size GetPaperSize(int paperSize)
+        {
+            Size targetSize;
+            switch (paperSize)
+            {
+                case (int)PaperSize.A3:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_A3;
+                    break;
+                case (int)PaperSize.A3W:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_A3W;
+                    break;
+                case (int)PaperSize.A5:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_A5;
+                    break;
+                case (int)PaperSize.A6:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_A6;
+                    break;
+                case (int)PaperSize.B4:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_B4;
+                    break;
+                case (int)PaperSize.B5:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_B5;
+                    break;
+                case (int)PaperSize.B6:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_B6;
+                    break;
+                case (int)PaperSize.Foolscap:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_FOOLSCAP;
+                    break;
+                case (int)PaperSize.Tabloid:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_TABLOID;
+                    break;
+                case (int)PaperSize.Legal:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_LEGAL;
+                    break;
+                case (int)PaperSize.Letter:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_LETTER;
+                    break;
+                case (int)PaperSize.Statement:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_STATEMENT;
+                    break;
+                case (int)PaperSize.A4:
+                default:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_A4;
+                    break;
+            }
+
+            return targetSize;
+        }
+
+        /// <summary>
+        /// Computes the number of pages based on imposition
+        /// </summary>
+        /// <param name="imposition">imposition type</param>
+        /// <returns>number of pages per sheet</returns>
+        public int GetPagesPerSheet(int imposition)
+        {
+            int pagesPerSheet = 1;
+            switch (imposition)
+            {
+                case (int)Imposition.TwoUp:
+                    pagesPerSheet = 2;
+                    break;
+                case (int)Imposition.FourUp:
+                    pagesPerSheet = 4;
+                    break;
+                case (int)Imposition.Off:
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            return pagesPerSheet;
+        }
+
+        /// <summary>
+        /// Gets the number of punch holes based on punch type
+        /// </summary>
+        /// <param name="punch">punch type</param>
+        /// <returns>number of punch holes</returns>
+        public int GetPunchHoleCount(int punch)
+        {
+            int numberOfHoles = 0;
+            switch (punch)
+            {
+                case (int)Punch.TwoHoles:
+                    numberOfHoles = 2;
+                    break;
+                case (int)Punch.FourHoles:
+                    numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
+                    break;
+                case (int)Punch.Off:
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            return numberOfHoles;
+        }
+
+        /// <summary>
+        /// Computes the distance between punch holes based on number of punches
+        /// </summary>
+        /// <param name="punch">punch type</param>
+        /// <returns>distance</returns>
+        private double GetDistanceBetweenHoles(int punch)
+        {
+            double distance = 0;
+            switch (punch)
+            {
+                case (int)Punch.TwoHoles:
+                    distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
+                    break;
+                case (int)Punch.FourHoles:
+                    distance = (GlobalizationUtility.IsJapaneseLocale()) ?
+                        PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE :
+                        PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE;
+                    break;
+                case (int)Punch.Off:
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            return distance * ImageConstant.BASE_DPI;
         }
 
         #endregion Apply Print Settings

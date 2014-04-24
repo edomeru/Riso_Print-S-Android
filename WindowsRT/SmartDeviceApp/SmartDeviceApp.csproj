@@ -200,8 +200,6 @@
     </Compile>
     <Compile Include="Converters\PageNumberFormatConverter.cs" />
     <Compile Include="Controllers\PrintPreviewController.cs" />
-    <Compile Include="Converters\BasePrintSettingConverter.cs" />
-    <Compile Include="Converters\PrintSettingConverter.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
     <Compile Include="DummyControllers\DummyProvider.cs" />
