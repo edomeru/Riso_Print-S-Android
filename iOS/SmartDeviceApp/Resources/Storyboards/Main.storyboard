@@ -877,7 +877,7 @@
                                                             <state key="normal" image="img_btn_default_print_settings">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
-                                                            <state key="highlighted" image="img_btn_default_print_settings"/>
+                                                            <state key="highlighted" image="img_btn_default_print_settings_pressed"/>
                                                             <connections>
                                                                 <action selector="defaultSettingsButtonAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="m6Q-MJ-lLH"/>
                                                             </connections>
@@ -2503,11 +2503,11 @@
                                             <constraint firstAttribute="height" constant="32" id="Snt-FQ-rAw"/>
                                             <constraint firstAttribute="width" constant="32" id="VwH-2j-OUx"/>
                                         </constraints>
-                                        <state key="normal" image="img_btn_print_settings_normal">
+                                        <state key="normal" image="img_btn_default_print_settings">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="disabled" image="img_btn_print_settings_pressed"/>
-                                        <state key="highlighted" image="img_btn_print_settings_pressed"/>
+                                        <state key="highlighted" image="img_btn_default_print_settings_pressed"/>
                                         <connections>
                                             <action selector="printSettingsAction:" destination="qXF-RA-AFJ" eventType="touchUpInside" id="09e-IU-u3n"/>
                                         </connections>
@@ -3855,6 +3855,7 @@
         <image name="img_btn_back_normal" width="64" height="64"/>
         <image name="img_btn_back_pressed" width="64" height="64"/>
         <image name="img_btn_default_print_settings" width="64" height="64"/>
+        <image name="img_btn_default_print_settings_pressed" width="64" height="64"/>
         <image name="img_btn_delete_printer_tablet" width="64" height="64"/>
         <image name="img_btn_job_status_ok" width="64" height="64"/>
         <image name="img_btn_main_menu_normal" width="64" height="64"/>
