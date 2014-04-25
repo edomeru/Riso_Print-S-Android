@@ -130,9 +130,19 @@ namespace SmartDeviceApp.Controllers
                 // TODO: Verify bindings
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
-                if (printJobGroup != null)
+                if (printJobGroup != null) // Group already exists
                 {
                     printJobGroup.Jobs.Add(printJob);
+                }
+                else // Create new group
+                {
+                    string printerName = await DatabaseController.Instance
+                        .GetPrinterName(printJob.PrinterId);
+
+                    PrintJobGroup newPrintJobGroup = new PrintJobGroup(printerName.Trim(),
+                        new ObservableCollection<PrintJob>());
+                    newPrintJobGroup.Jobs.Add(printJob);
+                    _jobsViewModel.PrintJobsList.Add(newPrintJobGroup);
                 }
             }
         }
