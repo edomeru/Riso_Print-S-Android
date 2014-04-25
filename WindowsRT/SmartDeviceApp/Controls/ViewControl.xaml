@@ -208,9 +208,10 @@
             </Grid>
         </Grid>
         <Grid x:Name="viewRoot" Grid.Row="0"
-                Style="{StaticResource STYLE_ViewGrid}"
-                Width="{Binding ViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
-                Height="{Binding Converter={StaticResource HeightConverter}}">
+              Style="{StaticResource STYLE_ViewGrid}"
+              Width="{Binding ViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
+              Height="{Binding Converter={StaticResource HeightConverter}}"
+              Tapped="OnViewRootTapped">
             <!--<Grid.Projection>
                 <PlaneProjection/>
             </Grid.Projection>-->
@@ -232,7 +233,8 @@
                     <Button x:Name="mainMenuButton" 
                             Command="{Binding ToggleMainMenuPane}" 
                             Template="{StaticResource TEMPLATE_MainMenuButton}" 
-                            Style="{StaticResource STYLE_AlignLeft}"/>
+                            Style="{StaticResource STYLE_AlignLeft}"
+                            Tapped="OnMainMenuButtonTapped"/>
                     <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
@@ -240,12 +242,14 @@
                             Command="{Binding TogglePane2}" 
                             Template="{StaticResource TEMPLATE_Button2}"
                             Visibility="{Binding Button2Visibility, ElementName=viewControl}"
-                            Style="{StaticResource STYLE_AlignRight}"/>
+                            Style="{StaticResource STYLE_AlignRight}"
+                            Tapped="OnButton2Tapped"/>
                     <Button x:Name="button1" 
                             Command="{Binding TogglePane1}" 
                             Template="{StaticResource TEMPLATE_Button1}"
                             Visibility="{Binding Button1Visibility, ElementName=viewControl}"
-                            Style="{StaticResource STYLE_AlignRight}"/>
+                            Style="{StaticResource STYLE_AlignRight}"
+                            Tapped="OnButton1Tapped"/>
                 </StackPanel>
             </Grid>
             <Grid x:Name="contentGrid" Grid.Row="1"

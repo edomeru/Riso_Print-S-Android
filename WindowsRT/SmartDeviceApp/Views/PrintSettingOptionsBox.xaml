@@ -53,6 +53,7 @@
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                                 IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
+                                                IsEnabled="{Binding IsEnabled}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
                                                 Width="{Binding Width, ElementName=printSettingOptionsBox}">
                 </controls:KeyRadioButtonControl>

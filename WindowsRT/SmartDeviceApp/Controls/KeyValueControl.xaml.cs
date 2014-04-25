@@ -16,14 +16,20 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Enum;
 using GalaSoft.MvvmLight.Command;
+using Windows.UI.Xaml.Media.Imaging;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.Controls
 {
     public partial class KeyValueControl : UserControl
     {
+        private bool _isLoaded;
+        private bool _isForceReload;
+
         public KeyValueControl()
         {
             this.InitializeComponent();
+            if (!_isLoaded) Loaded += new RoutedEventHandler(OnLoaded);
         }
 		
         public static readonly DependencyProperty CommandProperty =
@@ -32,17 +38,14 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty CommandParameterProperty =
             DependencyProperty.Register("CommandParameter", typeof(object), typeof(KeyValueControl), null);
         
-        public static readonly DependencyProperty LeftButtonVisibilityProperty =
-            DependencyProperty.Register("LeftButtonVisibility", typeof(Visibility), typeof(KeyValueControl), null);
-
         public static readonly DependencyProperty RightButtonVisibilityProperty =
-            DependencyProperty.Register("RightButtonVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+            DependencyProperty.Register("RightButtonVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
         public static readonly DependencyProperty IconVisibilityProperty =
-            DependencyProperty.Register("IconVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+            DependencyProperty.Register("IconVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
         public static readonly DependencyProperty ValueVisibilityProperty =
-            DependencyProperty.Register("ValueVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+            DependencyProperty.Register("ValueVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
         public static readonly DependencyProperty ValueContentProperty = 
             DependencyProperty.Register("ValueContent", typeof(object), typeof(KeyValueControl), null);
@@ -62,11 +65,23 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty SubTextProperty =
+            DependencyProperty.Register("SubText", typeof(string), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty SubTextVisibilityProperty =
+            DependencyProperty.Register("SubTextVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Collapsed));
+
+        public static readonly DependencyProperty KeyTextWidthProperty =
+            DependencyProperty.Register("KeyTextWidth", typeof(double), typeof(KeyValueControl), null);
+
         public static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty ValueTextWidthProperty =
+            DependencyProperty.Register("ValueTextWidth", typeof(double), typeof(KeyValueControl), null);
+
         public static readonly DependencyProperty SeparatorVisibilityProperty =
-            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), null);
+            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
         public static new readonly DependencyProperty IsEnabledProperty =
             DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyValueControl), new PropertyMetadata(true, SetIsEnabled));
@@ -83,27 +98,21 @@ namespace SmartDeviceApp.Controls
             set { SetValue(CommandParameterProperty, value); }
         }
 
-        public string LeftButtonVisibility
+        public Visibility RightButtonVisibility
         {
-            get { return (string)GetValue(LeftButtonVisibilityProperty); }
-            set { SetValue(LeftButtonVisibilityProperty, value); }
-        }
-
-        public string RightButtonVisibility
-        {
-            get { return (string)GetValue(RightButtonVisibilityProperty); }
+            get { return (Visibility)GetValue(RightButtonVisibilityProperty); }
             set { SetValue(RightButtonVisibilityProperty, value); }
         }
 
-        public string IconVisibility
+        public Visibility IconVisibility
         {
-            get { return (string)GetValue(IconVisibilityProperty); }
+            get { return (Visibility)GetValue(IconVisibilityProperty); }
             set { SetValue(IconVisibilityProperty, value); }
         }
 
-        public string ValueVisibility
+        public Visibility ValueVisibility
         {
-            get { return (string)GetValue(ValueVisibilityProperty); }
+            get { return (Visibility)GetValue(ValueVisibilityProperty); }
             set { SetValue(ValueVisibilityProperty, value); }
         }
 
@@ -143,10 +152,34 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextProperty, value); }
         }
 
+        public string SubText
+        {
+            get { return (string)GetValue(SubTextProperty); }
+            set { SetValue(SubTextProperty, value); }
+        }
+
+        public Visibility SubTextVisibility
+        {
+            get { return (Visibility)GetValue(SubTextVisibilityProperty); }
+            set { SetValue(SubTextVisibilityProperty, value); }
+        }
+
         public string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
+        }
+
+        public double KeyTextWidth
+        {
+            get { return (double)GetValue(KeyTextWidthProperty); }
+            set { SetValue(KeyTextWidthProperty, value); }
+        }
+
+        public double ValueTextWidth
+        {
+            get { return (double)GetValue(ValueTextWidthProperty); }
+            set { SetValue(ValueTextWidthProperty, value); }
         }
 
         public string SeparatorVisibility
@@ -164,16 +197,83 @@ namespace SmartDeviceApp.Controls
         private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue == null || !(e.NewValue is bool)) return;
+            var control = (KeyValueControl)obj;
             if ((bool)e.NewValue)
             {
                 VisualStateManager.GoToState(((KeyValueControl)obj).button, "Normal", true);
-                ((KeyValueControl)obj).button.IsEnabled = true;
+                control.button.IsEnabled = true;
+                if (e.OldValue != e.NewValue)
+                {
+                    control._isForceReload = true;
+                    control.OnLoaded(null, null);
+                }
             }
             else
             {
                 VisualStateManager.GoToState(((KeyValueControl)obj).button, "Disabled", true);
-                ((KeyValueControl)obj).button.IsEnabled = false;
+                control.button.IsEnabled = false;
+                if (e.OldValue != e.NewValue)
+                {
+                    control._isForceReload = true;
+                    control.OnLoaded(null, null);
+                }
             }
+        }
+        
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if ((_isLoaded && !_isForceReload) || Visibility == Visibility.Collapsed) return;
+
+            var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+            var smallMargin = (int)((double)Application.Current.Resources["MARGIN_Small"]);
+
+            // Get text width by subtracting widths and margins of visible components
+            int maxTextWidth = (int)keyValueControl.ActualWidth;
+            
+            // Left and right margins
+            maxTextWidth -= (defaultMargin * 2);
+            
+            // Icon is visible
+            if (IconVisibility == Visibility.Visible)
+            {
+                var imageWidth = ((BitmapImage)IconImage).PixelWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.IconImageWidth;
+                maxTextWidth -= imageWidth;
+                maxTextWidth -= defaultMargin;
+            }
+            // RightButton is visible
+            if (RightButtonVisibility == Visibility.Visible)
+            {
+                var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
+                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.RightButtonImageWidth;
+                maxTextWidth -= rightButtonImageWidth;
+                maxTextWidth -= defaultMargin;
+            }
+
+            // ValueContent is visible
+            var valueContent = ValueContent as FrameworkElement;
+            if (valueContent != null && valueContent.Visibility == Visibility.Visible)
+            {
+                maxTextWidth -= (int)valueContent.ActualWidth;
+                maxTextWidth -= defaultMargin;
+            }
+
+            // Value is visible
+            if (ValueVisibility == Visibility.Visible && IsEnabled) // Note: If disabled, value is not visible
+            {
+                // Space between key and value texts
+                maxTextWidth -= smallMargin;
+                maxTextWidth /= 2;
+                // Set key and value to equal widths
+                KeyTextWidth = maxTextWidth;
+                ValueTextWidth = maxTextWidth;
+            }
+            else // only Key is visible
+            {
+                KeyTextWidth = maxTextWidth;
+            }
+            _isLoaded = true;
+            _isForceReload = false;
         }
     }
 }

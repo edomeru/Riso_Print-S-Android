@@ -24,8 +24,13 @@ namespace SmartDeviceApp.Converters
             {
                 if (group.PrintSettings.Contains(printSetting))
                 {
+                    if (group.PrintSettings.Count == 1)
+                    {
+                        return Visibility.Collapsed;
+                    }
                     index = group.PrintSettings.IndexOf(printSetting);
                     isLastItem = (index == group.PrintSettings.Count - 1);
+                    break;
                 }
             }
             return (isLastItem ? Visibility.Collapsed : Visibility.Visible);
