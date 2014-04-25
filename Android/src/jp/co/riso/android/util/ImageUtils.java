@@ -18,10 +18,32 @@ import android.graphics.Rect;
 
 public final class ImageUtils {
     
+    /**
+     * Render Bitmap to Canvas
+     * 
+     * @param bmp
+     *            bitmap image
+     * @param canvas
+     *            canvas
+     * @param color
+     *            color
+     */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color) {
         renderBmpToCanvas(bmp, canvas, color, new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
     }
     
+    /**
+     * Render Bitmap to Canvas
+     * 
+     * @param bmp
+     *            bitmap image
+     * @param canvas
+     *            canvas
+     * @param color
+     *            color
+     * @param rect
+     *            rectangular coordinates
+     */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, Rect rect) {
         int x = rect.centerX();
         int y = rect.centerY();
@@ -32,10 +54,50 @@ public final class ImageUtils {
         renderBmpToCanvas(bmp, canvas, color, x, y, 0, scaleX, scaleY);
     }
     
+    /**
+     * Render Bitmap to Canvas
+     * 
+     * @param bmp
+     *            bitmap image
+     * @param canvas
+     *            canvas
+     * @param color
+     *            color
+     * @param x
+     *            x coordinates
+     * @param y
+     *            y coordinates
+     * @param rotate
+     *            rotation
+     * @param scale
+     *            scale
+     */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scale) {
         renderBmpToCanvas(bmp, canvas, color, x, y, rotate, scale, scale);
     }
     
+    /**
+     * Render Bitmap to Canvas
+     * 
+     * @param bmp
+     *            bitmap image
+     * @param canvas
+     *            canvas
+     * @param color
+     *            color
+     * @param x
+     *            x coordinates
+     * @param y
+     *            y coordinates
+     * @param rotate
+     *            rotation
+     * @param scale
+     *            scale
+     * @param scaleX
+     *            scale of x-axis
+     * @param scaleY
+     *            scale of y-axis
+     */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scaleX, float scaleY) {
         Paint paint = new Paint();
         

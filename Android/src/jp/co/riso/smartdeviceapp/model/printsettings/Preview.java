@@ -44,14 +44,23 @@ public class Preview {
             mHeight = height;
         }
         
+        /**
+         * @return tag
+         */
         public static String getTag() {
             return "paperSize";
         }
         
+        /**
+         * @return width
+         */
         public float getWidth() {
             return mWidth;
         }
         
+        /**
+         * @return height
+         */
         public float getHeight() {
             return mHeight;
         }
@@ -74,18 +83,30 @@ public class Preview {
             mFlipLandscape = flipLandscape;
         }
         
+        /**
+         * @return perPage
+         */
         public int getPerPage() {
             return mPerPage;
         }
         
+        /**
+         * @return rows
+         */
         public int getRows() {
             return mRows;
         }
         
+        /**
+         * @return columns
+         */
         public int getCols() {
             return mCols;
         }
         
+        /**
+         * @return flip landscape
+         */
         public boolean isFlipLandscape() {
             return mFlipLandscape;
         }
@@ -109,14 +130,23 @@ public class Preview {
             mHorizontalFlow = horizontalFlow;
         }
         
+        /**
+         * @return imposition order is left to right
+         */
         public boolean isLeftToRight() {
             return mLeftToRight;
         }
-        
+
+        /**
+         * @return imposition order is top to bottom
+         */
         public boolean isTopToBottom() {
             return mTopToBottom;
         }
         
+        /**
+         * @return is horizontal flow
+         */
         public boolean isHorizontalFlow() {
             return mHorizontalFlow;
         }
@@ -151,6 +181,9 @@ public class Preview {
             mCount = count;
         }
         
+        /**
+         * @return staple count
+         */
         public int getCount() {
             return mCount;
         }
@@ -167,6 +200,9 @@ public class Preview {
             mCount = count;
         }
         
+        /**
+         * @return punch count
+         */
         public int getCount() {
             return mCount;
         }

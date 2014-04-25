@@ -83,6 +83,12 @@ public class PrintSettings {
         }
     }
     
+    /**
+     * Constructor
+     * 
+     * @param printSettings
+     *            Print settings
+     */
     public PrintSettings(PrintSettings printSettings) {
         mSettingValues = new HashMap<String, Integer>();
         
@@ -91,6 +97,12 @@ public class PrintSettings {
         }
     }
     
+    /**
+     * Constructor
+     * 
+     * @param printerId
+     *            Printer ID
+     */
     public PrintSettings(int printerId) {
         this();
         PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
@@ -104,6 +116,9 @@ public class PrintSettings {
         }
     }
     
+    /**
+     * Initialize static objects
+     */
     private static void initializeStaticObjects() {
         String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
         
@@ -127,6 +142,11 @@ public class PrintSettings {
         parsePrintSettings(printSettingsContent);
     }
     
+    /**
+     * Parse print settings
+     * 
+     * @param printSettingsContent
+     */
     private static void parsePrintSettings(Document printSettingsContent) {
         if (printSettingsContent == null) {
             return;
@@ -149,6 +169,9 @@ public class PrintSettings {
     // Getter for PJL
     // ================================================================================
     
+    /**
+     * @return PJL formatted string 
+     */
     public String formattedString() {
         StringBuffer strBuf = new StringBuffer();
         String KEY_VAL_FORMAT = "%s=%d\n";
@@ -167,14 +190,33 @@ public class PrintSettings {
     // Getter for int values
     // ================================================================================
     
+    /**
+     * @return setting values
+     */
     public HashMap<String, Integer> getSettingValues() {
         return mSettingValues;
     }
     
+    /**
+     * Get print settings value from key
+     * 
+     * @param key
+     *            Print settings key
+     * @return value
+     */
     public int getValue(String key) {
         return mSettingValues.get(key);
     }
     
+    /**
+     * Set print settings value to key
+     * 
+     * @param key
+     *            Print settings key
+     * @param value
+     *            Value
+     * @return success
+     */
     public boolean setValue(String key, int value) {
         mSettingValues.put(key, value);
         return true;

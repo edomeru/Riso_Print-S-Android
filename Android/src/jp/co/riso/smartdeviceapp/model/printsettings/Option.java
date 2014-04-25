@@ -15,11 +15,19 @@ public class Option extends XmlNode {
     
     private String mTextContent;
     
+    /**
+     * Constructor
+     * 
+     * @param optionNode
+     */
     public Option(Node optionNode) {
         super(optionNode);
         mTextContent = optionNode.getTextContent();
     }
     
+    /**
+     * @return text content
+     */
     public String getTextContent() {
         return mTextContent;
     }

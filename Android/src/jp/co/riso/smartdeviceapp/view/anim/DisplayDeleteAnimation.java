@@ -146,10 +146,16 @@ public class DisplayDeleteAnimation {
     public class HideOnFadeAnimationListener implements Animation.AnimationListener {
         private WeakReference<View> mViewReference = null;
         
+        /**
+         * Set delete view
+         * 
+         * @param view
+         */
         public void setView(View view) {
             mViewReference = new WeakReference<View>(view);
         }
         
+        /** {@inheritDoc} */
         @Override
         public void onAnimationEnd(Animation animation) {
             if (mViewReference != null) {
@@ -160,10 +166,12 @@ public class DisplayDeleteAnimation {
             }
         }
         
+        /** {@inheritDoc} */
         @Override
         public void onAnimationRepeat(Animation animation) {
         }
         
+        /** {@inheritDoc} */
         @Override
         public void onAnimationStart(Animation animation) {
         }

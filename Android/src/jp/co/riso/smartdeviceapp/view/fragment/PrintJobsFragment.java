@@ -51,20 +51,26 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ScrollView mScrollView;
     private int mScrollPosition;
     
+    /**
+     * Instantiate PrintJobsFragment
+     */
     public PrintJobsFragment() {
         super();
     }
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printjobs;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
@@ -80,6 +86,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mLoadPrintJobsTask.execute();
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -87,6 +94,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         addActionMenuButton(view);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -97,6 +105,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - View.onTouchListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean onTouch(View v, MotionEvent e) {
         if (v.getId() == R.id.printJobContainer) {
@@ -109,22 +118,26 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - PrintJobsGroupViewListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer) {
         this.mPrintGroupToDelete = printJobsGroupView;
         this.mPrinterToDelete = printer;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void deletePrinterFromList(Printer printer) {
         mPrinters.remove(printer);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void deleteJobFromList(PrintJob printJob) {
         mPrintJobs.remove(printJob);
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean showDeleteDialog() {
         String title = getResources().getString(R.string.ids_lbl_delete_jobs_title);
@@ -142,6 +155,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void setCollapsed(Printer printer, boolean isCollapsed) {
         if (isCollapsed) {
@@ -151,6 +165,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void setDeletePrintJob(PrintJob job) {
         mPrintJobToDelete = job;
@@ -160,6 +175,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - PrintJobsViewListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void hideLoading() {
         if (!isTablet()) {
@@ -175,6 +191,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - ConfirmationDialogListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onConfirm() {
         if (mPrintGroupToDelete != null) {
@@ -185,6 +202,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         if (mPrintGroupToDelete != null) {
@@ -200,6 +218,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // Internal Classes
     // ================================================================================
     
+    /**
+     * AsyncTask for Loading Print Job Tasks
+     */
     private class LoadPrintJobsTask extends AsyncTask<Void, Void, Void> {
         private WeakReference<Context> mContextRef;
         private List<PrintJob> mPrintJobsList;
@@ -215,6 +236,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             }
         }
         
+        /** {@inheritDoc} */
         @Override
         protected Void doInBackground(Void... arg0) {
             if (mContextRef != null && mContextRef.get() != null) {
@@ -243,6 +265,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             return null;
         }
         
+        /** {@inheritDoc} */
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
