@@ -736,7 +736,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
     }
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
-    if(punch != kPunchTypeNone && self.previewSetting.outputTray == kOutputTrayFaceDownTray)
+    if(punch != kPunchTypeNone && self.previewSetting.outputTray == kOutputTrayFaceDownTray &&
+       [self.printer.enabled_tray_face_down boolValue] == YES)
     {
         [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger) kOutputTrayAuto];
     }

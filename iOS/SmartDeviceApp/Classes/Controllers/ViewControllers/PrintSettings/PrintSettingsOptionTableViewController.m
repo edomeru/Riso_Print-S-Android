@@ -134,20 +134,21 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
--(BOOL) isApplicableOption:(NSInteger)option
+-(BOOL) isApplicableOption:(NSString *)option
 {
     if([self.key isEqualToString:KEY_STAPLE] == YES)
     {
         if(self.previewSetting.finishingSide == kFinishingSideTop)
         {
-            if(option == kStapleType1Pos)
+            if([option isEqualToString:@"ids_lbl_staple_1"] == YES)
             {
                 return NO;
             }
         }
         else
         {
-            if(option == kStapleTypeUpperLeft || option == kStapleTypeUpperRight)
+            if([option isEqualToString:@"ids_lbl_staple_upperleft"] == YES ||
+               [option isEqualToString:@"ids_lbl_staple_upperright"] == YES)
             {
                 return NO;
             }
@@ -156,7 +157,8 @@
     
     if([self.key isEqualToString:KEY_IMPOSITION_ORDER] == YES)
     {
-        if(option == kImpositionOrderLeftToRight || option == kImpositionOrderRightToLeft)
+        if([option isEqualToString:@"ids_lbl_imposition_order_2up_lr"] == YES ||
+           [option isEqualToString:@"ids_lbl_imposition_order_2up_rl"] == YES )
         {
             if(self.previewSetting.imposition == kImposition4pages)
             {
@@ -177,14 +179,14 @@
     {
         if(self.previewSetting.booklet == YES)
         {
-            if(option != kOutputTrayAuto)
+            if([option isEqualToString:@"ids_lbl_outputtray_auto"] == NO)
             {
                 return NO;
             }
         }
         if(self.previewSetting.punch != kPunchTypeNone)
         {
-            if(option == kOutputTrayFaceDownTray)
+            if([option isEqualToString:@"ids_lbl_outputtray_facedown"] == YES)
             {
                 return NO;
             }
@@ -202,7 +204,7 @@
     NSInteger count =options.count;
     for(int index = 0; index < count; index++)
     {
-        if([self isApplicableOption:index] == YES)
+        if([self isApplicableOption:[[options objectAtIndex:index] objectForKey:@"content-body"] ] == YES)
         {
             [self.options addObject:[options objectAtIndex:index]];
             [self.optionValues addObject:[NSNumber numberWithInt:index]];
