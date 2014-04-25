@@ -116,7 +116,7 @@
 /*Checks the keyboard input if should be accepted in textfield*/
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return[SettingsValidationHelper shouldAcceptCardIDInput:string];
+    return[SettingsValidationHelper shouldAcceptCardIDInput:[textField.text stringByAppendingString:string]];
 }
 
 /*Called when editing in a textfield ends*/
