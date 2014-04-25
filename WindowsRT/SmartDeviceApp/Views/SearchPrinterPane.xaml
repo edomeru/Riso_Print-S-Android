@@ -206,6 +206,7 @@
                             			Text="{Binding Name}"
                             			RightImage="{Binding ImageSource}"
                             			RightButtonVisibility="Visible"
+                                                          IconVisibility="Collapsed"
                                                               />
                             </Grid>
                         </DataTemplate>

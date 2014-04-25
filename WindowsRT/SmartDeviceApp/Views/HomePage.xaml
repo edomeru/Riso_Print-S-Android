@@ -20,24 +20,42 @@
                 <Setter Property="StrokeThickness" Value="1"/>
             </Style.Setters>
         </Style>
-        <Style x:Key="STYLE_Text" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
+        <Style x:Key="STYLE_TextAppTitle" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
+            <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>
+            <Setter Property="FontSize" Value="84"/>
+            <Setter Property="Margin" Value="0,40,0,30"/>
+        </Style>
+        <Style x:Key="STYLE_TextOpenDocument" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
             <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>
         </Style>
+        <ControlTemplate x:Key="TEMPLATE_OpenDocumentButton" TargetType="Button">
+            <Grid Background="Transparent" Height="160">
+                <StackPanel Style="{StaticResource STYLE_StackTop}">
+                    <TextBlock Text="{Binding Source=IDS_APP_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
+                                Style="{StaticResource STYLE_TextAppTitle}"/>
+                    <Line Style="{StaticResource STYLE_Line}" Margin="0,0,0,10"/>
+                    <TextBlock Text="{Binding Source=IDS_LBL_OPEN_IN_WINRT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                               Style="{StaticResource STYLE_TextOpenDocument}"
+                               Margin="0,0,0,10"/>
+                    <Line Style="{StaticResource STYLE_Line}" 
+                          Margin="0,0,0,10"/>
+                </StackPanel>
+            </Grid>
+        </ControlTemplate>
     </base:PageBase.Resources>
         
     <controls:ViewControl 
         ChildrenDataContext="{Binding DataContext, ElementName=homePage}"
         Text="{Binding Source=IDS_LBL_HOME, Converter={StaticResource ResourceStringToTextConverter}}" >
-        <StackPanel HorizontalAlignment="Center" 
-                    VerticalAlignment="Center"
-                    Style="{StaticResource STYLE_StackTop}">
-            <Image Source="ms-appx:///Resources/Dummy/Logo_Riso_temp.png" Width="600" Margin="0,0,0,30"/>
-            <Line Style="{StaticResource STYLE_Line}" Margin="0,0,0,10"/>
-            <TextBlock Text="{Binding Source=IDS_LBL_OPEN_IN_WINRT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
-                       Style="{StaticResource STYLE_Text}"
-                       Margin="0,0,0,10"/>
-            <Line Style="{StaticResource STYLE_Line}"/>
-        </StackPanel>        
+        <StackPanel Orientation="Vertical"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+            <Button Command="{Binding OpenDocumentCommand}"
+                    Template="{StaticResource  TEMPLATE_OpenDocumentButton}"/>
+            <ProgressRing IsActive="{Binding IsProgressRingActive}"
+                          Visibility="{Binding IsProgressRingActive, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Style="{StaticResource STYLE_ProgressRing}"/>
+        </StackPanel>
     </controls:ViewControl>
 </base:PageBase>
 

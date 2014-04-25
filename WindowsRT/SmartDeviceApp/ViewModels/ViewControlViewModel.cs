@@ -30,13 +30,11 @@ namespace SmartDeviceApp.ViewModels
         private ScreenMode _screenMode;
         private bool _isPane1Visible = false;
         private bool _isPane2Visible = false;
-        private Frame _frame;
 
         public ViewControlViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            _frame = Window.Current.Content as Frame;
             ViewMode = ViewMode.FullScreen;
             ScreenMode = ScreenMode.PrintPreview;
             InitializeMainMenu();
@@ -361,12 +359,12 @@ namespace SmartDeviceApp.ViewModels
         {
             if (DocumentController.Instance.IsFromFilePicker)
             {
-                _frame.Navigate(typeof(HomePage));
+                _navigationService.Navigate(typeof(HomePage));
                 ScreenMode = ScreenMode.Home;
             }
             else
             {
-                _frame.Navigate(typeof(PrintPreviewPage));
+                _navigationService.Navigate(typeof(PrintPreviewPage));
                 ScreenMode = ScreenMode.PrintPreview;
                 //new ViewModelLocator().PrintPreviewViewModel.InitializeGestures();
             }
@@ -374,36 +372,36 @@ namespace SmartDeviceApp.ViewModels
         }
 
         private void GoToPrintersPageExecute()
-        {            
-            _frame.Navigate(typeof(PrintersPage));
+        {
+            _navigationService.Navigate(typeof(PrintersPage));
             ScreenMode = ScreenMode.Printers;
             ViewMode = ViewMode.FullScreen;
         }
 
         private void GoToJobsPageExecute()
         {
-            _frame.Navigate(typeof(JobsPage));
+            _navigationService.Navigate(typeof(JobsPage));
             ScreenMode = ScreenMode.Jobs;
             ViewMode = ViewMode.FullScreen;
         }
 
         private void GoToSettingsPageExecute()
         {
-            _frame.Navigate(typeof(SettingsPage));
+            _navigationService.Navigate(typeof(SettingsPage));
             ScreenMode = ScreenMode.Settings;
             ViewMode = ViewMode.FullScreen;
         }
 
         private void GoToHelpPageExecute()
         {
-            _frame.Navigate(typeof(HelpPage));
+            _navigationService.Navigate(typeof(HelpPage));
             ScreenMode = ScreenMode.Help;
             ViewMode = ViewMode.FullScreen;
         }
 
         private void GoToLegalPageExecute()
         {
-            _frame.Navigate(typeof(LegalPage));
+            _navigationService.Navigate(typeof(LegalPage));
             ScreenMode = ScreenMode.Legal;
             ViewMode = ViewMode.FullScreen;
         }

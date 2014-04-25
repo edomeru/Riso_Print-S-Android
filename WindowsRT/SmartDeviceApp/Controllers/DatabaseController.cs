@@ -44,17 +44,15 @@ namespace SmartDeviceApp.Controllers
 
         public async Task Initialize()
         {
-            // await CreateDatabase();  // Used for create database from script
-            CreateDatabase();
+            await CreateDatabase();
 
             // TODO: Remove after testing (or create an initial data manager)
             await InsertSampleData();
         }
 
-        // private async Task CreateDatabase() // Used for create database from script
-        private void CreateDatabase()
+        private async Task CreateDatabase()
         {
-#if CREATE_TABLES_USING_SCRIPT
+#if true // CREATE_TABLES_USING_SCRIPT
             #region Create Tables Using Script File
 
             await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
@@ -129,19 +127,25 @@ namespace SmartDeviceApp.Controllers
                     string script = await FileIO.ReadTextAsync(file);
 
                     // Loop each commands
-                    string[] commands = script.Split(new char[] { ';' },
+                    string[] lines = script.Split(new char[] { ';' },
                         StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string command in commands)
+                    foreach (string line in lines)
                     {
                         try
                         {
                             // Since each parameter in the script is in each line,
                             // convert them into a single line statement
-                            db.Execute(command.Replace("\r\n", " ").Trim());
+                            string sqlStatement = line.Replace("\r\n", string.Empty).Trim();
+                            if (!string.IsNullOrEmpty(sqlStatement))
+                            {
+                                db.Execute(sqlStatement);
+                            }
                         }
                         catch (SQLiteException)
                         {
                             // Error handling
+                            // Possible cause:
+                            // * table/item already exists
                         }
                     }
                 }
@@ -307,7 +311,7 @@ namespace SmartDeviceApp.Controllers
                 int defaultPrinterCount = await db.Table<DefaultPrinter>().CountAsync();
                 if (defaultPrinterCount > 0)
                 {
-                    return await (db.Table<DefaultPrinter>().FirstAsync());
+                    return await (db.Table<DefaultPrinter>().FirstOrDefaultAsync());
                 }
             }
             catch
@@ -349,13 +353,34 @@ namespace SmartDeviceApp.Controllers
             try
             {
                 Printer printer = await db.GetAsync<Printer>(id);
-                return printer.Name;
+                if (printer != null)
+                {
+                    return printer.Name;
+                }
             }
             catch
             {
                 // Error handling here
             }
             return string.Empty;
+        }
+
+        public async Task UpdatePortNumber(Printer printer)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                var printerFromDB = await db.GetAsync<Printer>(printer.Id);
+                printerFromDB.PortSetting = printer.PortSetting;
+
+                await db.UpdateAsync(printerFromDB);
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return;
         }
 
         #endregion Printer Table Operations
@@ -369,6 +394,11 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; print settings if found, null otherwise</returns>
         public async Task<PrintSettings> GetPrintSettings(int id)
         {
+            if (id < 0)
+            {
+                return null;
+            }
+
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
             try
@@ -395,13 +425,14 @@ namespace SmartDeviceApp.Controllers
             var printJobsList = new List<PrintJob>();
 
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
             try
             {
-                printJobsList = await (db.Table<PrintJob>().ToListAsync());
+                printJobsList = await db.Table<PrintJob>().ToListAsync();
             }
             catch
             {
-                return null;
+                // Error handling here
             }
 
             return printJobsList;
@@ -419,12 +450,11 @@ namespace SmartDeviceApp.Controllers
                 return 0;
             }
 
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
             try
             {
-                var db = new SQLite.SQLiteAsyncConnection(_databasePath);
-
-                await db.InsertAsync(printJob);
-                return 1;
+                return await db.InsertAsync(printJob);
             }
             catch
             {
@@ -441,14 +471,16 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; number of deleted items</returns>
         public async Task<int> DeletePrintJob(PrintJob printJob)
         {
+            if (printJob == null)
+            {
+                return 0;
+            }
+
             var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
             try
             {
-                // Delete row
-                await db.DeleteAsync(printJob);
-
-                return 1;
+                return await db.DeleteAsync(printJob);
             }
             catch
             {
@@ -462,6 +494,10 @@ namespace SmartDeviceApp.Controllers
 
         #region Dummy - Initial Data
 
+        /// <summary>
+        /// Inserts sample data on first run of app after installation
+        /// </summary>
+        /// <returns>task</returns>
         private async Task InsertSampleData()
         {
             bool isPreviouslyLoaded = false;

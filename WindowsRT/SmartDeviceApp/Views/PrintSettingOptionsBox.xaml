@@ -41,22 +41,21 @@
     <ListView x:Name="printSettingOptionsListView" Grid.Row="1"  
               ItemsSource="{Binding PrintSetting.Options}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
-              IsItemClickEnabled="False" SelectionMode="Single">
+              IsItemClickEnabled="False" 
+              SelectionMode="Single">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
+                                                Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
+                                                CommandParameter="{Binding}"
                                                 GroupName="printSettingOptionsGroup"
                                                 Index="{Binding Index}"
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                                 IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
+                                                IsEnabled="{Binding IsEnabled}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
                                                 Width="{Binding Width, ElementName=printSettingOptionsBox}">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="Checked">
-                            <Core:InvokeCommandAction Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}" InputConverter="{StaticResource ItemCheckedConverter}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
                 </controls:KeyRadioButtonControl>
             </DataTemplate>
         </ListView.ItemTemplate>

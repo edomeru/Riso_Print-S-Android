@@ -63,6 +63,7 @@ namespace SmartDeviceApp.Models
     {
         private object _value;
         private PrintSettingOption _selectedOption;
+        private bool _isEnabled;
         public string Name { get; set; }
         public string Text { get; set; }
         public string Icon { get; set; }
@@ -80,6 +81,7 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
+
         // Should be used only if PrintSettingType = list
         public PrintSettingOption SelectedOption
         {
@@ -100,7 +102,18 @@ namespace SmartDeviceApp.Models
         }
         public object Default { get; set; }
         public List<PrintSettingOption> Options { get; set; }
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    RaisePropertyChanged("IsEnabled");
+                }
+            }
+        }
 
         public override bool Equals(System.Object obj)
         {
@@ -157,9 +170,9 @@ namespace SmartDeviceApp.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Printer ID, used by PrintSetting table and is indexed
+        /// Printer ID, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.Indexed(Name = "PrintSetting_FKIndex1")]
+        [SQLite.Column("prn_id"), SQLite.NotNull]
         public int PrinterId { get; set; }
 
         /// <summary>
@@ -298,55 +311,6 @@ namespace SmartDeviceApp.Models
             Staple = -1;
             Punch = -1;
             OutputTray = -1;
-        }
-        /// <summary>
-        /// PrintSettings class constructor
-        /// </summary>
-        /// <param name="id">print setting ID</param>
-        /// <param name="printerId">printer ID</param>
-        /// <param name="colorMode">color mode</param>
-        /// <param name="orientation">orientation</param>
-        /// <param name="copies">copies</param>
-        /// <param name="duplex">duplex</param>
-        /// <param name="paperSize">paper size</param>
-        /// <param name="scaleToFit">scale to fit</param>
-        /// <param name="paperType">paper type</param>
-        /// <param name="inputTray">input tray</param>
-        /// <param name="imposition">imposition</param>
-        /// <param name="impositionOrder">imposition order</param>
-        /// <param name="sort">sort</param>
-        /// <param name="booklet">booklet</param>
-        /// <param name="bookletFinishing">bookletFinishing</param>
-        /// <param name="bookletLayout">booklet layout</param>
-        /// <param name="finishingSide">finishing size</param>
-        /// <param name="staple">staple</param>
-        /// <param name="punch">punch</param>
-        /// <param name="outputTray">output tray</param>
-        public PrintSettings(int id, int printerId, int colorMode, int orientation, int copies,
-            int duplex, int paperSize, bool scaleToFit, int paperType, int inputTray,
-            int imposition, int impositionOrder, int sort, bool booklet, int bookletFinishing,
-            int bookletLayout, int finishingSide, int staple, int punch, int outputTray)
-        {
-            Id = id;
-            PrinterId = printerId;
-            ColorMode = colorMode;
-            Orientation = orientation;
-            Copies = copies;
-            Duplex = duplex;
-            PaperSize = paperSize;
-            ScaleToFit = scaleToFit;
-            PaperType = paperType;
-            InputTray = inputTray;
-            Imposition = imposition;
-            ImpositionOrder = impositionOrder;
-            Sort = sort;
-            Booklet = booklet;
-            BookletFinishing = bookletFinishing;
-            BookletLayout = bookletLayout;
-            FinishingSide = finishingSide;
-            Staple = staple;
-            Punch = punch;
-            OutputTray = outputTray;
         }
 
     }

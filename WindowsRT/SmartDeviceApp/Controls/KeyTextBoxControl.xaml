@@ -6,15 +6,19 @@
     xmlns:controls="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    SubTextVisibility="Collapsed"
     ValueVisibility="Collapsed"
-    LeftButtonVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
     mc:Ignorable="d"
     d:DesignHeight="60"
     d:DesignWidth="400">
 
     <controls:KeyValueControl.ValueContent>
-        <TextBox x:Name="textBox" Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
-                Style="{StaticResource STYLE_ListValue_TextBox}"/>
+        <TextBox x:Name="textBox" 
+                 Loaded="OnTextBoxLoaded"
+                 Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
+                 Width="{Binding TextBoxWidth, ElementName=keyTextBoxControl}"
+                 TextAlignment="{Binding TextBoxAlignment, ElementName=keyTextBoxControl}"                 
+                 Style="{StaticResource STYLE_ListValue_TextBox}"/>
     </controls:KeyValueControl.ValueContent>
 </controls:KeyValueControl>

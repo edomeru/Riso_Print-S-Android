@@ -342,26 +342,13 @@ namespace SmartDeviceApp.Controllers
         {
             
                 //add to printerList
-            //    Printer printer = new Printer(-1, -1, ip, name, -1,
-            //false, false, false, false,
-            //false, false, false);
-
-                Printer printer = new Printer() { IpAddress = ip, Name = name};
-                //printer.IpAddress = ip;
-                //printer.Name = name;
-
+                Printer printer = new Printer() { IpAddress = ip, Name = name };
                 try
                 {
-                    //insert to database
-                    int id = await DatabaseController.Instance.InsertPrinter(printer);
-                    if (id < 0)
-                    {
-                        return;
-                    }
-                
 
-                printer.Id = id;
-                printer.IsOnline = true;
+                    int id = await DatabaseController.Instance.InsertPrinter(printer);
+                    printer.Id = id;
+                    printer.IsOnline = true;
                 }
                 catch (Exception e)
                 {
@@ -443,6 +430,12 @@ namespace SmartDeviceApp.Controllers
                     }
                  }
                 
+            }
+
+            if (e.PropertyName == "PortSetting")
+            {
+                await DatabaseController.Instance.UpdatePortNumber(printer);
+                 
             }
             //throw new NotImplementedException();
         }

@@ -32,9 +32,9 @@ namespace SmartDeviceApp.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Printer ID, used by PrintJob table and is indexed
+        /// Printer ID, used by PrintJob table
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.NotNull, SQLite.Indexed(Name = "PrintJob_FKIndex1")]
+        [SQLite.Column("prn_id"), SQLite.NotNull]
         public int PrinterId { get; set; }
 
         /// <summary>
@@ -79,6 +79,7 @@ namespace SmartDeviceApp.Models
         /// <param name="result">print job result</param>
         public PrintJob(int id, int printerId, string name, DateTime date, int result)
         {
+            // TODO: This constructor should be deleted
             Id = id;
             PrinterId = printerId;
             Name = name;
@@ -118,9 +119,9 @@ namespace SmartDeviceApp.Models
 
     public class PrintJobGroup : ObservableObject
     {
-        private List<PrintJob> _jobs;
+        private ObservableCollection<PrintJob> _jobs;
         public string PrinterName { get; set; }
-        public List<PrintJob> Jobs
+        public ObservableCollection<PrintJob> Jobs
         {
             get { return _jobs; }
             set
@@ -133,7 +134,7 @@ namespace SmartDeviceApp.Models
             }
         }
 
-        public PrintJobGroup(string printerName, List<PrintJob> jobs)
+        public PrintJobGroup(string printerName, ObservableCollection<PrintJob> jobs)
         {
             PrinterName = printerName;
             Jobs = jobs;

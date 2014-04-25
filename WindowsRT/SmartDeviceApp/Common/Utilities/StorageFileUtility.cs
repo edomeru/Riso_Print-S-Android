@@ -11,6 +11,7 @@
 //
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -33,7 +34,7 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 storageFile = await folderLocation.GetFileAsync(fileName);
             }
-            catch (System.IO.FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 // File does not exist
             }
@@ -51,7 +52,7 @@ namespace SmartDeviceApp.Common.Utilities
             var files = await tempFolder.GetFilesAsync();
             foreach (var file in files)
             {
-                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                await DeleteFile(file);
             }
         }
 
@@ -68,7 +69,7 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 if (file.Name.Contains(keyword))
                 {
-                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    await DeleteFile(file);
                 }
             }
         }
@@ -84,7 +85,7 @@ namespace SmartDeviceApp.Common.Utilities
             var file = await GetExistingFile(fileName, folderLocation);
             if (file != null)
             {
-                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                await DeleteFile(file);
             }
         }
 
@@ -97,6 +98,23 @@ namespace SmartDeviceApp.Common.Utilities
         {
             Uri uri = new Uri("ms-appx:///" + filePath);
             return await StorageFile.GetFileFromApplicationUriAsync(uri);
+        }
+
+        /// <summary>
+        /// Delete a file
+        /// </summary>
+        /// <param name="file">actual file</param>
+        /// <returns>task</returns>
+        private async static Task DeleteFile(StorageFile file)
+        {
+            try
+            {
+                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+            catch (FileNotFoundException)
+            {
+                // Error handling
+            }
         }
 
     }
