@@ -100,11 +100,11 @@ namespace SmartDeviceApp.Controllers
                 PrintJob firstSample = group.FirstOrDefault();
                 if (firstSample != null)
                 {
-                    printerName = await DatabaseController.Instance
-                        .GetPrinterName(firstSample.PrinterId);
+                    printerName = (await DatabaseController.Instance
+                        .GetPrinterName(firstSample.PrinterId)).Trim();
                 }
 
-                PrintJobGroup printJobGroup = new PrintJobGroup(printerName.Trim(),
+                PrintJobGroup printJobGroup = new PrintJobGroup(printerName,
                     new ObservableCollection<PrintJob>(group));
                 tempList.Add(printJobGroup);
             }

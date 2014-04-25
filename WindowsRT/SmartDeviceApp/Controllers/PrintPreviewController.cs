@@ -172,7 +172,7 @@ namespace SmartDeviceApp.Controllers
         /// selected printer and default print settings are assigned.
         /// </summary>
         /// <returns>task</returns>
-        public async Task GetDefaultPrinterAndPrintSetting()
+        private async Task GetDefaultPrinterAndPrintSetting()
         {
             // Get default printer and print settings from database
             DefaultPrinter defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
@@ -606,7 +606,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="rightPageIndex">requested right page index based on slider value</param>
         /// <returns>task</returns>
-        public async Task GoToPage(int rightPageIndex)
+        private async Task GoToPage(int rightPageIndex)
         {
             await LoadPage(rightPageIndex, true);
         }
@@ -3103,7 +3103,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="paperSize">paper size</param>
         /// <returns>size</returns>
-        public Size GetPaperSize(int paperSize)
+        private Size GetPaperSize(int paperSize)
         {
             Size targetSize;
             switch (paperSize)
@@ -3158,7 +3158,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="imposition">imposition type</param>
         /// <returns>number of pages per sheet</returns>
-        public int GetPagesPerSheet(int imposition)
+        private int GetPagesPerSheet(int imposition)
         {
             int pagesPerSheet = 1;
             switch (imposition)
@@ -3183,7 +3183,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="punch">punch type</param>
         /// <returns>number of punch holes</returns>
-        public int GetPunchHoleCount(int punch)
+        private int GetPunchHoleCount(int punch)
         {
             int numberOfHoles = 0;
             switch (punch)
@@ -3234,7 +3234,10 @@ namespace SmartDeviceApp.Controllers
 
         #region Print
 
-        private void Print()
+        /// <summary>
+        /// Event handler for Print button
+        /// </summary>
+        public void Print()
         {
             // TODO: Check if printer is online (NetworkController)
             bool isOnline = true;
