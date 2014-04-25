@@ -71,7 +71,7 @@ CGSize paperDimensionsMM[] = {
     
     if(setting.booklet == YES)
     {
-        if(setting.orientation == kOrientationPortrait)
+        if(setting.bookletLayout != kBookletLayoutTopToBottom)
         {
             return YES;
         }

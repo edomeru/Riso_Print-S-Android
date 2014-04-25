@@ -633,7 +633,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
         [self applyFinishingWithOrientationConstraint];
-        [self applyOrientationConstraint];
+        //[self applyOrientationConstraint];
     }
     if([key isEqualToString:KEY_PUNCH] == YES)
     {
@@ -645,17 +645,10 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         [self applyImpositionConstraintWithPreviousValue:previousValue];
         [self applyFinishingWithOrientationConstraint];
     }
-#if OUTPUT_TRAY_CONSTRAINT_ENABLED
-    if([key isEqualToString:KEY_STAPLE] == YES)
-    {
-        //[self applyStapleConstraint];
-    }
-#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 }
 
 - (void)applyBookletConstraints
 {
-
     if(self.previewSetting.booklet == YES)
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
@@ -721,29 +714,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
            (finishingSide == kFinishingSideTop && isPaperLandscape == NO))
         {
             [self setOptionSettingToDefaultValue:KEY_PUNCH];
-        }
-    }
-}
-
--(void) applyOrientationConstraint
-{
-    if(self.previewSetting.booklet == YES)
-    {
-        kOrientation orientation = (kOrientation) self.previewSetting.orientation;
-        kBookletLayout bookletLayout = (kBookletLayout) self.previewSetting.bookletLayout;
-        if(orientation == kOrientationPortrait)
-        {
-            if(bookletLayout == kBookletLayoutTopToBottom)
-            {
-                [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
-            }
-        }
-        else
-        {
-            if(bookletLayout != kBookletLayoutTopToBottom)
-            {
-                [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:(NSInteger) kBookletLayoutTopToBottom];
-            }
         }
     }
 }
@@ -820,17 +790,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             break;
     }
 }
-
-#if OUTPUT_TRAY_CONSTRAINT_ENABLED
-/*- (void)applyStapleConstraint
-{
-    kPunchType staple = (kPunchType)self.previewSetting.staple;
-    if(staple != kStapleTypeNone && self.previewSetting.outputTray == kOutputTrayFaceUpTray)
-    {
-        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
-    }
-}*/
-#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 
 - (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key
 {

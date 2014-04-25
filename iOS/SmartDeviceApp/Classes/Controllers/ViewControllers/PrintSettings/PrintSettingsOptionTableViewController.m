@@ -171,24 +171,6 @@
             }
         }
     }
-    
-    if([self.key isEqualToString:KEY_BOOKLET_LAYOUT] == YES)
-    {
-        if(option == kBookletLayoutTopToBottom)
-        {
-            if(self.previewSetting.orientation == kOrientationPortrait)
-            {
-                return NO;
-            }
-        }
-        else
-        {
-            if(self.previewSetting.orientation == kOrientationLandscape)
-            {
-                return NO;
-            }
-        }
-    }
 
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
     if([self.key isEqualToString:KEY_OUTPUT_TRAY] == YES)
@@ -207,13 +189,6 @@
                 return NO;
             }
         }
-        /*if(self.previewSetting.staple != kStapleTypeNone)
-        {
-            if(option == kOutputTrayFaceUpTray)
-            {
-                return NO;
-            }
-        }*/
     }
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
     return YES;

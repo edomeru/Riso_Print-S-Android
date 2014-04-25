@@ -351,7 +351,7 @@
     if(self.printDocument.previewSetting.booklet == YES)
     {
         spineLocation = UIPageViewControllerSpineLocationMid;
-        if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
+        if(self.printDocument.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
         {
             navOrientation = UIPageViewControllerNavigationOrientationVertical;
         }
