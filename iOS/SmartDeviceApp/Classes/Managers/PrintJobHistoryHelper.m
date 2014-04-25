@@ -72,6 +72,8 @@
         {
             // get the printer
             NSString* printerName = job.printer.name;
+            if (printerName == nil)
+                printerName = job.printer.ip_address; // to avoid setting nil in setObject
             
             // attempt to get the group for this printer
             PrintJobHistoryGroup* group = [dictPrintJobHistoryGroups objectForKey:printerName];
