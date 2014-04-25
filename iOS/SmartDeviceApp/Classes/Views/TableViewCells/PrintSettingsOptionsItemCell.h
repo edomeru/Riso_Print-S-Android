@@ -14,5 +14,6 @@
 @property (nonatomic, weak) IBOutlet UILabel *optionLabel;
 @property (nonatomic, weak) IBOutlet UIView *separator;
 @property (weak, nonatomic) IBOutlet PrinterStatusView *statusView;
+@property (weak, nonatomic) IBOutlet UILabel *subLabel;
 
 @end

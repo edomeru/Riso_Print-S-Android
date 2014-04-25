@@ -127,6 +127,7 @@
 "IDS_LBL_OUTPUTTRAY_FACEUP" = "Face up tray";
 "IDS_LBL_OUTPUTTRAY_TOP" = "Top";
 "IDS_LBL_OUTPUTTRAY_STACKING" = "Stacking";
+"IDS_LBL_SECURE_PRINT" = "Secure Print";
 "IDS_LBL_AUTHENTICATION" = "Authentication";
 "IDS_LBL_AUTHENTICATION_LOGINID" = "Login ID";
 "IDS_LBL_AUTHENTICATION_PINCODE" = "PIN Code";
@@ -135,6 +136,7 @@
 "IDS_LBL_LEGAL" = "Legal";
 "IDS_LBL_PRINT_JOB_SUCCESSFUL" = "Successful";
 "IDS_LBL_PRINT_JOB_FAILED" = "Failed";
+"IDS_LBL_NO_NAME" = "No name";
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "Printer already exists in saved printers list.";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "Please enter a valid IP Address.";
 "IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";

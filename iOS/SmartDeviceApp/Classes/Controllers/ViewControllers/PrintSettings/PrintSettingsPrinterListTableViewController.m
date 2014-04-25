@@ -80,12 +80,13 @@
     Printer *printer = [self.printerManager getPrinterAtIndex:indexPath.row];
     if(printer.name == nil || [printer.name isEqualToString:@""])
     {
-        itemCell.optionLabel.text = printer.ip_address;
+        itemCell.optionLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     }
     else
     {
         itemCell.optionLabel.text = printer.name;
     }
+    itemCell.subLabel.text = printer.ip_address;
     itemCell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     itemCell.statusView.statusHelper.delegate = itemCell.statusView;
     
