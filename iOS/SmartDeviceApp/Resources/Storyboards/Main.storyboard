@@ -2866,7 +2866,7 @@
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
+                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -2887,9 +2887,9 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BVA-iB-fru" userLabel="Name">
-                                                            <rect key="frame" x="50" y="11" width="222" height="21"/>
+                                                            <rect key="frame" x="50" y="4" width="222" height="20"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
@@ -2915,28 +2915,38 @@
                                                             </constraints>
                                                         </imageView>
                                                         <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="fGJ-hZ-slT" userLabel="Separator">
-                                                            <rect key="frame" x="50" y="42" width="320" height="2"/>
+                                                            <rect key="frame" x="50" y="43" width="320" height="1"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="1" id="4Qm-mo-4Yz"/>
+                                                            </constraints>
                                                         </view>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Th-tv-56b" userLabel="IP">
+                                                            <rect key="frame" x="50" y="24" width="254" height="15"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
                                                     </subviews>
                                                     <gestureRecognizers/>
                                                     <constraints>
                                                         <constraint firstAttribute="trailing" secondItem="fGJ-hZ-slT" secondAttribute="trailing" constant="-50" id="1bs-dm-YGi"/>
                                                         <constraint firstItem="jZk-UU-XZR" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="4" id="Bff-uC-BG0"/>
                                                         <constraint firstAttribute="centerY" secondItem="UoX-YQ-VNL" secondAttribute="centerY" id="Bgp-SU-TGw"/>
+                                                        <constraint firstItem="3Th-tv-56b" firstAttribute="leading" secondItem="rJB-WH-qpf" secondAttribute="trailing" constant="10" id="C3B-vl-v6p"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="leading" secondItem="rJB-WH-qpf" secondAttribute="trailing" constant="10" id="QBJ-II-uY9"/>
-                                                        <constraint firstItem="fGJ-hZ-slT" firstAttribute="top" secondItem="BVA-iB-fru" secondAttribute="bottom" constant="10" id="R9N-ZQ-D4q"/>
                                                         <constraint firstAttribute="bottom" secondItem="fGJ-hZ-slT" secondAttribute="bottom" id="SUG-jl-b4n"/>
                                                         <constraint firstAttribute="bottom" secondItem="jZk-UU-XZR" secondAttribute="bottom" constant="4" id="aSC-CM-2Se"/>
                                                         <constraint firstItem="fGJ-hZ-slT" firstAttribute="leading" secondItem="BVA-iB-fru" secondAttribute="leading" id="c5G-FA-EvG"/>
-                                                        <constraint firstAttribute="centerY" secondItem="BVA-iB-fru" secondAttribute="centerY" id="cZa-0y-WzG"/>
                                                         <constraint firstAttribute="centerY" secondItem="rJB-WH-qpf" secondAttribute="centerY" id="hHm-6j-Lce"/>
                                                         <constraint firstItem="UoX-YQ-VNL" firstAttribute="leading" secondItem="BVA-iB-fru" secondAttribute="trailing" constant="16" id="ihS-v1-lux"/>
                                                         <constraint firstAttribute="trailing" secondItem="jZk-UU-XZR" secondAttribute="trailing" constant="16" id="isA-wU-8Hc"/>
                                                         <constraint firstItem="rJB-WH-qpf" firstAttribute="leading" secondItem="yJX-Vz-3ka" secondAttribute="leading" constant="10" id="j2N-gc-PAA"/>
                                                         <constraint firstAttribute="trailing" secondItem="UoX-YQ-VNL" secondAttribute="trailing" constant="10" id="lWs-cB-Pv8"/>
-                                                        <constraint firstItem="BVA-iB-fru" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="11" id="qyW-HC-lZt"/>
+                                                        <constraint firstItem="3Th-tv-56b" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="24" id="phg-rt-BYU"/>
+                                                        <constraint firstItem="BVA-iB-fru" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="4" id="qyW-HC-lZt"/>
+                                                        <constraint firstAttribute="trailing" secondItem="3Th-tv-56b" secondAttribute="trailing" constant="16" id="zzt-t5-VS1"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -2944,6 +2954,7 @@
                                                 <connections>
                                                     <outlet property="deleteButton" destination="jZk-UU-XZR" id="byW-aQ-ZRp"/>
                                                     <outlet property="disclosureImage" destination="UoX-YQ-VNL" id="3WJ-pe-Vik"/>
+                                                    <outlet property="ipAddress" destination="3Th-tv-56b" id="WvJ-5V-HNQ"/>
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="rJB-WH-qpf" id="YhY-j0-8dY"/>
                                                     <outlet property="separator" destination="fGJ-hZ-slT" id="G9k-Xa-iLb"/>

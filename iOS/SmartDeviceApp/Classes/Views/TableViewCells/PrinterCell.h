@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet PrinterStatusView *printerStatus;
 @property (weak, nonatomic) IBOutlet UIView* separator;
+@property (weak, nonatomic) IBOutlet UILabel *ipAddress;
 
 
 -(void) setCellToBeDeletedState:(BOOL)isCellForDelete;

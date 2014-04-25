@@ -87,12 +87,15 @@
     }
     if(printer.name == nil || [printer.name isEqualToString:@""] == YES)
     {
-        cell.printerName.text = printer.ip_address;
+        cell.printerName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     }
     else
     {
         cell.printerName.text = printer.name;
     }
+    
+    cell.ipAddress.text = printer.ip_address;
+    
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
 
@@ -101,7 +104,13 @@
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
     if (indexPath.row == self.printerManager.countSavedPrinters-1)
+    {
         [cell.separator setHidden:YES];
+    }
+    else
+    {
+        [cell.separator setHidden:NO];
+    }
     
     return cell;
 }
