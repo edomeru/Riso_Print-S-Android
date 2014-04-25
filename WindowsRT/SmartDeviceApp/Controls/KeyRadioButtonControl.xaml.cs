@@ -14,53 +14,45 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Models;
+using GalaSoft.MvvmLight.Command;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class KeyRadioButtonControl : RadioButton
+    public sealed partial class KeyRadioButtonControl : KeyValueControl
     {
         public KeyRadioButtonControl()
         {
             this.InitializeComponent();
         }
 
-        public static new readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(ICommand), typeof(KeyRadioButtonControl), null);
+        public static readonly DependencyProperty GroupNameProperty =
+            DependencyProperty.Register("GroupName", typeof(string), typeof(KeyRadioButtonControl), null);
 
-        public static new readonly DependencyProperty CommandParameterProperty =
-            DependencyProperty.Register("CommandParameter", typeof(object), typeof(KeyRadioButtonControl), null);
-       
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(object), typeof(KeyRadioButtonControl), null);
-
+        public static readonly DependencyProperty IsCheckedProperty =
+           DependencyProperty.Register("IsChecked", typeof(bool), typeof(KeyRadioButtonControl), new PropertyMetadata(false, SetIsChecked));
+        
+        public static new readonly DependencyProperty IsEnabledProperty =
+           DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyRadioButtonControl), new PropertyMetadata(true, SetIsEnabled));
+        
         public static readonly DependencyProperty IndexProperty =
             DependencyProperty.Register("Index", typeof(int), typeof(KeyRadioButtonControl), null);
 
-        public static readonly DependencyProperty IconImageProperty =
-            DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyRadioButtonControl), null);
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(KeyRadioButtonControl), null);
-
-        public static readonly DependencyProperty SeparatorVisibilityProperty =
-            DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyRadioButtonControl), null);
-
-        public new ICommand Command
+        public string GroupName
         {
-            get { return (ICommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
+            get { return (string)GetValue(GroupNameProperty); }
+            set { SetValue(GroupNameProperty, value); }
         }
 
-        public new object CommandParameter
+        public bool IsChecked
         {
-            get { return (object)GetValue(CommandParameterProperty); }
-            set { SetValue(CommandParameterProperty, value); }
+            get { return (bool)GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
         }
-        
-        public object Value
+
+        public new bool IsEnabled
         {
-            get { return this.DataContext; }
-            set { SetValue(ValueProperty, value); }
+            get { return (bool)GetValue(IsEnabledProperty); }
+            set { SetValue(IsEnabledProperty, value); }
         }
 
         public int Index
@@ -69,27 +61,35 @@ namespace SmartDeviceApp.Controls
             set { SetValue(IndexProperty, value); }
         }
 
-        public ImageSource IconImage
+        private static void SetIsChecked(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            get { return (ImageSource)GetValue(IconImageProperty); }
-            set { SetValue(IconImageProperty, value); }
+            if (e.NewValue == null || !(e.NewValue is bool)) return;
+            if ((bool)e.NewValue)
+            {
+                ((KeyRadioButtonControl)obj).radioButton.IsChecked = true;
+            }
+            else
+            {
+                ((KeyRadioButtonControl)obj).radioButton.IsChecked = false;
+            }
         }
 
-        public string Text
+        private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
-        }
-
-        public string SeparatorVisibility
-        {
-            get { return (string)GetValue(SeparatorVisibilityProperty); }
-            set { SetValue(SeparatorVisibilityProperty, value); }
+            if (e.NewValue == null || !(e.NewValue is bool)) return;
+            if ((bool)e.NewValue)
+            {
+                ((KeyRadioButtonControl)obj).Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ((KeyRadioButtonControl)obj).Visibility = Visibility.Collapsed;
+            }
         }
 
         private void OnTapped(object sender, RoutedEventArgs e)
         {
-            IsChecked = true;
+            radioButton.IsChecked = true;
         }
     }
 }

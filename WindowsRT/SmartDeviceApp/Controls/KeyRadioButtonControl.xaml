@@ -1,73 +1,67 @@
-﻿<RadioButton x:Name="keyRadioButtonControl"
+﻿<local:KeyValueControl x:Name="keyRadioButtonControl"
     x:Class="SmartDeviceApp.Controls.KeyRadioButtonControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Controls"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Tapped="OnTapped"
     d:DesignHeight="60"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
+    SubTextVisibility="Collapsed"
+    RightButtonVisibility="Collapsed"
+    ValueVisibility="Collapsed">
     
-    <RadioButton.Template>
-        <ControlTemplate>
-            <Grid>
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal" />
-                        <VisualState x:Name="PointerOver"/>
-                        <VisualState x:Name="Pressed"/>
-                        <VisualState x:Name="Disabled"/>
-                    </VisualStateGroup>
-                    <VisualStateGroup x:Name="CheckStates">
-                        <VisualState x:Name="Checked">
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                 Storyboard.TargetProperty="Opacity"
-                                                 To="1"
-                                                 Duration="0" />
-                            </Storyboard>
-                        </VisualState>
-                        <VisualState x:Name="Unchecked" />
-                        <VisualState x:Name="Indeterminate" />
-                    </VisualStateGroup>
-                    <VisualStateGroup x:Name="FocusStates">
-                        <VisualState x:Name="Focused"/>
-                        <VisualState x:Name="Unfocused"/>
-                        <VisualState x:Name="PointerFocused"/>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
-                <local:KeyValueControl x:Name="keyValueControl"
-                                       Command="{Binding Command, ElementName=keyRadioButtonControl}"
-                                       CommandParameter="{Binding CommandParameter, ElementName=keyRadioButtonControl}"
-                                       Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                       LeftButtonVisibility="Collapsed"
-                                       RightButtonVisibility="Collapsed"
-                                       IconImage="{Binding IconImage, ElementName=keyRadioButtonControl}"
-                                       SeparatorVisibility="{Binding SeparatorVisibility, ElementName=keyRadioButtonControl}"
-                                       Width="{Binding Width, ElementName=keyRadioButtonControl}">
-                    <local:KeyValueControl.ValueContent>
-                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Ellipse x:Name="BackgroundEllipse"
-                                     Width="26"
-                                     Height="26"
-                                     UseLayoutRounding="False"
-                                     Fill="{StaticResource BRUSH_Gray2}"
-                                     Stroke="{StaticResource BRUSH_Gray1}"
-                                     StrokeThickness="3" />
-                            <Ellipse x:Name="CheckGlyph"
-                                     Width="20"
-                                     Height="20"
-                                     UseLayoutRounding="False"
-                                     Opacity="0"
-                                     Fill="{StaticResource BRUSH_Purple2}" />
-                        </Grid>
-                    </local:KeyValueControl.ValueContent>
-                </local:KeyValueControl>
-            </Grid>
-        </ControlTemplate>
-    </RadioButton.Template>
-</RadioButton>
+    <local:KeyValueControl.ValueContent>
+        <RadioButton x:Name="radioButton"
+                     GroupName="{Binding GroupName, ElementName=keyRadioButtonControl}"
+                     IsChecked="{Binding IsChecked, ElementName=keyRadioButtonControl}">
+            <RadioButton.Template>
+                <ControlTemplate>
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="Disabled"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="CheckGlyph"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked" />
+                                <VisualState x:Name="Indeterminate" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Focused"/>
+                                <VisualState x:Name="Unfocused"/>
+                                <VisualState x:Name="PointerFocused"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Ellipse x:Name="BackgroundEllipse"
+                                 Width="26"
+                                 Height="26"
+                                 UseLayoutRounding="False"
+                                 Fill="{StaticResource BRUSH_Gray2}"
+                                 Stroke="{StaticResource BRUSH_Gray1}"
+                                 StrokeThickness="3" />
+                        <Ellipse x:Name="CheckGlyph"
+                                 Width="20"
+                                 Height="20"
+                                 UseLayoutRounding="False"
+                                 Opacity="0"
+                                 Fill="{StaticResource BRUSH_Purple2}" />
+                    </Grid>
+                </ControlTemplate>
+            </RadioButton.Template>
+        </RadioButton>
+    </local:KeyValueControl.ValueContent>
+</local:KeyValueControl>

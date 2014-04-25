@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.ViewModels;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
@@ -46,14 +48,19 @@ namespace SmartDeviceApp.Controls
         
         public static readonly DependencyProperty Button2VisibilityProperty =
            DependencyProperty.Register("Button2Visibility", typeof(Visibility), typeof(ViewControl), null);
-
-        //public static new readonly DependencyProperty WidthProperty =
-        //    DependencyProperty.Register("Width", typeof(double), typeof(ViewControl), new PropertyMetadata(0, SetWidth));
         
         public ViewControl()
         {
             this.InitializeComponent();
             Children = contentGrid.Children;
+        }
+
+        public ViewControlViewModel ViewModel
+        {
+            get
+            {
+                return (ViewControlViewModel)DataContext;
+            }
         }
 
         public string Text
@@ -110,18 +117,47 @@ namespace SmartDeviceApp.Controls
             set { SetValue(Button2VisibilityProperty, value); }
         }
 
-        //public new double Width
-        //{
-        //    get { return (double)GetValue(WidthProperty); }
-        //    set { SetValue(WidthProperty, value); }
-        //}
+        /// <summary>
+        /// Show fullscreen when area outside side panes are tapped
+        /// </summary>
+        private void OnViewRootTapped(object sender, TappedRoutedEventArgs e)
+        {
+            switch (ViewModel.ViewMode)
+            {
+                case ViewMode.MainMenuPaneVisible:
+                    {
+                        ViewModel.ViewMode = ViewMode.FullScreen;
+                        break;
+                    }
 
-        //private static void SetWidth(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        //{
-        //    if (e.NewValue != null && e.NewValue is double)
-        //    {
-        //        ((ViewControl)obj).viewRoot.Width = (double)e.NewValue;
-        //    }
-        //}
+                case ViewMode.FullScreen:
+                    {
+                        // Do nothing
+                        break;
+                    }
+
+                case ViewMode.RightPaneVisible:
+                case ViewMode.RightPaneVisible_ResizedWidth:
+                    {
+                        ViewModel.ViewMode = ViewMode.FullScreen;
+                        break;
+                    }
+            }
+        }
+
+        private void OnMainMenuButtonTapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void OnButton1Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void OnButton2Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }
