@@ -2537,7 +2537,7 @@ namespace SmartDeviceApp.Controllers
                 WriteableBitmapExtensions.FillRectangle(scaledImpositionPageBitmap, 0, 0,
                     scaledImpositionPageBitmap.PixelWidth, scaledImpositionPageBitmap.PixelHeight,
                     Windows.UI.Colors.White);
-                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap, true);
+                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap, false); // No border
 
                 // Put imposition page image to target page image
                 Rect destRect = new Rect(x, y, scaledImpositionPageBitmap.PixelWidth,
