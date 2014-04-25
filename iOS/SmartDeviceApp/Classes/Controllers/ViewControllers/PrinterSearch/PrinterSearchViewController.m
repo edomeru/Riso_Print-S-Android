@@ -421,7 +421,7 @@
     }
 #else
     // check if this is the last cell
-    if (indexPath.row == [self.listPrinterDetails count]-1)
+    if (indexPath.row == [self.listPrinterIP count]-1)
         isLastCell = YES;
 
     [cell setStyle:isLastCell];
