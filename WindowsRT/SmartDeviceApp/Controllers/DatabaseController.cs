@@ -339,7 +339,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Retrieves the printer name
+        /// Retrieves the printer name (or IP address when printer name is empty)
         /// </summary>
         /// <param name="id">printer ID</param>
         /// <returns>task; printer name if found, empty string otherwise</returns>
@@ -352,6 +352,10 @@ namespace SmartDeviceApp.Controllers
                 Printer printer = await db.GetAsync<Printer>(id);
                 if (printer != null)
                 {
+                    if (string.IsNullOrEmpty(printer.Name.Trim()))
+                    {
+                        return printer.IpAddress;
+                    }
                     return printer.Name;
                 }
             }

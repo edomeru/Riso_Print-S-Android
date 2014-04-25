@@ -98,6 +98,7 @@ namespace SmartDeviceApp.Common.Enum
 
     public enum BookletFinishing
     {
+        Off,
         PaperFolding,
         FoldAndStaple
     }
@@ -136,7 +137,7 @@ namespace SmartDeviceApp.Common.Enum
     {
         Auto,
         FaceDown,
-        FaceUp,
+        //FaceUp,
         Top,
         Stacking
     }

@@ -117,12 +117,12 @@ namespace SmartDeviceApp.Models
         }
         public bool IsValueDisplayed
         {
-            get { return _isEnabled; }
+            get { return _isValueDisplayed; }
             set
             {
-                if (_isEnabled != value)
+                if (_isValueDisplayed != value)
                 {
-                    _isEnabled = value;
+                    _isValueDisplayed = value;
                     RaisePropertyChanged("IsValueDisplayed");
                 }
             }

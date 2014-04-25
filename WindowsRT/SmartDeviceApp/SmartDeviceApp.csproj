@@ -130,6 +130,7 @@
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
@@ -217,8 +218,6 @@
     </Compile>
     <Compile Include="Converters\PageNumberFormatConverter.cs" />
     <Compile Include="Controllers\PrintPreviewController.cs" />
-    <Compile Include="Converters\BasePrintSettingConverter.cs" />
-    <Compile Include="Converters\PrintSettingConverter.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
     <Compile Include="DummyControllers\DummyProvider.cs" />

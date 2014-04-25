@@ -73,6 +73,8 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private static async Task InitializeControllers()
         {
+            // TODO: Verify timing of each initialization
+            SettingController.Instance.Initialize();
             await JobController.Instance.Initialize();
         }
 
