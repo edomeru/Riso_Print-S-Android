@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -1342,11 +1342,11 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" id="58t-nc-vdu" userLabel="SearchResultCell" customClass="SearchResultCell">
-                                                <rect key="frame" x="0.0" y="22" width="270" height="44"/>
+                                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" rowHeight="60" id="58t-nc-vdu" userLabel="SearchResultCell" customClass="SearchResultCell">
+                                                <rect key="frame" x="0.0" y="22" width="270" height="60"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="58t-nc-vdu" id="lYL-yn-uIb">
-                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="44"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="60"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EXa-4e-Ene">
@@ -1357,12 +1357,12 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="mVg-yV-2cB" userLabel="Separator">
-                                                            <rect key="frame" x="20" y="42" width="300" height="2"/>
+                                                            <rect key="frame" x="20" y="57" width="300" height="3"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
                                                         </view>
                                                         <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z2N-M0-1dv" userLabel="Check">
-                                                            <rect key="frame" x="224" y="7" width="30" height="30"/>
+                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="30" id="Fu1-c2-5Vp"/>
@@ -1375,7 +1375,7 @@
                                                             <state key="disabled" image="img_btn_search_printer_check"/>
                                                         </button>
                                                         <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C3R-cH-uWc" userLabel="Plus">
-                                                            <rect key="frame" x="224" y="7" width="30" height="30"/>
+                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="30" id="wd5-jA-l2g"/>
@@ -1387,25 +1387,35 @@
                                                             </state>
                                                             <state key="highlighted" image="img_btn_search_printer_plus"/>
                                                         </button>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-zg-wfa">
+                                                            <rect key="frame" x="20" y="31" width="188" height="15"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="trailing" secondItem="C3R-cH-uWc" secondAttribute="trailing" constant="16" id="4zE-1d-TQ2"/>
+                                                        <constraint firstItem="Utx-zg-wfa" firstAttribute="leading" secondItem="lYL-yn-uIb" secondAttribute="leading" constant="20" id="7Qh-ja-DuS"/>
+                                                        <constraint firstAttribute="trailing" secondItem="Utx-zg-wfa" secondAttribute="trailing" constant="62" id="BKl-9U-JTB"/>
                                                         <constraint firstItem="EXa-4e-Ene" firstAttribute="leading" secondItem="lYL-yn-uIb" secondAttribute="leading" constant="20" id="FVK-Jz-NRa"/>
-                                                        <constraint firstAttribute="centerY" secondItem="EXa-4e-Ene" secondAttribute="centerY" id="TIJ-Qx-WUT"/>
+                                                        <constraint firstAttribute="centerY" secondItem="EXa-4e-Ene" secondAttribute="centerY" constant="8" id="TIJ-Qx-WUT"/>
                                                         <constraint firstAttribute="bottom" secondItem="mVg-yV-2cB" secondAttribute="bottom" id="U5A-a0-3Ct"/>
                                                         <constraint firstAttribute="trailing" secondItem="z2N-M0-1dv" secondAttribute="trailing" constant="16" id="XLL-NZ-h3b"/>
                                                         <constraint firstAttribute="centerY" secondItem="z2N-M0-1dv" secondAttribute="centerY" id="bTa-n5-MMy"/>
                                                         <constraint firstAttribute="trailing" secondItem="mVg-yV-2cB" secondAttribute="trailing" constant="-50" id="bu4-8I-XyW"/>
                                                         <constraint firstAttribute="centerY" secondItem="C3R-cH-uWc" secondAttribute="centerY" id="dLx-6o-GEL"/>
+                                                        <constraint firstItem="Utx-zg-wfa" firstAttribute="top" secondItem="EXa-4e-Ene" secondAttribute="bottom" id="ugL-Nv-Tqu"/>
                                                         <constraint firstAttribute="trailing" secondItem="EXa-4e-Ene" secondAttribute="trailing" constant="62" id="v2k-Wi-DGF"/>
                                                         <constraint firstItem="EXa-4e-Ene" firstAttribute="leading" secondItem="mVg-yV-2cB" secondAttribute="leading" id="xK2-E0-zwb"/>
-                                                        <constraint firstItem="mVg-yV-2cB" firstAttribute="top" secondItem="EXa-4e-Ene" secondAttribute="bottom" constant="11" id="yqz-dt-OaI"/>
+                                                        <constraint firstItem="mVg-yV-2cB" firstAttribute="top" secondItem="EXa-4e-Ene" secondAttribute="bottom" constant="26" id="yqz-dt-OaI"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
                                                     <outlet property="addIcon" destination="C3R-cH-uWc" id="N2z-qZ-5r8"/>
                                                     <outlet property="oldIcon" destination="z2N-M0-1dv" id="tgY-n4-VZH"/>
+                                                    <outlet property="printerIP" destination="Utx-zg-wfa" id="0aT-Q2-rQj"/>
                                                     <outlet property="printerName" destination="EXa-4e-Ene" id="agR-nz-LUA"/>
                                                     <outlet property="separator" destination="mVg-yV-2cB" id="Ww4-AX-Poz"/>
                                                 </connections>
@@ -3088,11 +3098,11 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" id="TOE-xs-FJy" userLabel="SearchResultCell" customClass="SearchResultCell">
-                                                <rect key="frame" x="0.0" y="22" width="270" height="44"/>
+                                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" rowHeight="60" id="TOE-xs-FJy" userLabel="SearchResultCell" customClass="SearchResultCell">
+                                                <rect key="frame" x="0.0" y="22" width="270" height="60"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TOE-xs-FJy" id="KTt-bZ-HL0">
-                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="44"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="60"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1LA-cn-0Qi">
@@ -3103,12 +3113,12 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="bXR-I6-5YP" userLabel="Separator">
-                                                            <rect key="frame" x="20" y="41" width="300" height="3"/>
+                                                            <rect key="frame" x="20" y="57" width="300" height="3"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                                         </view>
                                                         <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bd1-3u-b69" userLabel="Check">
-                                                            <rect key="frame" x="224" y="7" width="30" height="30"/>
+                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="30" id="Rb7-Jo-boM"/>
@@ -3121,7 +3131,7 @@
                                                             <state key="disabled" image="img_btn_search_printer_check"/>
                                                         </button>
                                                         <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MAC-Yd-a2k" userLabel="Plus">
-                                                            <rect key="frame" x="224" y="7" width="30" height="30"/>
+                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="30" id="G7Q-nb-Tai"/>
@@ -3133,25 +3143,36 @@
                                                             </state>
                                                             <state key="highlighted" image="img_btn_search_printer_plus"/>
                                                         </button>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2kH-UO-YXY">
+                                                            <rect key="frame" x="20" y="31" width="188" height="15"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="trailing" secondItem="MAC-Yd-a2k" secondAttribute="trailing" constant="16" id="1xs-JW-veY"/>
                                                         <constraint firstAttribute="trailing" secondItem="bd1-3u-b69" secondAttribute="trailing" constant="16" id="3m9-lQ-9xM"/>
+                                                        <constraint firstAttribute="trailing" secondItem="2kH-UO-YXY" secondAttribute="trailing" constant="62" id="4Yk-EZ-HQc"/>
+                                                        <constraint firstItem="2kH-UO-YXY" firstAttribute="leading" secondItem="KTt-bZ-HL0" secondAttribute="leading" constant="20" id="8Bn-cR-lay"/>
                                                         <constraint firstAttribute="bottom" secondItem="bXR-I6-5YP" secondAttribute="bottom" id="A5O-ru-YIq"/>
-                                                        <constraint firstAttribute="centerY" secondItem="1LA-cn-0Qi" secondAttribute="centerY" id="GVm-b3-Yfl"/>
+                                                        <constraint firstAttribute="centerY" secondItem="1LA-cn-0Qi" secondAttribute="centerY" constant="8" id="GVm-b3-Yfl"/>
                                                         <constraint firstItem="1LA-cn-0Qi" firstAttribute="leading" secondItem="KTt-bZ-HL0" secondAttribute="leading" constant="20" id="MoW-iV-D0c"/>
                                                         <constraint firstAttribute="trailing" secondItem="bXR-I6-5YP" secondAttribute="trailing" constant="-50" id="acj-1d-5j8"/>
                                                         <constraint firstItem="bXR-I6-5YP" firstAttribute="leading" secondItem="1LA-cn-0Qi" secondAttribute="leading" id="daW-a1-cq1"/>
                                                         <constraint firstAttribute="centerY" secondItem="MAC-Yd-a2k" secondAttribute="centerY" id="hKy-61-fbO"/>
                                                         <constraint firstAttribute="trailing" secondItem="1LA-cn-0Qi" secondAttribute="trailing" constant="62" id="kX8-yV-zHn"/>
                                                         <constraint firstAttribute="centerY" secondItem="bd1-3u-b69" secondAttribute="centerY" id="qFy-xh-Ckf"/>
-                                                        <constraint firstItem="bXR-I6-5YP" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" constant="10" id="xiO-qs-8u7"/>
+                                                        <constraint firstItem="2kH-UO-YXY" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" id="sPd-xl-g0U"/>
+                                                        <constraint firstItem="bXR-I6-5YP" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" constant="26" id="xiO-qs-8u7"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
                                                     <outlet property="addIcon" destination="MAC-Yd-a2k" id="sp2-mi-Iac"/>
                                                     <outlet property="oldIcon" destination="bd1-3u-b69" id="Ypb-4L-gFZ"/>
+                                                    <outlet property="printerIP" destination="2kH-UO-YXY" id="wjr-pF-1MB"/>
                                                     <outlet property="printerName" destination="1LA-cn-0Qi" id="4yg-1c-ZUS"/>
                                                     <outlet property="separator" destination="bXR-I6-5YP" id="6gr-xR-HI3"/>
                                                 </connections>

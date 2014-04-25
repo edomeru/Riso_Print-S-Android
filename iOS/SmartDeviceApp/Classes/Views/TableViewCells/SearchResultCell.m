@@ -11,6 +11,7 @@
 
 @interface SearchResultCell ()
 
+@property (weak, nonatomic) IBOutlet UILabel* printerIP;
 @property (weak, nonatomic) IBOutlet UILabel* printerName;
 @property (weak, nonatomic) IBOutlet UIView* separator;
 @property (weak, nonatomic) IBOutlet UIButton* oldIcon;
@@ -54,12 +55,14 @@
     [self.addIcon setHidden:NO];
 }
 
-- (void)setContents:(NSString*)printerName
+- (void)setContentsUsingName:(NSString*)printerName usingIP:(NSString*)printerIP
 {
     self.printerName.text = printerName;
+    self.printerIP.text = printerIP;
     
     //TODO: different fonts for ipad and iphone?
-    self.printerName.font = [UIFont fontWithName:@"Helvetica Neue" size:17];
+    self.printerName.font = [UIFont fontWithName:@"Helvetica Neue" size:17.0f];
+    self.printerIP.font = [UIFont fontWithName:@"Helvetica Neue" size:12.0f];
 }
 
 - (void)setStyle:(BOOL)isLastCell

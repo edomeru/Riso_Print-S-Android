@@ -26,8 +26,10 @@
  Sets the printer name as the cell's main text.
  @param printerName
         name of the printer
+ @param printerIP
+        IP address of the printer
  */
-- (void)setContents:(NSString*)printerName;
+- (void)setContentsUsingName:(NSString*)printerName usingIP:(NSString*)printerIP;
 
 /**
  Sets the cell's UI/layout attributes.

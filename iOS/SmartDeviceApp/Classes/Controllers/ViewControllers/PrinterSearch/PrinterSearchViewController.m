@@ -432,14 +432,14 @@
     if ([printerValue isKindOfClass:[NSString class]])
     {
         // this is an old printer
-        [cell setContents:(NSString*)printerValue];
+        [cell setContentsUsingName:(NSString*)printerValue usingIP:printerIP];
         [cell setCellAsOldResult];
     }
     else
     {
         // this is a new printer
         PrinterDetails* pd = (PrinterDetails*)printerValue;
-        [cell setContents:pd.name];
+        [cell setContentsUsingName:pd.name usingIP:pd.ip];
         [cell setCellAsNewResult];
     }
 #endif
@@ -458,6 +458,11 @@
 #else
     [self addPrinter:indexPath.row];
 #endif
+}
+
+- (CGFloat)tableView:(UITableView*)tableView heightForRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return 60.0f;
 }
 
 @end
