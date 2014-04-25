@@ -134,6 +134,7 @@
 "IDS_LBL_LEGAL" = "リーガル情報";
 "IDS_LBL_PRINT_JOB_SUCCESSFUL" = "成功しました。";
 "IDS_LBL_PRINT_JOB_FAILED" = "失敗しました。";
+"IDS_LBL_NO_NAME" = "No name"
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "このプリンターはすでに登録されています。";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "IP Addressを確認してください。";
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "パスワードが正しくありません。確認してください。";
