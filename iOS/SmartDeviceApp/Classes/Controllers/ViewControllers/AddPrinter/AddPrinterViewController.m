@@ -135,6 +135,7 @@
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress
 {
     PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     pd.ip = ipAddress;
     pd.port = [NSNumber numberWithInt:0];
     pd.capBooklet = YES;
