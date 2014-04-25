@@ -49,7 +49,15 @@
 
     if(self.printer != nil)
     {
-        self.printerName.text = self.printer.name;
+        if(self.printer.name == nil || [self.printer.name isEqualToString:@""] == YES)
+        {
+            self.printerName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+        }
+        else
+        {
+            self.printerName.text = self.printer.name;
+        }
+        
         self.ipAddress.text = self.printer.ip_address;
         
         [self.portSelection setSelectedSegmentIndex:[self.printer.port integerValue]];

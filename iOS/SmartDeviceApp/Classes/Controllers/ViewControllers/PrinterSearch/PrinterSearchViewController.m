@@ -14,9 +14,12 @@
 #import "UIColor+Theme.h"
 
 #define SEARCHRESULTCELL    @"SearchResultCell"
+#define SORT_SEARCH_RESULTS 0
 
+#if SORT_SEARCH_RESULTS
 #define OLD_PRINTERS    0
 #define NEW_PRINTERS    1
+#endif
 
 @interface PrinterSearchViewController ()
 
@@ -28,6 +31,7 @@
 /** Flag that will be set to YES when at least one successful printer was added. */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
+#if SORT_SEARCH_RESULTS
 /**
  A list of the names of the printers searched from the network that
  are already saved to the database ("old" printers).
@@ -54,6 +58,21 @@
  the search, using the printer IP address as the key.
  */
 @property (strong, nonatomic) NSMutableDictionary* listNewPrinterDetails;
+#else
+/**
+ A list of the IP addresses of the printers searched from the network.
+ This is used for referencing the printer details.
+ */
+@property (strong, nonatomic) NSMutableArray* listPrinterIP;
+
+/**
+ A key-value listing of the details for each printer found during
+ the search, using the printer IP address as the key. The value can
+ either be just the printer name (for old printers) or an actual
+ PrinterDetails object (for new printers).
+ */
+@property (strong, nonatomic) NSMutableDictionary* listPrinterDetails;
+#endif
 
 #pragma mark - UI Properties
 
@@ -145,10 +164,16 @@
     // setup properties
     self.printerManager = [PrinterManager sharedPrinterManager];
     self.printerManager.searchDelegate = self;
+#if SORT_SEARCH_RESULTS
     self.listOldPrinterNames = [NSMutableArray array];
     self.listNewPrinterNames = [NSMutableArray array];
     self.listNewPrinterIP = [NSMutableArray array];
     self.listNewPrinterDetails = [NSMutableDictionary dictionary];
+#else
+    self.listPrinterIP = [NSMutableArray array];
+    self.listPrinterDetails = [NSMutableDictionary dictionary];
+#endif
+
     self.hasAddedPrinters = NO;
     
     // setup pull-to-refresh
@@ -196,8 +221,13 @@
     }
     
     // add the printer
+#if SORT_SEARCH_RESULTS
     NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
     PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
+#else
+    NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
+    PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
+#endif
     if ([self.printerManager registerPrinter:printerDetails])
     {
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
@@ -206,11 +236,16 @@
         self.hasAddedPrinters = YES;
         
         // change the '+' button to a checkmark
+#if SORT_SEARCH_RESULTS
         [self.listOldPrinterNames addObject:printerDetails.name];
         [self.listNewPrinterNames removeObjectAtIndex:row];
         [self.listNewPrinterDetails removeObjectForKey:printerIP];
         [self.listNewPrinterIP removeObjectAtIndex:row];
         [self.tableView reloadData];
+#else
+        [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
+        [self.tableView reloadData];
+#endif
         
         // if this is an iPad, reload the center panel
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -245,10 +280,15 @@
     }
 
     // clear the lists
+#if SORT_SEARCH_RESULTS
     [self.listOldPrinterNames removeAllObjects];
     [self.listNewPrinterNames removeAllObjects];
     [self.listNewPrinterIP removeAllObjects];
     [self.listNewPrinterDetails removeAllObjects];
+#else
+    [self.listPrinterIP removeAllObjects];
+    [self.listPrinterDetails removeAllObjects];
+#endif
 
     // start the search
 #if DEBUG_LOG_PRINTER_SEARCH_SCREEN
@@ -283,6 +323,7 @@
     NSLog(@"[INFO][PrinterSearch] updating UI");
 #endif
     
+#if SORT_SEARCH_RESULTS
     // save the printer name and IP
     [self.listNewPrinterNames addObject:printerDetails.name];
     [self.listNewPrinterIP addObject:printerDetails.ip];
@@ -290,6 +331,14 @@
     // save the entire printer details
     [self.listNewPrinterDetails setValue:printerDetails
                                   forKey:printerDetails.ip];
+#else
+    // save the printer IP
+    [self.listPrinterIP addObject:printerDetails.ip];
+    
+    // save the entire printer details
+    [self.listPrinterDetails setValue:printerDetails
+                               forKey:printerDetails.ip];
+#endif
     
     // reload the tableView
     [self.tableView reloadData];
@@ -301,9 +350,15 @@
     NSLog(@"[INFO][PrinterSearch] received OLD printer with IP=%@", printerIP);
     NSLog(@"[INFO][PrinterSearch] updating UI");
 #endif
-    
+
+#if SORT_SEARCH_RESULTS
     // save the printer name
     [self.listOldPrinterNames addObject:printerName];
+#else
+    // save the printer name
+    [self.listPrinterIP addObject:printerIP];
+    [self.listPrinterDetails setValue:printerName forKey:printerIP];
+#endif
     
     // reload the tableView
     [self.tableView reloadData];
@@ -313,15 +368,23 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+#if SORT_SEARCH_RESULTS
     return 2; // old and new printers
+#else
+    return 1; // list results as is
+#endif
 }
 
 - (NSInteger)tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section
 {
+#if SORT_SEARCH_RESULTS
     if (section == OLD_PRINTERS)
         return [self.listOldPrinterNames count];
     else
         return [self.listNewPrinterNames count];
+#else
+    return [self.listPrinterIP count];
+#endif
 }
 
 - (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath
@@ -330,6 +393,7 @@
                                                             forIndexPath:indexPath];
     BOOL isLastCell = NO;
     
+#if SORT_SEARCH_RESULTS
     // if this is the last new printer cell
     if ((indexPath.section == NEW_PRINTERS) && (indexPath.row == [self.listNewPrinterNames count]-1))
         isLastCell = YES;
@@ -355,17 +419,50 @@
         [cell setContents:[self.listNewPrinterNames objectAtIndex:indexPath.row]];
         [cell setCellAsNewResult];
     }
+#else
+    // check if this is the last cell
+    if (indexPath.row == [self.listPrinterIP count]-1)
+        isLastCell = YES;
+
+    [cell setStyle:isLastCell];
+    
+    // set the cell text
+    NSString* printerIP = [self.listPrinterIP objectAtIndex:indexPath.row];
+    id printerValue = [self.listPrinterDetails valueForKey:printerIP];
+    if ([printerValue isKindOfClass:[NSString class]])
+    {
+        // this is an old printer
+        [cell setContentsUsingName:(NSString*)printerValue usingIP:printerIP];
+        [cell setCellAsOldResult];
+    }
+    else
+    {
+        // this is a new printer
+        PrinterDetails* pd = (PrinterDetails*)printerValue;
+        [cell setContentsUsingName:pd.name usingIP:pd.ip];
+        [cell setCellAsNewResult];
+    }
+#endif
     
     return cell;
 }
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
 {
+#if SORT_SEARCH_RESULTS
     //tapping an old printer does nothing
     
     //tapping a new printer will add the printer
     if (indexPath.section == NEW_PRINTERS)
         [self addPrinter:indexPath.row];
+#else
+    [self addPrinter:indexPath.row];
+#endif
+}
+
+- (CGFloat)tableView:(UITableView*)tableView heightForRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return 60.0f;
 }
 
 @end

@@ -113,7 +113,16 @@
     {
         [cell setAsDefaultPrinterCell:NO];
     }
-    cell.nameLabel.text = printer.name;
+    
+    if(printer.name == nil || [printer.name isEqualToString:@""] == YES)
+    {
+        cell.nameLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+    }
+    else
+    {
+        cell.nameLabel.text = printer.name;
+    }
+    
     cell.ipAddressLabel.text = printer.ip_address;
     
     // Port

@@ -195,6 +195,8 @@ static SNMPManager* sharedSNMPManager = nil;
     // parse the printer name, IP, and capabilities
     PrinterDetails* pd = [[PrinterDetails alloc] init];
     pd.name = [NSString stringWithFormat:@"%s", snmp_device_get_name(device)];
+    if (pd.name == nil || [pd.name isEqualToString:@""])
+        pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     pd.ip = [NSString stringWithFormat:@"%s", snmp_device_get_ip_address(device)];
     pd.port = [NSNumber numberWithInt:0]; // Default port when added
     pd.capBooklet = (snmp_device_get_capability_status(device, kSnmpCapabilityBooklet)>0 ? YES : NO);
