@@ -2,15 +2,19 @@
 //  HomeViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "HomeViewController.h"
 #import "PrintPreviewViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "PrintersIpadViewController.h"
+#import "PrintJobHistoryViewController.h"
+#import "HelpViewController.h"
+#import "LegalViewController.h"
 #import "RootViewController.h"
+#import "SettingsViewController.h"
 #import "UIViewController+Segue.h"
 
 @interface HomeViewController ()
@@ -73,6 +77,10 @@
     {
         self.selectedButton = self.printersButton;
     }
+    else if (container.mainController.class == [PrintJobHistoryViewController class])
+    {
+        self.selectedButton = self.printJobHistoryButton;
+    }
     
     self.selectedButton.selected = YES;
 }
@@ -126,18 +134,31 @@
 
 - (IBAction)printJobHistoryAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[PrintJobHistoryViewController class]];
+    }
 }
 
 - (IBAction)settingsAction:(id)sender
 {
+    [self performSegueTo:[SettingsViewController class]];
 }
 
 - (IBAction)helpAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[HelpViewController class]];
+    }
 }
 
 - (IBAction)legalAction:(id)sender
 {
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[LegalViewController class]];
+    }
 }
 
 @end

@@ -2,8 +2,8 @@
 //  SlidingViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "SlidingViewController.h"
@@ -175,7 +175,7 @@ const CGFloat _AnimationDuration = 0.3f;
                 self.container.rightSlidingConstraint.constant = 0;
             }
             
-            [UIView animateWithDuration:_AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^
+            [UIView animateWithDuration:_AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^
              {
                  [self.container.view layoutIfNeeded];
                  self.isAnimating = YES;

@@ -2,8 +2,8 @@
 //  Printer.h
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/5/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,6 +19,7 @@
 @property (nonatomic, retain) NSNumber* enabled_pagination;
 @property (nonatomic, retain) NSNumber* enabled_raw;
 @property (nonatomic, retain) NSNumber* enabled_staple;
+@property (nonatomic, retain) NSNumber * enabled_punch_3holes;
 @property (nonatomic, retain) NSString* ip_address;
 @property (nonatomic, retain) NSString* name;
 @property (nonatomic, retain) NSNumber* port;
