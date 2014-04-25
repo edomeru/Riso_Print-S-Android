@@ -19,6 +19,7 @@
         <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
     <local:SidePaneTitleControl Grid.Row="0"
+                                ProgressRingVisibility="Collapsed"
                                    Title="{Binding Source=IDS_APP_NAME, Converter={StaticResource ResourceStringToTextConverter}}" ButtonVisibility="Collapsed"/>
     
     <ListView Grid.Row="1" x:Name="listView"

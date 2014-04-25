@@ -105,7 +105,7 @@
             </Core:DataTriggerBehavior>
             <Core:EventTriggerBehavior EventName="Holding">
                 <Core:GoToStateAction StateName="DeletePrinterState"/>
-                <Core:CallMethodAction MethodName="{Binding DataContext.UpdateToBeDeleted}"/>   
+                <!--<Core:CallMethodAction MethodName="{Binding DataContext.UpdateToBeDeleted, ElementName=printerNameControl}"/>-->   
                
             </Core:EventTriggerBehavior>
             <Core:DataTriggerBehavior Binding="{Binding DataContext.WillBeDeleted,  ElementName=printerNameControl, Mode=TwoWay}" Value="False">

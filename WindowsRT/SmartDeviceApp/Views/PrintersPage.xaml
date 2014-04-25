@@ -47,7 +47,7 @@
 						ScrollViewer.VerticalScrollBarVisibility="Visible"
 						SelectionMode="None"
 						IsItemClickEnabled="False"  
-                        ItemsSource="{Binding PrinterList}" Margin="0,10,0,0">
+                        ItemsSource="{Binding PrinterList}" Margin="85,10,50,0">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VariableSizedWrapGrid  Orientation="Horizontal" 
@@ -79,17 +79,27 @@
                             <!--TODO: bind this to image data-->
 
                             <controls:KeyValueControl x:Name="ipAddress" 
+                                                      IconVisibility="Collapsed"
                                                           Text="Ip Address" ValueText="{Binding IpAddress}"
                                                           RightButtonVisibility="Collapsed"
                                                           ValueVisibility="Visible"/>
+                            
+                            
+                            <controls:KeyDropDownListControl x:Name="port"
+                                                             Text="Port"
+                                                             SelectedIndex="{Binding PortSetting, Mode=TwoWay}"/>
 
-                            <controls:KeyValueControl x:Name="port" 
-                                                          Text="Port" />
+                            <!--<controls:KeyValueControl x:Name="port" 
+                                                          Text="Port"
+                                                          LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>-->
                             <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
                                                                  Text="Set as Default Printer"
+                                                             IconVisibility="Collapsed"
                                                                  RightButtonVisibility="Collapsed"
                                                                  IsOn="{Binding IsDefault, Mode=TwoWay}"/>
+                            
                             <controls:KeyValueControl x:Name="settings" 
+                                                      IconVisibility="Collapsed"
                                                           Text="Default Print Settings"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"/>
 

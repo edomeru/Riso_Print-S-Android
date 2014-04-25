@@ -1,6 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -23,16 +28,28 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _addPrinter;
 
+        private bool _isProgressRingVisible;
+        private bool _isButtonVisible;
+
+        private ImageSource _buttonImage;
+
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
 
+        private string ADD_IMAGE = "ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png";
+        private ViewControlViewModel _viewControlViewModel;
         public AddPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
+            _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
             IpAddress = "";
-            Username = "";
-            Password = "";
+            //Username = "";
+            //Password = "";
+            //ButtonImage = new ImageSource();
+            IsProgressRingVisible = false;
+            IsButtonVisible = true;
+            Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -78,7 +95,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (_addPrinter == null)
                 {
-                    _addPrinter = new SmartDeviceApp.Common.RelayCommand(
+                    _addPrinter = new RelayCommand(
                         () => AddPrinterExecute(),
                         () => true
                     );
@@ -90,9 +107,10 @@ namespace SmartDeviceApp.ViewModels
         private void AddPrinterExecute()
         {
             System.Diagnostics.Debug.WriteLine(IpAddress);
+            
 
             //check if has data
-            if (IpAddress.Equals("") || Username.Equals("") || Password.Equals(""))
+            if (IpAddress.Equals("") )
             {
                 //error please input data
                 //display error message TODO
@@ -100,30 +118,84 @@ namespace SmartDeviceApp.ViewModels
             }
 
             //add to printer controller
-            AddPrinterHandler(IpAddress);
+
+            IsButtonVisible = false;
+            IsProgressRingVisible = true;
+            if (AddPrinterHandler(IpAddress) == false)
+            {
+                setVisibilities();
+            }
             
         }
+
+        public bool IsProgressRingVisible
+        {
+            get { return _isProgressRingVisible; }
+            set
+            {
+                this._isProgressRingVisible = value;
+                OnPropertyChanged("IsProgressRingVisible");
+            }
+        }
+
+        public bool IsButtonVisible
+        {
+            get { return _isButtonVisible; }
+            set
+            {
+                this._isButtonVisible = value;
+                OnPropertyChanged("IsButtonVisible");
+            }
+        }
+
+        public ImageSource ButtonImage
+        {
+            get { return _buttonImage; }
+            set
+            {
+                this._buttonImage = value;
+                OnPropertyChanged("ButtonImage");
+            }
+        }
+
 
         public void handleAddIsSuccessful(bool isSuccessful)
         {
             string caption = "";
             string content = "";
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
             if (isSuccessful)
             {
-                content = "The new printer was added successfully.";
-                //clear data
-                IpAddress = "";
-                Username = "";
-                Password = "";
+                content = loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                
             }
             else
             {
-                content = "The new printer is not online but was added successfully with default printer settings.";
+                if (NetworkController.IsConnectedToNetwork)
+                {
+                    content = "The new printer is not online but was added successfully with default printer settings.";
+                }
+                else
+                {
+                    
+                    content = loader.GetString("IDS_ERR_MSG_NETWORK_ERROR");
+                }
             }
-            caption = "Add Printer Info";
+            caption = "Add Printer";
+            //clear data
+            IpAddress = "";
+            Username = "";
+            Password = "";
 
+            setVisibilities();
             DisplayMessage(caption, content);
+        }
+
+        public void setVisibilities()
+        {
+            IsButtonVisible = true;
+            IsProgressRingVisible = false;
         }
 
         public void DisplayMessage(string caption, string content)
@@ -132,6 +204,21 @@ namespace SmartDeviceApp.ViewModels
             ma.Caption = caption;
             ma.Content = content;
             Messenger.Default.Send<MessageAlert>(ma);
+        }
+
+        private void SetViewMode(VisibleRightPane viewMode)
+        {
+            if (_viewControlViewModel.ScreenMode == ScreenMode.Printers)
+            {
+                if (viewMode == VisibleRightPane.Pane2)
+                {
+                    //clear data
+                    IpAddress = "";
+                    Username = "";
+                    Password = "";
+                }
+            }
+
         }
     }
 }

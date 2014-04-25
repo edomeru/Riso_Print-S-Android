@@ -26,6 +26,7 @@ namespace SmartDeviceApp.Models
 
         private string _ipAddress;
         private string _name;
+        private int _portSetting;
         private bool _isOnline;
         private bool _isDefault;
         private bool _willBeDeleted;
@@ -73,7 +74,18 @@ namespace SmartDeviceApp.Models
         /// Printer post setting, used by Printer table
         /// </summary>
         [SQLite.Column("prn_port_setting"), SQLite.NotNull]
-        public int PortSetting { get; set; }
+        public int PortSetting
+        {
+            get { return this._portSetting; }
+            set
+            {
+                if (_portSetting != value)
+                {
+                    _portSetting = value;
+                    OnPropertyChanged("PortSetting");
+                }
+            }
+        }
 
         /// <summary>
         /// Printer support for LPR, used by Printer table

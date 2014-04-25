@@ -108,7 +108,7 @@
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl Title="Printer Search" ButtonVisibility="Collapsed" Loaded="OnLoaded"/>
+        <controls:SidePaneTitleControl Title="Printer Search" ButtonVisibility="Collapsed" Loaded="OnLoaded" ProgressRingVisibility="Collapsed"/>
         <Grid Margin="0,0,0,0" Grid.Row="1" Background="#FF262626">
             
 
@@ -206,6 +206,7 @@
                             			Text="{Binding Name}"
                             			RightImage="{Binding ImageSource}"
                             			RightButtonVisibility="Visible"
+                                                          IconVisibility="Collapsed"
                                                               />
                             </Grid>
                         </DataTemplate>

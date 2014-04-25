@@ -20,8 +20,6 @@ namespace SmartDeviceApp.Controllers
 
         static readonly PrinterController _instance = new PrinterController();
 
-        public delegate void PopulateScreenHandler();
-        private PopulateScreenHandler _populateScreenHandler;
 
         public delegate bool AddPrinterHandler(string ip);
         private AddPrinterHandler _addPrinterHandler;
@@ -189,16 +187,24 @@ namespace SmartDeviceApp.Controllers
 
         private async Task updateStatus()
         {
-            foreach (Printer printer in _printerListTemp)
-            {
-                //request for eachs printer's printer status
-                System.Diagnostics.Debug.WriteLine(printer.IpAddress);
-                
-                NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
-                await NetworkController.Instance.pingDevice(printer.IpAddress);
+            //foreach (Printer printer in _printerListTemp)
+            //{
 
+                int i = 0;
+                do
+                {
+                    Printer printer = _printerListTemp.ElementAt(i);
+                    //request for eachs printer's printer status
+                    System.Diagnostics.Debug.WriteLine(printer.IpAddress);
 
-            }
+                    NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
+                    await NetworkController.Instance.pingDevice(printer.IpAddress);
+
+                    i++;
+                }
+                while (i < _printerListTemp.Count);
+
+            //}
         }
 
         private async void handlePrinterStatus(string ip, bool isOnline)
@@ -208,15 +214,21 @@ namespace SmartDeviceApp.Controllers
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 //find the printer TODO: error handling here when the printer is deleted while handling status
-                Printer printer = _printerList.First(x => x.IpAddress == ip);
-                System.Diagnostics.Debug.WriteLine(printer.IpAddress);
-                int index = _printerList.IndexOf(printer);
+                try{
+                    Printer printer = _printerList.First(x => x.IpAddress == ip);
+                    System.Diagnostics.Debug.WriteLine(printer.IpAddress);
+                    int index = _printerList.IndexOf(printer);
 
-                //update status
-                printer.IsOnline = isOnline;
+                    //update status
+                    printer.IsOnline = isOnline;
 
-                System.Diagnostics.Debug.WriteLine(index);
-                System.Diagnostics.Debug.WriteLine(isOnline);
+                    System.Diagnostics.Debug.WriteLine(index);
+                    System.Diagnostics.Debug.WriteLine(isOnline);
+                }
+                catch(Exception e)
+                {
+                    
+                }
             });
         }
 
@@ -252,13 +264,14 @@ namespace SmartDeviceApp.Controllers
             {
                 //display error theat ip is invalid
                 _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_INVALID_IP_ADDRESS"));
+                
                 return false;
             }
 
             //check if _printerList is already full
-            if (_printerList.Count() == 20)//TODO: Change to CONSTANTS
+            if (_printerList.Count() >= 10)//TODO: Change to CONSTANTS
             {
-                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), "Cannot add printer");
+                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_MAX_PRINTER_COUNT "));
                 return false;
             }
 
@@ -271,7 +284,7 @@ namespace SmartDeviceApp.Controllers
             catch {
                 if (printer != null)
                 {
-                    //cannot add, printer already in list
+                    _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
                     return false;
                 }
 
@@ -327,22 +340,21 @@ namespace SmartDeviceApp.Controllers
 
         public async void handleAddPrinterStatus(string ip, string name, bool isOnline)
         {
-            if (isOnline)
-            {
-                
+            
                 //add to printerList
                 Printer printer = new Printer() { IpAddress = ip, Name = name };
-                
-
-                //insert to database
-                int id =await DatabaseController.Instance.InsertPrinter(printer);
-                if (id < 0)
+                try
                 {
+
+                    int id = await DatabaseController.Instance.InsertPrinter(printer);
+                    printer.Id = id;
+                    printer.IsOnline = true;
+                }
+                catch (Exception e)
+                {
+                    //add error message TODO
                     return;
                 }
-
-                printer.Id = id;
-                printer.IsOnline = true;
                 //printer.IsDefault = true; //for testing
                 
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -357,13 +369,6 @@ namespace SmartDeviceApp.Controllers
                 _addPrinterViewModel.handleAddIsSuccessful(true);
                 
             });
-
-                
-            }
-            else
-            {
-                //display error cannot add printer
-            }
         }
 
         private async void handlePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -390,13 +395,13 @@ namespace SmartDeviceApp.Controllers
                         }       
                     }
 
-                    //sortPrinterList(index);
+                    //sortPrinterList(index); TBA
                 
-                System.Diagnostics.Debug.WriteLine(e.PropertyName);
+                //System.Diagnostics.Debug.WriteLine(e.PropertyName);
 
-                System.Diagnostics.Debug.WriteLine(printer.IpAddress);
-                System.Diagnostics.Debug.WriteLine(printer.Name);
-                System.Diagnostics.Debug.WriteLine(printer.IsDefault);
+                //System.Diagnostics.Debug.WriteLine(printer.IpAddress);
+                //System.Diagnostics.Debug.WriteLine(printer.Name);
+                //System.Diagnostics.Debug.WriteLine(printer.IsDefault);
                 }
 
             }
@@ -426,6 +431,12 @@ namespace SmartDeviceApp.Controllers
                  }
                 
             }
+
+            if (e.PropertyName == "PortSetting")
+            {
+                await DatabaseController.Instance.UpdatePortNumber(printer);
+                 
+            }
             //throw new NotImplementedException();
         }
 
@@ -435,7 +446,7 @@ namespace SmartDeviceApp.Controllers
 
             //add to printerList
 
-            Printer printer = new Printer() { IpAddress = ip };
+            Printer printer = new Printer() { IpAddress = ip, Name = "No name"};
                 
 
                 //insert to database

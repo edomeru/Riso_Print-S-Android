@@ -20,8 +20,6 @@ using GalaSoft.MvvmLight.Command;
 using Windows.UI.Xaml;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
@@ -99,7 +97,21 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
+            Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
+        }
 
+        private void GridTapped(string tapped)
+        {
+            if (tapped == "ClearDelete")
+            {
+                int i = 0;
+                do
+                {
+                    Printer printer = PrinterList.ElementAt(i);
+                    printer.WillBeDeleted = false;
+                    i++;
+                } while (i < PrinterList.Count);
+            }
         }
 
 
