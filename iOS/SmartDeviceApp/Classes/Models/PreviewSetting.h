@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #define KEY_ORIENTATION         @"orientation"
+#define KEY_COPIES              @"copies"
 #define KEY_DUPLEX              @"duplex"
 #define KEY_IMPOSITION          @"imposition"
 #define KEY_IMPOSITION_ORDER    @"impositionOrder"
@@ -19,6 +20,10 @@
 #define KEY_STAPLE              @"staple"
 #define KEY_PUNCH               @"punch"
 #define KEY_OUTPUT_TRAY         @"outputTray"
+#define KEY_INPUT_TRAY          @"inputTray"
+#define KEY_SORT                @"sort"
+#define KEY_PAPER_TYPE          @"paperType"
+#define KEY_PIN_CODE            @"pinCode"
 
 @interface PreviewSetting : NSObject
 @property (nonatomic) NSInteger colorMode;
@@ -39,6 +44,7 @@
 @property (nonatomic) NSInteger staple;
 @property (nonatomic) NSInteger punch;
 @property (nonatomic) NSInteger outputTray;
+@property (nonatomic) NSString  *pinCode;
 
 @property (nonatomic, weak, readonly) NSString *formattedString;
 

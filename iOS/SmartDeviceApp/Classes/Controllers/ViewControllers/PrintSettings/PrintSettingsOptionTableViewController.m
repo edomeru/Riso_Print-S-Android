@@ -202,18 +202,18 @@
         }
         if(self.previewSetting.punch != kPunchTypeNone)
         {
-            if(option == kOutputTrayFaceDownTray || option == kOutputTrayFaceUpTray)
+            if(option == kOutputTrayFaceDownTray)
             {
                 return NO;
             }
         }
-        if(self.previewSetting.staple != kStapleTypeNone)
+        /*if(self.previewSetting.staple != kStapleTypeNone)
         {
             if(option == kOutputTrayFaceUpTray)
             {
                 return NO;
             }
-        }
+        }*/
     }
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
     return YES;

@@ -40,12 +40,12 @@ typedef enum {
 }kImposition;
 
 typedef enum {
-    kImpositionOrderRightToLeft,
     kImpositionOrderLeftToRight,
-    kImpositionOrderUpperLeftToBottom,
+    kImpositionOrderRightToLeft,
     kImpositionOrderUpperLeftToRight,
-    kImpositionOrderUpperRightToBottom,
-    kImpositionOrderUpperRightToLeft
+    kImpositionOrderUpperRightToLeft,
+    kImpositionOrderUpperLeftToBottom,
+    kImpositionOrderUpperRightToBottom
 }kImpositionOrder;
 
 typedef enum {
@@ -80,6 +80,7 @@ typedef enum {
 } kDuplexSetting;
 
 typedef enum {
+    kBookletTypeOff,
     kBookletTypeFold,
     kBookletTypeFoldAndStaple
 } kBookletType;
@@ -93,7 +94,7 @@ typedef enum {
 typedef enum {
     kOutputTrayAuto,
     kOutputTrayFaceDownTray,
-    kOutputTrayFaceUpTray,
+    //kOutputTrayFaceUpTray,
     kOutputTrayTop,
     kOutputTrayStacking
 } kOutputTray;

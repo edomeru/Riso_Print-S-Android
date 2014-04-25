@@ -30,6 +30,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 @property (nonatomic, weak) UIActivityIndicatorView *progressIndicator;
 @property (nonatomic, weak) PrintDocument *printDocument;
 
+- (directprint_job *)preparePrintJob;
 - (UIView *)createProgressView;
 - (void)updateProgress:(float)progress;
 - (void)updateSuccess;
@@ -40,6 +41,18 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 @implementation DirectPrintManager
 
 - (void)printDocumentViaLPR
+{
+    directprint_job *job = [self preparePrintJob];
+    directprint_job_lpr_print(job);
+}
+
+- (void)printDocumentViaRaw
+{
+    directprint_job *job = [self preparePrintJob];
+    directprint_job_raw_print(job);
+}
+
+- (directprint_job *)preparePrintJob
 {
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
     
@@ -62,7 +75,8 @@ void printProgressCallback(directprint_job *job, int status, float progress);
                               [self.alertView dismiss];
                           }];
     [alertView show];
-    directprint_job_lpr_print(job);
+    
+    return job;
 }
 
 - (UIView *)createProgressView

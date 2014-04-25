@@ -13,14 +13,16 @@
 
 @implementation Printer
 
-@dynamic enabled_bind;
-@dynamic enabled_booklet_binding;
-@dynamic enabled_duplex;
+@dynamic enabled_booklet;
+@dynamic enabled_finisher_2_3_holes;
+@dynamic enabled_finisher_2_4_holes;
 @dynamic enabled_lpr;
-@dynamic enabled_pagination;
 @dynamic enabled_raw;
 @dynamic enabled_staple;
-@dynamic enabled_punch_3holes;
+@dynamic enabled_tray_auto_stacking;
+@dynamic enabled_tray_face_down;
+@dynamic enabled_tray_stacking;
+@dynamic enabled_tray_top;
 @dynamic ip_address;
 @dynamic name;
 @dynamic port;

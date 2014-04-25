@@ -12,6 +12,8 @@
 #import "PrinterManager.h"
 #import "PrintDocument.h"
 #import "Printer.h"
+#import "PrinterStatusHelper.h"
+#import "PrinterStatusView.h"
 
 #define PRINTERS_HEADER_CELL @"PrintersHeaderCell"
 #define PRINTER_ITEM_CELL @"PrinterItem"
@@ -76,7 +78,18 @@
 {
     PrintSettingsOptionsItemCell *itemCell = [tableView dequeueReusableCellWithIdentifier:PRINTER_ITEM_CELL forIndexPath:indexPath];
     Printer *printer = [self.printerManager getPrinterAtIndex:indexPath.row];
-    itemCell.optionLabel.text = printer.name;
+    if(printer.name == nil || [printer.name isEqualToString:@""])
+    {
+        itemCell.optionLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+    }
+    else
+    {
+        itemCell.optionLabel.text = printer.name;
+    }
+    itemCell.subLabel.text = printer.ip_address;
+    itemCell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+    itemCell.statusView.statusHelper.delegate = itemCell.statusView;
+    
     itemCell.separator.hidden = NO;
     if (indexPath.row == [self.printerManager countSavedPrinters])
     {
