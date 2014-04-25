@@ -30,6 +30,7 @@
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
                                         TextBoxAlignment="Right"
+                                        TextBoxInputScope="Number"
                                         Width="{Binding Width, ElementName=printSettingsBox}"
                                         IsEnabled="{Binding Path=IsEnabled}"/>
         </DataTemplate>
@@ -40,6 +41,7 @@
                                       Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                       ValueText="{Binding Path=SelectedOption.Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                       SubTextVisibility="Collapsed"
+                                      ValueVisibility="{Binding Path=IsValueDisplayed, Converter={StaticResource BooleanToVisibilityConverter}}"
                                       utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                       IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                       RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
