@@ -29,7 +29,7 @@ namespace SmartDeviceApp.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return value is Visibility && (Visibility)value == Visibility.Visible;
         }
     }
 }

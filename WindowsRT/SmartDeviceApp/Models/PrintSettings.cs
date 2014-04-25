@@ -64,6 +64,7 @@ namespace SmartDeviceApp.Models
         private object _value;
         private PrintSettingOption _selectedOption;
         private bool _isEnabled;
+        private bool _isValueDisplayed;
         public string Name { get; set; }
         public string Text { get; set; }
         public string Icon { get; set; }
@@ -114,7 +115,18 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
-        public bool IsValueDisplayed { get; set; }
+        public bool IsValueDisplayed
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    RaisePropertyChanged("IsValueDisplayed");
+                }
+            }
+        }
 
         public override bool Equals(System.Object obj)
         {
