@@ -81,20 +81,16 @@
                             <controls:KeyValueControl x:Name="ipAddress" 
                                                           Text="Ip Address" ValueText="{Binding IpAddress}"
                                                           RightButtonVisibility="Collapsed"
-                                                          LeftButtonVisibility="Collapsed"
                                                           ValueVisibility="Visible"/>
 
                             <controls:KeyValueControl x:Name="port" 
-                                                          Text="Port"
-                                                          LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>
+                                                          Text="Port" />
                             <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
                                                                  Text="Set as Default Printer"
                                                                  RightButtonVisibility="Collapsed"
-                                                                 LeftButtonVisibility="Collapsed"
                                                                  IsOn="{Binding IsDefault, Mode=TwoWay}"/>
                             <controls:KeyValueControl x:Name="settings" 
                                                           Text="Default Print Settings"
-                                                          LeftButtonVisibility="Collapsed"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"/>
 
                         </ListView>
