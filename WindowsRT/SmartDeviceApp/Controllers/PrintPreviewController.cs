@@ -235,7 +235,7 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Initializes the gesture of the preview area.
-        /// Final paper size must be known before using this function.
+        /// Requires initial paper size before using this function.
         /// </summary>
         private void InitializeGestures()
         {
@@ -291,12 +291,6 @@ namespace SmartDeviceApp.Controllers
             }
 
             string name = printSetting.Name;
-            PrintSetting result = GetPrintSetting(name);
-            if (result == null)
-            {
-                return;
-            }
-            result.Value = value;
 
             // Manual check here what is changed
             bool isPreviewPageAffected = false;
@@ -322,7 +316,7 @@ namespace SmartDeviceApp.Controllers
                 value = CheckIfCopiesValid(value, out isValid);
                 if (!isValid)
                 {
-                    result.Value = value;
+                    printSetting.Value = value;
                 }
                 if (_selectedPrinter.PrintSettings.Copies != value)
                 {
@@ -481,8 +475,8 @@ namespace SmartDeviceApp.Controllers
                 await LoadPage(_currPreviewPageIndex, false);
 
                 // Update preview page
-                // TODO: Confirm with lester!
-                InitializeGestures();
+                // TODO: To be removed since this causes the preview area to zoom-in
+                //InitializeGestures();
             }
         }
 
@@ -503,12 +497,6 @@ namespace SmartDeviceApp.Controllers
             }
 
             string name = printSetting.Name;
-            PrintSetting result = GetPrintSetting(name);
-            if (result == null)
-            {
-                return;
-            }
-            result.Value = state;
 
             bool isPreviewPageAffected = false;
             bool isConstraintAffected = false;
@@ -541,8 +529,8 @@ namespace SmartDeviceApp.Controllers
                 await LoadPage(_currPreviewPageIndex, false);
 
                 // Update preview page
-                // TODO: Confirm with lester!
-                InitializeGestures();
+                // TODO: To be removed since this causes the preview area to zoom-in
+                //InitializeGestures();
             }
         }
 
