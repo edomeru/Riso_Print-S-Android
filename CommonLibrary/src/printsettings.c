@@ -88,8 +88,8 @@ const char *printsetting_names[kPrintSettingsCount] =
 const char *color_mode[] =
 {
     "AUTO",
-    "FULL",
-    "GRAYSCALE"
+    "COLOR",
+    "MONOCHROME"
 };
 
 const char *orientation[] =
