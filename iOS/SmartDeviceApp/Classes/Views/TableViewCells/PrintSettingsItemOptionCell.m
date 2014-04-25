@@ -64,7 +64,6 @@
 - (void) setHideValue:(BOOL)isValueHidden
 {
     self.valueLabel.hidden = isValueHidden;
-    self.subMenuImage.hidden = isValueHidden;
 }
 
 @end
