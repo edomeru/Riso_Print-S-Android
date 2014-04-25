@@ -992,14 +992,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         return YES;
     }
 
-    if([settingKey isEqualToString:KEY_DUPLEX])
+    if([settingKey isEqualToString:KEY_BOOKLET] ||
+       [settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
+       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
     {
-        return [self.printer.enabled_duplex boolValue];
+        return [self.printer.enabled_booklet boolValue];
     }
     
-    if([settingKey isEqualToString:KEY_FINISHING_SIDE])
+    if([settingKey isEqualToString:KEY_PUNCH])
     {
-        return [self.printer.enabled_bind boolValue];
+        return ([self.printer.enabled_finisher_2_3_holes boolValue] || [self.printer.enabled_finisher_2_4_holes boolValue]);
     }
     
     if([settingKey isEqualToString:KEY_STAPLE])
@@ -1007,18 +1009,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         return [self.printer.enabled_staple boolValue];
     }
     
-    if([settingKey isEqualToString:KEY_IMPOSITION] ||
-       [settingKey isEqualToString:KEY_IMPOSITION_ORDER])
-    {
-        return [self.printer.enabled_pagination boolValue];
-    }
     
-    if([settingKey isEqualToString:KEY_BOOKLET] ||
-       [settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
-       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
-    {
-        return [self.printer.enabled_booklet_binding boolValue];
-    }
     return YES;
 }
 
@@ -1054,7 +1045,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             NSString *key = [setting objectForKey:@"name"];
             if([self isSettingSupported:key] == YES)
             {
-                if([key isEqualToString:KEY_PUNCH] == YES)
+                if([key isEqualToString:KEY_PUNCH] == YES || [key isEqualToString:KEY_OUTPUT_TRAY] == YES)
                 {
                     NSMutableDictionary *tempSetting = [NSMutableDictionary dictionaryWithDictionary:setting];
                     NSArray *options = [setting objectForKey:@"option"];
@@ -1083,13 +1074,29 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     if([option isEqualToString:@"ids_lbl_punch_3holes"])
     {
-        return [self.printer.enabled_punch_3holes boolValue];
+        return [self.printer.enabled_finisher_2_3_holes boolValue];
     }
     
     if([option isEqualToString:@"ids_lbl_punch_4holes"])
     {
-        return ![self.printer.enabled_punch_3holes boolValue];
+        return [self.printer.enabled_finisher_2_4_holes boolValue];
     }
+    
+    if ([option isEqualToString:@"ids_lbl_outputtray_facedown"])
+    {
+        return  [self.printer.enabled_tray_face_down boolValue];
+    }
+    
+    if ([option isEqualToString:@"ids_lbl_outputtray_top"])
+    {
+        return [self.printer.enabled_tray_top boolValue];
+    }
+    
+    if ([option isEqualToString:@"ids_lbl_outputtray_stacking"])
+    {
+        return [self.printer.enabled_tray_stacking boolValue];
+    }
+    
     return YES;
 }
 

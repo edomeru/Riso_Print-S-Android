@@ -525,14 +525,14 @@
 
     if(punchType == kPunchType3or4Holes)
     {
-        if([self.printDocument.printer.enabled_punch_3holes boolValue] == YES)
+        if([self.printDocument.printer.enabled_finisher_2_3_holes boolValue] == YES)
         {
             punchDistance = PUNCH_3HOLE_DISTANCE;
             //center of the first hole is 1 punch distance from the center of the length of the finishing side
             startDistanceFromCenter = punchDistance + (PUNCH_WIDTH * 0.5f);
             numHoles = 3;
         }
-        else
+        else if([self.printDocument.printer.enabled_finisher_2_4_holes boolValue] == YES)
         {
             punchDistance = PUNCH_4HOLE_DISTANCE;
             //center of the first hole is 1 and half the punch distance from the center of the length of the finishing side

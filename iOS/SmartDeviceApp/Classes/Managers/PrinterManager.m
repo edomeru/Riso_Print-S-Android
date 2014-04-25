@@ -106,14 +106,16 @@ static PrinterManager* sharedPrinterManager = nil;
     newPrinter.name = printerDetails.name;
     newPrinter.ip_address = printerDetails.ip;
     newPrinter.port = printerDetails.port;
-    newPrinter.enabled_bind = [NSNumber numberWithBool:printerDetails.enBind];
-    newPrinter.enabled_booklet_binding = [NSNumber numberWithBool:printerDetails.enBookletBind];
-    newPrinter.enabled_duplex = [NSNumber numberWithBool:printerDetails.enDuplex];
-    newPrinter.enabled_pagination = [NSNumber numberWithBool:printerDetails.enPagination];
+    newPrinter.enabled_booklet = [NSNumber numberWithBool:printerDetails.enBooklet];
+    newPrinter.enabled_finisher_2_3_holes = [NSNumber numberWithBool:printerDetails.enFinisher23Holes];
+    newPrinter.enabled_finisher_2_4_holes = [NSNumber numberWithBool:printerDetails.enFinisher24Holes];
+    newPrinter.enabled_lpr = [NSNumber numberWithBool:printerDetails.enLpr];
+    newPrinter.enabled_raw = [NSNumber numberWithBool:printerDetails.enRaw];
     newPrinter.enabled_staple = [NSNumber numberWithBool:printerDetails.enStaple];
-    newPrinter.enabled_lpr = [NSNumber numberWithBool:printerDetails.enLPR];
-    newPrinter.enabled_raw = [NSNumber numberWithBool:printerDetails.enRAW];
-    newPrinter.enabled_punch_3holes = [NSNumber numberWithBool:printerDetails.enPunch3Holes];
+    newPrinter.enabled_tray_auto_stacking = [NSNumber numberWithBool:printerDetails.enTrayAutoStacking];
+    newPrinter.enabled_tray_face_down = [NSNumber numberWithBool:printerDetails.enTrayFaceDown];
+    newPrinter.enabled_tray_stacking = [NSNumber numberWithBool:printerDetails.enTrayStacking];
+    newPrinter.enabled_tray_top = [NSNumber numberWithBool:printerDetails.enTrayTop];
     
     // attach the PrintSetting to the Printer
     newPrinter.printsetting = defaultPrintSettings;
