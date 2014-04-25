@@ -34,7 +34,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Printer ID, used by Printer table as primary key
         /// </summary>
-        [SQLite.Column("prn_id"), SQLite.PrimaryKey]
+        [SQLite.Column("prn_id"), SQLite.PrimaryKey, SQLite.AutoIncrement]
         public int Id { get; set; }
 
         /// <summary>
@@ -193,21 +193,21 @@ namespace SmartDeviceApp.Models
         /// </summary>
         public Printer()
         {
-            Id = -1;
-            PrintSettingId = -1;
-            IpAddress = null;
-            Name = null;
-            PortSetting = -1;
-            EnabledLpr = false;
-            EnabledRaw = false;
-            EnabledPagination = false;
-            EnabledDuplex = false;
-            EnabledBookletBinding = false;
-            EnabledStaple = false;
-            EnabledBind = false;
-            IsDefault = false;
-            IsOnline = false;
-            PrintSettings = null;
+            //Id = -1;
+            //PrintSettingId = -1;
+            //IpAddress = null;
+            //Name = null;
+            //PortSetting = -1;
+            //EnabledLpr = false;
+            //EnabledRaw = false;
+            //EnabledPagination = false;
+            //EnabledDuplex = false;
+            //EnabledBookletBinding = false;
+            //EnabledStaple = false;
+            //EnabledBind = false;
+            //IsDefault = false;
+            //IsOnline = false;
+            //PrintSettings = null;
         }
 
         /// <summary>

@@ -199,7 +199,10 @@ namespace SmartDeviceApp.Controllers
                 var db = new SQLite.SQLiteAsyncConnection(dbpath);
 
                 // Create the tables if they don't exist
-                return await db.InsertAsync(printer);
+                await db.InsertAsync(printer);
+                //string query = @"select last_insert_rowid()";
+                //int lastId = await db.ExecuteScalarAsync<int>(query, 0);
+                return printer.Id;
             }
             catch
             {
@@ -269,7 +272,7 @@ namespace SmartDeviceApp.Controllers
                 //delete in printer table
                 var printer = await db.Table<Printer>().Where(
                     p => p.Id == printerId).FirstAsync();
-
+             
                 //check if default printer
                 var defaultPrinter = await db.Table<DefaultPrinter>().FirstAsync();
 

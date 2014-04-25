@@ -31,8 +31,9 @@
             <TextBlock x:Name="rightPaneTitle" Grid.Column="1" Text="{Binding Title, ElementName=sidepaneTitle}" Style="{StaticResource STYLE_TextHeader}"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
+            <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding ProgressRingVisibility, ElementName=sidepaneTitle}"/>
             <Button x:Name="button" Visibility="{Binding ButtonVisibility, ElementName=sidepaneTitle}"
-                        Template="{StaticResource TEMPLATE_Button}"/>
+                        Template="{StaticResource TEMPLATE_Button}" Command="{Binding ButtonCommand, ElementName=sidepaneTitle}"/>
         </StackPanel>
     </Grid>
 </UserControl>

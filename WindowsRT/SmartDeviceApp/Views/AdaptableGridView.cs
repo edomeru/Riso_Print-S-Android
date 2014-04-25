@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace SmartDeviceApp.Views
 {
@@ -43,5 +45,11 @@ namespace SmartDeviceApp.Views
             this.MaxRowsOrColumns = this.ItemWidth > 0 ? Convert.ToInt32(Math.Floor(e.NewSize.Width / this.ItemWidth)) : maxRowsOrColumns;
         }
 
+        protected override void OnTapped(Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            base.OnTapped(e);
+
+            Messenger.Default.Send<string>("ClearDelete");
+        }
     }
 }

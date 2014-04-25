@@ -44,7 +44,7 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Style="{StaticResource STYLE_StackRight}" Margin="0,1,70,0" Grid.RowSpan="2">
             <Image x:Name="printerImage" Source="{Binding PrinterImage, ElementName=keyImageControl}"
-                        Visibility="{Binding RightButtonVisibility, ElementName=keyImageControl}" 
+                        
                         Style="{StaticResource STYLE_AlignRight}" Stretch="None" RenderTransformOrigin="0.5,0.5" Width="115" Margin="20,-49,0,0"
                    />
 

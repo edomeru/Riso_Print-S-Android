@@ -38,29 +38,33 @@
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl Title="Add Printer" ButtonVisibility="Visible"
-                                       ButtonImage="ms-appx:///Resources/Images/img_btn_add_printer_ok_normal.png"
+        <controls:SidePaneTitleControl Title="Add Printer" 
+                                       ButtonVisibility="{Binding DataContext.IsButtonVisible, ElementName=AddPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       ProgressRingVisibility="{Binding DataContext.IsProgressRingVisible, ElementName=AddPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       ButtonImage="ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png"
                                        ButtonCommand="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}"/>
-        <Grid Margin="0,0,0,10" Grid.Row="1">
-            <!--CONTENTS HERE-->
-            <Grid Margin="0,0,0,0">
-                <Grid Margin="0,0,0,639" Height="75">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="8*"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TextBlock x:Uid="IDS_LBL_IP_ADDRESS" Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+        <!--<Grid Margin="0,0,0,10" >-->
+        <!--CONTENTS HERE-->
+        <!--<Grid Margin="0,0,0,0">-->
+        <Grid Margin="0,0,0,638" Width="400" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Uid="IDS_LBL_IP_ADDRESS" Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
-                    <utilities:IPAddressTextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay}" />
-                    <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
-                </Grid>
-                <Grid Margin="0,75,0,564" Height="75">
+            <utilities:IPAddressTextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay}" />
+            <!--<Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>-->
+        </Grid>
+        <!--<Grid Margin="0,75,0,564" Height="75">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="8*"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     
-                    <!--TODO: Use string from resource-->
+                    -->
+        <!--TODO: Use string from resource-->
+        <!--
                     
 					<TextBlock Text="Username" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
 					<TextBox x:Name="usernameTextBox" Margin="165,10,10,15" Text="{Binding Username, Mode=TwoWay}"/>
@@ -72,13 +76,15 @@
 						<RowDefinition/>
 					</Grid.RowDefinitions>
                     
-                    <!--TODO: Use string from resource-->
+                    -->
+        <!--TODO: Use string from resource-->
+        <!--
                     
 					<TextBlock Text="Password" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
 					<PasswordBox x:Name="passwordTextBox" Margin="165,10,10,15" Password="{Binding Password, Mode=TwoWay}"/>
-				</Grid>
-			</Grid>
-        </Grid>
+				</Grid>-->
+        <!--</Grid>-->
+        <!--</Grid>-->
     </Grid>
 
 </UserControl>

@@ -11,6 +11,8 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls.Primitives;
+using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Views
 {
@@ -156,10 +158,26 @@ namespace SmartDeviceApp.Views
             this.Margin = new Thickness(0, 0, 0, 0);   
             if (isPulling)
             {
-                Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
-                
+                if (NetworkController.IsConnectedToNetwork)
+                {
+                    Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
+                }
+                else
+                {
+                    var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+                    DisplayMessage(loader.GetString("IDS_LBL_SEARCH_PRINTERS"), loader.GetString("IDS_ERR_MSG_NETWORK_ERROR"));
+                }
             }
         }
+
+        public void DisplayMessage(string caption, string content)
+        {
+            MessageAlert ma = new MessageAlert();
+            ma.Caption = caption;
+            ma.Content = content;
+            Messenger.Default.Send<MessageAlert>(ma);
+        }
+
 
     }
 }

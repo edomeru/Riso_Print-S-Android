@@ -35,6 +35,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ButtonCommandProperty =
             DependencyProperty.Register("ButtonCommand", typeof(ICommand), typeof(SidePaneTitleControl), null);
 
+        public static readonly DependencyProperty ProgressRingVisibilityProperty =
+            DependencyProperty.Register("ProgressRingVisibility", typeof(Visibility), typeof(SidePaneTitleControl), null);
+
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
@@ -57,6 +60,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(ButtonCommandProperty); }
             set { SetValue(ButtonCommandProperty, value); }
+        }
+
+        public Visibility ProgressRingVisibility
+        {
+            get { return (Visibility)GetValue(ProgressRingVisibilityProperty); }
+            set { SetValue(ProgressRingVisibilityProperty, value); }
         }
     }
 }

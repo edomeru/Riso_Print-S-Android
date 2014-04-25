@@ -9,6 +9,7 @@ using Windows.Networking;
 using SNMP;
 using Windows.Storage.Streams;
 using System.Threading;
+using Windows.Networking.Connectivity;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -110,6 +111,20 @@ namespace SmartDeviceApp.Controllers
             //if there is a reply, it is online. 0.199 did not reply.
             System.Diagnostics.Debug.WriteLine("HandlePing");
             //networkControllerPingStatusCallback(ip, true);
+        }
+
+        public static bool IsConnectedToNetwork
+        {
+            get
+            {
+                var profile = NetworkInformation.GetInternetConnectionProfile();
+                if (profile != null)
+                {
+                    var interfaceType = profile.NetworkAdapter.IanaInterfaceType;
+                    return interfaceType == 71 || interfaceType == 6;
+                }
+                return false;
+            }
         }
 
 

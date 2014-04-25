@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Command;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -178,7 +179,7 @@ namespace SmartDeviceApp.Controls
             {
                 if (_setVisualState == null)
                 {
-                    _setVisualState = new SmartDeviceApp.Common.RelayCommand(
+                    _setVisualState = new RelayCommand(
                         () => SetVisualStateExecute(),
                         () => true
                     );
@@ -206,7 +207,7 @@ namespace SmartDeviceApp.Controls
             {
                 if (_updateDeletionPerform == null)
                 {
-                    _updateDeletionPerform = new SmartDeviceApp.Common.RelayCommand(
+                    _updateDeletionPerform = new RelayCommand(
                         () => UpdateDeletionPerformExecute(),
                         () => true
                     );

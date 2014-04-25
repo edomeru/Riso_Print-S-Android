@@ -80,7 +80,7 @@
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl Title="Print Settings" ButtonVisibility="Collapsed"/>
+        <controls:SidePaneTitleControl Title="Print Settings" ButtonVisibility="Collapsed" ProgressRingVisibility="Collapsed"/>
         <Grid x:Name="printSettingsRootGrid" Grid.Row="1">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
