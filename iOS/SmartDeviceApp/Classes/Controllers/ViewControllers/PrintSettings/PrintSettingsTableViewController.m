@@ -43,7 +43,7 @@
 #define PRINTER_SECTION_ITEM_ROW 1
 
 #define ROW_HEIGHT_SINGLE 44
-#define ROW_HEIGHT_DOUBLE 66
+#define ROW_HEIGHT_DOUBLE 55
 
 static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
@@ -268,7 +268,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
                 printerItemCell.selectPrinterLabel.hidden = YES;
                 if(self.printer.name == nil || [self.printer.name isEqualToString:@""] == YES)
                 {
-                     printerItemCell.printerNameLabel.text = self.printer.ip_address;
+                     printerItemCell.printerNameLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
                 }
                 else
                 {
@@ -472,12 +472,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     if (indexPath.section == 0)
     {
-        if (self.isDefaultSettingsMode == NO)
+        if (self.isDefaultSettingsMode == YES || indexPath.row == 1)
         {
-            if (indexPath.row == 1)
-            {
-                return ROW_HEIGHT_DOUBLE;
-            }
+            return ROW_HEIGHT_DOUBLE;
         }
     }
     return ROW_HEIGHT_SINGLE;
@@ -1008,7 +1005,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         return [self.printer.enabled_staple boolValue];
     }
-    
     
     return YES;
 }
