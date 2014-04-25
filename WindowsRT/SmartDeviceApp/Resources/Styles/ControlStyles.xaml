@@ -398,4 +398,11 @@
         </Style.Setters>
     </Style>
 
+    <Style x:Key="STYLE_List_Separator" TargetType="Path">
+        <Style.Setters>
+            <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
+            <Setter Property="StrokeThickness" Value="1"/>
+        </Style.Setters>
+    </Style>
+
 </ResourceDictionary>

@@ -17,7 +17,8 @@ namespace SmartDeviceApp.Converters
         {
             if (value == null || !(value is int)) return Visibility.Collapsed;
             var options = new ViewModelLocator().PrintSettingsViewModel.SelectedPrintSetting.Options;
-            bool isLastItem = ((int)value == options.Count - 1) ? true : false;
+            if (options.Count == 1) return Visibility.Collapsed;
+            bool isLastItem = ((int)value == options.Count - 1) ? true : false;            
             return (isLastItem ? Visibility.Collapsed : Visibility.Visible);
         }
 

@@ -10,7 +10,7 @@
     d:DesignWidth="400"
     Text="{Binding Name}"
     ValueText="{Binding Date, Converter={StaticResource DateTimeToStringConverter}}"
-    LeftButtonVisibility="Collapsed"
+    SubTextVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
     SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
     Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
