@@ -15,5 +15,4 @@
 @property (nonatomic, weak) IBOutlet UIView *separator;
 @property (weak, nonatomic) IBOutlet UIImageView *subMenuImage;
 
-- (void) setHideValue:(BOOL)isValueHidden;
 @end

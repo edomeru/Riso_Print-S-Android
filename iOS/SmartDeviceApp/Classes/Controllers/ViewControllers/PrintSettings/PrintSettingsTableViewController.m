@@ -36,7 +36,6 @@
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
 #define SETTING_ITEM_SWITCH_CELL @"SettingItemSwitchCell"
-#define PINCODE_INPUT_CELL @"PincodeInputCell"
 
 #define PRINTER_SECTION  0
 #define PRINTER_SECTION_HEADER_ROW 0
@@ -118,11 +117,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
     }
     
-    if(self.isDefaultSettingsMode == NO)
-    {
-        [self.expandedSections addObject:[NSNumber numberWithBool:YES]]; //add pincode section
-    }
-    
     [self fillSupportedSettings];
     
     PreviewSetting *previewSetting = self.previewSetting;
@@ -191,10 +185,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     // Return the number of sections.
     NSInteger sections = [[self.printSettingsTree objectForKey:@"group"] count];
-    if(self.isDefaultSettingsMode == NO)
-    {
-        sections += 1; // + pincode section
-    }
+
     return sections + 1;//print settings sections + the printer section
 }
 
@@ -202,7 +193,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     // Return the number of rows in the section.
     NSInteger logicalSection = section;
-    NSInteger totalSections = [[self.printSettingsTree objectForKey:@"group"] count] + 1;
+    
     if (logicalSection == 0)
     {
         if(self.isDefaultSettingsMode == YES)
@@ -213,14 +204,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         {
             return 2;
         }
-    }
-    else if(logicalSection == totalSections && self.isDefaultSettingsMode == NO) //pincode section
-    {
-        if ([[self.expandedSections objectAtIndex:logicalSection - 1] boolValue] == NO)
-        {
-            return 1;
-        }
-        return 2;
     }
     else if (logicalSection >= 1)
     {
@@ -266,14 +249,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
                 printerItemCell.printerNameLabel.hidden = NO;
                 printerItemCell.printerIPLabel.hidden = NO;
                 printerItemCell.selectPrinterLabel.hidden = YES;
-                if(self.printer.name == nil || [self.printer.name isEqualToString:@""] == YES)
-                {
-                     printerItemCell.printerNameLabel.text = self.printer.ip_address;
-                }
-                else
-                {
-                    printerItemCell.printerNameLabel.text = self.printer.name;
-                }
+                printerItemCell.printerNameLabel.text = self.printer.name;
                 printerItemCell.printerIPLabel.text = self.printer.ip_address;
             }
             else
@@ -286,28 +262,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             cell = printerItemCell;
         }
     }
-    else if(section == [self.supportedSettings count] + 1 && self.isDefaultSettingsMode == NO)
-    {
-        if (row == 0)
-        {
-            PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
-            headerCell.groupLabel.localizationId = @"IDS_LBL_SECURE_PRINT";
-            headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
-            cell = headerCell;
-        }
-        else
-        {
-            PrintSettingsItemInputCell *itemInputCell = [tableView dequeueReusableCellWithIdentifier:PINCODE_INPUT_CELL forIndexPath:indexPath];
-            itemInputCell.settingLabel.localizationId =  @"IDS_LBL_AUTHENTICATION_PINCODE";
-            itemInputCell.valueTextField.secureTextEntry = YES;
-            itemInputCell.valueTextField.text = [[self.previewSetting valueForKey:KEY_PIN_CODE] stringValue];
-            itemInputCell.valueTextField.tag = indexPath.section * 10 + indexPath.row;
-            itemInputCell.valueTextField.delegate = self;
-            [self.textFieldBindings setObject:KEY_PIN_CODE forKey:[NSNumber numberWithInteger:itemInputCell.valueTextField.tag]];
-            itemInputCell.separator.hidden = YES;
-            cell = itemInputCell;
-        }
-    }
     else
     {
         NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:section - 1];
@@ -315,7 +269,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
             headerCell.groupLabel.localizationId = [group objectForKey:@"text"];
-            headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
+            headerCell.expanded = YES;
             cell = headerCell;
         }
         else
@@ -345,12 +299,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
                 {
                     itemOptionCell.separator.hidden = YES;
                 }
-                
-                [itemOptionCell setHideValue:![self isSettingApplicable:key]];
-                
                 cell = itemOptionCell;
                 [cell setUserInteractionEnabled:[self isSettingEnabled:key]];
-                
             }
             else if ([type isEqualToString:@"numeric"])
             {
@@ -399,22 +349,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
 
-    if(section == [self.supportedSettings count] + 1 && self.isDefaultSettingsMode == NO)
-    {
-         PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
-         headerCell.expanded = !headerCell.expanded;
-         [self.expandedSections replaceObjectAtIndex:section - 1 withObject:[NSNumber numberWithBool:headerCell.expanded]];
-        NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
-        if(headerCell.expanded)
-        {
-            [tableView insertRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationTop];
-        }
-        else
-        {
-            [tableView deleteRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationTop];
-        }
-    }
-    else if (section > 0)
+    if (section > 0)
     {
         NSArray *settings = [self.supportedSettings objectAtIndex:section - 1];
         if (row == 0)
@@ -540,20 +475,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             return NO;
         }
     }
-    
-    if([key isEqualToString:KEY_PIN_CODE] == YES)
-    {
-        if((textField.text.length + string.length) > 8)
-        {
-            return NO;
-        }
-        
-        NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
-        if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
-        {
-            return NO;
-        }
-    }
     return YES;
 }
 
@@ -651,28 +572,27 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
     if([key isEqualToString:KEY_STAPLE] == YES)
     {
-        //[self applyStapleConstraint];
+        [self applyStapleConstraint];
     }
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 }
 
 - (void)applyBookletConstraints
 {
+    [self setState:[self isSettingEnabled:KEY_IMPOSITION] forSettingKey:KEY_IMPOSITION];
+    [self setState:[self isSettingEnabled:KEY_IMPOSITION_ORDER] forSettingKey:KEY_IMPOSITION_ORDER];
 
     if(self.previewSetting.booklet == YES)
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
-        [self setOptionSettingWithKey:KEY_IMPOSITION toValue:(NSInteger)kImpositionOff];
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
         [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
     }
     else
     {
-        [self setState:YES forSettingKey:KEY_IMPOSITION];
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingOff];
     }
-    
     [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
     [self setOptionSettingToDefaultValue:KEY_STAPLE];
     [self setOptionSettingToDefaultValue:KEY_PUNCH];
@@ -769,7 +689,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
     }
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
-    if(punch != kPunchTypeNone && self.previewSetting.outputTray == kOutputTrayFaceDownTray)
+    if(punch != kPunchTypeNone && (self.previewSetting.outputTray == kOutputTrayFaceDownTray || self.previewSetting.outputTray == kOutputTrayFaceUpTray))
     {
         [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger) kOutputTrayAuto];
     }
@@ -825,14 +745,14 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 }
 
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
-/*- (void)applyStapleConstraint
+- (void)applyStapleConstraint
 {
     kPunchType staple = (kPunchType)self.previewSetting.staple;
     if(staple != kStapleTypeNone && self.previewSetting.outputTray == kOutputTrayFaceUpTray)
     {
         [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
     }
-}*/
+}
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 
 - (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key
@@ -842,10 +762,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         [cell setUserInteractionEnabled:isEnabled];
-        if([cell isKindOfClass:[PrintSettingsItemOptionCell class]] == YES)
-        {
-            [(PrintSettingsItemOptionCell *)cell setHideValue:![self isSettingApplicable:key]];
-        }
     }
 }
 
@@ -934,57 +850,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     return YES;
 }
 
-- (BOOL)isSettingApplicable:(NSString*)settingKey
-{
-    if([settingKey isEqualToString:KEY_FINISHING_SIDE])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_STAPLE])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_PUNCH])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_IMPOSITION])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_IMPOSITION_ORDER])
-    {
-        if(self.previewSetting.imposition == kImpositionOff)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
-       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
-    {
-        return self.previewSetting.booklet;
-    }
-    
-    return YES;
-}
-
 - (BOOL)isSettingSupported:(NSString*)settingKey
 {
     if(self.printer == nil)
@@ -1024,7 +889,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (void)addToIndexToUpdate:(NSIndexPath *)indexPath
 {
-    if([self.indexPathsToUpdate containsObject:indexPath] == NO && [[self.expandedSections objectAtIndex:indexPath.section - 1] boolValue] == YES)
+    if([self.indexPathsToUpdate containsObject:indexPath] == NO)
     {
         [self.indexPathsToUpdate addObject:indexPath];
     }
