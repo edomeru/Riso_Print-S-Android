@@ -33,6 +33,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextBoxAlignmentProperty =
             DependencyProperty.Register("TextBoxAlignment", typeof(TextAlignment), typeof(KeyTextBoxControl), null);
 
+        public static readonly DependencyProperty TextBoxInputScopeProperty =
+            DependencyProperty.Register("TextBoxInputScope", typeof(InputScope), typeof(KeyTextBoxControl), null);
+
         public new string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
@@ -51,12 +54,22 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextBoxAlignmentProperty, value); }
         }
 
+        public InputScope TextBoxInputScope
+        {
+            get { return (InputScope)GetValue(TextBoxInputScopeProperty); }
+            set { SetValue(TextBoxInputScopeProperty, value); }
+        }
+
         private void OnTextBoxLoaded(object obj, RoutedEventArgs args)
         {
             if (!_isTextBoxLoaded)
             {
                 KeyTextBoxControl context = this;
-                ((TextBox)obj).TextChanged += (sender, e) => TextChanged(sender, context);
+                var textBox = ((TextBox)obj);
+                textBox.TextChanged += (sender, e) => TextChanged(sender, context);
+                textBox.Width = TextBoxWidth;
+                textBox.TextAlignment = TextBoxAlignment;
+                textBox.InputScope = TextBoxInputScope;
                 _isTextBoxLoaded = true;
             }
         }

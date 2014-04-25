@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -31,6 +32,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ButtonVisibilityProperty =
             DependencyProperty.Register("ButtonVisibility", typeof(Visibility), typeof(SidePaneTitleControl), null);
 
+        public static readonly DependencyProperty ButtonCommandProperty =
+            DependencyProperty.Register("ButtonCommand", typeof(ICommand), typeof(SidePaneTitleControl), null);
+
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
@@ -47,6 +51,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (Visibility)GetValue(ButtonVisibilityProperty); }
             set { SetValue(ButtonVisibilityProperty, value); }
+        }
+
+        public string ButtonCommand
+        {
+            get { return (string)GetValue(ButtonCommandProperty); }
+            set { SetValue(ButtonCommandProperty, value); }
         }
     }
 }
