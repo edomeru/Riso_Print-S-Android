@@ -282,6 +282,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
             case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
             case DirectPrintManager.PRINT_STATUS_ERROR:
+            case DirectPrintManager.PRINT_STATUS_SENT:
                 Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
                 newMessage.arg1 = status;
                 mPauseableHandler.sendMessage(newMessage);
@@ -291,7 +292,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             case DirectPrintManager.PRINT_STATUS_CONNECTING:
             case DirectPrintManager.PRINT_STATUS_CONNECTED:
             case DirectPrintManager.PRINT_STATUS_SENDING:
-            case DirectPrintManager.PRINT_STATUS_SENT:
                 break;
         }
     }

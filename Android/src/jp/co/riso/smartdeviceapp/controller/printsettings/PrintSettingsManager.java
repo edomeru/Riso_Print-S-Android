@@ -64,7 +64,7 @@ public class PrintSettingsManager {
                         printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
                         break;
                     case Setting.TYPE_BOOLEAN:
-                        printSettings.setValue(key, Boolean.parseBoolean(DatabaseManager.getStringFromCursor(c, setting.getDbKey())) ? 1 : 0);
+                        printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
                         break;
                 }
             }
@@ -119,15 +119,9 @@ public class PrintSettingsManager {
             Setting setting = PrintSettings.sSettingMap.get(key);
             String dbKey = setting.getDbKey();
             
-            switch (setting.getType()) {
-                case Setting.TYPE_LIST:
-                case Setting.TYPE_NUMERIC:
-                    cv.put(dbKey, printSettings.getValue(key));
-                    break;
-                case Setting.TYPE_BOOLEAN:
-                    cv.put(dbKey, printSettings.getValue(key) == 1 ? true : false);
-                    break;
-            }
+            // no need to convert since BOOL is also stored as integer in SQLite DB
+            // http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
+            cv.put(dbKey, printSettings.getValue(key));
         }
         
         // get pst_id of the current printer

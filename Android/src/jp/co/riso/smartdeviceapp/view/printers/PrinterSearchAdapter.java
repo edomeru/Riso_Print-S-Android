@@ -51,7 +51,12 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         ViewHolder viewHolder;
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View separator = null;
+        String printerName = printer.getName();
         
+        if(printerName.isEmpty()) {
+            printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
+            printer.setName(printerName);
+        }
         if (convertView == null) {
             convertView = inflater.inflate(layoutId, parent, false);
             AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
