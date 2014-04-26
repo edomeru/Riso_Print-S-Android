@@ -144,7 +144,7 @@
     <string name="ids_lbl_print_job_failed">Failed</string>
     <string name="ids_err_msg_cannot_add_printer">Printer already exists in saved printers list.</string>
     <string name="ids_err_msg_invalid_ip_address">Please enter a valid IP Address.</string>
-    <string name="ids_err_msg_pdf_wrong_password">Printer already exists in saved printers list.</string>
+    <string name="ids_err_msg_pdf_wrong_password">Please check the password you entered</string>
     <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
     <string name="ids_err_msg_warning_cannot_find_printer">Warning, Cannot find Printer.</string>
     <string name="ids_err_msg_no_selected_printer">Please register a printer</string>

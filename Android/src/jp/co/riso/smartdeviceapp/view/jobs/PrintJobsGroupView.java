@@ -269,9 +269,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mPrintGroupView = factory.inflate(R.layout.printjobs_group, this, true);
         mPrintJobGroupLayout = (RelativeLayout) mPrintGroupView.findViewById(R.id.printJobsGroupLayout);
         TextView printJobGroupText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupText);
+        TextView printJobGroupSubText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupSubText);
         Button printJobGroupDelete = (Button) mPrintGroupView.findViewById(R.id.printJobGroupDelete);
         
         printJobGroupText.setText(mPrinter.getName());
+        printJobGroupSubText.setText(mPrinter.getIpAddress());
         
         printJobGroupDelete.setTag(mPrinter);
         mPrintJobGroupLayout.setOnClickListener(this);

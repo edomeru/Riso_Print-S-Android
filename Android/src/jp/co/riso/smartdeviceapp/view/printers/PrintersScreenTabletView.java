@@ -15,6 +15,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
@@ -472,7 +473,10 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
                             ft.commit();
                         }
                         
-                        fragment.setPrintSettings(mSelectedPrinter.getPrintSettings());
+                        fragment.setPrinterId(mSelectedPrinter.getId());
+                        // use new print settings retrieved from the database
+                        fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
+                        
                         activity.openDrawer(Gravity.RIGHT, false);
                     } else {
                         activity.closeDrawers();

@@ -33,8 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
                 android:duplicateParentState="true"
+                android:gravity="center_vertical"
                 android:maxLines="1"
                 android:textColor="@color/selector_printers_text"
                 android:textSize="@dimen/printers_ipaddress_font_size" />
@@ -45,6 +45,7 @@
             android:layout_width="@dimen/printers_row_right_icon_size"
             android:layout_height="@dimen/printers_row_right_icon_size"
             android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/printers_row_right_margin"
             android:contentDescription="@string/default_content_description"
             android:paddingRight="@dimen/printers_row_right_padding" />
     </FrameLayout>

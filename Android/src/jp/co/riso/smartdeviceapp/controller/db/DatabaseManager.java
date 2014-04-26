@@ -108,6 +108,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
+     * Get the value of the requested column as a boolean.
+     * <p>
+     * Converts integer value retrieved from database to boolean
+     * http://www.sqlite.org/datatype3.html
+     * http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
+     * 
+     * @param cursor
+     *            cursor
+     * @param columnName
+     *            column name
+     * @return Returns the value of the requested column as a boolean.
+     */
+    public static boolean getBooleanFromCursor(Cursor cursor, String columnName) {
+        return (cursor.getInt(cursor.getColumnIndex(columnName)) == 1);
+    }
+    
+    /**
      * Convenience method for inserting a row into the database.
      * 
      * @param table
