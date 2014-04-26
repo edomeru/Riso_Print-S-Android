@@ -14,6 +14,7 @@
 
 @property (readwrite, assign, nonatomic) NSInteger tag;
 @property (readwrite, strong, nonatomic) NSString* groupName;
+@property (readwrite, strong, nonatomic) NSString* groupIP;
 @property (readwrite, assign, nonatomic) NSUInteger countPrintJobs;
 @property (readwrite, assign, nonatomic) BOOL isCollapsed;
 
@@ -33,13 +34,14 @@
 
 #pragma mark - Initializer
 
-- (id)initWithName:(NSString*)name withTag:(NSInteger)tag
+- (id)initWithName:(NSString*)name withGroupIP:ip withTag:(NSInteger)tag
 {
     self = [super init];
     if (self)
     {
         self.tag = tag;
         self.groupName = name;
+        self.groupIP = ip;
         self.listPrintJobs = [NSMutableArray array];
         self.countPrintJobs = 0;
         self.isCollapsed = NO;
@@ -47,9 +49,9 @@
     return self;
 }
 
-+ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name withGroupTag:(NSInteger)tag
++ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name withGroupIP:(NSString*)ip withGroupTag:(NSInteger)tag
 {
-    return [[self alloc] initWithName:name withTag:tag];
+    return [[self alloc] initWithName:name withGroupIP:ip withTag:tag];
 }
 
 #pragma mark - Add

@@ -30,6 +30,12 @@
 @property (weak, nonatomic) IBOutlet UIButton* groupName;
 
 /**
+ Displays the IP address of the printer and acts as
+ the toggle switch for collapsing/expanding the group.
+ */
+@property (weak, nonatomic) IBOutlet UIButton* groupIP;
+
+/**
  Displays collapsed/expanded state of the group and acts as
  the toggle switch for collapsing/expanding the group.
  */
@@ -139,6 +145,7 @@
 {
     // set cell tags
     self.groupName.tag = tag;
+    self.groupIP.tag = tag;
     self.groupIndicator.tag = tag;
     self.deleteAllButton.tag = tag;
     self.printJobsView.tag = tag;
@@ -150,6 +157,11 @@
 - (void)putGroupName:(NSString*)name
 {
     [self.groupName setTitle:name forState:UIControlStateNormal];
+}
+
+- (void)putGroupIP:(NSString*)ip
+{
+    [self.groupIP setTitle:ip forState:UIControlStateNormal];
 }
 
 - (void)putIndicator:(BOOL)isCollapsed
