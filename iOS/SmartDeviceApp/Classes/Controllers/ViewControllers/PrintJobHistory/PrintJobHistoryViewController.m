@@ -145,6 +145,7 @@
                                        // (to support deleting groups later without need for reloading)
     
     [groupCell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
+    [groupCell putGroupIP:[NSString stringWithFormat:@"%@", group.groupIP]];
     [groupCell putIndicator:group.isCollapsed];
     
     if (!group.isCollapsed)
