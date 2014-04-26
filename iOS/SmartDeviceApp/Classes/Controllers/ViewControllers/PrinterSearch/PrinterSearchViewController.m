@@ -456,7 +456,13 @@
     if (indexPath.section == NEW_PRINTERS)
         [self addPrinter:indexPath.row];
 #else
-    [self addPrinter:indexPath.row];
+    NSString* printerIP = [self.listPrinterIP objectAtIndex:indexPath.row];
+    if ([[self.listPrinterDetails valueForKey:printerIP] isKindOfClass:[PrinterDetails class]])
+    {
+        // tapping a new printer will add the printer
+        [self addPrinter:indexPath.row];
+    }
+    // tapping an old printer does nothing
 #endif
 }
 
