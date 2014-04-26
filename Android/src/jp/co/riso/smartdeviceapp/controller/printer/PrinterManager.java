@@ -132,7 +132,7 @@ public class PrinterManager implements SNMPManagerCallback {
         
         if (mPrinterList != null) {
             for (Printer printerItem : mPrinterList) {
-                if (printerItem.getIpAddress().equals(printer.getIpAddress()) && printerItem.getName().equals(printer.getName())) {
+                if (printerItem.getIpAddress().equals(printer.getIpAddress())) {
                     return true;
                 }
             }
@@ -140,8 +140,8 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         
         DatabaseManager dbManager = new DatabaseManager(mContext);
-        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
-                + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
+        Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_IP + "=?",
+                new String[] { printer.getIpAddress() }, null, null, null);
         
         if (cursor.getCount() > 0) {
             dbManager.close();
@@ -393,10 +393,16 @@ public class PrinterManager implements SNMPManagerCallback {
      * Stops Device Discovery/Manual Search.
      */
     public void cancelPrinterSearch() {
-        mIsSearching = false;
-        mIsCancelled = true;
-        mSNMPManager.cancel();
-        Log.d("PrinterManager", "Cancel");
+        new Timer().schedule(new TimerTask() {
+            
+            @Override
+            public void run() {
+                mIsSearching = false;
+                mIsCancelled = true;
+                mSNMPManager.cancel();
+                Log.d("PrinterManager", "Cancel");
+            }
+        }, 0);
     }
     
     /**

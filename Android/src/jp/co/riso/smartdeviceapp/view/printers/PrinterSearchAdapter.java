@@ -58,8 +58,10 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             
             viewHolder = new ViewHolder();
             viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
+            viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.ipAddressText);
             viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
             viewHolder.mPrinterName.setText(printer.getName());
+            viewHolder.mIpAddress.setText(printer.getIpAddress());
             viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
             viewHolder.mAddedIndicator.setTag(position);
             
@@ -103,6 +105,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     public class ViewHolder {
         public ImageView mAddedIndicator;
         public TextView mPrinterName;
+        public TextView mIpAddress;
     }
     
     // ================================================================================

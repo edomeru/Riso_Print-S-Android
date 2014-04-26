@@ -128,8 +128,11 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onPause() {
         super.onPause();
-        mUpdateStatusTimer.cancel();
-        mUpdateStatusTimer = null;
+        
+        if (mUpdateStatusTimer != null) {
+            mUpdateStatusTimer.cancel();
+            mUpdateStatusTimer = null;
+        }
     }
     
     /** {@inheritDoc} */

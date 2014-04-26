@@ -140,6 +140,14 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void onPause() {
         super.onPause();
         mPrinterManager.cancelUpdateStatusThread();
+        
+        if (isTablet()) {
+            mDeleteItem = mPrinterTabletView.getDeleteItemPosition();
+        } else {
+            if (mListView != null) {
+                mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
+            }
+        }
     }
     
     // ================================================================================
@@ -309,7 +317,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 if (isTablet()) {
                     mPrinterTabletView.onAddedNewPrinter(printer);
                 } else {
-                    mPrinterAdapter.add(printer);
                     mPrinterAdapter.notifyDataSetChanged();
                 }
                 return true;

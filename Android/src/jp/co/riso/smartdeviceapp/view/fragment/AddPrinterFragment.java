@@ -265,6 +265,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(Printer printer) {
+        if(mPrinterManager.isCancelled()) {
+            return;
+        }
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
         } else if (mPrinterManager.savePrinterToDB(printer)) {
@@ -277,6 +280,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
+        if(mPrinterManager.isCancelled()) {
+            return;
+        }
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
         final MainActivity activity = (MainActivity) getActivity();
@@ -289,11 +295,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         if (!mAdded) {
             // Create Printer object
-            Printer printer = new Printer(ipAddress, ipAddress);
-            
-            if(mPrinterManager.isCancelled()) {
-                return;
-            }
+            Printer printer = new Printer(getResources().getString(R.string.ids_lbl_no_name), ipAddress);            
             
             if (mPrinterManager.savePrinterToDB(printer)) {                                
                 Message newWarningMsg = new Message();

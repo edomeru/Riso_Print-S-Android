@@ -213,7 +213,6 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
      *            Printer object
      */
     public void onAddedNewPrinter(Printer printer) {
-        mPrinterList.add(printer);
         Message newMessage = Message.obtain(mHandler, MSG_ADD_PRINTER);
         newMessage.obj = printer;
         mHandler.sendMessage(newMessage);

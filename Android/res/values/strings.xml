@@ -44,7 +44,7 @@
     <string name="ids_lbl_printer_status_offline">Offline</string>
     <string name="ids_lbl_default_print_settings">Default Print Settings</string>
     <string name="ids_lbl_card_reader_group">CARD READER</string>
-    <string name="ids_lbl_card_id">ID</string>
+    <string name="ids_lbl_card_id">Card ID</string>
     <string name="ids_lbl_printer_search_group">PRINTER SEARCH</string>
     <string name="ids_lbl_printing">Printing&#8230;</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
@@ -144,9 +144,9 @@
     <string name="ids_lbl_print_job_failed">Failed</string>
     <string name="ids_err_msg_cannot_add_printer">Printer already exists in saved printers list.</string>
     <string name="ids_err_msg_invalid_ip_address">Please enter a valid IP Address.</string>
-    <string name="ids_err_msg_max_printer_count">Printer already exists in saved printers list.</string>
-    <string name="ids_err_msg_warning_cannot_find_printer">Saved Printer reached maximum count.</string>
-    <string name="ids_err_msg_pdf_wrong_password">Warning, Cannot find Printer.</string>
+    <string name="ids_err_msg_pdf_wrong_password">Printer already exists in saved printers list.</string>
+    <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
+    <string name="ids_err_msg_warning_cannot_find_printer">Warning, Cannot find Printer.</string>
     <string name="ids_err_msg_no_selected_printer">Please register a printer</string>
     <string name="ids_err_msg_open_failed">Please select a valid file.</string>
     <string name="ids_err_msg_file_too_large">File size is too large</string>
@@ -155,4 +155,8 @@
     <string name="ids_err_msg_delete_failed">Unable to delete.</string>
     <string name="ids_err_msg_network_error">No network available.</string>
 
+    <string name="ids_lbl_secure_print">Secure Print</string>
+    <string name="ids_lbl_no_name">No Name</string>
+    
+    
 </resources>
