@@ -27,6 +27,12 @@
 @property (readonly, strong, nonatomic) NSString* groupName;
 
 /**
+ IP address of the Printer object under which all the PrintJob objects this 
+ group holds belong to. This will be displayed in the group header.
+ */
+@property (readonly, strong, nonatomic) NSString* groupIP;
+
+/**
  Stores the number of PrintJob objects held by this group.
  */
 @property (readonly, assign, nonatomic) NSUInteger countPrintJobs;
@@ -46,8 +52,12 @@
  marked as expanded.
  @param name
         name that will be displayed in the group header
+ @param ip
+        IP address that will be displayed in the group header
+ @param tag
+        unique, non-changeable tag to identify the group
  */
-+ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name withGroupTag:(NSInteger)tag;
++ (PrintJobHistoryGroup*)initWithGroupName:(NSString*)name withGroupIP:(NSString*)ip withGroupTag:(NSInteger)tag;
 
 /**
  Adds a PrintJob object to the list of print jobs held by

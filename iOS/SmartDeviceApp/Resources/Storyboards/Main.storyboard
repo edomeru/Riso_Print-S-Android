@@ -1600,7 +1600,7 @@
                         <viewControllerLayoutGuide type="bottom" id="3f8-yG-Abd"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="7iy-BP-0QH" customClass="DefaultView">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ePG-kT-RdA" userLabel="Header">
@@ -1645,11 +1645,11 @@
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Mc-ty-cvj" userLabel="Content Parent View">
-                                <rect key="frame" x="0.0" y="48" width="320" height="412"/>
+                                <rect key="frame" x="0.0" y="48" width="320" height="432"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dM2-UF-FWF" userLabel="Content" customClass="DefaultView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="412"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="432"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ApG-zv-C5a" userLabel="Row Header - Card Reader">
@@ -1910,7 +1910,7 @@
             <objects>
                 <tableViewController id="pPd-nr-YZr" customClass="PrintSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -3321,7 +3321,7 @@
             <objects>
                 <tableViewController id="0Ud-GD-5mk" customClass="PrintSettingsPrinterListTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uaa-w3-8pN">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -3526,20 +3526,38 @@
                                                     </connections>
                                                 </tableView>
                                                 <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xec-Wp-7rm" userLabel="iPhone - Printer Name">
-                                                    <rect key="frame" x="40" y="0.0" width="180" height="45"/>
+                                                    <rect key="frame" x="40" y="0.0" width="180" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="180" id="WtY-Fk-u46"/>
-                                                        <constraint firstAttribute="height" constant="45" id="hGM-YV-Pky"/>
+                                                        <constraint firstAttribute="height" constant="32" id="hGM-YV-Pky"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="RISO Printer 1">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
                                                         <action selector="tappedPrinterHeader:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="mnj-fN-sxb"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eW3-lk-n0J" userLabel="iPhone - Printer IP">
+                                                    <rect key="frame" x="40" y="27" width="180" height="18"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="180" id="U3o-uY-F9L"/>
+                                                        <constraint firstAttribute="height" constant="18" id="de8-cO-Cn4"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                                                    <state key="normal" title="192.168.0.1">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="tappedPrinterHeader:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="vjQ-eR-Qvc"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MOS-FF-ZOf" userLabel="iPhone - Indicator">
@@ -3581,7 +3599,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="Xec-Wp-7rm" secondAttribute="bottom" id="2En-p0-nSk"/>
+                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="Xec-Wp-7rm" secondAttribute="bottom" constant="13" id="2En-p0-nSk"/>
                                             <constraint firstItem="MOS-FF-ZOf" firstAttribute="leading" secondItem="dPu-Ft-Q41" secondAttribute="leading" id="8aV-CH-F8L"/>
                                             <constraint firstItem="dPu-Ft-Q41" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="BOA-jT-Nhn"/>
                                             <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="uJ1-uS-srn" secondAttribute="bottom" id="E1k-MR-srk"/>
@@ -3591,12 +3609,16 @@
                                             <constraint firstItem="MOS-FF-ZOf" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="Xeu-78-wDt"/>
                                             <constraint firstAttribute="trailing" secondItem="dPu-Ft-Q41" secondAttribute="trailing" id="fFZ-7q-fyY"/>
                                             <constraint firstItem="Xec-Wp-7rm" firstAttribute="leading" secondItem="MOS-FF-ZOf" secondAttribute="trailing" id="g7g-Pw-0cu"/>
+                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="eW3-lk-n0J" secondAttribute="trailing" id="ggn-sW-Xgs"/>
+                                            <constraint firstItem="eW3-lk-n0J" firstAttribute="top" secondItem="Xec-Wp-7rm" secondAttribute="bottom" constant="-5" id="i2M-FB-81u"/>
                                             <constraint firstItem="MOS-FF-ZOf" firstAttribute="baseline" secondItem="uJ1-uS-srn" secondAttribute="baseline" id="n41-dt-mz2"/>
+                                            <constraint firstItem="eW3-lk-n0J" firstAttribute="leading" secondItem="MOS-FF-ZOf" secondAttribute="trailing" id="pGF-io-lCh"/>
                                             <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="Xec-Wp-7rm" secondAttribute="trailing" id="yoM-F0-dUL"/>
                                         </constraints>
                                         <size key="customSize" width="320" height="500"/>
                                         <connections>
                                             <outlet property="deleteAllButton" destination="uJ1-uS-srn" id="zGN-SC-AcD"/>
+                                            <outlet property="groupIP" destination="eW3-lk-n0J" id="SjS-n5-XHB"/>
                                             <outlet property="groupIndicator" destination="MOS-FF-ZOf" id="cWb-yX-ALG"/>
                                             <outlet property="groupName" destination="Xec-Wp-7rm" id="A0Y-i5-wjO"/>
                                             <outlet property="printJobsView" destination="dPu-Ft-Q41" id="fTy-bE-aeH"/>
@@ -3774,14 +3796,15 @@
                                                     </connections>
                                                 </tableView>
                                                 <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jg3-qz-mnm" userLabel="iPad - Printer Name">
-                                                    <rect key="frame" x="40" y="0.0" width="180" height="45"/>
+                                                    <rect key="frame" x="40" y="0.0" width="180" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="180" id="V7b-u3-UT7"/>
-                                                        <constraint firstAttribute="height" constant="45" id="dFU-bV-Ucd"/>
+                                                        <constraint firstAttribute="height" constant="32" id="dFU-bV-Ucd"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="RISO Printer 1">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -3825,6 +3848,23 @@
                                                         <action selector="tappedDeleteAllButton:" destination="k93-fC-OMI" eventType="touchUpInside" id="NA4-EV-tLu"/>
                                                     </connections>
                                                 </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kvz-2u-Gvk" userLabel="iPad - Printer IP">
+                                                    <rect key="frame" x="40" y="27" width="180" height="18"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="180" id="L1a-fx-cqT"/>
+                                                        <constraint firstAttribute="height" constant="18" id="m5Z-3U-zSa"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                                                    <state key="normal" title="192.168.0.1">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="tappedPrinterHeader:" destination="k93-fC-OMI" eventType="touchUpInside" id="euL-hc-0l3"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -3834,17 +3874,20 @@
                                             <constraint firstItem="LVv-VU-mNA" firstAttribute="top" secondItem="PlD-vX-hdR" secondAttribute="top" id="EXs-I9-2KQ"/>
                                             <constraint firstAttribute="trailing" secondItem="QLA-jj-dA8" secondAttribute="trailing" id="FmO-GE-M2a"/>
                                             <constraint firstAttribute="trailing" secondItem="RPP-IB-0ns" secondAttribute="trailing" id="HjF-ZP-lBn"/>
+                                            <constraint firstItem="Kvz-2u-Gvk" firstAttribute="leading" secondItem="LVv-VU-mNA" secondAttribute="trailing" id="Mqu-SH-jP1"/>
                                             <constraint firstAttribute="bottom" secondItem="QLA-jj-dA8" secondAttribute="bottom" id="Ut2-LN-s4q"/>
                                             <constraint firstItem="QLA-jj-dA8" firstAttribute="top" secondItem="RPP-IB-0ns" secondAttribute="bottom" id="gXy-DB-XtK"/>
                                             <constraint firstItem="LVv-VU-mNA" firstAttribute="leading" secondItem="QLA-jj-dA8" secondAttribute="leading" id="hJm-Wa-KX6"/>
                                             <constraint firstItem="Jg3-qz-mnm" firstAttribute="leading" secondItem="LVv-VU-mNA" secondAttribute="trailing" id="j3z-iV-jPU"/>
-                                            <constraint firstItem="QLA-jj-dA8" firstAttribute="top" secondItem="Jg3-qz-mnm" secondAttribute="bottom" id="rAh-hh-aTc"/>
+                                            <constraint firstItem="Kvz-2u-Gvk" firstAttribute="top" secondItem="Jg3-qz-mnm" secondAttribute="bottom" constant="-5" id="nkd-Lx-8DB"/>
+                                            <constraint firstItem="QLA-jj-dA8" firstAttribute="top" secondItem="Jg3-qz-mnm" secondAttribute="bottom" constant="13" id="rAh-hh-aTc"/>
                                             <constraint firstItem="LVv-VU-mNA" firstAttribute="baseline" secondItem="RPP-IB-0ns" secondAttribute="baseline" id="uWj-DW-Ehh"/>
                                             <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="Jg3-qz-mnm" secondAttribute="trailing" id="yhY-dP-Ud5"/>
                                         </constraints>
                                         <size key="customSize" width="320" height="736"/>
                                         <connections>
                                             <outlet property="deleteAllButton" destination="RPP-IB-0ns" id="LmF-2I-MFs"/>
+                                            <outlet property="groupIP" destination="Kvz-2u-Gvk" id="Tqx-G8-Op4"/>
                                             <outlet property="groupIndicator" destination="LVv-VU-mNA" id="L3e-3C-LxN"/>
                                             <outlet property="groupName" destination="Jg3-qz-mnm" id="qFL-Lb-oLO"/>
                                             <outlet property="printJobsView" destination="QLA-jj-dA8" id="hQ4-0N-14l"/>
@@ -3901,6 +3944,23 @@
             </objects>
             <point key="canvasLocation" x="1223" y="3201"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="IfO-wR-JVz">
+            <objects>
+                <viewController id="EPk-b0-oNN" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="tsW-fk-Y37"/>
+                        <viewControllerLayoutGuide type="bottom" id="ZEf-4X-5Le"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5Zv-yx-5w2">
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="CP3-Lw-qY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -3936,8 +3996,8 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="5pT-ga-236"/>
-        <segue reference="ax2-Mn-NH0"/>
-        <segue reference="4Gn-3V-oTg"/>
+        <segue reference="uoe-Al-ug4"/>
         <segue reference="dDZ-0e-JG0"/>
+        <segue reference="oE4-lZ-OOf"/>
     </inferredMetricsTieBreakers>
 </document>
