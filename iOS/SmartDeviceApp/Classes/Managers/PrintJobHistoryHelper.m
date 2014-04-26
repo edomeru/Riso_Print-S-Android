@@ -84,6 +84,7 @@
                 
                 // create a group for this printer
                 PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName
+                                                                             withGroupIP:printerIP
                                                                             withGroupTag:groupTag++];
                 [newGroup collapse:NO];
                 

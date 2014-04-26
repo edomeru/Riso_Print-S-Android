@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -147,6 +148,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      *            Searched printer
      */
     private void dialogCb(Printer printer) {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                return;
+            }
+        } else {
+            return;
+        }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
         String msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
         ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
@@ -168,6 +177,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      *            Error code
      */
     private void dialogErrCb(int err) {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                return;
+            }
+        } else {
+            return;
+        }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
         String errMsg = null;
         if (err == ERR_INVALID_IP_ADDRESS) {
@@ -180,11 +197,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
         DialogFragment info = null;
         
-        if(err == ERR_CAN_NOT_ADD_PRINTER) {
-            info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));    
-        } else {
+        if(err == ERR_PRINTER_ADDED_WARNING) {
             info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), null);
             info.setTargetFragment(this, 0);
+        } else {
+            info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));    
         }        
         if (mIsPaused) {
             mErrState = err;

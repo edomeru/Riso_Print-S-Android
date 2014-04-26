@@ -35,6 +35,13 @@
 - (void)putGroupName:(NSString*)name;
 
 /**
+ Sets the IP address of the group to be displayed in the header.
+ @param ip
+        the group ip
+ */
+- (void)putGroupIP:(NSString*)ip;
+
+/**
  Toggles the collapsed/expanded indicator.
  @param isCollapsed
         YES if the group is collapsed, NO otherwise
