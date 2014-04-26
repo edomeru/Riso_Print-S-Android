@@ -2,15 +2,26 @@
 //  PrintSettingsViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrintSettingsViewController.h"
+#import "PrintSettingsTableViewController.h"
+#import "PDFFileManager.h"
+#import "PrinterManager.h"
+#import "PrintDocument.h"
+#import "Printer.h"
+#import "PreviewSetting.h"
+#import "PrintSettingsHelper.h"
+#import "UIView+Localization.h"
+
+#define SEGUE_TO_PRINTSETTINGS_TABLE @"PrintSettings-PrintSettingsTable"
 
 @interface PrintSettingsViewController ()
 
 - (void)initialize;
+@property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
 @end
 
@@ -53,6 +64,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    if(self.printerIndex != nil)
+    {
+       self.printSettingsScreenTitle.localizationId = @"IDS_LBL_DEFAULT_PRINT_SETTINGS";
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,4 +77,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS_TABLE] == YES)
+    {
+        PrintSettingsTableViewController *viewController = (PrintSettingsTableViewController *)[segue.destinationViewController topViewController];
+        viewController.printerIndex = self.printerIndex;
+    }
+}
 @end
