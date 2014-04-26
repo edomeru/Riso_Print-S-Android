@@ -44,6 +44,8 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private Grid _pageAreaGrid;
+        private double _pageAreaGridOriginalHeight;
+        private bool _isPageAreaGridLoaded;
         public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
         private bool _isPageNumberSliderEnabled;
         private ICommand _goToPage;
@@ -80,16 +82,18 @@ namespace SmartDeviceApp.ViewModels
         public void SetPageAreaGrid(Grid pageAreaGrid)
         {
             _pageAreaGrid = pageAreaGrid;
+            _pageAreaGridOriginalHeight = _pageAreaGrid.ActualHeight;
+            _isPageAreaGridLoaded = true;
         }
 
         public void InitializeGestures()
         {
-            //if (_pageAreaGrid != null && _gestureController == null)
+            if (_isPageAreaGridLoaded)
             {
-                // Save page height to be used in resizing page images
-                var scalingFactor = _pageAreaGrid.ActualHeight / RightPageActualSize.Height;
-
+                // Save page height to be used in resizing page images                
+                var scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
                 var pageAreaScrollViewer = (UIElement)_pageAreaGrid.Parent;
+                if (_gestureController != null) _gestureController.Dispose();
                 _gestureController = new PreviewGestureController(_pageAreaGrid, pageAreaScrollViewer,
                     RightPageActualSize, scalingFactor,
                     new PreviewGestureController.SwipeRightDelegate(SwipeRight),

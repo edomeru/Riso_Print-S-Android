@@ -30,7 +30,7 @@
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
                                         TextBoxAlignment="Right"
-                                        TextBoxInputScope="Number"
+                                        TextBoxMaxLength="4"
                                         Width="{Binding Width, ElementName=printSettingsBox}"
                                         IsEnabled="{Binding Path=IsEnabled}"/>
         </DataTemplate>
