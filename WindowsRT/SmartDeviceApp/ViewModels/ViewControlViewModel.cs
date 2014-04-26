@@ -112,6 +112,18 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public bool IsPane1Visible
+        {
+            get { return _isPane1Visible; }
+            set { _isPane1Visible = value; }
+        }
+
+        public bool IsPane2Visible
+        {
+            get { return _isPane2Visible; }
+            set { _isPane2Visible = value; }
+        }
+
         private void ToggleMainMenuPaneExecute()
         {
             switch (ViewMode)
@@ -174,9 +186,8 @@ namespace SmartDeviceApp.ViewModels
                         }
                         else if (_isPane2Visible)
                         {
-                            _isPane1Visible = true;
+                            ViewMode = ViewMode.FullScreen;
                             _isPane2Visible = false;
-                            Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane1);
                         }
                         // else do nothing; keep right pane visible
                         break;
@@ -219,9 +230,8 @@ namespace SmartDeviceApp.ViewModels
                         }
                         else if (_isPane1Visible)
                         {
-                            _isPane2Visible = true;
+                            ViewMode = ViewMode.FullScreen;
                             _isPane1Visible = false;
-                            Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane2);
                         }
                         // else, do nothing; keep right pane visible
                         break;

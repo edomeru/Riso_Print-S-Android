@@ -13,7 +13,7 @@
 
     <controls:ViewControl 
         Text="{Binding Source=IDS_LBL_HELP, Converter={StaticResource ResourceStringToTextConverter}}" >
-        <WebView Source="ms-appx-web:///Assets/help.html">
+        <WebView Source="ms-appx-web:///Assets/help.html" DefaultBackgroundColor="Transparent">
             <WebView.Margin>
                 <Thickness Top="{StaticResource MARGIN_Default}"
                            Bottom="{StaticResource MARGIN_Default}"
