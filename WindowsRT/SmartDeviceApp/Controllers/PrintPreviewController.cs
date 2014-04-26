@@ -240,7 +240,8 @@ namespace SmartDeviceApp.Controllers
         private void InitializeGestures()
         {
             Size paperSize = GetPaperSize(_selectedPrinter.PrintSettings.PaperSize);
-            bool isPortrait = (_selectedPrinter.PrintSettings.Orientation == (int)Orientation.Portrait);
+            bool isPortrait = IsPortrait(_selectedPrinter.PrintSettings.Orientation,
+                _selectedPrinter.PrintSettings.BookletLayout);
 
             _printPreviewViewModel.RightPageActualSize = GetPreviewPageImageSize(paperSize, isPortrait);
             _printPreviewViewModel.InitializeGestures();
@@ -583,6 +584,24 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.PageTotal = _previewPageTotal;
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
             }
+        }
+
+        /// <summary>
+        /// Checks if the orientation is portrait based on selected orientation (when booklet is off)
+        /// or based on selected booklet layout (when booklet is on)
+        /// </summary>
+        /// <param name="orientation">orientation</param>
+        /// <param name="bookletLayout">booklet layout</param>
+        /// <returns>true when portrait, false otherwise</returns>
+        private bool IsPortrait(int orientation, int bookletLayout)
+        {
+            bool isPortrait = (orientation == (int)Orientation.Portrait);
+            if (_isBooklet)
+            {
+                isPortrait = (bookletLayout == (int)BookletLayout.TopToBottom);
+            }
+
+            return isPortrait;
         }
 
         #endregion Print Preview
@@ -2168,7 +2187,8 @@ namespace SmartDeviceApp.Controllers
 
                 Size paperSize = GetPaperSize(_selectedPrinter.PrintSettings.PaperSize);
 
-                bool isPortrait = (_selectedPrinter.PrintSettings.Orientation == (int)Orientation.Portrait);
+                bool isPortrait = IsPortrait(_selectedPrinter.PrintSettings.Orientation,
+                    _selectedPrinter.PrintSettings.BookletLayout);
 
                 // Loop to each LogicalPage(s) to selected paper size and orientation
                 foreach (LogicalPage logicalPage in logicalPages)
