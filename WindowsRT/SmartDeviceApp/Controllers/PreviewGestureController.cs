@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Media;
 
 namespace SmartDeviceApp.Controllers
 {
-    public class PreviewGestureController
+    public class PreviewGestureController : IDisposable
     {
         private const int SWIPE_THRESHOLD = 500;
 
@@ -37,6 +37,7 @@ namespace SmartDeviceApp.Controllers
         private Point _startPoint;
 
         private bool _isEnabled;
+        private bool _isDisposed;
 
         private bool _isTranslateXEnabled;
         private bool _isTranslateYEnabled;
@@ -116,6 +117,24 @@ namespace SmartDeviceApp.Controllers
                 _gestureRecognizer.ManipulationCompleted -= OnManipulationCompleted;
                 _isEnabled = false;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            if (disposing)
+            {
+                DisableGestures();
+                _gestureRecognizer = null; 
+            }
+            _isDisposed = true;
         }
 
         private void ControlReferenceSizeChanged(Object sender, SizeChangedEventArgs e)
