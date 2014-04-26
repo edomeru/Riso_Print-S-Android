@@ -940,8 +940,6 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void FilterPrintSettingsUsingCapabilities()
         {
-            bool enabled = true;
-
             if (!_selectedPrinter.EnabledBooklet)
             {
                 _selectedPrinter.PrintSettings.Booklet = false;

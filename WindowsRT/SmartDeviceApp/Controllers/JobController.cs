@@ -151,6 +151,7 @@ namespace SmartDeviceApp.Controllers
                         new ObservableCollection<PrintJob>());
                     newPrintJobGroup.Jobs.Add(printJob);
                     _jobsViewModel.PrintJobsList.Add(newPrintJobGroup);
+                    _jobsViewModel.SortPrintJobsListToColumns();
                 }
             }
         }
