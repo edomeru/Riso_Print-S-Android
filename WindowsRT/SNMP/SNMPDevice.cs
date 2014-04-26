@@ -54,9 +54,9 @@ namespace SNMP
         //@property (nonatomic, retain) NSString *macAddress;
         //@property (nonatomic, retain) NSString *sysName;
         //@property (nonatomic, readonly) NSMutableArray *capabilitiesList;
-        List<string> capabilitiesList;
+        private List<string> capabilitiesList;
         //@property (nonatomic, readonly) NSMutableArray *capabilityLevelsList;
-        List<string> capabilityLevelsList;
+        private List<string> capabilityLevelsList;
 
         ///
 
@@ -277,6 +277,8 @@ namespace SNMP
                             tempCapabilities.Add(val);
                             //[tempCapabilyLevels addObject:valForLangLevel];
                             tempCapabilyLevels.Add(valForLangLevel);
+
+                            System.Diagnostics.Debug.WriteLine(val);
                     
                             //NSArray *varbindOIDs = [NSArray arrayWithObjects:oid, oidForLangLevel, nil];
                             string[] varbindOIDS = {oid, oidForLangLevel};
@@ -390,6 +392,11 @@ namespace SNMP
         public string getCommunityName()
         {
             return communityName;
+        }
+
+        public List<string> getCapabilities()
+        {
+            return capabilitiesList;
         }
     }
 }

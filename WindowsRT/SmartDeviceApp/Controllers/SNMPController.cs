@@ -12,7 +12,7 @@ namespace SmartDeviceApp.Controllers
     class SNMPController
     {
         public Action<string, bool> printerControllerGetStatusCallback { get; set; } //PrintersModule
-        public Action<string, string, bool> printerControllerAddPrinterCallback { get; set; }
+        public Action<string, string, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
         public Action<PrinterSearchItem> printerControllerDiscoverCallback { get; set; }
         public Action<string> printerControllerTimeout { get; set; }
 
@@ -66,7 +66,7 @@ namespace SmartDeviceApp.Controllers
         {
             System.Diagnostics.Debug.WriteLine("Name(in SNMPController): ");
             System.Diagnostics.Debug.WriteLine(device.getSysName());
-            printerControllerAddPrinterCallback(device.getIpAddress(), device.getSysName(), true);
+            printerControllerAddPrinterCallback(device.getIpAddress(), device.getSysName(), true, device.getCapabilities());
         }
 
         
@@ -106,6 +106,8 @@ namespace SmartDeviceApp.Controllers
         {
             printerControllerTimeout(ip);
         }
+
+        
 
     }
 }

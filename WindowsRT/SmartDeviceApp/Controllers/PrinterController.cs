@@ -338,7 +338,7 @@ namespace SmartDeviceApp.Controllers
             return true;
         }
 
-        public async void handleAddPrinterStatus(string ip, string name, bool isOnline)
+        public async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
         {
             
                 //add to printerList
