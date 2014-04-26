@@ -103,6 +103,10 @@ namespace SmartDeviceApp.Controllers
                     printerName = (await DatabaseController.Instance
                         .GetPrinterName(firstSample.PrinterId)).Trim();
                 }
+                if (string.IsNullOrEmpty(printerName))
+                {
+                    // TODO: Set printer name as "No Name"
+                }
 
                 PrintJobGroup printJobGroup = new PrintJobGroup(printerName,
                     new ObservableCollection<PrintJob>(group));
@@ -138,6 +142,10 @@ namespace SmartDeviceApp.Controllers
                 {
                     string printerName = await DatabaseController.Instance
                         .GetPrinterName(printJob.PrinterId);
+                    if (string.IsNullOrEmpty(printerName))
+                    {
+                        // TODO: Set printer name as "No Name"
+                    }
 
                     PrintJobGroup newPrintJobGroup = new PrintJobGroup(printerName.Trim(),
                         new ObservableCollection<PrintJob>());
