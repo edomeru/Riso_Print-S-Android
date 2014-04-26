@@ -148,12 +148,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      *            Searched printer
      */
     private void dialogCb(Printer printer) {
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
+        if (isTablet() && getActivity() != null && getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                 return;
             }
-        } else {
+        } else if (isTablet()) {
             return;
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
@@ -177,12 +177,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      *            Error code
      */
     private void dialogErrCb(int err) {
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
+        if (isTablet() && getActivity() != null && getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                 return;
             }
-        } else {
+        } else if (isTablet()) {
             return;
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
