@@ -56,6 +56,7 @@ namespace SmartDeviceApp.Controllers
             #region Create Tables Using Script File
 
             await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
+            await DefaultsUtility.LoadDefaultsFromSqlScript(FILE_PATH_DATABASE_SCRIPT);
 
             #endregion Create Create Tables Using Script File
 #else // CREATE_TABLES_USING_SCRIPT
@@ -122,7 +123,7 @@ namespace SmartDeviceApp.Controllers
                 _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
                 using (var db = new SQLite.SQLiteConnection(_databasePath))
                 {
-                    // Read script from Dummy Resources and create tables
+                    // Read script file
                     StorageFile file = await StorageFileUtility.GetFileFromAppResource(filePath);
                     string script = await FileIO.ReadTextAsync(file);
 

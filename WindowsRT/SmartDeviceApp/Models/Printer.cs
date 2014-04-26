@@ -10,6 +10,8 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -136,15 +138,15 @@ namespace SmartDeviceApp.Models
             PrintSettingId = -1;
             IpAddress = null;
             Name = null;
-            PortSetting = -1;
-            EnabledLpr = false;
-            EnabledRaw = false;
-            EnabledStapler = false;
-            EnabledPunchFour = false;
-            EnabledTrayFacedown = false;
-            EnabledTrayAutostack = false;
-            EnabledTrayTop = false;
-            EnabledTrayStack = false;
+            PortSetting = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_PORT_SETTING, ListValueType.Int);
+            EnabledLpr = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_LPR, ListValueType.Boolean);
+            EnabledRaw = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_RAW, ListValueType.Boolean);
+            EnabledStapler = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_STAPLER, ListValueType.Boolean);
+            EnabledPunchFour = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PUNCH4, ListValueType.Boolean);
+            EnabledTrayFacedown = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_FACEDOWN, ListValueType.Boolean);
+            EnabledTrayAutostack = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_AUTOSTACK, ListValueType.Boolean);
+            EnabledTrayTop = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_TOP, ListValueType.Boolean);
+            EnabledTrayStack = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_STACK, ListValueType.Boolean);
             IsDefault = false;
             IsOnline = false;
             PrintSettings = null;
