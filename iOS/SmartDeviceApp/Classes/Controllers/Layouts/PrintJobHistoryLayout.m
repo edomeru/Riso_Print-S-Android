@@ -97,7 +97,6 @@
                                                 25.0f,  //L
                                                 15.0f,  //B
                                                 25.0f); //R
-
         }
         else
         {
@@ -113,15 +112,30 @@
     else
     {
         //iPhone
-        //will only support portrait
         
-        self.interGroupSpacingY = 2.0f;
-        self.interGroupSpacingX = 0.0f;
-        self.numberOfColumns = 1;
-        self.groupInsets = UIEdgeInsetsMake(0.0f,  //T
-                                            0.0f,  //L
-                                            0.0f,  //B
-                                            0.0f); //R
+        if (UIInterfaceOrientationIsLandscape(orientation))
+        {
+            CGRect screenRect = [[UIScreen mainScreen] bounds];
+            CGFloat inset = (screenRect.size.height - 320.0f) / 2.0f;
+            
+            self.interGroupSpacingY = 2.0f;
+            self.interGroupSpacingX = 0.0f;
+            self.numberOfColumns = 1;
+            self.groupInsets = UIEdgeInsetsMake(0.0f,  //T
+                                                inset, //L
+                                                0.0f,  //B
+                                                inset);//R
+        }
+        else
+        {
+            self.interGroupSpacingY = 2.0f;
+            self.interGroupSpacingX = 0.0f;
+            self.numberOfColumns = 1;
+            self.groupInsets = UIEdgeInsetsMake(0.0f,  //T
+                                                0.0f,  //L
+                                                0.0f,  //B
+                                                0.0f); //R
+        }
     }
     
     // reset tracker for column heights

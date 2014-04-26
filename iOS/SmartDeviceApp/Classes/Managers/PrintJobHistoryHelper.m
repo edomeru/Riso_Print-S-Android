@@ -72,11 +72,12 @@
         {
             // get the printer
             NSString* printerName = job.printer.name;
-            if (printerName == nil)
-                printerName = job.printer.ip_address; // to avoid setting nil in setObject
+            if (printerName == nil || [printerName isEqualToString:@""])
+                printerName = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+            NSString* printerIP = job.printer.ip_address;
             
             // attempt to get the group for this printer
-            PrintJobHistoryGroup* group = [dictPrintJobHistoryGroups objectForKey:printerName];
+            PrintJobHistoryGroup* group = [dictPrintJobHistoryGroups objectForKey:printerIP];
             if (group == nil)
             {
                 // group does not exist yet
@@ -90,7 +91,7 @@
                 [newGroup addPrintJob:job];
                 
                 // add the group to the dictionary
-                [dictPrintJobHistoryGroups setObject:newGroup forKey:printerName];
+                [dictPrintJobHistoryGroups setObject:newGroup forKey:printerIP];
             }
             else
             {
