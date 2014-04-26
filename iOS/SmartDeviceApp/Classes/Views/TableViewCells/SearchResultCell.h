@@ -2,8 +2,8 @@
 //  SearchResultCell.h
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/14/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -26,8 +26,10 @@
  Sets the printer name as the cell's main text.
  @param printerName
         name of the printer
+ @param printerIP
+        IP address of the printer
  */
-- (void)setContents:(NSString*)printerName;
+- (void)setContentsUsingName:(NSString*)printerName usingIP:(NSString*)printerIP;
 
 /**
  Sets the cell's UI/layout attributes.

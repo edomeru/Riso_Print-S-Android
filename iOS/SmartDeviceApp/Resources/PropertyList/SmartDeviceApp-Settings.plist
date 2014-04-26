@@ -3,11 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>Use_SNMPCommonLib</key>
-	<false/>
+	<true/>
 	<key>Use_SNMPUnicastTimeout</key>
 	<false/>
+	<key>Use_PrintJobHistoryTestData</key>
+	<false/>
 	<key>Printer_MaxCount</key>
-	<integer>20</integer>
+	<integer>10</integer>
 	<key>PrintSettings_Default</key>
 	<dict>
 		<key>Bind</key>

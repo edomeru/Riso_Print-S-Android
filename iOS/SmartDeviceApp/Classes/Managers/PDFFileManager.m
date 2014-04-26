@@ -2,34 +2,45 @@
 //  PDFFileManager.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PDFFileManager.h"
+#import "PrintDocument.h"
+#import "XMLParser.h"
+#import "PrintSettingsHelper.h"
+#import "PrinterManager.h"
+
+#define PREVIEW_FILENAME @"%@/SDAPreview.pdf"
+
 @interface PDFFileManager()
-@property (strong, nonatomic) NSURL *previewURL;
+
 /**
- Init the internal PDF URL used for preview
- **/
--(void) initPreviewURL;
+ Indicates whether or not a file ready for preview
+ */
+@property (nonatomic) BOOL fileAvailableForPreview;
+
 /**
- Check PDF for unsupported of error case
- @param CGPDFDocumentObjectRef pdfdocument object
- @return T_PDF_ERROR
- **/
--(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument;
+ Print document object
+ */
+@property (nonatomic, strong) PrintDocument *printDocument;
+
 /**
- Rename PDF for preview to the internal PDF URL used for preview
- @return YES if successfully renamed; NO otherwise
- **/
--(BOOL) renamePDFFileToPreviewURL;
+ Moves the PDF File (from Open In to Documents)
+ */
+- (BOOL)moveFileToDocuments:(NSURL **)documentURL;
+
 /**
- Cleanup the current internal PDF file for preview
- **/
--(void) cleanupPreviewPDF;
+ Verifies if the PDF file is valid
+ */
+- (kPDFError)verifyDocument:(NSURL *)documentURL;
+
 @end
+
 @implementation PDFFileManager
+
+#pragma mark - Public Methods
 
 +(id) sharedManager
 {
@@ -46,118 +57,89 @@
 
 -(id) init
 {
-    if(self == [super init])
+    self = [super init];
+    if(self)
     {
-        self.pdfDocument = nil;
-        self.pdfFileAvailable = NO;
-        [self initPreviewURL];
+        _fileAvailableForLoad = NO;
+        _fileAvailableForPreview = NO;
     }
     return self;
 }
 
-- (T_PDF_ERROR) setUpPDF:(NSURL *)fileURL
+- (kPDFError)setupDocument
 {
-    CGPDFDocumentRef pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)fileURL);
-    int statusCode = [self checkPDF:pdfDocument];
-    CGPDFDocumentRelease(pdfDocument);
-    if(statusCode == PDF_ERROR_NONE)
+    NSURL *documentURL;
+    if (![self moveFileToDocuments:&documentURL])
     {
-        self.pdfURL = fileURL; //keep original url
-        /*rename the file - 
-         handling for when the same file is opened in the next open-in while in background,
-         The previously opened file is still in sandbox when the same file is copied automatically,
-         to sandbox by the system, The systems renames the new file to <file name> - 1. pdf because the previous file has the same file name
-         To prevent this, always rename the file for preview to a temp file for preview so when the same file is opened for preview*/
-        if([self renamePDFFileToPreviewURL] == NO)
-        {
-            return PDF_ERROR_PROCESSING_FAILED;
-        }
-        self.pdfDocument = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.previewURL);
-        
-        if(self.pdfDocument == nil)
-        {
-            return PDF_ERROR_PROCESSING_FAILED;
-        }
-        self.pdfFileAvailable = YES;
+        return kPDFErrorProcessingFailed;
     }
-    else
+    
+    kPDFError result = [self verifyDocument:documentURL];
+    if (result == kPDFErrorNone)
     {
-        self.pdfFileAvailable = NO;
+        self.fileAvailableForPreview = YES;
+        self.fileAvailableForLoad = NO;
+        NSString *fileName = [self.fileURL lastPathComponent];
+        self.printDocument = [[PrintDocument alloc] initWithURL:documentURL name:fileName];
+        self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];
+        self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
     }
-
-    return statusCode;
+    
+    return result;
 }
 
-- (void) cleanUp
+#pragma mark - Helper Methods
+
+- (BOOL)moveFileToDocuments:(NSURL **)documentURL
 {
-    if(self.pdfDocument != nil)
-    {
-        CGPDFDocumentRelease(self.pdfDocument);
-    }
-
-    if(self.pdfURL != nil)
-    {
-        self.pdfURL = nil;
-    }
-    [self cleanupPreviewPDF];
-    self.pdfFileAvailable = NO;
-}
-
-#pragma mark - Private Class Methods
-
--(void) initPreviewURL
-{
+    // Create new path in the directory
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *tempString = [NSString stringWithFormat:@"%@/SDAPreview.pdf",documentsDirectory];
-    self.previewURL = [NSURL fileURLWithPath:tempString];
-}
-
--(T_PDF_ERROR) checkPDF:(CGPDFDocumentRef)pdfDocument
-{
-    if(pdfDocument == nil)
-    {
-        return PDF_ERROR_OPEN; //error opening
-    }
+    NSString *newPath = [NSString stringWithFormat:PREVIEW_FILENAME, documentsDirectory];
+    NSError *error;
     
-    if(CGPDFDocumentIsUnlocked(pdfDocument) == false)
-    {
-        return PDF_ERROR_LOCKED; //unsupported, password protected
-    }
+    // Remove existing file, if any
+    [[NSFileManager defaultManager] removeItemAtPath:newPath error:&error];
     
-    if(CGPDFDocumentIsEncrypted(pdfDocument) == true)
+    // Copy file to new path
+    if ([[NSFileManager defaultManager] moveItemAtPath:[self.fileURL path] toPath:newPath error:&error] == NO)
     {
-        if(CGPDFDocumentAllowsPrinting(pdfDocument) == false)
-        {
-            return PDF_ERROR_PRINTING_NOT_ALLOWED; // does not allow printing
-        }
-    }
-
-    return PDF_ERROR_NONE;
-}
-
--(BOOL) renamePDFFileToPreviewURL
-{
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSError *error = nil;
-    if([fileMgr moveItemAtPath:[self.pdfURL path] toPath:[self.previewURL path] error:&error] == NO)
-    {
-#if DEBUG_LOG_PRINT_PREVIEW
-        NSLog(@"Failed to rename file");
-#endif
+        (*documentURL) = nil;
         return NO;
     }
+    
+    (*documentURL) = [NSURL fileURLWithPath:newPath];
     return YES;
 }
 
--(void) cleanupPreviewPDF
+- (kPDFError)verifyDocument:(NSURL *)documentURL
 {
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    if([fileMgr fileExistsAtPath:[self.previewURL path]] == YES)
+    CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((__bridge CFURLRef)documentURL);
+    
+    // Check if loaded
+    if (document == nil)
     {
-        NSError *error = nil;
-        [fileMgr removeItemAtPath:[self.previewURL path] error:&error];
+        return kPDFErrorOpen;
     }
+    
+    kPDFError error = kPDFErrorNone;
+    
+    // Check if PDF has open password
+    if (CGPDFDocumentIsUnlocked(document) == false)
+    {
+        error = kPDFErrorLocked;
+    }
+    // Check if PDF has encryption
+    else if (CGPDFDocumentIsEncrypted(document) == true)
+    {
+        if (CGPDFDocumentAllowsPrinting(document) == false)
+        {
+            error = kPDFErrorPrintingNotAllowed;
+        }
+    }
+    
+    CGPDFDocumentRelease(document);
+    return error;
 }
 
 @end

@@ -1,16 +1,16 @@
 //
-//  PrinterSearchScreenController.h
+//  PrinterSearchViewController.h
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 #import "UIViewController+Segue.h"
 #import "PrintersIpadViewController.h"
-#import "PrinterSearchDelegate.h"
+#import "PrinterManager.h"
 
 @interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate, UIGestureRecognizerDelegate>
 

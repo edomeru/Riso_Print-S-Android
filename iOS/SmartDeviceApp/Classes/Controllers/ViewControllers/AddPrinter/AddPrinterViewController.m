@@ -2,16 +2,16 @@
 //  AddPrinterScreenController.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "AddPrinterViewController.h"
 #import "PrinterDetails.h"
 #import "PrinterManager.h"
 #import "NetworkManager.h"
-#import "AlertUtils.h"
-#import "InputUtils.h"
+#import "AlertHelper.h"
+#import "InputHelper.h"
 
 #define TAG_TEXT_IP         0
 #define TAG_TEXT_USERNAME   1
@@ -40,12 +40,6 @@
 /** Input TextField for the IP Address. */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
 
-/** Input TextField for the Username. */
-@property (weak, nonatomic) IBOutlet UITextField *textUsername;
-
-/** Input TextField for the Password. */
-@property (weak, nonatomic) IBOutlet UITextField *textPassword;
-
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
@@ -61,6 +55,11 @@
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
+
+/**
+ Adds a full-capability printer (for failed manual snmp search)
+ */
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress;
 
 /**
  Unwinds back to the Printers screen.
@@ -133,6 +132,27 @@
     [self.saveButton setEnabled:NO];
 }
 
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.enBooklet =YES;
+    pd.enFinisher23Holes = YES;
+    pd.enFinisher24Holes = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
+    pd.enStaple = YES;
+    pd.enTrayAutoStacking = YES;
+    pd.enTrayFaceDown = YES;
+    pd.enTrayStacking = YES;
+    pd.enTrayTop = YES;
+    
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
+}
+
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -162,44 +182,46 @@
     // is it still possible to add a printer
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertUtils displayResult:ERR_MAX_PRINTERS
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // properly format/trim the input IP
-    NSString* trimmedIP = [InputUtils trimIP:self.textIP.text];
+    NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
 #endif
     self.textIP.text = trimmedIP;
     
     // is the IP a valid IP address?
-    if (![InputUtils isIPValid:trimmedIP])
+    if (![InputHelper isIPValid:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_INVALID_IP
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrInvalidIP
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // was this printer already added before?
     if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_ALREADY_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterDuplicate
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertUtils displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrNoNetwork
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
+        
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
@@ -224,9 +246,12 @@
 {
     if (self.willEndWithoutAdd)
     {
-        [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                        withTitle:kAlertTitlePrintersSearch
                       withDetails:nil];
+        
+        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
     // hide the searching indicator
@@ -252,16 +277,16 @@
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertUtils displayResult:INFO_PRINTER_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         self.hasAddedPrinters = YES;
     }
     else
     {
-        [AlertUtils displayResult:ERR_CANNOT_ADD
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
     }
 }
 
@@ -277,10 +302,6 @@
 {
     if (self.textIP.isEditing)
         [self.textIP resignFirstResponder];
-    else if (self.textUsername.isEditing)
-        [self.textUsername resignFirstResponder];
-    else if (self.textPassword.isEditing)
-        [self.textPassword resignFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
