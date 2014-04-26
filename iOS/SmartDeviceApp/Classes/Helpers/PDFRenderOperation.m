@@ -378,15 +378,15 @@
     if(self.printDocument.previewSetting.booklet == YES)
     {
         if(self.printDocument.previewSetting.bookletFinish == kBookletTypeFoldAndStaple &&
-           self.isFrontPage)
+           self.isFrontPage == YES)
         {
-            if(self.printDocument.previewSetting.orientation == kOrientationPortrait)
+            if(self.printDocument.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
             {
-                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideLeft withMargin:0];
+                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideTop withMargin:0];
             }
             else
             {
-                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideTop withMargin:0];
+                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideLeft withMargin:0];
             }
         }
         return;
