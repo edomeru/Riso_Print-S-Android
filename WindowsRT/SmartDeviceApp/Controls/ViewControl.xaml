@@ -138,7 +138,7 @@
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
+                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
@@ -148,9 +148,9 @@
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
+                        </ObjectAnimationUsingKeyFrames>-->
                         <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>-->
-                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>-->
+                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="RightPaneVisible_ResizedViewState">
@@ -212,9 +212,9 @@
               Width="{Binding ViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
               Height="{Binding Converter={StaticResource HeightConverter}}"
               Tapped="OnViewRootTapped">
-            <!--<Grid.Projection>
+            <Grid.Projection>
                 <PlaneProjection/>
-            </Grid.Projection>-->
+            </Grid.Projection>
             <!--<Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition/>

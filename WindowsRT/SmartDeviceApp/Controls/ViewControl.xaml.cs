@@ -140,6 +140,8 @@ namespace SmartDeviceApp.Controls
                 case ViewMode.RightPaneVisible_ResizedWidth:
                     {
                         ViewModel.ViewMode = ViewMode.FullScreen;
+                        ViewModel.IsPane1Visible = false;
+                        ViewModel.IsPane2Visible = false;
                         break;
                     }
             }
