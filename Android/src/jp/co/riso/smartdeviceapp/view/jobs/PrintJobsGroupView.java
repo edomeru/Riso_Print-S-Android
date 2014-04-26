@@ -65,6 +65,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private Handler mHandler;
     private LinearLayout mJobsLayout;
     private int mRowHeight;
+    private int mSeparatorHeight;
     
     /**
      * Constructor
@@ -83,7 +84,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * @param attrs
      * @param defStyle
      */
-
+    
     public PrintJobsGroupView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
@@ -257,7 +258,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         }
         
         mRowHeight = getResources().getDimensionPixelSize(R.dimen.printjob_row_height);
-        
+        mSeparatorHeight = getResources().getDimensionPixelSize(R.dimen.separator_size);
     }
     
     /**
@@ -372,7 +373,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      */
     private void animateExpand(boolean animate) {
         mJobsLayout.setVisibility(View.VISIBLE);
-        int totalHeight = mPrintJobViews.size() * mRowHeight;
+        int totalHeight = (mPrintJobViews.size() * mRowHeight) + ((mPrintJobViews.size() - 1) * mSeparatorHeight);
         
         if (animate) {
             for (int i = 0; i < mPrintJobViews.size(); i++) {
@@ -417,7 +418,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      */
     private void animateCollapse(boolean animate) {
         if (animate) {
-            int totalHeight = mPrintJobViews.size() * mRowHeight;
+            int totalHeight = (mPrintJobViews.size() * mRowHeight) + ((mPrintJobViews.size() - 1) * mSeparatorHeight);
+            
             for (int i = 0; i < mPrintJobViews.size(); i++) {
                 View child = mPrintJobViews.get(i);
                 TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -totalHeight);
