@@ -259,7 +259,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Booklet finishing setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_booklet_finishing"), SQLite.NotNull]
+        [SQLite.Column("pst_booklet_finish"), SQLite.NotNull]
         public int BookletFinishing { get; set; }
 
         /// <summary>

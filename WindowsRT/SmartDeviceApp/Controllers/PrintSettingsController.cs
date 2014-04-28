@@ -38,10 +38,17 @@ namespace SmartDeviceApp.Controllers
         private PrintSettingsViewModel _printSettingsViewModel;
         private Printer _printer;
         private PrintSettings _currPrintSettings;
+        private bool _enableAutosave;
 
-        public PrintSettingsController(Printer printer)
+        /// <summary>
+        /// PrintSettingsController constructor
+        /// </summary>
+        /// <param name="printer">printer</param>
+        /// <param name="enableAutosave">true when value is autosaved to database, false otherwise</param>
+        public PrintSettingsController(Printer printer, bool enableAutosave)
         {
             _printer = printer;
+            _enableAutosave = enableAutosave;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             LoadPrintSettingsOptions();
         }
@@ -58,9 +65,27 @@ namespace SmartDeviceApp.Controllers
                 await GetPrintSettings(_printer.PrintSettingId);
             }
             FilterPrintSettingsUsingCapabilities();
+            MergePrintSettings();
             ApplyPrintSettingConstraints();
 
             return _currPrintSettings;
+        }
+
+        /// <summary>
+        /// Deletes print settings
+        /// </summary>
+        /// <returns></returns>
+        public async Task RemovePrintSettings()
+        {
+            int deleted = await DatabaseController.Instance.DeletePrintSettings(_currPrintSettings);
+
+            if (deleted == 0)
+            {
+                // TODO: Display error message
+            }
+
+            // TODO: Set this to null?
+            // _currPrintSettings = null;
         }
 
         /// <summary>
@@ -981,20 +1006,14 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="printSetting">source print setting</param>
         /// <param name="value">updated value</param>
-        /// <param name="isPreviewPageAffected">true when preview is to be updates, false otherwise</param>
-        /// <param name="isPageCountAffected">true when page count is to be updated, false otherwise</param>
-        /// <param name="isConstraintAffected">true when contraints are updated, false otherwise</param>
-        public void UpdatePrintSettings(PrintSetting printSetting, int value,
-            out bool isPreviewPageAffected, out bool isPageCountAffected,
-            out bool isConstraintAffected)
+        /// <returns>task; true if print preview needs to be refreshed, false otherwise</returns>
+        public async Task<bool> UpdatePrintSettings(PrintSetting printSetting, int value)
         {
-            isPreviewPageAffected = false;
-            isPageCountAffected = false;
-            isConstraintAffected = false;
+            bool isPreviewAffected = false;
 
             if (printSetting == null)
             {
-                return;
+                return false;
             }
 
             string name = printSetting.Name;
@@ -1009,7 +1028,7 @@ namespace SmartDeviceApp.Controllers
                     if (prevColorMode == (int)ColorMode.Mono ||
                         value == (int)ColorMode.Mono)
                     {
-                        isPreviewPageAffected = true;
+                        isPreviewAffected = true;
                     }
                 }
             }
@@ -1032,7 +1051,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     // isConstraintAffected = UpdateConstraintBookletLayoutUsingOrientation(value);
                     _currPrintSettings.Orientation = value;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
@@ -1040,7 +1059,7 @@ namespace SmartDeviceApp.Controllers
                 if (_currPrintSettings.Duplex != value)
                 {
                     _currPrintSettings.Duplex = value;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
@@ -1048,7 +1067,7 @@ namespace SmartDeviceApp.Controllers
                 if (_currPrintSettings.PaperSize != value)
                 {
                     _currPrintSettings.PaperSize = value;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
@@ -1069,10 +1088,9 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_currPrintSettings.Imposition != value)
                 {
-                    isConstraintAffected = UpdateConstraintsBasedOnImposition(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnImposition(value);
                     _currPrintSettings.Imposition = value;
-                    isPreviewPageAffected = true;
-                    isPageCountAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
@@ -1082,7 +1100,7 @@ namespace SmartDeviceApp.Controllers
                     _currPrintSettings.ImpositionOrder = value;
                     if (PagesPerSheet > 1) // Matters only if pages per sheet is more than 1
                     {
-                        isPreviewPageAffected = true;
+                        isPreviewAffected = true;
                     }
                 }
             }
@@ -1101,7 +1119,7 @@ namespace SmartDeviceApp.Controllers
                     // Matters only when booklet is ON
                     if (_currPrintSettings.Booklet == true)
                     {
-                        isPreviewPageAffected = true;
+                        isPreviewAffected = true;
                     }
                 }
             }
@@ -1113,7 +1131,7 @@ namespace SmartDeviceApp.Controllers
                     // Matters only when booklet is ON
                     if (_currPrintSettings.Booklet == true)
                     {
-                        isPreviewPageAffected = true;
+                        isPreviewAffected = true;
                     }
                 }
             }
@@ -1121,16 +1139,13 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_currPrintSettings.FinishingSide != value)
                 {
-                    //isConstraintAffected = UpdateConstraintStapleUsingFinishingSide(value);
-                    //isConstraintAffected = UpdateConstaintPunchUsingFinishingSide(value) ||
-                    //    isConstraintAffected;
-                    isConstraintAffected = UpdateConstraintsBasedOnFinishingSide(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value);
                     _currPrintSettings.FinishingSide = value;
                     // Matters only when staple or punch is ON
                     if (_currPrintSettings.Staple != (int)Staple.Off ||
                         _currPrintSettings.Punch != (int)Punch.Off)
                     {
-                        isPreviewPageAffected = true;
+                        isPreviewAffected = true;
                     }
                 }
             }
@@ -1138,19 +1153,18 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_currPrintSettings.Staple != value)
                 {
-                    isConstraintAffected = UpdateConstraintsBasedOnStaple(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnStaple(value);
                     _currPrintSettings.Staple = value;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
             {
                 if (_currPrintSettings.Punch != value)
                 {
-                    //isConstraintAffected = UpdateConstraintFinishingSideUsingPunch(value);
-                    isConstraintAffected = UpdateConstraintsBasedOnPunch(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnPunch(value);
                     _currPrintSettings.Punch = value;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
@@ -1161,6 +1175,12 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
+            if (_enableAutosave)
+            {
+                await DatabaseController.Instance.UpdatePrintSettings(_currPrintSettings);
+            }
+
+            return isPreviewAffected;
         }
 
         /// <summary>
@@ -1170,17 +1190,14 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="printSetting">source print setting</param>
         /// <param name="state">updated value</param>
-        /// <param name="isPreviewPageAffected">true when preview is to be updates, false otherwise</param>
-        /// <param name="isConstraintAffected">true when contraints are updated, false otherwise</param>
-        public void UpdatePrintSettings(PrintSetting printSetting, bool state,
-            out bool isPreviewPageAffected, out bool isConstraintAffected)
+        /// <returns>task; true </returns>
+        public async Task<bool> UpdatePrintSettings(PrintSetting printSetting, bool state)
         {
-            isPreviewPageAffected = false;
-            isConstraintAffected = false;
+            bool isPreviewAffected = false;
 
             if (printSetting == null)
             {
-                return;
+                return false;
             }
 
             string name = printSetting.Name;
@@ -1190,18 +1207,25 @@ namespace SmartDeviceApp.Controllers
                 if (_currPrintSettings.ScaleToFit != state)
                 {
                     _currPrintSettings.ScaleToFit = state;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 if (_currPrintSettings.Booklet != state)
                 {
-                    isConstraintAffected = UpdateConstraintsBasedOnBooklet(state);
+                    isPreviewAffected = UpdateConstraintsBasedOnBooklet(state);
                     _currPrintSettings.Booklet = state;
-                    isPreviewPageAffected = true;
+                    isPreviewAffected = true;
                 }
             }
+
+            if (_enableAutosave)
+            {
+                await DatabaseController.Instance.UpdatePrintSettings(_currPrintSettings);
+            }
+
+            return isPreviewAffected;
         }
 
         /// <summary>

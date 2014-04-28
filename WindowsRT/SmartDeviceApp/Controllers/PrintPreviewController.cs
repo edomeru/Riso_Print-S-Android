@@ -231,7 +231,7 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter = new Printer();
             }
 
-            _printSettingsController = new PrintSettingsController(_selectedPrinter);
+            _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
             _currPrintSettings = await _printSettingsController.GetCurrentPrintSettings();
         }
 
@@ -299,37 +299,32 @@ namespace SmartDeviceApp.Controllers
 
             string name = printSetting.Name;
 
-            bool isPreviewPageAffected = false;
-            bool isPageCountAffected = false;
-            bool isConstraintAffected = false;
-
-            _printSettingsController.UpdatePrintSettings(printSetting, value,
-                out isPreviewPageAffected, out isPageCountAffected, out isConstraintAffected);
+            bool refreshPreview = await _printSettingsController.UpdatePrintSettings(printSetting, value);
 
             if (name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
             {
-                if (isPreviewPageAffected)
+                if (refreshPreview)
                 {
                     _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
             {
-                if (isPreviewPageAffected || isPageCountAffected)
+                if (refreshPreview)
                 {
                     _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
-                if (isPreviewPageAffected)
+                if (refreshPreview)
                 {
                     _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
 
             // Generate PreviewPages again
-            if (isPreviewPageAffected || isPageCountAffected || isConstraintAffected)
+            if (refreshPreview)
             {
                 await ClearPreviewPageListAndImages();
                 UpdatePreviewInfo();
@@ -356,21 +351,18 @@ namespace SmartDeviceApp.Controllers
 
             string name = printSetting.Name;
 
-            bool isPreviewPageAffected = false;
-            bool isConstraintAffected = false;
-             
-            _printSettingsController.UpdatePrintSettings(printSetting, state,
-                out isPreviewPageAffected, out isConstraintAffected);
+            bool refreshPreview = await _printSettingsController.UpdatePrintSettings(printSetting, state);
 
             if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
-                if (isPreviewPageAffected)
+                if (refreshPreview)
                 {
                     _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
                 }
             }
 
-            if (isPreviewPageAffected || isConstraintAffected)
+            // Generate PreviewPages again
+            if (refreshPreview)
             {
                 await ClearPreviewPageListAndImages();
                 UpdatePreviewInfo();
@@ -1712,7 +1704,7 @@ namespace SmartDeviceApp.Controllers
                     PrinterId = _selectedPrinter.Id,
                     Name = DocumentController.Instance.FileName,
                     Date = DateTime.Now,
-                    Result = 0 // TODO: Set actual result
+                    Result = (int)PrintJobResult.Success  // TODO: Update actual result
                 };
                 JobController.Instance.SavePrintJob(printJob);
 
