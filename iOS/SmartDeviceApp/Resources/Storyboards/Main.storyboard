@@ -3295,7 +3295,7 @@
         <!--Print Job History View Controller-->
         <scene sceneID="qwz-Ol-TAm">
             <objects>
-                <viewController storyboardIdentifier="PrintJobHistoryViewController" id="FqZ-P9-QXX" customClass="PrintJobHistoryViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrintJobHistoryIphoneViewController" id="FqZ-P9-QXX" customClass="PrintJobHistoryViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="HC2-7x-yGV"/>
                         <viewControllerLayoutGuide type="bottom" id="FG3-Gk-gAO"/>
@@ -3564,7 +3564,7 @@
         <!--Print Job History View Controller-->
         <scene sceneID="Ghh-Yl-J0s">
             <objects>
-                <viewController storyboardIdentifier="PrintJobHistoryViewController" id="k93-fC-OMI" customClass="PrintJobHistoryViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PrintJobHistoryIpadViewController" id="k93-fC-OMI" customClass="PrintJobHistoryViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Nae-d8-qPs"/>
                         <viewControllerLayoutGuide type="bottom" id="z4R-X2-0V5"/>
@@ -3880,9 +3880,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="a4U-VG-JlJ"/>
+        <segue reference="oE4-lZ-OOf"/>
         <segue reference="5pT-ga-236"/>
         <segue reference="uoe-Al-ug4"/>
-        <segue reference="dDZ-0e-JG0"/>
-        <segue reference="oE4-lZ-OOf"/>
     </inferredMetricsTieBreakers>
 </document>

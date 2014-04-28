@@ -15,6 +15,7 @@
 		286CE3F618F2264E00642A10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
+		28814A93190E2BE0006E7A3A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		28A0565D190DE4BF003D3962 /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28A0565C190DE4BF003D3962 /* SmartDeviceApp-Settings.plist */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
@@ -1356,6 +1357,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28814A93190E2BE0006E7A3A /* Localizable.strings in Resources */,
 				28D8E4A1190DE07100012FCF /* printsettings.xml in Resources */,
 				28C9B529190DD6CD0018736C /* Main.storyboard in Resources */,
 				28C9B52A190DD6D30018736C /* Images.xcassets in Resources */,
