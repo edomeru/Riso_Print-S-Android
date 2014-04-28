@@ -114,8 +114,9 @@
     GHTestLog(@"# CHECK: Create a PJHGroup. #");
     
     NSString* groupName = @"Group X";
+    NSString* groupIP = @"999.99.9.1";
     
-    testGroup = [PrintJobHistoryGroup initWithGroupName:groupName withGroupTag:0];
+    testGroup = [PrintJobHistoryGroup initWithGroupName:groupName withGroupIP:groupIP withGroupTag:0];
     GHAssertNotNil(testGroup, @"could not initialize a PrintJobHistoryGroup");
     GHAssertEqualStrings(testGroup.groupName, groupName, @"groupName should be %@", groupName);
     GHAssertTrue(testGroup.countPrintJobs == 0, @"group initially should have no jobs");
