@@ -204,7 +204,22 @@ namespace SmartDeviceApp.Controllers
                 }
 
             }
-            // TODO: 3 or 4 Punch capabilities
+            if (!_printer.EnabledPunchFour) // Meaning punch3
+            {
+                // TODO: Verify assumption
+                // Assumption that punch4 is the default in print settings xml
+                PrintSetting punchPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+                if (punchPrintSetting != null)
+                {
+                    PrintSettingOption punchFourPrintSettingOption =
+                        GetPrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
+                    if (punchFourPrintSettingOption != null)
+                    {
+                        punchFourPrintSettingOption.Text = "ids_lbl_punch_3holes";
+                    }
+                }
+            }
             if (!_printer.EnabledTrayFacedown)
             {
                 PrintSetting outputTrayPrintSetting =

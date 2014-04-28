@@ -1643,7 +1643,8 @@ namespace SmartDeviceApp.Controllers
                     numberOfHoles = 2;
                     break;
                 case (int)Punch.FourHoles:
-                    numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
+                    //numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
+                    numberOfHoles = (_selectedPrinter.EnabledPunchFour) ? 4 : 3;
                     break;
                 case (int)Punch.Off:
                 default:
@@ -1668,9 +1669,10 @@ namespace SmartDeviceApp.Controllers
                     distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
                     break;
                 case (int)Punch.FourHoles:
-                    distance = (GlobalizationUtility.IsJapaneseLocale()) ?
-                        PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE :
-                        PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE;
+                    //distance = (GlobalizationUtility.IsJapaneseLocale()) ?
+                    distance = (_selectedPrinter.EnabledPunchFour) ?
+                        PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE :
+                        PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;
                     break;
                 case (int)Punch.Off:
                 default:
