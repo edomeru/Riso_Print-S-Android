@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		2801621118EAB0AA00DFFE5E /* PrintJobHistoryLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */; };
+		2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
+		2821CAAD190E3A7D00CE3D51 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232B1900D69A00301D1E /* Main.storyboard */; };
+		2821CAAE190E3A7D00CE3D51 /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232F1900F86A00301D1E /* printsettings.xml */; };
+		2821CAAF190E3A8600CE3D51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
@@ -1339,6 +1343,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2821CAAF190E3A8600CE3D51 /* Images.xcassets in Resources */,
+				2821CAAD190E3A7D00CE3D51 /* Main.storyboard in Resources */,
+				2821CAAE190E3A7D00CE3D51 /* printsettings.xml in Resources */,
 				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
 				2D1F23CB190104D900301D1E /* help.html in Resources */,
 				2D1F23CD190104D900301D1E /* legal.html in Resources */,
@@ -1444,6 +1451,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2D1F23881900FC1B00301D1E /* PrintSetting.m in Sources */,
 				2D1F23781900FC0D00301D1E /* SearchResultCell.m in Sources */,
 				2D1F23AE1900FF5800301D1E /* CXAlertView.m in Sources */,
