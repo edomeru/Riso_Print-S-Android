@@ -10,20 +10,19 @@
 //  ----------------------------------------------------------------------
 //
 
-using SmartDeviceApp.Common.Constants;
-using SmartDeviceApp.Common.Enum;
-using SmartDeviceApp.Common.Utilities;
-using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Data.Pdf;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Models;
 
 namespace SmartDeviceApp.Controllers
 {
