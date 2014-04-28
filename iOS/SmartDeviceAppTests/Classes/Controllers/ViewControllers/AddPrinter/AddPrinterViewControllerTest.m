@@ -12,8 +12,6 @@
 
 // expose private properties
 - (UITextField*)textIP;
-- (UITextField*)textUsername;
-- (UITextField*)textPassword;
 - (UIButton*)saveButton;
 - (UIActivityIndicatorView*)progressIndicator;
 
@@ -22,7 +20,8 @@
 @interface AddPrinterViewControllerTest : GHTestCase
 {
     UIStoryboard* storyboard;
-    AddPrinterViewController* controller;
+    AddPrinterViewController* controllerIphone;
+    AddPrinterViewController* controllerIpad;
 }
 
 @end
@@ -43,19 +42,27 @@
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
-    NSString* controllerName = @"AddPrinterViewController";
-    controller = [storyboard instantiateViewControllerWithIdentifier:controllerName];
-    GHAssertNotNil(controller, @"unable to instantiate controller (%@)", controllerName);
+    NSString* controllerIphoneName = @"AddPrinterIphoneViewController";
+    controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];
+    GHAssertNotNil(controllerIphone, @"unable to instantiate controller (%@)", controllerIphoneName);
     
-    [controller loadView];
-    GHAssertNotNil(controller.view, @"");
+    [controllerIphone loadView];
+    GHAssertNotNil(controllerIphone.view, @"");
+    
+    NSString* controllerIpadName = @"AddPrinterIphoneViewController";
+    controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
+    GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
+    
+    [controllerIpad loadView];
+    GHAssertNotNil(controllerIpad.view, @"");
 }
 
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
     storyboard = nil;
-    controller = nil;
+    controllerIphone = nil;
+    controllerIpad = nil;
 }
 
 // Run before each test method
@@ -70,37 +77,67 @@
 
 #pragma mark - Test Cases
 
-- (void)test001_IBOutletsBinding
+- (void)test001_IBOutletsBindingIphone
 {
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
-    GHAssertNotNil([controller textIP], @"");
-    GHAssertNotNil([controller textUsername], @"");
-    GHAssertNotNil([controller textPassword], @"");
-    GHAssertNotNil([controller saveButton], @"");
-    GHAssertNotNil([controller progressIndicator], @"");
+    GHAssertNotNil([controllerIphone textIP], @"");
+    GHAssertNotNil([controllerIphone saveButton], @"");
+    GHAssertNotNil([controllerIphone progressIndicator], @"");
 }
 
-- (void)test002_IBActionsBinding
+- (void)test002_IBOutletsBindingIpad
+{
+    GHTestLog(@"# CHECK: IBOutlets Binding. #");
+    
+    GHAssertNotNil([controllerIpad textIP], @"");
+    GHAssertNotNil([controllerIpad saveButton], @"");
+    GHAssertNotNil([controllerIpad progressIndicator], @"");
+}
+
+- (void)test003_IBActionsBindingIphone
 {
     GHTestLog(@"# CHECK: IBActions Binding. #");
     
-    UIButton* saveButton = [controller saveButton];
-    NSArray* ibActions = [saveButton actionsForTarget:controller
+    UIButton* saveButton = [controllerIphone saveButton];
+    NSArray* ibActions = [saveButton actionsForTarget:controllerIphone
                                       forControlEvent:UIControlEventTouchUpInside];
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count] == 1, @"");
     GHAssertTrue([ibActions containsObject:@"onSave:"], @"");
 }
 
-- (void)test003_TextFieldInput
+- (void)test004_IBActionsBindingIpad
+{
+    GHTestLog(@"# CHECK: IBActions Binding. #");
+    
+    UIButton* saveButton = [controllerIpad saveButton];
+    NSArray* ibActions = [saveButton actionsForTarget:controllerIpad
+                                      forControlEvent:UIControlEventTouchUpInside];
+    GHAssertNotNil(ibActions, @"");
+    GHAssertTrue([ibActions count] == 1, @"");
+    GHAssertTrue([ibActions containsObject:@"onSave:"], @"");
+}
+
+- (void)test005_TextFieldInputIphone
 {
     GHTestLog(@"# CHECK: IP TextField does not accept spaces. #");
     
     GHTestLog(@"-- entering a space");
-    BOOL willAcceptSpace = [controller textField:[controller textIP]
-                   shouldChangeCharactersInRange:NSMakeRange(0, 1)
-                               replacementString:@" "];
+    BOOL willAcceptSpace = [controllerIphone textField:[controllerIphone textIP]
+                         shouldChangeCharactersInRange:NSMakeRange(0, 1)
+                                     replacementString:@" "];
+    GHAssertFalse(willAcceptSpace, @"");
+}
+
+- (void)test006_TextFieldInputIpad
+{
+    GHTestLog(@"# CHECK: IP TextField does not accept spaces. #");
+    
+    GHTestLog(@"-- entering a space");
+    BOOL willAcceptSpace = [controllerIpad textField:[controllerIpad textIP]
+                         shouldChangeCharactersInRange:NSMakeRange(0, 1)
+                                     replacementString:@" "];
     GHAssertFalse(willAcceptSpace, @"");
 }
 

@@ -18,7 +18,8 @@
 @interface PrinterSearchViewControllerTest : GHTestCase
 {
     UIStoryboard* storyboard;
-    PrinterSearchViewController* controller;
+    PrinterSearchViewController* controllerIphone;
+    PrinterSearchViewController* controllerIpad;
 }
 
 @end
@@ -39,19 +40,27 @@
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
-    NSString* controllerName = @"PrinterSearchViewController";
-    controller = [storyboard instantiateViewControllerWithIdentifier:controllerName];
-    GHAssertNotNil(controller, @"unable to instantiate controller (%@)", controllerName);
+    NSString* controllerIphoneName = @"PrinterSearchIphoneViewController";
+    controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];
+    GHAssertNotNil(controllerIphone, @"unable to instantiate controller (%@)", controllerIphoneName);
     
-    [controller loadView];
-    GHAssertNotNil(controller.view, @"");
+    [controllerIphone loadView];
+    GHAssertNotNil(controllerIphone.view, @"");
+    
+    NSString* controllerIpadName = @"PrinterSearchIpadViewController";
+    controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
+    GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
+    
+    [controllerIpad loadView];
+    GHAssertNotNil(controllerIpad.view, @"");
 }
 
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
     storyboard = nil;
-    controller = nil;
+    controllerIphone = nil;
+    controllerIpad = nil;
 }
 
 // Run before each test method
@@ -66,14 +75,26 @@
 
 #pragma mark - Test Cases
 
-- (void)test001_IBOutletsBinding
+- (void)test001_IBOutletsBindingIphone
 {
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
-    GHAssertNotNil([controller tableView], @"");
+    GHAssertNotNil([controllerIphone tableView], @"");
 }
 
-- (void)test002_IBActionsBinding
+- (void)test002_IBOutletsBindingIpad
+{
+    GHTestLog(@"# CHECK: IBOutlets Binding. #");
+    
+    GHAssertNotNil([controllerIpad tableView], @"");
+}
+
+- (void)test003_IBActionsBindingIphone
+{
+    GHTestLog(@"# CHECK: IBActions Binding. #");
+}
+
+- (void)test004_IBActionsBindingIpad
 {
     GHTestLog(@"# CHECK: IBActions Binding. #");
 }

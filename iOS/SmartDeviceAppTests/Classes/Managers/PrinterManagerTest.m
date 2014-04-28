@@ -12,7 +12,7 @@
 #import "PrinterDetails.h"
 
 const NSUInteger NUM_PRINTERS = 5;
-const NSUInteger MAX_PRINTERS = 20; //get from SmartDeviceApp-Settings.plist
+const NSUInteger MAX_PRINTERS = 10; //get from SmartDeviceApp-Settings.plist
 const NSUInteger DEFAULT_1    = 2;
 const NSUInteger DEFAULT_2    = 4;
 const NSString*  PRINTER_NAME = @"UT-Printer";
@@ -44,6 +44,9 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"printer should be deleted");
+    
     printerManager = nil;
 }
 

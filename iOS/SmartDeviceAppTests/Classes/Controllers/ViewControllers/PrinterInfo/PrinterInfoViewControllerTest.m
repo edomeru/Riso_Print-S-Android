@@ -13,7 +13,7 @@
 // expose private properties
 - (UILabel*)printerName;
 - (UILabel*)ipAddress;
-- (UILabel*)port;
+- (UISegmentedControl*)portSelection;
 - (UILabel*)printerStatus;
 - (UISwitch*)defaultPrinterSwitch;
 
@@ -76,7 +76,7 @@
     
     GHAssertNotNil([controller printerName], @"");
     GHAssertNotNil([controller ipAddress], @"");
-    GHAssertNotNil([controller port], @"");
+    GHAssertNotNil([controller portSelection], @"");
     GHAssertNotNil([controller printerStatus], @"");
     GHAssertNotNil([controller defaultPrinterSwitch], @"");
 }
