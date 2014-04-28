@@ -408,6 +408,7 @@ namespace SmartDeviceApp.Controllers
                 if (impositionOrderPrintSetting != null)
                 {
                     impositionOrderPrintSetting.IsEnabled = false;
+                    impositionOrderPrintSetting.IsValueDisplayed = false;
                     impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
                     _currPrintSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
 
@@ -455,9 +456,20 @@ namespace SmartDeviceApp.Controllers
                         fourUpRB.IsEnabled = false;
                     }
                     impositionOrderPrintSetting.IsEnabled = true;
+                    impositionOrderPrintSetting.IsValueDisplayed = true;
 
-                    impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
-                    _currPrintSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
+                    //impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
+                    if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperLeftToRight ||
+                        (int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperLeftToBottom)
+                    {
+                        impositionOrderPrintSetting.Value = (int)ImpositionOrder.TwoUpLeftToRight;
+                    }
+                    else if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperRightToLeft ||
+                        (int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperRightToBottom)
+                    {
+                        impositionOrderPrintSetting.Value = (int)ImpositionOrder.TwoUpRightToLeft;
+                    }
+                    _currPrintSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
 
                     isUpdated = true;
                 }
@@ -532,17 +544,18 @@ namespace SmartDeviceApp.Controllers
                         fourUpRB.IsEnabled = true;
                     }
                     impositionOrderPrintSetting.IsEnabled = true;
+                    impositionOrderPrintSetting.IsValueDisplayed = true;
 
-                    impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
-                    if ((int)impositionOrderPrintSetting.Default == (int)ImpositionOrder.TwoUpLeftToRight)
+                    //impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
+                    if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.TwoUpLeftToRight)
                     {
                         impositionOrderPrintSetting.Value = (int)ImpositionOrder.FourUpUpperLeftToRight;
                     }
-                    else if ((int)impositionOrderPrintSetting.Default == (int)ImpositionOrder.TwoUpRightToLeft)
+                    else if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.TwoUpRightToLeft)
                     {
                         impositionOrderPrintSetting.Value = (int)ImpositionOrder.FourUpUpperRightToLeft;
                     }
-                    _currPrintSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
+                    _currPrintSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
 
                     isUpdated = true;
                 }
