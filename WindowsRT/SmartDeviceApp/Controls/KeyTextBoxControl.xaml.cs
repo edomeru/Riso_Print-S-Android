@@ -33,8 +33,8 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextBoxAlignmentProperty =
             DependencyProperty.Register("TextBoxAlignment", typeof(TextAlignment), typeof(KeyTextBoxControl), null);
 
-        public static readonly DependencyProperty TextBoxInputScopeProperty =
-            DependencyProperty.Register("TextBoxInputScope", typeof(InputScope), typeof(KeyTextBoxControl), null);
+        public static readonly DependencyProperty TextBoxMaxLengthProperty =
+            DependencyProperty.Register("TextBoxMaxLength", typeof(int), typeof(KeyTextBoxControl), null);
 
         public new string ValueText
         {
@@ -54,10 +54,10 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextBoxAlignmentProperty, value); }
         }
 
-        public InputScope TextBoxInputScope
+        public int TextBoxMaxLength
         {
-            get { return (InputScope)GetValue(TextBoxInputScopeProperty); }
-            set { SetValue(TextBoxInputScopeProperty, value); }
+            get { return (int)GetValue(TextBoxMaxLengthProperty); }
+            set { SetValue(TextBoxMaxLengthProperty, value); }
         }
 
         private void OnTextBoxLoaded(object obj, RoutedEventArgs args)
@@ -69,7 +69,7 @@ namespace SmartDeviceApp.Controls
                 textBox.TextChanged += (sender, e) => TextChanged(sender, context);
                 textBox.Width = TextBoxWidth;
                 textBox.TextAlignment = TextBoxAlignment;
-                textBox.InputScope = TextBoxInputScope;
+                textBox.MaxLength = TextBoxMaxLength;
                 _isTextBoxLoaded = true;
             }
         }
