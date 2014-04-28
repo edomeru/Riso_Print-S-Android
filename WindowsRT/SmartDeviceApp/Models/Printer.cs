@@ -12,11 +12,6 @@
 
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Models
 {
@@ -121,12 +116,6 @@ namespace SmartDeviceApp.Models
         [SQLite.Ignore]
         public bool IsOnline { get; set; }
 
-        /// <summary>
-        /// Print settings associated to the printer
-        /// </summary>
-        [SQLite.Ignore]
-        public PrintSettings PrintSettings { get; set; }
-
         #endregion Properties
 
         /// <summary>
@@ -149,7 +138,6 @@ namespace SmartDeviceApp.Models
             EnabledTrayStack = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_STACK, ListValueType.Boolean);
             IsDefault = false;
             IsOnline = false;
-            PrintSettings = null;
         }
 
     }

@@ -292,6 +292,18 @@ namespace SmartDeviceApp.Models
         [SQLite.Column("pst_output_tray"), SQLite.NotNull]
         public int OutputTray { get; set; }
 
+        /// <summary>
+        /// Log-in ID for Authentication; used only on a single print session
+        /// </summary>
+        [SQLite.Ignore]
+        public string LoginId { get; set; }
+
+        /// <summary>
+        /// PIN Code for Authentication; used only on a single print session
+        /// </summary>
+        [SQLite.Ignore]
+        public string PinCode { get; set; }
+
         #endregion Properties
 
         /// <summary>
@@ -319,6 +331,8 @@ namespace SmartDeviceApp.Models
             Staple = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_STAPLE, ListValueType.Int);
             Punch = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PUNCH, ListValueType.Int);
             OutputTray = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_OUTPUT_TRAY, ListValueType.Int);
+            LoginId = null;
+            PinCode = null;
         }
 
     }
