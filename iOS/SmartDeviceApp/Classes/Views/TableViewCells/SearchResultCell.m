@@ -57,7 +57,10 @@
 
 - (void)setContentsUsingName:(NSString*)printerName usingIP:(NSString*)printerIP
 {
-    self.printerName.text = printerName;
+    if (printerName == nil || [printerName isEqualToString:@""])
+        self.printerName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+    else
+        self.printerName.text = printerName;
     self.printerIP.text = printerIP;
     
     //TODO: different fonts for ipad and iphone?

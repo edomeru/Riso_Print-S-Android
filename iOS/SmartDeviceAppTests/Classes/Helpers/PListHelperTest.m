@@ -55,7 +55,7 @@
     
     GHTestLog(@"-- reading [Max Printer Count]");
     NSUInteger actualMaxPrinterCount = [PListHelper readUint:kPlistUintValMaxPrinters];
-    GHAssertEquals(actualMaxPrinterCount, (NSUInteger)10, @"");
+    GHAssertTrue(actualMaxPrinterCount == 10, @"");
 }
 
 - (void)test002_ReadBool
