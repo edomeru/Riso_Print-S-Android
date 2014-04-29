@@ -67,6 +67,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <returns>task</returns>
         public async static Task LoadDefaultsFromSqlScript(string filePath)
         {
+            _sqlScriptDefaults.Clear(); // Reset
             if (!string.IsNullOrEmpty(filePath))
             {
                 StorageFile file = await StorageFileUtility.GetFileFromAppResource(filePath);
@@ -112,8 +113,7 @@ namespace SmartDeviceApp.Common.Utilities
                     value = boolValue;
                     break;
                 case ListValueType.Int:
-                    int.TryParse(strValue, out intValue);
-                    value = intValue;
+                    value = (int.TryParse(strValue, out intValue)) ? intValue : -1;
                     break;
                 case ListValueType.String:
                 default:

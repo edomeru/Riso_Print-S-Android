@@ -319,7 +319,7 @@ namespace SmartDeviceApp.Models
             Duplex = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_DUPLEX, ListValueType.Int);
             PaperSize = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PAPER_SIZE, ListValueType.Int);
             ScaleToFit = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_SCALE_TO_FIT, ListValueType.Boolean);
-            PaperType = -(int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PAPER_TYPE, ListValueType.Int);
+            PaperType = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PAPER_TYPE, ListValueType.Int);
             InputTray = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_INPUT_TRAY, ListValueType.Int);
             Imposition = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_IMPOSITION, ListValueType.Int);
             ImpositionOrder = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_IMPOSITION_ORDER, ListValueType.Int);
