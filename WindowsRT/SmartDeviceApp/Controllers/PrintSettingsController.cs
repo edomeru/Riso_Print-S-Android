@@ -736,8 +736,8 @@ namespace SmartDeviceApp.Controllers
                 }
                 if (impositionOrderPrintSetting != null)
                 {
-                    // impositionOrderPrintSetting.IsEnabled is not set to true since Imposition is Off
-                    impositionOrderPrintSetting.IsValueDisplayed = true;
+                    // impositionOrderPrintSetting.IsEnabled and impositionOrderPrintSetting.IsValueDisplayed
+                    // are not set to true since Imposition is Off
 
                     isUpdated = true;
                 }
