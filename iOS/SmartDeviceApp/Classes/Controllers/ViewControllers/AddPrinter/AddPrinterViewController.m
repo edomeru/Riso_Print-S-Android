@@ -138,14 +138,16 @@
     pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     pd.ip = ipAddress;
     pd.port = [NSNumber numberWithInt:0];
-    pd.capBooklet = YES;
-    pd.capStapler = YES;
-    pd.capFin23Holes = YES;
-    pd.capFin23Holes = YES;
-    pd.capTrayAutoStack = YES;
-    pd.capTrayFaceDown = YES;
-    pd.capTrayStack = YES;
-    pd.capTrayTop = YES;
+    pd.enBooklet = YES;
+    pd.enStaple = YES;
+    pd.enFinisher23Holes = YES;
+    pd.enFinisher24Holes = YES;
+    pd.enTrayAutoStacking = YES;
+    pd.enTrayFaceDown = YES;
+    pd.enTrayStacking = YES;
+    pd.enTrayTop = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
     
     [self.printerManager registerPrinter:pd];
     self.hasAddedPrinters = YES;
