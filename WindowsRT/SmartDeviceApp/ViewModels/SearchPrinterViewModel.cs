@@ -123,7 +123,7 @@ namespace SmartDeviceApp.ViewModels
                     return;
                 }
 
-                item.IsInPrinterList = true;
+                //item.IsInPrinterList = true;
 
             }
         }

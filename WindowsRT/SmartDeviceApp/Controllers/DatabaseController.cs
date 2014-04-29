@@ -47,7 +47,7 @@ namespace SmartDeviceApp.Controllers
             await CreateDatabase();
 
             // TODO: Remove after testing (or create an initial data manager)
-            await InsertSampleData();
+            //await InsertSampleData();
         }
 
         private async Task CreateDatabase()
@@ -232,9 +232,10 @@ namespace SmartDeviceApp.Controllers
             return printerList;
         }
 
-        public async Task<int> SetDefaultPrinter(int printerId)
+        public int SetDefaultPrinter(int printerId)
         {
-            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+            //var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+            var db = new SQLite.SQLiteConnection(_databasePath);
             try
             {
                 if (printerId < 0)
@@ -243,21 +244,18 @@ namespace SmartDeviceApp.Controllers
                 }
                 else
                 {
-                    var existingDefault = await (db.Table<DefaultPrinter>().FirstOrDefaultAsync());
+                    var existingDefault = (db.Table<DefaultPrinter>().FirstOrDefault());
 
                     if (existingDefault != null)
                     {
-                        // update default printer id
-                        existingDefault.PrinterId = (uint)printerId;
+                        db.Delete(existingDefault);
                     }
-                    else
-                    {
-                        // no default printer, insert new
-                        DefaultPrinter dp = new DefaultPrinter();
-                        dp.PrinterId = (uint)printerId;
 
-                        int success = await db.InsertAsync(dp);
-                    }
+                    // no default printer, insert new
+                    DefaultPrinter dp = new DefaultPrinter();
+                    dp.PrinterId = (uint)printerId;
+
+                    int success = db.Insert(dp);
                 }
             }
             catch
@@ -378,7 +376,7 @@ namespace SmartDeviceApp.Controllers
                 var printerFromDB = await db.GetAsync<Printer>(printer.Id);
                 printerFromDB.PortSetting = printer.PortSetting;
 
-                await db.UpdateAsync(printerFromDB);
+                int i = await db.UpdateAsync(printerFromDB);
             }
             catch
             {

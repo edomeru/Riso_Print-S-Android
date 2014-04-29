@@ -19,23 +19,23 @@ using Windows.UI.Xaml.Navigation;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class KeyDropDownListControl : UserControl
+    public sealed partial class PortItemControl : UserControl
     {
-        public KeyDropDownListControl()
+        public PortItemControl()
         {
             this.InitializeComponent();
         }
 
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(KeyDropDownListControl), null);
+            DependencyProperty.Register("Text", typeof(string), typeof(PortItemControl), null);
 
         public static readonly DependencyProperty SelectedIndexProperty =
-            DependencyProperty.Register("SelectedIndex", typeof(int), typeof(KeyDropDownListControl), null);
+            DependencyProperty.Register("SelectedIndex", typeof(int), typeof(PortItemControl), null);
         public static readonly DependencyProperty LPRSelectedProperty =
-            DependencyProperty.Register("LPRSelected", typeof(int), typeof(KeyDropDownListControl), null);
+            DependencyProperty.Register("LPRSelected", typeof(int), typeof(PortItemControl), null);
 
         public static readonly DependencyProperty IconVisibilityProperty =
-            DependencyProperty.Register("IconVisibility", typeof(Visibility), typeof(KeyDropDownListControl), null);
+            DependencyProperty.Register("IconVisibility", typeof(Visibility), typeof(PortItemControl), null);
 
         //public static readonly DependencyProperty DeleteCommandProperty =
         //    DependencyProperty.Register("DeleteCommand", typeof(ICommand), typeof(KeyDropDownListControl), null);
@@ -124,7 +124,7 @@ namespace SmartDeviceApp.Controls
 
         private void OnPortLoaded(object obj, RoutedEventArgs args)
         {
-            UpdatePortExecute();
+            UpdateRawPortExecute();
         }
     }
 }

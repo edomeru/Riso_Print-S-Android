@@ -88,7 +88,20 @@ namespace SNMP
                               SNMPConstants.MIB_GETNEXTOID_PRINTERMIB, 
                               SNMPConstants.MIB_GETNEXTOID_NAME};
                 //requestMIB = new string[] { "1.3.6.1.2.1.1.1.0" };
-
+                //bool DETECTALL = true;
+                //requestMIB = new string[]
+                //{
+                //    SNMPConstants.MIB_GETNEXTOID_SYSID,
+                //    (DETECTALL ?  SNMPConstants.MIB_GETNEXTOID_DESC : SNMPConstants.MIB_GETNEXTOID_GENERALNAME)
+                //    //SNMPConstants.MIB_GETNEXTOID_BOOKLET,
+                //    //SNMPConstants.MIB_GETNEXTOID_STAPLER,
+                //    //SNMPConstants.MIB_GETNEXTOID_4HOLES,
+                //    //SNMPConstants.MIB_GETNEXTOID_3HOLES,
+                //    //SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
+                //    //SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
+                //    //SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
+                //    //SNMPConstants.MIB_GETNEXTOID_TRAY_STACK
+                //};
 
                 //[self setDelegate:toDelegate];
             }
@@ -128,6 +141,10 @@ namespace SNMP
         private void receiveData(HostName sender, byte[] responsedata)
         {
             //LOG_PRINTER_SEARCH(@"udpSocketDidReceiveData");
+            if (sender.ToString() == SNMPConstants.BROADCAST_ADDRESS)
+            {
+                return;
+            }
     
             //SNMPMessage *response = [[SNMPMessage alloc] initWithResponse:data];
             SNMPMessage response = new SNMPMessage(responsedata);
@@ -168,6 +185,11 @@ namespace SNMP
                     
                             //SNMPDevice *snmpDevice = [[SNMPDevice alloc] initWithHost:host];
                             SNMPDevice snmpDevice = new SNMPDevice(host);
+
+                            if (!FromPrinterSearch) // addition of printer, pass the handlers.
+                            {
+                                snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
+                            }
                     
                             //[snmpDevice setIpAddress:[GCDAsyncUdpSocket hostFromAddress:address]];
                             snmpDevice.setIpAddress(host);
@@ -220,8 +242,11 @@ namespace SNMP
                             {
                                 snmpControllerDiscoverTimeOut = null;
                             }
+                            else // if printer search
+                            {
+                                snmpControllerDiscoverCallback(snmpDevice);
+                            }
                             //call callback
-                            snmpControllerDiscoverCallback(snmpDevice);
                         }
                     }
 
@@ -246,8 +271,14 @@ namespace SNMP
                 System.Diagnostics.Debug.WriteLine("Closing udpSocket");
                 udpSocket.close();
                 //call callback if timedout during search or add
+                
                 if (snmpControllerDiscoverTimeOut != null)
                 {
+                    string ip = sender.ToString();
+                    if (sender.ToString() == SNMPConstants.BROADCAST_ADDRESS)
+                    {
+                        ip = "";
+                    }
                     snmpControllerDiscoverTimeOut(sender.ToString());
                 }
 

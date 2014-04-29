@@ -85,7 +85,7 @@
                                                           ValueVisibility="Visible"/>
                             
                             
-                            <controls:KeyDropDownListControl x:Name="port"
+                            <controls:PortItemControl x:Name="port"
                                                              Text="Port"
                                                              SelectedIndex="{Binding PortSetting, Mode=TwoWay}"/>
 
@@ -101,7 +101,8 @@
                             <controls:KeyValueControl x:Name="settings" 
                                                       IconVisibility="Collapsed"
                                                           Text="Default Print Settings"
-                                                          RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"/>
+                                                          RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
+                                                      RightPressedImage="ms-appx:///Resources/Images/img_btn_default_print_settings_pressed.scale-100.png"/>
 
                         </ListView>
                     </DataTemplate>

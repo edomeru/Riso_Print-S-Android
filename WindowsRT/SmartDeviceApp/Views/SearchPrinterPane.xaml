@@ -133,12 +133,12 @@
                     
                     <!--Event triggers when item is clicked. Calls PrinterSearchItemSelected in PrintersViewModel ItemsSource="{Binding PrinterSearchList}"-->
 
-                    <Interactivity:Interaction.Behaviors>
+                    <!--<Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="ItemClick">
                             <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}" 
                         			InputConverter="{StaticResource ItemClickedConverter}"/>
                         </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
+                    </Interactivity:Interaction.Behaviors>-->
 
                     <!--<TextBlock Text="Sample1"/>
                     <TextBlock Text="Sample2"/>
@@ -203,9 +203,14 @@
                                 </Grid.ColumnDefinitions>
 
                                 <controls:KeyValueControl x:Name="printerSearchListItem"
-                            			Text="{Binding Name}"
-                            			RightImage="{Binding ImageSource}"
-                            			RightButtonVisibility="Visible"
+                                                          Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}"
+                                                          CommandParameter="{Binding}"
+                                            			  Text="{Binding Name}"
+                                                          SubText="{Binding Ip_address}"
+                                                          SubTextVisibility="Visible"
+                                            			  RightImage="{Binding ImageSource}"
+                                                          RightPressedImage="ms-appx:///Resources/Images/img_btn_add_printer_pressed.scale-100.png"
+                                                          RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
                                                               />
                             </Grid>

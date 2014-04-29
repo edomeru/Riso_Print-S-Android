@@ -16,8 +16,8 @@ namespace SmartDeviceApp.Models
         private bool _isInPrinterList;
         private ImageSource _imageSource;
 
-        private readonly string _AddImageNormal = "ms-appx:///Resources/Images/img_btn_add_printer_normal.png";
-        private readonly string _AddPrinterOkImagePressed = "ms-appx:///Resources/Images/img_btn_add_printer_ok_pressed.png";
+        private readonly string _AddImageNormal = "ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png";
+        private readonly string _AddPrinterOkImagePressed = "ms-appx:///Resources/Images/img_btn_add_printer_search_ok.scale-100.png";
 
 
         public string Name

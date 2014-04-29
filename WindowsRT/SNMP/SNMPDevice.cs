@@ -8,8 +8,8 @@ namespace SNMP
 {
     public class SNMPDevice
     {
-
-        public Action<string, bool> snmpControllerCallBackGetStatus { get; set; } //PrintersModule
+        
+        public Action<SNMPDevice> snmpControllerDeviceCallBack { get; set; } //PrintersModule
         public Action<string, string, bool, List<string>> snmpControllerCallBackGetCapability { get; set; }
 
         //NSString *ipAddress;
@@ -40,6 +40,8 @@ namespace SNMP
         //NSTimer *receiveTimeoutTimer;
         Timer receiveTimeoutTimer;
 
+        string[] requestMIBs;
+        bool DETECTALL = true;
     
 	    //__unsafe_unretained id<SNMPDeviceCapabilityDelegate> delegate;
 
@@ -93,6 +95,26 @@ namespace SNMP
                 macAddress = null;
                 //[self setSysName:nil];
                 sysName = null;
+
+
+                DETECTALL = true;
+
+                requestMIBs = new string[]
+                {
+                    SNMPConstants.MIB_GETNEXTOID_BOOKLET,
+                    SNMPConstants.MIB_GETNEXTOID_STAPLER,
+                    SNMPConstants.MIB_GETNEXTOID_4HOLES,
+                    SNMPConstants.MIB_GETNEXTOID_3HOLES,
+                    SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
+                    SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
+                    SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
+                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK
+                };
+
+                udpSocket = new UDPSocket();
+                udpSocket.assignDelegate(receiveData);
+
+                udpSocket.assignTimeoutDelegate(timeout);
         
                 //[self setDelegate:nil];
             }
@@ -123,10 +145,7 @@ namespace SNMP
             tempCapabilyLevels.Clear();
     
             //udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-            udpSocket = new UDPSocket();
-            udpSocket.assignDelegate(receiveData);
-
-            udpSocket.assignTimeoutDelegate(timeout);
+            
 
             //[udpSocket enableBroadcast:YES error:nil];
     
@@ -139,12 +158,28 @@ namespace SNMP
             }
             */
             //[udpSocket beginReceiving:&err];
-            udpSocket.beginReceiving();
+            //udpSocket.beginReceiving();
     
             //NSArray *varbindOIDs = [NSArray arrayWithObjects:MIB_GETNEXTOID_PRINTERINTERPRETERLANG, MIB_GETNEXTOID_PRINTERINTERPRETERLANGLEVEL, nil];
             string[] varvindOIDs = {SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANG, SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGLEVEL/*, null*/};
+
+            //marjun
+            //DETECTALL = true;
+            //string[] varbindOIDs =
+            //{
+            //    SNMPConstants.MIB_GETNEXTOID_SYSID,
+            //    (DETECTALL ?  SNMPConstants.MIB_GETNEXTOID_DESC : SNMPConstants.MIB_GETNEXTOID_GENERALNAME),
+            //    SNMPConstants.MIB_GETNEXTOID_BOOKLET,
+            //    SNMPConstants.MIB_GETNEXTOID_STAPLER,
+            //    SNMPConstants.MIB_GETNEXTOID_4HOLES,
+            //    SNMPConstants.MIB_GETNEXTOID_3HOLES,
+            //    SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
+            //    SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
+            //    SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
+            //    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK
+            //};
             //SNMPMessage *message = [[SNMPMessage alloc] initRequestWithVersion:SNMP_V1 withCommunityString:self.communityName withRequestPDUType:SNMP_GET_NEXT_REQUEST withRequestId:1 varbindOids:varbindOIDs];
-            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1,communityName,SNMPConstants.SNMP_GET_NEXT_REQUEST,1,varvindOIDs);
+            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, requestMIBs);
     
             //NSData *data = [message generateDataForTransmission];
             byte[] data = message.generateDataForTransmission();
@@ -187,8 +222,11 @@ namespace SNMP
             //callback to SNMPController
             System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
             System.Diagnostics.Debug.WriteLine(ipAddress);
-            if (snmpControllerCallBackGetStatus != null)
-                snmpControllerCallBackGetStatus(ipAddress, true);
+            if (snmpControllerDeviceCallBack != null)
+            {
+                snmpControllerDeviceCallBack(this);
+            }
+                //snmpControllerCallBackGetStatus(ipAddress, true);
 
 
             if (snmpControllerCallBackGetCapability != null)
@@ -200,8 +238,16 @@ namespace SNMP
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice failed for ip: ");
             System.Diagnostics.Debug.WriteLine(ipAddress);
+
+            if (snmpControllerDeviceCallBack != null)
+            {
+                snmpControllerDeviceCallBack(this);
+            }
+
+
+
             //callback to SNMPController
-            snmpControllerCallBackGetStatus(ipAddress, false);
+            //snmpControllerCallBackGetStatus(ipAddress, false);
             /*
             [udpSocket pauseReceiving];
     
@@ -249,67 +295,28 @@ namespace SNMP
         
                 //only 1 data
                 //if ([values count] == 2)
-                if (values.Count == 2)
+                if (values.Count == 8)
                 {
-                    //NSDictionary *dictionary = [values objectAtIndex:0];
-                    Dictionary<string,string> dictionary = values[0];
-                    //NSString *oid = [dictionary objectForKey:KEY_OID];
-                    string oid = dictionary[SNMPConstants.KEY_OID];
-                    //NSString *val = [dictionary objectForKey:KEY_VAL];
-                    string val = dictionary[SNMPConstants.KEY_VAL];
-            
-                    //NSDictionary *dictionaryForLangLevel = [values objectAtIndex:1];
-                    Dictionary<string,string> dictionaryForLangLevel = values[1];
-                    //NSString *oidForLangLevel = [dictionaryForLangLevel objectForKey:KEY_OID];
-                    string oidForLangLevel = dictionaryForLangLevel[SNMPConstants.KEY_OID];
-                    //NSString *valForLangLevel = [dictionaryForLangLevel objectForKey:KEY_VAL];
-                    string valForLangLevel = dictionaryForLangLevel[SNMPConstants.KEY_VAL];
-            
-                    //valForLangLevel = valForLangLevel == nil ? @"-": valForLangLevel;
-                    valForLangLevel = valForLangLevel == null ? "-": valForLangLevel;
-            
-                    //if ([oid hasPrefix:MIB_GETNEXTOID_PRINTERINTERPRETERLANG]) // We expect the same number of interpreterlang and interpreterlanglevel
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANG))
+                    //add the requested mibs to temp capabilites.
+                    for (int i = 0; i < values.Count; i++)
                     {
-                        if (val != null)
-                        {
-                            //[tempCapabilities addObject:val];
-                            tempCapabilities.Add(val);
-                            //[tempCapabilyLevels addObject:valForLangLevel];
-                            tempCapabilyLevels.Add(valForLangLevel);
+                        Dictionary<string, string> dictionary = values[i];
 
-                            System.Diagnostics.Debug.WriteLine(val);
-                    
-                            //NSArray *varbindOIDs = [NSArray arrayWithObjects:oid, oidForLangLevel, nil];
-                            string[] varbindOIDS = {oid, oidForLangLevel};
-                            //SNMPMessage *message = [[SNMPMessage alloc] initRequestWithVersion:SNMP_V1 withCommunityString:self.communityName withRequestPDUType:SNMP_GET_NEXT_REQUEST withRequestId:1 varbindOids:varbindOIDs];
-                            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, this.communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, varbindOIDS);
-                    
-                            //NSData *data = [message generateDataForTransmission];
-                            byte[] data = message.generateDataForTransmission();
-                    
-                            //[udpSocket sendData:data toHost:ipAddress port:SNMP_PORT withTimeout:SNMP_GETCAPABILITY_SEND_TIMEOUT tag:1];
-                            udpSocket.sendData(data,ipAddress,SNMPConstants.SNMP_PORT,SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT,1);
-                        }
-                        else
+                        string oid = dictionary[SNMPConstants.KEY_OID];
+                        string val = dictionary[SNMPConstants.KEY_VAL];
+
+                        if (oid.StartsWith(requestMIBs[i]))
                         {
-                            //[self endRetrieveCapabilitiesSuccess];
-                            this.endRetrieveCapabilitiesSuccess();
+                            tempCapabilities.Add(val);
                         }
+                        i++;
                     }
-                    else {
-                        //[self endRetrieveCapabilitiesSuccess];
-                        this.endRetrieveCapabilitiesSuccess();
-                    }
-                }
-                else {
-                    //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Unexpected Result" code:SNMPRequestUnexpectedResponseError userInfo:nil]];
-                    this.endRetrieveCapabilitiesFailed();
+                
+                    this.endRetrieveCapabilitiesSuccess();
                 }
             }
-            else
-            {
-                //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Invalid Data" code:SNMPRequestInvalidDataError userInfo:nil]];
+            else {
+                //[self endRetrieveCapabilitiesFailed:[NSError errorWithDomain:@"Unexpected Result" code:SNMPRequestUnexpectedResponseError userInfo:nil]];
                 this.endRetrieveCapabilitiesFailed();
             }
         }
@@ -320,11 +327,23 @@ namespace SNMP
             {
                 System.Diagnostics.Debug.WriteLine("Closing udpSocket");
                 udpSocket.close();
+
+                if (snmpControllerDeviceCallBack != null)
+                {
+                    //for testing
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    //capabilitiesList.Add("false");
+                    snmpControllerDeviceCallBack(this);
+                }
             }
         }
 
-
-        ////
         public void setIpAddress(string s){
             ipAddress = s;
         }

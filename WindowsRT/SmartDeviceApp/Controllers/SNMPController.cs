@@ -15,6 +15,7 @@ namespace SmartDeviceApp.Controllers
         public Action<string, string, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
         public Action<PrinterSearchItem> printerControllerDiscoverCallback { get; set; }
         public Action<string> printerControllerTimeout { get; set; }
+        public Action<string> printerControllerAddTimeout { get; set; }
 
         public List<Printer> printerList {get; set;}
         private bool waiting;
@@ -31,7 +32,7 @@ namespace SmartDeviceApp.Controllers
             System.Diagnostics.Debug.WriteLine(ip);
             SNMPDevice device = new SNMPDevice(ip);
             waiting = true;
-            device.snmpControllerCallBackGetStatus = new Action<string, bool>(handlePrinterStatus);
+            //device.snmpControllerCallBackGetStatus = new Action<string, bool>(handlePrinterStatus);
             device.beginRetrieveCapabilities();            
         }
 
@@ -58,7 +59,7 @@ namespace SmartDeviceApp.Controllers
             SNMPDiscovery discovery = new SNMPDiscovery("public", ip);
             discovery.FromPrinterSearch = false;
             discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleGetDevice);
-            discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
+            discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleAddTimeout);
             discovery.startDiscover();
         }
 
@@ -79,7 +80,7 @@ namespace SmartDeviceApp.Controllers
 
         public void  startDiscover()
         {
-            SNMPDiscovery discovery = new SNMPDiscovery("public", "192.168.0.255");
+            SNMPDiscovery discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
             //add callback
             discovery.FromPrinterSearch = true;
             discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
@@ -102,6 +103,11 @@ namespace SmartDeviceApp.Controllers
          * Timeout
          * 
          * */
+        private void handleAddTimeout(string ip)
+        {
+            printerControllerAddTimeout(ip);
+        }
+
         private void handleTimeout(string ip)
         {
             printerControllerTimeout(ip);

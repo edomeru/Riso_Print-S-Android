@@ -134,8 +134,8 @@
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
-    <Compile Include="Controls\KeyDropDownListControl.xaml.cs">
-      <DependentUpon>KeyDropDownListControl.xaml</DependentUpon>
+    <Compile Include="Controls\PortItemControl.xaml.cs">
+      <DependentUpon>PortItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\KeyImageControl.xaml.cs">
       <DependentUpon>KeyImageControl.xaml</DependentUpon>
@@ -442,7 +442,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\KeyDropDownListControl.xaml">
+    <Page Include="Controls\PortItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
