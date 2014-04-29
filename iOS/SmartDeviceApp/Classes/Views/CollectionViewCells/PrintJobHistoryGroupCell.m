@@ -156,7 +156,10 @@
 
 - (void)putGroupName:(NSString*)name
 {
-    [self.groupName setTitle:name forState:UIControlStateNormal];
+    if (name == nil || [name isEqualToString:@""])
+        [self.groupName setTitle:NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name") forState:UIControlStateNormal];
+    else
+        [self.groupName setTitle:name forState:UIControlStateNormal];
 }
 
 - (void)putGroupIP:(NSString*)ip

@@ -242,7 +242,10 @@
         
         // check handling for nil/empty names
         if (![group.groupName isEqualToString:VALID_PRINTER_NAME])
-            GHAssertTrue([group.groupName isEqualToString:NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name")], @"");
+        {
+            GHAssertTrue(group.groupName == nil || [group.groupName isEqualToString:@""],
+                         @"invalid printer should have either nil or @\"\" name to be properly handled");
+        }
     }
 }
 
