@@ -97,12 +97,11 @@
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
-    // delete the test printer and the test jobs
-    
+    // remove all test data
     [DatabaseManager discardChanges];
-    
     pm = [PrinterManager sharedPrinterManager];
-    GHAssertTrue([pm deletePrinterAtIndex:0], @"check functionality of PrinterManager");
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"check functionality of PrinterManager");
 }
 
 // Run before each test method

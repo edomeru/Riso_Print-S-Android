@@ -115,7 +115,11 @@
         for (NSUInteger i = 0; i < group.countPrintJobs; i++)
         {
             PrintJob* job = [group getPrintJobAtIndex:i];
+            GHTestLog(@"--- %@", job.name);
+            
             GHAssertTrue([job.name hasPrefix:TEST_JOB_NAME], @"");
+            NSString* findString = [NSString stringWithFormat:@"%d-", printerIdx+1];
+            GHAssertTrue([job.name rangeOfString:findString].location != NSNotFound, @"");
         }
     }
 }
@@ -230,14 +234,13 @@
     GHAssertTrue(countPrintJobHistoryGroups == 3, @"there should be three groups");
     
     // check groups
-    GHTestLog(@"-- check if jobs for the two invalids were differentiated");
     for (NSUInteger i = 0; i < 3; i++)
     {
         PrintJobHistoryGroup* group = [listPrintJobHistoryGroups objectAtIndex:i];
         GHTestLog(@"-- group=[%@]: #jobs=[%lu]", group.groupName, (unsigned long)group.countPrintJobs);
         GHAssertTrue(group.countPrintJobs == 2, @"there should be two jobs per group");
         
-        // check handling for nil/empty name
+        // check handling for nil/empty names
         if (![group.groupName isEqualToString:VALID_PRINTER_NAME])
             GHAssertTrue([group.groupName isEqualToString:NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name")], @"");
     }
