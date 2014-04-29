@@ -131,7 +131,6 @@ namespace SmartDeviceApp.Controllers
                     return;
                 }
 
-                // TODO: Verify bindings
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
                 if (printJobGroup != null) // Group already exists

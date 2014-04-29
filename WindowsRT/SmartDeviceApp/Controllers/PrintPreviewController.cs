@@ -1708,23 +1708,39 @@ namespace SmartDeviceApp.Controllers
             if (isOnline)
             {
                 // TODO: Prepare for printing (DirectPrintController)
+                // Display progress dialog ?
                 // Pass DocumentController.Instance.FileName, DocumentController.Instance.PdfFile and _selectedPrinter
 
-                // Save to Jobs
-                PrintJob printJob = new PrintJob()
-                {
-                    PrinterId = _selectedPrinter.Id,
-                    Name = DocumentController.Instance.FileName,
-                    Date = DateTime.Now,
-                    Result = (int)PrintJobResult.Success  // TODO: Update actual result
-                };
-                JobController.Instance.SavePrintJob(printJob);
-
-                // TODO: Clean up temp files, close preview and go to home
+                // TODO: Remove the following line
+                UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));
             }
             else
             {
                 // TODO: Display error message
+            }
+        }
+
+        public void UpdatePrintJobProgress(int progress)
+        {
+            // TODO: Apply value to progress dialog
+        }
+
+        public void UpdatePrintJobStatus(string name, DateTime date, int result)
+        {
+            PrintJob printJob = new PrintJob()
+            {
+                PrinterId = _selectedPrinter.Id,
+                Name = name,
+                Date = date,
+                Result = result
+            };
+
+            JobController.Instance.SavePrintJob(printJob);
+
+            if (result == (int)PrintJobResult.Success)
+            {
+                // TODO: await Cleanup();
+                // TODO: Close preview and go to home
             }
         }
 

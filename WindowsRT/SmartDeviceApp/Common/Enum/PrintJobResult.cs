@@ -14,7 +14,7 @@ namespace SmartDeviceApp.Common.Enum
 {
     public enum PrintJobResult
     {
-        Error,
-        Success
+        Success,
+        Error
     }
 }
