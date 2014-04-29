@@ -25,12 +25,6 @@ typedef enum
 @interface PListHelper : NSObject
 
 /**
- Wrapper for reading the default print settings for a new printer.
- @return NSDictionary*
- */
-+ (NSDictionary*)readDefaultPrintSettings;
-
-/**
  Wrapper for reading an unsigned int value from the property list.
  @param kPlistUintVal key
  @return value for the specified key
@@ -44,16 +38,4 @@ typedef enum
  */
 + (BOOL)readBool:(kPlistBoolVal)type;
 
-/**
- Wrapper for reading the Generic Settings of the Application
- @return NSDictionary*
- */
-+ (NSDictionary*)readApplicationSettings;
-
-/**
- Wrapper for setting the new values for the Application Settings
- @param settings dictionary
-
- */
-+(void) setApplicationSettings:(NSDictionary *) appSettingsDict;
 @end
