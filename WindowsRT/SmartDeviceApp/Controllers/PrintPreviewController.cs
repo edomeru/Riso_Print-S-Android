@@ -23,6 +23,7 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
+using Windows.ApplicationModel.Resources;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -100,8 +101,6 @@ namespace SmartDeviceApp.Controllers
 
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
-
-                _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
 
                 UpdatePreviewInfo();
                 _printPreviewViewModel.SetInitialPageIndex(0);
@@ -229,6 +228,17 @@ namespace SmartDeviceApp.Controllers
             {
                 // Use dummy printer (meaning no selected printer)
                 _selectedPrinter = new Printer();
+            }
+
+            if (_selectedPrinter.Id == -1)
+            {
+                // Temporary only
+                // TODO: Verify if accessing resources is allowed here in Controllers
+                _printSettingsViewModel.PrinterName = new ResourceLoader().GetString("IDS_LBL_CHOOSE_PRINTER");
+            }
+            else
+            {
+                _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
             }
 
             _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
