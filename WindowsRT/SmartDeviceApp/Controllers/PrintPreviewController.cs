@@ -2296,6 +2296,8 @@ namespace SmartDeviceApp.Controllers
                         {
                             _printPreviewViewModel.RightPageImage = bitmapImage;
                             _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
+
+                            _printPreviewViewModel.InitializeGestures();
                         }
                         else if (!isRightSide && !isBackSide)
                         {

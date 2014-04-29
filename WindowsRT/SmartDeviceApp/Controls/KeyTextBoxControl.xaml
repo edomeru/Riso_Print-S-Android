@@ -4,8 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Controls"
     xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:behaviors="using:SmartDeviceApp.Behaviors"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"   
     SubTextVisibility="Collapsed"
     ValueVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
@@ -17,6 +19,10 @@
         <TextBox x:Name="textBox" 
                  Loaded="OnTextBoxLoaded"
                  Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
-                 Style="{StaticResource STYLE_ListValue_TextBox}"/>
+                 Style="{StaticResource STYLE_ListValue_TextBox}">
+            <Interactivity:Interaction.Behaviors>
+                <behaviors:NumericTextBoxBehavior/>
+            </Interactivity:Interaction.Behaviors>
+        </TextBox>            
     </controls:KeyValueControl.ValueContent>
 </controls:KeyValueControl>
