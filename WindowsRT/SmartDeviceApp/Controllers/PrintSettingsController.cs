@@ -256,6 +256,18 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
                 }
             }
+            // TODO: Need to create a generic function to remove print settings (type list) with empty options
+            if (!(_printer.EnabledTrayFacedown || _printer.EnabledTrayAutostack ||
+                  _printer.EnabledTrayTop || _printer.EnabledTrayStack))
+            {
+                // Remove output tray print setting since all options are off
+                PrintSetting outputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+                if (outputTrayPrintSetting != null)
+                {
+                    RemovePrintSetting(outputTrayPrintSetting);
+                }
+            }
         }
 
         /// <summary>

@@ -116,6 +116,14 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public SelectPrinterViewModel SelectPrinterViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SelectPrinterViewModel>();
+            }
+        }
+
         public PrintSettingOptionsViewModel PrintSettingOptionsViewModel
         {
             get
@@ -149,6 +157,7 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<LegalViewModel>();
             SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
+            SimpleIoc.Default.Register<SelectPrinterViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();
         }
 

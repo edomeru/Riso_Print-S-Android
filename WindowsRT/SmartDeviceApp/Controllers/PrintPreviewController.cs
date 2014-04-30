@@ -31,12 +31,14 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
-        public delegate Task GoToPageEventHandler(int pageIndex);
+        public delegate void GoToPageEventHandler(int pageIndex);
         public delegate void PrintSettingValueChangedEventHandler(PrintSetting printSetting,
             object value);
+        public delegate void SelectedPrinterChangedEventHandler(int printerId);
         public delegate void PrintEventHandler();
         private GoToPageEventHandler _goToPageEventHandler;
         private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
+        private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
         private PrintEventHandler _printEventHandler;
 
         public delegate void PageAreaGridLoadedEventHandler();
@@ -50,6 +52,7 @@ namespace SmartDeviceApp.Controllers
 
         private PrintSettingsController _printSettingsController;
         private PrintPreviewViewModel _printPreviewViewModel;
+        private SelectPrinterViewModel _selectPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
         private Printer _selectedPrinter;
         private PrintSettings _currPrintSettings;
@@ -69,6 +72,7 @@ namespace SmartDeviceApp.Controllers
         private PrintPreviewController()
         {
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
+            _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
         }
 
@@ -89,6 +93,7 @@ namespace SmartDeviceApp.Controllers
         {
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
+            _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _printEventHandler = new PrintEventHandler(Print);
 
             PageAreaGridLoaded += InitializeGestures;
@@ -99,19 +104,20 @@ namespace SmartDeviceApp.Controllers
             {
                 _previewPageTotal = DocumentController.Instance.PageCount;
 
+                // TODO: This is only for testing. Printers should come from PrinterController
+                new ViewModelLocator().SelectPrinterViewModel.Printers = await DatabaseController.Instance.GetPrinters();
+
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                UpdatePreviewInfo();
+                _currPreviewPageIndex = 0;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
-                PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
 
                 // TODO: Register to print button event only when there is a selected printer
                 _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
-
-                await GoToPage(0);
             }
             else
             {
@@ -130,6 +136,7 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             }
             PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
@@ -163,7 +170,7 @@ namespace SmartDeviceApp.Controllers
         /// Event handler for selected printer
         /// </summary>
         /// <param name="printerId"></param>
-        public async void SelectedPrinterChangedEventHandler(int printerId)
+        public async void SelectedPrinterChanged(int printerId)
         {
             await SetSelectedPrinterAndPrintSettings(printerId);
         }
@@ -200,6 +207,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task GetDefaultPrinter()
         {
+            // TODo: Check if this function should use PrinterController (avoid conflicting roles)
             // Get default printer
             DefaultPrinter defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
 
@@ -230,19 +238,15 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter = new Printer();
             }
 
-            if (_selectedPrinter.Id == -1)
-            {
-                // Temporary only
-                // TODO: Verify if accessing resources is allowed here in Controllers
-                _printSettingsViewModel.PrinterName = new ResourceLoader().GetString("IDS_LBL_CHOOSE_PRINTER");
-            }
-            else
-            {
-                _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
-            }
-
+            _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
+            PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
             _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
             _currPrintSettings = await _printSettingsController.GetCurrentPrintSettings();
+            ReloadCurrentPage();
+
+            PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+
+            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
         }
 
         #endregion Printer and Print Settings Initialization
@@ -333,13 +337,9 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            // Generate PreviewPages again
             if (refreshPreview)
             {
-                await ClearPreviewPageListAndImages();
-                UpdatePreviewInfo();
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
-                await LoadPage(_currPreviewPageIndex, false);
+                ReloadCurrentPage();
             }
         }
 
@@ -371,13 +371,9 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            // Generate PreviewPages again
             if (refreshPreview)
             {
-                await ClearPreviewPageListAndImages();
-                UpdatePreviewInfo();
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
-                await LoadPage(_currPreviewPageIndex, false);
+                ReloadCurrentPage();
             }
         }
 
@@ -415,6 +411,10 @@ namespace SmartDeviceApp.Controllers
             if (_printPreviewViewModel.PageTotal != _previewPageTotal)
             {
                 _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+                if (_currPreviewPageIndex > _previewPageTotal)
+                {
+                    _currPreviewPageIndex = (int)_previewPageTotal - 1;
+                }
                 _printPreviewViewModel.PageTotal = _previewPageTotal;
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
             }
@@ -446,10 +446,18 @@ namespace SmartDeviceApp.Controllers
         /// Event handler for page slider is changed
         /// </summary>
         /// <param name="rightPageIndex">requested right page index based on slider value</param>
-        /// <returns>task</returns>
-        private async Task GoToPage(int rightPageIndex)
+        public async void GoToPage(int rightPageIndex)
         {
             await LoadPage(rightPageIndex, true);
+        }
+
+        private async Task ReloadCurrentPage()
+        {
+            // Generate PreviewPages again
+            await ClearPreviewPageListAndImages();
+            UpdatePreviewInfo();
+            _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
+            await LoadPage(_currPreviewPageIndex, false);
         }
 
         /// <summary>
@@ -605,7 +613,7 @@ namespace SmartDeviceApp.Controllers
         /// It is assumed here that required LogicalPage images are already done
         /// by DocumentController.
         /// </summary>
-        private async void GenerateNearPreviewPages()
+        private async Task GenerateNearPreviewPages()
         {
             PreviewPage previewPage = null;
             if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))

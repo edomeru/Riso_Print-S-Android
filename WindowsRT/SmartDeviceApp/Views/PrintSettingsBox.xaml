@@ -74,7 +74,7 @@
         </ControlTemplate>
     </Grid.Resources>
 
-    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">        
+    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <Button x:Name="printButton"
                 Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                 Command="{Binding PrintCommand}" 
@@ -82,7 +82,8 @@
                 Width="{Binding Width, ElementName=printSettingsBox}"/>
         <controls:KeyValueControl x:Name="printerButton"
                                   Text="{Binding Source=IDS_LBL_PRINTER_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
-                                  ValueText="{Binding PrinterName}"
+                                  Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
+                                  ValueText="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}}"
                                   IconVisibility="Collapsed"
                                   RightButtonVisibility="Collapsed"
                                   SeparatorVisibility="Collapsed"
