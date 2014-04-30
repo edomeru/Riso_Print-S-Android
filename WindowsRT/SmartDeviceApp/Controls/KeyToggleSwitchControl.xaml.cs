@@ -31,7 +31,7 @@ namespace SmartDeviceApp.Controls
         private static bool _isToggled;
 
         public static readonly DependencyProperty IsOnProperty =
-            DependencyProperty.Register("IsOn", typeof(string), typeof(KeyToggleSwitchControl), new PropertyMetadata(false, SetIsOn));
+            DependencyProperty.Register("IsOn", typeof(bool), typeof(KeyToggleSwitchControl), new PropertyMetadata(false, SetIsOn));
 
         // Toggles the switch when any part of the button is tapped
         public ICommand ToggleSwitchCommand
