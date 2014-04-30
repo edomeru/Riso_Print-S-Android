@@ -81,11 +81,13 @@
                 Template="{StaticResource TEMPLATE_HeaderButton}"
                 Width="{Binding Width, ElementName=printSettingsBox}"/>
         <controls:KeyValueControl x:Name="printerButton"
-                                  Text="{Binding Source=IDS_LBL_PRINTER_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
+                                  Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                   Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
                                   ValueText="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}, ConverterParameter=true}"
                                   IconVisibility="Collapsed"
-                                  RightButtonVisibility="Collapsed"
+                                  RightButtonVisibility="Visible"
+                                  RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
+                                  RightPressedImage="ms-appx:///Resources/Images/img_btn_submenu_pressed.png"
                                   SeparatorVisibility="Collapsed"
                                   Width="{Binding Width, ElementName=printSettingsBox}"/>
         <ListView ItemsSource="{Binding Path=PrintSettingsList}"
