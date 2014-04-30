@@ -82,6 +82,12 @@ namespace SmartDeviceApp.Common.Utilities
                         break;
                     }
 
+                    case PrintSettingsPaneMode.SelectPrinter:
+                    {
+                        VisualStateManager.GoToState((UserControl)obj, "SelectPrinterVisibleState", true);
+                        break;
+                    }
+
                     case PrintSettingsPaneMode.PrintSettingOptions:
                     {
                         VisualStateManager.GoToState((UserControl)obj, "PrintSettingOptionsVisibleState", true);

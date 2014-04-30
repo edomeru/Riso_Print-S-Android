@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\PrintJobResult.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
     <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
@@ -172,6 +174,7 @@
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintSettingToSeparatorVisibilityConverter.cs" />
@@ -181,6 +184,7 @@
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingToValueConverter.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverter.cs" />
+    <Compile Include="Converters\PrinterNameToTextConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
@@ -242,6 +246,7 @@
     <Compile Include="ViewModels\AddPrinterViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\SearchPrinterViewModel.cs" />
+    <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
     <Compile Include="ViewModels\ViewControlViewModel.cs" />
     <Compile Include="ViewModels\JobsViewModel.cs" />
     <Compile Include="ViewModels\HelpViewModel.cs" />
@@ -295,6 +300,9 @@
     </Compile>
     <Compile Include="Views\SearchPrinterPane.xaml.cs">
       <DependentUpon>SearchPrinterPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectPrinterBox.xaml.cs">
+      <DependentUpon>SelectPrinterBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -565,6 +573,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SearchPrinterPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectPrinterBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,12 +7,40 @@ using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
+using System.Threading.Tasks;
 
 namespace SmartDeviceAppTests.Common.Utilities
 {
     [TestClass]
     public class DefaultsUtilityTest
     {
+
+        [TestMethod]
+        public async Task Test_LoadDefaultsFromSqlScript_Null()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+        }
+
+        [TestMethod]
+        public void Test_GetDefaultValueFromSqlScript_NullKey_Boolean()
+        {
+            bool result = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(null, ListValueType.Boolean);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void Test_GetDefaultValueFromSqlScript_NullKey_Int()
+        {
+            int result = (int)DefaultsUtility.GetDefaultValueFromSqlScript(null, ListValueType.Int);
+            Assert.AreEqual(-1, result);
+        }
+
+        [TestMethod]
+        public void Test_GetDefaultValueFromSqlScript_NullKey_String()
+        {
+            string result = (string)DefaultsUtility.GetDefaultValueFromSqlScript(null, ListValueType.String);
+            Assert.IsNull(result);
+        }
 
         [TestMethod]
         public void Test_GetDefaultPrintSettings_Null()
