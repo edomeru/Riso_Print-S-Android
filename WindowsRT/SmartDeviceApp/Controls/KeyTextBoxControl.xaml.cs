@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -12,16 +14,21 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Command;
 
 namespace SmartDeviceApp.Controls
 {
     public sealed partial class KeyTextBoxControl : KeyValueControl
     {
         private bool _isTextBoxLoaded;
+        private ICommand _setFocus;
+        private TextBox _textBox;
 
         public KeyTextBoxControl()
         {
             this.InitializeComponent();
+            _textBox = this.textBox;
+            this.Command = SetFocus;
         }
 
         public new static readonly DependencyProperty ValueTextProperty =
@@ -60,6 +67,22 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextBoxMaxLengthProperty, value); }
         }
 
+        // Sets the focus to the textbox when any part of the button is tapped
+        public ICommand SetFocus
+        {
+            get
+            {
+                if (_setFocus == null)
+                {
+                    _setFocus = new RelayCommand(
+                        () => SetFocusExecute(),
+                        () => true
+                    );
+                }
+                return _setFocus;
+            }
+        }
+
         private void OnTextBoxLoaded(object obj, RoutedEventArgs args)
         {
             if (!_isTextBoxLoaded)
@@ -83,6 +106,19 @@ namespace SmartDeviceApp.Controls
         private static void SetValueText(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             ((KeyTextBoxControl)obj).textBox.Text = e.NewValue.ToString();
+        }
+
+        private void SetFocusExecute()
+        {
+            _textBox.Focus(FocusState.Programmatic);
+        }
+
+        private void OnKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                var scope = FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+            }
         }
     }
 }

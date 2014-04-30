@@ -40,6 +40,10 @@
     <x:Double x:Key="SIZE_ListValue_TextboxWidth_Short">80</x:Double>
     <x:Double x:Key="SIZE_ListValue_TextboxWidth_Long">200</x:Double>
     <x:Double x:Key="SIZE_ProgressRing">50</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonWidth_Long">150</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonHeight_Long">60</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonWidth_Short">110</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonHeight_Short">50</x:Double>
     <!-- APP THEME CONSTANTS END-->
 
     <!-- APP CONVERTERS START -->

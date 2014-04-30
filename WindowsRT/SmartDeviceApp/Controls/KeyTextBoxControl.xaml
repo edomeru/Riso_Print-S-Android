@@ -18,6 +18,7 @@
     <controls:KeyValueControl.ValueContent>
         <TextBox x:Name="textBox" 
                  Loaded="OnTextBoxLoaded"
+                 KeyUp="OnKeyUp"
                  Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
                  Style="{StaticResource STYLE_ListValue_TextBox}">
             <Interactivity:Interaction.Behaviors>
