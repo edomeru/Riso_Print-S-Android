@@ -71,7 +71,7 @@ namespace SmartDeviceApp.Behaviors
                     // Restore the last valid value.
                     var caretPosition = textBox.SelectionStart;
                     textBox.Text = lastValidText;
-                    textBox.SelectionStart = caretPosition - 1;
+                    textBox.SelectionStart = (caretPosition > 0) ? caretPosition - 1 : 0;
                 }
             }
         }

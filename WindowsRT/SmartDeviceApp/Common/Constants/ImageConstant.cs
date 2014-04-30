@@ -17,9 +17,13 @@ namespace SmartDeviceApp.Common.Constants
     public static class ImageConstant
     {
 
+        #region Print Preview Page
+
         public const double BASE_DPI = 96.0;  // 96.0 DPI = 1 DIP
         public static double DpiScaleFactor =
             (int)DisplayInformation.GetForCurrentView().LogicalDpi / BASE_DPI;
+
+        #endregion Print Preview Page
 
         #region Default Image Sizes
 

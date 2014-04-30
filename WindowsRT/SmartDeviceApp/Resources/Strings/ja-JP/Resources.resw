@@ -1,42 +1,578 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<root>	
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_APP_NAME" xml:space="preserve">
+    <value>SmartDeviceApp</value>
+  </data>
+  <data name="IDS_LBL_BACK" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="IDS_LBL_SAVE" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="IDS_LBL_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="IDS_LBL_CANCEL" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="IDS_LBL_OPEN_IN_IOS" xml:space="preserve">
+    <value>ドキュメントを選択してください。</value>
+  </data>
+  <data name="IDS_LBL_OPEN_IN_ANDROID" xml:space="preserve">
+    <value>ドキュメントを選択してください。</value>
+  </data>
+  <data name="IDS_LBL_OPEN_IN_WINRT" xml:space="preserve">
+    <value>ドキュメントを選択してください。</value>
+  </data>
+  <data name="IDS_LBL_HOME" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
+    <value>印刷プレビュー</value>
+  </data>
+  <data name="IDS_LBL_PRINTERS" xml:space="preserve">
+    <value>プリンター</value>
+  </data>
+  <data name="IDS_LBL_PRINT_JOB_HISTORY" xml:space="preserve">
+    <value>印刷履歴</value>
+  </data>
+  <data name="IDS_LBL_SETTINGS" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="IDS_LBL_ADD_PRINTER" xml:space="preserve">
+    <value>プリンターの追加</value>
+  </data>
+  <data name="IDS_LBL_SEARCH_PRINTERS" xml:space="preserve">
+    <value>プリンター検索</value>
+  </data>
+  <data name="IDS_LBL_SAVED_PRINTERS" xml:space="preserve">
+    <value>登録プリンター</value>
+  </data>
+  <data name="IDS_LBL_DEFAULT_PRINTER" xml:space="preserve">
+    <value>デフォルトプリンター</value>
+  </data>
+  <data name="IDS_LBL_DELETE" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="IDS_LBL_PULL_TO_REFRESH" xml:space="preserve">
+    <value>下に引っ張って更新</value>
+  </data>
+  <data name="IDS_LBL_RELEASE_TO_REFRESH" xml:space="preserve">
+    <value>指を離して更新</value>
+  </data>
+  <data name="IDS_LBL_REFRESHING" xml:space="preserve">
+    <value>更新中…</value>
+  </data>
+  <data name="IDS_LBL_LAST_UPDATED" xml:space="preserve">
+    <value>アップデート: %@</value>
+  </data>
+  <data name="IDS_LBL_SET_DEFAULT_PRINTER" xml:space="preserve">
+    <value>デフォルトプリンターに指定</value>
+  </data>
+  <data name="IDS_LBL_ADD_SUCCESSFUL" xml:space="preserve">
+    <value>追加に成功しました</value>
+  </data>
+  <data name="IDS_LBL_DELETE_ALL" xml:space="preserve">
+    <value>全て削除</value>
+  </data>
+  <data name="IDS_LBL_DELETE_JOBS_TITLE" xml:space="preserve">
+    <value>履歴を削除</value>
+  </data>
+  <data name="IDS_LBL_DELETE_JOBS_MSG" xml:space="preserve">
+    <value>本当に削除してよろしいですか？</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_INFO" xml:space="preserve">
+    <value>プリンター情報</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_NAME" xml:space="preserve">
+    <value>プリンター名</value>
+  </data>
+  <data name="IDS_LBL_IP_ADDRESS" xml:space="preserve">
+    <value>IPアドレス</value>
+  </data>
+  <data name="IDS_LBL_PORT" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="IDS_LBL_PORT_RAW" xml:space="preserve">
+    <value>Raw</value>
+  </data>
+  <data name="IDS_LBL_PORT_LPR" xml:space="preserve">
+    <value>LPR</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_STATUS" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_STATUS_ONLINE" xml:space="preserve">
+    <value>オンライン</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_STATUS_OFFLINE" xml:space="preserve">
+    <value>オフライン</value>
+  </data>
+  <data name="IDS_LBL_DEFAULT_PRINT_SETTINGS" xml:space="preserve">
+    <value>デフォルト印刷設定</value>
+  </data>
+  <data name="IDS_LBL_CARD_READER_GROUP" xml:space="preserve">
+    <value>カードリーダー</value>
+  </data>
+  <data name="IDS_LBL_CARD_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_SEARCH_GROUP" xml:space="preserve">
+    <value>プリンター検索</value>
+  </data>
+  <data name="IDS_LBL_PRINTING" xml:space="preserve">
+    <value>印刷中…</value>
+  </data>
+  <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
+    <value>印刷設定</value>
+  </data>
+  <data name="IDS_LBL_PRINT" xml:space="preserve">
+    <value>印刷</value>
+  </data>
+  <data name="IDS_LBL_PRINTER" xml:space="preserve">
+    <value>プリンター</value>
+  </data>
+  <data name="IDS_LBL_CHOOSE_PRINTER" xml:space="preserve">
+    <value>Choose Printer</value>
+  </data>
+  <data name="IDS_LBL_BASIC" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE" xml:space="preserve">
+    <value>カラーモー</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_AUTO" xml:space="preserve">
+    <value>オート</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_FULLCOLOR" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
+    <value>白黒</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
+    <value>向き</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
+    <value>縦</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
+    <value>横</value>
+  </data>
+  <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
+    <value>印刷部数</value>
+  </data>
+  <data name="IDS_LBL_DUPLEX" xml:space="preserve">
+    <value>両面印刷</value>
+  </data>
+  <data name="IDS_LBL_DUPLEX_LONG_EDGE" xml:space="preserve">
+    <value>長辺とじ</value>
+  </data>
+  <data name="IDS_LBL_DUPLEX_SHORT_EDGE" xml:space="preserve">
+    <value>短辺とじ</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE" xml:space="preserve">
+    <value>出力用紙</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A3" xml:space="preserve">
+    <value>A3</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A3W" xml:space="preserve">
+    <value>A3W</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A4" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A5" xml:space="preserve">
+    <value>A5</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A6" xml:space="preserve">
+    <value>A6</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_B4" xml:space="preserve">
+    <value>B4</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_FOOLSCAP" xml:space="preserve">
+    <value>Foolscap</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_TABLOID" xml:space="preserve">
+    <value>Tabloid</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL" xml:space="preserve">
+    <value>Legal</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LETTER" xml:space="preserve">
+    <value>Letter</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_STATEMENT" xml:space="preserve">
+    <value>Statement</value>
+  </data>
+  <data name="IDS_LBL_SCALETOFIT" xml:space="preserve">
+    <value>用紙にフィット</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE" xml:space="preserve">
+    <value>用紙種類</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_ANY" xml:space="preserve">
+    <value>指定しない</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_PLAIN" xml:space="preserve">
+    <value>普通紙</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_IJPAPER" xml:space="preserve">
+    <value>ＩＪ用紙</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_MATTCOATED" xml:space="preserve">
+    <value>ＩＪマット用</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_HIGHQUALITY" xml:space="preserve">
+    <value>高品位紙</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_CARDIJ" xml:space="preserve">
+    <value>ＩＪハガキ</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_LWPAPER" xml:space="preserve">
+    <value>軽量紙</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY" xml:space="preserve">
+    <value>給紙トレイ選択</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_AUTO" xml:space="preserve">
+    <value>オート</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_STANDARD" xml:space="preserve">
+    <value>給紙台</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_TRAY1" xml:space="preserve">
+    <value>トレイ1</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_TRAY2" xml:space="preserve">
+    <value>トレイ2</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_TRAY3" xml:space="preserve">
+    <value>トレイ3</value>
+  </data>
+  <data name="IDS_LBL_LAYOUT" xml:space="preserve">
+    <value>レイアウト</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION" xml:space="preserve">
+    <value>面付け</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_2UP" xml:space="preserve">
+    <value>2面</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_4UP" xml:space="preserve">
+    <value>4面</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER" xml:space="preserve">
+    <value>面付け順</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_2UP_RL" xml:space="preserve">
+    <value>右から左へ(下から上へ)</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_2UP_LR" xml:space="preserve">
+    <value>左から右へ(上から下へ)</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_ULB" xml:space="preserve">
+    <value>左上から下へ</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_ULR" xml:space="preserve">
+    <value>左上から横へ</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_URB" xml:space="preserve">
+    <value>右上から下へ</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_URL" xml:space="preserve">
+    <value>右上から横へ</value>
+  </data>
+  <data name="IDS_LBL_FINISHING" xml:space="preserve">
+    <value>仕上げ</value>
+  </data>
+  <data name="IDS_LBL_SORT" xml:space="preserve">
+    <value>ソート</value>
+  </data>
+  <data name="IDS_LBL_SORT_PERPAGE" xml:space="preserve">
+    <value>ページごと</value>
+  </data>
+  <data name="IDS_LBL_SORT_PERCOPY" xml:space="preserve">
+    <value>部ごと</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET" xml:space="preserve">
+    <value>小冊子</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_FINISHING" xml:space="preserve">
+    <value>小冊子製本</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_FINISHING_FOLD" xml:space="preserve">
+    <value>折り</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" xml:space="preserve">
+    <value>折り＋ステープル</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
+    <value>小冊子レイアウト</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_LR" xml:space="preserve">
+    <value>左から右へ</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_RL" xml:space="preserve">
+    <value>右から左へ</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_TB" xml:space="preserve">
+    <value>上下開き</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
+    <value>とじ位置</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE_LEFT" xml:space="preserve">
+    <value>左側</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE_TOP" xml:space="preserve">
+    <value>上側</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE_RIGHT" xml:space="preserve">
+    <value>右側</value>
+  </data>
+  <data name="IDS_LBL_STAPLE" xml:space="preserve">
+    <value>ステープル</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_UPPERLEFT" xml:space="preserve">
+    <value>左1カ所</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_UPPERRIGHT" xml:space="preserve">
+    <value>右1カ所</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_2" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_1" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="IDS_LBL_PUNCH" xml:space="preserve">
+    <value>パンチ</value>
+  </data>
+  <data name="IDS_LBL_PUNCH_2HOLES" xml:space="preserve">
+    <value>2穴</value>
+  </data>
+  <data name="IDS_LBL_PUNCH_3HOLES" xml:space="preserve">
+    <value>3穴</value>
+  </data>
+  <data name="IDS_LBL_PUNCH_4HOLES" xml:space="preserve">
+    <value>4穴</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY" xml:space="preserve">
+    <value>排紙先</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_AUTO" xml:space="preserve">
+    <value>オート</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_FACEDOWN" xml:space="preserve">
+    <value>フェイスダウン排紙トレイ</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_FACEUP" xml:space="preserve">
+    <value>フェイスアップ排紙トレイ</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_TOP" xml:space="preserve">
+    <value>トップトレイ</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_STACKING" xml:space="preserve">
+    <value>スタックトレイ</value>
+  </data>
+  <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
+    <value>認証</value>
+  </data>
+  <data name="IDS_LBL_AUTHENTICATION_LOGINID" xml:space="preserve">
+    <value>ログインID</value>
+  </data>
+  <data name="IDS_LBL_AUTHENTICATION_PINCODE" xml:space="preserve">
+    <value>PINコード</value>
+  </data>
+  <data name="IDS_LBL_OFF" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="IDS_LBL_HELP" xml:space="preserve">
+    <value>ヘルプ</value>
+  </data>
+  <data name="IDS_LBL_LEGAL" xml:space="preserve">
+    <value>リーガル情報</value>
+  </data>
+  <data name="IDS_LBL_PRINT_JOB_SUCCESSFUL" xml:space="preserve">
+    <value>成功しました。</value>
+  </data>
+  <data name="IDS_LBL_PRINT_JOB_FAILED" xml:space="preserve">
+    <value>失敗しました。</value>
+  </data>
+  <data name="IDS_ERR_MSG_CANNOT_ADD_PRINTER" xml:space="preserve">
+    <value>このプリンターはすでに登録されています。</value>
+  </data>
+  <data name="IDS_ERR_MSG_INVALID_IP_ADDRESS" xml:space="preserve">
+    <value>IP Addressを確認してください。</value>
+  </data>
+  <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
+    <value>Saved Printer reached maximum count.</value>
+  </data>
+  <data name="IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
+    <value>Warning, Cannot find Printer.</value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value>パスワードが正しくありません。確認してください。</value>
+  </data>
+  <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
+    <value>プリンターを登録してください。</value>
+  </data>
+  <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
+    <value>ファイルが開けません。</value>
+  </data>
+  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
+    <value>ファイルサイズが大きすぎます。</value>
+  </data>
+  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value>デバイスの空き容量が不足しています。</value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
+    <value>暗号化PDFには対応していません。</value>
+  </data>
+  <data name="IDS_ERR_MSG_DELETE_FAILED" xml:space="preserve">
+    <value>削除に失敗しました。</value>
+  </data>
+  <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
+    <value>ネットワークに接続できません。</value>
+  </data>
+  <!-- NOT IN WORDING LIST - START -->
+  <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
+    <value>Page {0} / {1}</value>
+  </data>
+  <data name="IDS_LBL_JOBS" xml:space="preserve">
+    <value>Jobs</value>
+  </data>
+  <data name="IDS_LBL_READ_COMMUNITY_NAME" xml:space="preserve">
+    <value>Read Community Name</value>
+  </data>
+  <data name="IDS_LBL_NO_NAME" xml:space="preserve">
+    <value>No name</value>
+  </data>
+  <!-- NOT IN WORDING LIST - END -->
 </root>

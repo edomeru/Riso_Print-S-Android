@@ -50,6 +50,30 @@
                     </VisualTransition>
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="PrintSettingsVisibleState"/>
+                <VisualState x:Name="SelectPrinterVisibleState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="printSettingsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness Top="0"
+                                               Bottom="0"
+                                               Left="{StaticResource MARGIN_RightSidePane}"
+                                               Right="0">
+                                    </Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="selectPrinterGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness>0</Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="printSettingsGrid" d:IsOptimized="True"/>
+                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="selectPrinterGrid" d:IsOptimized="True"/>-->
+                    </Storyboard>
+                </VisualState>
                 <VisualState x:Name="PrintSettingOptionsVisibleState">
                     <Storyboard>
                     	<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="printSettingsGrid">
@@ -88,15 +112,21 @@
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
             <Grid Grid.Row="0" x:Name="printSettingsGrid" Style="{StaticResource STYLE_LeftGrid}">
-            	<Grid.Projection>
-            		<PlaneProjection/>
-            	</Grid.Projection>
+                <Grid.Projection>
+                    <PlaneProjection/>
+                </Grid.Projection>
                 <local:PrintSettingsBox />
             </Grid>
+            <Grid Grid.Row="0" x:Name="selectPrinterGrid" Style="{StaticResource STYLE_RightGrid}">
+                <Grid.Projection>
+                    <PlaneProjection/>
+                </Grid.Projection>
+                <local:SelectPrinterBox />
+            </Grid>
             <Grid Grid.Row="0" x:Name="printSettingOptionsGrid" Style="{StaticResource STYLE_RightGrid}">
-            	<Grid.Projection>
-            		<PlaneProjection/>
-            	</Grid.Projection>
+                <Grid.Projection>
+                    <PlaneProjection/>
+                </Grid.Projection>
                 <local:PrintSettingOptionsBox />
             </Grid>
         </Grid>

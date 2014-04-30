@@ -48,6 +48,7 @@ namespace SmartDeviceApp.ViewModels
 
         private string _printerName;
         private ICommand _printCommand;
+        private ICommand _listPrintersCommand;
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
@@ -58,6 +59,8 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
         }
+
+        public int PrinterId { get; set; }
 
         public string PrinterName
         {
@@ -87,7 +90,22 @@ namespace SmartDeviceApp.ViewModels
                 return _printCommand;
             }
         }
-        
+
+        public ICommand ListPrintersCommand
+        {
+            get
+            {
+                if (_listPrintersCommand == null)
+                {
+                    _listPrintersCommand = new RelayCommand(
+                        () => ListPrintersCommandExecute(),
+                        () => true
+                    );
+                }
+                return _listPrintersCommand;
+            }
+        }
+
         public PrintSettingList PrintSettingsList
         {
             get { return _printSettingsList; }
@@ -135,6 +153,12 @@ namespace SmartDeviceApp.ViewModels
             {
                 ExecutePrintEventHandler();
             }
+        }
+
+        private void ListPrintersCommandExecute()
+        {
+            new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
+            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)

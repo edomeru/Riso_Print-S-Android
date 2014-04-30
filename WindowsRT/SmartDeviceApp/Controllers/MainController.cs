@@ -27,7 +27,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initialization
         /// </summary>
-        public static async void Initialize()
+        public async static void Initialize()
         {
             await InitializeDataStorage();
             await InitializeControllers();
@@ -50,6 +50,11 @@ namespace SmartDeviceApp.Controllers
 
             await DocumentController.Instance.Load(file, false);
             await PrintPreviewController.Instance.Initialize();
+        }
+
+        public static void Cleanup()
+        {
+            DatabaseController.Instance.Cleanup();
         }
 
         /// <summary>
