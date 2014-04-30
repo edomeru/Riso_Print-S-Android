@@ -462,6 +462,7 @@ namespace SmartDeviceApp.Controllers
             UpdatePreviewInfo();
             _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
             await LoadPage(_currPreviewPageIndex, false);
+            InitializeGestures();
         }
 
         /// <summary>
@@ -802,8 +803,6 @@ namespace SmartDeviceApp.Controllers
                         {
                             _printPreviewViewModel.RightPageImage = bitmapImage;
                             _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
-
-                            _printPreviewViewModel.InitializeGestures(); // TODO: Set right timing
                         }
                         else if (!isRightSide && !isBackSide)
                         {
