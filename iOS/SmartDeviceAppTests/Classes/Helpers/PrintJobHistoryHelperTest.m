@@ -174,6 +174,7 @@
     GHTestLog(@"-- creating the document [%@]", PDF_NAME);
     PrintDocument* doc = [[PrintDocument alloc] initWithURL:[NSURL URLWithString:PDF_URL]
                                                        name:PDF_NAME];
+    GHAssertNotNil(doc, @"check functionality of PrintDocument");
     
     // create the test print jobs
     GHTestLog(@"-- creating the print jobs");

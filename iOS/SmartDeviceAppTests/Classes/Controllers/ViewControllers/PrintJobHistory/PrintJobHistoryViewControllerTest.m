@@ -268,4 +268,49 @@
     GHAssertTrue([listPrintJobHistoryGroups count] == countGroups, @"list of groups should be unchanged");
 }
 
+- (void)test009_DisplayInvalidPrinter
+{
+    GHTestLog(@"# CHECK: Display No Name Printer. #");
+    
+    NSMutableArray* listGroups = [controllerIphone listPrintJobHistoryGroups];
+    NSUInteger countGroups = [listGroups count];
+    
+    // add another group (nil name)
+    PrintJobHistoryGroup* group1 = [PrintJobHistoryGroup initWithGroupName:nil
+                                                               withGroupIP:@"888.88.8.1"
+                                                              withGroupTag:801];
+    PrintJob* job1 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
+    job1.name = @"Job 1";
+    //no need to set printer, will be discarded later
+    [group1 addPrintJob:job1];
+    [listGroups addObject:group1];
+    
+    // add another group (empty name)
+    PrintJobHistoryGroup* group2 = [PrintJobHistoryGroup initWithGroupName:@""
+                                                               withGroupIP:@"888.88.8.2"
+                                                              withGroupTag:802];
+    [listGroups addObject:group2];
+    
+    GHAssertTrue([listGroups count] == countGroups+2, @"");
+    [[controllerIphone groupsView] reloadData];
+    GHAssertTrue([listGroups count] == countGroups+2, @"");
+    
+    // check that nil/@"" group names are displayed properly
+    NSIndexPath* indexPath;
+    countGroups = [listGroups count];
+    PrintJobHistoryGroupCell* groupCell;
+    for (NSInteger item = 0; item < countGroups; item++)
+    {
+        indexPath = [NSIndexPath indexPathForItem:item inSection:0];
+        groupCell = (PrintJobHistoryGroupCell*)[[controllerIphone groupsView] cellForItemAtIndexPath:indexPath];
+        NSString* groupIP = [[[groupCell groupIP] titleLabel] text];
+        if ([groupIP hasPrefix:@"888"])
+        {
+            GHAssertEqualStrings([groupCell groupName], NSLocalizedString(@"IDS_LBL_NO_NAME", @""), @"");
+        }
+        else
+            continue;
+    }
+}
+
 @end
