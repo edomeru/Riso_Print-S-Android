@@ -347,12 +347,16 @@ const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
 - (void)test011_SearchForOnePrinter
 {
-    GHTestLog(@"# CHECK: PM can search for a Printer. #");
+    GHTestLog(@"# CHECK: PM can handle printer search. #");
+    
+    //TODO
 }
 
 - (void)test012_SearchForAllPrinters
 {
-    GHTestLog(@"# CHECK: PM can search for Printers. #");
+    GHTestLog(@"# CHECK: PM can handle printer search. #");
+    
+    //TODO
 }
 
 - (void)test013_Singleton

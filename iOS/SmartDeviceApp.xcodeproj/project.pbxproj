@@ -13,6 +13,7 @@
 		2821CAAE190E3A7D00CE3D51 /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232F1900F86A00301D1E /* printsettings.xml */; };
 		2821CAAF190E3A8600CE3D51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
+		28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
@@ -250,6 +251,7 @@
 /* Begin PBXFileReference section */
 		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryLayout.h; sourceTree = "<group>"; };
 		2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayout.m; sourceTree = "<group>"; };
+		28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelperTest.m; sourceTree = "<group>"; };
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
 		2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
@@ -614,6 +616,7 @@
 				28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */,
 				28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */,
 				28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */,
+				28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1473,6 +1476,7 @@
 				2D1F23611900FBAE00301D1E /* PrinterInfoViewController.m in Sources */,
 				2D1F23671900FBD400301D1E /* PDFPageContentViewController.m in Sources */,
 				2D1F23861900FC1B00301D1E /* PrintJob.m in Sources */,
+				28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */,
 				2D1F23B01900FF5800301D1E /* CXAlertViewController.m in Sources */,
 				2D1F23581900FB4E00301D1E /* PrintJobHistoryLayout.m in Sources */,
 				2D1F236B1900FBDA00301D1E /* PrintSettingsViewController.m in Sources */,
