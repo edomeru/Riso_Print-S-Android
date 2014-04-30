@@ -242,7 +242,7 @@ namespace SmartDeviceApp.Controllers
             PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
             _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
             _currPrintSettings = await _printSettingsController.GetCurrentPrintSettings();
-            ReloadCurrentPage();
+            await ReloadCurrentPage();
 
             PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
 
@@ -339,7 +339,7 @@ namespace SmartDeviceApp.Controllers
 
             if (refreshPreview)
             {
-                ReloadCurrentPage();
+                await ReloadCurrentPage();
             }
         }
 
@@ -373,7 +373,7 @@ namespace SmartDeviceApp.Controllers
 
             if (refreshPreview)
             {
-                ReloadCurrentPage();
+                await ReloadCurrentPage();
             }
         }
 
@@ -451,6 +451,10 @@ namespace SmartDeviceApp.Controllers
             await LoadPage(rightPageIndex, true);
         }
 
+        /// <summary>
+        /// Refreshes the preview area based on new print settings
+        /// </summary>
+        /// <returns>task</returns>
         private async Task ReloadCurrentPage()
         {
             // Generate PreviewPages again
@@ -613,7 +617,7 @@ namespace SmartDeviceApp.Controllers
         /// It is assumed here that required LogicalPage images are already done
         /// by DocumentController.
         /// </summary>
-        private async Task GenerateNearPreviewPages()
+        private async void GenerateNearPreviewPages()
         {
             PreviewPage previewPage = null;
             if (!_previewPages.TryGetValue(_currPreviewPageIndex + 1, out previewPage))
