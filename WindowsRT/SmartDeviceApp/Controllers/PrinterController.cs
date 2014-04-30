@@ -12,6 +12,7 @@ using Windows.Networking;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.ViewModels;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -256,7 +257,6 @@ namespace SmartDeviceApp.Controllers
             {
                 //display error theat ip is invalid
                 _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_INVALID_IP_ADDRESS"));
-                
                 return false;
             }
 

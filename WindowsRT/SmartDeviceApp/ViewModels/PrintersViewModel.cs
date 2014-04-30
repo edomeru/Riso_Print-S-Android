@@ -36,6 +36,7 @@ namespace SmartDeviceApp.ViewModels
 
 
         private ICommand _deletePrinter;
+        private ICommand _openDefaultPrinterSettings;
 
         private ObservableCollection<Printer> _printerList;
 
@@ -160,6 +161,29 @@ namespace SmartDeviceApp.ViewModels
         private void DeletePrinterExecute(string ipAddress)
         {
             DeletePrinterHandler(ipAddress);
+        }
+
+        public ICommand OpenDefaultPrinterSettings
+        {
+            get
+            {
+                if (_openDefaultPrinterSettings == null)
+                {
+                    _openDefaultPrinterSettings = new RelayCommand<Printer>(
+                        (printer) => OpenDefaultPrinterSettingsExecute(printer),
+                        (printer) => true
+                        );
+                }
+                return _openDefaultPrinterSettings;
+            }
+        }
+
+        private void OpenDefaultPrinterSettingsExecute(Printer printer)
+        {
+            //use visual state.
+            //get default printer settings using ip
+            System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
+            System.Diagnostics.Debug.WriteLine(printer.IpAddress);
         }
     }
 

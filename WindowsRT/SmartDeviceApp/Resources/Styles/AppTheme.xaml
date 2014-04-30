@@ -64,6 +64,8 @@
     <conv:SeparatorLineGeometryEndPointConverter x:Key="SeparatorLineGeometryEndPointConverter"/>
     <conv:SeparatorLineGeometryStartPointConverter x:Key="SeparatorLineGeometryStartPointConverter"/>
     <conv:WidthConverter x:Key="WidthConverter"/>
+    <conv:IntToBooleanConverter x:Key="IntToBooleanConverter"/>
+    <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
     <!-- APP CONVERTERS END -->       
 
 </ResourceDictionary>

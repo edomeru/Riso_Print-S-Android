@@ -72,7 +72,7 @@
                                                                      PrinterIp="{Binding IpAddress}"
                                                                      WillPerformDelete="{Binding WillPerformDelete, Mode=TwoWay}"
                                                                      WillBeDeleted ="{Binding WillBeDeleted, Mode=TwoWay}"
-                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printersPage, Converter={StaticResource BooleanToImageSourceConverter}}"/>
+                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printersPage}"/>
 
                             <controls:KeyImageControl x:Name="printerImage" 
                                                           PrinterImage="ms-appx:///Resources/Dummy/RZ1070-page1.jpg"/>
@@ -82,12 +82,20 @@
                                                       IconVisibility="Collapsed"
                                                           Text="Ip Address" ValueText="{Binding IpAddress}"
                                                           RightButtonVisibility="Collapsed"
-                                                          ValueVisibility="Visible"/>
+                                                          ValueVisibility="Visible"
+                                                      SeparatorVisibility="Visible"
+                                                      Width="{Binding ItemWidth, ElementName=printerInfoView}"/>
                             
                             
                             <controls:PortItemControl x:Name="port"
                                                              Text="Port"
-                                                             SelectedIndex="{Binding PortSetting, Mode=TwoWay}"/>
+                                                      IsRawSelected="{Binding PortSetting, Converter={StaticResource IntToBooleanConverter}, Mode=TwoWay}"
+                                                             SelectedIndex="{Binding PortSetting, Mode=TwoWay}"
+                                                      IconVisibility="Collapsed"
+                                                      RightButtonVisibility="Collapsed"
+                                                        SeparatorVisibility="Visible"
+                                                      Width="{Binding ItemWidth, ElementName=printerInfoView}"
+                                                      />
 
                             <!--<controls:KeyValueControl x:Name="port" 
                                                           Text="Port"
@@ -96,13 +104,17 @@
                                                                  Text="Set as Default Printer"
                                                              IconVisibility="Collapsed"
                                                                  RightButtonVisibility="Collapsed"
-                                                                 IsOn="{Binding IsDefault, Mode=TwoWay}"/>
+                                                                 IsOn="{Binding IsDefault, Mode=TwoWay}"
+                                                             SeparatorVisibility="Visible"
+                                                             Width="{Binding ItemWidth, ElementName=printerInfoView}"/>
                             
                             <controls:KeyValueControl x:Name="settings" 
                                                       IconVisibility="Collapsed"
                                                           Text="Default Print Settings"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
-                                                      RightPressedImage="ms-appx:///Resources/Images/img_btn_default_print_settings_pressed.scale-100.png"/>
+                                                      RightPressedImage="ms-appx:///Resources/Images/img_btn_default_print_settings_pressed.scale-100.png"
+                                                      RightButtonVisibility="Visible"
+                                                      />
 
                         </ListView>
                     </DataTemplate>
