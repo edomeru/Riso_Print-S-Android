@@ -17,14 +17,14 @@
 {
     
 }
-- (void) testShouldAcceptCardIDInput_LessThan128Chars
+- (void)test001_shouldAcceptCardIDInput_LessThan128Chars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
     BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
     GHAssertTrue(result, nil);
 }
 
--(void) testShouldAcceptCardIDInput_MoreThan128Chars
+- (void)test002_shouldAcceptCardIDInput_MoreThan128Chars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//62Chars
     [testString appendString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//+62Chars
@@ -33,7 +33,7 @@
     GHAssertFalse(result, nil);
 }
 
--(void) testShouldAcceptCardIDInput_128Chars
+- (void)test003_shouldAcceptCardIDInput_128Chars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//62Chars
     [testString appendString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//+62Chars
@@ -42,21 +42,21 @@
     GHAssertTrue(result, nil);
 }
 
--(void) testShouldAcceptCardIDInput_0Chars
+- (void)test004_shouldAcceptCardIDInput_0Chars
 {
     NSMutableString *testString = [NSMutableString stringWithString:@""];
     BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
     GHAssertTrue(result, nil);
 }
 
--(void) testValidateCardIDInput_ValidChars
+- (void)test005_validateCardIDInput_ValidChars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
     kSettingsInputError result = [SettingsValidationHelper validateCardIDInput:testString];
     GHAssertTrue((result == kSettingsInputErrorNone) , nil);
 }
 
--(void) testValidateCardIDInput_InvalidChars
+- (void)test006_validateCardIDInput_InvalidChars
 {
     
     NSString *invalidChars =@" +";//other characters ruled out by keyboard
@@ -69,7 +69,7 @@
     }
 }
 
--(void) testErrorMessage
+- (void)test007_errorMessages
 {
     NSArray *errorMessages = [NSArray arrayWithObjects: @"",
                                                         @"Card ID should be alphanumeric only",

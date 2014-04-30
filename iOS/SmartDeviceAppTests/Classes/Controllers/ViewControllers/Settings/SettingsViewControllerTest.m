@@ -25,7 +25,7 @@
     return YES;
 }
 
-- (void)testUIViewBinding
+- (void)test0001_UIViewBinding
 {
     GHTestLog(@"Testing SettingsViewController.UIViewBinding");
     
@@ -37,7 +37,7 @@
     [self performUIViewBindingTest:controller];
 }
 
-- (void)testUIViewLoading
+- (void)test002_UIViewLoading
 {
     GHTestLog(@"Testing SettingsViewController.UIViewBinding");
     
@@ -49,7 +49,7 @@
     [self performUIViewBindingTest:controller];
 }
 
-- (void) testCardIDDidEndEditing
+- (void)test003_cardIDDidEndEditing
 {
     UIStoryboard *storyboard;
     SettingsViewController *controller;
@@ -78,7 +78,7 @@
 
 - (void)performUIViewBindingTest:(SettingsViewController *)controller
 {
-    [controller loadView];
+    [controller view];
     GHAssertNotNil(controller, @"");
     GHAssertNotNil(controller.view, @"");
     GHAssertNotNil([controller cardId], @"");

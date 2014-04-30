@@ -69,6 +69,11 @@
 - (kPDFError)setupDocument
 {
     NSURL *documentURL;
+    
+    //revert flags and variables before setting up new document
+    self.fileAvailableForPreview = NO;
+    self.printDocument = nil;
+    
     if (![self moveFileToDocuments:&documentURL])
     {
         return kPDFErrorProcessingFailed;

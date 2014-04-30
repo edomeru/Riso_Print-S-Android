@@ -126,33 +126,4 @@
     GHTestLog(@"-- reading ZoomRate");
     GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"ZoomRate"] intValue], 100, nil);
 }
-
--(void) testReadApplicationSettings
-{
-    NSDictionary *appSettings = [PListHelper readApplicationSettings];
-    GHAssertNotNil(appSettings, @"");
-    NSString *cardId = (NSString *)[appSettings objectForKey:@"CardReaderID"];
-    GHAssertNotNil(cardId, @"");
-    NSString *communityName = (NSString *)[appSettings objectForKey:@"CommunityName"];
-    GHAssertNotNil(communityName, @"");
-}
-
-
--(void) testSetApplicationSettings
-{
-    NSMutableDictionary *appSettings = [[PListHelper readApplicationSettings] mutableCopy];
-    GHAssertNotNil(appSettings, @"");
-    NSString *testCardIDData = @"testCardID";
-    [appSettings setObject: testCardIDData forKey:@"CardReaderID"];
-    NSString *testCommunityName = @"testCommunityName";
-    [appSettings setObject: testCommunityName forKey:@"CommunityName"];
-    
-    [PListHelper setApplicationSettings:appSettings];
-    
-    NSDictionary *updatedDict = [PListHelper readApplicationSettings];
-    
-    GHAssertEqualStrings(testCardIDData, [updatedDict objectForKey:@"CardReaderID"], @"");
-    GHAssertEqualStrings(testCommunityName, [updatedDict objectForKey:@"CommunityName"], @"");
-}
-
 @end
