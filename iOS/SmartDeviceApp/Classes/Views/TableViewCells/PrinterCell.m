@@ -49,6 +49,7 @@
     UIColor *bgColor = [UIColor purple2ThemeColor];
     [self setBackgroundColor:bgColor];
     [self.printerName setTextColor:[UIColor whiteThemeColor]];
+    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.deleteButton setHidden: NO];
     [self.disclosureImage setHidden: YES];
     [self.separator setBackgroundColor:[UIColor purple2ThemeColor]];
@@ -59,6 +60,7 @@
     self.isDefaultPrinterCell = YES;
     [self setBackgroundColor:[UIColor gray4ThemeColor]];
     [self.printerName setTextColor:[UIColor whiteThemeColor]];
+    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.deleteButton setHidden: YES];
     [self.disclosureImage setHidden: NO];
     [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
@@ -70,6 +72,7 @@
     UIColor *bgColor = [UIColor gray1ThemeColor];
     [self setBackgroundColor:bgColor];
     [self.printerName setTextColor:[UIColor blackThemeColor]];
+    [self.ipAddress setTextColor:[UIColor blackThemeColor]];
     [self.deleteButton setHidden: YES];
     [self.disclosureImage setHidden: NO];
     [self.separator setBackgroundColor:[UIColor whiteThemeColor]];

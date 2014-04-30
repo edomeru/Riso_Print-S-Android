@@ -63,12 +63,13 @@
     GHTestLog(@"# CHECK: The BOOL settings are correct. #");
     
     GHTestLog(@"-- reading [Use SNMP Common Lib]");
-    BOOL useSNMPCommonLib = [PListHelper readBool:kPlistBoolValUseSNMP];
-    GHAssertTrue(useSNMPCommonLib, @"");
+    GHAssertTrue([PListHelper readBool:kPlistBoolValUseSNMP], @"");
     
     GHTestLog(@"-- reading [Use SNMP Timeout]");
-    BOOL useSNMPTimeout = [PListHelper readBool:kPlistBoolValUseSNMPTimeout];
-    GHAssertFalse(useSNMPTimeout, @"");
+    GHAssertFalse([PListHelper readBool:kPlistBoolValUseSNMPTimeout], @"");
+    
+    GHTestLog(@"-- reading [Use Print Job History Test Data]");
+    GHAssertFalse([PListHelper readBool:kPlistBoolValUsePrintJobTestData], @"");
 }
 
 @end

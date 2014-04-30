@@ -57,9 +57,4 @@
     GHTestLog(@"# CHECK: SNMPM can initiate Device Discovery. #");
 }
 
-- (void)test003_GetPrinterStatus
-{
-    GHTestLog(@"# CHECK: SNMPM can get printer status. #");
-}
-
 @end
