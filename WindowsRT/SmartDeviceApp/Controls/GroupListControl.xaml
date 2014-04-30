@@ -25,7 +25,9 @@
             </Style.Setters>
         </Style>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
-            <Grid Background="{StaticResource BRUSH_White}" Width="150" Height="60">
+            <Grid Background="{StaticResource BRUSH_White}" 
+                  Width="{StaticResource SIZE_DeleteButtonWidth_Long}" 
+                  Height="{StaticResource SIZE_DeleteButtonHeight_Long}">
                 <TextBlock Text="{Binding Source=IDS_LBL_DELETE_ALL, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"></TextBlock>
             </Grid>
         </ControlTemplate>
@@ -77,8 +79,14 @@
                 </Grid.ColumnDefinitions>
         		<StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="expandImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_expand.png"/>
-                    <Image x:Name="collapseImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_collapse.png"/>
-                    <TextBlock x:Name="key" Text="{Binding Text, ElementName=groupListControl}" Style="{StaticResource STYLE_TextListHeader}" />
+                    <Image x:Name="collapseImage" 
+                           Style="{StaticResource STYLE_AlignLeft}" 
+                           Stretch="None" 
+                           Source="ms-appx:///Resources/Images/img_btn_collapse.png"/>
+                    <TextBlock x:Name="key" 
+                               Text="{Binding Text, ElementName=groupListControl}" 
+                               Width="{Binding TextWidth, ElementName=groupListControl}"
+                               Style="{StaticResource STYLE_TextListHeader}" />
         		</StackPanel>
                 <Button x:Name="deleteButton" Grid.Column="1" 
                         Template="{StaticResource TEMPLATE_DeleteButton}"
@@ -87,7 +95,7 @@
             </Grid>
         </ControlTemplate>
     </UserControl.Resources>
-    <Grid >
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1"/>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -12,22 +13,41 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Command;
 
 namespace SmartDeviceApp.Controls
 {
     public sealed partial class KeyToggleSwitchControl : KeyValueControl
     {
         private bool _isToggleSwitchLoaded;
+        private ICommand _toggleSwitchCommand;
 
         public KeyToggleSwitchControl()
         {
             this.InitializeComponent();
+            this.Command = ToggleSwitchCommand;
         }
 
         private static bool _isToggled;
 
         public static readonly DependencyProperty IsOnProperty =
             DependencyProperty.Register("IsOn", typeof(string), typeof(KeyToggleSwitchControl), new PropertyMetadata(false, SetIsOn));
+
+        // Toggles the switch when any part of the button is tapped
+        public ICommand ToggleSwitchCommand
+        {
+            get
+            {
+                if (_toggleSwitchCommand == null)
+                {
+                    _toggleSwitchCommand = new RelayCommand(
+                        () => ToggleSwitchExecute(),
+                        () => true
+                    );
+                }
+                return _toggleSwitchCommand;
+            }
+        }
 
         public bool IsOn
         {
@@ -41,6 +61,7 @@ namespace SmartDeviceApp.Controls
             {
                 KeyToggleSwitchControl context = this;
                 ((ToggleSwitch)obj).Toggled += (sender, e) => Toggled(sender, context);
+
                 _isToggleSwitchLoaded = true;
             }
         }
@@ -57,6 +78,11 @@ namespace SmartDeviceApp.Controls
         {
             if (!_isToggled) return;
             control.SetValue(IsOnProperty, ((ToggleSwitch)sender).IsOn);
-        }  
+        }
+
+        private void ToggleSwitchExecute()
+        {
+            IsOn = !IsOn;
+        }
     }
 }

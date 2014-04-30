@@ -74,7 +74,7 @@
         </ControlTemplate>
     </Grid.Resources>
 
-    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">        
         <Button x:Name="printButton"
                 Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                 Command="{Binding PrintCommand}" 

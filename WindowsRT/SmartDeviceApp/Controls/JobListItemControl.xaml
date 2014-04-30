@@ -16,7 +16,9 @@
     Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
     <local:KeyValueControl.Resources>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
-            <Grid Background="{StaticResource BRUSH_White}" Width="110" Height="50">
+            <Grid Background="{StaticResource BRUSH_White}" 
+                  Width="{StaticResource SIZE_DeleteButtonWidth_Short}" 
+                  Height="{StaticResource SIZE_DeleteButtonHeight_Short}">
                 <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"/>
             </Grid>
         </ControlTemplate>
