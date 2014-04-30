@@ -571,5 +571,8 @@
   <data name="IDS_LBL_READ_COMMUNITY_NAME" xml:space="preserve">
     <value>Read Community Name</value>
   </data>
+  <data name="IDS_LBL_NO_NAME" xml:space="preserve">
+    <value>No name</value>
+  </data>
   <!-- NOT IN WORDING LIST - END -->
 </root>

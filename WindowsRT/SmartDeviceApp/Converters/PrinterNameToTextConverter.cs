@@ -29,8 +29,15 @@ namespace SmartDeviceApp.Converters
             {
                 if (value == null || String.IsNullOrEmpty(value.ToString()))
                 {
+                    bool isSelectPrinter = false;
+                    if (parameter != null)
+                    {
+                        isSelectPrinter = System.Convert.ToBoolean(parameter);
+                    }
+
+                    string resourceId = (isSelectPrinter) ? "IDS_LBL_CHOOSE_PRINTER" : "IDS_LBL_NO_NAME";
                     var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                    var text = loader.GetString("IDS_LBL_CHOOSE_PRINTER");
+                    var text = loader.GetString(resourceId);
                     if (String.IsNullOrEmpty(text))
                     {
                         throw new ArgumentException(LogUtility.ERROR_RESOURCE_STRING_NOT_FOUND,
