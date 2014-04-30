@@ -13,18 +13,25 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.Controls
 {
     public sealed partial class GroupListControl : UserControl
     {
+        private bool _isLoaded;
+
         public GroupListControl()
         {
             this.InitializeComponent();
+            if (!_isLoaded) Loaded += new RoutedEventHandler(OnLoaded);
         }
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(GroupListControl), null);
+
+        public static readonly DependencyProperty TextWidthProperty =
+            DependencyProperty.Register("TextWidth", typeof(double), typeof(GroupListControl), null);
 
         public static new readonly DependencyProperty ContentProperty =
            DependencyProperty.Register("Content", typeof(object), typeof(GroupListControl), null);
@@ -36,12 +43,18 @@ namespace SmartDeviceApp.Controls
            DependencyProperty.Register("DeleteCommandParameter", typeof(object), typeof(GroupListControl), null);
 
         public static readonly DependencyProperty DeleteButtonVisibilityProperty =
-           DependencyProperty.Register("DeleteButtonVisibility", typeof(Visibility), typeof(GroupListControl), null);
+           DependencyProperty.Register("DeleteButtonVisibility", typeof(Visibility), typeof(GroupListControl), new PropertyMetadata(Visibility.Visible));
 
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
+        }
+
+        public double TextWidth
+        {
+            get { return (double)GetValue(TextWidthProperty); }
+            set { SetValue(TextWidthProperty, value); }
         }
 
         public new object Content
@@ -66,6 +79,31 @@ namespace SmartDeviceApp.Controls
         {
             get { return (Visibility)GetValue(DeleteButtonVisibilityProperty); }
             set { SetValue(DeleteButtonVisibilityProperty, value); }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_isLoaded) return;
+
+            var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+            
+            // Get text width by subtracting widths and margins of visible components
+            int maxTextWidth = (int)groupListControl.ActualWidth;
+
+            // Left and right margins
+            maxTextWidth -= (defaultMargin * 2);
+
+            // Delete button is visible
+            if (DeleteButtonVisibility == Visibility.Visible)
+            {
+                var deleteButtonWidth = (int)((double)Application.Current.Resources["SIZE_DeleteButtonWidth_Long"]);
+                maxTextWidth -= deleteButtonWidth;
+            }
+
+            // Image
+            maxTextWidth -= ImageConstant.IconImageWidth;
+            maxTextWidth -= defaultMargin;
+            TextWidth = maxTextWidth;
         }
     }
 }

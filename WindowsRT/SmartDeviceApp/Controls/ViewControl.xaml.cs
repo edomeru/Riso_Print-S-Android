@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Enum;
 
@@ -40,8 +41,14 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty Button1ImageProperty =
            DependencyProperty.Register("Button1Image", typeof(ImageSource), typeof(ViewControl), null);
 
+        public static readonly DependencyProperty Button1PressedImageProperty =
+           DependencyProperty.Register("Button1PressedImage", typeof(ImageSource), typeof(ViewControl), null);
+        
         public static readonly DependencyProperty Button2ImageProperty =
            DependencyProperty.Register("Button2Image", typeof(ImageSource), typeof(ViewControl), null);
+
+        public static readonly DependencyProperty Button2PressedImageProperty =
+           DependencyProperty.Register("Button2PressedImage", typeof(ImageSource), typeof(ViewControl), null);
         
         public static readonly DependencyProperty Button1VisibilityProperty =
            DependencyProperty.Register("Button1Visibility", typeof(Visibility), typeof(ViewControl), null);
@@ -53,6 +60,7 @@ namespace SmartDeviceApp.Controls
         {
             this.InitializeComponent();
             Children = contentGrid.Children;
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
         }
 
         public ViewControlViewModel ViewModel
@@ -99,10 +107,22 @@ namespace SmartDeviceApp.Controls
             set { SetValue(Button1ImageProperty, value); }
         }
 
+        public ImageSource Button1PressedImage
+        {
+            get { return (ImageSource)GetValue(Button1PressedImageProperty); }
+            set { SetValue(Button1PressedImageProperty, value); }
+        }
+
         public ImageSource Button2Image
         {
             get { return (ImageSource)GetValue(Button2ImageProperty); }
             set { SetValue(Button2ImageProperty, value); }
+        }
+
+        public ImageSource Button2PressedImage
+        {
+            get { return (ImageSource)GetValue(Button2PressedImageProperty); }
+            set { SetValue(Button2PressedImageProperty, value); }
         }
 
         public Visibility Button1Visibility
@@ -115,6 +135,16 @@ namespace SmartDeviceApp.Controls
         {
             get { return (Visibility)GetValue(Button2VisibilityProperty); }
             set { SetValue(Button2VisibilityProperty, value); }
+        }
+
+        private void SetViewMode(ViewMode viewMode)
+        {
+            if (viewMode == ViewMode.FullScreen)
+            {
+                mainMenuButton.IsChecked = false;
+                if (button1.Visibility == Visibility.Visible) button1.IsChecked = false;
+                if (button2.Visibility == Visibility.Visible) button2.IsChecked = false;
+            }
         }
 
         /// <summary>

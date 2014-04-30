@@ -90,7 +90,6 @@
                             <controls:PortItemControl x:Name="port"
                                                              Text="Port"
                                                       IsRawSelected="{Binding PortSetting, Converter={StaticResource IntToBooleanConverter}, Mode=TwoWay}"
-                                                             SelectedIndex="{Binding PortSetting, Mode=TwoWay}"
                                                       IconVisibility="Collapsed"
                                                       RightButtonVisibility="Collapsed"
                                                         SeparatorVisibility="Visible"

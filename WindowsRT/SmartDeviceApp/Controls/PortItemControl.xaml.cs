@@ -21,19 +21,15 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class PortItemControl : KeyValueControl
     {
+        private ICommand _togglePort;
+
         public PortItemControl()
         {
             this.InitializeComponent();
+            this.Command = TogglePort;
         }
 
-        private bool _isRawToggled;
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(PortItemControl), null);
-
-        public static readonly DependencyProperty SelectedIndexProperty =
-            DependencyProperty.Register("SelectedIndex", typeof(int), typeof(PortItemControl), null);
-
+        
         public static readonly DependencyProperty IsRawSelectedProperty =
             DependencyProperty.Register("IsRawSelected", typeof(bool), typeof(PortItemControl), new PropertyMetadata(false, SetRawChecked));
 
@@ -51,21 +47,25 @@ namespace SmartDeviceApp.Controls
             ((PortItemControl)d).LPRToggle.IsChecked = bool.Parse(e.NewValue.ToString());
         }
 
-        
-
-        //public static readonly DependencyProperty DeleteCommandProperty =
-        //    DependencyProperty.Register("DeleteCommand", typeof(ICommand), typeof(KeyDropDownListControl), null);
-
-        public string Text
+        public ICommand TogglePort
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { 
+                if (_togglePort == null)
+                {
+                    _togglePort = new RelayCommand(
+                        () => TogglePortExecute(),
+                        () => true
+                        );
+                }
+
+                return _togglePort;
+            }
         }
 
-        public int SelectedIndex
+        private void TogglePortExecute()
         {
-            get { return (int)GetValue(SelectedIndexProperty); }
-            set { SetValue(SelectedIndexProperty, value); }
+            IsRawSelected = !IsRawSelected;
+            IsLPRSelected = !IsRawSelected;
         }
 
         public bool IsRawSelected
