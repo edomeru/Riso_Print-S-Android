@@ -55,7 +55,8 @@
                                                 IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
                                                 IsEnabled="{Binding IsEnabled}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
-                                                Width="{Binding Width, ElementName=printSettingOptionsBox}">
+                                                Width="{Binding Width, ElementName=printSettingOptionsBox}"
+                                                PressedColor="{StaticResource BRUSH_Purple1}">
                 </controls:KeyRadioButtonControl>
             </DataTemplate>
         </ListView.ItemTemplate>
