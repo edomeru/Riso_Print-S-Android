@@ -144,8 +144,8 @@
     [groupCell initWithTag:group.tag]; // use a tag that is independent of the list or view position
                                        // (to support deleting groups later without need for reloading)
     
-    [groupCell putGroupName:[NSString stringWithFormat:@"%@", group.groupName]];
-    [groupCell putGroupIP:[NSString stringWithFormat:@"%@", group.groupIP]];
+    [groupCell putGroupName:group.groupName];
+    [groupCell putGroupIP:group.groupIP];
     [groupCell putIndicator:group.isCollapsed];
     
     if (!group.isCollapsed)

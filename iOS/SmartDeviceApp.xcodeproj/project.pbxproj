@@ -19,6 +19,10 @@
 		28052CE81911C651007982DF /* SNMPManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */; };
 		28052CE91911C651007982DF /* InputHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */; };
 		28052CEA1911C651007982DF /* PListHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */; };
+		28052CED1911D06F007982DF /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */; };
+		28052CEE1911D16F007982DF /* PrintJobHistoryGroupTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */; };
+		28052CEF1911D16F007982DF /* PrintJobHistoryViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */; };
+		28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */; };
 		2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
@@ -30,7 +34,6 @@
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
-		28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
@@ -265,6 +268,7 @@
 /* Begin PBXFileReference section */
 		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryLayout.h; sourceTree = "<group>"; };
 		2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayout.m; sourceTree = "<group>"; };
+		28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
 		28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelperTest.m; sourceTree = "<group>"; };
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
@@ -551,6 +555,14 @@
 			path = Layouts;
 			sourceTree = "<group>";
 		};
+		28052CEB1911D06F007982DF /* PropertyList */ = {
+			isa = PBXGroup;
+			children = (
+				28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */,
+			);
+			path = PropertyList;
+			sourceTree = "<group>";
+		};
 		2828312F18C70699008B127C /* Database */ = {
 			isa = PBXGroup;
 			children = (
@@ -816,8 +828,9 @@
 		2D0AEC84185FE50000810455 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3195C0641911126100197397 /* TestData */,
 				2D0AEC85185FE50000810455 /* Locales */,
+				28052CEB1911D06F007982DF /* PropertyList */,
+				3195C0641911126100197397 /* TestData */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1429,7 +1442,7 @@
 				3195C08E1911149B00197397 /* printsettings.xml in Resources */,
 				3195C08B1911148C00197397 /* Images.xcassets in Resources */,
 				2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */,
-				28C1CE0A18F27C1E007FA569 /* SmartDeviceApp-Settings.plist in Resources */,
+				28052CED1911D06F007982DF /* SmartDeviceApp-Settings.plist in Resources */,
 				2D1F23CB190104D900301D1E /* help.html in Resources */,
 				2D1F23CD190104D900301D1E /* legal.html in Resources */,
 				3195C06B1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf in Resources */,
@@ -1541,11 +1554,13 @@
 				2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */,
 				3195C1EF19111B1F00197397 /* main.m in Sources */,
 				3195C1E319111A6C00197397 /* PrintDocumentTest.m in Sources */,
+				28052CEE1911D16F007982DF /* PrintJobHistoryGroupTest.m in Sources */,
 				28052CE01911C651007982DF /* AddPrinterViewControllerTest.m in Sources */,
 				28052CE11911C651007982DF /* PrinterInfoViewControllerTest.m in Sources */,
 				28052CE21911C651007982DF /* PrintersIpadViewControllerTest.m in Sources */,
 				28052CE31911C651007982DF /* PrintersIphoneViewControllerTest.m in Sources */,
 				28052CE41911C651007982DF /* PrinterSearchViewControllerTest.m in Sources */,
+				28052CEF1911D16F007982DF /* PrintJobHistoryViewControllerTest.m in Sources */,
 				3195C1E419111A7A00197397 /* PrintPreviewControllerTest.m in Sources */,
 				3195C1E519111A7A00197397 /* PrintSettingsPrinterListTableViewControllerTest.m in Sources */,
 				3195C1E619111A7A00197397 /* PrintSettingsTableViewControllerTest.m in Sources */,
@@ -1559,6 +1574,7 @@
 				28052CE91911C651007982DF /* InputHelperTest.m in Sources */,
 				28052CEA1911C651007982DF /* PListHelperTest.m in Sources */,
 				28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */,
+				28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */,
 				3195C1E819111A9700197397 /* PrintPreviewHelperTest.m in Sources */,
 				3195C1E919111A9700197397 /* PrintSettingsHelperTest.m in Sources */,
 				3195C1EA19111A9700197397 /* RenderCacheTest.m in Sources */,

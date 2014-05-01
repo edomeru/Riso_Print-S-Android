@@ -52,6 +52,7 @@
 - (void)test001_ReadUInt
 {
     GHTestLog(@"# CHECK: The UINT settings are correct. #");
+    // reads the UINT settings from SmartDeviceAppTests/PropertyList/SmartDeviceApp-Settings.plist
     
     GHTestLog(@"-- reading [Max Printer Count]");
     NSUInteger actualMaxPrinterCount = [PListHelper readUint:kPlistUintValMaxPrinters];
@@ -61,6 +62,7 @@
 - (void)test002_ReadBool
 {
     GHTestLog(@"# CHECK: The BOOL settings are correct. #");
+    // reads the BOOL settings from SmartDeviceAppTests/PropertyList/SmartDeviceApp-Settings.plist
     
     GHTestLog(@"-- reading [Use SNMP Common Lib]");
     GHAssertTrue([PListHelper readBool:kPlistBoolValUseSNMP], @"");
@@ -69,7 +71,7 @@
     GHAssertFalse([PListHelper readBool:kPlistBoolValUseSNMPTimeout], @"");
     
     GHTestLog(@"-- reading [Use Print Job History Test Data]");
-    GHAssertFalse([PListHelper readBool:kPlistBoolValUsePrintJobTestData], @"");
+    GHAssertTrue([PListHelper readBool:kPlistBoolValUsePrintJobTestData], @"");
 }
 
 @end

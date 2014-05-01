@@ -70,19 +70,15 @@
         NSInteger groupTag = 0;
         for (PrintJob* job in listPrintJobs)
         {
-            // get the printer
-            NSString* printerName = job.printer.name;
-            if (printerName == nil || [printerName isEqualToString:@""])
-                printerName = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
-            NSString* printerIP = job.printer.ip_address;
-            
             // attempt to get the group for this printer
+            NSString* printerIP = job.printer.ip_address;
             PrintJobHistoryGroup* group = [dictPrintJobHistoryGroups objectForKey:printerIP];
             if (group == nil)
             {
                 // group does not exist yet
                 
                 // create a group for this printer
+                NSString* printerName = job.printer.name;
                 PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName
                                                                              withGroupIP:printerIP
                                                                             withGroupTag:groupTag++];
