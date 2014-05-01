@@ -74,6 +74,13 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+
+            _previewPages = new Dictionary<int, PreviewPage>();
+
+            _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
+            _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
+            _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
+            _printEventHandler = new PrintEventHandler(Print);
         }
 
         /// <summary>
@@ -91,13 +98,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize()
         {
-            _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
-            _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
-            _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
-            _printEventHandler = new PrintEventHandler(Print);
-
             PageAreaGridLoaded += InitializeGestures;
-            _previewPages = new Dictionary<int, PreviewPage>();
 
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
@@ -140,7 +141,6 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
-            _previewPages = null;
 
             _pagesPerSheet = 1;
             _isDuplex = false;
@@ -158,10 +158,7 @@ namespace SmartDeviceApp.Controllers
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
             await StorageFileUtility.DeleteFiles(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE, tempFolder);
 
-            if (_previewPages != null)
-            {
-                _previewPages.Clear();
-            }
+            _previewPages.Clear();
         }
 
         #region Printer and Print Settings Initialization
@@ -386,7 +383,7 @@ namespace SmartDeviceApp.Controllers
             if (_currPrintSettings.Booklet)
             {
                 _isBooklet = true;
-                //_printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView; // TODO: Enable on two-page view
+                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView;
             }
             else
             {

@@ -64,7 +64,10 @@ namespace SmartDeviceApp.Views
             var pageAreaGrid = twoPageControl.PageAreaGrid;
             ViewModel.SetPageAreaGrid(pageAreaGrid);
             PrintPreviewController.PageAreaGridLoadedEventHandler handler = PageAreaGridLoaded;
-            handler();
+            if (handler != null)
+            {
+                handler();
+            }
         }
 
         private void ResetTransforms(object sender, RoutedEventArgs e)
