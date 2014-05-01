@@ -1028,6 +1028,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 -(BOOL) isSettingOptionSupported:(NSString *) option
 {
+    if(self.printer == nil)
+    {
+        return YES;
+    }
+    
     if([option isEqualToString:@"ids_lbl_punch_2holes"])
     {
         return ([self.printer.enabled_finisher_2_3_holes boolValue] || [self.printer.enabled_finisher_2_4_holes boolValue]);

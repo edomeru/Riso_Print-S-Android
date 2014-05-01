@@ -2,8 +2,8 @@
 //  PrintSettingsTableViewController.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 4/29/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <GHUnitIOS/GHUnit.h>
@@ -18,6 +18,8 @@
 #import "PDFFileManager.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
+#import "Printer.h"
+#import "PrintPreviewHelper.h"
 
 #define PRINTER_HEADER_CELL_ID @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL_ID @"PrinterItemCell"
@@ -45,7 +47,11 @@
 @property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
 @property (nonatomic) BOOL isRedrawFullSettingsTable;
 
-- (void)executePrint;
+- (BOOL)isSettingEnabled:(NSString*)settingKey;
+- (BOOL)isSettingApplicable:(NSString*)settingKey;
+- (BOOL)isSettingSupported:(NSString*)settingKey;
+-(BOOL) isSettingOptionSupported:(NSString *) option;
+
 @end
 
 @interface PrintSettingsTableViewControllerTest : GHTestCase
@@ -198,4 +204,203 @@
     GHAssertNotNil(viewController.printSettingsTree, @"");
 }
 
+-(void)test004_isSettingSupported
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    //printer is still nil - all supported
+    GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET],@"");
+    GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET_FINISH],@"");
+    GHAssertTrue([viewController isSettingSupported:KEY_STAPLE],@"");
+    GHAssertTrue([viewController isSettingSupported:KEY_PUNCH],@"");
+    
+    [viewController view];
+    
+    Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
+    printer.enabled_booklet = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingSupported:KEY_BOOKLET],@"");
+    GHAssertFalse([viewController isSettingSupported:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertFalse([viewController isSettingSupported:KEY_BOOKLET_FINISH],@"");
+    
+    printer.enabled_booklet = [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET],@"");
+    GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET_FINISH],@"");
+    
+    printer.enabled_staple = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingSupported:KEY_STAPLE],@"");
+
+    printer.enabled_staple = [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingSupported:KEY_STAPLE],@"");
+
+    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
+    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingSupported:KEY_PUNCH],@"");
+    
+    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:YES];
+    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:NO];
+    GHAssertTrue([viewController isSettingSupported:KEY_PUNCH],@"");
+    
+    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
+    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingSupported:KEY_PUNCH],@"");
+}
+
+-(void)test005_isSettingOptionSupported
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_facedown"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_top"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_stacking"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_2holes"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_4holes"],@"");
+    
+    [viewController view];
+    
+    Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
+    printer.enabled_tray_face_down = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_outputtray_facedown"],@"");
+    
+    printer.enabled_tray_face_down = [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_facedown"],@"");
+    
+    printer.enabled_tray_top = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_outputtray_top"],@"");
+    
+    printer.enabled_tray_top = [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_top"],@"");
+    
+    printer.enabled_tray_stacking = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_outputtray_stacking"],@"");
+    
+    printer.enabled_tray_stacking= [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_stacking"],@"");
+    
+    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
+    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:NO];
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_2holes"],@"");
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_4holes"],@"");
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
+    
+    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:YES];
+    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:NO];
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_2holes"],@"");
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_4holes"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
+    
+    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
+    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:YES];
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_2holes"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_4holes"],@"");
+    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
+}
+
+-(void)test006_isSettingEnabled
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    [viewController view];
+    
+    PreviewSetting *previewSetting = viewController.previewSetting;
+    
+    previewSetting.booklet = YES;
+    previewSetting.imposition = kImpositionOff;
+    GHAssertTrue([viewController isSettingEnabled:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertTrue([viewController isSettingEnabled:KEY_BOOKLET_FINISH],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_DUPLEX],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_FINISHING_SIDE],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_IMPOSITION],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_STAPLE],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_PUNCH],@"");
+    
+    previewSetting.imposition= kImposition2Pages;
+    GHAssertFalse([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
+    
+    previewSetting.imposition = kImposition4pages;
+    GHAssertFalse([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
+    
+    previewSetting.booklet = NO;
+    previewSetting.imposition = kImpositionOff;
+    GHAssertFalse([viewController isSettingEnabled:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_BOOKLET_FINISH],@"");
+    GHAssertTrue([viewController isSettingEnabled:KEY_DUPLEX],@"");
+    GHAssertTrue([viewController isSettingEnabled:KEY_FINISHING_SIDE],@"");
+    GHAssertTrue([viewController isSettingEnabled:KEY_IMPOSITION],@"");
+    GHAssertFalse([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
+    GHAssertTrue([viewController isSettingEnabled:KEY_STAPLE],@"");
+    GHAssertTrue([viewController isSettingEnabled:KEY_PUNCH],@"");
+    
+    previewSetting.imposition = kImposition2Pages;
+    GHAssertTrue([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
+    
+    previewSetting.imposition = kImposition4pages;
+    GHAssertTrue([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
+}
+
+-(void)test007_isSettingApplicable
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    [viewController view];
+    
+    PreviewSetting *previewSetting = viewController.previewSetting;
+    
+    previewSetting.booklet = YES;
+    previewSetting.imposition = kImpositionOff;
+    GHAssertTrue([viewController isSettingApplicable:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_BOOKLET_FINISH],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_DUPLEX],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_FINISHING_SIDE],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_IMPOSITION],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_STAPLE],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_PUNCH],@"");
+    
+    previewSetting.imposition = kImposition2Pages;
+    GHAssertTrue([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
+    
+    previewSetting.imposition = kImposition4pages;
+    GHAssertTrue([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
+    
+    previewSetting.booklet = NO;
+    previewSetting.imposition = kImpositionOff;
+    GHAssertFalse([viewController isSettingApplicable:KEY_BOOKLET_LAYOUT],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_BOOKLET_FINISH],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_DUPLEX],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_FINISHING_SIDE],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_IMPOSITION],@"");
+    GHAssertFalse([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_STAPLE],@"");
+    GHAssertTrue([viewController isSettingApplicable:KEY_PUNCH],@"");
+    
+    previewSetting.imposition = kImposition2Pages;
+    GHAssertTrue([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
+    
+    previewSetting.imposition = kImposition4pages;
+    GHAssertTrue([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
+}
 @end

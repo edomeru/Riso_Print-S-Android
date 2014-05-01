@@ -2,8 +2,8 @@
 //  PrintSettingsPrinterListTableViewControllerTest.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 4/30/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <GHUnitIOS/GHUnit.h>
@@ -23,7 +23,9 @@
 @end
 
 @interface PrintSettingsOptionsItemCell(Test)
-@property (nonatomic, weak) IBOutlet UIImageView *radioImageView;@end
+@property (nonatomic, weak) IBOutlet UIImageView *radioImageView;
+@end
+
 @interface PrintSettingsPrinterListTableViewControllerTest : GHTestCase
 
 @end

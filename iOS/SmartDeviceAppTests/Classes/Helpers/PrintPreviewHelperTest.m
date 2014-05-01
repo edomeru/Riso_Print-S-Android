@@ -2,9 +2,10 @@
 //  PreviewHelperTest.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 4/26/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
+
 #import <GHUnitIOS/GHUnit.h>
 #import "PrintPreviewHelper.h"
 #import "PreviewSetting.h"

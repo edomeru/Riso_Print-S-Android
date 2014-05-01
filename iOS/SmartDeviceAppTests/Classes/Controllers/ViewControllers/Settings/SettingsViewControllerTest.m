@@ -2,9 +2,10 @@
 //  SettingsViewControllerTest.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/31/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
+
 #import <GHUnitIOS/GHUnit.h>
 #import "SettingsViewController.h"
 
@@ -25,7 +26,7 @@
     return YES;
 }
 
-- (void)test0001_UIViewBinding
+- (void)test001_UIViewBinding
 {
     GHTestLog(@"Testing SettingsViewController.UIViewBinding");
     

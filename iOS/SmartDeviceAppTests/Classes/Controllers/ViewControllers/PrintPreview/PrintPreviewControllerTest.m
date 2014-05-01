@@ -2,8 +2,8 @@
 //  PrintPreviewControllerTest.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 4/30/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <GHUnitIOS/GHUnit.h>
@@ -12,6 +12,9 @@
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
 #import "Printer.h"
+#import "PrintDocument.h"
+#import "PreviewSetting.h"
+#import "PrintPreviewHelper.h"
 #import "PrintDocument.h"
 
 
@@ -39,23 +42,8 @@
 @property (atomic, strong) NSMutableArray *renderArray;
 @property (atomic, strong) RenderCache *renderCache;
 
-- (void)loadPDF;
-- (void)setupPreview;
-- (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation;;
-
 - (void)setupPageviewControllerWithBindSetting;
 - (void)setupTotalPageNum;
-- (void)setupPageLabel;
-- (void)setupDisplayAspectRatio;
-- (UIViewController *)nextViewController:(NSInteger)index;
-- (UIViewController *)previousViewController:(NSInteger)index;
-- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index;
-- (void)goToPage:(NSInteger)pageNum;
-- (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue;
-- (IBAction)mainMenuAction:(id)sender;
-- (IBAction)printSettingsAction:(id)sender;
-- (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event;
-- (IBAction)tapPageScrollAction:(id)sender;
 @end
 
 @interface PrintPreviewControllerTest : GHTestCase
@@ -69,6 +57,7 @@
     NSString* storyboardId;
     NSURL *testURL;
     NSURL *pdfOriginalFileURL;
+    float tolerance;
 }
 
 - (BOOL)shouldRunOnMainThread
@@ -87,6 +76,8 @@
     
     testURL = [NSURL URLWithString:[testFilePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     printerTesDataCount = 5;
+    
+    tolerance = 0.001f;
 }
 
 - (void) setUp
@@ -120,7 +111,7 @@
     }
 }
 
-- (void)test_001_UIViewBinding
+- (void)test001_UIViewBinding
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -136,7 +127,7 @@
     GHAssertNotNil(viewController.previewView, @"");
 }
 
-- (void)test_001_UIViewLoading_NoPreview
+- (void)test002_UIViewLoading_NoPreview
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -148,7 +139,7 @@
     GHAssertTrue(viewController.activityIndicator.hidden, @"");
 }
 
-- (void)test_001_UIViewLoading_WithFileForLoad
+- (void)test003_UIViewLoading_WithFileForLoad
 {
     [[PDFFileManager sharedManager] setFileAvailableForLoad:YES];
     [[PDFFileManager sharedManager] setFileURL:testURL];
@@ -163,7 +154,7 @@
     GHAssertFalse(viewController.activityIndicator.hidden, @"");
 }
 
-- (void)test_001_UIViewLoading_WithPreview
+- (void)test004_UIViewLoading_WithPreview
 {
     [[PDFFileManager sharedManager] setFileURL:testURL];
     [[PDFFileManager sharedManager] setupDocument];
@@ -180,4 +171,214 @@
     GHAssertFalse(viewController.activityIndicator.isAnimating, @"");
     GHAssertTrue(viewController.activityIndicator.hidden, @"");
 }
+
+- (void)test005_setupPageviewControllerWithBindSetting_FinishingSide
+{
+    [[PDFFileManager sharedManager] setFileURL:testURL];
+    [[PDFFileManager sharedManager] setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    [viewController view];
+    
+    //change the print document so as not to trigger observer
+    PrintDocument *printDocument = [[PrintDocument alloc] init];
+    viewController.printDocument = printDocument;
+    
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    printDocument.previewSetting = previewSetting;
+    
+    
+    previewSetting.duplex = kDuplexSettingOff;
+    previewSetting.booklet = NO;
+    previewSetting.finishingSide = kFinishingSideRight;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMax, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertFalse(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.finishingSide = kFinishingSideTop;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMin, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
+    GHAssertFalse(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.finishingSide = kFinishingSideLeft;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMin, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertFalse(viewController.pageViewController.isDoubleSided, @"");
+}
+
+- (void)test006_setupPageviewControllerWithBindSetting_Duplex
+{
+    [[PDFFileManager sharedManager] setFileURL:testURL];
+    [[PDFFileManager sharedManager] setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    [viewController view];
+    
+    //change the print document so as not to trigger observer
+    PrintDocument *printDocument = [[PrintDocument alloc] init];
+    viewController.printDocument = printDocument;
+    
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    printDocument.previewSetting = previewSetting;
+    
+    previewSetting.booklet = NO;
+    previewSetting.duplex = kDuplexSettingLongEdge;
+
+    previewSetting.finishingSide = kFinishingSideRight;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.finishingSide = kFinishingSideTop;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.finishingSide = kFinishingSideLeft;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.duplex = kDuplexSettingShortEdge;
+    
+    previewSetting.finishingSide = kFinishingSideRight;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.finishingSide = kFinishingSideTop;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.finishingSide = kFinishingSideLeft;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+}
+
+- (void)test005_setupPageviewControllerWithBindSetting_Booklet
+{
+    [[PDFFileManager sharedManager] setFileURL:testURL];
+    [[PDFFileManager sharedManager] setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    [viewController view];
+    
+    //change the print document so as not to trigger observer
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:testURL name:[testURL lastPathComponent]];
+    viewController.printDocument = printDocument;
+    
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    printDocument.previewSetting = previewSetting;
+    
+    previewSetting.duplex = kDuplexSettingShortEdge;
+    previewSetting.booklet = YES;
+    previewSetting.finishingSide = kFinishingSideLeft;
+    
+    previewSetting.bookletLayout = kBookletLayoutLeftToRight;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.bookletLayout = kBookletLayoutTopToBottom;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+    previewSetting.bookletLayout = kBookletLayoutRightToLeft;
+    [viewController setupPageviewControllerWithBindSetting];
+    GHAssertNotNil(viewController.pageViewController, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
+    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
+    
+}
+
+- (void)test008_setupTotalPageNum
+{
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
+    
+    previewSetting.duplex = kDuplexSettingLongEdge;
+    [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
+    
+    previewSetting.booklet = YES;
+    [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
+}
+
+- (void) performTotalPageNumTest:(NSURL *) pdfURL withPreviewSetting: (PreviewSetting *)previewSetting
+{
+    [[PDFFileManager sharedManager] setFileURL:pdfURL];
+    [[PDFFileManager sharedManager] setupDocument];
+    
+    CGPDFDocumentRef pdfDocumentRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)pdfURL);
+    NSUInteger pageCount = CGPDFDocumentGetNumberOfPages(pdfDocumentRef);
+    CGPDFDocumentRelease(pdfDocumentRef);
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    [viewController view];
+    
+    //change the print document so as not to trigger observer
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:testURL name:[testURL lastPathComponent]];
+    viewController.printDocument = printDocument;
+    
+    printDocument.previewSetting = previewSetting;
+    [viewController setupTotalPageNum];
+    
+    NSInteger expectedPageNum = pageCount;
+    if(previewSetting.booklet == YES)
+    {
+        expectedPageNum = pageCount + 4 - (pageCount - ((pageCount / 4) * 4));
+    }
+    else if(previewSetting.duplex != kDuplexSettingOff)
+    {
+        expectedPageNum = pageCount + pageCount % 2;
+    }
+    
+    GHAssertEquals(viewController.totalPageNum, expectedPageNum, @"");
+}
+
+- (void)test009_previewSettingDidChange
+{
+    [[PDFFileManager sharedManager] setFileURL:testURL];
+    [[PDFFileManager sharedManager] setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    [viewController view];
+    PreviewSetting *previewSetting = viewController.printDocument.previewSetting;
+}
+
 @end
