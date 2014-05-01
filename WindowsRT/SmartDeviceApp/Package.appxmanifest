@@ -35,7 +35,6 @@
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="removableStorage" />
     <Capability Name="internetClient" />
     <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
