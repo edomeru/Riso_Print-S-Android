@@ -236,6 +236,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
+            _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
             PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
             _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
             _currPrintSettings = await _printSettingsController.GetCurrentPrintSettings();

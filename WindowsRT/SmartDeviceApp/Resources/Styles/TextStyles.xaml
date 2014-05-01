@@ -55,7 +55,19 @@
         <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     </Style>
 
+    <Style x:Key="STYLE_TextValueSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="LineHeight" Value="12"/>
+    </Style>
+
     <Style x:Key="STYLE_TextValueDisabled" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
+        <Setter Property="Foreground" Value="{StaticResource BRUSH_Gray3}"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValueSubTextDisabled" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueSubText}" >
         <Setter Property="Foreground" Value="{StaticResource BRUSH_Gray3}"/>
     </Style>
 

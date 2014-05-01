@@ -47,6 +47,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private string _printerName;
+        private string _printerIpAddress;
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
 
@@ -70,8 +71,20 @@ namespace SmartDeviceApp.ViewModels
                 if (_printerName != value)
                 {
                     _printerName = value;
-                    // TODO: No default/selected printer
                     RaisePropertyChanged("PrinterName");
+                }
+            }
+        }
+
+        public string PrinterIpAddress
+        {
+            get { return _printerIpAddress; }
+            set
+            {
+                if (_printerIpAddress != value)
+                {
+                    _printerIpAddress = value;
+                    RaisePropertyChanged("PrinterIpAddress");
                 }
             }
         }

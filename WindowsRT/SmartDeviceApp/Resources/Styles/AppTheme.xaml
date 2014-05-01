@@ -69,7 +69,8 @@
     <conv:SelectedPrinterToBooleanConverter x:Key="SelectedPrinterToBooleanConverter"/>
     <conv:SeparatorLineGeometryEndPointConverter x:Key="SeparatorLineGeometryEndPointConverter"/>
     <conv:SeparatorLineGeometryStartPointConverter x:Key="SeparatorLineGeometryStartPointConverter"/>
+    <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <conv:WidthConverter x:Key="WidthConverter"/>
-    <!-- APP CONVERTERS END -->       
+    <!-- APP CONVERTERS END -->
 
 </ResourceDictionary>
