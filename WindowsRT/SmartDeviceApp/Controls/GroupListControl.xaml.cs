@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Constants;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controls
 {
@@ -101,7 +102,7 @@ namespace SmartDeviceApp.Controls
             }
 
             // Image
-            maxTextWidth -= ImageConstant.IconImageWidth;
+            maxTextWidth -= ImageConstant.GetIconImageWidth(sender);
             maxTextWidth -= defaultMargin;
             TextWidth = maxTextWidth;
         }

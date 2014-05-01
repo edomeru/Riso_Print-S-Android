@@ -60,7 +60,8 @@
                                                 SeparatorVisibility="True"
                                                 SubText="{Binding IpAddress}"
                                                 SubTextVisibility="Visible"
-                                                Width="{Binding Width, ElementName=selectPrinterBox}">
+                                                Width="{Binding Width, ElementName=selectPrinterBox}"
+                                                PressedColor="{StaticResource BRUSH_Purple1}">
                 </controls:KeyRadioButtonControl>
             </DataTemplate>
         </ListView.ItemTemplate>
