@@ -135,19 +135,18 @@
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress
 {
     PrinterDetails *pd = [[PrinterDetails alloc] init];
-    pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     pd.ip = ipAddress;
     pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet =YES;
+    pd.enBooklet = YES;
+    pd.enStaple = YES;
     pd.enFinisher23Holes = YES;
     pd.enFinisher24Holes = YES;
-    pd.enLpr = YES;
-    pd.enRaw = YES;
-    pd.enStaple = YES;
     pd.enTrayAutoStacking = YES;
     pd.enTrayFaceDown = YES;
     pd.enTrayStacking = YES;
     pd.enTrayTop = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
     
     [self.printerManager registerPrinter:pd];
     self.hasAddedPrinters = YES;

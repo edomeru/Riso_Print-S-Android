@@ -10,6 +10,9 @@
 #import "SNMPManager.h"
 
 @interface SNMPManagerTest : GHTestCase
+{
+    SNMPManager* snmpManager;
+}
 
 @end
 
@@ -25,6 +28,8 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    snmpManager = [SNMPManager sharedSNMPManager];
+    GHAssertNotNil(snmpManager, @"check initialization of SNMPManager");
 }
 
 // Run at end of all tests in the class
@@ -50,16 +55,23 @@
 - (void)test001_SearchForPrinter
 {
     GHTestLog(@"# CHECK: SNMPM can initiate Manual Search. #");
+    
+    //TODO
 }
 
 - (void)test002_SearchForAvailablePrinters
 {
     GHTestLog(@"# CHECK: SNMPM can initiate Device Discovery. #");
+    
+    //TODO
 }
 
-- (void)test003_GetPrinterStatus
+- (void)test003_Singleton
 {
-    GHTestLog(@"# CHECK: SNMPM can get printer status. #");
+    GHTestLog(@"# CHECK: SNPM is indeed a singleton. #");
+    
+    SNMPManager* snmpmNew = [SNMPManager sharedSNMPManager];
+    GHAssertEqualObjects(snmpManager, snmpmNew, @"should return the same object");
 }
 
 @end

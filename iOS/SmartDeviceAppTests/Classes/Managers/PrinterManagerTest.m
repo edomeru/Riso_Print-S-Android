@@ -11,12 +11,17 @@
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
 
-const NSUInteger NUM_PRINTERS = 5;
-const NSUInteger MAX_PRINTERS = 20; //get from SmartDeviceApp-Settings.plist
-const NSUInteger DEFAULT_1    = 2;
-const NSUInteger DEFAULT_2    = 4;
-const NSString*  PRINTER_NAME = @"UT-Printer";
-const NSString*  PRINTER_IP   = @"192.168.1.";
+const NSUInteger NUM_VALID_PRINTERS     = 4;
+const NSUInteger NUM_INVALID_PRINTERS   = 2;
+const NSUInteger NUM_TOTAL_PRINTERS = NUM_VALID_PRINTERS + NUM_INVALID_PRINTERS;
+const NSUInteger MAX_PRINTERS = 10; //get from SmartDeviceApp-Settings.plist
+
+const NSUInteger DEFAULT_1 = 2; //valid printer
+const NSUInteger DEFAULT_2 = 4; //invalid printer
+
+const NSString*  PRINTER_NAME       = @"UT-Printer";
+const NSString*  VALID_PRINTER_IP   = @"192.168.0.19";
+const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
 @interface PrinterManagerTest : GHTestCase
 {
@@ -37,13 +42,20 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    GHAssertTrue(NUM_TOTAL_PRINTERS < MAX_PRINTERS, @"invalid test data");
+    GHAssertTrue(DEFAULT_1 < NUM_TOTAL_PRINTERS, @"invalid test data");
+    GHAssertTrue(DEFAULT_2 < NUM_TOTAL_PRINTERS, @"invalid test data");
+    
     printerManager = [PrinterManager sharedPrinterManager];
-    GHAssertNotNil(printerManager, nil);
+    GHAssertNotNil(printerManager, @"check initialization of PrinterManager");
 }
 
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"printer should be deleted");
+    
     printerManager = nil;
 }
 
@@ -66,38 +78,79 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
 {
     GHTestLog(@"# CHECK: PM is properly initialized. #");
     
-    GHAssertEquals(printerManager.countSavedPrinters, (NSUInteger)0, @"printer count should be 0");
+    GHAssertTrue(printerManager.countSavedPrinters == 0, @"printer count should be 0");
     GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
 }
 
-- (void)test002_AddPrinters
+- (void)test002_AddValidPrinters
 {
     GHTestLog(@"# CHECK: PM can add Printers. #");
     
-    for (int i = 0; i < NUM_PRINTERS; i++)
+    GHTestLog(@"-- adding valid printers");
+    int start = 0;
+    int limit = NUM_VALID_PRINTERS;
+    for (int i = start; i < limit; i++)
     {
         PrinterDetails* pd = [[PrinterDetails alloc] init];
         pd.name = [NSString stringWithFormat:@"%@%d", PRINTER_NAME, i+1];
-        pd.ip = [NSString stringWithFormat:@"%@%d", PRINTER_IP, i+1];
-        pd.port = [NSNumber numberWithInt:(i+1)*100];
-        pd.enLPR = YES;
-        pd.enRAW = NO;
-        pd.enBind = YES;
-        pd.enBookletBind = YES;
-        pd.enDuplex = YES;
-        pd.enPagination = YES;
-        pd.enStaple = YES;
-        GHTestLog(@"-- registering \"%@\"..", pd.name);
+        pd.ip = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, i+1];
+        pd.port = [NSNumber numberWithInt:i%2];
+        pd.enBooklet = YES;
+        pd.enStaple = NO;
+        pd.enFinisher23Holes = YES;
+        pd.enFinisher24Holes = NO;
+        pd.enTrayAutoStacking = YES;
+        pd.enTrayFaceDown = NO;
+        pd.enTrayStacking = YES;
+        pd.enTrayTop = NO;
+        pd.enLpr = YES;
+        pd.enRaw = NO;
+        GHTestLog(@"-- registering \"%@\",\"%@\"..", pd.name, pd.ip);
         GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
     }
+    
+    GHAssertTrue([printerManager countSavedPrinters] == 0+NUM_VALID_PRINTERS, @"");
 }
 
-- (void)test003_GetPrinters
+- (void)test003_AddInvalidPrinters
+{
+    GHTestLog(@"# CHECK: PM can add Printers. #");
+    
+    GHTestLog(@"-- adding invalid printers");
+    int start = 0;
+    int limit = NUM_INVALID_PRINTERS;
+    for (int i = start; i < limit; i++)
+    {
+        PrinterDetails* pd = [[PrinterDetails alloc] init];
+        //pd.name -- should be nil
+        pd.ip = [NSString stringWithFormat:@"%@%d", INVALID_PRINTER_IP, i+1];
+        pd.port = [NSNumber numberWithInt:i%2];
+        pd.enBooklet = YES;
+        pd.enStaple = YES;
+        pd.enFinisher23Holes = YES;
+        pd.enFinisher24Holes = YES;
+        pd.enTrayAutoStacking = YES;
+        pd.enTrayFaceDown = YES;
+        pd.enTrayStacking = YES;
+        pd.enTrayTop = YES;
+        pd.enLpr = YES;
+        pd.enRaw = YES;
+        GHTestLog(@"-- registering \"%@\",\"%@\"..", pd.name, pd.ip);
+        GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
+    }
+    
+    GHAssertTrue([printerManager countSavedPrinters] == NUM_VALID_PRINTERS+NUM_INVALID_PRINTERS, @"");
+}
+
+- (void)test004_GetValidPrinters
 {
     GHTestLog(@"# CHECK: PM can retrieve Printers. #");
     
-    for (NSUInteger i = 0; i < NUM_PRINTERS; i++)
+    GHTestLog(@"-- getting valid printers");
+    int start = 0;
+    int limit = NUM_VALID_PRINTERS;
+    for (int i = start; i < limit; i++)
     {
         GHTestLog(@"-- getting printer i=%lu", (unsigned long)i);
         
@@ -105,29 +158,81 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
         GHAssertNotNil(testPrinter, @"get printer should return a valid printer");
         
         NSString* expectedName = [NSString stringWithFormat:@"%@%d", PRINTER_NAME, i+1];
+        GHTestLog(@"--- name=[%@]", testPrinter.name);
         GHAssertEqualStrings(testPrinter.name, expectedName, @"");
         
-        NSString* expectedIP = [NSString stringWithFormat:@"%@%d", PRINTER_IP, i+1];
+        NSString* expectedIP = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, i+1];
+        GHTestLog(@"--- ip=[%@]", testPrinter.ip_address);
         GHAssertEqualStrings(testPrinter.ip_address, expectedIP, @"");
         
-        NSNumber* expectedPort = [NSNumber numberWithInt:(i+1)*100];
+        NSNumber* expectedPort = [NSNumber numberWithInt:i%2];
         GHAssertEquals([testPrinter.port intValue], [expectedPort intValue], @"");
         
         GHAssertTrue([testPrinter.enabled_lpr boolValue], @"setting is different than expected");
         GHAssertFalse([testPrinter.enabled_raw boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_bind boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_booklet_binding boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_duplex boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_pagination boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_staple boolValue], @"setting is different than expected");
+        GHAssertTrue([testPrinter.enabled_booklet boolValue], @"setting is different than expected");
+        GHAssertFalse([testPrinter.enabled_staple boolValue], @"setting is different than expected");
+        GHAssertTrue([testPrinter.enabled_finisher_2_3_holes boolValue], @"setting is different than expected");
+        GHAssertFalse([testPrinter.enabled_finisher_2_4_holes boolValue], @"setting is different than expected");
+        GHAssertTrue([testPrinter.enabled_tray_auto_stacking boolValue], @"setting is different than expected");
+        GHAssertFalse([testPrinter.enabled_tray_face_down boolValue], @"setting is different than expected");
+        GHAssertTrue([testPrinter.enabled_tray_stacking boolValue], @"setting is different than expected");
+        GHAssertFalse([testPrinter.enabled_tray_top boolValue], @"setting is different than expected");
         
         GHAssertFalse([printerManager isDefaultPrinter:testPrinter], @"there should be no default printer");
         
+        GHAssertNil(testPrinter.defaultprinter, @"DefaultPrinter should be nil");
         GHAssertNotNil(testPrinter.printsetting, @"Printer should have a valid PrintSetting object");
+        GHAssertNotNil(testPrinter.printjob, @"PrintJob should not be nil");
+        GHAssertTrue([testPrinter.printjob count] == 0, @"there should be no print jobs");
     }
 }
 
-- (void)test004_SetUnsetDefaultPrinter
+- (void)test005_GetInvalidPrinters
+{
+    GHTestLog(@"# CHECK: PM can retrieve Printers. #");
+    
+    GHTestLog(@"-- getting invalid printers");
+    int start = NUM_VALID_PRINTERS;
+    int limit = NUM_TOTAL_PRINTERS;
+    for (int i = start; i < limit; i++)
+    {
+        GHTestLog(@"-- getting printer i=%lu", (unsigned long)i);
+        
+        Printer* testPrinter = [printerManager getPrinterAtIndex:i];
+        GHAssertNotNil(testPrinter, @"get printer should return a valid printer");
+        
+        GHTestLog(@"--- name=[%@]", testPrinter.name);
+        GHAssertNil(testPrinter.name, @"invalid printer should have a nil or @\"\" name");
+        
+        NSString* expectedIP = [NSString stringWithFormat:@"%@%d", INVALID_PRINTER_IP, (i-start)+1];
+        GHTestLog(@"--- ip=[%@]", testPrinter.ip_address);
+        GHAssertEqualStrings(testPrinter.ip_address, expectedIP, @"");
+        
+        NSNumber* expectedPort = [NSNumber numberWithInt:i%2];
+        GHAssertEquals([testPrinter.port intValue], [expectedPort intValue], @"");
+        
+        GHAssertTrue([testPrinter.enabled_lpr boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_raw boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_booklet boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_staple boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_finisher_2_3_holes boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_finisher_2_4_holes boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_tray_auto_stacking boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_tray_face_down boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_tray_stacking boolValue], @"should have full capabilities");
+        GHAssertTrue([testPrinter.enabled_tray_top boolValue], @"should have full capabilities");
+        
+        GHAssertFalse([printerManager isDefaultPrinter:testPrinter], @"there should be no default printer");
+        
+        GHAssertNil(testPrinter.defaultprinter, @"DefaultPrinter should be nil");
+        GHAssertNotNil(testPrinter.printsetting, @"Printer should have a valid PrintSetting object");
+        GHAssertNotNil(testPrinter.printjob, @"PrintJob should not be nil");
+        GHAssertTrue([testPrinter.printjob count] == 0, @"there should be no print jobs");
+    }
+}
+
+- (void)test006_SetUnsetDefaultPrinter
 {
     GHTestLog(@"# CHECK: PM knows which is the DefaultPrinter. #");
     
@@ -136,7 +241,7 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     BOOL setDefault1 = [printerManager registerDefaultPrinter:default1];
     GHAssertTrue(setDefault1, @"printer at index=%lu should be the default printer", (unsigned long)DEFAULT_1);
     GHAssertTrue([printerManager hasDefaultPrinter], @"there should be a default printer");
-    GHAssertEquals(printerManager.countSavedPrinters, NUM_PRINTERS, @"printer count should remain the same");
+    GHAssertEquals(printerManager.countSavedPrinters, NUM_TOTAL_PRINTERS, @"printer count should remain the same");
     GHAssertTrue([printerManager isDefaultPrinter:default1], @"default1 should be the default printer");
     
     GHTestLog(@"-- setting printer[%lu] to be the default printer", (unsigned long)DEFAULT_2);
@@ -144,20 +249,19 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
     BOOL setDefault2 = [printerManager registerDefaultPrinter:default2];
     GHAssertTrue(setDefault2, @"printer at index=%lu should be the default printer", (unsigned long)DEFAULT_2);
     GHAssertTrue([printerManager hasDefaultPrinter], @"there should be a default printer");
-    GHAssertEquals(printerManager.countSavedPrinters, NUM_PRINTERS, @"printer count should remain the same");
+    GHAssertEquals(printerManager.countSavedPrinters, NUM_TOTAL_PRINTERS, @"printer count should remain the same");
     GHAssertTrue([printerManager isDefaultPrinter:default2], @"default2 should be the default printer");
-    
     GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
     
     GHTestLog(@"-- unsetting printer[%lu] from being the default printer", (unsigned long)DEFAULT_2);
     GHAssertTrue([printerManager deleteDefaultPrinter], @"default printer should be removed");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there shouldn't be a default printer");
-    GHAssertEquals(printerManager.countSavedPrinters, NUM_PRINTERS, @"printer count should remain the same");
+    GHAssertEquals(printerManager.countSavedPrinters, NUM_TOTAL_PRINTERS, @"printer count should remain the same");
     GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
     GHAssertFalse([printerManager isDefaultPrinter:default2], @"default2 is not anymore the default printer");
 }
 
-- (void)test005_MaximumPrinters
+- (void)test007_MaximumPrinters
 {
     GHTestLog(@"# CHECK: PM can check for max printers. #");
     
@@ -166,19 +270,22 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
                   (unsigned long)MAX_PRINTERS);
     
     // add until we reach maximum printers
-    for (NSUInteger i = NUM_PRINTERS; i < MAX_PRINTERS; i++)
+    for (NSUInteger i = NUM_TOTAL_PRINTERS; i < MAX_PRINTERS; i++)
     {
         PrinterDetails* pd = [[PrinterDetails alloc] init];
         pd.name = [NSString stringWithFormat:@"%@%d", PRINTER_NAME, i+1];
-        pd.ip = [NSString stringWithFormat:@"%@%d", PRINTER_IP, i+1];
-        pd.port = [NSNumber numberWithInt:(i+1)*100];
-        pd.enLPR = YES;
-        pd.enRAW = NO;
-        pd.enBind = YES;
-        pd.enBookletBind = YES;
-        pd.enDuplex = YES;
-        pd.enPagination = YES;
+        pd.ip = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, i+1];
+        pd.port = [NSNumber numberWithInt:i%2];
+        pd.enBooklet = YES;
         pd.enStaple = YES;
+        pd.enFinisher23Holes = YES;
+        pd.enFinisher24Holes = YES;
+        pd.enTrayAutoStacking = YES;
+        pd.enTrayFaceDown = YES;
+        pd.enTrayStacking = YES;
+        pd.enTrayTop = YES;
+        pd.enLpr = YES;
+        pd.enRaw = YES;
         GHTestLog(@"-- registering \"%@\"..", pd.name);
         GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
     }
@@ -188,18 +295,34 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
                   (unsigned long)MAX_PRINTERS);
 }
 
-- (void)test006_DuplicatePrinter
+- (void)test008_IsPrinterRegistered
 {
     GHTestLog(@"# CHECK: PM can check IPs. #");
     
-    NSString* oldIP = [NSString stringWithFormat:@"%@%d", PRINTER_IP, 4]; //192.168.1.4
+    NSString* oldIP = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, 4]; //192.168.1.4
     GHAssertTrue([printerManager isIPAlreadyRegistered:oldIP], @"IP=%@ should already be registered", oldIP);
     
     NSString* newIP = @"127.0.0.1";
     GHAssertFalse([printerManager isIPAlreadyRegistered:newIP], @"IP=%@ shouldn't be registered", newIP);
 }
 
-- (void)test007_DeletePrinters
+- (void)test009_DeleteDefaultPrinter
+{
+    GHTestLog(@"# CHECK: PM can delete default Printer. #");
+    
+    GHTestLog(@"-- setting printer[%lu] as the default", (unsigned long)DEFAULT_1);
+    Printer* defaultPrinter = [printerManager getPrinterAtIndex:DEFAULT_1];
+    GHAssertNotNil(defaultPrinter, @"");
+    GHAssertTrue([printerManager registerDefaultPrinter:defaultPrinter], @"");
+    
+    GHTestLog(@"-- deleting printer[%lu]", (unsigned long)DEFAULT_1);
+    NSUInteger countBeforeDelete = printerManager.countSavedPrinters;
+    GHAssertTrue([printerManager deletePrinterAtIndex:DEFAULT_1], @"default printer can be deleted");
+    GHAssertTrue(printerManager.countSavedPrinters == countBeforeDelete-1, @"");
+    GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no more default printer");
+}
+
+- (void)test010_DeleteNonDefaultPrinters
 {
     GHTestLog(@"# CHECK: PM can delete Printers. #");
     
@@ -217,19 +340,31 @@ const NSString*  PRINTER_IP   = @"192.168.1.";
         }
     }
     
-    GHAssertEquals(printerManager.countSavedPrinters, (NSUInteger)0, @"printers count should be 0");
+    GHAssertTrue(printerManager.countSavedPrinters == 0, @"printers count should be 0");
     GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
 }
 
-- (void)test008_SearchForOnePrinter
+- (void)test011_SearchForOnePrinter
 {
-    GHTestLog(@"# CHECK: PM can search for a Printer. #");
+    GHTestLog(@"# CHECK: PM can handle printer search. #");
+    
+    //TODO
 }
 
-- (void)test009_SearchForAllPrinters
+- (void)test012_SearchForAllPrinters
 {
-    GHTestLog(@"# CHECK: PM can search for Printers. #");
+    GHTestLog(@"# CHECK: PM can handle printer search. #");
+    
+    //TODO
+}
+
+- (void)test013_Singleton
+{
+    GHTestLog(@"# CHECK: PM is indeed a singleton. #");
+    
+    PrinterManager* pmNew = [PrinterManager sharedPrinterManager];
+    GHAssertEqualObjects(printerManager, pmNew, @"should return the same object");
 }
 
 @end

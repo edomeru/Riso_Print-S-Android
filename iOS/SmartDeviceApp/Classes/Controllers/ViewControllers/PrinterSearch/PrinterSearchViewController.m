@@ -243,7 +243,10 @@
         [self.listNewPrinterIP removeObjectAtIndex:row];
         [self.tableView reloadData];
 #else
-        [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
+        if (printerDetails.name == nil)
+            [self.listPrinterDetails setValue:@"" forKey:printerIP];
+        else
+            [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
         [self.tableView reloadData];
 #endif
         
@@ -357,7 +360,10 @@
 #else
     // save the printer name
     [self.listPrinterIP addObject:printerIP];
-    [self.listPrinterDetails setValue:printerName forKey:printerIP];
+    if (printerName == nil)
+        [self.listPrinterDetails setValue:@"" forKey:printerIP];
+    else
+        [self.listPrinterDetails setValue:printerName forKey:printerIP];
 #endif
     
     // reload the tableView

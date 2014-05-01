@@ -155,6 +155,8 @@
     {
         GHAssertEquals([[self.printDocument.previewSetting valueForKey:key]integerValue], [[printSetting valueForKey:key]integerValue], @"");
     }
+    
+    [DatabaseManager discardChanges]; //remove the added printer and printSetting
 }
 
 - (void)test005_keyValueObservingValueNotChanged
