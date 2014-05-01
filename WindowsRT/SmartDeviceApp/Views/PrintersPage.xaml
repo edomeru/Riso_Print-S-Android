@@ -111,7 +111,6 @@
                                                       IconVisibility="Collapsed"
                                                           Text="Default Print Settings"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
-                                                      RightPressedImage="ms-appx:///Resources/Images/img_btn_default_print_settings_pressed.scale-100.png"
                                                       RightButtonVisibility="Visible"
                                                       />
 

@@ -209,7 +209,6 @@
                                                           SubText="{Binding Ip_address}"
                                                           SubTextVisibility="Visible"
                                             			  RightImage="{Binding ImageSource}"
-                                                          RightPressedImage="ms-appx:///Resources/Images/img_btn_add_printer_pressed.scale-100.png"
                                                           RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
                                                           SeparatorVisibility="{Binding Converter={StaticResource PrinterSearchItemToSeparatorVisibility}}"

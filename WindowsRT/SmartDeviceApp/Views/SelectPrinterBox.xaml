@@ -59,7 +59,7 @@
                                                 IsEnabled="True"
                                                 SeparatorVisibility="True"
                                                 SubText="{Binding IpAddress}"
-                                                SubTextVisibility="Visible"
+                                                SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                                 Width="{Binding Width, ElementName=selectPrinterBox}"
                                                 PressedColor="{StaticResource BRUSH_Purple1}">
                 </controls:KeyRadioButtonControl>

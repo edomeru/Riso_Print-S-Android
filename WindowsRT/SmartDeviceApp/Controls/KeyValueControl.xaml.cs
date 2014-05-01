@@ -52,8 +52,8 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty IconImageProperty =
             DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyValueControl), null);
-			
-		public static readonly DependencyProperty RightImageProperty =
+
+        public static readonly DependencyProperty RightImageProperty =
             DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
         public static readonly DependencyProperty RightDisabledImageProperty =
@@ -76,6 +76,12 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty ValueTextWidthProperty =
             DependencyProperty.Register("ValueTextWidth", typeof(double), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty ValueSubTextProperty =
+            DependencyProperty.Register("ValueSubText", typeof(string), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty ValueSubTextVisibilityProperty =
+            DependencyProperty.Register("ValueSubTextVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Collapsed));
 
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
@@ -114,6 +120,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (Visibility)GetValue(ValueVisibilityProperty); }
             set { SetValue(ValueVisibilityProperty, value); }
+        }
+
+        public Visibility ValueSubTextVisibility
+        {
+            get { return (Visibility)GetValue(ValueSubTextVisibilityProperty); }
+            set { SetValue(ValueSubTextVisibilityProperty, value); }
         }
 
         public object ValueContent
@@ -162,6 +174,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
+        }
+
+        public string ValueSubText
+        {
+            get { return (string)GetValue(ValueSubTextProperty); }
+            set { SetValue(ValueSubTextProperty, value); }
         }
 
         public double KeyTextWidth
