@@ -56,9 +56,6 @@ namespace SmartDeviceApp.Controls
 		public static readonly DependencyProperty RightImageProperty =
             DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
-        public static readonly DependencyProperty RightPressedImageProperty =
-            DependencyProperty.Register("RightPressedImage", typeof(ImageSource), typeof(KeyValueControl), null);
-
         public static readonly DependencyProperty RightDisabledImageProperty =
             DependencyProperty.Register("RightDisabledImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
@@ -85,6 +82,9 @@ namespace SmartDeviceApp.Controls
 
         public static new readonly DependencyProperty IsEnabledProperty =
             DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyValueControl), new PropertyMetadata(true, SetIsEnabled));
+
+        public static readonly DependencyProperty PressedColorProperty =
+            DependencyProperty.Register("PressedColor", typeof(SolidColorBrush), typeof(KeyValueControl), null);
 
         public ICommand Command
         {
@@ -132,12 +132,6 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ImageSource)GetValue(RightImageProperty); }
             set { SetValue(RightImageProperty, value); }
-        }
-
-        public ImageSource RightPressedImage
-        {
-            get { return (ImageSource)GetValue(RightPressedImageProperty); }
-            set { SetValue(RightPressedImageProperty, value); }
         }
 
         public ImageSource RightDisabledImage
@@ -194,6 +188,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(IsEnabledProperty, value); }
         }
 
+        public SolidColorBrush PressedColor
+        {
+            get { return (SolidColorBrush)GetValue(PressedColorProperty); }
+            set { SetValue(PressedColorProperty, value); }
+        }
+
         private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue == null || !(e.NewValue is bool)) return;
@@ -237,7 +237,7 @@ namespace SmartDeviceApp.Controls
             if (IconVisibility == Visibility.Visible)
             {
                 var imageWidth = ((BitmapImage)IconImage).PixelWidth;
-                if (imageWidth == 0) imageWidth = ImageConstant.IconImageWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(sender);
                 maxTextWidth -= imageWidth;
                 maxTextWidth -= defaultMargin;
             }
@@ -245,7 +245,7 @@ namespace SmartDeviceApp.Controls
             if (RightButtonVisibility == Visibility.Visible)
             {
                 var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
-                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.RightButtonImageWidth;
+                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
                 maxTextWidth -= rightButtonImageWidth;
                 maxTextWidth -= defaultMargin;
             }
