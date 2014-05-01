@@ -39,6 +39,7 @@
             </Grid>
             <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_CARD_ID, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding CardId, Mode=TwoWay}"
+                                        IsNumeric="False"
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="Collapsed"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
@@ -51,6 +52,7 @@
             </Grid>
             <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_READ_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding ReadCommunityName, Mode=TwoWay}"
+                                        IsNumeric="False"
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="Collapsed"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"

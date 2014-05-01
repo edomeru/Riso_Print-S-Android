@@ -27,11 +27,12 @@
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding Path=Value, Converter={StaticResource IntToStringConverter}, Mode=TwoWay}"
                                         utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
+                                        IsNumeric="True"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
                                         TextBoxAlignment="Right"
-                                        TextBoxMaxLength="4"
+                                        TextBoxMaxLength="{StaticResource MAXLENGTH_Copies}"
                                         Width="{Binding Width, ElementName=printSettingsBox}"
                                         IsEnabled="{Binding Path=IsEnabled}"
                                         PressedColor="{StaticResource BRUSH_Purple1}"/>
@@ -114,5 +115,33 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <controls:GroupListControl Text="{Binding Source=IDS_LBL_AUTHENTICATION, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                                   Width="{Binding Width, ElementName=printSettingsBox}"
+                                   DeleteButtonVisibility="Collapsed">
+            <controls:GroupListControl.Content>
+                <StackPanel Orientation="Vertical">
+                    <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_AUTHENTICATION_LOGINID, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                ValueText="{Binding AuthenticationLoginId,  Mode=TwoWay}"
+                                                IsNumeric="False"
+                                                IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                                SeparatorVisibility="Visible"
+                                                TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
+                                                TextBoxAlignment="Left"
+                                                TextBoxMaxLength="{StaticResource MAXLENGTH_AuthenticationLoginId}"
+                                                Width="{Binding Width, ElementName=printSettingsBox}"
+                                                IsEnabled="True"
+                                                PressedColor="{StaticResource BRUSH_Purple1}"/>
+                    <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_AUTHENTICATION_PINCODE, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                    ValueText="{Binding AuthenticationLoginPinCode,  Mode=TwoWay}"
+                                                    IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                                    SeparatorVisibility="Collapsed"
+                                                    PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
+                                                    PasswordMaxLength="{StaticResource MAXLENGTH_AuthenticationLoginId}"
+                                                    Width="{Binding Width, ElementName=printSettingsBox}"
+                                                    IsEnabled="True"
+                                                    PressedColor="{StaticResource BRUSH_Purple1}"/>
+                </StackPanel>
+            </controls:GroupListControl.Content>
+        </controls:GroupListControl>
     </ListView>
 </Grid>
