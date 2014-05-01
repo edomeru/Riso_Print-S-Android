@@ -50,7 +50,6 @@ namespace SmartDeviceApp.Controllers
             _printer = printer;
             _enableAutosave = enableAutosave;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
-            LoadPrintSettingsOptions();
         }
 
         /// <summary>
@@ -64,6 +63,7 @@ namespace SmartDeviceApp.Controllers
             {
                 await GetPrintSettings(_printer.PrintSettingId);
             }
+            LoadPrintSettingsOptions();
             FilterPrintSettingsUsingCapabilities();
             MergePrintSettings();
             ApplyPrintSettingConstraints();
