@@ -25,12 +25,15 @@
             <local:AddPrinterPane/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_SearchPrinterPane">
-
             <local:SearchPrinterPane x:Name="SearchPrinterPaneControl"/>
+        </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_PrintSettingsPane">
+            <local:PrintSettingsPane x:Name="PrintSettingsPaneControl"/>
         </DataTemplate>
         <sel:PrintersRightPaneTemplateSelector x:Key="PrintersRightPaneTemplateSelector"
                                      AddPrinterPaneTemplate="{StaticResource TEMPLATE_AddPrinterPane}"
-                                     SearchPrinterPaneTemplate="{StaticResource TEMPLATE_SearchPrinterPane}"/>
+                                     SearchPrinterPaneTemplate="{StaticResource TEMPLATE_SearchPrinterPane}"
+                                     PrintSettingsPaneTemplate="{StaticResource TEMPLATE_PrintSettingsPane}"/>
    
     </base:PageBase.Resources>
     
@@ -70,9 +73,8 @@
                                                                      IconVisibility="Visible"
                                                                      LeftButtonVisibility="Collapsed"
                                                                      PrinterIp="{Binding IpAddress}"
-                                                                     WillPerformDelete="{Binding WillPerformDelete, Mode=TwoWay}"
                                                                      WillBeDeleted ="{Binding WillBeDeleted, Mode=TwoWay}"
-                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printersPage}"/>
+                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printerInfoView}"/>
 
                             <controls:KeyImageControl x:Name="printerImage" 
                                                           PrinterImage="ms-appx:///Resources/Dummy/RZ1070-page1.jpg"/>
@@ -84,7 +86,9 @@
                                                           RightButtonVisibility="Collapsed"
                                                           ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
-                                                      Width="{Binding ItemWidth, ElementName=printerInfoView}"/>
+                                                      Width="{Binding ItemWidth, ElementName=printerInfoView}"
+                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
+                                                      />
                             
                             
                             <controls:PortItemControl x:Name="port"
@@ -111,8 +115,10 @@
                                                       IconVisibility="Collapsed"
                                                           Text="Default Print Settings"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
-                                                      RightPressedImage="ms-appx:///Resources/Images/img_btn_default_print_settings_pressed.scale-100.png"
+                                                      
                                                       RightButtonVisibility="Visible"
+                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printerInfoView}"
+                                                      CommandParameter="{Binding}"
                                                       />
 
                         </ListView>

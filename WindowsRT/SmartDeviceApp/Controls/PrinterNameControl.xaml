@@ -143,8 +143,8 @@
 				Style="{StaticResource STYLE_AlignRight}" Stretch="None" Visibility="{Binding WillBeDeleted, ElementName=printerNameControl, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerPressed">
-                        <Core:InvokeCommandAction Command="{Binding UpdateDeletionPerform, ElementName=printerNameControl}"
-                                                />
+                        <Core:InvokeCommandAction Command="{Binding DeleteCommand, ElementName=printerNameControl}"
+                                                CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"/>
                     </Core:EventTriggerBehavior>
                     
 

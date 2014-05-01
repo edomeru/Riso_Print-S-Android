@@ -106,12 +106,12 @@ namespace SmartDeviceApp.ViewModels
             if (tapped == "ClearDelete")
             {
                 int i = 0;
-                do
+                while (i < PrinterList.Count)
                 {
                     Printer printer = PrinterList.ElementAt(i);
                     printer.WillBeDeleted = false;
                     i++;
-                } while (i < PrinterList.Count);
+                } 
             }
         }
 
@@ -178,12 +178,20 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public event SmartDeviceApp.Controllers.PrinterController.OpenDefaultPrintSettingsHandler OpenDefaultPrintSettingsHandler;
+
         private void OpenDefaultPrinterSettingsExecute(Printer printer)
         {
             //use visual state.
             //get default printer settings using ip
             System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
-            System.Diagnostics.Debug.WriteLine(printer.IpAddress);
+
+            var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+
+            _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
+            RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
+            OpenDefaultPrintSettingsHandler(printer);
+            
         }
     }
 

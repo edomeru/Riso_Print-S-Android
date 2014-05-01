@@ -271,22 +271,31 @@ namespace SmartDeviceApp.Controllers
 
             try
             {
-                //delete in printer table
-                var printer = await db.Table<Printer>().Where(
-                    p => p.Id == printerId).FirstAsync();
+                int count = await db.Table<Printer>().CountAsync();
+                if (count > 0)
+                { 
+                    //delete in printer table
+                    var printer = await db.Table<Printer>().Where(
+                        p => p.Id == printerId).FirstAsync();
              
-                //check if default printer
-                var defaultPrinter = await db.Table<DefaultPrinter>().FirstAsync();
+                    //check if default printer
+                    int defaultPrinterCount = await db.Table<DefaultPrinter>().CountAsync();
+                    if (defaultPrinterCount > 0)
+                    {
+                        var defaultPrinter = await db.Table<DefaultPrinter>().FirstAsync();
+                    
+                        if (printer.Id == defaultPrinter.PrinterId)
+                        {
+                            //update default printer in DB
+                            await db.DeleteAsync(defaultPrinter);
+                        }
 
-                if (printer.Id == defaultPrinter.PrinterId)
-                {
-                    //update default printer in DB
-                    await db.DeleteAsync(defaultPrinter);
+                    }
+
+                    //delete in Printer table
+
+                    await db.DeleteAsync(printer);
                 }
-
-                //delete in Printer table
-
-                await db.DeleteAsync(printer);
             }
             catch
             {

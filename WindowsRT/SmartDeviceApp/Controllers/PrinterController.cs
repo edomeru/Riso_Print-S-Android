@@ -32,6 +32,9 @@ namespace SmartDeviceApp.Controllers
         public delegate Task<bool> DeletePrinterHandler(string ipAddress);
         private DeletePrinterHandler _deletePrinterHandler;
 
+        public delegate void OpenDefaultPrintSettingsHandler(Printer printer);
+        private OpenDefaultPrintSettingsHandler _openDefaultPrintSettingsHandler;
+
         ThreadPoolTimer periodicTimer;
 
         private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
@@ -41,6 +44,7 @@ namespace SmartDeviceApp.Controllers
         private PrintersViewModel _printersViewModel;
         private SearchPrinterViewModel _searchPrinterViewModel;
         private AddPrinterViewModel _addPrinterViewModel;
+        private PrintSettingsViewModel _printSettingsViewModel;
 
         SNMPController snmpController = new SNMPController();
 
@@ -63,21 +67,33 @@ namespace SmartDeviceApp.Controllers
             _printersViewModel = new ViewModelLocator().PrintersViewModel;
             _searchPrinterViewModel = new ViewModelLocator().SearchPrinterViewModel;
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
+            _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
             _deletePrinterHandler = new DeletePrinterHandler(deletePrinter);
             _searchPrinterTimeoutHandler = new SearchPrinterTimeoutHandler(handleSearchTimeout);
+            _openDefaultPrintSettingsHandler = new OpenDefaultPrintSettingsHandler(handleOpenDefaultPrintSettings);
 
             _printersViewModel.DeletePrinterHandler += _deletePrinterHandler;
             populatePrintersScreen();
             _printersViewModel.PrinterList = PrinterList;
+            _printersViewModel.OpenDefaultPrintSettingsHandler += _openDefaultPrintSettingsHandler;
 
             _searchPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
             _searchPrinterViewModel.PrinterSearchList = PrinterSearchList;
 
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
+            _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
+
+        }
+
+        private void handleOpenDefaultPrintSettings(Printer printer)
+        {
+            //get new print settings
+            _printSettingsViewModel.PrinterName = printer.Name;
+
         }
 
 
@@ -251,6 +267,7 @@ namespace SmartDeviceApp.Controllers
 
         public bool addPrinter(string ip)
         {
+            
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             //check if valid ip address
             if (!isValidIpAddress(ip))
@@ -434,13 +451,6 @@ namespace SmartDeviceApp.Controllers
                 //System.Diagnostics.Debug.WriteLine(printer.IsDefault);
                 }
 
-            }
-            if (e.PropertyName == "WillPerformDelete")
-            {
-                if (printer.WillPerformDelete == true)
-                {
-                    await deletePrinter(printer.IpAddress);
-                }
             }
 
             if (e.PropertyName == "WillBeDeleted" && printer.WillBeDeleted == true)

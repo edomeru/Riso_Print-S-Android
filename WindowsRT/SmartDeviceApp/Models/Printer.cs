@@ -182,17 +182,6 @@ namespace SmartDeviceApp.Models
             }
         }
 
-        [SQLite.Ignore]
-        public bool WillPerformDelete
-        {
-            get { return this._willPerformDelete; }
-            set
-            {
-                _willPerformDelete = value;
-                OnPropertyChanged("WillPerformDelete");
-            }
-        }
-
 
 
         /// <summary>

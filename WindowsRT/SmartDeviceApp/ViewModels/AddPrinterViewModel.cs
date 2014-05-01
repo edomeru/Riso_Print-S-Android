@@ -7,6 +7,7 @@ using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,8 @@ namespace SmartDeviceApp.ViewModels
         private ImageSource _buttonImage;
 
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
+
+        private ObservableCollection<PrinterSearchItem> _printerSearchList;
 
         private string ADD_IMAGE = "ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png";
         private ViewControlViewModel _viewControlViewModel;
@@ -89,6 +92,16 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public ObservableCollection<PrinterSearchItem> PrinterSearchList
+        {
+            get { return this._printerSearchList; }
+            set
+            {
+                _printerSearchList = value;
+                OnPropertyChanged("PrinterSearchList");
+            }
+        }
+
         public ICommand AddPrinter
         {
             get
@@ -107,7 +120,8 @@ namespace SmartDeviceApp.ViewModels
         private void AddPrinterExecute()
         {
             System.Diagnostics.Debug.WriteLine(IpAddress);
-            
+
+            PrinterSearchList.Clear();
 
             //check if has data
             if (IpAddress.Equals("") )
