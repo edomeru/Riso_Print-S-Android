@@ -24,7 +24,6 @@ namespace SmartDeviceApp.Controls
     public partial class KeyValueControl : UserControl
     {
         private bool _isLoaded;
-        private bool _isForceReload;
 
         public KeyValueControl()
         {
@@ -91,6 +90,10 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty PressedColorProperty =
             DependencyProperty.Register("PressedColor", typeof(SolidColorBrush), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty VisualStateProperty =
+            DependencyProperty.Register("VisualState", typeof(string), typeof(KeyValueControl),
+            new PropertyMetadata("Normal", SetVisualState));
 
         public ICommand Command
         {
@@ -212,6 +215,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(PressedColorProperty, value); }
         }
 
+        public string VisualState
+        {
+            get { return (string)GetValue(VisualStateProperty); }
+            set { SetValue(VisualStateProperty, value); }
+        }
+
         private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue == null || !(e.NewValue is bool)) return;
@@ -220,27 +229,17 @@ namespace SmartDeviceApp.Controls
             {
                 VisualStateManager.GoToState(((KeyValueControl)obj).button, "Normal", true);
                 control.button.IsEnabled = true;
-                if (e.OldValue != e.NewValue)
-                {
-                    control._isForceReload = true;
-                    control.OnLoaded(null, null);
-                }
             }
             else
             {
                 VisualStateManager.GoToState(((KeyValueControl)obj).button, "Disabled", true);
                 control.button.IsEnabled = false;
-                if (e.OldValue != e.NewValue)
-                {
-                    control._isForceReload = true;
-                    control.OnLoaded(null, null);
-                }
             }
         }
         
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if ((_isLoaded && !_isForceReload) || Visibility == Visibility.Collapsed) return;
+            if (_isLoaded || Visibility == Visibility.Collapsed) return;
 
             var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
             var smallMargin = (int)((double)Application.Current.Resources["MARGIN_Small"]);
@@ -291,7 +290,28 @@ namespace SmartDeviceApp.Controls
                 KeyTextWidth = maxTextWidth;
             }
             _isLoaded = true;
-            _isForceReload = false;
+        }
+
+        private static void SetVisualState(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue == null || !(e.NewValue is string)) return;
+            var state = e.NewValue.ToString();
+            var button = ((KeyValueControl)obj).button;
+            switch (state)
+            {
+                case "Normal":
+                    VisualStateManager.GoToState(button, "Normal", true);
+                    break;
+                case "Pressed":
+                    VisualStateManager.GoToState(button, "Pressed", true);
+                    break;
+                case "Disabled":
+                    VisualStateManager.GoToState(button, "Disabled", true);
+                    break;    
+                default:
+                    VisualStateManager.GoToState(button, "Normal", true);
+                    break;
+            }
         }
     }
 }

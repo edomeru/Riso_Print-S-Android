@@ -15,6 +15,11 @@
     <SolidColorBrush x:Key="BRUSH_Purple2" Color="#5207B6" />
     <!-- APP THEME BRUSHES END -->
 
+    <!-- PRINT SETTING CONSTANTS START -->
+    <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>
+    <x:Int32 x:Key="MAXLENGTH_AuthenticationLoginId">31</x:Int32>
+    <!-- PRINT SETTING CONSTANTS END -->
+
     <!-- APP THEME CONSTANTS START -->
     <x:Double x:Key="MARGIN_Default">20</x:Double>
     <x:Double x:Key="MARGIN_List">50</x:Double>
