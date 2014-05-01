@@ -23,7 +23,7 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 
 - (BOOL)shouldRunOnMainThread
 {
-    return YES;
+    return NO;
 }
 
 // Run at start of all tests in the class

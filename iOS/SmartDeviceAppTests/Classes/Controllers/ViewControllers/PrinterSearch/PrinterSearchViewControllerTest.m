@@ -9,19 +9,15 @@
 #import "PrinterSearchViewController.h"
 #import "SearchResultCell.h"
 #import "PrinterDetails.h"
-#import "DatabaseManager.h"
-#import "SNMPManager.h"
 
 @interface PrinterSearchViewController (UnitTest)
 
 // expose private properties
 - (UITableView*)tableView;
-- (PrinterManager*)printerManager;
-- (NSMutableArray*)listPrinterIP;
-- (NSMutableDictionary*)listPrinterDetails;
+- (UIRefreshControl*)refreshControl;
 
 // expose private methods
-- (void)addPrinter:(NSUInteger)row;
+- (void)refresh;
 
 @end
 
@@ -61,17 +57,22 @@
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
+    NSString* msg;
+    const float SEARCH_TIMEOUT = 10.0f;
+    
     NSString* controllerIphoneName = @"PrinterSearchIphoneViewController";
     controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];
     GHAssertNotNil(controllerIphone, @"unable to instantiate controller (%@)", controllerIphoneName);
     GHAssertNotNil(controllerIphone.view, @"");
-    [[controllerIphone printerManager] stopSearching];
+    msg = [NSString stringWithFormat:@"wait for %.2f secs while the iPhone controller is loading", SEARCH_TIMEOUT];
+    [self waitForCompletion:SEARCH_TIMEOUT withMessage:msg];
     
     NSString* controllerIpadName = @"PrinterSearchIpadViewController";
     controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
-    [[controllerIpad printerManager] stopSearching];
+    msg = [NSString stringWithFormat:@"wait for %.2f secs while the iPad controller is loading", SEARCH_TIMEOUT];
+    [self waitForCompletion:SEARCH_TIMEOUT withMessage:msg];
 }
 
 // Run at end of all tests in the class
@@ -80,9 +81,6 @@
     storyboard = nil;
     controllerIphone = nil;
     controllerIpad = nil;
-    
-    SNMPManager* sm = [SNMPManager sharedSNMPManager];
-    [sm cancelSearch];
 }
 
 // Run before each test method
@@ -97,52 +95,70 @@
 
 #pragma mark - Test Cases
 
-- (void)test001_IBOutletsBindingIphone
+- (void)test001_IBOutletsBinding
 {
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
     GHAssertNotNil([controllerIphone tableView], @"");
-}
-
-- (void)test002_IBOutletsBindingIpad
-{
-    GHTestLog(@"# CHECK: IBOutlets Binding. #");
-    
     GHAssertNotNil([controllerIpad tableView], @"");
 }
 
-- (void)test003_UITableViewCellIphone
+- (void)test002_UITableViewCell
 {
     GHTestLog(@"# CHECK: UITableViewCell Outlets.");
     
-    GHTestLog(@"-- get SearchResultCell");
-    UITableView* tableView = [controllerIphone tableView];
-    SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
+    GHTestLog(@"-- get SearchResultCell (iPhone)");
+    UITableView* tableViewIphone = [controllerIphone tableView];
+    SearchResultCell* cellIphone = [tableViewIphone dequeueReusableCellWithIdentifier:@"SearchResultCell"];
     
     GHTestLog(@"-- check cell bindings");
-    GHAssertNotNil(cell, @"");
-    GHAssertNotNil([cell printerIP], @"");
-    GHAssertNotNil([cell printerName], @"");
-    GHAssertNotNil([cell separator], @"");
-    GHAssertNotNil([cell oldIcon], @"");
-    GHAssertNotNil([cell addIcon], @"");
+    GHAssertNotNil(cellIphone, @"");
+    GHAssertNotNil([cellIphone printerIP], @"");
+    GHAssertNotNil([cellIphone printerName], @"");
+    GHAssertNotNil([cellIphone separator], @"");
+    GHAssertNotNil([cellIphone oldIcon], @"");
+    GHAssertNotNil([cellIphone addIcon], @"");
+    
+    GHTestLog(@"-- get SearchResultCell (iPad)");
+    UITableView* tableViewIpad = [controllerIpad tableView];
+    SearchResultCell* cellIPad = [tableViewIpad dequeueReusableCellWithIdentifier:@"SearchResultCell"];
+    
+    GHTestLog(@"-- check cell bindings");
+    GHAssertNotNil(cellIPad, @"");
+    GHAssertNotNil([cellIPad printerIP], @"");
+    GHAssertNotNil([cellIPad printerName], @"");
+    GHAssertNotNil([cellIPad separator], @"");
+    GHAssertNotNil([cellIPad oldIcon], @"");
+    GHAssertNotNil([cellIPad addIcon], @"");
 }
 
-- (void)test004_UITableViewCellIpad
+#pragma mark - Utilities
+
+/**
+ @see http://www.infinite-loop.dk/blog/2011/04/unittesting-asynchronous-network-access/
+ */
+- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
 {
-    GHTestLog(@"# CHECK: UITableViewCell Outlets.");
+    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
     
-    GHTestLog(@"-- get SearchResultCell");
-    UITableView* tableView = [controllerIpad tableView];
-    SearchResultCell* cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Printer Search Test"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"HIDE"
+                                          otherButtonTitles:nil];
+    [alert show];
     
-    GHTestLog(@"-- check cell bindings");
-    GHAssertNotNil(cell, @"");
-    GHAssertNotNil([cell printerIP], @"");
-    GHAssertNotNil([cell printerName], @"");
-    GHAssertNotNil([cell separator], @"");
-    GHAssertNotNil([cell oldIcon], @"");
-    GHAssertNotNil([cell addIcon], @"");
+    BOOL done = NO;
+    do
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
+        if ([timeoutDate timeIntervalSinceNow] < 0.0)
+            break;
+    } while (!done);
+    
+    [alert dismissWithClickedButtonIndex:0 animated:YES];
+    
+    return done;
 }
 
 @end

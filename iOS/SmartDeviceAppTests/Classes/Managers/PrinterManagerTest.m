@@ -23,9 +23,14 @@ const NSString*  PRINTER_NAME       = @"UT-Printer";
 const NSString*  VALID_PRINTER_IP   = @"192.168.0.19";
 const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
-@interface PrinterManagerTest : GHTestCase
+const float SEARCH_TIMEOUT = 10;
+
+@interface PrinterManagerTest : GHTestCase <PrinterSearchDelegate>
 {
     PrinterManager* printerManager;
+    BOOL callbackSearchEndCalled;
+    BOOL callbackFoundNewCalled;
+    BOOL callbackFoundOldCalled;
 }
 
 @end
@@ -48,6 +53,8 @@ const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
     
     printerManager = [PrinterManager sharedPrinterManager];
     GHAssertNotNil(printerManager, @"check initialization of PrinterManager");
+    
+    printerManager.searchDelegate = self;
 }
 
 // Run at end of all tests in the class
@@ -347,24 +354,116 @@ const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
 - (void)test011_SearchForOnePrinter
 {
-    GHTestLog(@"# CHECK: PM can handle printer search. #");
+    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
     
-    //TODO
+    GHTestLog(@"-- search for one printer");
+    callbackSearchEndCalled = NO;
+    [printerManager searchForPrinter:@"192.168.0.1"];
+    
+    NSString* msg = [NSString stringWithFormat:@"wait for %.2f seconds for manual search to end", SEARCH_TIMEOUT];
+    [self waitForCompletion:SEARCH_TIMEOUT+1 withMessage:msg];
+    
+    GHTestLog(@"-- check if end callback was received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
 }
 
-- (void)test012_SearchForAllPrinters
+//- (void)test012_SearchForOneThenStop
+//{
+//    GHTestLog(@"# CHECK: PM can stop search for one. #");
+//    
+//    GHTestLog(@"-- search for one printer");
+//    callbackSearchEndCalled = NO;
+//    [printerManager searchForPrinter:@"192.168.0.1"];
+//    GHTestLog(@"-- canceling the search");
+//    [printerManager stopSearching];
+//    
+//    [self waitForCompletion:SEARCH_TIMEOUT withMessage:
+//            @"started search, then canceled, now wait some time after canceling the manual search"];
+//    GHAssertFalse(callbackSearchEndCalled, @"callback should not have been called since the search was canceled");
+//}
+
+- (void)test013_SearchForAllPrinters
 {
-    GHTestLog(@"# CHECK: PM can handle printer search. #");
+    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
     
-    //TODO
+    GHTestLog(@"-- search for all printers");
+    callbackSearchEndCalled = NO;
+    [printerManager searchForAllPrinters];
+    
+    NSString* msg = [NSString stringWithFormat:@"wait for %.2f seconds for auto search to end", SEARCH_TIMEOUT];
+    [self waitForCompletion:SEARCH_TIMEOUT+1 withMessage:msg];
+    
+    GHTestLog(@"-- check if end callback was received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
 }
 
-- (void)test013_Singleton
+//- (void)test014_SearchForAllThenStop
+//{
+//    GHTestLog(@"# CHECK: PM can stop search for all. #");
+//    
+//    GHTestLog(@"-- search for all printers");
+//    callbackSearchEndCalled = NO;
+//    [printerManager searchForAllPrinters];
+//    GHTestLog(@"-- canceling the search");
+//    [printerManager stopSearching];
+//    
+//    [self waitForCompletion:SEARCH_TIMEOUT withMessage:
+//            @"started search, then canceled, now wait some time after canceling the auto search"];
+//    GHAssertFalse(callbackSearchEndCalled, @"callback should not have been called since the search was canceled");
+//}
+
+- (void)test015_Singleton
 {
     GHTestLog(@"# CHECK: PM is indeed a singleton. #");
     
     PrinterManager* pmNew = [PrinterManager sharedPrinterManager];
     GHAssertEqualObjects(printerManager, pmNew, @"should return the same object");
+}
+
+#pragma mark - PrinterSearchDelegate Methods
+
+- (void)searchEnded
+{
+    callbackSearchEndCalled = YES;
+}
+
+- (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails
+{
+    callbackFoundNewCalled = YES;
+}
+
+- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
+{
+    callbackFoundOldCalled = YES;
+}
+
+#pragma mark - Utilities
+
+/**
+ @see http://www.infinite-loop.dk/blog/2011/04/unittesting-asynchronous-network-access/
+ */
+- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
+{
+    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
+    
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Printer Manager Test"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"HIDE"
+                                          otherButtonTitles:nil];
+    [alert show];
+    
+    BOOL done = NO;
+    do
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
+        if ([timeoutDate timeIntervalSinceNow] < 0.0)
+            break;
+    } while (!done);
+    
+    [alert dismissWithClickedButtonIndex:0 animated:YES];
+    
+    return done;
 }
 
 @end

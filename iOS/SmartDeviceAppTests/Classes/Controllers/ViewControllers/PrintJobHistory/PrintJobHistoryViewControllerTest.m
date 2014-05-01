@@ -102,74 +102,88 @@
 
 #pragma mark - Test Cases
 
-- (void)test001_IBOutletsBindingIphone
+- (void)test001_IBOutletsBinding
 {
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
     GHAssertNotNil([controllerIphone mainMenuButton], @"");
     GHAssertNotNil([controllerIphone groupsView], @"");
     GHAssertNotNil([controllerIphone groupsViewLayout], @"");
-}
-
-- (void)test002_IBOutletsBindingIpad
-{
-    GHTestLog(@"# CHECK: IBOutlets Binding. #");
-    
+   
     GHAssertNotNil([controllerIpad mainMenuButton], @"");
     GHAssertNotNil([controllerIpad groupsView], @"");
     GHAssertNotNil([controllerIpad groupsViewLayout], @"");
 }
 
-- (void)test003_IBActionsBindingIphone
+- (void)test002_IBActionsBinding
 {
     GHTestLog(@"# CHECK: IBActions Binding. #");
     
     NSArray* ibActions;
     
-    UIButton* mainMenuButton = [controllerIphone mainMenuButton];
-    ibActions = [mainMenuButton actionsForTarget:controllerIphone
-                                 forControlEvent:UIControlEventTouchUpInside];
+    UIButton* mainMenuButtonIphone = [controllerIphone mainMenuButton];
+    ibActions = [mainMenuButtonIphone actionsForTarget:controllerIphone
+                                       forControlEvent:UIControlEventTouchUpInside];
+    GHAssertNotNil(ibActions, @"");
+    GHAssertTrue([ibActions count] == 1, @"");
+    GHAssertTrue([ibActions containsObject:@"mainMenuAction:"], @"");
+    
+    UIButton* mainMenuButtonIpad = [controllerIpad mainMenuButton];
+    ibActions = [mainMenuButtonIpad actionsForTarget:controllerIpad
+                                     forControlEvent:UIControlEventTouchUpInside];
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count] == 1, @"");
     GHAssertTrue([ibActions containsObject:@"mainMenuAction:"], @"");
 }
 
-- (void)test004_IBActionsBindingIpad
-{
-    GHTestLog(@"# CHECK: IBActions Binding. #");
-    
-    NSArray* ibActions;
-    
-    UIButton* mainMenuButton = [controllerIpad mainMenuButton];
-    ibActions = [mainMenuButton actionsForTarget:controllerIpad
-                                 forControlEvent:UIControlEventTouchUpInside];
-    GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"mainMenuAction:"], @"");
-}
-
-- (void)test005_UICollectionViewIphone
+- (void)test003_UICollectionView
 {
     GHTestLog(@"# CHECK: UICollectionView. #");
-    
     const NSUInteger TEST_NUM_PRINTERS = 8; //--defined in PrintJobHistoryHelper
     
-    NSMutableArray* listPrintJobHistoryGroups = [controllerIphone listPrintJobHistoryGroups];
-    GHAssertNotNil(listPrintJobHistoryGroups, @"");
-    NSUInteger countGroups = [listPrintJobHistoryGroups count];
-    GHAssertTrue(countGroups == TEST_NUM_PRINTERS, @"should be equal to defined test data");
+    NSMutableArray* listPrintJobHistoryGroups;
+    NSUInteger countGroups;
+    UICollectionView* groupsView;
+    NSIndexPath* index;
+    PrintJobHistoryGroupCell* groupCell;
+
+    GHTestLog(@"-- UICollectionView (iPhone)");
     
+    listPrintJobHistoryGroups = [controllerIphone listPrintJobHistoryGroups];
+    GHAssertNotNil(listPrintJobHistoryGroups, @"");
+    countGroups = [listPrintJobHistoryGroups count];
+    GHAssertTrue(countGroups == TEST_NUM_PRINTERS, @"should be equal to defined test data");
     GHTestLog(@"-- checking sections");
-    UICollectionView* groupsView = [controllerIphone groupsView];
+    groupsView = [controllerIphone groupsView];
     GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
     GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
+    GHTestLog(@"-- checking cell bindings");
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+    GHAssertNotNil(groupCell, @"");
+    GHAssertNotNil([groupCell groupName], @"");
+    GHAssertNotNil([groupCell groupIP], @"");
+    GHAssertNotNil([groupCell groupIndicator], @"");
+    GHAssertNotNil([groupCell deleteAllButton], @"");
+    GHAssertNotNil([groupCell printJobsView], @"");
     
-    GHTestLog(@"-- checking cell binding");
-    NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
-    PrintJobHistoryGroupCell* groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL
-                                                                                forIndexPath:index];
+    GHTestLog(@"-- UICollectionView (iPad)");
+    
+    listPrintJobHistoryGroups = [controllerIpad listPrintJobHistoryGroups];
+    GHAssertNotNil(listPrintJobHistoryGroups, @"");
+    countGroups = [listPrintJobHistoryGroups count];
+    GHAssertTrue(countGroups == TEST_NUM_PRINTERS, @"should be equal to defined test data");
+    GHTestLog(@"-- checking sections");
+    groupsView = [controllerIpad groupsView];
+    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHAssertTrue([groupsView numberOfSections] == 1, @"");
+    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
+    GHTestLog(@"-- checking cell bindings");
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
     GHAssertNotNil(groupCell, @"");
     GHAssertNotNil([groupCell groupName], @"");
     GHAssertNotNil([groupCell groupIP], @"");
@@ -178,37 +192,7 @@
     GHAssertNotNil([groupCell printJobsView], @"");
 }
 
-- (void)test006_UICollectionViewIpad
-{
-    GHTestLog(@"# CHECK: UICollectionView. #");
-    
-    const NSUInteger TEST_NUM_PRINTERS = 8; //--defined in PrintJobHistoryHelper
-    
-    NSMutableArray* listPrintJobHistoryGroups = [controllerIpad listPrintJobHistoryGroups];
-    GHAssertNotNil(listPrintJobHistoryGroups, @"");
-    NSUInteger countGroups = [listPrintJobHistoryGroups count];
-    GHAssertTrue(countGroups == TEST_NUM_PRINTERS, @"should be equal to defined test data");
-    
-    GHTestLog(@"-- checking sections");
-    UICollectionView* groupsView = [controllerIpad groupsView];
-    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
-    GHAssertTrue([groupsView numberOfSections] == 1, @"");
-    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
-    GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
-    
-    GHTestLog(@"-- checking cell binding");
-    NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
-    PrintJobHistoryGroupCell* groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL
-                                                                                forIndexPath:index];
-    GHAssertNotNil(groupCell, @"");
-    GHAssertNotNil([groupCell groupName], @"");
-    GHAssertNotNil([groupCell groupIP], @"");
-    GHAssertNotNil([groupCell groupIndicator], @"");
-    GHAssertNotNil([groupCell deleteAllButton], @"");
-    GHAssertNotNil([groupCell printJobsView], @"");
-}
-
-- (void)test007_FindGroupWithTag
+- (void)test004_FindGroupWithTag
 {
     GHTestLog(@"# CHECK: Find Group With Tag. #");
     
@@ -268,7 +252,7 @@
     GHAssertTrue([listPrintJobHistoryGroups count] == countGroups, @"list of groups should be unchanged");
 }
 
-- (void)test009_DisplayInvalidPrinter
+- (void)test005_DisplayInvalidPrinter
 {
     GHTestLog(@"# CHECK: Display No Name Printer. #");
     

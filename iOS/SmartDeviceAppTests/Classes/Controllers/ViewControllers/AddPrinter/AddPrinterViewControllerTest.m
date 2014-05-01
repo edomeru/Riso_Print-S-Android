@@ -81,71 +81,60 @@
 
 #pragma mark - Test Cases
 
-- (void)test001_IBOutletsBindingIphone
+- (void)test001_IBOutletsBinding
 {
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
     GHAssertNotNil([controllerIphone textIP], @"");
     GHAssertNotNil([controllerIphone saveButton], @"");
     GHAssertNotNil([controllerIphone progressIndicator], @"");
-}
-
-- (void)test002_IBOutletsBindingIpad
-{
-    GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
     GHAssertNotNil([controllerIpad textIP], @"");
     GHAssertNotNil([controllerIpad saveButton], @"");
     GHAssertNotNil([controllerIpad progressIndicator], @"");
 }
 
-- (void)test003_IBActionsBindingIphone
+- (void)test002_IBActionsBinding
 {
     GHTestLog(@"# CHECK: IBActions Binding. #");
     
-    UIButton* saveButton = [controllerIphone saveButton];
-    NSArray* ibActions = [saveButton actionsForTarget:controllerIphone
-                                      forControlEvent:UIControlEventTouchUpInside];
+    NSArray* ibActions;
+    
+    UIButton* saveButtonIphone = [controllerIphone saveButton];
+    ibActions = [saveButtonIphone actionsForTarget:controllerIphone
+                                   forControlEvent:UIControlEventTouchUpInside];
+    GHAssertNotNil(ibActions, @"");
+    GHAssertTrue([ibActions count] == 1, @"");
+    GHAssertTrue([ibActions containsObject:@"onSave:"], @"");
+
+    UIButton* saveButtonIpad = [controllerIpad saveButton];
+    ibActions = [saveButtonIpad actionsForTarget:controllerIpad
+                                 forControlEvent:UIControlEventTouchUpInside];
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count] == 1, @"");
     GHAssertTrue([ibActions containsObject:@"onSave:"], @"");
 }
 
-- (void)test004_IBActionsBindingIpad
-{
-    GHTestLog(@"# CHECK: IBActions Binding. #");
-    
-    UIButton* saveButton = [controllerIpad saveButton];
-    NSArray* ibActions = [saveButton actionsForTarget:controllerIpad
-                                      forControlEvent:UIControlEventTouchUpInside];
-    GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"onSave:"], @"");
-}
-
-- (void)test005_TextFieldInputIphone
+- (void)test003_TextFieldInput
 {
     GHTestLog(@"# CHECK: IP TextField does not accept spaces. #");
     
-    GHTestLog(@"-- entering a space");
-    BOOL willAcceptSpace = [controllerIphone textField:[controllerIphone textIP]
-                         shouldChangeCharactersInRange:NSMakeRange(0, 1)
-                                     replacementString:@" "];
-    GHAssertFalse(willAcceptSpace, @"");
-}
-
-- (void)test006_TextFieldInputIpad
-{
-    GHTestLog(@"# CHECK: IP TextField does not accept spaces. #");
+    BOOL willAcceptSpace = YES;
     
-    GHTestLog(@"-- entering a space");
-    BOOL willAcceptSpace = [controllerIpad textField:[controllerIpad textIP]
-                         shouldChangeCharactersInRange:NSMakeRange(0, 1)
-                                     replacementString:@" "];
+    GHTestLog(@"-- entering a space (iPhone)");
+    willAcceptSpace = [controllerIphone textField:[controllerIphone textIP]
+                    shouldChangeCharactersInRange:NSMakeRange(0, 1)
+                                replacementString:@" "];
+    GHAssertFalse(willAcceptSpace, @"");
+
+    GHTestLog(@"-- entering a space (iPad)");
+    willAcceptSpace = [controllerIpad textField:[controllerIpad textIP]
+                  shouldChangeCharactersInRange:NSMakeRange(0, 1)
+                              replacementString:@" "];
     GHAssertFalse(willAcceptSpace, @"");
 }
 
-- (void)test007_AddFullCapabilityPrinter
+- (void)test004_AddFullCapabilityPrinter
 {
     GHTestLog(@"# CHECK: Adding a Full-Capability Printer. #");
     NSString* invalidIP = @"192.168.0.1";

@@ -34,6 +34,10 @@
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
+		28C918121911D95600CB582C /* HelpViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C918111911D95600CB582C /* HelpViewControllerTest.m */; };
+		28C9181D1911E2F800CB582C /* LegalViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C9181C1911E2F800CB582C /* LegalViewControllerTest.m */; };
+		28C918201911E69F00CB582C /* HomeViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C9181F1911E69F00CB582C /* HomeViewControllerTest.m */; };
+		28C9182219124B1F00CB582C /* DirectPrintManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C9182119124B1F00CB582C /* DirectPrintManagerTest.m */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
@@ -284,6 +288,10 @@
 		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
 		28A9173718E3D55900BA5232 /* PrintJobHistoryGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroupCell.h; sourceTree = "<group>"; };
 		28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroupCell.m; sourceTree = "<group>"; };
+		28C918111911D95600CB582C /* HelpViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewControllerTest.m; sourceTree = "<group>"; };
+		28C9181C1911E2F800CB582C /* LegalViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegalViewControllerTest.m; sourceTree = "<group>"; };
+		28C9181F1911E69F00CB582C /* HomeViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewControllerTest.m; sourceTree = "<group>"; };
+		28C9182119124B1F00CB582C /* DirectPrintManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManagerTest.m; sourceTree = "<group>"; };
 		28CFC54518F61C1700DBD2BD /* AddPrinterViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPrinterViewControllerTest.m; sourceTree = "<group>"; };
 		28CFC54718F61C1700DBD2BD /* PrinterInfoViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterInfoViewControllerTest.m; sourceTree = "<group>"; };
 		28CFC54918F61C1700DBD2BD /* PrintersIpadViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintersIpadViewControllerTest.m; sourceTree = "<group>"; };
@@ -594,6 +602,30 @@
 			path = PrintJobHistory;
 			sourceTree = "<group>";
 		};
+		28C918101911D95600CB582C /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				28C918111911D95600CB582C /* HelpViewControllerTest.m */,
+			);
+			path = Help;
+			sourceTree = "<group>";
+		};
+		28C9181B1911E2E700CB582C /* Legal */ = {
+			isa = PBXGroup;
+			children = (
+				28C9181C1911E2F800CB582C /* LegalViewControllerTest.m */,
+			);
+			path = Legal;
+			sourceTree = "<group>";
+		};
+		28C9181E1911E69000CB582C /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				28C9181F1911E69F00CB582C /* HomeViewControllerTest.m */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		28CFC54118F61C1700DBD2BD /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -618,6 +650,9 @@
 			isa = PBXGroup;
 			children = (
 				28CFC54418F61C1700DBD2BD /* AddPrinter */,
+				28C918101911D95600CB582C /* Help */,
+				28C9181E1911E69000CB582C /* Home */,
+				28C9181B1911E2E700CB582C /* Legal */,
 				28CFC54618F61C1700DBD2BD /* PrinterInfo */,
 				28CFC54818F61C1700DBD2BD /* Printers */,
 				28CFC54B18F61C1700DBD2BD /* PrinterSearch */,
@@ -682,6 +717,7 @@
 			isa = PBXGroup;
 			children = (
 				28CFC55118F61C1700DBD2BD /* DatabaseManagerTest.m */,
+				28C9182119124B1F00CB582C /* DirectPrintManagerTest.m */,
 				28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */,
 				3195C0791911133D00197397 /* PDFFileManagerTest.m */,
 				28CFC55318F61C1700DBD2BD /* PrinterManagerTest.m */,
@@ -1573,6 +1609,9 @@
 				3195C1E319111A6C00197397 /* PrintDocumentTest.m in Sources */,
 				28052CEE1911D16F007982DF /* PrintJobHistoryGroupTest.m in Sources */,
 				28052CE01911C651007982DF /* AddPrinterViewControllerTest.m in Sources */,
+				28C918121911D95600CB582C /* HelpViewControllerTest.m in Sources */,
+				28C918201911E69F00CB582C /* HomeViewControllerTest.m in Sources */,
+				28C9181D1911E2F800CB582C /* LegalViewControllerTest.m in Sources */,
 				28052CE11911C651007982DF /* PrinterInfoViewControllerTest.m in Sources */,
 				28052CE21911C651007982DF /* PrintersIpadViewControllerTest.m in Sources */,
 				28052CE31911C651007982DF /* PrintersIphoneViewControllerTest.m in Sources */,
@@ -1584,6 +1623,7 @@
 				3195C1E719111A7A00197397 /* PrintSettingsViewControllerTest.m in Sources */,
 				3195C1ED19111A9F00197397 /* SettingsViewControllerTest.m in Sources */,
 				28052CE51911C651007982DF /* DatabaseManagerTest.m in Sources */,
+				28C9182219124B1F00CB582C /* DirectPrintManagerTest.m in Sources */,
 				28052CE61911C651007982DF /* NetworkManagerTest.m in Sources */,
 				3195C1EE19111AA800197397 /* PDFFileManagerTest.m in Sources */,
 				28052CE71911C651007982DF /* PrinterManagerTest.m in Sources */,

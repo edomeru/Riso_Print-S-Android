@@ -81,6 +81,18 @@
     {
         self.selectedButton = self.printJobHistoryButton;
     }
+    else if (container.mainController.class == [SettingsViewController class])
+    {
+        self.selectedButton = self.settingsButton;
+    }
+    else if (container.mainController.class == [HelpViewController class])
+    {
+        self.selectedButton = self.helpButton;
+    }
+    else if (container.mainController.class == [LegalViewController class])
+    {
+        self.selectedButton = self.legaButton;
+    }
     
     self.selectedButton.selected = YES;
 }
