@@ -92,6 +92,7 @@
 		2D232D9318E56E45008D06C8 /* PrintSettingsOptionsHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9218E56E45008D06C8 /* PrintSettingsOptionsHeaderCell.m */; };
 		2D232D9618E57DB0008D06C8 /* PrintSettingsItemInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9518E57DB0008D06C8 /* PrintSettingsItemInputCell.m */; };
 		2D232D9918E580D1008D06C8 /* PrintSettingsItemSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9818E580D1008D06C8 /* PrintSettingsItemSwitchCell.m */; };
+		2D58A9071913D4DE003FBC0B /* TestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
@@ -395,6 +396,8 @@
 		2D232D9518E57DB0008D06C8 /* PrintSettingsItemInputCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsItemInputCell.m; sourceTree = "<group>"; };
 		2D232D9718E580D1008D06C8 /* PrintSettingsItemSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsItemSwitchCell.h; sourceTree = "<group>"; };
 		2D232D9818E580D1008D06C8 /* PrintSettingsItemSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsItemSwitchCell.m; sourceTree = "<group>"; };
+		2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
+		2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -853,9 +856,11 @@
 		2D0AEC5C185FE43200810455 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				2D0AEC61185FE43200810455 /* main.m */,
 				2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */,
 				2D0AEC63185FE43200810455 /* SmartDeviceAppTests-Prefix.pch */,
-				2D0AEC61185FE43200810455 /* main.m */,
+				2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */,
+				2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1413,6 +1418,7 @@
 				2D0AEC53185FE43200810455 /* Sources */,
 				2D0AEC54185FE43200810455 /* Frameworks */,
 				2D0AEC55185FE43200810455 /* Resources */,
+				2D58A9041913D4B2003FBC0B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1507,6 +1513,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2D58A9041913D4B2003FBC0B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh RunTests.sh";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2D0AEBFB185FDD2100810455 /* Sources */ = {
@@ -1618,6 +1641,7 @@
 				28052CE41911C651007982DF /* PrinterSearchViewControllerTest.m in Sources */,
 				28052CEF1911D16F007982DF /* PrintJobHistoryViewControllerTest.m in Sources */,
 				3195C1E419111A7A00197397 /* PrintPreviewControllerTest.m in Sources */,
+				2D58A9071913D4DE003FBC0B /* TestAppDelegate.m in Sources */,
 				3195C1E519111A7A00197397 /* PrintSettingsPrinterListTableViewControllerTest.m in Sources */,
 				3195C1E619111A7A00197397 /* PrintSettingsTableViewControllerTest.m in Sources */,
 				3195C1E719111A7A00197397 /* PrintSettingsViewControllerTest.m in Sources */,
@@ -1919,6 +1943,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/SmartDeviceAppTests/GHUnit\"",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1950,6 +1976,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/SmartDeviceAppTests/GHUnit\"",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
