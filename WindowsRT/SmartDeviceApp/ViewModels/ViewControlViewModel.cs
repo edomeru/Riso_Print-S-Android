@@ -36,7 +36,7 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
             ViewMode = ViewMode.FullScreen;
-            ScreenMode = ScreenMode.PrintPreview;
+            ScreenMode = ScreenMode.Home;
             InitializeMainMenu();
         }
 

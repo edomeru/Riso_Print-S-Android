@@ -173,6 +173,7 @@
     <Compile Include="Converters\PrintSettingToValueConverter.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverter.cs" />
     <Compile Include="Converters\PrinterNameToTextConverter.cs" />
+    <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />

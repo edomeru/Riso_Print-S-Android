@@ -12,10 +12,9 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     Height="{Binding Converter={StaticResource HeightConverter}}"
+    Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
     DataContext="{Binding PrintSettingsPaneViewModel, Source={StaticResource Locator}}">
-    
-    <!--TODO: Localize title!!-->
-    
+   
     <UserControl.Resources>
         <Style x:Key="STYLE_RootGrid" TargetType="Grid">
             <Style.Setters>
@@ -104,8 +103,21 @@
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl Title="Print Settings" ButtonVisibility="Collapsed"/>
-        <Grid x:Name="printSettingsRootGrid" Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Path Grid.RowSpan="2" Grid.Column="0" 
+              Style="{StaticResource STYLE_List_Separator}">
+            <Path.Data>
+                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+            </Path.Data>
+        </Path>
+        <controls:SidePaneTitleControl Grid.Row="0" Grid.Column="1"
+                                       Title="{Binding Source=IDS_LBL_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                       ButtonVisibility="Collapsed"/>
+        <Grid x:Name="printSettingsRootGrid" Grid.Row="1" Grid.Column="1">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <PaneThemeTransition/>

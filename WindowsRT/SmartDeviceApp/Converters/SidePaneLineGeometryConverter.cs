@@ -9,12 +9,11 @@ using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
 {
-    public class SeparatorLineGeometryStartPointConverter : IValueConverter
+    public class SidePaneLineGeometryStartPointConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || !(value is double)) return null;
-            var startPoint = new Point((double)value, 0);
+            var startPoint = new Point(0, 0);
             return startPoint;
         }
 
@@ -24,12 +23,12 @@ namespace SmartDeviceApp.Converters
         }
     }
 
-    public class SeparatorLineGeometryEndPointConverter : IValueConverter
+    public class SidePaneLineGeometryEndPointConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || !(value is double)) return new Point(0,0);
-            return new Point((double)value, 0);
+            var endPoint = new Point(0, Window.Current.Bounds.Height);
+            return endPoint;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
