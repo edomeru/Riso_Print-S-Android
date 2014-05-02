@@ -35,6 +35,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
     private DatabaseManager mManager;
     private int mPrinterid=-1;
     private int mPrinterid2=-1;
+    private boolean mInitialFlag = false;
 
     public PrintJobManagerTest() {
         super();
@@ -47,27 +48,32 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         mSdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         mSdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
-        mPrintJobManager = PrintJobManager.getInstance(mContext);
-        mManager = new DatabaseManager(mContext);
 
+        mPrintJobManager = PrintJobManager.getInstance(mContext);
+        mPrintJobManager.setRefreshFlag(mInitialFlag);
+
+        mManager = new DatabaseManager(mContext);
+        SQLiteDatabase db = mManager.getWritableDatabase();
         // set printers
-        mManager.delete(TABLE_PRINTER, null, null);
+        db.delete(TABLE_PRINTER, null, null);
         ContentValues pvalues = new ContentValues();
         pvalues.put(C_PRN_NAME, "printer with job");
-        mManager.insert(TABLE_PRINTER, "true", pvalues);
+        db.insert(TABLE_PRINTER, "true", pvalues);
         pvalues.put(C_PRN_NAME, "printer without job");
-        mManager.insert(TABLE_PRINTER, "true", pvalues);
-        Cursor c = mManager.query(TABLE_PRINTER, null, null, null, null, null, null);
+        db.insert(TABLE_PRINTER, "true", pvalues);
+        Cursor c = db.query(TABLE_PRINTER, null, null, null, null, null, null);
         c.moveToFirst();
         mPrinterid = c.getInt(c.getColumnIndex(C_PRN_ID));
         c.moveToNext();
         mPrinterid2 = c.getInt(c.getColumnIndex(C_PRN_ID));
+        c.close();
+        db.close();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        mManager.getWritableDatabase();
+        // clear data
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE_PRINTER, null, null);
         db.delete(TABLE, null, null);
@@ -75,12 +81,31 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
     }
 
+
+    public void testPreConditions() {
+        assertNotNull(mPrintJobManager);
+        SQLiteDatabase db = mManager.getReadableDatabase();
+        Cursor c = db.query(TABLE_PRINTER, null, null, null, null, null, null);
+        assertEquals(2, c.getCount());
+
+        c.moveToFirst();
+        assertEquals(c.getInt(c.getColumnIndex(C_PRN_ID)), mPrinterid);
+
+        c.moveToNext();
+        assertEquals(c.getInt(c.getColumnIndex(C_PRN_ID)), mPrinterid2);
+
+        assertFalse(mPrintJobManager.isRefreshFlag());
+
+        c.close();
+        db.close();
+    }
+
+
     public void testGetInstance() {
         assertEquals(mPrintJobManager, PrintJobManager.getInstance(mContext));
     }
 
     public void testGetPrintJobs() {
-        mManager.getWritableDatabase();
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE, null, null);
 
@@ -92,7 +117,6 @@ public class PrintJobManagerTest extends AndroidTestCase {
         pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
 
         db.insert(TABLE, null, pvalues);
-
         db.close();
 
         List<PrintJob> pj = mPrintJobManager.getPrintJobs();
@@ -105,6 +129,14 @@ public class PrintJobManagerTest extends AndroidTestCase {
         assertTrue(mSdf.format(pj.get(0).getDate()).equals(
                 "2014-03-17 13:12:11"));
 
+        //test no data
+        db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+        db.close();
+
+        pj = mPrintJobManager.getPrintJobs();
+        assertNotNull(pj);
+        assertEquals(0, pj.size());
     }
 
     public void testGetPrintJobsOrder() {
@@ -167,16 +199,23 @@ public class PrintJobManagerTest extends AndroidTestCase {
             //printer id is sorted
             assertTrue(pj.get(i).getPrinterId() <= pj.get(i + 1).getPrinterId());
             //same printer group; sorted according to date
-            if (pj.get(i).getPrinterId() == pj.get(i + 1).getPrinterId())
+            if (pj.get(i).getPrinterId() == pj.get(i + 1).getPrinterId()) {
                 assertTrue(pj.get(i).getDate().after(pj.get(i + 1).getDate()));
+            }
         }
 
     }
 
     public void testGetPrintersWithJobs() {
-
+        int newPrinterId = mPrinterid2 + 1;
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE, null, null);
+
+        //initial data - empty jobs yet but w/ existing printers -> printers list is empty
+        List<Printer> printers = mPrintJobManager.getPrintersWithJobs();
+
+        assertNotNull(printers);
+        assertEquals(0, printers.size());
 
         ContentValues pvalues = new ContentValues();
 
@@ -184,58 +223,119 @@ public class PrintJobManagerTest extends AndroidTestCase {
         pvalues.put(C_PJB_NAME, "Print Job Name");
         pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
         pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
-
+        //add a job to an existing printer -> will be added to the printers list
         db.insert(TABLE, null, pvalues);
 
         db.close();
 
-        List<Printer> printers = mPrintJobManager.getPrintersWithJobs();
+        printers = mPrintJobManager.getPrintersWithJobs();
 
         assertNotNull(printers);
         assertEquals(1, printers.size());
         assertEquals(mPrinterid,printers.get(0).getId());
         assertEquals("printer with job",printers.get(0).getName());
-    }
 
-    public void testGetPrintersCount() {
-
-        SQLiteDatabase db = mManager.getWritableDatabase();
-        db.delete(TABLE, null, null);
-
-        ContentValues pvalues = new ContentValues();
-
+        //add another job to the same printer -> same printers list
         pvalues.put(C_PRN_ID, mPrinterid);
-        pvalues.put(C_PJB_NAME, "New Print Job Name");
+        pvalues.put(C_PJB_NAME, "Another Print Job Name");
         pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
-        pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
+        pvalues.put(C_PJB_DATE, "2014-03-17 13:14:11");
 
-        db.insert(TABLE, null, pvalues);
-
-        pvalues.put(C_PRN_ID, mPrinterid2);
-        pvalues.put(C_PJB_NAME, "A Print Job");
-        pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
-        pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
-
+        db = mManager.getWritableDatabase();
         db.insert(TABLE, null, pvalues);
 
         db.close();
 
-        List<Printer> printers = mPrintJobManager.getPrintersWithJobs();
+        printers = mPrintJobManager.getPrintersWithJobs();
 
         assertNotNull(printers);
+        assertEquals(1, printers.size());
+        assertEquals(mPrinterid,printers.get(0).getId());
+        assertEquals("printer with job",printers.get(0).getName());
+
+
+        //add another printer -> same printers list
+        pvalues.clear();
+        pvalues.put(C_PRN_ID, newPrinterId);
+        pvalues.put(C_PRN_NAME, "another printer");
+
+        db = mManager.getWritableDatabase();
+        db.insert("Printer", null, pvalues);
+
+        db.close();
+
+        printers = mPrintJobManager.getPrintersWithJobs();
+
+        assertNotNull(printers);
+        assertEquals(1, printers.size());
+        assertEquals(mPrinterid,printers.get(0).getId());
+        assertEquals("printer with job",printers.get(0).getName());
+
+        // add another job on a different printer -> added in printers list
+        pvalues.clear();
+        pvalues.put(C_PRN_ID, newPrinterId);
+        pvalues.put(C_PJB_NAME, "A Print Job in another printer");
+        pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
+        pvalues.put(C_PJB_DATE, "2014-03-17 13:22:11");
+
+        db = mManager.getWritableDatabase();
+        db.insert(TABLE, null, pvalues);
+        db.close();
+
+        printers = mPrintJobManager.getPrintersWithJobs();
+
+        assertNotNull(printers);
+        assertEquals(2, printers.size());
+        assertEquals(mPrinterid,printers.get(0).getId());
+        assertEquals("printer with job",printers.get(0).getName());
+        assertEquals(newPrinterId,printers.get(1).getId());
+        assertEquals("another printer",printers.get(1).getName());
+
+
+
+        //delete existing printer w/ job and add another printer -> same printers list
+        pvalues.clear();
+        pvalues.put(C_PRN_NAME, "a new printer");
+
+        db = mManager.getWritableDatabase();
+
+        db.delete("Printer", "prn_id=?", new String[] {String.valueOf(newPrinterId)});
+        db.insert("Printer", null, pvalues);
+
+        db.close();
+
+        printers = mPrintJobManager.getPrintersWithJobs();
+
+        assertNotNull(printers);
+        assertEquals(1, printers.size());
+        assertEquals(mPrinterid,printers.get(0).getId());
+        assertEquals("printer with job",printers.get(0).getName());
+
+
+        //delete existing printer w/o job -> same printers list
+        db = mManager.getWritableDatabase();
+
+        db.delete("Printer", "prn_id=?", new String[] {String.valueOf(mPrinterid2)});
+
+        db.close();
+
+        printers = mPrintJobManager.getPrintersWithJobs();
+
+        assertNotNull(printers);
+        assertEquals(1, printers.size());
+        assertEquals(mPrinterid,printers.get(0).getId());
+        assertEquals("printer with job",printers.get(0).getName());
 
     }
+
 
     public void testCreatePrintJob() {
         boolean result = false;
+        Date date = null;
 
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE, null, null);
-        Cursor c = db.query(TABLE, null, null, null, null, null, null);
-        assertNotNull("not null"+c.getCount(), c);
         db.close();
-        mManager.close();
-        Date date = null;
 
         try {
             date = mSdf.parse("2014-03-17 13:12:11");
@@ -247,7 +347,9 @@ public class PrintJobManagerTest extends AndroidTestCase {
                 JobResult.ERROR);
         assertTrue(result);
 
-        db = mManager.getWritableDatabase();
+        assertTrue(mPrintJobManager.isRefreshFlag());
+
+        db = mManager.getReadableDatabase();
 
         Cursor cur = db.query(TABLE, null, null, null, null, null, null);
         assertNotNull(cur);
@@ -289,6 +391,80 @@ public class PrintJobManagerTest extends AndroidTestCase {
         db.close();
         boolean result = mPrintJobManager.deleteWithJobId(1);
         assertFalse(result);
+    }
+
+    public void testDeleteWithPrinterId() {
+
+        SQLiteDatabase db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+
+        ContentValues pvalues = new ContentValues();
+
+        pvalues.put(C_PRN_ID, mPrinterid);
+        pvalues.put(C_PJB_NAME, "Print Job Name");
+        pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
+        pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
+
+        db.insert(TABLE, null, pvalues);
+
+        db.close();
+
+        boolean result = mPrintJobManager.deleteWithPrinterId(mPrinterid);
+        assertTrue(result);
+
+        db = mManager.getReadableDatabase();
+
+        Cursor cur = db.query(TABLE, null, null, null, null, null, null);
+        assertNotNull(cur);
+        assertEquals(0, cur.getCount());
+
+        cur.close();
+        db.close();
+    }
+
+    public void testDeleteWithJobId() {
+        int jobId = 1;
+
+        SQLiteDatabase db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+
+        ContentValues pvalues = new ContentValues();
+
+        pvalues.put("pjb_id", jobId);
+        pvalues.put(C_PRN_ID, mPrinterid);
+        pvalues.put(C_PJB_NAME, "Print Job Name");
+        pvalues.put(C_PJB_RESULT, JobResult.SUCCESSFUL.ordinal());
+        pvalues.put(C_PJB_DATE, "2014-03-17 13:12:11");
+
+        db.insert(TABLE, null, pvalues);
+
+        db.close();
+
+        boolean result = mPrintJobManager.deleteWithJobId(jobId);
+        assertTrue(result);
+
+        db = mManager.getReadableDatabase();
+
+        Cursor cur = db.query(TABLE, null, null, null, null, null, null);
+        assertEquals(0, cur.getCount());
+
+        cur.close();
+        db.close();
+    }
+
+
+    public void testGetFlag() {
+        assertEquals(mInitialFlag, mPrintJobManager.isRefreshFlag());
+    }
+
+
+    public void testSetFlag() {
+
+        boolean flag = true;
+        mPrintJobManager.setRefreshFlag(flag);
+
+        assertEquals(flag, mPrintJobManager.isRefreshFlag());
+
     }
 
 }

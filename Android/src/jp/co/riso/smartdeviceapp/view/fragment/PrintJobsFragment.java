@@ -242,21 +242,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             if (mContextRef != null && mContextRef.get() != null) {
                 PrintJobManager pm = PrintJobManager.getInstance(mContextRef.get());
                 List<Printer> printers = pm.getPrintersWithJobs();
-                boolean printersChanged = false;
-                
-                if (mPrintersList != null) {
-                    if (mPrintersList.size() != printers.size()) {
-                        printersChanged = true;
-                    } else {
-                        for (int i = 0; i < printers.size(); i++){
-                            if (printers.get(i).getId() != mPrintersList.get(i).getId()) {
-                                printersChanged = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag() || printersChanged) {
+                // if initial data OR job is added OR printer w/jobs is deleted (no need to check if a printer is added since initially w/o print job)
+                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag() || mPrintersList.size() > printers.size()) {
                     mPrintJobsList = pm.getPrintJobs();
                     mPrintersList = printers;
                     pm.setRefreshFlag(false);

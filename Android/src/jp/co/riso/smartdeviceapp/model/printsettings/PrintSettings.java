@@ -99,20 +99,22 @@ public class PrintSettings {
     
     /**
      * Constructor
+     * <p>
+     * This method creates PrintSettings from the database using printer ID.
+     * If not existing in the database, default values are used.
      * 
      * @param printerId
      *            Printer ID
      */
     public PrintSettings(int printerId) {
-        this();
         PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
-        // will overwrite the value if values are retrieved
         
         PrintSettings printSettings = manager.getPrintSetting(printerId);
-        if (printSettings != null){
-            for (String key : printSettings.getSettingValues().keySet()) {
-                mSettingValues.put(key, printSettings.getSettingValues().get(key));
-            }
+        
+        mSettingValues = new HashMap<String, Integer>();
+        
+        for (String key : printSettings.getSettingValues().keySet()) {
+            mSettingValues.put(key, printSettings.getSettingValues().get(key));
         }
     }
     
@@ -170,7 +172,7 @@ public class PrintSettings {
     // ================================================================================
     
     /**
-     * @return PJL formatted string 
+     * @return PJL formatted string
      */
     public String formattedString() {
         StringBuffer strBuf = new StringBuffer();
