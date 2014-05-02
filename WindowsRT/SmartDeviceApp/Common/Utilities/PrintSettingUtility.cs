@@ -19,7 +19,7 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class PrintSettingUtility : DependencyObject
     {
-        public static event SmartDeviceApp.Controllers.PrintPreviewController.PrintSettingValueChangedEventHandler PrintSettingValueChangedEventHandler;
+        public static event SmartDeviceApp.Controllers.PrintSettingsController.PrintSettingValueChangedEventHandler PrintSettingValueChangedEventHandler;
 
         public static readonly DependencyProperty PrintSettingValueChangedProperty =
             DependencyProperty.RegisterAttached("PrintSettingValueChanged", typeof(object),
