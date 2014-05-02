@@ -366,10 +366,10 @@ namespace SmartDeviceApp.ViewModels
                 {
                     CurrentPageIndex = _rightPageIndex;
                 }
-                else
-                {
-                    CurrentPageIndex = _leftPageIndex;
-                }
+                //else
+                //{
+                //    CurrentPageIndex = _leftPageIndex;
+                //}
             }
         }
 

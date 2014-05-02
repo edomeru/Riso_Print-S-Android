@@ -404,7 +404,7 @@ namespace SmartDeviceApp.Controllers
 
             // When booklet is on and booklet finishing is off, act like as duplex (short edge)
             // so no need for left side
-            if (_isBooklet && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
+            if (_isBooklet) // && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
             {
                 // Compute left side page index
                 int leftSidePreviewPageIndex = _currPreviewPageIndex - 1;
@@ -707,9 +707,12 @@ namespace SmartDeviceApp.Controllers
                         _previewPages.Add(previewPageIndex, previewPage);
                     }
 
+                    // TODO: Minimize checking
                     // Check if needs to send the page image
                     // Don't bother to send the old requests
-                    if (enableSend && _currPreviewPageIndex == previewPageIndex)
+                    if (enableSend &&
+                        (isRightSide && _currPreviewPageIndex == previewPageIndex) ||
+                        (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex))
                     {
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
