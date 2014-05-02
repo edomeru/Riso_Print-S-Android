@@ -146,9 +146,6 @@
     <Compile Include="Controls\KeyPasswordBoxControl.xaml.cs">
       <DependentUpon>KeyPasswordBoxControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\KeyPasswordBoxControl.xaml.cs">
-      <DependentUpon>KeyPasswordBoxControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
       <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
     </Compile>
@@ -464,10 +461,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\KeyImageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\KeyPasswordBoxControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
