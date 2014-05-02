@@ -330,57 +330,27 @@ namespace SmartDeviceApp.ViewModels
         // TODO: Two-page view
         private void GoToPreviousPageExecute()
         {
-            if (_pageViewMode == PageViewMode.SinglePageView)
-            {
-                --_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
-            }
-            else if (_pageViewMode == PageViewMode.TwoPageView)
-            {
-                _pageIndex -= 2;
-            }
+            --_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
         private bool CanGoToPreviousPage()
         {
-            if (_pageViewMode == PageViewMode.SinglePageView)
-            {
-                // Check if at least second page
-                if (_pageIndex > 0) return true;
-            }
-            else if (_pageViewMode == PageViewMode.TwoPageView)
-            {
-                if (_pageIndex > 1) return true;
-            }
+            // Check if at least second page
+            if (_pageIndex > 0) return true;
             return false;
         }
 
-        // TODO: Two-page view
         private void GoToNextPageExecute()
         {
-            if (_pageViewMode == PageViewMode.SinglePageView)
-            {
-                ++_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
-            }
-            else if (_pageViewMode == PageViewMode.TwoPageView)
-            {
-                _pageIndex += 2;
-            }
+            ++_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
         private bool CanGoToNextPage()
         {
-            if (_pageViewMode == PageViewMode.SinglePageView)
-            {
-                // Check if at least second to the last page
-                if (_pageIndex < _pageTotal - 1) return true;
-            }
-            else if (_pageViewMode == PageViewMode.TwoPageView)
-            {
-                // Check if at least second to the last page
-                if (_pageIndex < _pageTotal - 2) return true;
-            }
+            // Check if at least second to the last page
+            if (_pageIndex < _pageTotal - 1) return true;
             return false;
         }
         
