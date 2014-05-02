@@ -100,6 +100,8 @@
                                          forDevice:UIUserInterfaceIdiomPhone];
     }
     
+    self.groupsView.bounces = NO; //switch in storyboard does not disable the bounce
+    
     self.groupWithDelete = nil;
     
     self.tappedDeleteAllButton = nil;
