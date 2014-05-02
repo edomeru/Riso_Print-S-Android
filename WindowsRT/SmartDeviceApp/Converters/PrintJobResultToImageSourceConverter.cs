@@ -10,6 +10,7 @@ using Windows.Storage;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Converters
 {
@@ -24,11 +25,11 @@ namespace SmartDeviceApp.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null || !(value is int)) return null;
-            if ((int)value == 0) // OK
+            if ((int)value == (int)PrintJobResult.Success) // OK
             {
                 return new Uri(RESOURCE_IMAGES_LOCATION + IMAGE_JOB_STATUS_OK);
             }
-            else if ((int)value == 1) // NG
+            else if ((int)value == (int)PrintJobResult.Error) // NG
             {
                 return new Uri(RESOURCE_IMAGES_LOCATION + IMAGE_JOB_STATUS_NG);
             }

@@ -63,8 +63,8 @@ namespace SmartDeviceApp.Common.Constants
         public static Size PAPER_SIZE_STATEMENT  = new Size( 5.50,  8.50);
 
         // Margin; in inches
-        public const double MARGIN_IMPOSITION_EDGE          = 0.5;
-        public const double MARGIN_IMPOSITION_BETWEEN_PAGES = 0.25;
+        public const double MARGIN_IMPOSITION_EDGE          = 0;
+        public const double MARGIN_IMPOSITION_BETWEEN_PAGES = 0;
         public const double MARGIN_STAPLE                   = 0.25;
         public const double MARGIN_PUNCH                    = 0.25;
 

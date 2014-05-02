@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\PrintJobResult.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
     <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
@@ -172,6 +174,7 @@
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintSettingToSeparatorVisibilityConverter.cs" />
@@ -181,6 +184,8 @@
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingToValueConverter.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverter.cs" />
+    <Compile Include="Converters\PrinterNameToTextConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
@@ -242,6 +247,7 @@
     <Compile Include="ViewModels\AddPrinterViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\SearchPrinterViewModel.cs" />
+    <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
     <Compile Include="ViewModels\ViewControlViewModel.cs" />
     <Compile Include="ViewModels\JobsViewModel.cs" />
     <Compile Include="ViewModels\HelpViewModel.cs" />
@@ -295,6 +301,9 @@
     </Compile>
     <Compile Include="Views\SearchPrinterPane.xaml.cs">
       <DependentUpon>SearchPrinterPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectPrinterBox.xaml.cs">
+      <DependentUpon>SelectPrinterBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -369,6 +378,9 @@
     <Content Include="Resources\Images\img_btn_delete_printer_tablet.scale-100.png" />
     <Content Include="Resources\Images\img_btn_delete_printer_tablet.scale-140.png" />
     <Content Include="Resources\Images\img_btn_delete_printer_tablet.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_btn_dummy_print_setting.scale-100.png" />
     <Content Include="Resources\Images\img_btn_dummy_print_setting.scale-140.png" />
     <Content Include="Resources\Images\img_btn_dummy_print_setting.scale-180.png" />
@@ -429,9 +441,6 @@
     <Content Include="Resources\Images\img_btn_submenu_disabled.scale-100.png" />
     <Content Include="Resources\Images\img_btn_submenu_disabled.scale-140.png" />
     <Content Include="Resources\Images\img_btn_submenu_disabled.scale-180.png" />
-    <Content Include="Resources\Images\img_btn_submenu_pressed.scale-100.png" />
-    <Content Include="Resources\Images\img_btn_submenu_pressed.scale-140.png" />
-    <Content Include="Resources\Images\img_btn_submenu_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_punch.png" />
     <Content Include="Resources\Images\img_staple.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
@@ -568,6 +577,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SelectPrinterBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -594,7 +607,7 @@
     <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT81, Version=3.8.3.1">
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.3">
       <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
     </SDKReference>
   </ItemGroup>

@@ -52,12 +52,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty IconImageProperty =
             DependencyProperty.Register("IconImage", typeof(ImageSource), typeof(KeyValueControl), null);
-			
-		public static readonly DependencyProperty RightImageProperty =
-            DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
-        public static readonly DependencyProperty RightPressedImageProperty =
-            DependencyProperty.Register("RightPressedImage", typeof(ImageSource), typeof(KeyValueControl), null);
+        public static readonly DependencyProperty RightImageProperty =
+            DependencyProperty.Register("RightImage", typeof(ImageSource), typeof(KeyValueControl), null);
 
         public static readonly DependencyProperty RightDisabledImageProperty =
             DependencyProperty.Register("RightDisabledImage", typeof(ImageSource), typeof(KeyValueControl), null);
@@ -80,11 +77,20 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ValueTextWidthProperty =
             DependencyProperty.Register("ValueTextWidth", typeof(double), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty ValueSubTextProperty =
+            DependencyProperty.Register("ValueSubText", typeof(string), typeof(KeyValueControl), null);
+
+        public static readonly DependencyProperty ValueSubTextVisibilityProperty =
+            DependencyProperty.Register("ValueSubTextVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Collapsed));
+
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
         public static new readonly DependencyProperty IsEnabledProperty =
             DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyValueControl), new PropertyMetadata(true, SetIsEnabled));
+
+        public static readonly DependencyProperty PressedColorProperty =
+            DependencyProperty.Register("PressedColor", typeof(SolidColorBrush), typeof(KeyValueControl), null);
 
         public ICommand Command
         {
@@ -116,6 +122,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(ValueVisibilityProperty, value); }
         }
 
+        public Visibility ValueSubTextVisibility
+        {
+            get { return (Visibility)GetValue(ValueSubTextVisibilityProperty); }
+            set { SetValue(ValueSubTextVisibilityProperty, value); }
+        }
+
         public object ValueContent
         {
             get { return (object)GetValue(ValueContentProperty); }
@@ -132,12 +144,6 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ImageSource)GetValue(RightImageProperty); }
             set { SetValue(RightImageProperty, value); }
-        }
-
-        public ImageSource RightPressedImage
-        {
-            get { return (ImageSource)GetValue(RightPressedImageProperty); }
-            set { SetValue(RightPressedImageProperty, value); }
         }
 
         public ImageSource RightDisabledImage
@@ -170,6 +176,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(ValueTextProperty, value); }
         }
 
+        public string ValueSubText
+        {
+            get { return (string)GetValue(ValueSubTextProperty); }
+            set { SetValue(ValueSubTextProperty, value); }
+        }
+
         public double KeyTextWidth
         {
             get { return (double)GetValue(KeyTextWidthProperty); }
@@ -192,6 +204,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (bool)GetValue(IsEnabledProperty); }
             set { SetValue(IsEnabledProperty, value); }
+        }
+
+        public SolidColorBrush PressedColor
+        {
+            get { return (SolidColorBrush)GetValue(PressedColorProperty); }
+            set { SetValue(PressedColorProperty, value); }
         }
 
         private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
@@ -237,7 +255,7 @@ namespace SmartDeviceApp.Controls
             if (IconVisibility == Visibility.Visible)
             {
                 var imageWidth = ((BitmapImage)IconImage).PixelWidth;
-                if (imageWidth == 0) imageWidth = ImageConstant.IconImageWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(sender);
                 maxTextWidth -= imageWidth;
                 maxTextWidth -= defaultMargin;
             }
@@ -245,7 +263,7 @@ namespace SmartDeviceApp.Controls
             if (RightButtonVisibility == Visibility.Visible)
             {
                 var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
-                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.RightButtonImageWidth;
+                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
                 maxTextWidth -= rightButtonImageWidth;
                 maxTextWidth -= defaultMargin;
             }

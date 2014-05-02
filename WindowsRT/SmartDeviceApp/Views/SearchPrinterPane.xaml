@@ -114,7 +114,7 @@
 
             <!--CONTENTS HERE-->
             <StackPanel >
-                <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="39" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="#FF262626">
+                <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="60" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="#FF262626">
                 <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding DataContext.WillRefresh,  ElementName=SearchPrinterPaneControl}" Value="True">
                             <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchRefreshed,  ElementName=SearchPrinterPaneControl}"/>
@@ -209,10 +209,10 @@
                                                           SubText="{Binding Ip_address}"
                                                           SubTextVisibility="Visible"
                                             			  RightImage="{Binding ImageSource}"
-                                                          RightPressedImage="ms-appx:///Resources/Images/img_btn_add_printer_pressed.scale-100.png"
                                                           RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
                                                           SeparatorVisibility="{Binding Converter={StaticResource PrinterSearchItemToSeparatorVisibility}}"
+                                                          PressedColor="{StaticResource BRUSH_Purple1}"
                                                               />
                             </Grid>
                         </DataTemplate>

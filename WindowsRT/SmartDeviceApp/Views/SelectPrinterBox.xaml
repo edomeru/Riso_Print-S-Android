@@ -1,5 +1,5 @@
-﻿<Grid x:Name="printSettingOptionsBox"
-    x:Class="SmartDeviceApp.Views.PrintSettingOptionsBox"
+﻿<Grid x:Name="selectPrinterBox"
+    x:Class="SmartDeviceApp.Views.SelectPrinterBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Views"
@@ -11,17 +11,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Width="{StaticResource SIZE_SidePaneWidth}"
-    DataContext="{Binding PrintSettingOptionsViewModel, Source={StaticResource Locator}}">
+    DataContext="{Binding SelectPrinterViewModel, Source={StaticResource Locator}}">
 
     <Grid.Resources>
         <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
+                    <!-- TO BE REMOVED, I think.
                     <Image x:Name="icon"
                            Source="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                            Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
                            Visibility="Collapsed"/>
+                    -->
                     <TextBlock x:Name="key" 
                             Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}}" 
                             Style="{StaticResource STYLE_TextListHeader}" />
@@ -34,31 +36,35 @@
         <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
     <Button x:Name="header" Grid.Row="0" 
-            Content="{Binding PrintSetting.Text}"
+            Content="{Binding Source=IDS_LBL_PRINTERS}"
             Command="{Binding BackToPrintSettings}" 
             Template="{StaticResource TEMPLATE_HeaderButton}"
-            Width="{Binding Width, ElementName=printSettingOptionsBox}"/>
-    <ListView x:Name="printSettingOptionsListView" Grid.Row="1"  
-              ItemsSource="{Binding PrintSetting.Options}" 
+            Width="{Binding Width, ElementName=selectPrinterBox}"/>
+    <ListView x:Name="printersListView" Grid.Row="1"  
+              ItemsSource="{Binding Printers}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
               IsItemClickEnabled="False" 
               SelectionMode="Single">
         <ListView.ItemTemplate>
             <DataTemplate>
+                <!-- Needs binding for IconImage and SeparatorVisibility -->
                 <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
-                                                Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
+                                                Command="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
                                                 CommandParameter="{Binding}"
-                                                GroupName="printSettingOptionsGroup"
-                                                Index="{Binding Index}"
-                                                Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                                IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                                                IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
-                                                IsEnabled="{Binding IsEnabled}"
-                                                SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
-                                                Width="{Binding Width, ElementName=printSettingOptionsBox}"
+                                                GroupName="printersList"
+                                                Index="{Binding Id}"
+                                                Text="{Binding Name}"
+                                                IconImage="ms-appx:///Resources/Images/img_btn_printer_status_online.png"
+                                                IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}}"
+                                                IsEnabled="True"
+                                                SeparatorVisibility="True"
+                                                SubText="{Binding IpAddress}"
+                                                SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
+                                                Width="{Binding Width, ElementName=selectPrinterBox}"
                                                 PressedColor="{StaticResource BRUSH_Purple1}">
                 </controls:KeyRadioButtonControl>
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
 </Grid>
+

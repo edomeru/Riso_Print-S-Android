@@ -89,19 +89,14 @@ namespace SmartDeviceApp.Controls
             {
                 KeyTextBoxControl context = this;
                 var textBox = ((TextBox)obj);
-                textBox.TextChanged += (sender, e) => TextChanged(sender, context);
+                textBox.KeyUp += OnFinalizeTextBox;
+                textBox.LostFocus += OnLostFocus;
                 textBox.Width = TextBoxWidth;
                 textBox.TextAlignment = TextBoxAlignment;
                 textBox.MaxLength = TextBoxMaxLength;
                 _isTextBoxLoaded = true;
             }
         }
-
-        // Updates the value source binding every time the text is changed
-        private static void TextChanged(object sender, KeyTextBoxControl control)
-        {
-            control.SetValue(ValueTextProperty, ((TextBox)sender).Text);
-        }  
 
         private static void SetValueText(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
@@ -113,11 +108,17 @@ namespace SmartDeviceApp.Controls
             _textBox.Focus(FocusState.Programmatic);
         }
 
-        private void OnKeyUp(object sender, KeyRoutedEventArgs e)
+        private void OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            ValueText = ((TextBox)sender).Text;
+            var scope = FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+        }
+
+        private void OnFinalizeTextBox(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
             {
-                var scope = FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+                OnLostFocus(sender, null);
             }
         }
     }

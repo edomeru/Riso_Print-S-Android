@@ -56,6 +56,7 @@
     <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
+    <conv:PrinterNameToTextConverter x:Key="PrinterNameToTextConverter"/>
     <conv:PrintJobListToGroupVisibilityConverter x:Key="PrintJobListToGroupVisibilityConverter"/>
     <conv:PrintJobListWidthConverter x:Key="PrintJobListWidthConverter"/>
     <conv:PrintJobResultToImageSourceConverter x:Key="PrintJobResultToImageSourceConverter"/>
@@ -65,11 +66,13 @@
     <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>
     <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
+    <conv:SelectedPrinterToBooleanConverter x:Key="SelectedPrinterToBooleanConverter"/>
     <conv:SeparatorLineGeometryEndPointConverter x:Key="SeparatorLineGeometryEndPointConverter"/>
     <conv:SeparatorLineGeometryStartPointConverter x:Key="SeparatorLineGeometryStartPointConverter"/>
+    <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <conv:WidthConverter x:Key="WidthConverter"/>
     <conv:IntToBooleanConverter x:Key="IntToBooleanConverter"/>
     <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
-    <!-- APP CONVERTERS END -->       
+    <!-- APP CONVERTERS END -->
 
 </ResourceDictionary>

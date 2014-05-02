@@ -141,6 +141,9 @@
   <data name="IDS_LBL_OPEN_IN_WINRT" xml:space="preserve">
     <value>Open Document</value>
   </data>
+  <data name="IDS_LBL_HOME" xml:space="preserve">
+    <value>Home</value>
+  </data>
   <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
     <value>Print Preview</value>
   </data>
@@ -165,8 +168,35 @@
   <data name="IDS_LBL_DEFAULT_PRINTER" xml:space="preserve">
     <value>Default Printer</value>
   </data>
-  <data name="IDS_LBL_DELETE_PRINTER" xml:space="preserve">
+  <data name="IDS_LBL_DELETE" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="IDS_LBL_PULL_TO_REFRESH" xml:space="preserve">
+    <value>Pull to refresh</value>
+  </data>
+  <data name="IDS_LBL_RELEASE_TO_REFRESH" xml:space="preserve">
+    <value>Release to refresh</value>
+  </data>
+  <data name="IDS_LBL_REFRESHING" xml:space="preserve">
+    <value>Refreshing…</value>
+  </data>
+  <data name="IDS_LBL_LAST_UPDATED" xml:space="preserve">
+    <value>Updated: %@</value>
+  </data>
+  <data name="IDS_LBL_SET_DEFAULT_PRINTER" xml:space="preserve">
+    <value>Set as Default Printer</value>
+  </data>
+  <data name="IDS_LBL_ADD_SUCCESSFUL" xml:space="preserve">
+    <value>Added Successfully</value>
+  </data>
+  <data name="IDS_LBL_DELETE_ALL" xml:space="preserve">
+    <value>Delete All</value>
+  </data>
+  <data name="IDS_LBL_DELETE_JOBS_TITLE" xml:space="preserve">
+    <value>Delete Print Job History</value>
+  </data>
+  <data name="IDS_LBL_DELETE_JOBS_MSG" xml:space="preserve">
+    <value>Are you sure you want to delete?</value>
   </data>
   <data name="IDS_LBL_PRINTER_INFO" xml:space="preserve">
     <value>Printer Info</value>
@@ -208,7 +238,19 @@
     <value>PRINTER SEARCH</value>
   </data>
   <data name="IDS_LBL_PRINTING" xml:space="preserve">
-    <value>Printing… Tap to Cancel</value>
+    <value>Printing…</value>
+  </data>
+  <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
+    <value>Print Settings</value>
+  </data>
+  <data name="IDS_LBL_PRINT" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="IDS_LBL_PRINTER" xml:space="preserve">
+    <value>Printer</value>
+  </data>
+  <data name="IDS_LBL_CHOOSE_PRINTER" xml:space="preserve">
+    <value>Choose printer</value>
   </data>
   <data name="IDS_LBL_BASIC" xml:space="preserve">
     <value>Basic</value>
@@ -248,6 +290,9 @@
   </data>
   <data name="IDS_LBL_PAPERSIZE" xml:space="preserve">
     <value>Paper Size</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A3" xml:space="preserve">
+    <value>A3</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_A3W" xml:space="preserve">
     <value>A3W</value>
@@ -337,13 +382,13 @@
     <value>Imposition</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_2UP" xml:space="preserve">
-    <value>2-up</value>
+    <value>2 pages</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_4UP" xml:space="preserve">
-    <value>4-up</value>
+    <value>4 pages</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER" xml:space="preserve">
-    <value>Imposition Order</value>
+    <value>Layout order</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER_2UP_RL" xml:space="preserve">
     <value>Right to left (B to T)</value>
@@ -370,19 +415,16 @@
     <value>Collate</value>
   </data>
   <data name="IDS_LBL_SORT_PERPAGE" xml:space="preserve">
-    <value>Per Page</value>
+    <value>Group</value>
   </data>
   <data name="IDS_LBL_SORT_PERCOPY" xml:space="preserve">
-    <value>Per Copy</value>
+    <value>Sort</value>
   </data>
   <data name="IDS_LBL_BOOKLET" xml:space="preserve">
     <value>Booklet</value>
   </data>
-  <data name="IDS_LBL_BOOKLET_ON" xml:space="preserve">
-    <value>On</value>
-  </data>
   <data name="IDS_LBL_BOOKLET_FINISHING" xml:space="preserve">
-    <value>Booklet Finishing</value>
+    <value>Booklet binding</value>
   </data>
   <data name="IDS_LBL_BOOKLET_FINISHING_FOLD" xml:space="preserve">
     <value>Paper folding</value>
@@ -390,14 +432,26 @@
   <data name="IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" xml:space="preserve">
     <value>Fold + Staple</value>
   </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
+    <value>Booklet Layout</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_LR" xml:space="preserve">
+    <value>Left to right</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_RL" xml:space="preserve">
+    <value>Right to left</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_TB" xml:space="preserve">
+    <value>Top to bottom</value>
+  </data>
   <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
-    <value>Finishing Side</value>
+    <value>Binding side</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE_LEFT" xml:space="preserve">
     <value>Left</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE_TOP" xml:space="preserve">
-    <value>Upper</value>
+    <value>Top</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE_RIGHT" xml:space="preserve">
     <value>Right</value>
@@ -406,16 +460,16 @@
     <value>Staple</value>
   </data>
   <data name="IDS_LBL_STAPLE_UPPERLEFT" xml:space="preserve">
-    <value>1 (upper-left)</value>
+    <value>1 (Upper-left)</value>
   </data>
   <data name="IDS_LBL_STAPLE_UPPERRIGHT" xml:space="preserve">
-    <value>1 (upper-right)</value>
+    <value>1 (Upper-right)</value>
   </data>
   <data name="IDS_LBL_STAPLE_2" xml:space="preserve">
-    <value>2.0</value>
+    <value>2</value>
   </data>
   <data name="IDS_LBL_STAPLE_1" xml:space="preserve">
-    <value>1.0</value>
+    <value>1</value>
   </data>
   <data name="IDS_LBL_PUNCH" xml:space="preserve">
     <value>Punch</value>
@@ -477,8 +531,14 @@
   <data name="IDS_ERR_MSG_INVALID_IP_ADDRESS" xml:space="preserve">
     <value>Please enter a valid IP Address.</value>
   </data>
+  <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
+    <value>Saved Printer reached maximum count.</value>
+  </data>
+  <data name="IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
+    <value>Warning, Cannot find Printer.</value>
+  </data>
   <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
-    <value>Please check the password you entered.</value>
+    <value>Please check the password you entered</value>
   </data>
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>Please register a printer</value>
@@ -495,28 +555,24 @@
   <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
     <value>PDF Encryption is not supported</value>
   </data>
+  <data name="IDS_ERR_MSG_DELETE_FAILED" xml:space="preserve">
+    <value>Unable to delete.</value>
+  </data>
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
   </data>
+  <!-- NOT IN WORDING LIST - START -->
   <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
     <value>Page {0} / {1}</value>
-  </data>
-  <data name="IDS_LBL_HOME" xml:space="preserve">
-    <value>Home</value>
   </data>
   <data name="IDS_LBL_JOBS" xml:space="preserve">
     <value>Jobs</value>
   </data>
-  <data name="IDS_LBL_PRINT" xml:space="preserve">
-    <value>Print</value>
-  </data>
-  <data name="IDS_LBL_DELETE_ALL_JOBS" xml:space="preserve">
-    <value>Delete All</value>
-  </data>
-  <data name="IDS_LBL_DELETE_JOB" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="IDS_LBL_READ_COMMUNITY_NAME" xml:space="preserve">
     <value>Read Community Name</value>
   </data>
+  <data name="IDS_LBL_NO_NAME" xml:space="preserve">
+    <value>No name</value>
+  </data>
+  <!-- NOT IN WORDING LIST - END -->
 </root>

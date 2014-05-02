@@ -19,6 +19,7 @@ namespace SmartDeviceApp.Controllers
     public class PrinterController : INotifyPropertyChanged
     {
         static readonly PrinterController _instance = new PrinterController();
+        private PrintSettingsController _printSettingsController;
 
         public delegate bool AddPrinterHandler(string ip);
         private AddPrinterHandler _addPrinterHandler;
@@ -93,7 +94,9 @@ namespace SmartDeviceApp.Controllers
         {
             //get new print settings
             _printSettingsViewModel.PrinterName = printer.Name;
+            _printSettingsController = new PrintSettingsController(printer, true);
 
+            _printSettingsController.GetCurrentPrintSettings();
         }
 
 
@@ -443,12 +446,6 @@ namespace SmartDeviceApp.Controllers
                     }
 
                     //sortPrinterList(index); TBA
-                
-                //System.Diagnostics.Debug.WriteLine(e.PropertyName);
-
-                //System.Diagnostics.Debug.WriteLine(printer.IpAddress);
-                //System.Diagnostics.Debug.WriteLine(printer.Name);
-                //System.Diagnostics.Debug.WriteLine(printer.IsDefault);
                 }
 
             }
@@ -585,7 +582,7 @@ namespace SmartDeviceApp.Controllers
         {
             Printer printer =  _printerList.First(x => x.IpAddress == ipAddress);
 
-            int result = await DatabaseController.Instance.DeletePrinterFromDB(printer.Id);
+            int result = await DatabaseController.Instance.DeletePrinter(printer);
 
             if (result > 0)
             {

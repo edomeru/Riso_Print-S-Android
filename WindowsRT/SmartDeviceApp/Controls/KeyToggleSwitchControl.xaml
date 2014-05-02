@@ -1,9 +1,8 @@
-﻿<controls:KeyValueControl x:Name="keyToggleSwitchControl"
+﻿<local:KeyValueControl x:Name="keyToggleSwitchControl"
     x:Class="SmartDeviceApp.Controls.KeyToggleSwitchControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Controls"
-    xmlns:controls="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     SubTextVisibility="Collapsed"
@@ -13,10 +12,10 @@
     d:DesignHeight="60"
     d:DesignWidth="400">
     
-    <controls:KeyValueControl.ValueContent>
+    <local:KeyValueControl.ValueContent>
         <ToggleSwitch x:Name="toggleSwitch"
                       Loaded="OnToggleSwitchLoaded"
                       IsOn="{Binding IsOn, ElementName=keyToggleSwitchControl}"
                       Style="{StaticResource STYLE_ListValue_ToggleSwitch}" />
-    </controls:KeyValueControl.ValueContent>
-</controls:KeyValueControl>
+    </local:KeyValueControl.ValueContent>
+</local:KeyValueControl>

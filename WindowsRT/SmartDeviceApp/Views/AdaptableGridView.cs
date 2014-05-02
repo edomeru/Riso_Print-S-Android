@@ -20,7 +20,7 @@ namespace SmartDeviceApp.Views
             set { SetValue(ItemWidthProperty, value); }
         }
         public static readonly DependencyProperty ItemWidthProperty =
-            DependencyProperty.Register("ItemWidth", typeof(double), typeof(AdaptableGridView), new PropertyMetadata(itemWidth));
+            DependencyProperty.Register("ItemWidth", typeof(double), typeof(AdaptableGridView), null); //new PropertyMetadata(itemWidth)
 
         // default max number of rows or columns
         private const int maxRowsOrColumns = 3;
@@ -51,5 +51,7 @@ namespace SmartDeviceApp.Views
 
             Messenger.Default.Send<string>("ClearDelete");
         }
+
+        
     }
 }

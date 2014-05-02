@@ -156,5 +156,11 @@ namespace SmartDeviceApp.Views
             MessageDialog md = new MessageDialog(msg.Content, msg.Caption);
             await md.ShowAsync();
         }
+
+        private void printerInfoView_Loaded(object sender, RoutedEventArgs e)
+        {
+            //this.printerInfoView.ItemWidth = 
+        }
+
     }
 }

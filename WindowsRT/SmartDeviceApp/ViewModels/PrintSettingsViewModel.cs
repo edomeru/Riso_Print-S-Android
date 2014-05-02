@@ -47,7 +47,9 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private string _printerName;
+        private string _printerIpAddress;
         private ICommand _printCommand;
+        private ICommand _listPrintersCommand;
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
@@ -59,6 +61,8 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
         }
 
+        public int PrinterId { get; set; }
+
         public string PrinterName
         {
             get { return _printerName; }
@@ -67,8 +71,20 @@ namespace SmartDeviceApp.ViewModels
                 if (_printerName != value)
                 {
                     _printerName = value;
-                    // TODO: No default/selected printer
                     RaisePropertyChanged("PrinterName");
+                }
+            }
+        }
+
+        public string PrinterIpAddress
+        {
+            get { return _printerIpAddress; }
+            set
+            {
+                if (_printerIpAddress != value)
+                {
+                    _printerIpAddress = value;
+                    RaisePropertyChanged("PrinterIpAddress");
                 }
             }
         }
@@ -87,7 +103,22 @@ namespace SmartDeviceApp.ViewModels
                 return _printCommand;
             }
         }
-        
+
+        public ICommand ListPrintersCommand
+        {
+            get
+            {
+                if (_listPrintersCommand == null)
+                {
+                    _listPrintersCommand = new RelayCommand(
+                        () => ListPrintersCommandExecute(),
+                        () => true
+                    );
+                }
+                return _listPrintersCommand;
+            }
+        }
+
         public PrintSettingList PrintSettingsList
         {
             get { return _printSettingsList; }
@@ -135,6 +166,12 @@ namespace SmartDeviceApp.ViewModels
             {
                 ExecutePrintEventHandler();
             }
+        }
+
+        private void ListPrintersCommandExecute()
+        {
+            new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
+            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)

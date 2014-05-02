@@ -20,7 +20,7 @@
     </controls:KeyValueControl.Resources>
     
     <controls:KeyValueControl.ValueContent>
-        <StackPanel x:Name="stackPanel" Style="{StaticResource STYLE_StackRight}" Width="129">
+        <StackPanel x:Name="stackPanel" Style="{StaticResource STYLE_StackRight}" Width="129" Margin="0,1,0,-1">
             <ToggleButton x:Name="LPRToggle" Margin="0,7" Width="65" Height="45" Content="LPR" BorderThickness="2,2,1,2" Style="{StaticResource ToggleButtonStyle1}" 
                           IsChecked="{Binding IsLPRSelected, ElementName=portControl}"
                           Loaded="OnLPRPortLoaded">

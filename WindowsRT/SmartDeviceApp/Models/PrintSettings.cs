@@ -10,16 +10,11 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using GalaSoft.MvvmLight;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Models
 {
@@ -264,7 +259,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Booklet finishing setting, used by PrintSetting table
         /// </summary>
-        [SQLite.Column("pst_booklet_finishing"), SQLite.NotNull]
+        [SQLite.Column("pst_booklet_finish"), SQLite.NotNull]
         public int BookletFinishing { get; set; }
 
         /// <summary>
@@ -297,6 +292,18 @@ namespace SmartDeviceApp.Models
         [SQLite.Column("pst_output_tray"), SQLite.NotNull]
         public int OutputTray { get; set; }
 
+        /// <summary>
+        /// Log-in ID for Authentication; used only on a single print session
+        /// </summary>
+        [SQLite.Ignore]
+        public string LoginId { get; set; }
+
+        /// <summary>
+        /// PIN Code for Authentication; used only on a single print session
+        /// </summary>
+        [SQLite.Ignore]
+        public string PinCode { get; set; }
+
         #endregion Properties
 
         /// <summary>
@@ -306,24 +313,26 @@ namespace SmartDeviceApp.Models
         {
             Id = -1;
             PrinterId = -1;
-            ColorMode = -1;
-            Orientation = -1;
-            Copies = -1;
-            Duplex = -1;
-            PaperSize = -1;
-            ScaleToFit = false;
-            PaperType = -1;
-            InputTray = -1;
-            Imposition = -1;
-            ImpositionOrder = -1;
-            Sort = -1;
-            Booklet = false;
-            BookletFinishing = -1;
-            BookletLayout = -1;
-            FinishingSide = -1;
-            Staple = -1;
-            Punch = -1;
-            OutputTray = -1;
+            ColorMode = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_COLOR_MODE, ListValueType.Int);
+            Orientation = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_ORIENTATION, ListValueType.Int);
+            Copies = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_COPIES, ListValueType.Int);
+            Duplex = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_DUPLEX, ListValueType.Int);
+            PaperSize = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PAPER_SIZE, ListValueType.Int);
+            ScaleToFit = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_SCALE_TO_FIT, ListValueType.Boolean);
+            PaperType = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PAPER_TYPE, ListValueType.Int);
+            InputTray = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_INPUT_TRAY, ListValueType.Int);
+            Imposition = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_IMPOSITION, ListValueType.Int);
+            ImpositionOrder = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_IMPOSITION_ORDER, ListValueType.Int);
+            Sort = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_SORT, ListValueType.Int);
+            Booklet = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_BOOKLET, ListValueType.Boolean);
+            BookletFinishing = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_BOOKLET_FINISH, ListValueType.Int);
+            BookletLayout = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_BOOKLET_LAYOUT, ListValueType.Int);
+            FinishingSide = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_FINISHING_SIDE, ListValueType.Int);
+            Staple = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_STAPLE, ListValueType.Int);
+            Punch = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PUNCH, ListValueType.Int);
+            OutputTray = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_OUTPUT_TRAY, ListValueType.Int);
+            LoginId = null;
+            PinCode = null;
         }
 
     }
