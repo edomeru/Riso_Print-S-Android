@@ -9,21 +9,14 @@ namespace SmartDeviceApp.Models
 {
     public class PageNumberInfo
     {
-        private uint _leftPageIndex;
-        private uint _rightPageIndex;
+        private uint _pageIndex;
         private uint _pageTotal;
         private PageViewMode _pageViewMode;
-
-        public uint LeftPageIndex
+        
+        public uint PageIndex
         {
-            get { return _leftPageIndex; }
-            set { _leftPageIndex = value; }
-        }
-
-        public uint RightPageIndex
-        {
-            get { return _rightPageIndex; }
-            set { _rightPageIndex = value; }
+            get { return _pageIndex; }
+            set { _pageIndex = value; }
         }
 
         public uint PageTotal
@@ -38,11 +31,10 @@ namespace SmartDeviceApp.Models
             set { _pageViewMode = value; }
         }
 
-        public PageNumberInfo(uint leftPageIndex, uint rightPageIndex, 
+        public PageNumberInfo(uint rightPageIndex, 
             uint pageTotal, PageViewMode pageViewMode)
         {
-            _leftPageIndex = leftPageIndex;
-            _rightPageIndex = rightPageIndex;
+            _pageIndex = rightPageIndex;
             _pageTotal = pageTotal;
             _pageViewMode = pageViewMode;
         }

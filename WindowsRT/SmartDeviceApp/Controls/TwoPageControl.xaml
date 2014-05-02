@@ -35,8 +35,8 @@
                 <ColumnDefinition x:Name="leftPageArea"/>
                 <ColumnDefinition x:Name="rightPageArea"/>
             </Grid.ColumnDefinitions>
-            <local:PageControl Grid.Column="0" x:Name="leftPage" Style="{StaticResource STYLE_AlignLeft}"/>
-            <local:PageControl Grid.Column="1" x:Name="rightPage" Style="{StaticResource STYLE_AlignRight}"/>
+            <local:PageControl Grid.Column="0" x:Name="leftPage"/>
+            <local:PageControl Grid.Column="1" x:Name="rightPage"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

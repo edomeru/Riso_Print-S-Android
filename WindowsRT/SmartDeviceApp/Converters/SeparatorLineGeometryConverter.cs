@@ -13,7 +13,7 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || !(value is double)) return null;
+            if (value == null || !(value is double)) return new Point(0,0);
             var startPoint = new Point((double)value, 0);
             return startPoint;
         }
