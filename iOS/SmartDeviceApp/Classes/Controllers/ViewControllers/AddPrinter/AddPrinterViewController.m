@@ -139,7 +139,7 @@
     pd.port = [NSNumber numberWithInt:0];
     pd.enBooklet = YES;
     pd.enStaple = YES;
-    pd.enFinisher23Holes = YES;
+    pd.enFinisher23Holes = NO;
     pd.enFinisher24Holes = YES;
     pd.enTrayAutoStacking = YES;
     pd.enTrayFaceDown = YES;

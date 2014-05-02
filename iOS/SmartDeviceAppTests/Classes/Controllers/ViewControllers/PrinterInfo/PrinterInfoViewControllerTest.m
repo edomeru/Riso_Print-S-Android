@@ -178,7 +178,7 @@
     pd2.port = [NSNumber numberWithInt:0];
     pd2.enBooklet = YES;
     pd2.enStaple = YES;
-    pd2.enFinisher23Holes = YES;
+    pd2.enFinisher23Holes = NO;
     pd2.enFinisher24Holes = YES;
     pd2.enTrayAutoStacking = YES;
     pd2.enTrayFaceDown = YES;

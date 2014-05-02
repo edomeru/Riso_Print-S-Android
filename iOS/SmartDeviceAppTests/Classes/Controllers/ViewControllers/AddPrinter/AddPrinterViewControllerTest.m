@@ -152,7 +152,7 @@
     GHAssertEqualStrings(fullCapPrinter.ip_address, invalidIP, @"");
     GHAssertTrue([fullCapPrinter.port intValue] == 0, @"");
     GHAssertTrue([fullCapPrinter.enabled_booklet boolValue], @"");
-    GHAssertTrue([fullCapPrinter.enabled_finisher_2_3_holes boolValue], @"");
+    GHAssertFalse([fullCapPrinter.enabled_finisher_2_3_holes boolValue], @"");
     GHAssertTrue([fullCapPrinter.enabled_finisher_2_4_holes boolValue], @"");
     GHAssertTrue([fullCapPrinter.enabled_staple boolValue], @"");
     GHAssertTrue([fullCapPrinter.enabled_tray_auto_stacking boolValue], @"");
