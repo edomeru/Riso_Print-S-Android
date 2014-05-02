@@ -14,9 +14,16 @@
 #import "PrinterDetails.h"
 #import "CXAlertView.h"
 
+//use valid printer IPs
 //static NSString* TEST_PRINTER_IP = @"192.168.0.198";
 static NSString* TEST_PRINTER_IP = @"192.168.0.199";
-//static NSString* TEST_PRINTER_IP = @"192.168.0.1";
+
+@interface DirectPrintManager (UnitTest)
+
+// expose private variables
+- (CXAlertView*)alertView;
+
+@end
 
 @interface DirectPrintManagerTest : GHTestCase <DirectPrintManagerDelegate>
 {
@@ -48,6 +55,9 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
+    PDFFileManager* pdfManager = [PDFFileManager sharedManager];
+    pdfManager.printDocument.printer = nil;
+    
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     while (pm.countSavedPrinters != 0)
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
@@ -78,6 +88,8 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     [self waitForCompletion:5];
     GHTestLog(@"-- printing finished");
 
+    [self removeErrorDialogIfPresent];
+    
     GHAssertTrue(documentDidFinishCallbackReceived,
                  [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
 }
@@ -91,6 +103,8 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     [dpm printDocumentViaRaw];
     [self waitForCompletion:5];
     GHTestLog(@"-- printing finished");
+    
+    [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
                  [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
@@ -172,6 +186,22 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     } while (!done);
     
     return done;
+}
+
+- (void)removeErrorDialogIfPresent
+{
+    for (UIWindow* window in [UIApplication sharedApplication].windows)
+    {
+        for (UIView *subView in [window subviews])
+        {
+            if ([subView isKindOfClass:[CXAlertView class]])
+            {
+                CXAlertView* alert = (CXAlertView*)subView;
+                [alert dismiss];
+                [self waitForCompletion:2];
+            }
+        }
+    }
 }
 
 @end
