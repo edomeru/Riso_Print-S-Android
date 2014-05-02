@@ -439,9 +439,6 @@ const float SEARCH_TIMEOUT = 10;
 
 #pragma mark - Utilities
 
-/**
- @see http://www.infinite-loop.dk/blog/2011/04/unittesting-asynchronous-network-access/
- */
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
 {
     NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];

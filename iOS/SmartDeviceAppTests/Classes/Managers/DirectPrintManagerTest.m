@@ -14,12 +14,9 @@
 #import "PrinterDetails.h"
 #import "CXAlertView.h"
 
-@interface DirectPrintManager (UnitTest)
-
-// expose private properties
-- (CXAlertView*)alertView;
-
-@end
+//static NSString* TEST_PRINTER_IP = @"192.168.0.198";
+static NSString* TEST_PRINTER_IP = @"192.168.0.199";
+//static NSString* TEST_PRINTER_IP = @"192.168.0.1";
 
 @interface DirectPrintManagerTest : GHTestCase <DirectPrintManagerDelegate>
 {
@@ -81,7 +78,8 @@
     [self waitForCompletion:5];
     GHTestLog(@"-- printing finished");
 
-    GHAssertTrue(documentDidFinishCallbackReceived, @"");
+    GHAssertTrue(documentDidFinishCallbackReceived,
+                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
 }
 
 - (void)test002_PrintDocumentViaRAW
@@ -94,7 +92,8 @@
     [self waitForCompletion:5];
     GHTestLog(@"-- printing finished");
     
-    GHAssertTrue(documentDidFinishCallbackReceived, @"");
+    GHAssertTrue(documentDidFinishCallbackReceived,
+                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
 }
 
 #pragma mark - DirectPrintManagerDelegate Methods
@@ -107,7 +106,7 @@
 #pragma mark - Utilities
 
 - (void)prepareForPrinting
-{
+{   
     //-- PDF
     
     PDFFileManager* pdfManager = [PDFFileManager sharedManager];
@@ -134,7 +133,7 @@
     PrinterDetails* pd = [[PrinterDetails alloc] init];
     GHAssertNotNil(pd, @"check initialization of PrinterDetails");
     pd.name = @"RISO Printer 1";
-    pd.ip = @"192.168.0.199";
+    pd.ip = TEST_PRINTER_IP;
     pd.port = [NSNumber numberWithInt:0];
     pd.enBooklet = YES;
     pd.enStaple = YES;
@@ -149,7 +148,8 @@
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     GHAssertNotNil(pm, @"check initialization of PrinterManager");
-    GHAssertTrue(pm.countSavedPrinters == 0, @"should initially have no printers");
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
     GHAssertTrue([pm registerPrinter:pd], @"");
     Printer* testPrinter = [pm getPrinterAtIndex:0];
     GHAssertNotNil(testPrinter, @"");
@@ -159,9 +159,6 @@
     pdfManager.printDocument.printer = testPrinter;
 }
 
-/**
- @see http://www.infinite-loop.dk/blog/2011/04/unittesting-asynchronous-network-access/
- */
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs
 {
     NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];

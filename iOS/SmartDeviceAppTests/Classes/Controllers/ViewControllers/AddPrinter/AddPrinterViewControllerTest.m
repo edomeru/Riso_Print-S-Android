@@ -63,10 +63,6 @@
     storyboard = nil;
     controllerIphone = nil;
     controllerIpad = nil;
-    
-    PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    while (pm.countSavedPrinters != 0)
-        GHAssertTrue([pm deletePrinterAtIndex:0], @"printer should be deleted");
 }
 
 // Run before each test method
@@ -140,12 +136,10 @@
     NSString* invalidIP = @"192.168.0.1";
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    for (NSUInteger i = 0; i < pm.countSavedPrinters; i++)
-    {
-        Printer* printer = [pm getPrinterAtIndex:i];
-        GHTestLog(@"printer=[%@]", printer.ip_address);
-    }
-    GHAssertTrue(pm.countSavedPrinters == 0, @"initially should have no printers");
+    
+    // clear out the other printers
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
     
     GHTestLog(@"-- adding invalid printer=[%@]", invalidIP);
     [controllerIphone addFullCapabilityPrinter:invalidIP];
@@ -173,7 +167,11 @@
     GHAssertTrue([fullCapPrinter.printjob count] == 0, @"");
     GHAssertNotNil(fullCapPrinter.printsetting, @"");
     
-    GHAssertTrue([pm deletePrinterAtIndex:0], @"printer should be deleted");
+    // clear out the other printers
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+    
+    fullCapPrinter = nil;
 }
 
 @end

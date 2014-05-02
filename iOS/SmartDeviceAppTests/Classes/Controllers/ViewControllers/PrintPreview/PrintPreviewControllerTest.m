@@ -378,7 +378,7 @@
     PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
     [viewController view];
-    PreviewSetting *previewSetting = viewController.printDocument.previewSetting;
+    //PreviewSetting *previewSetting = viewController.printDocument.previewSetting; //--unused
 }
 
 @end

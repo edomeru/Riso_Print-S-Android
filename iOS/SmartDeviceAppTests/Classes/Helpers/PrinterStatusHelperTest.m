@@ -9,10 +9,13 @@
 #import <GHUnitIOS/GHUnit.h>
 #import "PrinterStatusHelper.h"
 
+//static NSString* TEST_PRINTER_IP = @"192.168.0.198";
 static NSString* TEST_PRINTER_IP = @"192.168.0.199";
+//static NSString* TEST_PRINTER_IP = @"192.168.0.1";
 
-@interface PrinterStatusHelperTest : GHTestCase
+@interface PrinterStatusHelperTest : GHTestCase <PrinterStatusHelperDelegate>
 {
+    BOOL statusDidChangeCallbackReceived;
 }
 
 @end
@@ -23,7 +26,7 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 
 - (BOOL)shouldRunOnMainThread
 {
-    return NO;
+    return YES;
 }
 
 // Run at start of all tests in the class
@@ -55,6 +58,7 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 {
     GHTestLog(@"# CHECK: PSHelper can be initialized. #");
     
+    GHTestLog(@"-- creating the helper");
     PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:TEST_PRINTER_IP];
     GHAssertNotNil(psh, @"check initialization of PrinterStatusHelper");
     GHAssertFalse([psh isPolling], @"should not be polling");
@@ -64,15 +68,65 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 - (void)test002_StartStop
 {
     GHTestLog(@"# CHECK: PSHelper can be started/stopped. #");
+    float POLL_TIMEOUT = 5;
+    NSString* msg;
     
+    GHTestLog(@"-- creating the helper");
     PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:TEST_PRINTER_IP];
     GHAssertNotNil(psh, @"check initialization of PrinterStatusHelper");
-
     GHAssertFalse([psh isPolling], @"should not be polling");
+    psh.delegate = self;
+    
+    GHTestLog(@"-- starting status poller");
+    statusDidChangeCallbackReceived = NO;
     [psh startPrinterStatusPolling];
+    
+    msg = [NSString stringWithFormat: @"wait for %.2f seconds while printer status polling to start", POLL_TIMEOUT];
+    [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
     GHAssertTrue([psh isPolling], @"should now be polling");
+    
+    GHTestLog(@"-- waiting for status change callback");
+    msg = [NSString stringWithFormat: @"wait for %.2f seconds while waiting for the polling callback", POLL_TIMEOUT];
+    [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
+    GHAssertTrue(statusDidChangeCallbackReceived,
+                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
+    
+    GHTestLog(@"-- stopping status poller");
     [psh stopPrinterStatusPolling];
     GHAssertFalse([psh isPolling], @"should not be polling");
+}
+
+#pragma mark - PrinterStatusHelperDelegate Methods
+
+- (void)statusDidChange:(BOOL)isOnline
+{
+    statusDidChangeCallbackReceived = YES;
+}
+
+#pragma mark - Utilities
+
+- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
+{
+    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
+    
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Printer Status Helper Test"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"HIDE"
+                                          otherButtonTitles:nil];
+    [alert show];
+    
+    BOOL done = NO;
+    do
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
+        if ([timeoutDate timeIntervalSinceNow] < 0.0)
+            break;
+    } while (!done);
+    
+    [alert dismissWithClickedButtonIndex:0 animated:YES];
+    
+    return done;
 }
 
 @end
