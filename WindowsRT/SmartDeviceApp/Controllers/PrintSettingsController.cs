@@ -27,6 +27,11 @@ namespace SmartDeviceApp.Controllers
 {
     public class PrintSettingsController
     {
+        SmartDeviceApp.Controllers.PrintPreviewController.UpdatePreviewEventHandler UpdatePreviewEventHandler;
+
+        public delegate void PrintSettingValueChangedEventHandler(PrintSetting printSetting,
+            object value);
+        private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
 
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
 
@@ -50,6 +55,27 @@ namespace SmartDeviceApp.Controllers
             _printer = printer;
             _enableAutosave = enableAutosave;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+            _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
+        }
+
+        /// <summary>
+        /// Register for print settings changes to update preview
+        /// </summary>
+        /// <param name="handler"></param>
+        public void RegisterUpdatePreviewEventHandler(
+            SmartDeviceApp.Controllers.PrintPreviewController.UpdatePreviewEventHandler handler)
+        {
+            UpdatePreviewEventHandler += handler;
+        }
+
+        /// <summary>
+        /// Unregister for print settings changes
+        /// </summary>
+        /// <param name="handler"></param>
+        public void UnregisterUpdatePreviewEventHandler(
+            SmartDeviceApp.Controllers.PrintPreviewController.UpdatePreviewEventHandler handler)
+        {
+            UpdatePreviewEventHandler -= handler;
         }
 
         /// <summary>
@@ -67,6 +93,7 @@ namespace SmartDeviceApp.Controllers
             FilterPrintSettingsUsingCapabilities();
             MergePrintSettings();
             ApplyPrintSettingConstraints();
+            PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
 
             return _currPrintSettings;
         }
@@ -1037,6 +1064,41 @@ namespace SmartDeviceApp.Controllers
         private PrintSettingOption GetPrintSettingOption(PrintSetting printSetting, int index)
         {
             return printSetting.Options.FirstOrDefault(option => option.Index == index);
+        }
+
+        /// <summary>
+        /// Receives modified print setting and its new value
+        /// </summary>
+        /// <param name="printSetting">affected print setting</param>
+        /// <param name="value">updated value</param>
+        public async void PrintSettingValueChanged(PrintSetting printSetting, object value)
+        {
+            if (printSetting == null || value == null)
+            {
+                return;
+            }
+
+            bool isPreviewAffected = false;
+
+            switch (printSetting.Type)
+            {
+                case PrintSettingType.boolean:
+                    isPreviewAffected = await UpdatePrintSettings(printSetting, (bool)value);
+                    break;
+                case PrintSettingType.list:
+                case PrintSettingType.numeric:
+                    isPreviewAffected = await UpdatePrintSettings(printSetting, (int)value);
+                    break;
+                case PrintSettingType.unknown:
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            if (UpdatePreviewEventHandler != null && isPreviewAffected)
+            {
+                UpdatePreviewEventHandler(printSetting);
+            }
         }
 
         /// <summary>
