@@ -235,8 +235,10 @@ namespace SmartDeviceApp.Controllers
 
             // Refresh Print Settings
             PrintSettingList printSettingList = null;
-            _printSettingListMap.TryGetValue(screenName, out printSettingList);
-            _printSettingsViewModel.PrintSettingsList = printSettingList;
+            if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
+            {
+                _printSettingsViewModel.PrintSettingsList = printSettingList;
+            }
 
             // Show/hide other controls
             _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
