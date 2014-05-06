@@ -27,7 +27,6 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
-// using SmartDeviceApp.DummyControllers;
 using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.ViewModels
@@ -54,8 +53,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _pageNumberSliderValueChange;
         private uint _pageTotal;
         private uint _currentPageIndex;
-        private uint _rightPageIndex;
-        private uint _leftPageIndex;
+        private uint _pageIndex;
         private PageNumberInfo _pageNumber;
 
         private string _documentTitleText;
@@ -72,7 +70,7 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
 
-            _rightPageIndex = 0;
+            _pageIndex = 0;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
             SetViewMode(_viewControlViewModel.ViewMode); 
@@ -94,12 +92,20 @@ namespace SmartDeviceApp.ViewModels
                 var scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
                 var pageAreaScrollViewer = (UIElement)_pageAreaGrid.Parent;
                 if (_gestureController != null) _gestureController.Dispose();
+                Size targetSize;
+                if (PageViewMode == PageViewMode.SinglePageView)
+                {
+                    targetSize = RightPageActualSize;
+                }
+                else if (PageViewMode == PageViewMode.TwoPageView)
+                {
+                    var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+                    targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width + defaultMargin, RightPageActualSize.Height);                   
+                }
                 _gestureController = new PreviewGestureController(_pageAreaGrid, pageAreaScrollViewer,
-                    RightPageActualSize, scalingFactor,
-                    new PreviewGestureController.SwipeRightDelegate(SwipeRight),
-                    new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
-
-                // TODO: Two-page view handling
+                       targetSize, scalingFactor,
+                       new PreviewGestureController.SwipeRightDelegate(SwipeRight),
+                       new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
             }
         }
 
@@ -301,14 +307,13 @@ namespace SmartDeviceApp.ViewModels
         
         public void SetInitialPageIndex(uint index)
         {
-            _rightPageIndex = index;
+            _pageIndex = index;
             SetPageIndexes();
         }
 
         // TODO: Two-page view
         public void GoToPage(uint index)
         {
-            //DummyProvider.Instance.LoadPageImage(index);
             if (GoToPageEventHandler != null)
             {
                 GoToPageEventHandler((int)index);
@@ -318,59 +323,41 @@ namespace SmartDeviceApp.ViewModels
 
         public void UpdatePageIndexes(uint index)
         {
-            _rightPageIndex = index;
+            _pageIndex = index;
             SetPageIndexes();
         }
 
         // TODO: Two-page view
         private void GoToPreviousPageExecute()
         {
-            // DummyProvider.Instance.LoadPageImage(--_rightPageIndex);
-            --_rightPageIndex; // Page image will be requested on PageSliderValueChangeExecute
+            --_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
         private bool CanGoToPreviousPage()
         {
             // Check if at least second page
-            if (_rightPageIndex > 0) return true;
+            if (_pageIndex > 0) return true;
             return false;
         }
 
-        // TODO: Two-page view
         private void GoToNextPageExecute()
         {
-            // DummyProvider.Instance.LoadPageImage(++_rightPageIndex);
-            ++_rightPageIndex; // Page image will be requested on PageSliderValueChangeExecute
+            ++_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
             SetPageIndexes();
         }
 
         private bool CanGoToNextPage()
         {
             // Check if at least second to the last page
-            if (_rightPageIndex < _pageTotal - 1) return true;
+            if (_pageIndex < _pageTotal - 1) return true;
             return false;
         }
         
         private void SetPageIndexes()
         {
-            if (_pageViewMode == PageViewMode.SinglePageView)
-            {
-                PageNumber = new PageNumberInfo(0, _rightPageIndex, _pageTotal, _pageViewMode);
-                CurrentPageIndex = _rightPageIndex;
-            }
-            else if (_pageViewMode == PageViewMode.TwoPageView)
-            {
-                PageNumber = new PageNumberInfo(_leftPageIndex, _rightPageIndex, _pageTotal, _pageViewMode);
-                if (_rightPageIndex == 0) // If first page
-                {
-                    CurrentPageIndex = _rightPageIndex;
-                }
-                else
-                {
-                    CurrentPageIndex = _leftPageIndex;
-                }
-            }
+            PageNumber = new PageNumberInfo(_pageIndex, _pageTotal, _pageViewMode);
+            CurrentPageIndex = _pageIndex;
         }
 
         #endregion

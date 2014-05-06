@@ -66,6 +66,7 @@ namespace SmartDeviceApp.Controllers
                 GestureSettings.Tap |
                 GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
                 GestureSettings.RightTap |
+                GestureSettings.DoubleTap |
                 GestureSettings.ManipulationTranslateX |
                 GestureSettings.ManipulationTranslateY |
                 GestureSettings.ManipulationScale |
@@ -194,6 +195,10 @@ namespace SmartDeviceApp.Controllers
 
         void OnTapped(object sender, TappedEventArgs e)
         {
+            if (e.TapCount == 2) // Double tap for reset zoom
+            {
+                ResetTransforms();
+            }
         }
 
         void OnRightTapped(object sender, RightTappedEventArgs e)

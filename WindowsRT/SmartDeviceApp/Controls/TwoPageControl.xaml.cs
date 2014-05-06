@@ -84,7 +84,6 @@ namespace SmartDeviceApp.Controls
                 ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
                 ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
                 ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
-                ((TwoPageControl)obj).rightPage.HorizontalAlignment = HorizontalAlignment.Center;
                 ((TwoPageControl)obj).rightPage.Margin = new Thickness(0,0,0,0);
             }
             else if ((PageViewMode)e.NewValue == PageViewMode.TwoPageView)
@@ -92,8 +91,6 @@ namespace SmartDeviceApp.Controls
                 ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
                 ((TwoPageControl)obj).leftPageArea.Width = new GridLength(1, GridUnitType.Star);
                 ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
-                ((TwoPageControl)obj).rightPage.HorizontalAlignment = HorizontalAlignment.Left;
-                ((TwoPageControl)obj).rightPage.Margin = new Thickness(20, 0, 0, 0);
             }
         }
     }

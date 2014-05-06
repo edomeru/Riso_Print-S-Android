@@ -16,15 +16,7 @@ namespace SmartDeviceApp.Converters
             if (value == null) return String.Empty;
             var pageNumber = value as PageNumberInfo;
             string formattedPageNumber = String.Empty;
-            if (pageNumber.PageViewMode == PageViewMode.SinglePageView)
-            {
-                formattedPageNumber = (pageNumber.RightPageIndex + 1).ToString();
-            }
-            else if (pageNumber.PageViewMode == PageViewMode.TwoPageView)
-            {
-                formattedPageNumber = String.Format("{0} - {1}", pageNumber.LeftPageIndex + 1, pageNumber.RightPageIndex + 1);
-            }
-            
+            formattedPageNumber = (pageNumber.PageIndex + 1).ToString();
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             var pageNumberFormat = loader.GetString("IDS_LBL_PAGE_NUMBER");
             formattedPageNumber = String.Format(pageNumberFormat, formattedPageNumber, pageNumber.PageTotal);
