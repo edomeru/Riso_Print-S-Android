@@ -152,15 +152,18 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetRightPaneMode(VisibleRightPane visibleRightPane)
         {
-            _gestureController.DisableGestures();
-            switch (visibleRightPane)
+            if (_gestureController != null)
             {
-                case VisibleRightPane.Pane1:
-                    RightPaneMode = PrintersRightPaneMode.SearchPrinter;
-                    break;
-                case VisibleRightPane.Pane2:
-                    RightPaneMode = PrintersRightPaneMode.AddPrinter;
-                    break;
+                _gestureController.DisableGestures();
+                switch (visibleRightPane)
+                {
+                    case VisibleRightPane.Pane1:
+                        RightPaneMode = PrintersRightPaneMode.SearchPrinter;
+                        break;
+                    case VisibleRightPane.Pane2:
+                        RightPaneMode = PrintersRightPaneMode.AddPrinter;
+                        break;
+                }
             }
         }
 
