@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -35,6 +36,12 @@ namespace SmartDeviceApp.Controllers
 
         public delegate void OpenDefaultPrintSettingsHandler(Printer printer);
         private OpenDefaultPrintSettingsHandler _openDefaultPrintSettingsHandler;
+
+        public delegate void OnNavigateToEventHandler();
+        private OnNavigateToEventHandler _onNavigateToEventHandler;
+
+        public delegate void OnNavigateFromEventHandler();
+        private OnNavigateFromEventHandler _onNavigateFromEventHandler;
 
         ThreadPoolTimer periodicTimer;
 
@@ -76,10 +83,15 @@ namespace SmartDeviceApp.Controllers
             _searchPrinterTimeoutHandler = new SearchPrinterTimeoutHandler(handleSearchTimeout);
             _openDefaultPrintSettingsHandler = new OpenDefaultPrintSettingsHandler(handleOpenDefaultPrintSettings);
 
+            _onNavigateToEventHandler = new OnNavigateToEventHandler(UnregisterPrintSettingValueChange);
+            _onNavigateFromEventHandler = new OnNavigateFromEventHandler(RegisterPrintSettingValueChange);
+
             _printersViewModel.DeletePrinterHandler += _deletePrinterHandler;
             populatePrintersScreen();
             _printersViewModel.PrinterList = PrinterList;
             _printersViewModel.OpenDefaultPrintSettingsHandler += _openDefaultPrintSettingsHandler;
+            _printersViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
+            _printersViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
 
             _searchPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
@@ -93,13 +105,23 @@ namespace SmartDeviceApp.Controllers
         private void handleOpenDefaultPrintSettings(Printer printer)
         {
             //get new print settings
-            _printSettingsViewModel.PrinterName = printer.Name;
-            _printSettingsController = new PrintSettingsController(printer, true);
-            
 
-            _printSettingsController.GetCurrentPrintSettings();
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINTERS);
+
+            _printSettingsViewModel.PrinterName = printer.Name;
+            PrintSettingsController.Instance.Initialize(PrintSettingConstant.SCREEN_PRINTERS, printer, true);
         }
 
+        public void RegisterPrintSettingValueChange()
+        {
+            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINTERS);
+        }
+
+        public void UnregisterPrintSettingValueChange()
+        {
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINTERS);
+            PrintSettingsController.Instance.Uninitialize(PrintSettingConstant.SCREEN_PRINTERS);
+        }
 
         public ObservableCollection<Printer> PrinterList
         {
