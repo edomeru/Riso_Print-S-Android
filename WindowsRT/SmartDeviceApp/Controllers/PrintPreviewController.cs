@@ -283,7 +283,16 @@ namespace SmartDeviceApp.Controllers
             bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
                 _currPrintSettings.BookletLayout);
 
-            _printPreviewViewModel.RightPageActualSize = GetPreviewPageImageSize(paperSize, isPortrait);
+            Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
+            _printPreviewViewModel.RightPageActualSize = sampleSize;
+            if (_isBooklet)
+            {
+                _printPreviewViewModel.LeftPageActualSize = sampleSize;
+            }
+            else
+            {
+                _printPreviewViewModel.LeftPageActualSize = new Size();
+            }
             _printPreviewViewModel.InitializeGestures();
         }
 
@@ -342,7 +351,7 @@ namespace SmartDeviceApp.Controllers
                                                     _pagesPerSheet);
             if (_isDuplex || _isBooklet)
             {
-                _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2);
+                _previewPageTotal = (_previewPageTotal / 2) + 1;
             }
             if (_printPreviewViewModel.PageTotal != _previewPageTotal)
             {
@@ -397,8 +406,8 @@ namespace SmartDeviceApp.Controllers
             await ClearPreviewPageListAndImages();
             UpdatePreviewInfo();
             _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
-            await LoadPage(_currPreviewPageIndex, false);
             InitializeGestures();
+            await LoadPage(_currPreviewPageIndex, false);
         }
 
         /// <summary>
@@ -410,6 +419,9 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task LoadPage(int rightPageIndex, bool isSliderEvent)
         {
+            _printPreviewViewModel.RightPageImage = new BitmapImage();
+            _printPreviewViewModel.LeftPageImage = new BitmapImage();
+
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = true;
 
@@ -418,9 +430,6 @@ namespace SmartDeviceApp.Controllers
                 _currPreviewPageIndex = (_isDuplex || _isBooklet) ? rightPageIndex * 2 :
                                                                     rightPageIndex;
             }
-
-            // Generate right side
-            await GenerateSingleLeaf(_currPreviewPageIndex, true);
 
             // When booklet is on and booklet finishing is off, act like as duplex (short edge)
             // so no need for left side
@@ -435,11 +444,16 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            GenerateNearPreviewPages();
+            if (rightPageIndex < _previewPageTotal)
+            {
+                // Generate right side
+                await GenerateSingleLeaf(_currPreviewPageIndex, true);
+            }
+
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = false;
-            
-            InitializeGestures(); // TODO: Verify if redundant 
+
+            GenerateNearPreviewPages();
         }
 
         /// <summary>
