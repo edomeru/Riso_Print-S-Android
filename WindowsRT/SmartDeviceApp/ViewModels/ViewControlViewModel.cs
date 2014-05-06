@@ -30,6 +30,7 @@ namespace SmartDeviceApp.ViewModels
         private ScreenMode _screenMode;
         private bool _isPane1Visible = false;
         private bool _isPane2Visible = false;
+        private bool _tapHandled = false;
 
         public ViewControlViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -237,6 +238,12 @@ namespace SmartDeviceApp.ViewModels
                         break;
                     }
             }
+        }
+
+        public bool TapHandled
+        {
+            get { return _tapHandled; }
+            set { _tapHandled = value; }
         }
 
         #region MAIN MENU
