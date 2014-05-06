@@ -54,6 +54,18 @@ namespace SmartDeviceApp.Views
             }
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.OnNavigatedTo();
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.OnNavigatedFrom();
+            base.OnNavigatedFrom(e);
+        }
+
         // Note: Need to access TwoPageControl this way 
         // Otherwise, getting null value from PrintPreviewPage constructor
         // because TwoPageControl is a child of another user control

@@ -81,5 +81,9 @@ namespace SmartDeviceApp.Common.Constants
         public const int COPIES_MIN = 1;
         public const int COPIES_MAX = 9999;
 
+        // Screen name used by PrintSettingsController
+        public const string SCREEN_PRINTERS = "Screen_Printers";
+        public const string SCREEN_PRINT_PREVIEW = "Screen_PrintPreview";
+
     }
 }

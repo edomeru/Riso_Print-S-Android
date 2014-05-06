@@ -31,25 +31,41 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
+        // Transition to Print Preview Screen
+        public delegate void OnNavigateToEventHandler();
+        private OnNavigateFromEventHandler _onNavigateFromEventHandler;
+
+        // Transition from Print Preview Screen
+        public delegate void OnNavigateFromEventHandler();
+        private OnNavigateToEventHandler _onNavigateToEventHandler;
+
+        // Update preview area based on updated print settings
         public delegate void UpdatePreviewEventHandler(PrintSetting printSetting);
-        public delegate void GoToPageEventHandler(int pageIndex);
-        public delegate void SelectedPrinterChangedEventHandler(int printerId);
-        public delegate void PrintEventHandler();
         private UpdatePreviewEventHandler _updatePreviewEventHandler;
+
+        // Slider value and turn page
+        public delegate void GoToPageEventHandler(int pageIndex);
         private GoToPageEventHandler _goToPageEventHandler;
+
+        // Choose printer
+        public delegate void SelectedPrinterChangedEventHandler(int printerId);
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
+
+        // Print button
+        public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
 
+        // PageAreaGrid loaded
         public delegate void PageAreaGridLoadedEventHandler();
         public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
 
+        // Constants
         private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
         private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
             FORMAT_PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}-{1:yyyyMMddHHmmssffff}.jpg";
         private const string FILE_PATH_RES_IMAGE_STAPLE = "Resources/Images/img_staple.png";
         private const string FILE_PATH_RES_IMAGE_PUNCH = "Resources/Images/img_punch.png";
 
-        private PrintSettingsController _printSettingsController;
         private PrintPreviewViewModel _printPreviewViewModel;
         private SelectPrinterViewModel _selectPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
@@ -80,6 +96,8 @@ namespace SmartDeviceApp.Controllers
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _printEventHandler = new PrintEventHandler(Print);
+            _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
+            _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
         }
 
         /// <summary>
@@ -118,6 +136,9 @@ namespace SmartDeviceApp.Controllers
 
                 // TODO: Register to print button event only when there is a selected printer
                 _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
+
+                _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
+                _printPreviewViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
             }
             else
             {
@@ -135,10 +156,7 @@ namespace SmartDeviceApp.Controllers
             {
                 _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             }
-            if (_printSettingsController != null)
-            {
-                _printSettingsController.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
-            }
+            PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             _selectedPrinter = null;
@@ -164,6 +182,16 @@ namespace SmartDeviceApp.Controllers
         }
 
         #region Printer and Print Settings Initialization
+
+        public void RegisterPrintSettingValueChange()
+        {
+            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+        }
+
+        public void UnregisterPrintSettingValueChange()
+        {
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+        }
 
         /// <summary>
         /// Event handler for selected printer
@@ -239,13 +267,11 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
-            if (_printSettingsController != null)
-            {
-                _printSettingsController.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
-            }
-            _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
-            _currPrintSettings = await _printSettingsController.GetCurrentPrintSettings();
-            _printSettingsController.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
+
+            PrintSettingsController.Instance.Uninitialize(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+            _currPrintSettings = await PrintSettingsController.Instance.Initialize(
+                PrintSettingConstant.SCREEN_PRINT_PREVIEW, _selectedPrinter, false);
+            PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             await ReloadCurrentPage();
 
             _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
@@ -279,6 +305,8 @@ namespace SmartDeviceApp.Controllers
             {
                 return;
             }
+
+            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
 
             string name = printSetting.Name;
 
@@ -316,7 +344,7 @@ namespace SmartDeviceApp.Controllers
             _isReversePages = _isBooklet &&
                 _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
 
-            _pagesPerSheet = _printSettingsController.PagesPerSheet;
+            _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
 
             _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
                                                     _pagesPerSheet);
@@ -1632,6 +1660,10 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void Print()
         {
+            // Get latest print settings since non-preview related print settings may be updated
+            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(
+                PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+
             // TODO: Check if printer is online (NetworkController)
             bool isOnline = true;
 
