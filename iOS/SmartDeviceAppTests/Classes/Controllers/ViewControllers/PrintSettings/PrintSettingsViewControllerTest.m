@@ -40,7 +40,7 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.printSettingsScreenTitle, @"");
 }
@@ -50,7 +50,7 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.printSettingsScreenTitle, @"");
     GHAssertEqualStrings(viewController.printSettingsScreenTitle.text, NSLocalizedString(@"IDS_LBL_PRINT_SETTINGS", @"Print Settings") ,@"");
@@ -63,7 +63,7 @@
     
     viewController.printerIndex = [NSNumber numberWithInt:0];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.printSettingsScreenTitle, @"");
     GHAssertEqualStrings(viewController.printSettingsScreenTitle.text, NSLocalizedString(@"IDS_LBL_DEFAULT_PRINT_SETTINGS", @"Default Print Settings") ,@"");

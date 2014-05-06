@@ -20,6 +20,7 @@
 #import "PrinterDetails.h"
 #import "Printer.h"
 #import "PrintPreviewHelper.h"
+#import "PrintSettingsHelper.h"
 
 #define PRINTER_HEADER_CELL_ID @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL_ID @"PrinterItemCell"
@@ -91,13 +92,38 @@
 
     //setup managers to init with data
     //add test printer data
+
+    int noNameIndex = 3;
+    int nilIndex = 4;
     for(int i = 0; i < printerTesDataCount; i++)
     {
         PrinterDetails *pd = [[PrinterDetails alloc] init];
-        pd.name = [NSString stringWithFormat:@"Printer %d", i];
+        pd.enBooklet = YES;
+        pd.enFinisher23Holes = NO;
+        pd.enFinisher24Holes = YES;
+        pd.enStaple = YES;
+        pd.enTrayAutoStacking = YES;
+        pd.enTrayStacking = YES;
+        pd.enTrayFaceDown = YES;
+        pd.enTrayTop = YES;
+        if(i == noNameIndex)
+        {
+            pd.name = @"";;
+        }
+        else if (i == nilIndex)
+        {
+            pd.name = nil;
+        }
+        else
+        {
+            pd.name = [NSString stringWithFormat:@"Printer %d", i];
+        }
+ 
         pd.ip = [NSString stringWithFormat:@"192.168.2.%d", i];
         [[PrinterManager sharedPrinterManager] registerPrinter:pd];
     }
+    
+    
     //create test default printer
     Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:0];
     [[PrinterManager sharedPrinterManager] registerDefaultPrinter:printer];
@@ -169,12 +195,14 @@
     GHAssertNotNil(itemOptionCell.separator, @"");
 }
 
-- (void)test002_UIViewLoading_InPrintPreviewPrintSetting
+- (void)test002_UIViewLoading_InPrintPreviewPrintSetting_AllSupported
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
-    [viewController view];
+    NSUInteger testPrinterIndex = 0; //setup default printer
+    
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.printDocument, @"");
     GHAssertNotNil(viewController.previewSetting, @"");
@@ -183,9 +211,61 @@
     GHAssertEqualObjects(viewController.printer, [[PDFFileManager sharedManager] printDocument].printer, @"");
     GHAssertFalse(viewController.isDefaultSettingsMode, @"");
     GHAssertNotNil(viewController.printSettingsTree, @"");
+    
+    NSDictionary *settingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [settingsTree objectForKey:@"group"];
+    
+    NSInteger sectionCount = [viewController.tableView numberOfSections];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+    
+    PrintSettingsPrinterItemCell *printerItemCell = (PrintSettingsPrinterItemCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
+    
+    GHAssertEqualStrings(printerItemCell.printerNameLabel.text, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex].name, @"");
+    GHAssertEqualStrings(printerItemCell.printerIPLabel.text, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex].ip_address, @"");
+    
+    GHAssertEquals((NSUInteger)sectionCount, [groups count] + 2, @"");
+    for(NSUInteger sectionNumber = 1; sectionNumber < sectionCount - 1 && (sectionNumber - 1) < [groups count]; sectionNumber++)
+    {
+        NSDictionary *group = [groups objectAtIndex:sectionNumber - 1];
+        NSArray *settings = [group objectForKey:@"setting"];
+        NSInteger rowCount = [viewController.tableView numberOfRowsInSection:sectionNumber];
+        
+        GHAssertEquals((NSUInteger)rowCount, [settings count] + 1, @"");
+        
+        indexPath = [NSIndexPath indexPathForRow:0 inSection:sectionNumber];
+        [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+        
+        PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
+        
+        GHAssertEqualStrings(headerCell.groupLabel.text, NSLocalizedString([[group objectForKey:@"text"] uppercaseString], @""), @"");
+        
+        for(NSUInteger rowNumber = 1; rowNumber< rowCount && (rowNumber - 1) < [settings count]; rowNumber++)
+        {
+            indexPath = [NSIndexPath indexPathForRow:rowNumber inSection:sectionNumber];
+            [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+            NSDictionary* setting = [settings objectAtIndex:rowNumber - 1];
+            UITableViewCell *cell = [viewController.tableView cellForRowAtIndexPath:indexPath];
+            NSString *type = [setting objectForKey:@"type"];
+            if([type isEqualToString:@"list"])
+            {
+                PrintSettingsItemOptionCell* optionCell = (PrintSettingsItemOptionCell*)cell;
+                GHAssertEqualStrings(optionCell.settingLabel.text, NSLocalizedString([[setting objectForKey:@"text"] uppercaseString], @""), @"");
+            }
+            if([type isEqualToString:@"numeric"])
+            {
+                PrintSettingsItemInputCell* inputCell = (PrintSettingsItemInputCell*)cell;
+                GHAssertEqualStrings(inputCell.settingLabel.text, NSLocalizedString([[setting objectForKey:@"text"] uppercaseString], @""), @"");
+            }
+            if([type isEqualToString:@"switch"])
+            {
+                PrintSettingsItemSwitchCell*switchCell = (PrintSettingsItemSwitchCell*)cell;
+                GHAssertEqualStrings(switchCell.settingLabel.text, NSLocalizedString([[setting objectForKey:@"text"] uppercaseString], @""), @"");
+            }
+        }
+    }
 }
 
-- (void)test003_UIViewLoading_InDefaultPrintSetting
+- (void)test003_UIViewLoading_InDefaultPrintSetting_AllSupported
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -194,7 +274,7 @@
     
     viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNil(viewController.printDocument, @"");
     GHAssertNotNil(viewController.previewSetting, @"");
@@ -202,9 +282,116 @@
     
     GHAssertTrue(viewController.isDefaultSettingsMode, @"");
     GHAssertNotNil(viewController.printSettingsTree, @"");
+    
+    NSDictionary *settingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [settingsTree objectForKey:@"group"];
+    
+    NSInteger sectionCount = [viewController.tableView numberOfSections];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    
+    PrintSettingsPrinterItemCell *printerItemCell = (PrintSettingsPrinterItemCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
+    
+    GHAssertEqualStrings(printerItemCell.printerNameLabel.text, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex].name, @"");
+    GHAssertEqualStrings(printerItemCell.printerIPLabel.text, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex].ip_address, @"");
+    
+    GHAssertEquals((NSUInteger)sectionCount, [groups count] + 1, @"");
+    for(NSUInteger sectionNumber = 1; sectionNumber < sectionCount && (sectionNumber - 1) < [groups count]; sectionNumber++)
+    {
+        NSDictionary *group = [groups objectAtIndex:sectionNumber - 1];
+        NSArray *settings = [group objectForKey:@"setting"];
+        NSInteger rowCount = [viewController.tableView numberOfRowsInSection:sectionNumber];
+        
+        GHAssertEquals((NSUInteger)rowCount, [settings count] + 1, @"");
+        
+        indexPath = [NSIndexPath indexPathForRow:0 inSection:sectionNumber];
+        [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+        
+        PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
+
+        GHAssertEqualStrings(headerCell.groupLabel.text, NSLocalizedString([[group objectForKey:@"text"] uppercaseString], @""), @"");
+        
+        for(NSUInteger rowNumber = 1; rowNumber< rowCount && (rowNumber - 1) < [settings count]; rowNumber++)
+        {
+            indexPath = [NSIndexPath indexPathForRow:rowNumber inSection:sectionNumber];
+             [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+            NSDictionary* setting = [settings objectAtIndex:rowNumber - 1];
+            UITableViewCell *cell = [viewController.tableView cellForRowAtIndexPath:indexPath];
+            NSString *type = [setting objectForKey:@"type"];
+            if([type isEqualToString:@"list"])
+            {
+                PrintSettingsItemOptionCell* optionCell = (PrintSettingsItemOptionCell*)cell;
+                GHAssertEqualStrings(optionCell.settingLabel.text, NSLocalizedString([[setting objectForKey:@"text"] uppercaseString], @""), @"");
+            }
+            if([type isEqualToString:@"numeric"])
+            {
+                PrintSettingsItemInputCell* inputCell = (PrintSettingsItemInputCell*)cell;
+                GHAssertEqualStrings(inputCell.settingLabel.text, NSLocalizedString([[setting objectForKey:@"text"] uppercaseString], @""), @"");
+            }
+            if([type isEqualToString:@"switch"])
+            {
+                PrintSettingsItemSwitchCell*switchCell = (PrintSettingsItemSwitchCell*)cell;
+                GHAssertEqualStrings(switchCell.settingLabel.text, NSLocalizedString([[setting objectForKey:@"text"] uppercaseString], @""), @"");
+            }
+        }
+    }
 }
 
--(void)test004_isSettingSupported
+- (void)test004_UIViewLoading_InDefaultPrintSetting_AllSupported_PrinterNoName
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 3;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    GHAssertNil(viewController.printDocument, @"");
+    GHAssertNotNil(viewController.previewSetting, @"");
+    GHAssertEqualObjects(viewController.printer ,[[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex], @"");
+    
+    GHAssertTrue(viewController.isDefaultSettingsMode, @"");
+    GHAssertNotNil(viewController.printSettingsTree, @"");
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    
+    PrintSettingsPrinterItemCell *printerItemCell = (PrintSettingsPrinterItemCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
+    
+    GHAssertEqualStrings(printerItemCell.printerNameLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME",@"No name"), @"");
+    GHAssertEqualStrings(printerItemCell.printerIPLabel.text, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex].ip_address, @"");
+    
+}
+
+- (void)test005_UIViewLoading_InDefaultPrintSetting_AllSupported_PrinterNameNil
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 4;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    GHAssertNil(viewController.printDocument, @"");
+    GHAssertNotNil(viewController.previewSetting, @"");
+    GHAssertEqualObjects(viewController.printer ,[[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex], @"");
+    
+    GHAssertTrue(viewController.isDefaultSettingsMode, @"");
+    GHAssertNotNil(viewController.printSettingsTree, @"");
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    
+    PrintSettingsPrinterItemCell *printerItemCell = (PrintSettingsPrinterItemCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
+    
+    GHAssertEqualStrings(printerItemCell.printerNameLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME",@"No name"), @"");
+    GHAssertEqualStrings(printerItemCell.printerIPLabel.text, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex].ip_address, @"");
+
+}
+
+
+-(void)test006_isSettingSupported
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -220,7 +407,7 @@
     GHAssertTrue([viewController isSettingSupported:KEY_STAPLE],@"");
     GHAssertTrue([viewController isSettingSupported:KEY_PUNCH],@"");
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
     printer.enabled_booklet = [NSNumber numberWithBool:NO];
@@ -252,7 +439,7 @@
     GHAssertTrue([viewController isSettingSupported:KEY_PUNCH],@"");
 }
 
--(void)test005_isSettingOptionSupported
+-(void)test007_isSettingOptionSupported
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -268,7 +455,7 @@
     GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
     GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_4holes"],@"");
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
     printer.enabled_tray_face_down = [NSNumber numberWithBool:NO];
@@ -308,7 +495,7 @@
     GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
 }
 
--(void)test006_isSettingEnabled
+-(void)test008_isSettingEnabled
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -317,7 +504,7 @@
     
     viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     PreviewSetting *previewSetting = viewController.previewSetting;
     
@@ -356,7 +543,7 @@
     GHAssertTrue([viewController isSettingEnabled:KEY_IMPOSITION_ORDER],@"");
 }
 
--(void)test007_isSettingApplicable
+-(void)test009_isSettingApplicable
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -365,7 +552,7 @@
     
     viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     PreviewSetting *previewSetting = viewController.previewSetting;
     
@@ -403,4 +590,58 @@
     previewSetting.imposition = kImposition4pages;
     GHAssertTrue([viewController isSettingApplicable:KEY_IMPOSITION_ORDER],@"");
 }
+
+- (void)test010_selectRowHeadersExpanded
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    GHAssertNotNil(viewController.tableView, @"");
+    GHAssertNotNil(viewController.printDocument, @"");
+    GHAssertNotNil(viewController.previewSetting, @"");
+    GHAssertEqualObjects(viewController.printDocument, [[PDFFileManager sharedManager] printDocument], @"");
+    
+    GHAssertEqualObjects(viewController.printer, [[PDFFileManager sharedManager] printDocument].printer, @"");
+    GHAssertFalse(viewController.isDefaultSettingsMode, @"");
+    GHAssertNotNil(viewController.printSettingsTree, @"");
+    
+    NSInteger sectionCount = [viewController.tableView numberOfSections];
+    
+    for(NSInteger index = 1; index < sectionCount; index++)
+    {
+        NSIndexPath *headerIndexPath = [NSIndexPath indexPathForRow:0 inSection:index];
+        [viewController tableView:viewController.tableView didSelectRowAtIndexPath:headerIndexPath];
+        UITableViewCell * cell = [viewController.tableView cellForRowAtIndexPath:headerIndexPath];
+        PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *) cell;
+        GHAssertFalse(headerCell.expanded, @"");
+    }
+}
+
+
+- (void)test011_changePrinter
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    GHAssertNotNil(viewController.tableView, @"");
+    GHAssertNotNil(viewController.printDocument, @"");
+    GHAssertNotNil(viewController.previewSetting, @"");
+    GHAssertEqualObjects(viewController.printDocument, [[PDFFileManager sharedManager] printDocument], @"");
+    
+    GHAssertEqualObjects(viewController.printer, [[PDFFileManager sharedManager] printDocument].printer, @"");
+    GHAssertFalse(viewController.isDefaultSettingsMode, @"");
+    GHAssertNotNil(viewController.printSettingsTree, @"");
+    
+
+    [[PDFFileManager sharedManager] printDocument].printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:1];
+    GHAssertEqualObjects(viewController.printer, [[PDFFileManager sharedManager] printDocument].printer, @"");
+    
+    
+    
+}
+
+
+
 @end

@@ -71,11 +71,13 @@
         pd.ip = [NSString stringWithFormat:@"192.168.2.%d", i];
         [[PrinterManager sharedPrinterManager] registerPrinter:pd];
     }
+    testSelectedIndex = 0;
     //create test default printer
-    Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:0];
+    Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testSelectedIndex];
     [[PrinterManager sharedPrinterManager] registerDefaultPrinter:printer];
     [[PDFFileManager sharedManager] setFileURL:testURL];
     [[PDFFileManager sharedManager] setupDocument];
+    
 }
 
 -(void)tearDown
@@ -109,7 +111,7 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsPrinterListTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
 
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertEquals(viewController.selectedIndex, testSelectedIndex, @"");
     NSUInteger rowCount = [viewController.tableView numberOfRowsInSection:0];
@@ -138,7 +140,7 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintSettingsPrinterListTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     NSUInteger rowCount = [viewController.tableView numberOfRowsInSection:0];
     testSelectedIndex = 2;
@@ -164,4 +166,33 @@
     GHAssertEqualObjects([[PDFFileManager sharedManager] printDocument].printer, [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testSelectedIndex], @"");
 };
 
+
+- (void)test002_UIViewLoading_PrinterNoName
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsPrinterListTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    [[PrinterManager sharedPrinterManager] getPrinterAtIndex:2].name = nil;
+    [[PrinterManager sharedPrinterManager] getPrinterAtIndex:2].name = @"";
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    GHAssertEquals(viewController.selectedIndex, testSelectedIndex, @"");
+    NSUInteger rowCount = [viewController.tableView numberOfRowsInSection:0];
+    GHAssertEquals(rowCount, [[PrinterManager sharedPrinterManager] countSavedPrinters], @"");
+    
+    for(int i = 0; i < rowCount; i++)
+    {
+        PrintSettingsOptionsItemCell *cell = (PrintSettingsOptionsItemCell *)[viewController.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForItem:i inSection:0]];
+        Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:i];
+        if(printer.name == nil || [printer.name isEqualToString:@""])
+        {
+            GHAssertEqualStrings(cell.optionLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME",@"No name"), @"");
+        }
+        else
+        {
+            GHAssertEqualStrings(cell.optionLabel.text, printer.name, @"");
+        }
+    }
+}
 @end

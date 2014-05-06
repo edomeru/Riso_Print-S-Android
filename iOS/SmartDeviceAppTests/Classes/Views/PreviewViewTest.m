@@ -2,7 +2,7 @@
 //  PreviewViewTest.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 5/1/14.
+//  Created by a-LINK Group.
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 

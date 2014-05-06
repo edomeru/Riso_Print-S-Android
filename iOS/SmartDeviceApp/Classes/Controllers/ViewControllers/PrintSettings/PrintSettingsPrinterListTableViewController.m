@@ -91,7 +91,7 @@
     itemCell.statusView.statusHelper.delegate = itemCell.statusView;
     
     itemCell.separator.hidden = NO;
-    if (indexPath.row == [self.printerManager countSavedPrinters])
+    if (indexPath.row == [self.printerManager countSavedPrinters] - 1)
     {
         itemCell.separator.hidden = YES;
     }

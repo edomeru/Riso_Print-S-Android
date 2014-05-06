@@ -402,7 +402,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if(section == [self.supportedSettings count] + 1 && self.isDefaultSettingsMode == NO)
     {
          PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
-         headerCell.expanded = !headerCell.expanded;
+         headerCell.expanded = ![[self.expandedSections objectAtIndex:section - 1] boolValue];
          [self.expandedSections replaceObjectAtIndex:section - 1 withObject:[NSNumber numberWithBool:headerCell.expanded]];
         NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
         if(headerCell.expanded)

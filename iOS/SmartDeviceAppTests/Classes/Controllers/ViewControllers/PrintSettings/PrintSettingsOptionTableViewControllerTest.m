@@ -83,7 +83,7 @@
     viewController.previewSetting = previewSetting;
     viewController.setting = setting;
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     NSInteger expectedSelectedIndex = 2;
     
@@ -117,7 +117,7 @@
 -(void)test003_UIViewLoading_NotAllApplicableOption
 {
     PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
-    NSDictionary *setting = [self getSettingsForKey:@"staple"];
+    NSDictionary *setting = [self getSettingsForKey:KEY_STAPLE];
     
     previewSetting.finishingSide = kFinishingSideLeft;
     previewSetting.staple = kStapleType1Pos;
@@ -128,9 +128,37 @@
     viewController.previewSetting = previewSetting;
     viewController.setting = setting;
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
-    //TODO add asserts
+    NSInteger expectedSelectedIndex = 1;
+    
+    GHAssertEquals(expectedSelectedIndex, viewController.selectedIndex, @"");
+    NSUInteger rowCount = [viewController.tableView numberOfRowsInSection:0];
+    
+    GHAssertEquals(rowCount - 1, [[setting objectForKey:@"option"] count] - 2, @"");
+    for(NSUInteger i = 1; i < rowCount; i++)
+    {
+        PrintSettingsOptionsItemCell *cell = (PrintSettingsOptionsItemCell *)[viewController.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+        if(viewController.selectedIndex == (i - 1))
+        {
+            GHAssertTrue(cell.isSelected, @"");
+            GHAssertTrue(cell.radioImageView.isHighlighted, @"");
+        }
+        else
+        {
+            GHAssertFalse(cell.isSelected, @"");
+            GHAssertFalse(cell.radioImageView.isHighlighted, @"");
+        }
+        
+        if(i == rowCount - 1)
+        {
+            GHAssertTrue(cell.separator.hidden, @"");
+        }
+        else
+        {
+            GHAssertFalse(cell.separator.hidden, @"");
+        }
+    }
     
 }
 
@@ -143,7 +171,7 @@
     viewController.key = KEY_STAPLE;
     
     NSDictionary *setting = [self getSettingsForKey:KEY_STAPLE];
-    NSArray *options = [setting objectForKey:@"options"];
+    NSArray *options = [setting objectForKey:@"option"];
     
     viewController.previewSetting.finishingSide = kFinishingSideTop;
     for(NSDictionary *option in options)
@@ -159,8 +187,6 @@
             GHAssertTrue(retVal, @"");
         }
     }
-    
-
     
     viewController.previewSetting.finishingSide = kFinishingSideRight;
     for(NSDictionary *option in options)
@@ -179,7 +205,6 @@
     }
 
     viewController.previewSetting.finishingSide = kFinishingSideLeft;
-    viewController.previewSetting.finishingSide = kFinishingSideRight;
     for(NSDictionary *option in options)
     {
         NSString *optionString = [option objectForKey:@"content-body"];
@@ -206,7 +231,7 @@
     viewController.key = KEY_IMPOSITION_ORDER;
     
     NSDictionary *setting = [self getSettingsForKey:KEY_IMPOSITION_ORDER];
-    NSArray *options = [setting objectForKey:@"options"];
+    NSArray *options = [setting objectForKey:@"option"];
     
     viewController.previewSetting.imposition = kImposition2Pages;
     for(NSDictionary *option in options)
@@ -245,7 +270,7 @@
 -(void) test006_selectRow
 {
     PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
-    NSDictionary *setting = [self getSettingsForKey:@"finishingSide"];
+    NSDictionary *setting = [self getSettingsForKey:KEY_FINISHING_SIDE];
     
     previewSetting.finishingSide = kFinishingSideLeft;
     
@@ -255,14 +280,13 @@
     viewController.previewSetting = previewSetting;
     viewController.setting = setting;
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     NSInteger expectedSelectedIndex = 2;
     
     [viewController tableView:viewController.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForItem:expectedSelectedIndex + 1 inSection:0]];
 
     GHAssertEquals(expectedSelectedIndex, viewController.selectedIndex, @"");
-    
     NSUInteger rowCount = [viewController.tableView numberOfRowsInSection:0];
     for(NSUInteger i = 1; i < rowCount; i++)
     {
@@ -278,6 +302,28 @@
             GHAssertFalse(cell.radioImageView.isHighlighted, @"");
         }
     }
+    GHAssertEquals(viewController.previewSetting.finishingSide, expectedSelectedIndex , @"");
+    
+    //select table header
+    [viewController tableView:viewController.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]];
+
+    //expect no change in previously selected option
+    GHAssertEquals(expectedSelectedIndex, viewController.selectedIndex, @"");
+    for(NSUInteger i = 1; i < rowCount; i++)
+    {
+        PrintSettingsOptionsItemCell *cell = (PrintSettingsOptionsItemCell *)[viewController.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+        if(viewController.selectedIndex == (i - 1))
+        {
+            GHAssertTrue(cell.isSelected, @"");
+            GHAssertTrue(cell.radioImageView.isHighlighted, @"");
+        }
+        else
+        {
+            GHAssertFalse(cell.isSelected, @"");
+            GHAssertFalse(cell.radioImageView.isHighlighted, @"");
+        }
+    }
+    GHAssertEquals(viewController.previewSetting.finishingSide,expectedSelectedIndex , @"");
 }
 
 

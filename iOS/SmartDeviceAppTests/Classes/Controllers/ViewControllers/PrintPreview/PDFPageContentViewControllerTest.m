@@ -39,7 +39,7 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PDFPageContentViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.imageView, @"");
     GHAssertNotNil(viewController.activityIndicatorView, @"");
@@ -53,7 +53,7 @@
     viewController.isBookendPage = NO;
     viewController.image = nil;
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.activityIndicatorView, @"");
     GHAssertTrue(viewController.activityIndicatorView.isAnimating, @"");
@@ -67,7 +67,7 @@
     viewController.isBookendPage = NO;
     viewController.image = [UIImage imageNamed:@"LaunchImage"]; //use launch image as temp image
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.activityIndicatorView, @"");
     GHAssertFalse(viewController.activityIndicatorView.isAnimating, @"");
@@ -81,7 +81,7 @@
     viewController.isBookendPage = YES;
     viewController.image = nil; //use launch image as temp image
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.activityIndicatorView, @"");
     GHAssertFalse(viewController.activityIndicatorView.isAnimating, @"");
@@ -97,7 +97,7 @@
     viewController.isBookendPage = NO;
     viewController.image = nil;
     
-    [viewController view];
+    GHAssertNotNil(viewController.view, @"");
     
     GHAssertNotNil(viewController.activityIndicatorView, @"");
     GHAssertTrue(viewController.activityIndicatorView.isAnimating, @"");
