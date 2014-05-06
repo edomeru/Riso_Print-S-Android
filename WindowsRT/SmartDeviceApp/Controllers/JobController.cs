@@ -101,11 +101,7 @@ namespace SmartDeviceApp.Controllers
                 if (firstSample != null)
                 {
                     printerName = (await DatabaseController.Instance
-                        .GetPrinterName(firstSample.PrinterId)).Trim();
-                }
-                if (string.IsNullOrEmpty(printerName))
-                {
-                    // TODO: Set printer name as "No Name"
+                        .GetPrinterName(firstSample.PrinterId));
                 }
 
                 PrintJobGroup printJobGroup = new PrintJobGroup(printerName,

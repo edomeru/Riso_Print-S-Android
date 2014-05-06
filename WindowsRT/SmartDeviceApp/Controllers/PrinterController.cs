@@ -78,7 +78,7 @@ namespace SmartDeviceApp.Controllers
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
-            _screenName = SmartDeviceApp.Common.Enum.ScreenMode.PrintPreview.ToString();
+            _screenName = SmartDeviceApp.Common.Enum.ScreenMode.Printers.ToString();
 
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
@@ -107,9 +107,9 @@ namespace SmartDeviceApp.Controllers
         private async void handleOpenDefaultPrintSettings(Printer printer)
         {
             //get new print settings
+            PrintSettingsController.Instance.Uninitialize(_screenName);
             _printSettingsViewModel.PrinterName = printer.Name;
             _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
-            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
             await PrintSettingsController.Instance.Initialize(_screenName, printer, true);
         }
 

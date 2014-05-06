@@ -48,6 +48,7 @@ namespace SmartDeviceApp.ViewModels
 
         private string _printerName;
         private string _printerIpAddress;
+        private bool _isPrintPreview;
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
 
@@ -87,6 +88,19 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerIpAddress = value;
                     RaisePropertyChanged("PrinterIpAddress");
+                }
+            }
+        }
+
+        public bool IsPrintPreview
+        {
+            get { return _isPrintPreview; }
+            set
+            {
+                if (_isPrintPreview != value)
+                {
+                    _isPrintPreview = value;
+                    RaisePropertyChanged("IsPrintPreview");
                 }
             }
         }
@@ -185,8 +199,11 @@ namespace SmartDeviceApp.ViewModels
 
         private void ListPrintersCommandExecute()
         {
-            new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
-            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
+            if (_isPrintPreview)
+            {
+                new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
+                new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
+            }
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)

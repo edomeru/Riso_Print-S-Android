@@ -224,9 +224,23 @@ namespace SmartDeviceApp.Controllers
         public void RegisterPrintSettingValueChanged(String screenName)
         {
             _activeScreen = screenName;
+
+            // Refresh Printer
+            Printer printer = null;
+            if (_printerMap.TryGetValue(screenName, out printer))
+            {
+                _printSettingsViewModel.PrinterName = printer.Name;
+                _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+            }
+
+            // Refresh Print Settings
             PrintSettingList printSettingList = null;
             _printSettingListMap.TryGetValue(screenName, out printSettingList);
             _printSettingsViewModel.PrintSettingsList = printSettingList;
+
+            // Show/hide other controls
+            _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
+
             PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
         }
 
@@ -1297,7 +1311,8 @@ namespace SmartDeviceApp.Controllers
                     break;
             }
 
-            if (UpdatePreviewEventHandler != null && isPreviewAffected)
+            if (UpdatePreviewEventHandler != null && isPreviewAffected &&
+                _activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
                 UpdatePreviewEventHandler(printSetting);
             }
@@ -1317,7 +1332,7 @@ namespace SmartDeviceApp.Controllers
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
-            if (printSetting == null)
+            if (printSettings == null)
             {
                 return isPreviewAffected;
             }
@@ -1507,7 +1522,7 @@ namespace SmartDeviceApp.Controllers
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
-            if (printSetting == null)
+            if (printSettings == null)
             {
                 return isPreviewAffected;
             }
