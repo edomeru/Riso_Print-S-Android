@@ -446,6 +446,8 @@ namespace SmartDeviceApp.Controllers
             GenerateNearPreviewPages();
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = false;
+            
+            InitializeGestures(); // TODO: Verify if redundant 
         }
 
         /// <summary>

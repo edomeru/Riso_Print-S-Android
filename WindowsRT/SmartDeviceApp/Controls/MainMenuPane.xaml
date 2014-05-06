@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Width="{StaticResource SIZE_SidePaneWidth}"
+    Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
     Background="{StaticResource BRUSH_Gray4}">
     
     <Grid.ChildrenTransitions>
@@ -18,10 +18,15 @@
         <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
         <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <local:SidePaneTitleControl Grid.Row="0"
-                                   Title="{Binding Source=IDS_APP_NAME, Converter={StaticResource ResourceStringToTextConverter}}" ButtonVisibility="Collapsed"/>
-    
-    <ListView Grid.Row="1" x:Name="listView"
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition Width="1"/>
+    </Grid.ColumnDefinitions>
+    <local:SidePaneTitleControl Grid.Row="0" Grid.Column="0"
+                                Title="{Binding Source=IDS_APP_NAME, Converter={StaticResource ResourceStringToTextConverter}}" ButtonVisibility="Collapsed"/>
+
+    <ListView x:Name="listView" 
+              Grid.Row="1" Grid.Column="0"
               ItemsSource="{Binding Path=MainMenuItems}"
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <ListView.ItemTemplate>
@@ -32,6 +37,12 @@
                                           Width="{Binding Width, ElementName=mainMenuPane}"/>
             </DataTemplate>
         </ListView.ItemTemplate>
-
     </ListView>
+    <Path Grid.RowSpan="2" Grid.Column="1" 
+              Style="{StaticResource STYLE_List_Separator}">
+        <Path.Data>
+            <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+        </Path.Data>
+    </Path>
 </Grid>

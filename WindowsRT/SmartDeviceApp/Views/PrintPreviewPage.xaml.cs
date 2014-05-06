@@ -81,10 +81,5 @@ namespace SmartDeviceApp.Views
                 handler();
             }
         }
-
-        private void ResetTransforms(object sender, RoutedEventArgs e)
-        {
-            ViewModel._gestureController.ResetTransforms();
-        }
     }
 }
