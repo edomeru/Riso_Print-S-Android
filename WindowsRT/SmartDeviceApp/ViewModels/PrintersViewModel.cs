@@ -213,6 +213,7 @@ namespace SmartDeviceApp.ViewModels
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
+            _viewControlViewModel.TapHandled = true;
             RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
             _gestureController.DisableGestures();
             OpenDefaultPrintSettingsHandler(printer);
