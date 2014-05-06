@@ -211,6 +211,7 @@ namespace SmartDeviceApp.ViewModels
 
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
             RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
+            _gestureController.DisableGestures();
             OpenDefaultPrintSettingsHandler(printer);
             
         }
