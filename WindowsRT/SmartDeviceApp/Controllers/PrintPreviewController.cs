@@ -272,7 +272,7 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            _currPrintSettings = await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter, false);
+            _currPrintSettings = await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             await ReloadCurrentPage();
 

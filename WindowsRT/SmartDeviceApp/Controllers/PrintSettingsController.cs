@@ -47,7 +47,6 @@ namespace SmartDeviceApp.Controllers
         private Dictionary<string, Printer> _printerMap;
         private Dictionary<string, PrintSettings> _printSettingsMap;
         private Dictionary<string, PrintSettingList> _printSettingListMap;
-        private Dictionary<string, bool> _enableAutosaveMap;
         private Dictionary<string, int> _pagesPerSheetMap;
 
         // Explicit static constructor to tell C# compiler
@@ -60,7 +59,6 @@ namespace SmartDeviceApp.Controllers
             _printerMap = new Dictionary<string, Printer>();
             _printSettingsMap = new Dictionary<string, PrintSettings>();
             _printSettingListMap = new Dictionary<string, PrintSettingList>();
-            _enableAutosaveMap = new Dictionary<string, bool>();
             _pagesPerSheetMap = new Dictionary<string, int>();
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
@@ -82,9 +80,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="screenName">name of active screen</param>
         /// <param name="printer">target printer</param>
-        /// <param name="enableAutosave">true to enable save to database, false otherwise</param>
         /// <returns>task; print settings</returns>
-        public async Task<PrintSettings> Initialize(string screenName, Printer printer, bool enableAutosave)
+        public async Task<PrintSettings> Initialize(string screenName, Printer printer)
         {
             PrintSettings currPrintSettings = new PrintSettings();
 
@@ -102,15 +99,6 @@ namespace SmartDeviceApp.Controllers
             else
             {
                 _printerMap[screenName] = printer;
-            }
-
-            if (!_enableAutosaveMap.ContainsKey(screenName))
-            {
-                _enableAutosaveMap.Add(screenName, enableAutosave);
-            }
-            else
-            {
-                _enableAutosaveMap[screenName] = enableAutosave;
             }
 
             if (printer != null)
@@ -158,11 +146,6 @@ namespace SmartDeviceApp.Controllers
                 if (_printerMap.ContainsKey(screenName))
                 {
                     _printerMap.Remove(screenName);
-                }
-
-                if (_enableAutosaveMap.ContainsKey(screenName))
-                {
-                    _enableAutosaveMap.Remove(screenName);
                 }
 
                 if (_printSettingsMap.ContainsKey(screenName))
@@ -1498,9 +1481,7 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            bool enableAutosave = false;
-            _enableAutosaveMap.TryGetValue(_activeScreen, out enableAutosave);
-            if (enableAutosave)
+            if (!_printSettingsViewModel.IsPrintPreview)
             {
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             }
@@ -1549,9 +1530,7 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            bool enableAutosave = false;
-            _enableAutosaveMap.TryGetValue(_activeScreen, out enableAutosave);
-            if (enableAutosave)
+            if (!_printSettingsViewModel.IsPrintPreview)
             {
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             }

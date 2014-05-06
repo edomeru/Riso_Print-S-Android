@@ -110,7 +110,7 @@ namespace SmartDeviceApp.Controllers
             PrintSettingsController.Instance.Uninitialize(_screenName);
             _printSettingsViewModel.PrinterName = printer.Name;
             _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
-            await PrintSettingsController.Instance.Initialize(_screenName, printer, true);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
         }
 
         public void RegisterPrintSettingValueChange()
