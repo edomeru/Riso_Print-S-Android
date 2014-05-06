@@ -136,7 +136,6 @@ namespace SmartDeviceApp.Controllers
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
 
-                // TODO: Register to print button event only when there is a selected printer
                 _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
 
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
@@ -1663,24 +1662,31 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void Print()
         {
-            // Get latest print settings since non-preview related print settings may be updated
-            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
-
-            // TODO: Check if printer is online (NetworkController)
-            bool isOnline = true;
-
-            if (isOnline)
+            if (_selectedPrinter.Id > -1)
             {
-                // TODO: Prepare for printing (DirectPrintController)
-                // Display progress dialog ?
-                // Pass DocumentController.Instance.FileName, DocumentController.Instance.PdfFile and _selectedPrinter
+                // Get latest print settings since non-preview related print settings may be updated
+                _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                // TODO: Remove the following line
-                UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));
+                // TODO: Check if printer is online (NetworkController)
+                bool isOnline = true;
+
+                if (isOnline)
+                {
+                    // TODO: Prepare for printing (DirectPrintController)
+                    // Display progress dialog ?
+                    // Pass DocumentController.Instance.FileName, DocumentController.Instance.PdfFile and _selectedPrinter
+
+                    // TODO: Remove the following line
+                    UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));
+                }
+                else
+                {
+                    // TODO: Display error message
+                }
             }
             else
             {
-                // TODO: Display error message
+                // TODO: Display no selected printer message
             }
         }
 
