@@ -225,7 +225,8 @@ namespace SmartDeviceApp.Controllers
             PrintSettings printSettings = null;
             if (_printSettingsMap.TryGetValue(screenName, out printSettings))
             {
-                _printSettingsViewModel.AuthenticationLoginPinCode = printSettings.PinCode;
+                string pinCode = (string.IsNullOrEmpty(printSettings.PinCode)) ? string.Empty : printSettings.PinCode;
+                _printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
             }
 
             // Show/hide other controls
