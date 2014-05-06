@@ -98,7 +98,27 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
+
+            
+        }
+
+        private void EnableMode(Common.Enum.ViewMode viewMode)
+        {
+            if (_gestureController != null)
+            {
+                if (viewMode == Common.Enum.ViewMode.FullScreen)
+                {
+                    _gestureController.EnableGestures();
+                }
+
+                if (viewMode == Common.Enum.ViewMode.MainMenuPaneVisible)
+                {
+                    _gestureController.DisableGestures();
+                }
+            }
+            
         }
 
         private void GridTapped(string tapped)
@@ -132,6 +152,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetRightPaneMode(VisibleRightPane visibleRightPane)
         {
+            _gestureController.DisableGestures();
             switch (visibleRightPane)
             {
                 case VisibleRightPane.Pane1:
@@ -192,6 +213,13 @@ namespace SmartDeviceApp.ViewModels
             RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
             OpenDefaultPrintSettingsHandler(printer);
             
+        }
+
+        private PrintersGestureController _gestureController;
+        public PrintersGestureController GestureController
+        {
+            get { return _gestureController; }
+            set { _gestureController = value; }
         }
     }
 

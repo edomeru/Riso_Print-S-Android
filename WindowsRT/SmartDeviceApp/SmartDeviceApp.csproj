@@ -132,6 +132,7 @@
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
@@ -142,6 +143,9 @@
     </Compile>
     <Compile Include="Controls\KeyImageControl.xaml.cs">
       <DependentUpon>KeyImageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyPasswordBoxControl.xaml.cs">
+      <DependentUpon>KeyPasswordBoxControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
       <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
@@ -465,6 +469,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\KeyPasswordBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\KeyRadioButtonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -607,7 +615,7 @@
     <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.3">
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.1">
       <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
     </SDKReference>
   </ItemGroup>

@@ -224,12 +224,6 @@ namespace SmartDeviceApp.Controllers
                     HideDeleteJobButton();
                     return isSwipe;
                 }
-                if (jobListItem.DeleteButtonVisibility != Visibility.Collapsed)
-                {
-                    jobListItem.DeleteButtonVisibility = Visibility.Collapsed;
-                    _lastJobListItem = jobListItem;
-                }
-                
             }
             // Swipe left, show delete button
             else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
@@ -246,6 +240,7 @@ namespace SmartDeviceApp.Controllers
                 if (jobListItem.DeleteButtonVisibility != Visibility.Visible)
                 {
                     jobListItem.DeleteButtonVisibility = Visibility.Visible;
+                    jobListItem.VisualState = "Pressed";
                     _lastJobListItem = jobListItem;
                     _isDeleteJobButtonVisible = true;
                 }
@@ -257,6 +252,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (_lastJobListItem == null || !_isDeleteJobButtonVisible) return;
             _lastJobListItem.DeleteButtonVisibility = Visibility.Collapsed;
+            _lastJobListItem.VisualState = "Normal";
             _isDeleteJobButtonVisible = false;
         }
 

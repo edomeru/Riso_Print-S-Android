@@ -19,7 +19,7 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class PrintSettingUtility : DependencyObject
     {
-        public static event SmartDeviceApp.Controllers.PrintPreviewController.PrintSettingValueChangedEventHandler PrintSettingValueChangedEventHandler;
+        public static event SmartDeviceApp.Controllers.PrintSettingsController.PrintSettingValueChangedEventHandler PrintSettingValueChangedEventHandler;
 
         public static readonly DependencyProperty PrintSettingValueChangedProperty =
             DependencyProperty.RegisterAttached("PrintSettingValueChanged", typeof(object),
@@ -41,17 +41,9 @@ namespace SmartDeviceApp.Common.Utilities
             if (obj != null && e.NewValue != null)
             {
                 PrintSetting printSetting = null;
-                if (obj is KeyToggleSwitchControl)
-                {
-                    printSetting = (PrintSetting)((KeyToggleSwitchControl)obj).DataContext;
-                }
-                else if (obj is KeyValueControl)
+                if (obj is KeyValueControl)
                 {
                     printSetting = (PrintSetting)((KeyValueControl)obj).DataContext;
-                }
-                else if (obj is KeyTextBoxControl)
-                {
-                    printSetting = (PrintSetting)((KeyTextBoxControl)obj).DataContext;
                 }
                 object value = e.NewValue;
 

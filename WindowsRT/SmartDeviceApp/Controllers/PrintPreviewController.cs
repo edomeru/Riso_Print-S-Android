@@ -31,13 +31,12 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
+        public delegate void UpdatePreviewEventHandler(PrintSetting printSetting);
         public delegate void GoToPageEventHandler(int pageIndex);
-        public delegate void PrintSettingValueChangedEventHandler(PrintSetting printSetting,
-            object value);
         public delegate void SelectedPrinterChangedEventHandler(int printerId);
         public delegate void PrintEventHandler();
+        private UpdatePreviewEventHandler _updatePreviewEventHandler;
         private GoToPageEventHandler _goToPageEventHandler;
-        private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
         private PrintEventHandler _printEventHandler;
 
@@ -77,8 +76,8 @@ namespace SmartDeviceApp.Controllers
 
             _previewPages = new Dictionary<int, PreviewPage>();
 
+            _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
-            _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _printEventHandler = new PrintEventHandler(Print);
         }
@@ -136,7 +135,10 @@ namespace SmartDeviceApp.Controllers
             {
                 _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             }
-            PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            if (_printSettingsController != null)
+            {
+                _printSettingsController.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
+            }
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             _selectedPrinter = null;
@@ -237,12 +239,14 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
-            PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            if (_printSettingsController != null)
+            {
+                _printSettingsController.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
+            }
             _printSettingsController = new PrintSettingsController(_selectedPrinter, false);
             _currPrintSettings = await _printSettingsController.GetCurrentPrintSettings();
+            _printSettingsController.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             await ReloadCurrentPage();
-
-            PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
 
             _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
         }
@@ -266,44 +270,10 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Receives modified print setting and its new value
+        /// Event handler that receives modified print setting to update preview
         /// </summary>
         /// <param name="printSetting">affected print setting</param>
-        /// <param name="value">updated value</param>
-        public async void PrintSettingValueChanged(PrintSetting printSetting, object value)
-        {
-
-            if (printSetting == null || value == null)
-            {
-                return;
-            }
-
-            switch (printSetting.Type)
-            {
-                case PrintSettingType.boolean:
-                    await UpdatePrintSettings(printSetting, (bool)value);
-                    break;
-                case PrintSettingType.list:
-                case PrintSettingType.numeric:
-                    await UpdatePrintSettings(printSetting, (int)value);
-                    break;
-                case PrintSettingType.unknown:
-                default:
-                    // Do nothing
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Receiver of the selected print setting option (selected index or numeric value).
-        /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
-        /// updates value and enabled options based on constraints, and applies
-        /// changes to the PreviewPage image.
-        /// </summary>
-        /// <param name="printSetting">affected print setting</param>
-        /// <param name="value">updated value</param>
-        /// <returns>task</returns>
-        private async Task UpdatePrintSettings(PrintSetting printSetting, int value)
+        public async void UpdatePreview(PrintSetting printSetting)
         {
             if (printSetting == null)
             {
@@ -312,68 +282,15 @@ namespace SmartDeviceApp.Controllers
 
             string name = printSetting.Name;
 
-            bool refreshPreview = await _printSettingsController.UpdatePrintSettings(printSetting, value);
-
-            if (name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
+            if (printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX) ||
+                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION) ||
+                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT) ||
+                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
-                if (refreshPreview)
-                {
-                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
-                }
-            }
-            else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION))
-            {
-                if (refreshPreview)
-                {
-                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
-                }
-            }
-            else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
-            {
-                if (refreshPreview)
-                {
-                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
-                }
+                _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
             }
 
-            if (refreshPreview)
-            {
-                await ReloadCurrentPage();
-            }
-        }
-
-        /// <summary>
-        /// Receiver of the selected print setting option (must be a switch).
-        /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
-        /// updates value and enabled options based on constraints, and applies
-        /// changes to the PreviewPage image.
-        /// </summary>
-        /// <param name="printSetting">affected print setting</param>
-        /// <param name="state">updated value</param>
-        /// <returns>task</returns>
-        private async Task UpdatePrintSettings(PrintSetting printSetting, bool state)
-        {
-            if (printSetting == null)
-            {
-                return;
-            }
-
-            string name = printSetting.Name;
-
-            bool refreshPreview = await _printSettingsController.UpdatePrintSettings(printSetting, state);
-
-            if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
-            {
-                if (refreshPreview)
-                {
-                    _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
-                }
-            }
-
-            if (refreshPreview)
-            {
-                await ReloadCurrentPage();
-            }
+            await ReloadCurrentPage();
         }
 
         /// <summary>

@@ -34,9 +34,59 @@
                                      AddPrinterPaneTemplate="{StaticResource TEMPLATE_AddPrinterPane}"
                                      SearchPrinterPaneTemplate="{StaticResource TEMPLATE_SearchPrinterPane}"
                                      PrintSettingsPaneTemplate="{StaticResource TEMPLATE_PrintSettingsPane}"/>
-   
+        <Style x:Key="AdaptableGridViewStyle1" TargetType="local:AdaptableGridView">
+            <Setter Property="Padding" Value="0,0,0,10"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="TabNavigation" Value="Once"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Enabled"/>
+            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
+            <Setter Property="IsSwipeEnabled" Value="True"/>
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition/>
+                        <ContentThemeTransition/>
+                        <ReorderThemeTransition/>
+                        <EntranceThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:AdaptableGridView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="ScrollViewer" Loaded="ScrollViewer_Loaded" AutomationProperties.AccessibilityView="Raw" BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}" IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" TabNavigation="{TemplateBinding TabNavigation}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
+                                <Grid>
+                                    <ItemsPresenter   FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}"/>
+                                    <Grid x:Name="PrintersGestureGrid" Loaded="PrintersGestureGrid_Loaded" Grid.Row="0"
+                                            Width="Auto"
+                                            Height="Auto"
+                                            Background="Transparent"
+                                            ManipulationMode="All"/>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </base:PageBase.Resources>
-    
+
     <controls:ViewControl x:Name="printersView" ChildrenDataContext="{Binding DataContext, ElementName=printersPage}"
                           Text="{Binding Source=IDS_LBL_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
                           Button1Image="ms-appx:///Resources/Images/img_btn_search_printer_normal.scale-100.png" 
@@ -54,7 +104,7 @@
 						SelectionMode="None"
 						IsItemClickEnabled="False"  
                         ItemsSource="{Binding PrinterList}"  ScrollViewer.HorizontalScrollMode="Disabled"
-                                     Loaded="printerInfoView_Loaded">
+                              Loaded="printerInfoView_Loaded"       Style="{StaticResource AdaptableGridViewStyle1}">
                 <local:AdaptableGridView.Margin>
                     <Thickness Top="{StaticResource MARGIN_Default}"
                                    Bottom="{StaticResource MARGIN_Default}"
@@ -62,7 +112,6 @@
                                    Right="{StaticResource MARGIN_Default}">
                     </Thickness>
                 </local:AdaptableGridView.Margin>
-                
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VariableSizedWrapGrid  Orientation="Horizontal" 
@@ -111,8 +160,6 @@
                                                       Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
-                            
-                            
                             <controls:PortItemControl x:Name="port"
                                                              Text="Port"
                                                       IsRawSelected="{Binding PortSetting, Converter={StaticResource IntToBooleanConverter}, Mode=TwoWay}"
@@ -134,7 +181,6 @@
                                                              SeparatorVisibility="Visible"
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                              PressedColor="{StaticResource BRUSH_Purple2}"/>
-                            
                             <controls:KeyValueControl x:Name="settings" 
                                                       IconVisibility="Collapsed"
                                                           Text="Default Print Settings"

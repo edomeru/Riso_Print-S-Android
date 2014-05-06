@@ -28,6 +28,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
+using SmartDeviceApp.Controllers;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -47,31 +48,21 @@ namespace SmartDeviceApp.Views
             }
         }
 
+        private PrintersGestureController _gestureController;
+
         public PrintersPage()
         {
-            Messenger.Default.Register<PrintersViewMode>(this, (printersViewMode) => OnSetPrintersView(printersViewMode));
-
             Messenger.Default.Register<MessageAlert>(
              this,
              msg => ShowDialog(msg));
 
 
+
             this.InitializeComponent();
+
+            _gestureController = new PrintersGestureController();
+            ViewModel.GestureController = _gestureController;
         }
-
-        private void OnSetRefreshState(PrinterSearchRefreshState refreshState)
-        {
-            if (refreshState == PrinterSearchRefreshState.RefreshingState)
-            {
-                VisualStateManager.GoToState(this, "RefreshingState", true);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "NotRefreshingState", true);
-            }
-        }
-
-
 
         /// <summary>
         /// Populates the page with content passed during navigation. Any saved state is also
@@ -116,41 +107,7 @@ namespace SmartDeviceApp.Views
 
         #endregion
 
-        // Note: Cannot set this in ViewModel because need to get this object
-        // for VisualStateManager.GoToState
-        private void OnSetPrintersView(PrintersViewMode previewViewMode)
-        {
-            switch (previewViewMode)
-            {
-                case PrintersViewMode.MainMenuPaneVisible:
-                    {
-                        VisualStateManager.GoToState(this, "MainMenuPaneVisibleState", true);
-                        break;
-                    }
-
-                case PrintersViewMode.PrintersFullScreen:
-                    {
-                        VisualStateManager.GoToState(this, "PrintersPaneVisibleState", true);
-
-                        break;
-                    }
-
-                case PrintersViewMode.AddPrinterPaneVisible:
-                    {
-                        VisualStateManager.GoToState(this, "AddPrinterPaneVisibleState", true);
-
-                        break;
-                    }
-                case PrintersViewMode.ScanPrintersPaneVisible:
-                    {
-                        VisualStateManager.GoToState(this, "SearchPrinterPaneVisibleState", true);
-
-                        break;
-                    }
-            }
-
-
-        }
+       
         private async void ShowDialog(MessageAlert msg)
         {
             MessageDialog md = new MessageDialog(msg.Content, msg.Caption);
@@ -159,7 +116,21 @@ namespace SmartDeviceApp.Views
 
         private void printerInfoView_Loaded(object sender, RoutedEventArgs e)
         {
-            //this.printerInfoView.ItemWidth = 
+            _gestureController.TargetControl = (AdaptableGridView)sender;
+            
+        }
+
+        private void PrintersGestureGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            _gestureController.Control = (Grid)sender;
+
+            _gestureController.EnableGestures();
+        }
+
+        private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+            _gestureController.ControlReference = (ScrollViewer)sender;
+
         }
 
     }

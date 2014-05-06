@@ -13,6 +13,7 @@
     SubTextVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
     SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
+    PressedColor="{StaticResource BRUSH_Purple2}"
     Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
     <local:KeyValueControl.Resources>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >

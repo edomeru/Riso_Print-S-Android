@@ -48,10 +48,7 @@ namespace SmartDeviceApp.Views
         protected override void OnTapped(Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             base.OnTapped(e);
-
             Messenger.Default.Send<string>("ClearDelete");
         }
-
-        
     }
 }

@@ -55,6 +55,9 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _selectPrintSetting;
         private PrintSetting _selectedPrintSetting;
 
+        private string _authenticationLoginId;
+        private string _authenticationPinCode;
+
         public PrintSettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -157,6 +160,32 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _selectPrintSetting;
+            }
+        }
+
+        public string AuthenticationLoginId
+        {
+            get { return _authenticationLoginId; }
+            set
+            {
+                if (_authenticationLoginId != value)
+                {
+                    _authenticationLoginId = value;
+                    RaisePropertyChanged("AuthenticationLoginId");
+                }
+            }
+        }
+
+        public string AuthenticationLoginPinCode
+        {
+            get { return _authenticationPinCode; }
+            set
+            {
+                if (_authenticationPinCode != value)
+                {
+                    _authenticationPinCode = value;
+                    RaisePropertyChanged("AuthenticationLoginPinCode");
+                }
             }
         }
 

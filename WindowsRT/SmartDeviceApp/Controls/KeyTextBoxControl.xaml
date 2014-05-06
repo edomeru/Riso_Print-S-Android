@@ -19,9 +19,6 @@
                  Loaded="OnTextBoxLoaded"
                  Text="{Binding ValueText, ElementName=keyTextBoxControl, Mode=TwoWay}" 
                  Style="{StaticResource STYLE_ListValue_TextBox}">
-            <Interactivity:Interaction.Behaviors>
-                <behaviors:NumericTextBoxBehavior/>
-            </Interactivity:Interaction.Behaviors>
         </TextBox>            
     </local:KeyValueControl.ValueContent>
 </local:KeyValueControl>
