@@ -86,8 +86,8 @@ namespace SmartDeviceApp.Controllers
             _searchPrinterTimeoutHandler = new SearchPrinterTimeoutHandler(handleSearchTimeout);
             _openDefaultPrintSettingsHandler = new OpenDefaultPrintSettingsHandler(handleOpenDefaultPrintSettings);
 
-            _onNavigateToEventHandler = new OnNavigateToEventHandler(UnregisterPrintSettingValueChange);
-            _onNavigateFromEventHandler = new OnNavigateFromEventHandler(RegisterPrintSettingValueChange);
+            _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
+            _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
 
             _printersViewModel.DeletePrinterHandler += _deletePrinterHandler;
             populatePrintersScreen();
