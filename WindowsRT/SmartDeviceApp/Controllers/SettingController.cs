@@ -21,6 +21,10 @@ namespace SmartDeviceApp.Controllers
 
         static readonly SettingController _instance = new SettingController();
 
+        // Event: Card ID
+        public delegate void CardIdValueChangedEventHandler(string pinCode);
+        private CardIdValueChangedEventHandler _cardIdValueChangedEventHandler;
+
         private const string KEY_SETTINGS_CARD_READER_CARD_ID = "key_card_reader_card_id";
 
         private SettingsViewModel _settingsViewModel;
@@ -33,6 +37,8 @@ namespace SmartDeviceApp.Controllers
         private SettingController()
         {
             _settingsViewModel = new ViewModelLocator().SettingsViewModel;
+
+            _cardIdValueChangedEventHandler = new CardIdValueChangedEventHandler(CardIdTextChanged);
         }
 
         public static SettingController Instance
@@ -50,6 +56,8 @@ namespace SmartDeviceApp.Controllers
                 cardId = localSettings.Values[KEY_SETTINGS_CARD_READER_CARD_ID].ToString();
             }
             _settingsViewModel.CardId = cardId;
+
+            _settingsViewModel.CardIdValueChangedEventHandler += _cardIdValueChangedEventHandler;
         }
 
         /// <summary>

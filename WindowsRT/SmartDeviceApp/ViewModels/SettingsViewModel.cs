@@ -14,6 +14,8 @@ namespace SmartDeviceApp.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
+        public event SmartDeviceApp.Controllers.SettingController.CardIdValueChangedEventHandler CardIdValueChangedEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -35,6 +37,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _cardId = value;
                     RaisePropertyChanged("CardId");
+                    CardIdValueChanged();
                 }
             }
         }
@@ -49,6 +52,14 @@ namespace SmartDeviceApp.ViewModels
                     _readCommunityName = value;
                     RaisePropertyChanged("ReadCommunityName");
                 }
+            }
+        }
+
+        private void CardIdValueChanged()
+        {
+            if (CardIdValueChangedEventHandler != null)
+            {
+                CardIdValueChangedEventHandler(_cardId);
             }
         }
     }
