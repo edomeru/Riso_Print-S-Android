@@ -23,7 +23,7 @@ const NSString*  PRINTER_NAME       = @"UT-Printer";
 const NSString*  VALID_PRINTER_IP   = @"192.168.0.19";
 const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
-const float SEARCH_TIMEOUT = 10;
+const float PM_SEARCH_TIMEOUT = 10;
 
 @interface PrinterManagerTest : GHTestCase <PrinterSearchDelegate>
 {
@@ -360,29 +360,15 @@ const float SEARCH_TIMEOUT = 10;
     callbackSearchEndCalled = NO;
     [printerManager searchForPrinter:@"192.168.0.1"];
     
-    NSString* msg = [NSString stringWithFormat:@"wait for %.2f seconds for manual search to end", SEARCH_TIMEOUT];
-    [self waitForCompletion:SEARCH_TIMEOUT+1 withMessage:msg];
+    NSString* msg = [NSString stringWithFormat:
+                     @"wait for %.2f seconds for manual search to end", PM_SEARCH_TIMEOUT];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
     
     GHTestLog(@"-- check if end callback was received");
     GHAssertTrue(callbackSearchEndCalled, @"");
 }
 
-//- (void)test012_SearchForOneThenStop
-//{
-//    GHTestLog(@"# CHECK: PM can stop search for one. #");
-//    
-//    GHTestLog(@"-- search for one printer");
-//    callbackSearchEndCalled = NO;
-//    [printerManager searchForPrinter:@"192.168.0.1"];
-//    GHTestLog(@"-- canceling the search");
-//    [printerManager stopSearching];
-//    
-//    [self waitForCompletion:SEARCH_TIMEOUT withMessage:
-//            @"started search, then canceled, now wait some time after canceling the manual search"];
-//    GHAssertFalse(callbackSearchEndCalled, @"callback should not have been called since the search was canceled");
-//}
-
-- (void)test013_SearchForAllPrinters
+- (void)test012_SearchForAllPrinters
 {
     GHTestLog(@"# CHECK: PM can handle search callbacks. #");
     
@@ -390,29 +376,28 @@ const float SEARCH_TIMEOUT = 10;
     callbackSearchEndCalled = NO;
     [printerManager searchForAllPrinters];
     
-    NSString* msg = [NSString stringWithFormat:@"wait for %.2f seconds for auto search to end", SEARCH_TIMEOUT];
-    [self waitForCompletion:SEARCH_TIMEOUT+1 withMessage:msg];
+    NSString* msg = [NSString stringWithFormat:
+                     @"wait for %.2f seconds for auto search to end", PM_SEARCH_TIMEOUT];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
     
     GHTestLog(@"-- check if end callback was received");
     GHAssertTrue(callbackSearchEndCalled, @"");
 }
 
-//- (void)test014_SearchForAllThenStop
-//{
-//    GHTestLog(@"# CHECK: PM can stop search for all. #");
-//    
-//    GHTestLog(@"-- search for all printers");
-//    callbackSearchEndCalled = NO;
-//    [printerManager searchForAllPrinters];
-//    GHTestLog(@"-- canceling the search");
-//    [printerManager stopSearching];
-//    
-//    [self waitForCompletion:SEARCH_TIMEOUT withMessage:
-//            @"started search, then canceled, now wait some time after canceling the auto search"];
-//    GHAssertFalse(callbackSearchEndCalled, @"callback should not have been called since the search was canceled");
-//}
+- (void)test013_StopSearching
+{
+    GHTestLog(@"# CHECK: PM can stop searching. #");
+    
+    callbackSearchEndCalled = NO;
+    [printerManager searchForPrinter:@"192.168.0.1"];
+    [printerManager stopSearching];
+    NSString* msg = [NSString stringWithFormat:
+                     @"wait for %.2f seconds after stopping search", PM_SEARCH_TIMEOUT];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    GHAssertFalse(callbackSearchEndCalled, @"");
+}
 
-- (void)test015_Singleton
+- (void)test014_Singleton
 {
     GHTestLog(@"# CHECK: PM is indeed a singleton. #");
     

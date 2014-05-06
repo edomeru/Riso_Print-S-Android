@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
+#import <GHUnitIOS/GHUnit.h>
 #import "PrintersViewController.h"
 #import "PrintersIphoneViewController.h"
 #import "PrinterCell.h"
@@ -29,6 +30,7 @@
 // expose private properties
 - (UIButton*)deleteButton;
 - (UIImageView*)disclosureImage;
+- (BOOL)isDefaultPrinterCell;
 
 @end
 
@@ -152,9 +154,9 @@
     GHAssertTrue([tableView numberOfRowsInSection:0] == expectedPrinters, @"#rows = #printers");
 }
 
-- (void)test004_UITableViewCellOutlets
+- (void)test004_PrinterCellOutlets
 {
-    GHTestLog(@"# CHECK: UITableViewCell Outlets. #");
+    GHTestLog(@"# CHECK: PrinterCell Outlets. #");
     
     GHTestLog(@"-- get PrinterCell");
     UITableView* tableView = [controller tableView];
@@ -170,9 +172,9 @@
     GHAssertNotNil([printerCell disclosureImage], @"");
 }
 
-- (void)test005_UITableViewCellActions
+- (void)test005_PrinterCellActions
 {
-    GHTestLog(@"# CHECK: UITableViewCell Actions. #");
+    GHTestLog(@"# CHECK: PrinterCell Actions. #");
     
     GHTestLog(@"-- get PrinterCell");
     UITableView* tableView = [controller tableView];
@@ -211,6 +213,72 @@
         }
     }
     GHAssertTrue(hasTap && hasSwipeLeft && hasSwipeRight, @"");
+}
+
+- (void)test006_PrinterCellSetNormal
+{
+    GHTestLog(@"# CHECK: PrinterCell Set Normal. #");
+    
+    GHTestLog(@"-- get PrinterCell");
+    UITableView* tableView = [controller tableView];
+    PrinterCell* printerCell = [tableView dequeueReusableCellWithIdentifier:@"PrinterCell"];
+    
+    [printerCell setCellStyleForNormalCell];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
+    GHAssertFalse([printerCell isDefaultPrinterCell], @"");
+}
+
+- (void)test007_PrinterCellSetDefault
+{
+    GHTestLog(@"# CHECK: PrinterCell Set Default. #");
+    
+    GHTestLog(@"-- get PrinterCell");
+    UITableView* tableView = [controller tableView];
+    PrinterCell* printerCell = [tableView dequeueReusableCellWithIdentifier:@"PrinterCell"];
+    
+    [printerCell setCellStyleForDefaultCell];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
+    GHAssertTrue([printerCell isDefaultPrinterCell], @"");
+}
+
+- (void)test008_PrinterCellSetDeleteNormal
+{
+    GHTestLog(@"# CHECK: PrinterCell Set Normal->Delete. #");
+    
+    GHTestLog(@"-- get PrinterCell");
+    UITableView* tableView = [controller tableView];
+    PrinterCell* printerCell = [tableView dequeueReusableCellWithIdentifier:@"PrinterCell"];
+    
+    [printerCell setCellStyleForNormalCell];
+    
+    [printerCell setCellToBeDeletedState:YES];
+    GHAssertFalse([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell disclosureImage] isHidden], @"");
+    
+    [printerCell setCellToBeDeletedState:NO];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
+}
+
+- (void)test009_PrinterCellSetDeleteDefault
+{
+    GHTestLog(@"# CHECK: PrinterCell Set Default->Delete. #");
+    
+    GHTestLog(@"-- get PrinterCell");
+    UITableView* tableView = [controller tableView];
+    PrinterCell* printerCell = [tableView dequeueReusableCellWithIdentifier:@"PrinterCell"];
+    
+    [printerCell setCellStyleForDefaultCell];
+    
+    [printerCell setCellToBeDeletedState:YES];
+    GHAssertFalse([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell disclosureImage] isHidden], @"");
+    
+    [printerCell setCellToBeDeletedState:NO];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
 }
 
 #pragma mark - Utilities

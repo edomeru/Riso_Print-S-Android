@@ -65,9 +65,9 @@
     return [UIColor colorWithR:82.0f G:7.0f B:182.0f A:1.0f];
 }
 
-+ (UIColor *)redThemeColor
-{
-    return [UIColor colorWithR:248.0f G:75.0f B:75.0f A:1.0f];
-}
+//+ (UIColor *)redThemeColor
+//{
+//    return [UIColor colorWithR:248.0f G:75.0f B:75.0f A:1.0f];
+//}
 
 @end

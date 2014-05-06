@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
+#import <GHUnitIOS/GHUnit.h>
 #import "PrintJobHistoryViewController.h"
 #import "PrintJobHistoryLayout.h"
 #import "PrinterManager.h"
@@ -31,15 +32,17 @@
 @interface PrintJobHistoryGroupCell (UnitTest)
 
 // expose private properties
-- (UIButton*) groupName;
-- (UIButton*) groupIP;
-- (UIButton*) groupIndicator;
-- (UIButton*) deleteAllButton;
-- (UITableView*) printJobsView;
+- (UIButton*)groupName;
+- (UIButton*)groupIP;
+- (UIButton*)groupIndicator;
+- (UIButton*)deleteAllButton;
+- (UITableView*)printJobsView;
+- (NSIndexPath*)jobWithDelete;
+- (NSMutableArray*)listPrintJobs;
 
 @end
 
-@interface PrintJobHistoryViewControllerTest : GHTestCase
+@interface PrintJobHistoryViewControllerTest : GHTestCase <PrintJobHistoryGroupCellDelegate>
 {
     UIStoryboard* storyboard;
     PrintJobHistoryViewController* controllerIphone;
@@ -144,8 +147,6 @@
     NSMutableArray* listPrintJobHistoryGroups;
     NSUInteger countGroups;
     UICollectionView* groupsView;
-    NSIndexPath* index;
-    PrintJobHistoryGroupCell* groupCell;
 
     GHTestLog(@"-- UICollectionView (iPhone)");
     
@@ -159,15 +160,6 @@
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
     GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
-    GHTestLog(@"-- checking cell bindings");
-    index = [NSIndexPath indexPathForItem:0 inSection:0];
-    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
-    GHAssertNotNil(groupCell, @"");
-    GHAssertNotNil([groupCell groupName], @"");
-    GHAssertNotNil([groupCell groupIP], @"");
-    GHAssertNotNil([groupCell groupIndicator], @"");
-    GHAssertNotNil([groupCell deleteAllButton], @"");
-    GHAssertNotNil([groupCell printJobsView], @"");
     
     GHTestLog(@"-- UICollectionView (iPad)");
     
@@ -181,15 +173,6 @@
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
     GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
-    GHTestLog(@"-- checking cell bindings");
-    index = [NSIndexPath indexPathForItem:0 inSection:0];
-    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
-    GHAssertNotNil(groupCell, @"");
-    GHAssertNotNil([groupCell groupName], @"");
-    GHAssertNotNil([groupCell groupIP], @"");
-    GHAssertNotNil([groupCell groupIndicator], @"");
-    GHAssertNotNil([groupCell deleteAllButton], @"");
-    GHAssertNotNil([groupCell printJobsView], @"");
 }
 
 - (void)test004_FindGroupWithTag
@@ -295,6 +278,136 @@
         else
             continue;
     }
+}
+
+- (void)test006_PrintJobHistoryGroupCellBindings
+{
+    GHTestLog(@"# CHECK: PrintJobHistoryGroupCell. #");
+    UICollectionView* groupsView;
+    NSIndexPath* index;
+    PrintJobHistoryGroupCell* groupCell;
+    
+    GHTestLog(@"-- UICollectionView (iPhone)");
+    groupsView = [controllerIphone groupsView];
+    GHTestLog(@"-- checking cell bindings");
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+    GHAssertNotNil(groupCell, @"");
+    GHAssertNotNil([groupCell groupName], @"");
+    GHAssertNotNil([groupCell groupIP], @"");
+    GHAssertNotNil([groupCell groupIndicator], @"");
+    GHAssertNotNil([groupCell deleteAllButton], @"");
+    GHAssertNotNil([groupCell printJobsView], @"");
+    
+    GHTestLog(@"-- UICollectionView (iPad)");
+    groupsView = [controllerIpad groupsView];
+    GHTestLog(@"-- checking cell bindings");
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+    GHAssertNotNil(groupCell, @"");
+    GHAssertNotNil([groupCell groupName], @"");
+    GHAssertNotNil([groupCell groupIP], @"");
+    GHAssertNotNil([groupCell groupIndicator], @"");
+    GHAssertNotNil([groupCell deleteAllButton], @"");
+    GHAssertNotNil([groupCell printJobsView], @"");
+}
+
+- (void)test007_PrintJobHistoryGroupCellIPhone
+{
+    GHTestLog(@"# CHECK: PrintJobHistoryGroupCell (Iphone). #");
+    UICollectionView* groupsView;
+    NSIndexPath* index;
+    PrintJobHistoryGroupCell* groupCell;
+    NSUInteger tag = 5;
+    NSString* printerName = @"RISO Printer";
+    NSString* printerIP = @"192.168.0.1";
+    NSString* printJobName = @"Print Job 1";
+    BOOL printJobResult = YES;
+    NSDate* printJobDate = [NSDate date];
+    
+    GHTestLog(@"-- UICollectionView (iPhone)");
+    
+    groupsView = [controllerIphone groupsView];
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+
+    GHAssertNil([groupCell jobWithDelete], @"");
+    
+    [groupCell initWithTag:tag];
+    GHAssertTrue([groupCell groupName].tag == tag, @"");
+    GHAssertTrue([groupCell groupIP].tag == tag, @"");
+    GHAssertTrue([groupCell groupIndicator].tag == tag, @"");
+    GHAssertTrue([groupCell deleteAllButton].tag == tag, @"");
+    GHAssertTrue([groupCell printJobsView].tag == tag, @"");
+    GHAssertNotNil([groupCell listPrintJobs], @"");
+    
+    [groupCell putGroupName:printerName];
+    GHAssertEqualStrings([groupCell groupName].titleLabel.text, printerName, @"");
+    
+    [groupCell putGroupIP:printerIP];
+    GHAssertEqualStrings([groupCell groupIP].titleLabel.text, printerIP, @"");
+    
+    [groupCell putIndicator:YES];
+    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"+", @"");
+    
+    [groupCell putIndicator:NO];
+    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"-", @"");
+    
+    [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
+    [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
+    GHAssertTrue([[groupCell listPrintJobs] count] == 2, @"");
+    
+    [groupCell reloadContents];
+    GHAssertTrue([[groupCell listPrintJobs] count] == 2, @"");
+}
+
+- (void)test008_PrintJobHistoryGroupCellIPad
+{
+    GHTestLog(@"# CHECK: PrintJobHistoryGroupCell (Ipad). #");
+    UICollectionView* groupsView;
+    NSIndexPath* index;
+    PrintJobHistoryGroupCell* groupCell;
+    NSUInteger tag = 5;
+    NSString* printerName = @"RISO Printer";
+    NSString* printerIP = @"192.168.0.1";
+    NSString* printJobName = @"Print Job 1";
+    BOOL printJobResult = YES;
+    NSDate* printJobDate = [NSDate date];
+    
+    GHTestLog(@"-- UICollectionView (iPad)");
+    
+    groupsView = [controllerIpad groupsView];
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+    
+    GHAssertNil([groupCell jobWithDelete], @"");
+    
+    [groupCell initWithTag:tag];
+    GHAssertTrue([groupCell groupName].tag == tag, @"");
+    GHAssertTrue([groupCell groupIP].tag == tag, @"");
+    GHAssertTrue([groupCell groupIndicator].tag == tag, @"");
+    GHAssertTrue([groupCell deleteAllButton].tag == tag, @"");
+    GHAssertTrue([groupCell printJobsView].tag == tag, @"");
+    GHAssertNotNil([groupCell listPrintJobs], @"");
+    
+    [groupCell putGroupName:printerName];
+    GHAssertEqualStrings([groupCell groupName].titleLabel.text, printerName, @"");
+    
+    [groupCell putGroupIP:printerIP];
+    GHAssertEqualStrings([groupCell groupIP].titleLabel.text, printerIP, @"");
+    
+    [groupCell putIndicator:YES];
+    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"+", @"");
+    
+    [groupCell putIndicator:NO];
+    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"-", @"");
+    
+    [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
+    [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
+    GHAssertTrue([[groupCell listPrintJobs] count] == 2, @"");
+    
+    [groupCell reloadContents];
+    GHAssertTrue([[groupCell listPrintJobs] count] == 2, @"");
 }
 
 @end

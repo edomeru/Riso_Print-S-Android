@@ -111,7 +111,7 @@ static SNMPManager* sharedSNMPManager = nil;
     {
         // "Fake" SNMP
         // 1. receive the Printer Added callback after 2 seconds
-        // 2. receive the Discovery Ended callback after 30 seconds
+        // 2. receive the Discovery Ended callback after 10 seconds
         // 3. if timeout is enabled, the Printer Added callback will never be received
         
         if (self.useSNMPUnicastTimeout)
@@ -126,7 +126,7 @@ static SNMPManager* sharedSNMPManager = nil;
             [self addFakePrinter:printerIP];
         }
         
-        [NSThread sleepForTimeInterval:28];
+        [NSThread sleepForTimeInterval:8];
         [self endFakeSearch];
     }
 }
@@ -146,7 +146,7 @@ static SNMPManager* sharedSNMPManager = nil;
     {
         // "Fake" SNMP
         //  1. receive the Printer Added callback every x seconds
-        //  2. receive the Discovery Ended callback after 30 seconds
+        //  2. receive the Discovery Ended callback after 10 seconds
         
         [NSThread sleepForTimeInterval:1];
         [self addFakePrinter:@"192.168.1.1"];
@@ -157,13 +157,13 @@ static SNMPManager* sharedSNMPManager = nil;
         [NSThread sleepForTimeInterval:2];
         [self addFakePrinter:@"192.168.3.3"];
         
-        [NSThread sleepForTimeInterval:5];
+        [NSThread sleepForTimeInterval:1];
         [self addFakePrinter:@"192.168.4.4"];
         
-        [NSThread sleepForTimeInterval:3];
+        [NSThread sleepForTimeInterval:1];
         [self addFakePrinter:@"192.168.5.5"];
         
-        [NSThread sleepForTimeInterval:17];
+        [NSThread sleepForTimeInterval:3];
         [self endFakeSearch];
     }
 }

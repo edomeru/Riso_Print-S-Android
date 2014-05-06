@@ -81,7 +81,7 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     statusDidChangeCallbackReceived = NO;
     [psh startPrinterStatusPolling];
     
-    msg = [NSString stringWithFormat: @"wait for %.2f seconds while printer status polling to start", POLL_TIMEOUT];
+    msg = [NSString stringWithFormat: @"wait for %.2f seconds for printer status polling to start", POLL_TIMEOUT];
     [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
     GHAssertTrue([psh isPolling], @"should now be polling");
     

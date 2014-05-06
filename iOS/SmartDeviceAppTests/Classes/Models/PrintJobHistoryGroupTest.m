@@ -77,7 +77,7 @@
     GHAssertNotNil(job4, @"check functionality of DatabaseManager");
     job4.name = @"Job 4";
     job4.result = [NSNumber numberWithBool:NO];
-    job4.date = [NSDate dateWithTimeIntervalSinceNow:50000];
+    job4.date = job1.date;
     job4.printer = testPrinter;
     
     PrintJob* job5 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
@@ -91,7 +91,7 @@
     GHAssertTrue([DatabaseManager saveChanges], @"check functionality of DatabaseManager");
     
     jobList = [NSArray arrayWithObjects:job1, job2, job3, job4, job5, nil];
-    sortedJobList = [NSArray arrayWithObjects:job2, job4, job1, job5, job3, nil];
+    sortedJobList = [NSArray arrayWithObjects:job2, job1, job4, job5, job3, nil];
 }
 
 // Run at end of all tests in the class
@@ -172,6 +172,9 @@
         GHAssertEquals([getJob.date compare:refJob.date], NSOrderedSame,
                        @"getJob date should be same as %@", refJob.name);
     }
+    
+    GHTestLog(@"-- getting an invalid index");
+    GHAssertNil([testGroup getPrintJobAtIndex:[jobList count]+5], @"");
 }
 
 - (void)test004_SortJobs
@@ -217,6 +220,9 @@
     }
     
     GHAssertTrue(testGroup.countPrintJobs == 0, @"there should be no more print jobs");
+    
+    GHTestLog(@"-- removing an invalid index");
+    GHAssertFalse([testGroup removePrintJobAtIndex:2], @"");
 }
 
 - (void)test006_CollapseGroup

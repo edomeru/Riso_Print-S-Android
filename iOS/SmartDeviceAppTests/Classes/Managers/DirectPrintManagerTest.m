@@ -197,6 +197,7 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
             if ([subView isKindOfClass:[CXAlertView class]])
             {
                 CXAlertView* alert = (CXAlertView*)subView;
+                [alert cleanAllPenddingAlert];
                 [alert dismiss];
                 [self waitForCompletion:2];
             }

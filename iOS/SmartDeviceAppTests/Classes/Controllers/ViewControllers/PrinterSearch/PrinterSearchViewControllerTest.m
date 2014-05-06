@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
+#import <GHUnitIOS/GHUnit.h>
 #import "PrinterSearchViewController.h"
 #import "SearchResultCell.h"
 #import "PrinterDetails.h"
@@ -103,9 +104,9 @@
     GHAssertNotNil([controllerIpad tableView], @"");
 }
 
-- (void)test002_UITableViewCell
+- (void)test002_SearchResultCellOutlets
 {
-    GHTestLog(@"# CHECK: UITableViewCell Outlets.");
+    GHTestLog(@"# CHECK: SearchResultCell Outlets.");
     
     GHTestLog(@"-- get SearchResultCell (iPhone)");
     UITableView* tableViewIphone = [controllerIphone tableView];
@@ -130,6 +131,57 @@
     GHAssertNotNil([cellIPad separator], @"");
     GHAssertNotNil([cellIPad oldIcon], @"");
     GHAssertNotNil([cellIPad addIcon], @"");
+}
+
+- (void)test003_SearchResultCellSetters
+{
+    GHTestLog(@"# CHECK: SearchResultCell Setters.");
+    NSString* printerName = @"RISO Printer";
+    NSString* printerIP = @"192.168.0.199";
+    
+    GHTestLog(@"-- get SearchResultCell (iPhone)");
+    UITableView* tableViewIphone = [controllerIphone tableView];
+    SearchResultCell* cellIphone = [tableViewIphone dequeueReusableCellWithIdentifier:@"SearchResultCell"];
+    
+    [cellIphone setCellAsOldResult];
+    GHAssertFalse([[cellIphone oldIcon] isHidden], @"");
+    GHAssertTrue([[cellIphone addIcon] isHidden], @"");
+    
+    [cellIphone setCellAsNewResult];
+    GHAssertTrue([[cellIphone oldIcon] isHidden], @"");
+    GHAssertFalse([[cellIphone addIcon] isHidden], @"");
+    
+    [cellIphone setContentsUsingName:printerName usingIP:printerIP];
+    GHAssertEqualStrings([[cellIphone printerName] text], printerName, @"");
+    GHAssertEqualStrings([[cellIphone printerIP] text], printerIP, @"");
+    
+    [cellIphone setStyle:NO]; //not last cell
+    GHAssertFalse([[cellIphone separator] isHidden], @"");
+    
+    [cellIphone setStyle:YES]; //yes last cell
+    GHAssertTrue([[cellIphone separator] isHidden], @"");
+    
+    GHTestLog(@"-- get SearchResultCell (iPad)");
+    UITableView* tableViewIpad = [controllerIpad tableView];
+    SearchResultCell* cellIpad = [tableViewIpad dequeueReusableCellWithIdentifier:@"SearchResultCell"];
+    
+    [cellIpad setCellAsOldResult];
+    GHAssertFalse([[cellIpad oldIcon] isHidden], @"");
+    GHAssertTrue([[cellIpad addIcon] isHidden], @"");
+    
+    [cellIpad setCellAsNewResult];
+    GHAssertTrue([[cellIpad oldIcon] isHidden], @"");
+    GHAssertFalse([[cellIpad addIcon] isHidden], @"");
+    
+    [cellIpad setContentsUsingName:printerName usingIP:printerIP];
+    GHAssertEqualStrings([[cellIpad printerName] text], printerName, @"");
+    GHAssertEqualStrings([[cellIpad printerIP] text], printerIP, @"");
+    
+    [cellIpad setStyle:NO]; //not last cell
+    GHAssertFalse([[cellIpad separator] isHidden], @"");
+    
+    [cellIpad setStyle:YES]; //yes last cell
+    GHAssertTrue([[cellIpad separator] isHidden], @"");
 }
 
 #pragma mark - Utilities

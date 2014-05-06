@@ -34,6 +34,8 @@
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
+		28B774671918A61500E97C60 /* AlertHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B774661918A61500E97C60 /* AlertHelperTest.m */; };
+		28B774691918C94400E97C60 /* NSDateFormatTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B774681918C94400E97C60 /* NSDateFormatTest.m */; };
 		28C918121911D95600CB582C /* HelpViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C918111911D95600CB582C /* HelpViewControllerTest.m */; };
 		28C9181D1911E2F800CB582C /* LegalViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C9181C1911E2F800CB582C /* LegalViewControllerTest.m */; };
 		28C918201911E69F00CB582C /* HomeViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C9181F1911E69F00CB582C /* HomeViewControllerTest.m */; };
@@ -289,6 +291,8 @@
 		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
 		28A9173718E3D55900BA5232 /* PrintJobHistoryGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroupCell.h; sourceTree = "<group>"; };
 		28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroupCell.m; sourceTree = "<group>"; };
+		28B774661918A61500E97C60 /* AlertHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelperTest.m; sourceTree = "<group>"; };
+		28B774681918C94400E97C60 /* NSDateFormatTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateFormatTest.m; sourceTree = "<group>"; };
 		28C918111911D95600CB582C /* HelpViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewControllerTest.m; sourceTree = "<group>"; };
 		28C9181C1911E2F800CB582C /* LegalViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegalViewControllerTest.m; sourceTree = "<group>"; };
 		28C9181F1911E69F00CB582C /* HomeViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewControllerTest.m; sourceTree = "<group>"; };
@@ -703,7 +707,9 @@
 		28CFC54D18F61C1700DBD2BD /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				28B774661918A61500E97C60 /* AlertHelperTest.m */,
 				28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */,
+				28B774681918C94400E97C60 /* NSDateFormatTest.m */,
 				28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */,
 				28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */,
 				28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */,
@@ -1653,6 +1659,7 @@
 				28052CE71911C651007982DF /* PrinterManagerTest.m in Sources */,
 				28052CE81911C651007982DF /* SNMPManagerTest.m in Sources */,
 				28052CE91911C651007982DF /* InputHelperTest.m in Sources */,
+				28B774691918C94400E97C60 /* NSDateFormatTest.m in Sources */,
 				28052CEA1911C651007982DF /* PListHelperTest.m in Sources */,
 				28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */,
 				28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */,
@@ -1687,6 +1694,7 @@
 				3195C156191117F700197397 /* PrinterCell.m in Sources */,
 				3195C158191117F700197397 /* SearchResultCell.m in Sources */,
 				3195C15A191117F700197397 /* PrintSettingsHeaderCell.m in Sources */,
+				28B774671918A61500E97C60 /* AlertHelperTest.m in Sources */,
 				3195C15C191117F700197397 /* PrintSettingsItemInputCell.m in Sources */,
 				3195C15E191117F700197397 /* PrintSettingsItemOptionCell.m in Sources */,
 				3195C160191117F700197397 /* PrintSettingsItemSwitchCell.m in Sources */,

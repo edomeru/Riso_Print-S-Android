@@ -100,6 +100,8 @@
     //TODO: replace title and message with localized strings
     //TODO: replace NO and YES with localized strings
     
+    NSInteger tag = 0;
+    
     // get the title, message, and choices
     NSString* alertTitle;
     NSString* alertMsg;
@@ -108,9 +110,10 @@
     switch (confirmation)
     {
         case kAlertConfirmationDeleteAllJobs:
+            tag = [[details objectAtIndex:0] integerValue];
             alertTitle = @"Print Job History Info";
             alertMsg = [NSString stringWithFormat:
-                        @"Are you sure you want to delete all print jobs for %@?", details[1]];
+                        @"Are you sure you want to delete all print jobs for %@?", [details objectAtIndex:1]];
             cancelButtonTitle = @"NO";
             confirmButtonTitle = @"YES";
             break;
@@ -122,11 +125,7 @@
                                                        delegate:screen
                                               cancelButtonTitle:cancelButtonTitle
                                               otherButtonTitles:confirmButtonTitle, nil];
-    
-    // add tag (if available)
-    if (details != nil && [details[0] isKindOfClass:[NSNumber class]])
-        alertView.tag = [details[0] integerValue];
-    
+    alertView.tag = tag;
     [alertView show];
 }
 

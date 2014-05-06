@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
+#import <GHUnitIOS/GHUnit.h>
 #import "PrintersViewController.h"
 #import "PrintersIpadViewController.h"
 #import "PrinterCollectionViewCell.h"
@@ -31,6 +32,10 @@
 
 // expose private properties
 - (UIButton*) deleteButton;
+- (BOOL)isDefaultPrinterCell;
+
+// expose private methods
+- (IBAction)defaultSwitchAction:(id)sender;
 
 @end
 
@@ -157,9 +162,9 @@
     GHAssertTrue([collectionView numberOfItemsInSection:0] == expectedPrinters, @"#items = #printers");
 }
 
-- (void)test004_UICollectionViewCellOutlets
+- (void)test004_PrinterCollectionViewCellOutlets
 {
-    GHTestLog(@"# CHECK: UICollectionViewCell Outlets. #");
+    GHTestLog(@"# CHECK: PrinterCollectionViewCell Outlets. #");
     
     GHTestLog(@"-- get PrinterCollectionViewCell");
     UICollectionView* collectionView = [controller collectionView];
@@ -178,9 +183,9 @@
     GHAssertNotNil([printerCell deleteButton], @"");
 }
 
-- (void)test005_UICollectionViewCellActions
+- (void)test005_PrinterCollectionViewCellActions
 {
-    GHTestLog(@"# CHECK: UICollectionViewCell Actions. #");
+    GHTestLog(@"# CHECK: PrinterCollectionViewCell Actions. #");
     
     GHTestLog(@"-- get PrinterCollectionViewCell");
     UICollectionView* collectionView = [controller collectionView];
@@ -231,7 +236,72 @@
     GHAssertTrue([ibActions containsObject:@"portSelectionAction:"], @"");
 }
 
-- (void)test006_SetDefaultPrinter
+- (void)test006_SetCellDefault
+{
+    GHTestLog(@"# CHECK: PrinterCollectionViewCell Default. #");
+    
+    GHTestLog(@"-- get PrinterCollectionViewCell");
+    UICollectionView* collectionView = [controller collectionView];
+    NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
+    PrinterCollectionViewCell* printerCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
+                                                                                       forIndexPath:index];
+    
+    [printerCell setAsDefaultPrinterCell:NO];
+    GHAssertFalse([printerCell isDefaultPrinterCell], @"");
+    GHAssertFalse(printerCell.defaultSwitch.on, @"");
+    
+    [printerCell setAsDefaultPrinterCell:YES];
+    GHAssertTrue([printerCell isDefaultPrinterCell], @"");
+    GHAssertTrue(printerCell.defaultSwitch.on, @"");
+    
+    [printerCell setAsDefaultPrinterCell:NO];
+    GHAssertFalse([printerCell isDefaultPrinterCell], @"");
+    GHAssertFalse(printerCell.defaultSwitch.on, @"");
+}
+
+- (void)test007_SetCellDeleteNormal
+{
+    GHTestLog(@"# CHECK: PrinterCollectionViewCell Delete. #");
+    
+    GHTestLog(@"-- get PrinterCollectionViewCell");
+    UICollectionView* collectionView = [controller collectionView];
+    NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
+    PrinterCollectionViewCell* printerCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
+                                                                                       forIndexPath:index];
+    
+    [printerCell setCellToBeDeletedState:NO];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    
+    [printerCell setCellToBeDeletedState:YES];
+    GHAssertFalse([[printerCell deleteButton] isHidden], @"");
+    
+    [printerCell setCellToBeDeletedState:NO];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+}
+
+- (void)test008_SetCellDeleteDefault
+{
+    GHTestLog(@"# CHECK: PrinterCollectionViewCell Delete. #");
+    
+    GHTestLog(@"-- get PrinterCollectionViewCell");
+    UICollectionView* collectionView = [controller collectionView];
+    NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
+    PrinterCollectionViewCell* printerCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
+                                                                                       forIndexPath:index];
+    
+    [printerCell setAsDefaultPrinterCell:YES];
+    
+    [printerCell setCellToBeDeletedState:NO];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    
+    [printerCell setCellToBeDeletedState:YES];
+    GHAssertFalse([[printerCell deleteButton] isHidden], @"");
+    
+    [printerCell setCellToBeDeletedState:NO];
+    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+}
+
+- (void)test009_SetDefaultPrinter
 {
     GHTestLog(@"# CHECK: Set Default Printer. #");
     
@@ -252,6 +322,31 @@
     GHAssertTrue([pm hasDefaultPrinter], @"");
     GHAssertFalse([pm isDefaultPrinter:[pm getPrinterAtIndex:0]], @"");
     GHAssertTrue([pm isDefaultPrinter:[pm getPrinterAtIndex:1]], @"");
+}
+
+- (void)test010_DefaultSwitchAction
+{
+    GHTestLog(@"# CHECK: Default Switch Action.");
+    
+    GHTestLog(@"-- get PrinterCollectionViewCell");
+    UICollectionView* collectionView = [controller collectionView];
+    NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
+    PrinterCollectionViewCell* printerCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
+                                                                                       forIndexPath:index];
+    
+    UISwitch* defaultSwitch = [[UISwitch alloc] init];
+    
+    defaultSwitch.on = YES;
+    [printerCell defaultSwitchAction:defaultSwitch];
+    GHAssertTrue([printerCell isDefaultPrinterCell], @"");
+    
+    defaultSwitch.on = NO;
+    [printerCell defaultSwitchAction:defaultSwitch];
+    GHAssertFalse([printerCell isDefaultPrinterCell], @"");
+    
+    defaultSwitch.on = YES;
+    [printerCell defaultSwitchAction:defaultSwitch];
+    GHAssertTrue([printerCell isDefaultPrinterCell], @"");
 }
 
 #pragma mark - Utilities

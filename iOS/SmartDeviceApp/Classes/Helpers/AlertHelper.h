@@ -75,7 +75,8 @@ typedef enum
         the screen that will handle the user response
  @param details
         array of extra information optionally needed when displaying
-        the alert, with the first element required to be a unique tag
+        the alert -- 
+            kAlertConfirmationDeleteAllJobs: [0]=groupIndex,[1]=groupName;
  */
 + (void)displayConfirmation:(kAlertConfirmation)confirmation forScreen:(id)screen withDetails:(NSArray*)details;
 
