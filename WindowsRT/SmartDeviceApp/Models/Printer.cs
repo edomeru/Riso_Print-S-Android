@@ -10,15 +10,29 @@
 //  ----------------------------------------------------------------------
 //
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Models
 {
-    public class Printer
+    public class Printer : INotifyPropertyChanged
     {
 
         #region Properties
+
+        private string _ipAddress;
+        private string _name;
+        private int _portSetting;
+        private bool _isOnline;
+        private bool _isDefault;
+        private bool _willBeDeleted;
+        private bool _willPerformDelete;
 
         /// <summary>
         /// Printer ID, used by Printer table as primary key
@@ -36,19 +50,44 @@ namespace SmartDeviceApp.Models
         /// Printer IP address, used by Printer table and allowed only upto 20 characters
         /// </summary>
         [SQLite.Column("prn_ip_address"), SQLite.MaxLength(20)]
-        public string IpAddress { get; set; }
+        public string IpAddress {
+            get { return this._ipAddress; }
+            set
+            {
+                _ipAddress = value;
+                OnPropertyChanged("IpAddress");
+            }
+        }
 
         /// <summary>
         /// Printer name, used by Printer table and allowed only upto 255 characters
         /// </summary>
         [SQLite.Column("prn_name"), SQLite.MaxLength(255)]
-        public string Name { get; set; }
+        public string Name {
+            get { return this._name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged("Name");
+            }
+        }
 
         /// <summary>
         /// Printer post setting, used by Printer table
         /// </summary>
         [SQLite.Column("prn_port_setting"), SQLite.NotNull]
-        public int PortSetting { get; set; }
+        public int PortSetting
+        {
+            get { return this._portSetting; }
+            set
+            {
+                if (_portSetting != value)
+                {
+                    _portSetting = value;
+                    OnPropertyChanged("PortSetting");
+                }
+            }
+        }
 
         /// <summary>
         /// Printer support for LPR, used by Printer table
@@ -108,15 +147,61 @@ namespace SmartDeviceApp.Models
         /// Flag that denotes that the printer is the default printer
         /// </summary>
         [SQLite.Ignore]
-        public bool IsDefault { get; set; }
+        public bool IsDefault {
+            get { return this._isDefault; }
+            set
+            {
+                if (_isDefault != value)
+                {
+                    _isDefault = value;
+                    OnPropertyChanged("IsDefault");
+                }
+            }
+        }
 
         /// <summary>
         /// Flag that denotes that the printer is online
         /// </summary>
         [SQLite.Ignore]
-        public bool IsOnline { get; set; }
+        public bool IsOnline {
+            get { return this._isOnline; }
+            set
+            {
+                _isOnline = value;
+                OnPropertyChanged("IsOnline");
+            }
+        }
+
+
+        [SQLite.Ignore]
+        public bool WillBeDeleted
+        {
+            get { return this._willBeDeleted; }
+            set
+            {
+                _willBeDeleted = value;
+                OnPropertyChanged("WillBeDeleted");
+            }
+        }
+
+
+
+        /// <summary>
+        /// Print settings associated to the printer
+        /// </summary>
+        [SQLite.Ignore]
+        public PrintSettings PrintSettings { get; set; }
 
         #endregion Properties
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
 
         /// <summary>
         /// Printer default class constructor

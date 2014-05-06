@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_printjobs_id"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false" >
+
+    <include layout="@layout/actionbar_main" />
+
+<!--     <FrameLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+ -->
+        <ScrollView
+            android:id="@+id/printJobScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true" >
+
+            <LinearLayout
+                android:id="@+id/printJobContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
+                    android:id="@+id/printJobsView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                </jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView>
+                
+            </LinearLayout>
+        </ScrollView>
+
+<!--         <ProgressBar
+            android:id="@+id/printJobsLoadIndicator"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" 
+            android:visibility="gone" /> 
+    </FrameLayout>-->
+
+</LinearLayout>

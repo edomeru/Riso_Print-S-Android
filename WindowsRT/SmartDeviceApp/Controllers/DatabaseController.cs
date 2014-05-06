@@ -59,7 +59,7 @@ namespace SmartDeviceApp.Controllers
             await CreateDatabase();
 
             // TODO: Remove after testing (or create an initial data manager)
-            await InsertSampleData();
+            //await InsertSampleData();
         }
 
         /// <summary>
@@ -323,19 +323,29 @@ namespace SmartDeviceApp.Controllers
                 // Error handling
             }
 
+                    
             return 0;
         }
 
+                    //delete in Printer table
         // TODO: Check usage. Use public async Task<int> DeletePrinter(Printer printer) below instead
         public async Task<int> DeletePrinterFromDB(int printerId)
         {
             try
             {
                 //delete in printer table
+                int count = await _dbConnection.Table<Printer>().CountAsync();
+
+                if (count > 0)
+                { 
+
                 var printer = await _dbConnection.Table<Printer>()
                     .Where(prn => prn.Id == printerId).FirstOrDefaultAsync();
 
-                await _dbConnection.DeleteAsync(printer);
+                    await _dbConnection.DeleteAsync(printer);
+
+                }
+                
             }
             catch
             {
@@ -407,6 +417,24 @@ namespace SmartDeviceApp.Controllers
                 // Error handling here
             }
             return string.Empty;
+        }
+
+        public async Task UpdatePortNumber(Printer printer)
+        {
+            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+
+            try
+            {
+                var printerFromDB = await db.GetAsync<Printer>(printer.Id);
+                printerFromDB.PortSetting = printer.PortSetting;
+
+                int i = await db.UpdateAsync(printerFromDB);
+            }
+            catch
+            {
+                // Error handling here
+            }
+            return;
         }
 
         #endregion Printer Table Operations

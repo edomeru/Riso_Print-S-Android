@@ -13,6 +13,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
+using System.Collections.ObjectModel;
+using SmartDeviceApp.Models;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
@@ -20,7 +26,38 @@ namespace SmartDeviceApp.Views
     {
         public SearchPrinterPane()
         {
+            Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
+
             this.InitializeComponent();
+
         }
+
+        public SearchPrinterViewModel ViewModel
+        {
+            get
+            {
+                return (SearchPrinterViewModel)DataContext;
+            }
+        }
+
+        private void OnSetRefreshState(PrinterSearchRefreshState refreshState)
+        {
+            if (refreshState == PrinterSearchRefreshState.RefreshingState)
+            {
+                VisualStateManager.GoToState(this, "RefreshingState", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "NotRefreshingState", true);
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var vBar = ((FrameworkElement)VisualTreeHelper.GetChild(printerSearchListView.ElementScrollViewer, 0)).FindName("VerticalScrollBar") as ScrollBar;
+            
+            this.printerSearchListView.SetVBar(vBar);
+        }
+
     }
 }

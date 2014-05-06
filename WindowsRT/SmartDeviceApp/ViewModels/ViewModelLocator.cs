@@ -132,6 +132,22 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public SearchPrinterViewModel SearchPrinterViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SearchPrinterViewModel>();
+            }
+        }
+
+        public AddPrinterViewModel AddPrinterViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<AddPrinterViewModel>();
+            }
+        }
+
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
@@ -159,6 +175,8 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
             SimpleIoc.Default.Register<SelectPrinterViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();
+            SimpleIoc.Default.Register<SearchPrinterViewModel>();
+            SimpleIoc.Default.Register<AddPrinterViewModel>();
         }
 
         /// <summary>

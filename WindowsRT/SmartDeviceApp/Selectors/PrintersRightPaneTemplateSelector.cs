@@ -14,6 +14,7 @@ namespace SmartDeviceApp.Selectors
     {
         public DataTemplate AddPrinterPaneTemplate { get; set; }
         public DataTemplate SearchPrinterPaneTemplate { get; set; }
+        public DataTemplate PrintSettingsPaneTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -29,6 +30,8 @@ namespace SmartDeviceApp.Selectors
                             return AddPrinterPaneTemplate;
                         case PrintersRightPaneMode.SearchPrinter:
                             return SearchPrinterPaneTemplate;
+                        case PrintersRightPaneMode.PrintSettings:
+                            return PrintSettingsPaneTemplate;
                     }
                     return AddPrinterPaneTemplate;
                 }

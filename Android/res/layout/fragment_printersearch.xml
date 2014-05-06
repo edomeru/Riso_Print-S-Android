@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SDALinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false" >
+
+    <include layout="@layout/actionbar_sub" />
+
+    <FrameLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <eu.erikw.PullToRefreshListView
+            android:id="@+id/printer_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null" />
+    </FrameLayout>
+
+</jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>

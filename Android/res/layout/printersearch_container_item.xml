@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/printer_search_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/printers_row_height"
+        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/printerText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical|left"
+            android:textColor="@color/theme_dark_1" />
+
+        <ImageButton
+            android:id="@+id/addPrinterButton"
+            android:layout_width="@dimen/printers_row_right_icon_size"
+            android:layout_height="@dimen/printers_row_right_icon_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/printers_row_right_margin"
+            android:layout_weight="0"
+            android:contentDescription="@string/default_content_description" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/printers_separator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_size"
+        android:layout_marginLeft="@dimen/printers_separator_padding"
+        android:background="@color/theme_light_1" />
+
+</LinearLayout>

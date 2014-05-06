@@ -4,12 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartDeviceApp.Views"
     xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:converters="using:SmartDeviceApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
-    d:DesignWidth="400">
-
-    <!--TODO: Localize title!!-->
+    d:DesignWidth="400"
+    x:Name="SearchPrinterPaneControl"
+    Height="{Binding Converter={StaticResource HeightConverter}}"
+    DataContext="{Binding SearchPrinterViewModel, Source={StaticResource Locator}}">
 
     <UserControl.Resources>
         <Style x:Key="STYLE_RootGrid" TargetType="Grid">
@@ -17,17 +21,204 @@
                 <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
             </Style.Setters>
         </Style>
+
+        <!--ListView Style for Printer Search-->
+        <Style x:Key="PrinterSearchListViewStyle" TargetType="ListView">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="TabNavigation" Value="Once"/>
+            <Setter Property="IsSwipeEnabled" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition/>
+                        <ContentThemeTransition/>
+                        <ReorderThemeTransition/>
+                        <EntranceThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+            
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="ScrollViewer" AutomationProperties.AccessibilityView="Raw" BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}" IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" TabNavigation="{TemplateBinding TabNavigation}" VerticalScrollBarVisibility="Visible" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}" ManipulationMode="TranslateY">
+                                <Grid x:Name="GridInTemplate" ManipulationMode="All">
+                                    <Rectangle x:Name="ReleaseElement"  Height="80" Margin="0,-80,0,0"  VerticalAlignment="Top" Grid.Row="0" Fill="#FF262626" />
+                                    <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}" Grid.Row="1" />
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <converters:ItemClickedConverter x:Name="ItemClickedConverter" />
+        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
+
     </UserControl.Resources>
 
     <Grid Style="{StaticResource STYLE_RootGrid}">
+        <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="PrinterSearchRefreshStateGroup">
+            <VisualState x:Name="RefreshingState">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PrinterSearchProgressRing">
+                        <DiscreteObjectKeyFrame KeyTime="0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Visible</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+            <VisualState x:Name="NotRefreshingState">
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PrinterSearchProgressRing">
+                        <DiscreteObjectKeyFrame KeyTime="0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Collapsed</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl Title="Printer Search" ButtonVisibility="Collapsed"/>
-        <Grid>
+        <controls:SidePaneTitleControl Title="Printer Search" ButtonVisibility="Collapsed" Loaded="OnLoaded" ProgressRingVisibility="Collapsed"/>
+        <Grid Margin="0,0,0,0" Grid.Row="1" Background="#FF262626">
+            
+
             <!--CONTENTS HERE-->
+            <StackPanel >
+                <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="60" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="#FF262626">
+                <Interactivity:Interaction.Behaviors>
+                        <Core:DataTriggerBehavior Binding="{Binding DataContext.WillRefresh,  ElementName=SearchPrinterPaneControl}" Value="True">
+                            <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchRefreshed,  ElementName=SearchPrinterPaneControl}"/>
+                            </Core:DataTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </ProgressRing>
+                
+                
+                <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
+				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                                             ItemsSource="{Binding DataContext.PrinterSearchList, ElementName=SearchPrinterPaneControl}" 
+                                             IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
+                                             Height="719" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
+
+                    <!--Data Template for list view-->
+                    
+                    <!--Event triggers when item is clicked. Calls PrinterSearchItemSelected in PrintersViewModel ItemsSource="{Binding PrinterSearchList}"-->
+
+                    <!--<Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="ItemClick">
+                            <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}" 
+                        			InputConverter="{StaticResource ItemClickedConverter}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>-->
+
+                    <!--<TextBlock Text="Sample1"/>
+                    <TextBlock Text="Sample2"/>
+                    <TextBlock Text="Sample3"/>
+                    <TextBlock Text="Sample4"/>
+                    <TextBlock Text="Sample5"/>
+                    <TextBlock Text="Sample6"/>
+                    <TextBlock Text="Sample7"/>
+                    <TextBlock Text="Sample8"/>
+                    <TextBlock Text="Sample9"/>
+                    <TextBlock Text="Sample10"/>
+                    <TextBlock Text="Sample11"/>
+                    <TextBlock Text="Sample12"/>
+                    <TextBlock Text="Sample13"/>
+                    <TextBlock Text="Sample14"/>
+                    <TextBlock Text="Sample15"/>
+                    <TextBlock Text="Sample16"/>
+                    <TextBlock Text="Sample17"/>
+                    <TextBlock Text="Sample18"/>
+                    <TextBlock Text="Sample19"/>
+                    <TextBlock Text="Sample20"/>
+                    <TextBlock Text="Sample21"/>
+                    <TextBlock Text="Sample22"/>
+                    <TextBlock Text="Sample23"/>
+                    <TextBlock Text="Sample24"/>
+                    <TextBlock Text="Sample25"/>
+                    <TextBlock Text="Sample26"/>
+                    <TextBlock Text="Sample27"/>
+                    <TextBlock Text="Sample28"/>
+                    <TextBlock Text="Sample29"/>
+                    <TextBlock Text="Sample30"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample"/>
+                    <TextBlock Text="Sample20"/>
+                    <TextBlock Text="Sample21"/>
+                    <TextBlock Text="Sample22"/>
+                    <TextBlock Text="Sample23"/>
+                    <TextBlock Text="Sample24"/>
+                    <TextBlock Text="Sample25"/>
+                    <TextBlock Text="Sample26"/>
+                    <TextBlock Text="Sample27"/>
+                    <TextBlock Text="Sample28"/>
+                    <TextBlock Text="Sample29"/>
+                    <TextBlock Text="Sample30"/>-->
+                    
+                    <local:PullToRefreshListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid HorizontalAlignment="Stretch" Margin="0" Tag="{Binding}">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <controls:KeyValueControl x:Name="printerSearchListItem"
+                                                          Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}"
+                                                          CommandParameter="{Binding}"
+                                            			  Text="{Binding Name}"
+                                                          SubText="{Binding Ip_address}"
+                                                          SubTextVisibility="Visible"
+                                            			  RightImage="{Binding ImageSource}"
+                                                          RightButtonVisibility="Visible"
+                                                          IconVisibility="Collapsed"
+                                                          SeparatorVisibility="{Binding Converter={StaticResource PrinterSearchItemToSeparatorVisibility}}"
+                                                          PressedColor="{StaticResource BRUSH_Purple1}"
+                                                              />
+                            </Grid>
+                        </DataTemplate>
+                    </local:PullToRefreshListView.ItemTemplate>
+                </local:PullToRefreshListView>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

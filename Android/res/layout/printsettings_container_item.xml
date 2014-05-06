@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/theme_light_3"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/menuContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_menu_height"
+        android:orientation="horizontal"
+        android:background="@drawable/selector_printsettings_item"
+        android:duplicateParentState="true"
+        android:paddingLeft="@dimen/printsettings_icon_setting_padding" >
+
+        <ImageView
+            android:id="@+id/menuIcon"
+            android:layout_width="@dimen/printsettings_icon_width"
+            android:layout_height="@dimen/printsettings_icon_width"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0"
+            android:contentDescription="@string/default_content_description"
+            android:visibility="gone" />
+    
+        <TextView
+            android:id="@+id/menuTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/printsettings_menu_padding"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:duplicateParentState="true"
+            android:text="@string/default_textview"
+	        android:textColor="@color/selector_printsettings_item_text"
+            android:textSize="@dimen/home_text_size" />
+        
+    </LinearLayout>
+
+    <View
+        android:id="@+id/menuSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_size"
+        android:layout_marginLeft="@dimen/printsettings_separator_padding"
+        android:background="@drawable/selector_home_separator" />
+
+</LinearLayout>

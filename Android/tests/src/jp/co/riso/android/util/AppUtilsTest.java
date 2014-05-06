@@ -13,7 +13,19 @@ import android.util.AndroidRuntimeException;
 import android.view.Display;
 
 public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
+    
+    private static final String ASSET = "html/help.html";
+    private static final String INVALID_VAL = "invalid";
 
+    private static final String FOLDER = "html";
+    private static final String RESOURCE = "help.html";
+    private static final String RELATIVE_PATH = "html/help.html";
+    private static final String RELATIVE_PATH_JA = "html-ja/help.html";
+    private static final String FULL_PATH = "file:///android_asset/html/help.html";
+    private static final String FULL_PATH_JA = "file:///android_asset/html-ja/help.html";
+    private static final String INVALID_FOLDER_PATH = "invalid/help.html";
+    private static final String INVALID_FOLDER_FULLPATH = "file:///android_asset/invalid/help.html";
+    
     public AppUtilsTest() {
         super(MainActivity.class);
     }
@@ -25,7 +37,8 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
+        Locale.setDefault(Locale.US);
 	}
 
     @Override
@@ -246,5 +259,181 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         Point size = AppUtils.getScreenDimensions(null);
         
         assertNull(size);
+    }
+
+    //================================================================================
+    // Tests - getFileContentsFromAssets
+    //================================================================================
+
+    public void testGetFileContentsFromAssets_ContextNull() {
+        String str = AppUtils.getFileContentsFromAssets(null, null);
+        
+        assertNull(str);
+    }
+    
+    public void testGetFileContentsFromAssets_Valid() {
+        String str = AppUtils.getFileContentsFromAssets(getActivity(), "db/SmartDeviceAppDB.sql");
+        
+        assertNotNull(str);
+    }
+    
+    public void testGetFileContentsFromAssets_InvalidAsset() {
+        String str = AppUtils.getFileContentsFromAssets(getActivity(), "db/non-existent.sql");
+        
+        assertNull(str);
+    }
+
+    //================================================================================
+    // Tests - assetExists
+    //================================================================================
+    
+    public void testAssetExists_Valid() {
+        boolean isExists = AppUtils.assetExists(getActivity(), ASSET);
+        
+        assertTrue(isExists);
+    }
+    
+    public void testAssetExists_ContextNull() {
+        boolean isExists = AppUtils.assetExists(null, ASSET);
+        
+        assertFalse(isExists);
+    }
+    
+    public void testAssetExists_PathNull() {
+        boolean isExists = AppUtils.assetExists(getActivity(), null);
+        
+        assertFalse(isExists);
+    }
+    
+    public void testAssetExists_PathEmptyString() {
+        boolean isExists = AppUtils.assetExists(getActivity(), "");
+        
+        assertFalse(isExists);
+    }
+    
+    public void testAssetExists_PathNotExisting() {
+        boolean isExists = AppUtils.assetExists(getActivity(), INVALID_VAL);
+        
+        assertFalse(isExists);
+    }
+    
+    //================================================================================
+    // Tests - getLocalizedAssetRelativePath
+    //================================================================================
+    
+    public void testGetLocalizedAssetRelativePath_Valid() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, RESOURCE);
+        
+        assertEquals(RELATIVE_PATH, localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_Valid_ja() {
+        Locale.setDefault(Locale.JAPANESE);
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, RESOURCE);
+        
+        assertEquals(RELATIVE_PATH_JA, localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_Valid_missingLocale() {
+        Locale.setDefault(Locale.KOREAN);
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, RESOURCE);
+        
+        assertEquals(RELATIVE_PATH, localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_ContexNull() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(null, FOLDER, RESOURCE);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_FolderNull() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), null, RESOURCE);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_FolderEmptyString() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), "", RESOURCE);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_FolderNotExisting() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), INVALID_VAL, RESOURCE);
+        
+        assertEquals(INVALID_FOLDER_PATH, localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_ResourceNull() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, null);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetRelativePath_ResourceEmptyString() {
+        String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, "");
+        
+        assertNull(localized);
+    }
+    
+    //================================================================================
+    // Tests - getLocalizedAssetFullPath
+    //================================================================================
+    
+    public void testGetLocalizedAssetFullPath_Valid() {
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, RESOURCE);
+        
+        assertEquals(FULL_PATH, localized);
+    }
+
+    public void testGetLocalizedAssetFullPath_Valid_ja() {
+        Locale.setDefault(Locale.JAPANESE);
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, RESOURCE);
+        
+        assertEquals(FULL_PATH_JA, localized);
+    }
+
+    public void testGetLocalizedAssetFullPath_Valid_missingLocale() {
+        Locale.setDefault(Locale.KOREAN);
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, RESOURCE);
+        
+        assertEquals(FULL_PATH, localized);
+    }
+    
+    public void testGetLocalizedAssetFullPath_ContexNull() {
+        String localized = AppUtils.getLocalizedAssetFullPath(null, FOLDER, RESOURCE);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetFullPath_FolderNull() {
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), null, RESOURCE);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetFullPath_FolderEmptyString() {
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), "", RESOURCE);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetFullPath_FolderNotExisting() {
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), INVALID_VAL, RESOURCE);
+        
+        assertEquals(INVALID_FOLDER_FULLPATH, localized);
+    }
+    
+    public void testGetLocalizedAssetFullPath_ResourceNull() {
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, null);
+        
+        assertNull(localized);
+    }
+    
+    public void testGetLocalizedAssetFullPath_ResourceEmptyString() {
+        String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, "");
+        
+        assertNull(localized);
     }
 }

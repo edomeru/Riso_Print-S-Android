@@ -9,6 +9,7 @@ namespace SmartDeviceApp.Common.Enum
     public enum PrintersRightPaneMode
     {
         AddPrinter,
-        SearchPrinter
+        SearchPrinter,
+        PrintSettings
     }
 }
