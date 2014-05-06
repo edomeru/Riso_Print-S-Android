@@ -42,6 +42,7 @@ namespace SmartDeviceApp.ViewModels
     public class PrintSettingsViewModel : ViewModelBase
     {
         public event SmartDeviceApp.Controllers.PrintPreviewController.PrintEventHandler ExecutePrintEventHandler;
+        public event SmartDeviceApp.Controllers.PrintPreviewController.PinCodeValueChangedEventHandler PinCodeValueChangedEventHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -185,7 +186,16 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _authenticationPinCode = value;
                     RaisePropertyChanged("AuthenticationLoginPinCode");
+                    AuthenticationLoginPinCodeValueChanged();
                 }
+            }
+        }
+
+        private void AuthenticationLoginPinCodeValueChanged()
+        {
+            if (PinCodeValueChangedEventHandler != null)
+            {
+                PinCodeValueChangedEventHandler(_authenticationPinCode);
             }
         }
 

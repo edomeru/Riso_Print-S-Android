@@ -222,6 +222,11 @@ namespace SmartDeviceApp.Controllers
             {
                 _printSettingsViewModel.PrintSettingsList = printSettingList;
             }
+            PrintSettings printSettings = null;
+            if (_printSettingsMap.TryGetValue(screenName, out printSettings))
+            {
+                _printSettingsViewModel.AuthenticationLoginPinCode = printSettings.PinCode;
+            }
 
             // Show/hide other controls
             _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
@@ -1542,7 +1547,7 @@ namespace SmartDeviceApp.Controllers
 
         #endregion PrintSettingList Operations
 
-        #region Get Properties
+        #region Get PrintSettings Properties
 
         /// <summary>
         /// Retrieves the current print settings
@@ -1575,7 +1580,24 @@ namespace SmartDeviceApp.Controllers
             return pagesPerSheet;
         }
 
-        #endregion Get Properties
+        #endregion Get PrintSettings Properties
+
+        #region Set PrintSettings Properties
+
+        /// <summary>
+        /// Set PIN code
+        /// </summary>
+        /// <param name="screenName">name of active screen</param>
+        /// <param name="pinCode">PIN code</param>
+        public void SetPinCode(string screenName, string pinCode)
+        {
+            if (_printSettingsMap.ContainsKey(screenName))
+            {
+                _printSettingsMap[screenName].PinCode = string.IsNullOrEmpty(pinCode) ? null : pinCode;
+            }
+        }
+
+        #endregion Set PrintSettings Properties
 
         #region Utilities
 
