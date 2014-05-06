@@ -17,6 +17,8 @@ using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +36,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _selectPrinter;
         private ICommand _backToPrintSettings;
 
-        private List<Printer> _printers;
+        private ObservableCollection<Printer> _printerList;
         private int _selectedPrinterId;
 
         public SelectPrinterViewModel(IDataService dataService, INavigationService navigationService)
@@ -43,16 +45,13 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
         }
 
-        public List<Printer> Printers
+        public ObservableCollection<Printer> PrinterList
         {
-            get { return _printers; }
+            get { return _printerList; }
             set
             {
-                if (_printers != value)
-                {
-                    _printers = value;
-                    RaisePropertyChanged("Printers");
-                }
+                _printerList = value;
+                RaisePropertyChanged("PrinterList");
             }
         }
 

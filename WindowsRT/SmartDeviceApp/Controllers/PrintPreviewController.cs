@@ -125,8 +125,7 @@ namespace SmartDeviceApp.Controllers
             {
                 _previewPageTotal = DocumentController.Instance.PageCount;
 
-                // TODO: This is only for testing. Printers should come from PrinterController
-                new ViewModelLocator().SelectPrinterViewModel.Printers = await DatabaseController.Instance.GetPrinters();
+                new ViewModelLocator().SelectPrinterViewModel.PrinterList = PrinterController.Instance.PrinterList;
 
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();

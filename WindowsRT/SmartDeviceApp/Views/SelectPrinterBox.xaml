@@ -41,7 +41,7 @@
             Template="{StaticResource TEMPLATE_HeaderButton}"
             Width="{Binding Width, ElementName=selectPrinterBox}"/>
     <ListView x:Name="printersListView" Grid.Row="1"  
-              ItemsSource="{Binding Printers}" 
+              ItemsSource="{Binding PrinterList}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
               IsItemClickEnabled="False" 
               SelectionMode="Single">
