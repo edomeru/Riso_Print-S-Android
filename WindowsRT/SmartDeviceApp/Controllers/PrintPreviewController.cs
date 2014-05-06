@@ -69,6 +69,7 @@ namespace SmartDeviceApp.Controllers
         private PrintPreviewViewModel _printPreviewViewModel;
         private SelectPrinterViewModel _selectPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private string _screenName;
         private Printer _selectedPrinter;
         private PrintSettings _currPrintSettings;
         private int _pagesPerSheet = 1;
@@ -89,6 +90,8 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel = new ViewModelLocator().PrintPreviewViewModel;
             _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+
+            _screenName = ScreenMode.PrintPreview.ToString();
 
             _previewPages = new Dictionary<int, PreviewPage>();
 
@@ -185,12 +188,12 @@ namespace SmartDeviceApp.Controllers
 
         public void RegisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
         }
 
         public void UnregisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
         }
 
         /// <summary>
@@ -268,9 +271,8 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
 
-            PrintSettingsController.Instance.Uninitialize(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
-            _currPrintSettings = await PrintSettingsController.Instance.Initialize(
-                PrintSettingConstant.SCREEN_PRINT_PREVIEW, _selectedPrinter, false);
+            PrintSettingsController.Instance.Uninitialize(_screenName);
+            _currPrintSettings = await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter, false);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             await ReloadCurrentPage();
 
@@ -306,7 +308,7 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
             string name = printSetting.Name;
 
@@ -344,7 +346,7 @@ namespace SmartDeviceApp.Controllers
             _isReversePages = _isBooklet &&
                 _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
 
-            _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+            _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);
 
             _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
                                                     _pagesPerSheet);
@@ -1663,8 +1665,7 @@ namespace SmartDeviceApp.Controllers
         public void Print()
         {
             // Get latest print settings since non-preview related print settings may be updated
-            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(
-                PrintSettingConstant.SCREEN_PRINT_PREVIEW);
+            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
             // TODO: Check if printer is online (NetworkController)
             bool isOnline = true;

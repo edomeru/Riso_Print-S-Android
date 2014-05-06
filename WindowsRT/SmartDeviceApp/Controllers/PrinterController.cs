@@ -53,6 +53,7 @@ namespace SmartDeviceApp.Controllers
         private SearchPrinterViewModel _searchPrinterViewModel;
         private AddPrinterViewModel _addPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private string _screenName;
 
         SNMPController snmpController = new SNMPController();
 
@@ -77,6 +78,8 @@ namespace SmartDeviceApp.Controllers
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
+            _screenName = SmartDeviceApp.Common.Enum.ScreenMode.PrintPreview.ToString();
+
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
             _deletePrinterHandler = new DeletePrinterHandler(deletePrinter);
@@ -99,28 +102,26 @@ namespace SmartDeviceApp.Controllers
 
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
-
         }
 
-        private void handleOpenDefaultPrintSettings(Printer printer)
+        private async void handleOpenDefaultPrintSettings(Printer printer)
         {
             //get new print settings
-
-            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINTERS);
-
             _printSettingsViewModel.PrinterName = printer.Name;
-            PrintSettingsController.Instance.Initialize(PrintSettingConstant.SCREEN_PRINTERS, printer, true);
+            _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer, true);
         }
 
         public void RegisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINTERS);
+            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
         }
 
         public void UnregisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(PrintSettingConstant.SCREEN_PRINTERS);
-            PrintSettingsController.Instance.Uninitialize(PrintSettingConstant.SCREEN_PRINTERS);
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
+            PrintSettingsController.Instance.Uninitialize(_screenName);
         }
 
         public ObservableCollection<Printer> PrinterList
