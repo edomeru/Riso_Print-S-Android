@@ -148,6 +148,7 @@
 		312B0DEC1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DEB1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m */; };
 		312B0DF219120E8D0033FB55 /* PDFPageContentViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DF119120E8D0033FB55 /* PDFPageContentViewControllerTest.m */; };
 		312B0DF8191216200033FB55 /* PreviewViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DF7191216200033FB55 /* PreviewViewTest.m */; };
+		319167D0191A0F5A00D38222 /* PDFRenderOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */; };
 		3195C0691911126100197397 /* TestPDF_3Pages_NoPass.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */; };
 		3195C06A1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */; };
 		3195C06B1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0671911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf */; };
@@ -507,6 +508,7 @@
 		312B0DEB1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsOptionTableViewControllerTest.m; sourceTree = "<group>"; };
 		312B0DF119120E8D0033FB55 /* PDFPageContentViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageContentViewControllerTest.m; sourceTree = "<group>"; };
 		312B0DF7191216200033FB55 /* PreviewViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewViewTest.m; sourceTree = "<group>"; };
+		319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFRenderOperationTest.m; sourceTree = "<group>"; };
 		3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = TestPDF_3Pages_NoPass.pdf; sourceTree = "<group>"; };
 		3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf"; sourceTree = "<group>"; };
 		3195C0671911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf"; sourceTree = "<group>"; };
@@ -710,6 +712,7 @@
 				28B774661918A61500E97C60 /* AlertHelperTest.m */,
 				28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */,
 				28B774681918C94400E97C60 /* NSDateFormatTest.m */,
+				319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */,
 				28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */,
 				28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */,
 				28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */,
@@ -1729,6 +1732,7 @@
 				3195C197191117F700197397 /* PrintJobHistoryViewController.m in Sources */,
 				3195C199191117F700197397 /* PDFPageContentViewController.m in Sources */,
 				3195C19B191117F700197397 /* PrintPreviewViewController.m in Sources */,
+				319167D0191A0F5A00D38222 /* PDFRenderOperationTest.m in Sources */,
 				3195C19D191117F700197397 /* PrintSettingsOptionTableViewController.m in Sources */,
 				3195C19F191117F700197397 /* PrintSettingsTableViewController.m in Sources */,
 				3195C1A1191117F700197397 /* PrintSettingsViewController.m in Sources */,

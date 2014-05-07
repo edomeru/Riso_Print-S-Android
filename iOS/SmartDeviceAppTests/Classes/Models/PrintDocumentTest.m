@@ -170,8 +170,9 @@
     GHAssertEquals((int)self.keyChangedSet.count, 0, @"");
 }
 
--(void) previewSettingDidChange:(NSString *)keyChanged
+-(BOOL) previewSettingDidChange:(NSString *)keyChanged
 {
     [self.keyChangedSet addObject:keyChanged];
+    return YES;
 }
 @end
