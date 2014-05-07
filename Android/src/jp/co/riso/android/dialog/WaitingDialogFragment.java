@@ -105,7 +105,7 @@ public class WaitingDialogFragment extends DialogFragment {
                 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    cancelListener();
+                    dialog.cancel();
                 }
             });
             
@@ -132,10 +132,6 @@ public class WaitingDialogFragment extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        cancelListener();
-    }
-    
-    private void cancelListener() {
         if (getTargetFragment() instanceof WaitingDialogListener) {
             WaitingDialogListener listener = (WaitingDialogListener) getTargetFragment();
             listener.onCancel();
