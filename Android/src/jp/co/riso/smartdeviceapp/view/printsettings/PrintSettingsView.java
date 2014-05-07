@@ -95,7 +95,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private static final int ID_DISCLOSURE_VIEW = 0x1100000E;
     
-    private boolean mShowPrintControls = false;
     private PrintSettings mPrintSettings = null;
     private int mPrinterId = PrinterManager.EMPTY_ID;
     private List<Printer> mPrintersList = null;
@@ -786,12 +785,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @param showPrintControls
      */
     public void setShowPrintControls(boolean showPrintControls) {
-        mShowPrintControls = showPrintControls;
-        
-        if (mShowPrintControls) {
-            mPrintControls.setVisibility(View.VISIBLE);
+        if (showPrintControls) {
+            mPrintControls.findViewById(ID_PRINT_HEADER).setVisibility(View.VISIBLE);
+            View selectedPrinter = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
+            selectedPrinter.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
         } else {
-            mPrintControls.setVisibility(View.GONE);
+            mPrintControls.findViewById(ID_PRINT_HEADER).setVisibility(View.GONE);
+            View selectedPrinter = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
+            selectedPrinter.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
         }
     }
     
