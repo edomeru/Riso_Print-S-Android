@@ -698,6 +698,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             }
             break;
         default:
+            [self.previewSetting setValue:[NSNumber numberWithInteger:previousFinishingSide] forKey:KEY_FINISHING_SIDE];
             break;
     }
 }
@@ -788,6 +789,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             }
             break;
         default:
+            [self.previewSetting setValue:[NSNumber numberWithInteger:previousImpositionValue] forKey:KEY_IMPOSITION];
             break;
     }
 }

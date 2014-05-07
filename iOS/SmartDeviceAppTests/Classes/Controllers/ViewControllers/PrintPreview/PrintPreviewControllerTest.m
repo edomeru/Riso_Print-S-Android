@@ -44,7 +44,7 @@
 
 - (void)setupPageviewControllerWithBindSetting;
 - (void)setupTotalPageNum;
-- (void)previewSettingDidChange:(NSString *)keyChanged;
+- (BOOL)previewSettingDidChange:(NSString *)keyChanged;
 - (BOOL)isNonPreviewableSetting:(NSString *)settingKey;
 - (void)goToPage:(NSInteger)pageIndex;
 - (UIViewController *)nextViewController:(NSInteger)index;
@@ -414,15 +414,28 @@
     
     
     manager.printDocument.previewSetting.booklet = YES;
-    //TODO: Add checks
+    CGFloat ratio = [PrintPreviewHelper getAspectRatioForPaperSize:manager.printDocument.previewSetting.paperSize];
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
 
     
     manager.printDocument.previewSetting.bookletLayout = kBookletLayoutRightToLeft;
-    //TODO: Add checks
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
     
     manager.printDocument.previewSetting.bookletLayout = kBookletLayoutTopToBottom;
-    //TODO: Add checks
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
     
 }
 
@@ -437,25 +450,48 @@
     
     GHAssertNotNil(viewController.view, @"");
     
-    
     manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
-    //TODO: Add checks
-    
+    CGFloat ratio = [PrintPreviewHelper getAspectRatioForPaperSize:manager.printDocument.previewSetting.paperSize];
+    CGFloat expectedRatio = ratio * 2;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
     manager.printDocument.previewSetting.orientation = kOrientationLandscape;
-    //TODO: Add checks
+    expectedRatio = ratio / 2;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
-
+    
     manager.printDocument.previewSetting.finishingSide = kFinishingSideTop;
-    //TODO: Add Checks
+    expectedRatio = ratio * 2;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
     
     
     manager.printDocument.previewSetting.orientation = kOrientationPortrait;
-    //TODO: Add Checks
-    
+    expectedRatio = ratio / 2;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
     
     manager.printDocument.previewSetting.finishingSide = kFinishingSideRight;
-    //TODO: Add Checks
+    expectedRatio = ratio * 2;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
+    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
+    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
+    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
 }
 
@@ -498,28 +534,12 @@
     PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
     GHAssertNotNil(viewController.view, @"");
-    UIPageViewController *pageViewController = viewController.pageViewController;
     
-    
-    [viewController previewSettingDidChange:KEY_COPIES];
-    //assert no change in preview
-    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
-    
-    [viewController previewSettingDidChange:KEY_OUTPUT_TRAY];
-    //assert no change in preview
-    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
-    
-    [viewController previewSettingDidChange:KEY_INPUT_TRAY];
-    //assert no change in preview
-    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
-    
-    [viewController previewSettingDidChange:KEY_PAPER_TYPE];
-    //assert no change in preview
-    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
-    
-    [viewController previewSettingDidChange:KEY_SORT];
-    //assert no change in preview
-    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
+    GHAssertFalse([viewController previewSettingDidChange:KEY_COPIES], @"");
+    GHAssertFalse([viewController previewSettingDidChange:KEY_OUTPUT_TRAY], @"");
+    GHAssertFalse([viewController previewSettingDidChange:KEY_INPUT_TRAY], @"");
+    GHAssertFalse([viewController previewSettingDidChange:KEY_PAPER_TYPE], @"");
+    GHAssertFalse([viewController previewSettingDidChange:KEY_SORT], @"");
 }
 
 - (void)test016_goToPage
@@ -631,4 +651,141 @@
     GHAssertNil(page, @"");
 }
 
-@end
+-(void)test019_pageViewControllerAfterViewController
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    NSArray *pageControllers = [viewController.pageViewController viewControllers];
+    PDFPageContentViewController *currentPage = [pageControllers objectAtIndex:0];
+    GHAssertNotNil(currentPage, @"");
+    GHAssertEquals(currentPage.pageIndex, (NSInteger)0, @"");
+    
+    PDFPageContentViewController *nextPage = (PDFPageContentViewController *)[viewController pageViewController:viewController.pageViewController viewControllerAfterViewController:currentPage];
+
+    GHAssertNotNil(nextPage, @"");
+    GHAssertEquals(nextPage.pageIndex, (NSInteger)1, @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideRight;
+                                              
+    currentPage = nextPage;
+    nextPage = (PDFPageContentViewController *)[viewController pageViewController:viewController.pageViewController viewControllerAfterViewController:currentPage];
+    GHAssertNotNil(nextPage, @"");
+    GHAssertEquals(nextPage.pageIndex, (NSInteger)0, @"");
+    
+    
+    viewController.pageIsAnimating = YES;
+    nextPage = (PDFPageContentViewController *)[viewController pageViewController:viewController.pageViewController viewControllerAfterViewController:currentPage];
+    GHAssertNil(nextPage, @"");
+}
+
+-(void)test020_pageViewControllerBeforeViewController
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideRight;
+    NSArray *pageControllers = [viewController.pageViewController viewControllers];
+    PDFPageContentViewController *currentPage = [pageControllers objectAtIndex:0];
+    GHAssertNotNil(currentPage, @"");
+    GHAssertEquals(currentPage.pageIndex, (NSInteger)0, @"");
+    
+    PDFPageContentViewController *nextPage = (PDFPageContentViewController *)[viewController pageViewController:viewController.pageViewController viewControllerBeforeViewController:currentPage];
+    GHAssertNotNil(nextPage, @"");
+    GHAssertEquals(nextPage.pageIndex, (NSInteger)1, @"");
+    
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    currentPage = nextPage;
+    nextPage = (PDFPageContentViewController *)[viewController pageViewController:viewController.pageViewController viewControllerBeforeViewController:currentPage];
+    GHAssertNotNil(nextPage, @"");
+    GHAssertEquals(nextPage.pageIndex, (NSInteger)0, @"");
+    
+
+    viewController.pageIsAnimating = YES;
+    nextPage = (PDFPageContentViewController *)[viewController pageViewController:viewController.pageViewController viewControllerBeforeViewController:currentPage];
+    GHAssertNil(nextPage, @"");
+}
+
+-(void)test021_pageViewControllerDidFinishAnimating
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    viewController.pageIsAnimating = YES;
+    
+    [viewController pageViewController:viewController.pageViewController didFinishAnimating:NO previousViewControllers:nil transitionCompleted:NO];
+    GHAssertTrue(viewController.pageIsAnimating, @"");
+    
+    [viewController pageViewController:viewController.pageViewController didFinishAnimating:YES previousViewControllers:nil transitionCompleted:NO];
+    GHAssertFalse(viewController.pageIsAnimating, @"");
+    
+    viewController.pageIsAnimating = YES;
+    [viewController pageViewController:viewController.pageViewController didFinishAnimating:NO previousViewControllers:nil transitionCompleted:YES];
+    GHAssertFalse(viewController.pageIsAnimating, @"");
+    
+     manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    [viewController goToPage:3];
+    [viewController pageViewController:viewController.pageViewController didFinishAnimating:NO previousViewControllers:nil transitionCompleted:YES];
+    GHAssertFalse(viewController.pageIsAnimating, @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideRight;
+    [viewController goToPage:0];
+    [viewController pageViewController:viewController.pageViewController didFinishAnimating:NO previousViewControllers:nil transitionCompleted:YES];
+    GHAssertFalse(viewController.pageIsAnimating, @"");
+}
+
+-(void)test022_pageViewControllerWillTransitionToViewController
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    viewController.pageIsAnimating = NO;
+    [viewController pageViewController:viewController.pageViewController willTransitionToViewControllers:nil];
+    GHAssertTrue(viewController.pageIsAnimating, @"");
+
+}
+
+-(void)test023_previewViewDidChangeZoomMode
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    [viewController previewView:viewController.previewView didChangeZoomMode:YES];
+    GHAssertFalse([viewController.pageViewController.view isUserInteractionEnabled], @"");
+    
+    [viewController previewView:viewController.previewView didChangeZoomMode:NO];
+    GHAssertTrue([viewController.pageViewController.view isUserInteractionEnabled], @"");
+    
+}@end

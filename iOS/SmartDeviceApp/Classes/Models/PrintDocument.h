@@ -65,6 +65,6 @@
 /**
  Notifies the delegate when a preview setting has changed
  */
-- (void)previewSettingDidChange:(NSString *)keyChanged;
+- (BOOL)previewSettingDidChange:(NSString *)keyChanged;
 
 @end

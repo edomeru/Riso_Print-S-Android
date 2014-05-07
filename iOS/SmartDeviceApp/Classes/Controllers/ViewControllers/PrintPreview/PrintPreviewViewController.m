@@ -737,11 +737,11 @@
 
 #pragma mark - PrintDocument Delegate Methods
 
-- (void)previewSettingDidChange:(NSString *)keyChanged
+- (BOOL)previewSettingDidChange:(NSString *)keyChanged
 {
     if([self isNonPreviewableSetting:keyChanged] == YES)
     {
-        return;
+        return NO;
     }
     
     // Cancel all operations
@@ -765,6 +765,8 @@
     [self setupPageviewControllerWithBindSetting];
     
     [self goToPage:self.printDocument.currentPage];
+    
+    return YES;
 }
 
 - (BOOL)isNonPreviewableSetting:(NSString *)settingKey

@@ -390,7 +390,6 @@
 
 }
 
-
 -(void)test006_isSettingSupported
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -673,6 +672,9 @@
     previewSetting.impositionOrder = kImpositionOrderRightToLeft;
     previewSetting.imposition = kImpositionOff;
     GHAssertEquals(previewSetting.impositionOrder, (NSInteger)kImpositionOrderLeftToRight, @"");
+    
+    previewSetting.imposition = kImposition4pages + 1;
+    GHAssertEquals(previewSetting.imposition, (NSInteger)kImpositionOff, @"");
 }
 
 -(void)test013_applyConstraints_FinishingSideToStaple
@@ -698,13 +700,16 @@
     previewSetting.staple = kStapleType1Pos;
     
     previewSetting.finishingSide = kFinishingSideTop;
-    GHAssertEquals(previewSetting.staple, kStapleTypeUpperLeft, @"");
+    GHAssertEquals(previewSetting.staple, (NSInteger)kStapleTypeUpperLeft, @"");
     
     previewSetting.finishingSide = kFinishingSideRight;
-    GHAssertEquals(previewSetting.staple, kStapleType1Pos, @"");
+    GHAssertEquals(previewSetting.staple, (NSInteger)kStapleType1Pos, @"");
     
     previewSetting.finishingSide = kFinishingSideTop;
-    GHAssertEquals(previewSetting.staple, kStapleTypeUpperRight, @"");
+    GHAssertEquals(previewSetting.staple, (NSInteger)kStapleTypeUpperRight, @"");
+    
+    previewSetting.finishingSide = kFinishingSideRight + 1;
+    GHAssertEquals(previewSetting.finishingSide, (NSInteger)kFinishingSideTop, @"");
 }
 
 -(void)test014_applyConstraints_PunchFinishingSideOrientation
@@ -734,13 +739,13 @@
     GHAssertEquals(previewSetting.punch, (NSInteger)kPunchTypeNone, @"");
     
     previewSetting.punch = kPunchType3or4Holes;
-    GHAssertEquals(previewSetting.finishingSide, kFinishingSideLeft, @"");
+    GHAssertEquals(previewSetting.finishingSide, (NSInteger)kFinishingSideLeft, @"");
     
     previewSetting.orientation = kOrientationLandscape;
     GHAssertEquals(previewSetting.punch, (NSInteger)kPunchTypeNone, @"");
 
     previewSetting.punch = kPunchType3or4Holes;
-    GHAssertEquals(previewSetting.finishingSide, kFinishingSideTop, @"");}
+    GHAssertEquals(previewSetting.finishingSide, (NSInteger)kFinishingSideTop, @"");}
 
 
 @end
