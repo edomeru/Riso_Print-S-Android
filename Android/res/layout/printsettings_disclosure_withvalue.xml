@@ -20,6 +20,7 @@
         android:textSize="@dimen/printsettings_listvalue_text_size" />
 
     <ImageView
+        android:id="@+id/disclosureIndicator"
         android:layout_width="@dimen/printsettings_disclosure_size"
         android:layout_height="@dimen/printsettings_disclosure_size"
         android:layout_weight="0.0"

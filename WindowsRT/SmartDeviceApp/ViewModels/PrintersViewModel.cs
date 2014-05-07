@@ -48,9 +48,26 @@ namespace SmartDeviceApp.ViewModels
          * Delegates for controllers
          * 
          * */
+        public event SmartDeviceApp.Controllers.PrinterController.OnNavigateToEventHandler OnNavigateToEventHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
 
         public event SmartDeviceApp.Controllers.PrinterController.DeletePrinterHandler DeletePrinterHandler;
 
+        public void OnNavigatedTo()
+        {
+            if (OnNavigateToEventHandler != null)
+            {
+                OnNavigateToEventHandler();
+            }
+        }
+
+        public void OnNavigatedFrom()
+        {
+            if (OnNavigateFromEventHandler != null)
+            {
+                OnNavigateFromEventHandler();
+            }
+        }
 
         public int Height
         {

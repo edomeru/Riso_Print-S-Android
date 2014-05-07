@@ -38,6 +38,8 @@ namespace SmartDeviceApp.ViewModels
         private const double PREVIEW_VIEW_RATIO = 5;
 
         public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
+        public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateToEventHandler OnNavigateToEventHandler;
+        public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -75,6 +77,22 @@ namespace SmartDeviceApp.ViewModels
 
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+        }
+
+        public void OnNavigatedTo()
+        {
+            if (OnNavigateToEventHandler != null)
+            {
+                OnNavigateToEventHandler();
+            }
+        }
+
+        public void OnNavigatedFrom()
+        {
+            if (OnNavigateFromEventHandler != null)
+            {
+                OnNavigateFromEventHandler();
+            }
         }
 
         public void SetPageAreaGrid(Grid pageAreaGrid)

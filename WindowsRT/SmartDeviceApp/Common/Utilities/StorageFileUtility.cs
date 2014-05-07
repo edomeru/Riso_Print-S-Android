@@ -64,10 +64,23 @@ namespace SmartDeviceApp.Common.Utilities
         /// <returns>task</returns>
         public async static Task DeleteFiles(string keyword, StorageFolder folderLocation)
         {
+            await DeleteFilesExcept(keyword, string.Empty, folderLocation);
+        }
+
+        /// <summary>
+        /// Deletes all files with specified part of the file name except one
+        /// </summary>
+        /// <param name="keyword">substring of the file name to be deleted</param>
+        /// <param name="except">file name - not to be deleted</param>
+        /// <param name="folderLocation">folder location</param>
+        /// <returns>task</returns>
+        public async static Task DeleteFilesExcept(string keyword, string except,
+            StorageFolder folderLocation)
+        {
             var files = await folderLocation.GetFilesAsync();
             foreach (var file in files)
             {
-                if (file.Name.Contains(keyword))
+                if (file.Name.Contains(keyword) && !file.Name.Equals(except))
                 {
                     await DeleteFile(file);
                 }

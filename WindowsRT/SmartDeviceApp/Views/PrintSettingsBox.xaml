@@ -82,15 +82,16 @@
                 Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                 Command="{Binding PrintCommand}" 
                 Template="{StaticResource TEMPLATE_HeaderButton}"
-                Width="{Binding Width, ElementName=printSettingsBox}"/>
+                Width="{Binding Width, ElementName=printSettingsBox}"
+                Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <controls:KeyValueControl x:Name="printerButton"
                                   Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                   Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
-                                  ValueText="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}, ConverterParameter=true}"
+                                  ValueText="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}, ConverterParameter={Binding IsPrintPreview}}"
                                   ValueSubText="{Binding PrinterIpAddress}"
                                   ValueSubTextVisibility="{Binding PrinterIpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                   IconVisibility="Collapsed"
-                                  RightButtonVisibility="Visible"
+                                  RightButtonVisibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
                                   RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
                                   SeparatorVisibility="Collapsed"
                                   Width="{Binding Width, ElementName=printSettingsBox}"
@@ -117,7 +118,8 @@
         </ListView>
         <controls:GroupListControl Text="{Binding Source=IDS_LBL_AUTHENTICATION, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                                    Width="{Binding Width, ElementName=printSettingsBox}"
-                                   DeleteButtonVisibility="Collapsed">
+                                   DeleteButtonVisibility="Collapsed"
+                                   Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}">
             <controls:GroupListControl.Content>
                 <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_AUTHENTICATION_PINCODE, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 ValueText="{Binding AuthenticationLoginPinCode, Mode=TwoWay}"

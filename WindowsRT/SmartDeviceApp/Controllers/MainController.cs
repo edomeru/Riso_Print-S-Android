@@ -66,12 +66,6 @@ namespace SmartDeviceApp.Controllers
             await DatabaseController.Instance.Initialize();
         }
 
-        public async static Task InitializePrintersController()
-        {
-            await PrinterController.Instance.Initialize();
-            
-        }
-
         /// <summary>
         /// Other initializations (TBD)
         /// </summary>
@@ -80,6 +74,7 @@ namespace SmartDeviceApp.Controllers
         {
             // TODO: Verify timing of each initialization
             SettingController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
         }
 
@@ -87,10 +82,6 @@ namespace SmartDeviceApp.Controllers
 
         public async static Task InitializeSamplePdf()
         {
-
-            // TODO: Put in proper initialization location
-            await JobController.Instance.Initialize();
-
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 

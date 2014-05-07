@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -39,6 +40,12 @@ namespace SmartDeviceApp.Controllers
         public delegate void OpenDefaultPrintSettingsHandler(Printer printer);
         private OpenDefaultPrintSettingsHandler _openDefaultPrintSettingsHandler;
 
+        public delegate void OnNavigateToEventHandler();
+        private OnNavigateToEventHandler _onNavigateToEventHandler;
+
+        public delegate void OnNavigateFromEventHandler();
+        private OnNavigateFromEventHandler _onNavigateFromEventHandler;
+
         ThreadPoolTimer periodicTimer;
 
         private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
@@ -49,6 +56,7 @@ namespace SmartDeviceApp.Controllers
         private SearchPrinterViewModel _searchPrinterViewModel;
         private AddPrinterViewModel _addPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private string _screenName;
 
         //SNMPController snmpController = new SNMPController();
 
@@ -73,6 +81,8 @@ namespace SmartDeviceApp.Controllers
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
+            _screenName = SmartDeviceApp.Common.Enum.ScreenMode.Printers.ToString();
+
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
             _addPrinterFromSearchHandler = new AddPrinterFromSearchHandler(addPrinterFromSearch);
@@ -80,10 +90,15 @@ namespace SmartDeviceApp.Controllers
             _searchPrinterTimeoutHandler = new SearchPrinterTimeoutHandler(handleSearchTimeout);
             _openDefaultPrintSettingsHandler = new OpenDefaultPrintSettingsHandler(handleOpenDefaultPrintSettings);
 
+            _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
+            _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
+
             _printersViewModel.DeletePrinterHandler += _deletePrinterHandler;
             populatePrintersScreen();
             _printersViewModel.PrinterList = PrinterList;
             _printersViewModel.OpenDefaultPrintSettingsHandler += _openDefaultPrintSettingsHandler;
+            _printersViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
+            _printersViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
 
             _searchPrinterViewModel.AddPrinterFromSearchHandler += _addPrinterFromSearchHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
@@ -94,16 +109,25 @@ namespace SmartDeviceApp.Controllers
             SNMPController.Instance.Initialize();
         }
 
-        private void handleOpenDefaultPrintSettings(Printer printer)
+        private async void handleOpenDefaultPrintSettings(Printer printer)
         {
             //get new print settings
+            PrintSettingsController.Instance.Uninitialize(_screenName);
             _printSettingsViewModel.PrinterName = printer.Name;
-            _printSettingsController = new PrintSettingsController(printer, true);
-            
-
-            _printSettingsController.GetCurrentPrintSettings();
+            _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
         }
 
+        public void RegisterPrintSettingValueChange()
+        {
+            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
+        }
+
+        public void UnregisterPrintSettingValueChange()
+        {
+            PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
+            PrintSettingsController.Instance.Uninitialize(_screenName);
+        }
 
         public ObservableCollection<Printer> PrinterList
         {

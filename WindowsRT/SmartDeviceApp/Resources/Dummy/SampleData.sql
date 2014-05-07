@@ -1,4 +1,4 @@
-INSERT INTO Printer VALUES(1, 1, "192.168.0.1", "RISO_Printer1", 1111, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(1, 1, "192.168.0.1", null, 1111, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO Printer VALUES(2, 2, "192.168.0.22", "RISO_Printer2", 2222, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO Printer VALUES(3, 3, "192.168.0.3", "RISO_Printer3", 3333, 0, 1, 0, 1, 0, 1, 0, 1, 0);
 INSERT INTO Printer VALUES(4, 4, "192.168.0.4", "RISO_Printer4", 4444, 1, 0, 1, 0, 1, 0, 1, 0, 1);

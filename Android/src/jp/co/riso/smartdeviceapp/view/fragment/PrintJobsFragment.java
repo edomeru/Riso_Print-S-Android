@@ -222,12 +222,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                 List<Printer> printers = pm.getPrintersWithJobs();
                 boolean printersChanged = false;
                 
-                if (mPrintJobsList != null) {
-                    if (mPrintJobsList.size() != printers.size()) {
+                if (mPrintersList != null) {
+                    if (mPrintersList.size() != printers.size()) {
                         printersChanged = true;
                     } else {
                         for (int i = 0; i < printers.size(); i++){
-                            if (printers.get(i).getId() != mPrintJobsList.get(i).getId()) {
+                            if (printers.get(i).getId() != mPrintersList.get(i).getId()) {
                                 printersChanged = true;
                                 break;
                             }

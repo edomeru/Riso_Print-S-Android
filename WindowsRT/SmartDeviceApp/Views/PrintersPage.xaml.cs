@@ -64,6 +64,17 @@ namespace SmartDeviceApp.Views
             ViewModel.GestureController = _gestureController;
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.OnNavigatedTo();
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.OnNavigatedFrom();
+            base.OnNavigatedFrom(e);
+        }
         /// <summary>
         /// Populates the page with content passed during navigation. Any saved state is also
         /// provided when recreating a page from a prior session.

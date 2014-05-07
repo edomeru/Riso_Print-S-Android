@@ -41,7 +41,7 @@
             Template="{StaticResource TEMPLATE_HeaderButton}"
             Width="{Binding Width, ElementName=selectPrinterBox}"/>
     <ListView x:Name="printersListView" Grid.Row="1"  
-              ItemsSource="{Binding Printers}" 
+              ItemsSource="{Binding PrinterList}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
               IsItemClickEnabled="False" 
               SelectionMode="Single">
@@ -53,7 +53,7 @@
                                                 CommandParameter="{Binding}"
                                                 GroupName="printersList"
                                                 Index="{Binding Id}"
-                                                Text="{Binding Name}"
+                                                Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}, ConverterParameter=false}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_printer_status_online.png"
                                                 IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}}"
                                                 IsEnabled="True"

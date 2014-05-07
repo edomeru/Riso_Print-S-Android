@@ -16,6 +16,8 @@
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>SmartDeviceApp_TemporaryKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>AF37E8FC259B97D5557A3E086E2C0C812B0F6CBE</PackageCertificateThumbprint>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -131,6 +133,7 @@
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
+    <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
@@ -623,6 +626,10 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\DirectPrint\DirectPrint.csproj">
+      <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
+      <Name>DirectPrint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SNMP\SNMP.csproj">
       <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
       <Name>SNMP</Name>
@@ -684,6 +691,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

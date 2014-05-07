@@ -59,7 +59,7 @@ namespace SmartDeviceApp.Controllers
             await CreateDatabase();
 
             // TODO: Remove after testing (or create an initial data manager)
-            //await InsertSampleData();
+            await InsertSampleData();
         }
 
         /// <summary>

@@ -8,6 +8,11 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -20,6 +25,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -27,9 +34,10 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener {
+public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
+    public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
     private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
@@ -43,6 +51,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
+    Timer mUpdateStatusTimer = null;
     
     @Override
     public int getViewLayout() {
@@ -63,6 +72,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
         mStatus = (TextView) view.findViewById(R.id.inputStatus);
         mPort = (Spinner) view.findViewById(R.id.inputPort);
+        mPort.setOnItemSelectedListener(this);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
         portAdapter.add(getString(R.string.ids_lbl_port_raw));
@@ -83,20 +93,76 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+        if (savedInstanceState != null) {
+            if (mPrinter == null) {
+                List<Printer> printersList = mPrinterManager.getSavedPrintersList();
+                int printerId = savedInstanceState.getInt(KEY_PRINTER_INFO_ID);
+                for (Printer printer : printersList) {
+                    if (printer.getId() == printerId) {
+                        mPrinter = printer;
+                    }
+                }
+            }
+        }
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
-        }
-        if (mPrinter.getOnlineStatus()) {
-            mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
-        }
-        
+        }        
+        mPort.setSelection(mPrinter.getPortSetting());
     }
+    
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        mUpdateStatusTimer.cancel();
+        mUpdateStatusTimer = null;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateOnlineStatus();
+    }
+    
+    // ================================================================================
+    // Public Methods
+    // ================================================================================
     
     public void setPrinter(Printer printer) {
         mPrinter = printer;
+    }
+    
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    public void updateOnlineStatus() {
+        
+        if (mUpdateStatusTimer != null) {
+            return;
+        }
+        
+        mUpdateStatusTimer = new Timer();
+        mUpdateStatusTimer.schedule(new TimerTask() {
+            
+            @Override
+            public void run() {
+                try {
+                    if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
+                        mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
+                    }
+                } catch (Exception e) {
+                    mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
+                }
+            }
+        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
     }
     
     // ================================================================================
@@ -127,7 +193,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                         
                         PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
                         mPrintSettingsFragment.setTargetFragment(printersFragment, 0);
-                        activity.openDrawer(Gravity.RIGHT, true);
+                        activity.openDrawer(Gravity.RIGHT, false);
                     } else {
                         activity.closeDrawers();
                     }
@@ -156,5 +222,19 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         } else {
             mPrinterManager.clearDefaultPrinter();
         }
+    }
+    
+    // ================================================================================
+    // INTERFACE - onCheckedChanged
+    // ================================================================================
+    
+    @Override
+    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        mPrinter.setPortSetting(position);
+    }
+    
+    @Override
+    public void onNothingSelected(AdapterView<?> parentView) {
+        // Do nothing
     }
 }

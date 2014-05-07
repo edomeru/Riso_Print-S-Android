@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 
 public class SDADrawerLayout extends DrawerLayout {
     
-    private boolean mPreventInterceptTouches;
+    private boolean mPreventInterceptTouches = false;
 
     public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
