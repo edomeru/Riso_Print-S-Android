@@ -404,14 +404,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 View disclosureView = (View) view.findViewById(ID_DISCLOSURE_VIEW);
                 if (disclosureView != null) {
                     if (enabled) {
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.VISIBLE);
                         view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
-                        disclosureView.setVisibility(View.VISIBLE);
                     } else if (hideControl) {
-                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
-                        disclosureView.setVisibility(View.GONE);
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.INVISIBLE);
+                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
                     } else {
-                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
-                        disclosureView.setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
                     }
                 } else {
                     boolean shouldHideControl = !enabled && hideControl;
