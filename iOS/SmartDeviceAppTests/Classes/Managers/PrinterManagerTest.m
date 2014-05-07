@@ -382,7 +382,7 @@ const float PM_SEARCH_TIMEOUT = 10;
     
     GHTestLog(@"-- search for one printer");
     callbackSearchEndCalled = NO;
-    [printerManager searchForPrinter:@"192.168.0.1"];
+    [printerManager searchForPrinter:@"192.168.0.197"]; //use an offline printer
     
     NSString* msg = [NSString stringWithFormat:
                      @"wait for %.2f seconds for manual search to end", PM_SEARCH_TIMEOUT];

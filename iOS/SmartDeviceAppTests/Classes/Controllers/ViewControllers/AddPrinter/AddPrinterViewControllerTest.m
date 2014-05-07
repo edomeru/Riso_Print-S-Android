@@ -6,8 +6,11 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
+#import <GHUnitIOS/GHUnit.h>
 #import "AddPrinterViewController.h"
 #import "Printer.h"
+#import "CXAlertView.h"
+#import "PrinterDetails.h"
 
 @interface AddPrinterViewController (UnitTest)
 
@@ -18,6 +21,7 @@
 
 // expose private methods
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress;
+- (IBAction)onSave:(UIButton*)sender;
 
 @end
 
@@ -50,11 +54,13 @@
     controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];
     GHAssertNotNil(controllerIphone, @"unable to instantiate controller (%@)", controllerIphoneName);
     GHAssertNotNil(controllerIphone.view, @"");
+    GHAssertFalse(controllerIphone.hasAddedPrinters, @"");
     
     NSString* controllerIpadName = @"AddPrinterIphoneViewController";
     controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
+    GHAssertFalse(controllerIpad.hasAddedPrinters, @"");
 }
 
 // Run at end of all tests in the class
@@ -63,6 +69,10 @@
     storyboard = nil;
     controllerIphone = nil;
     controllerIpad = nil;
+    
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
 }
 
 // Run before each test method
@@ -84,10 +94,12 @@
     GHAssertNotNil([controllerIphone textIP], @"");
     GHAssertNotNil([controllerIphone saveButton], @"");
     GHAssertNotNil([controllerIphone progressIndicator], @"");
+    GHAssertNil(controllerIphone.printersViewController, @"will only be non-nil on segue from Printers");
     
     GHAssertNotNil([controllerIpad textIP], @"");
     GHAssertNotNil([controllerIpad saveButton], @"");
     GHAssertNotNil([controllerIpad progressIndicator], @"");
+    GHAssertNil(controllerIpad.printersViewController, @"will only be non-nil on segue from Printers");
 }
 
 - (void)test002_IBActionsBinding
@@ -111,23 +123,52 @@
     GHAssertTrue([ibActions containsObject:@"onSave:"], @"");
 }
 
-- (void)test003_TextFieldInput
+- (void)test003_TextFieldActions
 {
     GHTestLog(@"# CHECK: IP TextField does not accept spaces. #");
     
+    UITextField* textFieldIphone = [controllerIphone textIP];
+    UITextField* textFieldIpad = [controllerIpad textIP];
     BOOL willAcceptSpace = YES;
+    BOOL willAcceptBackspace = YES;
     
     GHTestLog(@"-- entering a space (iPhone)");
-    willAcceptSpace = [controllerIphone textField:[controllerIphone textIP]
+    willAcceptSpace = [controllerIphone textField:textFieldIphone
                     shouldChangeCharactersInRange:NSMakeRange(0, 1)
                                 replacementString:@" "];
     GHAssertFalse(willAcceptSpace, @"");
 
     GHTestLog(@"-- entering a space (iPad)");
-    willAcceptSpace = [controllerIpad textField:[controllerIpad textIP]
+    willAcceptSpace = [controllerIpad textField:textFieldIpad
                   shouldChangeCharactersInRange:NSMakeRange(0, 1)
                               replacementString:@" "];
     GHAssertFalse(willAcceptSpace, @"");
+    
+    GHTestLog(@"-- checking backspace");
+    textFieldIphone.text = @"aa";
+    willAcceptBackspace = [controllerIphone textField:textFieldIphone
+                        shouldChangeCharactersInRange:NSMakeRange(1, 1)
+                                    replacementString:@""];
+    GHAssertTrue(willAcceptBackspace, @"");
+    willAcceptBackspace = [controllerIphone textField:textFieldIphone
+                        shouldChangeCharactersInRange:NSMakeRange(0, 1)
+                                    replacementString:@""];
+    GHAssertTrue(willAcceptBackspace, @"");
+    textFieldIpad.text = @"aa";
+    willAcceptBackspace = [controllerIphone textField:textFieldIpad
+                        shouldChangeCharactersInRange:NSMakeRange(1, 1)
+                                    replacementString:@""];
+    GHAssertTrue(willAcceptBackspace, @"");
+    willAcceptBackspace = [controllerIphone textField:textFieldIpad
+                        shouldChangeCharactersInRange:NSMakeRange(0, 1)
+                                    replacementString:@""];
+    GHAssertTrue(willAcceptBackspace, @"");
+    
+    GHTestLog(@"-- checking clear and return");
+    GHAssertTrue([controllerIphone textFieldShouldClear:textFieldIphone], @"");
+    GHAssertTrue([controllerIpad textFieldShouldClear:textFieldIpad], @"");
+    GHAssertTrue([controllerIphone textFieldShouldReturn:textFieldIphone], @"");
+    GHAssertTrue([controllerIpad textFieldShouldReturn:textFieldIpad], @"");
 }
 
 - (void)test004_AddFullCapabilityPrinter
@@ -144,6 +185,7 @@
     GHTestLog(@"-- adding invalid printer=[%@]", invalidIP);
     [controllerIphone addFullCapabilityPrinter:invalidIP];
     GHAssertTrue(pm.countSavedPrinters == 1, @"1 printer should be added");
+    GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
     
     GHTestLog(@"-- checking capabilities=[%@]", invalidIP);
     Printer* fullCapPrinter = [pm getPrinterAtIndex:0];
@@ -172,6 +214,171 @@
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
     
     fullCapPrinter = nil;
+}
+
+- (void)test005_SaveOnlinePrinter
+{
+    GHTestLog(@"# CHECK: Save Online Printer. #");
+    NSString* onlinePrinterIP = @"192.168.0.199";
+    UITextField* inputText = [controllerIphone textIP];
+    
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- adding an online printer");
+    inputText.text = onlinePrinterIP;
+    [controllerIphone onSave:[controllerIphone saveButton]];
+    [self waitForCompletion:10 withMessage:nil];
+    [self removeResultAlert];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
+    
+    GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
+}
+
+- (void)test006_SaveOfflinePrinter
+{
+    GHTestLog(@"# CHECK: Save Offline Printer. #");
+    NSString* offlinePrinterIP = @"192.168.0.197";
+    UITextField* inputText = [controllerIphone textIP];
+    
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- adding an offline printer");
+    inputText.text = offlinePrinterIP;
+    [controllerIphone onSave:[controllerIphone saveButton]];
+    [self waitForCompletion:10 withMessage:nil];
+    [controllerIphone searchEnded]; //call callback twice (willEndWithoutAdd is wrong here in UT)
+    [self removeResultAlert];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
+    
+    GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
+}
+
+- (void)test007_SaveButAlreadySaved
+{
+    GHTestLog(@"# CHECK: Save Already Saved Printer. #");
+    NSString* onlinePrinterIP = @"192.168.0.199";
+    UITextField* inputText = [controllerIphone textIP];
+    
+    GHTestLog(@"-- registering one printer");
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+    PrinterDetails* pd = [[PrinterDetails alloc] init];
+    pd.name = @"RISO Printer";
+    pd.ip = onlinePrinterIP;
+    GHAssertTrue([pm registerPrinter:pd], @"");
+    
+    GHTestLog(@"-- save the same printer");
+    inputText.text = onlinePrinterIP;
+    [controllerIphone onSave:[controllerIphone saveButton]];
+    [self waitForCompletion:2 withMessage:nil];
+    [self removeResultAlert];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
+}
+
+- (void)test008_SaveButInvalidIP
+{
+    GHTestLog(@"# CHECK: Save Invalid IP. #");
+    NSString* invalidPrinterIP1 = @"999.999.999.999";
+    NSString* invalidPrinterIP2 = @"00000192.168.0.1";
+    UITextField* inputText = [controllerIphone textIP];
+    
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- save invalid IP1");
+    inputText.text = invalidPrinterIP1;
+    [controllerIphone onSave:[controllerIphone saveButton]];
+    [self waitForCompletion:2 withMessage:nil];
+    [self removeResultAlert];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0, @"");
+    
+    GHTestLog(@"-- save invalid IP2");
+    inputText.text = invalidPrinterIP2;
+    [controllerIphone onSave:[controllerIphone saveButton]];
+    [self waitForCompletion:2 withMessage:nil];
+    [self removeResultAlert];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0, @"");
+}
+
+- (void)test009_SaveButMaximum
+{
+    GHTestLog(@"# CHECK: Save Already Saved Printer. #");
+    NSString* printerIP = @"192.168.0.199";
+    NSUInteger printerMax = 10;
+    UITextField* inputText = [controllerIphone textIP];
+    
+    GHTestLog(@"-- registering maximum printers");
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != printerMax)
+    {
+        PrinterDetails* pd = [[PrinterDetails alloc] init];
+        pd.name = @"RISO Printer";
+        pd.ip = printerIP;
+        GHAssertTrue([pm registerPrinter:pd], @"");
+    }
+    
+    GHTestLog(@"-- save another printer");
+    inputText.text = printerIP;
+    [controllerIphone onSave:[controllerIphone saveButton]];
+    [self waitForCompletion:2 withMessage:nil];
+    [self removeResultAlert];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == printerMax, @"");
+}
+
+#pragma mark - Utilities
+
+- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
+{
+    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
+    UIAlertView* alert;
+    
+    if (msg != nil)
+    {
+        alert = [[UIAlertView alloc] initWithTitle:@"Add Printer Test"
+                                           message:msg
+                                          delegate:self
+                                 cancelButtonTitle:@"HIDE"
+                                 otherButtonTitles:nil];
+        [alert show];
+    }
+    
+    BOOL done = NO;
+    do
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
+        if ([timeoutDate timeIntervalSinceNow] < 0.0)
+            break;
+    } while (!done);
+    
+    if (msg != nil)
+        [alert dismissWithClickedButtonIndex:0 animated:YES];
+    
+    return done;
+}
+
+- (void)removeResultAlert
+{
+    for (UIWindow* window in [UIApplication sharedApplication].windows)
+    {
+        NSArray* subViews = window.subviews;
+        if ([subViews count] > 0)
+        {
+            UIView* view = [subViews objectAtIndex:0];
+            if ([view isKindOfClass:[CXAlertView class]])
+            {
+                CXAlertView* alert = (CXAlertView*)view;
+                [alert dismiss];
+                [self waitForCompletion:2 withMessage:nil];
+                alert = nil;
+            }
+        }
+    }
 }
 
 @end

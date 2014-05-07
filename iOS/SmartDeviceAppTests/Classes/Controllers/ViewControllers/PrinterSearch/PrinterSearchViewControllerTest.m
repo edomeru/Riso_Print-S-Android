@@ -10,10 +10,14 @@
 #import "PrinterSearchViewController.h"
 #import "SearchResultCell.h"
 #import "PrinterDetails.h"
+#import "CXAlertView.h"
+
+const float PSC_SEARCH_TIMEOUT = 10.0f;
 
 @interface PrinterSearchViewController (UnitTest)
 
 // expose private properties
+
 - (UITableView*)tableView;
 - (UIRefreshControl*)refreshControl;
 
@@ -59,21 +63,20 @@
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
     NSString* msg;
-    const float SEARCH_TIMEOUT = 10.0f;
     
     NSString* controllerIphoneName = @"PrinterSearchIphoneViewController";
     controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];
     GHAssertNotNil(controllerIphone, @"unable to instantiate controller (%@)", controllerIphoneName);
     GHAssertNotNil(controllerIphone.view, @"");
-    msg = [NSString stringWithFormat:@"wait for %.2f secs while the iPhone controller is loading", SEARCH_TIMEOUT];
-    [self waitForCompletion:SEARCH_TIMEOUT withMessage:msg];
+    msg = [NSString stringWithFormat:@"wait for %.2f secs while iPhone screen is loading", PSC_SEARCH_TIMEOUT];
+    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:msg];
     
     NSString* controllerIpadName = @"PrinterSearchIpadViewController";
     controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
-    msg = [NSString stringWithFormat:@"wait for %.2f secs while the iPad controller is loading", SEARCH_TIMEOUT];
-    [self waitForCompletion:SEARCH_TIMEOUT withMessage:msg];
+    msg = [NSString stringWithFormat:@"wait for %.2f secs while iPad screen is loading", PSC_SEARCH_TIMEOUT];
+    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:msg];
 }
 
 // Run at end of all tests in the class
@@ -82,6 +85,10 @@
     storyboard = nil;
     controllerIphone = nil;
     controllerIpad = nil;
+    
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 0)
+        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
 }
 
 // Run before each test method
@@ -101,10 +108,56 @@
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
     
     GHAssertNotNil([controllerIphone tableView], @"");
+    GHAssertNil(controllerIphone.printersViewController, @"will only be non-nil on segue from Printers");
+    
     GHAssertNotNil([controllerIpad tableView], @"");
+    GHAssertNil(controllerIpad.printersViewController, @"will only be non-nil on segue from Printers");
 }
 
-- (void)test002_SearchResultCellOutlets
+- (void)test002_AddPrinter
+{
+    GHTestLog(@"# CHECK: Add Printer.");
+    UITableView* listPrinters;
+    NSUInteger numPrinters = 0;
+
+    GHTestLog(@"-- checking the list");
+    listPrinters = [controllerIphone tableView];
+    GHAssertNotNil(listPrinters, @"");
+    numPrinters = [listPrinters numberOfRowsInSection:0];
+    GHAssertTrue(numPrinters > 0, @"make sure that there is at least 1 searchable printer available");
+    
+    GHTestLog(@"-- adding one printer");
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    [controllerIphone tableView:listPrinters didSelectRowAtIndexPath:indexPath];
+    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:nil];
+    [self removeSuccessAlert];
+    
+    GHTestLog(@"-- checking the list");
+    listPrinters = [controllerIphone tableView];
+    GHAssertNotNil(listPrinters, @"");
+    numPrinters = [listPrinters numberOfRowsInSection:0];
+    GHAssertTrue(numPrinters > 0, @"there should at least be 1 printer (the added printer)");
+    
+    GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
+}
+
+- (void)test003_Refresh
+{
+    GHTestLog(@"# CHECK: Refresh.");
+    NSString* msg = [NSString stringWithFormat:@"wait for %.2f secs while refreshing", PSC_SEARCH_TIMEOUT];
+    UITableView* listPrinters;
+    NSUInteger numRegisteredPrinters = [[PrinterManager sharedPrinterManager] countSavedPrinters];
+    
+    GHTestLog(@"-- refreshing");
+    [controllerIphone refresh];
+    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:msg];
+    listPrinters = [controllerIphone tableView];
+    GHAssertNotNil(listPrinters, @"");
+    NSUInteger numPrinters = [listPrinters numberOfRowsInSection:0];
+    GHAssertTrue(numPrinters >= numRegisteredPrinters, @"");
+}
+
+- (void)test004_SearchResultCellOutlets
 {
     GHTestLog(@"# CHECK: SearchResultCell Outlets.");
     
@@ -133,7 +186,7 @@
     GHAssertNotNil([cellIPad addIcon], @"");
 }
 
-- (void)test003_SearchResultCellSetters
+- (void)test005_SearchResultCellSetters
 {
     GHTestLog(@"# CHECK: SearchResultCell Setters.");
     NSString* printerName = @"RISO Printer";
@@ -194,13 +247,17 @@
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
 {
     NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
-    
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Printer Search Test"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"HIDE"
-                                          otherButtonTitles:nil];
-    [alert show];
+    UIAlertView* alert;
+
+    if (msg != nil)
+    {
+        alert = [[UIAlertView alloc] initWithTitle:@"Printer Search Test"
+                                           message:msg
+                                          delegate:self
+                                 cancelButtonTitle:@"HIDE"
+                                 otherButtonTitles:nil];
+        [alert show];
+    }
     
     BOOL done = NO;
     do
@@ -210,9 +267,29 @@
             break;
     } while (!done);
     
-    [alert dismissWithClickedButtonIndex:0 animated:YES];
+    if (msg != nil)
+        [alert dismissWithClickedButtonIndex:0 animated:YES];
     
     return done;
+}
+
+- (void)removeSuccessAlert
+{
+    for (UIWindow* window in [UIApplication sharedApplication].windows)
+    {
+        NSArray* subViews = window.subviews;
+        if ([subViews count] > 0)
+        {
+            UIView* view = [subViews objectAtIndex:0];
+            if ([view isKindOfClass:[CXAlertView class]])
+            {
+                CXAlertView* alert = (CXAlertView*)view;
+                [alert dismiss];
+                [self waitForCompletion:2 withMessage:nil];
+                alert = nil;
+            }
+        }
+    }
 }
 
 @end
