@@ -1,21 +1,30 @@
+
 package jp.co.riso.android.os.pauseablehandler;
 
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.os.Message;
-import android.test.AndroidTestCase;
+import android.test.ActivityInstrumentationTestCase2;
 
-public class PauseableHandlerTest extends AndroidTestCase implements PauseableHandlerCallback  {
+public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-    public static final int MESSAGE_FORSTORING = 0x10001;
-    public static final int MESSAGE_DONOTSTORE = 0x10001;
-    
-    boolean mMessageProcessed = false;
-    
+    private static final int MESSAGE = 0x10001;
+
+    private PauseableHandler mHandler ;
+
+    public PauseableHandlerTest() {
+        super(MainActivity.class);
+    }
+
+    public PauseableHandlerTest(Class<MainActivity> activityClass) {
+        super(activityClass);
+    }
+
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
-        
-        mMessageProcessed = false;
     }
-    
+
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }
@@ -24,28 +33,56 @@ public class PauseableHandlerTest extends AndroidTestCase implements PauseableHa
         PauseableHandler handler = new PauseableHandler(null);
         assertNotNull(handler);
     }
-    
-    public void testMessage_Immediately() {
-        
-        PauseableHandler handler = new PauseableHandler(null);
 
-        handler.sendEmptyMessageDelayed(MESSAGE_FORSTORING, 100);
-        
-        assertTrue(mMessageProcessed);
+    public void testSendMessageNoCallback() {
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            @Override
+            public void run(){
+                mHandler = new PauseableHandler(null);
+
+                Message msg = Message.obtain(mHandler, MESSAGE);
+                mHandler.sendMessage(msg);
+                assertTrue(mHandler.hasStoredMessage(MESSAGE));
+                assertTrue(mHandler.hasMessages(MESSAGE));
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        assertFalse(mHandler.hasStoredMessage(MESSAGE));
+        assertFalse(mHandler.hasMessages(MESSAGE));
     }
 
-    // ================================================================================
-    // INTERFACE - PauseableHandlerCallback
-    // ================================================================================
-    
+    public void testSendMessageNoCallbackDelayed() {
 
-    @Override
-    public boolean storeMessage(Message message) {
-        return false;
-    }
+        getInstrumentation().runOnMainSync(new Runnable(){
+            @Override
+            public void run(){
+                mHandler = new PauseableHandler(null);
 
-    @Override
-    public void processMessage(Message message) {
-        mMessageProcessed = true;
+                Message msg = Message.obtain(mHandler, MESSAGE);
+                mHandler.pause();
+                mHandler.sendMessage(msg);
+                assertTrue(mHandler.hasStoredMessage(MESSAGE));
+
+                assertTrue(mHandler.hasMessages(MESSAGE));
+            }
+        });
+
+        getInstrumentation().waitForIdleSync();
+        // message is already processed
+        assertFalse(mHandler.hasStoredMessage(MESSAGE));
+        assertFalse(mHandler.hasMessages(MESSAGE));
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            @Override
+            public void run(){
+                mHandler.resume();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+
+        // no effect since message is already processed
+        assertFalse(mHandler.hasStoredMessage(MESSAGE));
+        assertFalse(mHandler.hasMessages(MESSAGE));
     }
 }

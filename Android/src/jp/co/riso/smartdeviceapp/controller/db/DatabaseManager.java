@@ -21,7 +21,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public static final String TAG = "DatabaseManager";
     
     public static final int DATABASE_VERSION = 1;
-
+    
     private static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
     
@@ -155,10 +155,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * General method for inserting a row into the database. 
+     * General method for inserting a row into the database.
+     * When a UNIQUE constraint violation occurs, the pre-existing rows that are causing the
+     * constraint violation are removed prior to inserting or updating the current row.
      * 
      * @param table
-     *           the table to insert the row into  
+     *           the table to insert / replace the row into
      * @param nullColumnHack
      *            optional; may be null. SQL doesn't allow inserting a completely empty row without naming at least one
      *            column name. If your provided values is empty, no column names are known and an empty row can't be
@@ -167,7 +169,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param values
      *            this map contains the initial column values for the row. The keys should be the column names and the
      *            values the column values
-     * @return insert is successful
+     * @return rowId of the inserted row if successful else -1
      */
     public long insertOrReplace(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
@@ -191,19 +193,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
      *            the table to update in
      * @param whereClause
      *            the optional WHERE clause to apply when updating. Passing null will update all rows.
-     * @param whereArgs
-     *            You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
-     *            values will be bound as Strings.
+     * @param whereArg
+     *            You may include ?s in the where clause, which will be replaced by the value from whereArg.
      * @return update is successful
      */
-    public boolean update(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        long rowId = -1;
+    public boolean update(String table, ContentValues values, String whereClause, String whereArg) {
+        int rowsNum = 0;
         SQLiteDatabase db = this.getWritableDatabase();
+        String whereArgs[] = null;
         
-        rowId = db.update(table, values, whereClause, whereArgs);
+        if (whereArg != null && !whereArg.isEmpty()) {
+            whereArgs = new String[] { whereArg };
+        }
+        
+        rowsNum = db.update(table, values, whereClause, whereArgs);
         db.close();
         
-        return (rowId > -1);
+        return (rowsNum > 0);
     }
     
     /**
@@ -244,9 +250,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * 
      * @param whereClause
      *            the optional WHERE clause to apply when deleting. Passing null will delete all rows.
-     * @param whereArgs
-     *            You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
-     *            values will be bound as Strings.
+     * @param whereArg
+     *            You may include ?s in the where clause, which will be replaced by the value from whereArg.
      * @return delete is successful
      */
     public boolean delete(String table, String whereClause, String whereArg) {

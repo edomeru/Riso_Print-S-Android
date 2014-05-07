@@ -95,7 +95,7 @@ public class PrintSettingsManager {
             ContentValues cv = new ContentValues();
             cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, rowid);
             result = mManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv,
-                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] { String.valueOf(printerId) });
+                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
         }
         
         mManager.close();
