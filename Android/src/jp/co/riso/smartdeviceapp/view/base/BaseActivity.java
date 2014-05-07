@@ -11,7 +11,6 @@ package jp.co.riso.smartdeviceapp.view.base;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -22,12 +21,6 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        overridePendingTransition(0, 0);
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_NO_ANIMATION) == 0) {
-            // Override transition for consistency with Fragment Transition
-            overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
-        }
         
         onCreateContent(savedInstanceState);
     }

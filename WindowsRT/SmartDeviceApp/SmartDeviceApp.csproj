@@ -133,6 +133,7 @@
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
+    <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
@@ -622,6 +623,10 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\DirectPrint\DirectPrint.csproj">
+      <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
+      <Name>DirectPrint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SNMP\SNMP.csproj">
       <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
       <Name>SNMP</Name>

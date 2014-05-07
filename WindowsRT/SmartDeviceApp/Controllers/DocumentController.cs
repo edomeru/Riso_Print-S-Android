@@ -47,6 +47,11 @@ namespace SmartDeviceApp.Controllers
         public uint PageCount { get; private set; }
 
         /// <summary>
+        /// PDF File
+        /// </summary>
+        public StorageFile PdfFile { get; private set; }
+
+        /// <summary>
         /// File name of the actual PDF file
         /// </summary>
         public string FileName { get; private set; }
@@ -104,23 +109,23 @@ namespace SmartDeviceApp.Controllers
             {
                 // Copy to AppData temporary store
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                StorageFile tempPdfFile =  await file.CopyAsync(tempFolder, TEMP_PDF_NAME,
+                PdfFile =  await file.CopyAsync(tempFolder, TEMP_PDF_NAME,
                     NameCollisionOption.ReplaceExisting);
 
                 // Open and load PDF.
                 // Attempt to open PDF using empty string to determine whether the PDF requires
                 // password to open the file. If the PDF file requires a password,
                 // invalid password error will be thrown.
-                PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(tempPdfFile,
+                PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(PdfFile,
                     PDF_PASSWORD_EMPTY);
 
-                _document = new Document(file.Path, tempPdfFile.Path, pdfDocument);
+                _document = new Document(file.Path, PdfFile.Path, pdfDocument);
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
                 _isFileLoaded = true;
                 Result = LoadDocumentResult.Successful;
 
-                GenerateLogicalPages(0, 0); // Pre-load LogicalPages
+                await GenerateLogicalPages(0, 0); // Pre-load LogicalPages
             }
             catch (FileNotFoundException)
             {
@@ -211,7 +216,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="basePageIndex">base page index</param>
         /// <param name="numPages">number of pages needed (for imposition)</param>
-        public async void GenerateLogicalPages(int basePageIndex, int numPages)
+        /// <returns>task</returns>
+        public async Task GenerateLogicalPages(int basePageIndex, int numPages)
         {
             if (!_isFileLoaded)
             {

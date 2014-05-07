@@ -36,7 +36,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 public final class AppUtils {
-    public static final String TAG = "AppUtils"; 
+    public static final String TAG = "AppUtils";
     
     public static final String CONST_ASSET_PATH = "file:///android_asset/";
     
@@ -147,7 +147,9 @@ public final class AppUtils {
      */
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        if (activity.getCurrentFocus() != null) {
+            imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
     
     /**
@@ -155,7 +157,7 @@ public final class AppUtils {
      * 
      * @param activity
      *            Valid activity
-     *            
+     * 
      * @return Screen size
      */
     public static Point getScreenDimensions(Activity activity) {
@@ -165,7 +167,7 @@ public final class AppUtils {
         
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
-
+        
         display.getSize(size);
         
         return size;
@@ -178,7 +180,7 @@ public final class AppUtils {
      *            Valid Context
      * @param assetFile
      *            Relative path of the asset (from assets/)
-     *            
+     * 
      * @return Whether the asset exists or not
      */
     public static String getFileContentsFromAssets(Context context, String assetFile) {
@@ -213,7 +215,7 @@ public final class AppUtils {
      *            Valid Context
      * @param assetFile
      *            Relative path of the asset (from assets/)
-     *            
+     * 
      * @return Whether the asset exists or not
      */
     public static boolean assetExists(Context context, String assetFile) {
@@ -227,9 +229,9 @@ public final class AppUtils {
             stream.close();
             assetOk = true;
         } catch (FileNotFoundException e) {
-            Log.w(TAG, "assetExists failed: "+e.toString());
+            Log.w(TAG, "assetExists failed: " + e.toString());
         } catch (IOException e) {
-            Log.w(TAG, "assetExists failed: "+e.toString());
+            Log.w(TAG, "assetExists failed: " + e.toString());
         }
         return assetOk;
     }
@@ -243,7 +245,7 @@ public final class AppUtils {
      *            Directory of the file for localization
      * @param resource
      *            File to be opened
-     *            
+     * 
      * @return Localized relative path of the asset file
      */
     public static String getLocalizedAssetRelativePath(Context context, String folder, String resource) {
@@ -275,7 +277,7 @@ public final class AppUtils {
      *            Directory of the file for localization
      * @param resource
      *            File to be opened
-     *            
+     * 
      * @return Localized full path of the asset file
      */
     public static String getLocalizedAssetFullPath(Context context, String folder, String resource) {
@@ -288,8 +290,8 @@ public final class AppUtils {
         return null;
     }
     
-    //http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
-    public static void changeChildrenFont(ViewGroup v, Typeface font){
+    // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
+    public static void changeChildrenFont(ViewGroup v, Typeface font) {
         if (font == null) {
             return;
         }
@@ -325,7 +327,7 @@ public final class AppUtils {
         }
     }
     
-    //http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
+    // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
         if (variableName == null) {
             return defaultId;
@@ -341,13 +343,13 @@ public final class AppUtils {
             Log.w(TAG, "IllegalAccessException on getInt");
         } catch (IllegalArgumentException e) {
             Log.w(TAG, "IllegalArgumentException on getInt");
-        } 
+        }
         
         return id;
     }
     
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
-        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE); 
+        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
         
         // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.
         final int memClass = manager.getMemoryClass();
