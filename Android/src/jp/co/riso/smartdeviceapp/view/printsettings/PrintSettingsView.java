@@ -706,8 +706,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private int getUpdatedStringId(String name, int id) {
         if (getPrinter() != null) {
             if (name.equals(PrintSettings.TAG_PUNCH)) {
-                if (id == R.string.ids_lbl_punch_3holes && getPrinter().getConfig().isPunch4Available()) {
-                    return R.string.ids_lbl_punch_4holes;
+                if (id == R.string.ids_lbl_punch_4holes && !getPrinter().getConfig().isPunch4Available()) {
+                    return R.string.ids_lbl_punch_3holes;
                 }
             }
         }
