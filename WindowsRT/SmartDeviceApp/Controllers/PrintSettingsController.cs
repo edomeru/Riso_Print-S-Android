@@ -63,6 +63,8 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
+
+            PrinterController.Instance.DeletePrinterItemsEventHandler += RemovePrintSettings;
         }
 
         /// <summary>
@@ -178,21 +180,24 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Deletes print settings
         /// </summary>
-        /// <param name="screenName">name of active screen</param>
-        /// <returns>task</returns>
-        public async Task RemovePrintSettings(string screenName)
+        /// <param name="printer">printer</param>
+        public async void RemovePrintSettings(Printer printer)
         {
-            PrintSettings currPrintSettings = new PrintSettings();
-            if (_printSettingsMap.TryGetValue(screenName, out currPrintSettings))
+            if (printer != null)
             {
-                int deleted = await DatabaseController.Instance.DeletePrintSettings(currPrintSettings);
-                if (deleted == 0)
+                PrintSettings printSettings = await DatabaseController.Instance
+                    .GetPrintSettings(printer.PrintSettingId);
+
+                int deleted = 0;
+                if (printSettings != null)
                 {
-                    // TODO: Display error message
+                    deleted = await DatabaseController.Instance.DeletePrintSettings(printSettings);
                 }
 
-                // TODO: Set this to null?
-                // _currPrintSettings = null;
+                if (deleted == 0)
+                {
+                    // TODO: Display error?
+                }
             }
         }
 

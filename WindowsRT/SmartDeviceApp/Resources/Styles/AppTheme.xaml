@@ -73,6 +73,7 @@
     <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <conv:SelectedPrinterToBooleanConverter x:Key="SelectedPrinterToBooleanConverter"/>
+    <conv:SelectPrinterToSeparatorVisibilityConverter x:Key="SelectPrinterToSeparatorVisibilityConverter"/>
     <conv:SeparatorLineGeometryEndPointConverter x:Key="SeparatorLineGeometryEndPointConverter"/>
     <conv:SeparatorLineGeometryStartPointConverter x:Key="SeparatorLineGeometryStartPointConverter"/>
     <conv:SidePaneLineGeometryEndPointConverter x:Key="SidePaneLineGeometryEndPointConverter"/>

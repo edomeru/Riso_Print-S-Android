@@ -184,14 +184,6 @@ namespace SmartDeviceApp.Models
             }
         }
 
-
-
-        /// <summary>
-        /// Print settings associated to the printer
-        /// </summary>
-        [SQLite.Ignore]
-        public PrintSettings PrintSettings { get; set; }
-
         #endregion Properties
 
 

@@ -323,35 +323,6 @@ namespace SmartDeviceApp.Controllers
                 // Error handling
             }
 
-                    
-            return 0;
-        }
-
-                    //delete in Printer table
-        // TODO: Check usage. Use public async Task<int> DeletePrinter(Printer printer) below instead
-        public async Task<int> DeletePrinterFromDB(int printerId)
-        {
-            try
-            {
-                //delete in printer table
-                int count = await _dbConnection.Table<Printer>().CountAsync();
-
-                if (count > 0)
-                { 
-
-                var printer = await _dbConnection.Table<Printer>()
-                    .Where(prn => prn.Id == printerId).FirstOrDefaultAsync();
-
-                    await _dbConnection.DeleteAsync(printer);
-
-                }
-                
-            }
-            catch
-            {
-                return 1;
-            }
-
             return 0;
         }
 

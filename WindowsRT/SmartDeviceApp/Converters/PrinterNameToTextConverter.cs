@@ -11,6 +11,7 @@
 //
 
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,9 @@ namespace SmartDeviceApp.Converters
                     {
                         isSelectPrinter = System.Convert.ToBoolean(parameter);
                     }
+
+                    isSelectPrinter = isSelectPrinter &&
+                        new ViewModelLocator().PrintSettingsViewModel.IsPrintPreview;
 
                     string resourceId = (isSelectPrinter) ? "IDS_LBL_CHOOSE_PRINTER" : "IDS_LBL_NO_NAME";
                     var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
