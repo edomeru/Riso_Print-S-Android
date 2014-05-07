@@ -10,6 +10,9 @@
 #import "Printer.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
+#import "Swizzler.h"
+#import "SNMPManager.h"
+#import "SNMPManagerMock.h"
 
 const NSUInteger NUM_VALID_PRINTERS     = 4;
 const NSUInteger NUM_INVALID_PRINTERS   = 2;
@@ -431,6 +434,7 @@ const float PM_SEARCH_TIMEOUT = 10;
 
 - (void)test015_ValidSearch
 {
+    Swizzler *swizzler = [[Swizzler alloc] init];
     GHTestLog(@"# CHECK: PM can handle search callbacks. #");
     NSString* msg = [NSString stringWithFormat:
                      @"wait for %.2f seconds for valid search to end", PM_SEARCH_TIMEOUT];
@@ -444,8 +448,10 @@ const float PM_SEARCH_TIMEOUT = 10;
     callbackSearchEndCalled = NO;
     callbackFoundNewCalled = NO;
     callbackFoundOldCalled = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
     [printerManager searchForPrinter:testIP];
     [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    [swizzler deswizzle];
     GHTestLog(@"-- check if callbacks were received");
     GHAssertTrue(callbackSearchEndCalled, @"");
     GHAssertTrue(callbackFoundNewCalled, @"");
@@ -457,8 +463,10 @@ const float PM_SEARCH_TIMEOUT = 10;
     callbackSearchEndCalled = NO;
     callbackFoundNewCalled = NO;
     callbackFoundOldCalled = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
     [printerManager searchForPrinter:testIP];
     [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    [swizzler deswizzle];
     GHTestLog(@"-- check if callbacks were received");
     GHAssertTrue(callbackSearchEndCalled, @"");
     GHAssertFalse(callbackFoundNewCalled, @"");
