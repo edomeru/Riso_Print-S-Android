@@ -495,7 +495,26 @@
     
 }
 
-- (void)test014_isNonPreviewableSetting
+- (void)test013_previewSettingDidChange_Imposition
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    manager.printDocument.previewSetting.orientation = kOrientationPortrait;
+    manager.printDocument.previewSetting.imposition = kImposition2Pages;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger) 2,@"");
+
+    manager.printDocument.previewSetting.imposition = kImposition4pages;
+    GHAssertEquals(viewController.totalPageNum, (NSInteger) 1,@"");
+}
+
+- (void)test015_isNonPreviewableSetting
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -524,7 +543,7 @@
     GHAssertFalse([viewController isNonPreviewableSetting:KEY_BOOKLET_FINISH], @"");
 }
 
-- (void)test015_previewSettingDidChange_NotPreviewable
+- (void)test016_previewSettingDidChange_NotPreviewable
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -542,7 +561,7 @@
     GHAssertFalse([viewController previewSettingDidChange:KEY_SORT], @"");
 }
 
-- (void)test016_goToPage
+- (void)test017_goToPage
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -587,7 +606,7 @@
     GHAssertEquals(rightPage.pageIndex, (NSInteger)1, @"");
 }
 
-- (void)test017_nextViewController
+- (void)test018_nextViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -619,7 +638,7 @@
     GHAssertNil(page, @"");
 }
 
-- (void)test018_previousViewController
+- (void)test019_previousViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -651,7 +670,7 @@
     GHAssertNil(page, @"");
 }
 
--(void)test019_pageViewControllerAfterViewController
+-(void)test020_pageViewControllerAfterViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -686,7 +705,7 @@
     GHAssertNil(nextPage, @"");
 }
 
--(void)test020_pageViewControllerBeforeViewController
+-(void)test021_pageViewControllerBeforeViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -720,7 +739,7 @@
     GHAssertNil(nextPage, @"");
 }
 
--(void)test021_pageViewControllerDidFinishAnimating
+-(void)test022_pageViewControllerDidFinishAnimating
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -754,7 +773,7 @@
     GHAssertFalse(viewController.pageIsAnimating, @"");
 }
 
--(void)test022_pageViewControllerWillTransitionToViewController
+-(void)test023_pageViewControllerWillTransitionToViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -771,7 +790,7 @@
 
 }
 
--(void)test023_previewViewDidChangeZoomMode
+-(void)test024_previewViewDidChangeZoomMode
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
