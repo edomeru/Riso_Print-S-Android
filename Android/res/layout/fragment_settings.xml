@@ -26,7 +26,7 @@
                 android:background="@drawable/selector_printsettings_title"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/home_title_padding"
-                android:text="@string/ids_lbl_authentication"
+                android:text="@string/ids_lbl_card_reader_group"
                 android:textAllCaps="true"
                 android:textColor="@color/theme_light_1" />
 
@@ -47,7 +47,7 @@
                     android:duplicateParentState="true"
                     android:paddingRight="@dimen/printsettings_menu_padding"
                     android:maxLines="2"
-                    android:text="@string/ids_lbl_authentication_loginid"
+                    android:text="@string/ids_lbl_card_id"
                     android:textColor="@color/theme_dark_1"
                     android:textSize="@dimen/home_text_size" />
 
@@ -61,48 +61,6 @@
                     android:singleLine="true" >
                 </EditText>
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_size"
-                android:layout_marginLeft="@dimen/settings_separator_padding"
-                android:background="@color/theme_light_1"
-                android:duplicateParentState="true" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/home_menu_height"
-                android:background="@drawable/selector_printsettings_item"
-                android:duplicateParentState="true"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/home_title_padding"
-                android:paddingRight="@dimen/printsettings_menu_padding" >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:duplicateParentState="true"
-                    android:paddingRight="@dimen/printsettings_menu_padding"
-                    android:maxLines="2"
-                    android:text="@string/ids_lbl_authentication_pincode"
-                    android:textColor="@color/theme_dark_1"
-                    android:textSize="@dimen/home_text_size" />
-
-                <EditText
-                    style="@style/BorderedEditText"
-                    android:id="@+id/pinCodeEditText"
-                    android:layout_width="@dimen/settings_pin_code_input_width"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0"
-                    android:singleLine="true"
-                    android:inputType="textPassword"
-                    android:maxLines="8" >
-                </EditText>
-            </LinearLayout>
-            
         </LinearLayout>
     </ScrollView>
 

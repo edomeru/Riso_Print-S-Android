@@ -93,6 +93,7 @@ public class WaitingDialogFragment extends DialogFragment {
             dialog.setMessage(message);
         }
         
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setIndeterminate(true);
         dialog.setCancelable(cancelable);
         
@@ -104,6 +105,7 @@ public class WaitingDialogFragment extends DialogFragment {
                 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
                 }
             });
             

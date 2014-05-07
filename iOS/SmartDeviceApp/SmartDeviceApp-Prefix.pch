@@ -16,7 +16,5 @@
     #import <CoreData/CoreData.h>
 
     #import "AppDebug.h"
-    #import "NotificationNames.h"
-    #import "PrintSettingNames.h"
     #import "AppStrings.h"
 #endif

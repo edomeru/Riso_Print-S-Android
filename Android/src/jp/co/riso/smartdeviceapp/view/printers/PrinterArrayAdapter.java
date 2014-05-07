@@ -278,20 +278,12 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 fragment.setPrinter(printer);
                 switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
                 break;
-            case R.id.printerListRow:
-                if (mDeleteViewHolder != null) {
-                    return;
-                }
-                ViewHolder viewHolder = (ViewHolder) v.getTag();
-                printer = (Printer) viewHolder.mDiscloseImage.getTag();
-                
-                setPrinterRowToDefault(viewHolder);
-                mPrinterManager.setDefaultPrinter(printer);
-                break;
             case R.id.btn_delete:
                 PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
-                viewHolder = (ViewHolder) printerContainer.getTag();
+                ViewHolder viewHolder = (ViewHolder) printerContainer.getTag();
                 printer = (Printer) viewHolder.mDiscloseImage.getTag();
+                viewHolder.mDeleteButton.setAnimation(null);
+                viewHolder.mDeleteButton.setVisibility(View.GONE);
                 
                 Message newMessage = Message.obtain(mHandler, MSG_REMOVE_PRINTER);
                 newMessage.obj = printer;

@@ -15,14 +15,14 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -60,16 +60,17 @@ public class SettingsFragment extends BaseFragment {
         };
         editText.setFilters(filterArray);
         
-        editText = (EditText) view.findViewById(R.id.pinCodeEditText);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        
-        editText.setText(prefs.getString(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE));
-        editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_PIN_CODE));
-        filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(PIN_CODE_LIMIT)
-        };
-        editText.setFilters(filterArray);
+        if (!isTablet()) {
+            Point screenSize = AppUtils.getScreenDimensions(getActivity());
+            View rootView = view.findViewById(R.id.rootView);
+            if (rootView == null) {
+                return;
+            }
+            ViewGroup.LayoutParams params = rootView.getLayoutParams();
+            if (screenSize.x > screenSize.y) {
+                params.width = screenSize.y;
+            }
+        }
     }
     
     /** {@inheritDoc} */

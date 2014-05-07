@@ -2,11 +2,12 @@
 //  PrinterCell.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/5/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrinterCell.h"
+#import "UIColor+Theme.h"
 
 @interface PrinterCell()
 @property BOOL isDefaultPrinterCell;
@@ -45,43 +46,33 @@
 
 - (void) setCellStyleForToDeleteCell
 {
-    //TODO: this only works for iOS7
-    UIColor *bgColor = [UIColor colorWithRed:82.0/255.0 green:7.0/255.0 blue:182.0/255.0 alpha:1.0];
+    UIColor *bgColor = [UIColor purple2ThemeColor];
     [self setBackgroundColor:bgColor];
-    [self.printerName setTextColor:[UIColor whiteColor]];
+    [self.printerName setTextColor:[UIColor whiteThemeColor]];
     [self.deleteButton setHidden: NO];
     [self.disclosureImage setHidden: YES];
-    [self.separator setBackgroundColor:[UIColor colorWithRed:82.0/255.0
-                                                       green:7.0/255.0
-                                                        blue:182.0/255.0
-                                                       alpha:1.0]];
+    [self.separator setBackgroundColor:[UIColor purple2ThemeColor]];
 }
 
 - (void) setCellStyleForDefaultCell
 {
     self.isDefaultPrinterCell = YES;
-    [self setBackgroundColor:[UIColor colorWithRed:36.0/255.0 green:36.0/255.0 blue:36.0/255.0 alpha:1.0]];
-    [self.printerName setTextColor:[UIColor whiteColor]];
+    [self setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self.printerName setTextColor:[UIColor whiteThemeColor]];
     [self.deleteButton setHidden: YES];
     [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor colorWithRed:36.0/255.0
-                                                       green:36.0/255.0
-                                                        blue:36.0/255.0
-                                                       alpha:1.0]];
+    [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
 }
 
 -(void) setCellStyleForNormalCell
 {
     self.isDefaultPrinterCell = NO;
-    UIColor *bgColor = [UIColor colorWithRed:205.0/255.0 green:205.0/255.0 blue:205.0/255.0 alpha:1.0];
+    UIColor *bgColor = [UIColor gray1ThemeColor];
     [self setBackgroundColor:bgColor];
-    [self.printerName setTextColor:[UIColor blackColor]];
+    [self.printerName setTextColor:[UIColor blackThemeColor]];
     [self.deleteButton setHidden: YES];
     [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor colorWithRed:255.0/255.0
-                                                       green:255.0/255.0
-                                                        blue:255.0/255.0
-                                                       alpha:1.0]];
+    [self.separator setBackgroundColor:[UIColor whiteThemeColor]];
 }
 
 @end

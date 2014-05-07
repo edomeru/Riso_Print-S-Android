@@ -2,8 +2,8 @@
 //  DatabaseManager.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "DatabaseManager.h"
@@ -147,9 +147,19 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
                                                                 error:&error])
     {
 #if DEBUG_LOG_DATABASE_MANAGER
-        NSLog(@"[ERROR][DBM] unresolved error %@, %@", error, [error userInfo]);
+        NSLog(@"[ERROR][DBM] error creating database, possibly incompatible schema");
 #endif
-        abort();
+        
+        // delete the existing store
+        [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
+        
+        // create the database again
+        // TODO: should migrate the DB instead (if possible)
+        [sharedPersistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                                       configuration:nil
+                                                                 URL:storeURL
+                                                             options:nil
+                                                               error:&error];
     }
     
     return sharedPersistentStoreCoordinator;

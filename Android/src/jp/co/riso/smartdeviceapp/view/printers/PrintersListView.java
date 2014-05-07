@@ -105,8 +105,15 @@ public class PrintersListView extends ListView implements Callback {
                 }
             }
             
-            endDeleteMode(mDeleteView);
-            return true;
+            boolean swipe = processSwipe(ev);
+            
+            if (swipe) {
+                return true;
+            }
+            if (ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                endDeleteMode(mDeleteView);
+            }
+            return super.onInterceptTouchEvent(ev);
         } else {
             boolean swipe = processSwipe(ev);
             
