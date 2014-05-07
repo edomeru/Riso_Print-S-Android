@@ -67,6 +67,6 @@ public class SmartDeviceApp extends Application {
             }
         }
         
-        editor.commit();
+        editor.apply();
     }
 }

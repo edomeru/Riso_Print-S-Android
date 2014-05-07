@@ -252,7 +252,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             SharedPreferences.Editor editor = prefs.edit();
 
             editor.putInt(AppConstants.PREF_KEY_DB_VERSION, DatabaseManager.DATABASE_VERSION);
-            editor.commit();
+            editor.apply();
         }
     }
 }
