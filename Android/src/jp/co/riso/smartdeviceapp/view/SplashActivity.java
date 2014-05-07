@@ -54,19 +54,21 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         if (isTaskRoot()) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+            boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
+            
             if (!mDatabaseInitialized) {
-                if (mInitTask == null) {
-                    mInitTask = new DBInitTask();
-                    mInitTask.execute();
+                if (!dbIsOK) {
+                    if (mInitTask == null) {
+                        mInitTask = new DBInitTask();
+                        mInitTask.execute();
+                    }
                 }
             }
             
             setContentView(R.layout.activity_splash);
             
             if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
-                boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
-                
                 if (dbIsOK && !AppConstants.APP_SHOW_SPLASH) {
                     runMainActivity();
                 } else {
