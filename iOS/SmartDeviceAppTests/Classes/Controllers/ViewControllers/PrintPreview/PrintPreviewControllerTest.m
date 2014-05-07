@@ -45,7 +45,7 @@
 - (void)setupPageviewControllerWithBindSetting;
 - (void)setupTotalPageNum;
 - (void)previewSettingDidChange:(NSString *)keyChanged;
-- (BOOL)isNonPreviewbleSetting:(NSString *)settingKey;
+- (BOOL)isNonPreviewableSetting:(NSString *)settingKey;
 - (void)goToPage:(NSInteger)pageIndex;
 - (UIViewController *)nextViewController:(NSInteger)index;
 - (UIViewController *)previousViewController:(NSInteger)index;
@@ -336,28 +336,28 @@
     [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
 }
 
-- (void)test008_setupTotalPageNum_Imposition
+- (void)test009_setupTotalPageNum_Imposition
 {
     PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
     previewSetting.imposition = kImposition2Pages;
     [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
 }
 
-- (void)test008_setupTotalPageNum_Duplex
+- (void)test010_setupTotalPageNum_Duplex
 {
     PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
     previewSetting.duplex = kDuplexSettingLongEdge;
     [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
 }
 
-- (void)test008_setupTotalPageNum_Booklet
+- (void)test011_setupTotalPageNum_Booklet
 {
     PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
     previewSetting.booklet = YES;
     [self performTotalPageNumTest:testURL withPreviewSetting:previewSetting];
 }
 
-- (void) performTotalPageNumTest:(NSURL *) pdfURL withPreviewSetting: (PreviewSetting *)previewSetting
+- (void)performTotalPageNumTest:(NSURL *) pdfURL withPreviewSetting: (PreviewSetting *)previewSetting
 {
 
     [[PDFFileManager sharedManager] setFileURL:pdfURL];
@@ -401,7 +401,7 @@
     GHAssertEquals(viewController.totalPageNum, expectedPageNum, @"");
 }
 
-- (void)test009_previewSettingDidChange_Booklet
+- (void)test012_previewSettingDidChange_Booklet
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -426,7 +426,7 @@
     
 }
 
-- (void)test009_previewSettingDidChange_Duplex
+- (void)test013_previewSettingDidChange_Duplex
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -458,7 +458,8 @@
     //TODO: Add Checks
     
 }
-- (void)test009_isNonPreviewableSetting
+
+- (void)test014_isNonPreviewableSetting
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -467,27 +468,27 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
     
-    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_COPIES] , @"");
-    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_OUTPUT_TRAY] , @"");
-    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_PAPER_TYPE] , @"");
-    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_SORT], @"");
-    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_INPUT_TRAY], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:@"colorMode"] , @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:@"scaleToFit"], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:@"paperSize"], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_DUPLEX] , @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_ORIENTATION] , @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_PUNCH], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_STAPLE], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_BOOKLET], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_BOOKLET_LAYOUT], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_IMPOSITION], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_IMPOSITION_ORDER], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_FINISHING_SIDE], @"");
-    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_BOOKLET_FINISH], @"");
+    GHAssertTrue([viewController isNonPreviewableSetting:KEY_COPIES] , @"");
+    GHAssertTrue([viewController isNonPreviewableSetting:KEY_OUTPUT_TRAY] , @"");
+    GHAssertTrue([viewController isNonPreviewableSetting:KEY_PAPER_TYPE] , @"");
+    GHAssertTrue([viewController isNonPreviewableSetting:KEY_SORT], @"");
+    GHAssertTrue([viewController isNonPreviewableSetting:KEY_INPUT_TRAY], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:@"colorMode"] , @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:@"scaleToFit"], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:@"paperSize"], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_DUPLEX] , @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_ORIENTATION] , @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_PUNCH], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_STAPLE], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_BOOKLET], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_BOOKLET_LAYOUT], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_IMPOSITION], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_IMPOSITION_ORDER], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_FINISHING_SIDE], @"");
+    GHAssertFalse([viewController isNonPreviewableSetting:KEY_BOOKLET_FINISH], @"");
 }
 
-- (void)test009_previewSettingDidChange_NotPreviewable
+- (void)test015_previewSettingDidChange_NotPreviewable
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -521,7 +522,7 @@
     GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
 }
 
-- (void)test009_goToPage
+- (void)test016_goToPage
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -532,7 +533,6 @@
     
     GHAssertNotNil(viewController.view, @"");
     
-
     manager.printDocument.previewSetting.booklet = YES;
     manager.printDocument.previewSetting.bookletLayout = kBookletLayoutLeftToRight;
     [viewController goToPage:2];
@@ -567,7 +567,7 @@
     GHAssertEquals(rightPage.pageIndex, (NSInteger)1, @"");
 }
 
-- (void)test009_nextViewController
+- (void)test017_nextViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
@@ -599,7 +599,7 @@
     GHAssertNil(page, @"");
 }
 
-- (void)test009_previousViewController
+- (void)test018_previousViewController
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
     [manager setFileURL:testURL];
