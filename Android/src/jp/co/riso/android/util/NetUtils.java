@@ -45,6 +45,9 @@ public class NetUtils {
      * @return true if the IP Address is a valid IPv4 Address.
      */
     public static boolean isIPv4Address(final String ipAddress) {
+        if (ipAddress == null) {
+            return false;
+        }
         return IPV4_PATTERN.matcher(ipAddress).matches();
     }
     
@@ -58,6 +61,9 @@ public class NetUtils {
      * @return true if the IP Address is a valid IPv4 Multicast Address.
      */
     public static boolean isIPv4MulticastAddress(final String ipAddress) {
+        if (ipAddress == null) {
+            return false;
+        }
         return IPV4_MULTICAST_PATTERN.matcher(ipAddress).matches();
     }
     
@@ -71,6 +77,9 @@ public class NetUtils {
      * @return true if the IP Address is a valid IPv6 Address.
      */
     public static boolean isIPv6Address(final String ipAddress) {
+        if (ipAddress == null) {
+            return false;
+        }
         return isIPv6StdAddress(ipAddress) || isIPv6HexCompressedAddress(ipAddress) || isIPv6LinkLocalAddress(ipAddress) || isIPv6Ipv4DerivedAddress(ipAddress);
     }
     
@@ -109,6 +118,8 @@ public class NetUtils {
             Log.w(TAG, "UnknownHostException");
         } catch (IOException e) {
             Log.w(TAG, "IOException");
+        } catch (NullPointerException e) {
+            Log.w(TAG, "NullPointerException");
         }
         return false;
     }

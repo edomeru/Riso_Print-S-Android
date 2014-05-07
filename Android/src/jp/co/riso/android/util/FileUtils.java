@@ -26,6 +26,9 @@ public class FileUtils {
      *            Destination
      */
     public static void copy(File src, File dst) throws IOException {
+        if(src == null || dst == null) {
+            return;
+        }
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);
         

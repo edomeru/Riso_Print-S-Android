@@ -1,0 +1,121 @@
+
+package jp.co.riso.android.util;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
+import android.content.res.AssetManager;
+import android.test.ActivityInstrumentationTestCase2;
+
+public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
+    final private static String TEST_SRC_FILE = "help.html";
+    final private static String TEST_DST_FILE = "sample_dst.html";
+
+    private File mSrcFile = null;
+    private File mDstFile = null;
+
+    public FileUtilsTest() {
+        super(MainActivity.class);
+    }
+
+    public FileUtilsTest(Class<MainActivity> activityClass) {
+        super(activityClass);
+    }
+
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
+
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    // ================================================================================
+    // Tests - constructors
+    // ================================================================================
+
+    public void testConstructor() {
+        FileUtils utils = new FileUtils();
+        assertNotNull(utils);
+    }
+
+    // ================================================================================
+    // Tests - copy
+    // ================================================================================
+
+    public void testCopy_ValidParams() {
+        try {
+            
+            mSrcFile = new File(getAssetPath(TEST_SRC_FILE));
+            if (mSrcFile == null) {
+                fail();
+            }
+
+            mDstFile = new File(SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/"
+                    + TEST_DST_FILE);
+            if (mDstFile == null) {
+                fail();
+            }
+
+            FileUtils.copy(mSrcFile, mDstFile);
+        } catch (IOException e) {
+            fail();
+        } catch (NullPointerException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testCopy_NullSrc() {
+        try {
+            FileUtils.copy(null, mDstFile);
+        } catch (IOException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testCopy_NullDst() {
+        try {
+            FileUtils.copy(mSrcFile, null);
+        } catch (IOException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    // ================================================================================
+    // Private
+    // ================================================================================
+
+    private String getAssetPath(String filename) {
+        File f = new File(getActivity().getCacheDir() + "/" + filename);
+        AssetManager assetManager = getInstrumentation().getContext().getAssets();
+
+        if (!f.exists()) {
+            try {
+                InputStream is = assetManager.open(filename);
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(buffer);
+                fos.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return f.getPath();
+    }
+
+}
