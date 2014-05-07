@@ -43,6 +43,9 @@ namespace SmartDeviceApp.Controllers
         public delegate void OnNavigateFromEventHandler();
         private OnNavigateFromEventHandler _onNavigateFromEventHandler;
 
+        public delegate void DeletePrinterItemsHandler(Printer printer);
+        public event DeletePrinterItemsHandler DeletePrinterItemsEventHandler;
+
         ThreadPoolTimer periodicTimer;
 
         private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
@@ -625,6 +628,11 @@ namespace SmartDeviceApp.Controllers
             _printerList.RemoveAt(index);
 
             _printerListTemp = _printerList;
+
+            if (DeletePrinterItemsEventHandler != null)
+            {
+                DeletePrinterItemsEventHandler(printer);
+            }
 
             return true;
         }

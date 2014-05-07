@@ -39,6 +39,8 @@ namespace SmartDeviceApp.Controllers
         {
             _removeJobEventHandler = new RemoveJobEventHandler(RemoveJob);
             _removeGroupedJobsEventHandler = new RemoveGroupedJobsEventHandler(RemoveGroupedJobs);
+
+            PrinterController.Instance.DeletePrinterItemsEventHandler += RemoveGroupedJobsByPrinter;
         }
 
         /// <summary>
@@ -194,6 +196,18 @@ namespace SmartDeviceApp.Controllers
                 {
                     RemoveJob(printJob);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Deletes a set of print jobs based on printer
+        /// </summary>
+        /// <param name="printer">printer</param>
+        public void RemoveGroupedJobsByPrinter(Printer printer)
+        {
+            if (printer != null)
+            {
+                RemoveGroupedJobs(printer.Id);
             }
         }
 
