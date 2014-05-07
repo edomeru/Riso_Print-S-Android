@@ -626,6 +626,7 @@
     <ProjectReference Include="..\SNMP\SNMP.csproj">
       <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
       <Name>SNMP</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

@@ -27,6 +27,9 @@ namespace SmartDeviceApp.Controllers
         public delegate void SearchPrinterHandler();
         private SearchPrinterHandler _searchPrinterHandler;
 
+        public delegate Task<bool> AddPrinterFromSearchHandler(string ip);
+        private AddPrinterFromSearchHandler _addPrinterFromSearchHandler;
+
         public delegate void SearchPrinterTimeoutHandler(string ipAddress);
         private SearchPrinterTimeoutHandler _searchPrinterTimeoutHandler;
 
@@ -47,7 +50,7 @@ namespace SmartDeviceApp.Controllers
         private AddPrinterViewModel _addPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
 
-        SNMPController snmpController = new SNMPController();
+        //SNMPController snmpController = new SNMPController();
 
 
         static PrinterController() { }
@@ -72,6 +75,7 @@ namespace SmartDeviceApp.Controllers
 
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
+            _addPrinterFromSearchHandler = new AddPrinterFromSearchHandler(addPrinterFromSearch);
             _deletePrinterHandler = new DeletePrinterHandler(deletePrinter);
             _searchPrinterTimeoutHandler = new SearchPrinterTimeoutHandler(handleSearchTimeout);
             _openDefaultPrintSettingsHandler = new OpenDefaultPrintSettingsHandler(handleOpenDefaultPrintSettings);
@@ -81,13 +85,13 @@ namespace SmartDeviceApp.Controllers
             _printersViewModel.PrinterList = PrinterList;
             _printersViewModel.OpenDefaultPrintSettingsHandler += _openDefaultPrintSettingsHandler;
 
-            _searchPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
+            _searchPrinterViewModel.AddPrinterFromSearchHandler += _addPrinterFromSearchHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
             _searchPrinterViewModel.PrinterSearchList = PrinterSearchList;
 
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
-
+            SNMPController.Instance.Initialize();
         }
 
         private void handleOpenDefaultPrintSettings(Printer printer)
@@ -173,7 +177,8 @@ namespace SmartDeviceApp.Controllers
                 //sortPrinterList(indexOfDefaultPrinter);
                 _printerListTemp = _printerList;
                
-                await updateStatus();
+                //await updateStatus();
+                startPolling();
             }
         }
 
@@ -302,9 +307,9 @@ namespace SmartDeviceApp.Controllers
 
                 //check if online
                 //get MIB
-                snmpController.printerControllerAddTimeout = new Action<string>(handleAddTimeout);
-                snmpController.printerControllerAddPrinterCallback = handleAddPrinterStatus;
-                snmpController.getDevice(ip);
+                SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
+                SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                SNMPController.Instance.getDevice(ip);
 
                 
             }
@@ -421,11 +426,11 @@ namespace SmartDeviceApp.Controllers
             });
         }
 
-        private async void handleAddTimeout(string ip)
+        private async void handleAddTimeout(string ip, string name, List<string> capabilities)
         {
             //add to printerList
 
-            Printer printer = new Printer() { IpAddress = ip, Name = "No name" };
+            Printer printer = new Printer() { IpAddress = ip, Name = (name == null ? "No Name" : name)};
 
             printer.EnabledBooklet = true;
             printer.EnabledStapler = true;
@@ -540,9 +545,9 @@ namespace SmartDeviceApp.Controllers
         {
             _searchPrinterViewModel.SetStateRefreshState();
             _printerSearchList.Clear();
-            snmpController.printerControllerTimeout = new Action<string>(handleSearchTimeout);
-            snmpController.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(handleDeviceDiscovered);
-            snmpController.startDiscover();
+            SNMPController.Instance.printerControllerTimeout = new Action<string>(handleSearchTimeout);
+            SNMPController.Instance.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(handleDeviceDiscovered);
+            SNMPController.Instance.startDiscover();
             
         }
 
@@ -578,6 +583,56 @@ namespace SmartDeviceApp.Controllers
         {
             _searchPrinterViewModel.SearchTimeout();
 
+        }
+
+        public async Task<bool> addPrinterFromSearch(string ip)
+        {
+
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            //check if _printerList is already full
+            if (_printerList.Count() >= 10)//TODO: Change to CONSTANTS
+            {
+                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_MAX_PRINTER_COUNT "));
+                return false;
+            }
+
+            Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
+                try
+                {
+                    int id = await DatabaseController.Instance.InsertPrinter(printer);
+                    printer.Id = id;
+                    printer.IsOnline = true;
+                }
+                catch (Exception e)
+                {
+                    
+                    _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                    return false;
+                }
+                
+
+                printer.PropertyChanged += handlePropertyChanged;
+                _printerList.Add(printer);
+
+
+                _printerListTemp = _printerList;
+                _addPrinterViewModel.handleAddIsSuccessful(true);
+
+                if (PrinterSearchList.Count > 0) { 
+                    PrinterSearchItem searchItem = PrinterSearchList.First(x => x.Ip_address == ip);
+                    if (searchItem == null)
+                    {
+                        //error in adding;
+                        
+                        _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                    }
+                    else
+                    {
+                        searchItem.IsInPrinterList = true;
+                    }
+                }
+                return true;
         }
         
 
