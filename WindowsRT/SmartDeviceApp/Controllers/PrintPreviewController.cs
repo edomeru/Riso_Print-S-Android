@@ -85,6 +85,7 @@ namespace SmartDeviceApp.Controllers
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private static int _currPreviewPageIndex;
+        private bool _resetPrintSettings; // Flag used only when selected printer is deleted
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -137,6 +138,7 @@ namespace SmartDeviceApp.Controllers
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
+                _resetPrintSettings = false;
                 _currPreviewPageIndex = 0;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
@@ -148,6 +150,8 @@ namespace SmartDeviceApp.Controllers
 
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
                 _printPreviewViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
+
+                PrinterController.Instance.DeletePrinterItemsEventHandler += PrinterDeleted;
             }
             else
             {
@@ -169,6 +173,9 @@ namespace SmartDeviceApp.Controllers
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
             _printSettingsViewModel.PinCodeValueChangedEventHandler -= _pinCodeValueChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
+            PrinterController.Instance.DeletePrinterItemsEventHandler -= PrinterDeleted;
+
+            _resetPrintSettings = false;
             _selectedPrinter = null;
             await ClearPreviewPageListAndImages();
 
@@ -193,14 +200,38 @@ namespace SmartDeviceApp.Controllers
 
         #region Printer and Print Settings Initialization
 
-        public void RegisterPrintSettingValueChange()
+        /// <summary>
+        /// On navigate to Print Preview screen event handler
+        /// </summary>
+        public async void RegisterPrintSettingValueChange()
         {
             PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
+            if (_resetPrintSettings)
+            {
+                _selectedPrinter = null;
+                await SetSelectedPrinterAndPrintSettings(-1);
+                _resetPrintSettings = false;
+            }
         }
 
+        /// <summary>
+        /// On navigate from Print Preview screen event handler
+        /// </summary>
         public void UnregisterPrintSettingValueChange()
         {
             PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
+        }
+
+        /// <summary>
+        /// Event handler when a printer is deleted
+        /// </summary>
+        /// <param name="printer">printer</param>
+        public async void PrinterDeleted(Printer printer)
+        {
+            if (_selectedPrinter.Id == printer.Id)
+            {
+                _resetPrintSettings = true;
+            }
         }
 
         /// <summary>
@@ -239,6 +270,7 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
+                _selectedPrinter = null;
                 await SetSelectedPrinterAndPrintSettings(-1);
             }
         }
