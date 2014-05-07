@@ -120,7 +120,7 @@ namespace SmartDeviceApp.Controllers
                 _isFileLoaded = true;
                 Result = LoadDocumentResult.Successful;
 
-                GenerateLogicalPages(0, 0); // Pre-load LogicalPages
+                await GenerateLogicalPages(0, 0); // Pre-load LogicalPages
             }
             catch (FileNotFoundException)
             {
@@ -211,7 +211,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="basePageIndex">base page index</param>
         /// <param name="numPages">number of pages needed (for imposition)</param>
-        public async void GenerateLogicalPages(int basePageIndex, int numPages)
+        /// <returns>task</returns>
+        public async Task GenerateLogicalPages(int basePageIndex, int numPages)
         {
             if (!_isFileLoaded)
             {
