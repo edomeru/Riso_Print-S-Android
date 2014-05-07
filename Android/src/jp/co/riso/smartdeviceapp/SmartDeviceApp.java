@@ -59,7 +59,6 @@ public class SmartDeviceApp extends Application {
         
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
-        hashMap.put(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE);
         
         for (String key : hashMap.keySet()) {
             String val = hashMap.get(key);
