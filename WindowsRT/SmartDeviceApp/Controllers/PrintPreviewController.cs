@@ -1709,7 +1709,7 @@ namespace SmartDeviceApp.Controllers
 
                     DirectPrintController dp = new DirectPrintController();
                     dp.SendPrintJob(DocumentController.Instance.FileName,
-                        DocumentController.Instance.PdfFile, _selectedPrinter);
+                        DocumentController.Instance.PdfFile, _selectedPrinter, _currPrintSettings);
 
                     // TODO: Remove the following line
                     UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));
