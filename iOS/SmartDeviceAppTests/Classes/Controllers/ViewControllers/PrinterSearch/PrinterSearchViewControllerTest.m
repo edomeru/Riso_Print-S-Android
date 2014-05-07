@@ -155,6 +155,11 @@
     GHAssertEqualStrings([[cellIphone printerName] text], printerName, @"");
     GHAssertEqualStrings([[cellIphone printerIP] text], printerIP, @"");
     
+    [cellIphone setContentsUsingName:nil usingIP:printerIP];
+    GHAssertEqualStrings([[cellIphone printerName] text], NSLocalizedString(@"IDS_LBL_NO_NAME", "No name"),  @"");
+    [cellIphone setContentsUsingName:@"" usingIP:printerIP];
+    GHAssertEqualStrings([[cellIphone printerName] text], NSLocalizedString(@"IDS_LBL_NO_NAME", "No name"),  @"");
+    
     [cellIphone setStyle:NO]; //not last cell
     GHAssertFalse([[cellIphone separator] isHidden], @"");
     

@@ -14,7 +14,6 @@
 @interface PrinterStatusHelper ()
 
 @property (nonatomic) NSTimer *pollingTimer;
-@property (nonatomic) NSString *notifName;
 
 @property (strong, nonatomic) SimplePing* pinger;
 @property (assign, nonatomic) BOOL respondedToPing;

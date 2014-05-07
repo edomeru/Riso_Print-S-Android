@@ -79,13 +79,23 @@
     const NSUInteger TEST_NUM_PRINTERS = 8;
     const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {5, 8, 10, 1, 4, 10, 3, 7};
     
+    // add a non-test printer with no jobs (for coverage)
+    PrinterDetails* pd1 = [[PrinterDetails alloc] init];
+    pd1.name = @"Not A Test Printer";
+    pd1.ip = @"127.0.0.1";
+    GHAssertTrue([[PrinterManager sharedPrinterManager] registerPrinter:pd1], @"");
+    // add a test printer (for coverage)
+    PrinterDetails* pd2 = [[PrinterDetails alloc] init];
+    pd2.name = [NSString stringWithFormat:@"%@ 3", TEST_PRINTER_NAME];
+    pd2.ip = [NSString stringWithFormat:@"%@.3", TEST_PRINTER_IP];
+    GHAssertTrue([[PrinterManager sharedPrinterManager] registerPrinter:pd2], @"");
+    
     NSMutableArray* listPrintJobHistoryGroups = [PrintJobHistoryHelper preparePrintJobHistoryGroups];
     GHAssertNotNil(listPrintJobHistoryGroups, @"");
 
     GHTestLog(@"-- checking number of groups");
     NSUInteger countPrintJobHistoryGroups = [listPrintJobHistoryGroups count];
     GHTestLog(@"-- #groups = %lu", (unsigned long)countPrintJobHistoryGroups);
-
     GHAssertTrue(countPrintJobHistoryGroups == TEST_NUM_PRINTERS, @"should be equal to # of test printers");
     
     for (NSUInteger i = 0; i < TEST_NUM_PRINTERS; i++)
@@ -245,7 +255,7 @@
         if (![group.groupName isEqualToString:VALID_PRINTER_NAME])
         {
             GHAssertTrue(group.groupName == nil || [group.groupName isEqualToString:@""],
-                         @"invalid printer should have either nil or @\"\" name to be properly handled");
+                         @"invalid printer should be either nil or @\"\" name to be properly handled");
         }
     }
 }

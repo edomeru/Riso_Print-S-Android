@@ -9,13 +9,14 @@
 #import <GHUnitIOS/GHUnit.h>
 #import "PrinterStatusHelper.h"
 
+//use an online printer IP
 //static NSString* TEST_PRINTER_IP = @"192.168.0.198";
 static NSString* TEST_PRINTER_IP = @"192.168.0.199";
-//static NSString* TEST_PRINTER_IP = @"192.168.0.1";
 
 @interface PrinterStatusHelperTest : GHTestCase <PrinterStatusHelperDelegate>
 {
     BOOL statusDidChangeCallbackReceived;
+    BOOL onlineStatus;
 }
 
 @end
@@ -88,8 +89,8 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     GHTestLog(@"-- waiting for status change callback");
     msg = [NSString stringWithFormat: @"wait for %.2f seconds while waiting for the polling callback", POLL_TIMEOUT];
     [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
-    GHAssertTrue(statusDidChangeCallbackReceived,
-                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
+    GHAssertTrue(statusDidChangeCallbackReceived, @"");
+    GHAssertTrue(onlineStatus, [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
     
     GHTestLog(@"-- stopping status poller");
     [psh stopPrinterStatusPolling];
@@ -101,6 +102,7 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 - (void)statusDidChange:(BOOL)isOnline
 {
     statusDidChangeCallbackReceived = YES;
+    onlineStatus = isOnline;
 }
 
 #pragma mark - Utilities

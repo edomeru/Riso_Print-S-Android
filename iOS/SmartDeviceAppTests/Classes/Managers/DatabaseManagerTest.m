@@ -12,6 +12,9 @@
 #import "PrintJob.h"
 #import "PrintSetting.h"
 #import "DefaultPrinter.h"
+#import "PrintJob+Log.h"
+#import "Printer+Log.h"
+#import "PrintSetting+Log.h"
 
 @interface DatabaseManagerTest : GHTestCase
 {
@@ -94,6 +97,7 @@
     
     NSArray* results = [self checkGet:E_PRINTER expecting:1];
     Printer* retrievedPrinter1 = (Printer*)[results firstObject];
+    [retrievedPrinter1 log]; //for coverage
     GHAssertNotNil(retrievedPrinter1, @"retrievedPrinter1 should not be nil");
     GHAssertNotNil(retrievedPrinter1.printsetting, @"PrintSetting object should not be nil");
     
@@ -206,6 +210,7 @@
     
     NSArray* results1 = [self checkGet:E_PRINTJOB expecting:1];
     PrintJob* retrievedPrintJob1 = (PrintJob*)[results1 firstObject];
+    [retrievedPrintJob1 log]; //for coverage
     GHAssertNotNil(retrievedPrintJob1, @"retrievedPrintJob1 should not be nil");
     GHAssertNotNil(retrievedPrintJob1.printer, @"Printer object should not be nil");
     
@@ -265,6 +270,7 @@
     
     NSArray* results = [self checkGet:E_PRINTSETTING expecting:1];
     PrintSetting* retrievedPrintSetting = (PrintSetting*)[results firstObject];
+    [retrievedPrintSetting log]; //for coverage
     GHAssertNotNil(retrievedPrintSetting, @"retrievedPrintSetting should not be nil");
     
     [self checkDelete:retrievedPrintSetting usingTag:@"retrievedPrintSetting"];

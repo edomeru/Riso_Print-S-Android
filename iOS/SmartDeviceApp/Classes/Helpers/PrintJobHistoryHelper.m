@@ -215,7 +215,7 @@
 #endif
                 break;
             }
-            newPrintJob.name = [NSString stringWithFormat:@"%@ %d-%d", TEST_JOB_NAME, printerIdx+1, jobIdx+1];
+            newPrintJob.name = [NSString stringWithFormat:@"%@ %d-%d", TEST_JOB_NAME, testPrinterIdx+1, jobIdx+1];
             newPrintJob.result = [NSNumber numberWithInt:jobIdx%2]; //alternate OK and NG
             newPrintJob.date = [NSDate dateWithTimeIntervalSinceNow:(arc4random()%60)*1000]; //random times
             newPrintJob.printer = testPrinter;

@@ -15,8 +15,9 @@
 #import "CXAlertView.h"
 
 //use valid printer IPs
-//static NSString* TEST_PRINTER_IP = @"192.168.0.198";
-static NSString* TEST_PRINTER_IP = @"192.168.0.199";
+static NSString* TEST_PRINTER_IP_SUCCESS = @"192.168.0.198";
+//static NSString* TEST_PRINTER_IP_SUCCESS = @"192.168.0.199";
+static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
 
 @interface DirectPrintManager (UnitTest)
 
@@ -61,6 +62,8 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     while (pm.countSavedPrinters != 0)
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+    
+    [self removeErrorDialogIfPresent];
 }
 
 // Run before each test method
@@ -82,32 +85,60 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 {
     GHTestLog(@"# CHECK: DPM can print via LPR. #");
     
+    //attach the correct printer
+    PDFFileManager* pdfm = [PDFFileManager sharedManager];
+    pdfm.printDocument.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:0];
+    
     GHTestLog(@"-- printing the document");
     documentDidFinishCallbackReceived = NO;
     [dpm printDocumentViaLPR];
-    [self waitForCompletion:5];
+    [self waitForCompletion:10];
     GHTestLog(@"-- printing finished");
 
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
+                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP_SUCCESS]);
 }
 
 - (void)test002_PrintDocumentViaRAW
 {
     GHTestLog(@"# CHECK: DPM can print via RAW. #");
     
+    //attach the correct printer
+    PDFFileManager* pdfm = [PDFFileManager sharedManager];
+    pdfm.printDocument.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:0];
+    
     GHTestLog(@"-- printing the document");
     documentDidFinishCallbackReceived = NO;
     [dpm printDocumentViaRaw];
-    [self waitForCompletion:5];
+    [self waitForCompletion:10];
     GHTestLog(@"-- printing finished");
     
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
+                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP_SUCCESS]);
+}
+
+- (void)test003_PrintDocumentError
+{
+    GHTestLog(@"# CHECK: DPM can handle print error. #");
+    
+    //attach the incorrect printer
+    PDFFileManager* pdfm = [PDFFileManager sharedManager];
+    pdfm.printDocument.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:1];
+    
+    GHTestLog(@"-- printing the document");
+    documentDidFinishCallbackReceived = NO;
+    [dpm printDocumentViaLPR];
+    [self waitForCompletion:10];
+    GHTestLog(@"-- printing finished");
+    
+    [self removeErrorDialogIfPresent];
+    
+    GHAssertTrue(documentDidFinishCallbackReceived,
+                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP_SUCCESS]);
 }
 
 #pragma mark - DirectPrintManagerDelegate Methods
@@ -144,33 +175,44 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     
     //-- Printer
     
-    PrinterDetails* pd = [[PrinterDetails alloc] init];
-    GHAssertNotNil(pd, @"check initialization of PrinterDetails");
-    pd.name = @"RISO Printer 1";
-    pd.ip = TEST_PRINTER_IP;
-    pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet = YES;
-    pd.enStaple = YES;
-    pd.enFinisher23Holes = NO;
-    pd.enFinisher24Holes = YES;
-    pd.enTrayAutoStacking = YES;
-    pd.enTrayFaceDown = YES;
-    pd.enTrayStacking = YES;
-    pd.enTrayTop = YES;
-    pd.enLpr = YES;
-    pd.enRaw = YES;
+    PrinterDetails* pd1 = [[PrinterDetails alloc] init];
+    GHAssertNotNil(pd1, @"check initialization of PrinterDetails");
+    pd1.name = @"RISO Printer 1";
+    pd1.ip = TEST_PRINTER_IP_SUCCESS;
+    pd1.port = [NSNumber numberWithInt:0];
+    pd1.enBooklet = YES;
+    pd1.enStaple = YES;
+    pd1.enFinisher23Holes = NO;
+    pd1.enFinisher24Holes = YES;
+    pd1.enTrayAutoStacking = YES;
+    pd1.enTrayFaceDown = YES;
+    pd1.enTrayStacking = YES;
+    pd1.enTrayTop = YES;
+    pd1.enLpr = YES;
+    pd1.enRaw = YES;
+    
+    PrinterDetails* pd2 = [[PrinterDetails alloc] init];
+    GHAssertNotNil(pd2, @"check initialization of PrinterDetails");
+    pd2.name = @"RISO Printer 1";
+    pd2.ip = TEST_PRINTER_IP_FAILED;
+    pd2.port = [NSNumber numberWithInt:0];
+    pd2.enBooklet = YES;
+    pd2.enStaple = YES;
+    pd2.enFinisher23Holes = NO;
+    pd2.enFinisher24Holes = YES;
+    pd2.enTrayAutoStacking = YES;
+    pd2.enTrayFaceDown = YES;
+    pd2.enTrayStacking = YES;
+    pd2.enTrayTop = YES;
+    pd2.enLpr = YES;
+    pd2.enRaw = YES;
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     GHAssertNotNil(pm, @"check initialization of PrinterManager");
     while (pm.countSavedPrinters != 0)
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
-    GHAssertTrue([pm registerPrinter:pd], @"");
-    Printer* testPrinter = [pm getPrinterAtIndex:0];
-    GHAssertNotNil(testPrinter, @"");
-    
-    //-- Printer-PDF
-    
-    pdfManager.printDocument.printer = testPrinter;
+    GHAssertTrue([pm registerPrinter:pd1], @"");
+    GHAssertTrue([pm registerPrinter:pd2], @"");
 }
 
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs
@@ -192,14 +234,16 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 {
     for (UIWindow* window in [UIApplication sharedApplication].windows)
     {
-        for (UIView *subView in [window subviews])
+        NSArray* subViews = window.subviews;
+        if ([subViews count] > 0)
         {
-            if ([subView isKindOfClass:[CXAlertView class]])
+            UIView* view = [subViews objectAtIndex:0];
+            if ([view isKindOfClass:[CXAlertView class]])
             {
-                CXAlertView* alert = (CXAlertView*)subView;
-                [alert cleanAllPenddingAlert];
+                CXAlertView* alert = (CXAlertView*)view;
                 [alert dismiss];
                 [self waitForCompletion:2];
+                alert = nil;
             }
         }
     }

@@ -25,6 +25,16 @@ const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
 const float PM_SEARCH_TIMEOUT = 10;
 
+@interface PrinterManager (UnitTest)
+
+// expose private properties
+- (DefaultPrinter*)defaultPrinter;
+
+// expose private methods
+- (void)retrieveDefaultPrinter;
+
+@end
+
 @interface PrinterManagerTest : GHTestCase <PrinterSearchDelegate>
 {
     PrinterManager* printerManager;
@@ -173,7 +183,7 @@ const float PM_SEARCH_TIMEOUT = 10;
         GHAssertEqualStrings(testPrinter.ip_address, expectedIP, @"");
         
         NSNumber* expectedPort = [NSNumber numberWithInt:i%2];
-        GHAssertEquals([testPrinter.port intValue], [expectedPort intValue], @"");
+        GHAssertTrue([testPrinter.port intValue] == [expectedPort intValue], @"");
         
         GHAssertTrue([testPrinter.enabled_lpr boolValue], @"setting is different than expected");
         GHAssertFalse([testPrinter.enabled_raw boolValue], @"setting is different than expected");
@@ -217,7 +227,7 @@ const float PM_SEARCH_TIMEOUT = 10;
         GHAssertEqualStrings(testPrinter.ip_address, expectedIP, @"");
         
         NSNumber* expectedPort = [NSNumber numberWithInt:i%2];
-        GHAssertEquals([testPrinter.port intValue], [expectedPort intValue], @"");
+        GHAssertTrue([testPrinter.port intValue] == [expectedPort intValue], @"");
         
         GHAssertTrue([testPrinter.enabled_lpr boolValue], @"should have full capabilities");
         GHAssertTrue([testPrinter.enabled_raw boolValue], @"should have full capabilities");
@@ -243,12 +253,16 @@ const float PM_SEARCH_TIMEOUT = 10;
 {
     GHTestLog(@"# CHECK: PM knows which is the DefaultPrinter. #");
     
+    GHTestLog(@"-- unsetting default without a default printer");
+    GHAssertTrue([printerManager deleteDefaultPrinter], @"");
+    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"");
+    
     GHTestLog(@"-- setting printer[%lu] to be the default printer", (unsigned long)DEFAULT_1);
     Printer* default1 = [printerManager getPrinterAtIndex:DEFAULT_1];
     BOOL setDefault1 = [printerManager registerDefaultPrinter:default1];
     GHAssertTrue(setDefault1, @"printer at index=%lu should be the default printer", (unsigned long)DEFAULT_1);
     GHAssertTrue([printerManager hasDefaultPrinter], @"there should be a default printer");
-    GHAssertEquals(printerManager.countSavedPrinters, NUM_TOTAL_PRINTERS, @"printer count should remain the same");
+    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"printer count should remain the same");
     GHAssertTrue([printerManager isDefaultPrinter:default1], @"default1 should be the default printer");
     
     GHTestLog(@"-- setting printer[%lu] to be the default printer", (unsigned long)DEFAULT_2);
@@ -256,14 +270,18 @@ const float PM_SEARCH_TIMEOUT = 10;
     BOOL setDefault2 = [printerManager registerDefaultPrinter:default2];
     GHAssertTrue(setDefault2, @"printer at index=%lu should be the default printer", (unsigned long)DEFAULT_2);
     GHAssertTrue([printerManager hasDefaultPrinter], @"there should be a default printer");
-    GHAssertEquals(printerManager.countSavedPrinters, NUM_TOTAL_PRINTERS, @"printer count should remain the same");
+    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"printer count should remain the same");
     GHAssertTrue([printerManager isDefaultPrinter:default2], @"default2 should be the default printer");
     GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
+    
+    GHTestLog(@"-- retrieve the default printer");
+    [printerManager retrieveDefaultPrinter];
+    GHAssertNotNil([printerManager defaultPrinter], @"");
     
     GHTestLog(@"-- unsetting printer[%lu] from being the default printer", (unsigned long)DEFAULT_2);
     GHAssertTrue([printerManager deleteDefaultPrinter], @"default printer should be removed");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there shouldn't be a default printer");
-    GHAssertEquals(printerManager.countSavedPrinters, NUM_TOTAL_PRINTERS, @"printer count should remain the same");
+    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"printer count should remain the same");
     GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
     GHAssertFalse([printerManager isDefaultPrinter:default2], @"default2 is not anymore the default printer");
 }
@@ -316,6 +334,7 @@ const float PM_SEARCH_TIMEOUT = 10;
 - (void)test009_DeleteDefaultPrinter
 {
     GHTestLog(@"# CHECK: PM can delete default Printer. #");
+    NSUInteger countBeforeDelete = printerManager.countSavedPrinters;
     
     GHTestLog(@"-- setting printer[%lu] as the default", (unsigned long)DEFAULT_1);
     Printer* defaultPrinter = [printerManager getPrinterAtIndex:DEFAULT_1];
@@ -323,7 +342,6 @@ const float PM_SEARCH_TIMEOUT = 10;
     GHAssertTrue([printerManager registerDefaultPrinter:defaultPrinter], @"");
     
     GHTestLog(@"-- deleting printer[%lu]", (unsigned long)DEFAULT_1);
-    NSUInteger countBeforeDelete = printerManager.countSavedPrinters;
     GHAssertTrue([printerManager deletePrinterAtIndex:DEFAULT_1], @"default printer can be deleted");
     GHAssertTrue(printerManager.countSavedPrinters == countBeforeDelete-1, @"");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no more default printer");
@@ -332,6 +350,9 @@ const float PM_SEARCH_TIMEOUT = 10;
 - (void)test010_DeleteNonDefaultPrinters
 {
     GHTestLog(@"# CHECK: PM can delete Printers. #");
+    
+    // delete invalid index
+    GHAssertFalse([printerManager deletePrinterAtIndex:printerManager.countSavedPrinters+5], @"");
     
     BOOL deleted = NO;
     while (printerManager.countSavedPrinters != 0)
@@ -350,6 +371,9 @@ const float PM_SEARCH_TIMEOUT = 10;
     GHAssertTrue(printerManager.countSavedPrinters == 0, @"printers count should be 0");
     GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
     GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
+    
+    // delete invalid index
+    GHAssertFalse([printerManager deletePrinterAtIndex:1], @"");
 }
 
 - (void)test011_SearchForOnePrinter
@@ -405,6 +429,42 @@ const float PM_SEARCH_TIMEOUT = 10;
     GHAssertEqualObjects(printerManager, pmNew, @"should return the same object");
 }
 
+- (void)test015_ValidSearch
+{
+    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
+    NSString* msg = [NSString stringWithFormat:
+                     @"wait for %.2f seconds for valid search to end", PM_SEARCH_TIMEOUT];
+    NSString* testIP = @"192.168.0.199"; //use an online printer IP
+
+    // clear existing printers
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- search for an online printer");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    [printerManager searchForPrinter:testIP];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    GHTestLog(@"-- check if callbacks were received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertTrue(callbackFoundNewCalled, @"");
+    GHAssertFalse(callbackFoundOldCalled, @"");
+    
+    GHTestLog(@"-- printer found was added");
+    
+    GHTestLog(@"-- searching for the same printer");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    [printerManager searchForPrinter:testIP];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    GHTestLog(@"-- check if callbacks were received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertFalse(callbackFoundNewCalled, @"");
+    GHAssertTrue(callbackFoundOldCalled, @"");
+}
+
 #pragma mark - PrinterSearchDelegate Methods
 
 - (void)searchEnded
@@ -415,6 +475,7 @@ const float PM_SEARCH_TIMEOUT = 10;
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails
 {
     callbackFoundNewCalled = YES;
+    GHAssertTrue([printerManager registerPrinter:printerDetails], @"");
 }
 
 - (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName

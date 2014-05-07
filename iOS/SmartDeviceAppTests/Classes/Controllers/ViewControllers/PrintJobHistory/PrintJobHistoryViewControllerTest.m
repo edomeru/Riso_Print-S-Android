@@ -15,6 +15,7 @@
 #import "PrinterDetails.h"
 #import "PrintJob.h"
 #import "PrintJobHistoryGroupCell.h"
+#import "NSDate+Format.h"
 
 @interface PrintJobHistoryViewController (UnitTest)
 
@@ -26,6 +27,7 @@
 
 // expose private methods
 - (void)findGroupWithTag:(NSInteger)tag outIndex:(NSInteger*)index outGroup:(PrintJobHistoryGroup**)group;
+- (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 
@@ -148,12 +150,15 @@
     NSUInteger countGroups;
     UICollectionView* groupsView;
 
-    GHTestLog(@"-- UICollectionView (iPhone)");
-    
+    GHTestLog(@"-- List of Print Jobs (iPhone)");
     listPrintJobHistoryGroups = [controllerIphone listPrintJobHistoryGroups];
     GHAssertNotNil(listPrintJobHistoryGroups, @"");
     countGroups = [listPrintJobHistoryGroups count];
     GHAssertTrue(countGroups == TEST_NUM_PRINTERS, @"should be equal to defined test data");
+    
+    GHTestLog(@"-- UICollectionView (iPhone-Portrait)");
+    [[controllerIphone groupsViewLayout] setupForOrientation:UIInterfaceOrientationPortrait
+                                                   forDevice:UIUserInterfaceIdiomPhone];
     GHTestLog(@"-- checking sections");
     groupsView = [controllerIphone groupsView];
     GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
@@ -161,12 +166,37 @@
     GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
     
-    GHTestLog(@"-- UICollectionView (iPad)");
+    GHTestLog(@"-- UICollectionView (iPhone-Landscape)");
+    [[controllerIphone groupsViewLayout] setupForOrientation:UIInterfaceOrientationLandscapeLeft
+                                                   forDevice:UIUserInterfaceIdiomPhone];
+    GHTestLog(@"-- checking sections");
+    groupsView = [controllerIphone groupsView];
+    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHAssertTrue([groupsView numberOfSections] == 1, @"");
+    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
     
+    GHTestLog(@"-- List of Print Jobs (iPad)");
     listPrintJobHistoryGroups = [controllerIpad listPrintJobHistoryGroups];
     GHAssertNotNil(listPrintJobHistoryGroups, @"");
     countGroups = [listPrintJobHistoryGroups count];
     GHAssertTrue(countGroups == TEST_NUM_PRINTERS, @"should be equal to defined test data");
+    
+    GHTestLog(@"-- UICollectionView (iPad-Portrait)");
+    [[controllerIphone groupsViewLayout] setupForOrientation:UIInterfaceOrientationPortrait
+                                                   forDevice:UIUserInterfaceIdiomPad];
+    
+    GHTestLog(@"-- checking sections");
+    groupsView = [controllerIpad groupsView];
+    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHAssertTrue([groupsView numberOfSections] == 1, @"");
+    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
+    
+    GHTestLog(@"-- UICollectionView (iPad-Landscape)");
+    [[controllerIphone groupsViewLayout] setupForOrientation:UIInterfaceOrientationLandscapeLeft
+                                                   forDevice:UIUserInterfaceIdiomPad];
+    
     GHTestLog(@"-- checking sections");
     groupsView = [controllerIpad groupsView];
     GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
@@ -235,52 +265,7 @@
     GHAssertTrue([listPrintJobHistoryGroups count] == countGroups, @"list of groups should be unchanged");
 }
 
-- (void)test005_DisplayInvalidPrinter
-{
-    GHTestLog(@"# CHECK: Display No Name Printer. #");
-    
-    NSMutableArray* listGroups = [controllerIphone listPrintJobHistoryGroups];
-    NSUInteger countGroups = [listGroups count];
-    
-    // add another group (nil name)
-    PrintJobHistoryGroup* group1 = [PrintJobHistoryGroup initWithGroupName:nil
-                                                               withGroupIP:@"888.88.8.1"
-                                                              withGroupTag:801];
-    PrintJob* job1 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
-    job1.name = @"Job 1";
-    //no need to set printer, will be discarded later
-    [group1 addPrintJob:job1];
-    [listGroups addObject:group1];
-    
-    // add another group (empty name)
-    PrintJobHistoryGroup* group2 = [PrintJobHistoryGroup initWithGroupName:@""
-                                                               withGroupIP:@"888.88.8.2"
-                                                              withGroupTag:802];
-    [listGroups addObject:group2];
-    
-    GHAssertTrue([listGroups count] == countGroups+2, @"");
-    [[controllerIphone groupsView] reloadData];
-    GHAssertTrue([listGroups count] == countGroups+2, @"");
-    
-    // check that nil/@"" group names are displayed properly
-    NSIndexPath* indexPath;
-    countGroups = [listGroups count];
-    PrintJobHistoryGroupCell* groupCell;
-    for (NSInteger item = 0; item < countGroups; item++)
-    {
-        indexPath = [NSIndexPath indexPathForItem:item inSection:0];
-        groupCell = (PrintJobHistoryGroupCell*)[[controllerIphone groupsView] cellForItemAtIndexPath:indexPath];
-        NSString* groupIP = [[[groupCell groupIP] titleLabel] text];
-        if ([groupIP hasPrefix:@"888"])
-        {
-            GHAssertEqualStrings([groupCell groupName], NSLocalizedString(@"IDS_LBL_NO_NAME", @""), @"");
-        }
-        else
-            continue;
-    }
-}
-
-- (void)test006_PrintJobHistoryGroupCellBindings
+- (void)test005_PrintJobHistoryGroupCellBindings
 {
     GHTestLog(@"# CHECK: PrintJobHistoryGroupCell. #");
     UICollectionView* groupsView;
@@ -312,7 +297,7 @@
     GHAssertNotNil([groupCell printJobsView], @"");
 }
 
-- (void)test007_PrintJobHistoryGroupCellIPhone
+- (void)test006_PrintJobHistoryGroupCellIPhone
 {
     GHTestLog(@"# CHECK: PrintJobHistoryGroupCell (Iphone). #");
     UICollectionView* groupsView;
@@ -343,6 +328,10 @@
     
     [groupCell putGroupName:printerName];
     GHAssertEqualStrings([groupCell groupName].titleLabel.text, printerName, @"");
+    [groupCell putGroupName:nil];
+    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
+    [groupCell putGroupName:@""];
+    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
     
     [groupCell putGroupIP:printerIP];
     GHAssertEqualStrings([groupCell groupIP].titleLabel.text, printerIP, @"");
@@ -361,7 +350,7 @@
     GHAssertTrue([[groupCell listPrintJobs] count] == 2, @"");
 }
 
-- (void)test008_PrintJobHistoryGroupCellIPad
+- (void)test007_PrintJobHistoryGroupCellIPad
 {
     GHTestLog(@"# CHECK: PrintJobHistoryGroupCell (Ipad). #");
     UICollectionView* groupsView;
@@ -392,6 +381,10 @@
     
     [groupCell putGroupName:printerName];
     GHAssertEqualStrings([groupCell groupName].titleLabel.text, printerName, @"");
+    [groupCell putGroupName:nil];
+    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
+    [groupCell putGroupName:@""];
+    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
     
     [groupCell putGroupIP:printerIP];
     GHAssertEqualStrings([groupCell groupIP].titleLabel.text, printerIP, @"");
@@ -408,6 +401,50 @@
     
     [groupCell reloadContents];
     GHAssertTrue([[groupCell listPrintJobs] count] == 2, @"");
+}
+
+- (void)test008_PrintJobHistoryGroupCellJobs
+{
+    GHTestLog(@"# CHECK: PrintJobHistoryGroupCell (Ipad). #");
+    UICollectionView* groupsView;
+    NSIndexPath* index;
+    PrintJobHistoryGroupCell* groupCell;
+    NSUInteger tag = 5;
+    NSString* printerName = @"RISO Printer";
+    NSString* printerIP = @"192.168.0.1";
+    NSString* printJobName = @"Print Job 1";
+    NSDate* printJobDate = [NSDate date];
+    
+    groupsView = [controllerIpad groupsView];
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+    [groupCell initWithTag:tag];
+    [groupCell putGroupName:printerName];
+    [groupCell putGroupIP:printerIP];
+    [groupCell putPrintJob:printJobName withResult:YES withTimestamp:printJobDate];
+    [groupCell putPrintJob:printJobName withResult:NO withTimestamp:printJobDate];
+    [groupCell putPrintJob:printJobName withResult:YES withTimestamp:printJobDate];
+    [groupCell reloadContents];
+    
+    //get the UITableView
+    NSArray* subViews = [groupCell.contentView subviews];
+    UITableView* jobsView = nil;
+    for (NSUInteger i = 0; i < [subViews count]; i++)
+    {
+        UIView* subView = [subViews objectAtIndex:i];
+        if ([subView isKindOfClass:[UITableView class]])
+        {
+            jobsView = (UITableView*)subView;
+            break;
+        }
+    }
+    GHAssertNotNil(jobsView, @"");
+    
+    UITableViewCell* jobCell = [jobsView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    GHAssertNotNil(jobCell, @"");
+    GHAssertEqualStrings(jobCell.textLabel.text, printJobName, @"");
+    GHAssertEqualStrings(jobCell.detailTextLabel.text, [printJobDate formattedString], @"");
+    GHAssertNotNil(jobCell.imageView, @"");
 }
 
 @end

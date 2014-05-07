@@ -167,9 +167,9 @@
         getJob = [testGroup getPrintJobAtIndex:i];
         GHAssertNotNil(getJob, @"should get %@", refJob.name);
         GHAssertEqualStrings(getJob.name, refJob.name, @"getJob name should be %@", refJob.name);
-        GHAssertEquals([getJob.result boolValue], [refJob.result boolValue],
+        GHAssertTrue([getJob.result boolValue] == [refJob.result boolValue],
                        @"getJob result should be same as %@", refJob.name);
-        GHAssertEquals([getJob.date compare:refJob.date], NSOrderedSame,
+        GHAssertTrue([getJob.date compare:refJob.date] == NSOrderedSame,
                        @"getJob date should be same as %@", refJob.name);
     }
     
