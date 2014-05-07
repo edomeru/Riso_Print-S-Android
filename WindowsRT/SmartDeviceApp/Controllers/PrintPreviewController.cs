@@ -1705,9 +1705,11 @@ namespace SmartDeviceApp.Controllers
 
                 if (isOnline)
                 {
-                    // TODO: Prepare for printing (DirectPrintController)
-                    // Display progress dialog ?
-                    // Pass DocumentController.Instance.FileName, DocumentController.Instance.PdfFile and _selectedPrinter
+                    // TODO: Display progress dialog
+
+                    DirectPrintController dp = new DirectPrintController();
+                    dp.SendPrintJob(DocumentController.Instance.FileName,
+                        DocumentController.Instance.PdfFile, _selectedPrinter);
 
                     // TODO: Remove the following line
                     UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));

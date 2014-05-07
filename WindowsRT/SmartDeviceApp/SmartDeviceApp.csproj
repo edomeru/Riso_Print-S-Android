@@ -330,9 +330,6 @@
     <Content Include="Common\ReadMe.txt" />
     <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
     <Content Include="Resources\Dummy\RZ1070.pdf" />
-    <Content Include="Resources\Dummy\test.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
