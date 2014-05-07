@@ -32,5 +32,13 @@ GHUNIT_CLI=1 GHUNIT_AUTOEXIT=1 xcodebuild -project "$XCODE_PROJ.xcodeproj" -conf
 
 lcov --gcov-tool gcov-4.2 --directory "$OBJ_PATH" --capture --rc lcov_branch_coverage=1 --output-file "$RUN_DATA_PATH/raw.info"
 
-genhtml -p $PREFIX --rc lcov_branch_coverage=1 -o "$RUN_DATA_PATH" "$RUN_DATA_PATH/raw.info"
+# Extract app and tests
+lcov --rc lcov_branch_coverage=1 --e "$RUN_DATA_PATH/raw.info" "$PATTERN_APP" -o "$RUN_DATA_PATH/$TITLE_APP.info"
+lcov --rc lcov_branch_coverage=1 --e "$RUN_DATA_PATH/raw.info" "$PATTERN_TEST" -o "$RUN_DATA_PATH/$TITLE_TEST.info"
+
+genhtml -p $PREFIX --rc lcov_branch_coverage=1 -o "$RUN_DATA_PATH/raw" "$RUN_DATA_PATH/raw.info"
+
+# Extract app and tests
+genhtml -o --rc lcov_branch_coverage=1 "$RUN_DATA_PATH/$TITLE_APP" "$RUN_DATA_PATH/$TITLE_APP.info"
+genhtml -o --rc lcov_branch_coverage=1 "$RUN_DATA_PATH/$TITLE_TEST" "$RUN_DATA_PATH/$TITLE_TEST.info"
 
