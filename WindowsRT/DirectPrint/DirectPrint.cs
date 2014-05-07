@@ -13,6 +13,8 @@ using Windows.Storage.Streams;
 
 namespace DirectPrint
 {
+    public delegate void directprint_callback(int directprint_result);
+
     public class directprint_job
     {
         public string job_name;
@@ -20,7 +22,8 @@ namespace DirectPrint
         public StorageFile file;
         public string print_settings;
         public string ip_address;
-        //directprint_callback callback;
+        public directprint_callback callback;
+        
 
         //pthread_t main_thread;
         //pthread_mutex_t mutex;
@@ -32,6 +35,9 @@ namespace DirectPrint
 
     public class DirectPrint
     {
+        int PRINT_STATUS_OK = 0;
+        int PRINT_STATUS_ERROR = 1;
+
         string PORT_LPR = "515";
         string PORT_RAW = "9100";
 
@@ -68,6 +74,10 @@ namespace DirectPrint
             });
         }
 
+        private void nullCallBack(int val){
+
+        }
+
         public DirectPrint()
         {
             directprint_job job = new directprint_job();
@@ -77,6 +87,7 @@ namespace DirectPrint
             job.ip_address = "192.168.1.206";//21//206//119
             job.progress = 0;
             job.cancel_print = 0;
+            job.callback = new directprint_callback(nullCallBack);
 
             socket = new TCPSocket();
             socket.connect(job.ip_address, PORT_LPR);
@@ -145,6 +156,9 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
+                if (print_job.callback != null){
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
                 return;
             }
 
@@ -188,7 +202,9 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+                if (print_job.callback != null){
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
                 return;
             }
 
@@ -210,6 +226,9 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
+                if (print_job.callback != null){
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
                 return;
             }
 
@@ -269,6 +288,9 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
+                if (print_job.callback != null){
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
                 return;
             }
 
@@ -302,11 +324,15 @@ namespace DirectPrint
             int retval = 0;
             if ((retval = waitForAck()) != 0)
             {
-                retval = retval;
+                if (print_job.callback != null){
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
                 return;
             }
 
-
+            if (print_job.callback != null){
+                print_job.callback(PRINT_STATUS_OK);
+            }
             return;
             //end!
         }
