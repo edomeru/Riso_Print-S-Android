@@ -105,9 +105,6 @@
     <None Include="LPR.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPSocket.cs" />
-    <Content Include="test.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectPrintSettings\DirectPrintSettings.vcxproj">

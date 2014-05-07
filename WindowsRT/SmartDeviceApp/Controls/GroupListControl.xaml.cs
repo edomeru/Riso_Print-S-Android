@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Constants;
 using Windows.UI.Xaml.Media.Imaging;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Controls
 {
@@ -84,27 +85,60 @@ namespace SmartDeviceApp.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_isLoaded) return;
-
-            var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
-            
-            // Get text width by subtracting widths and margins of visible components
-            int maxTextWidth = (int)groupListControl.ActualWidth;
-
-            // Left and right margins
-            maxTextWidth -= (defaultMargin * 2);
-
-            // Delete button is visible
-            if (DeleteButtonVisibility == Visibility.Visible)
+            try
             {
-                var deleteButtonWidth = (int)((double)Application.Current.Resources["SIZE_DeleteButtonWidth_Long"]);
-                maxTextWidth -= deleteButtonWidth;
-            }
 
-            // Image
-            maxTextWidth -= ImageConstant.GetIconImageWidth(sender);
-            maxTextWidth -= defaultMargin;
-            TextWidth = maxTextWidth;
+
+                if (_isLoaded) return;
+
+                var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+
+                // Get text width by subtracting widths and margins of visible components
+                var groupControlWidth = (int)groupListControl.ActualWidth;
+                if (groupControlWidth <= 0)
+                {
+                    var parent = (FrameworkElement)groupListControl.Parent;
+                    if (parent != null)
+                    {
+                        groupControlWidth = (int)parent.ActualWidth;
+                        if (groupControlWidth <= 0)
+                        {
+                            throw new ArgumentException("Zero width element");
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Zero width element");
+                    }
+                }
+                int maxTextWidth = groupControlWidth;
+
+                // Left and right margins
+                maxTextWidth -= (defaultMargin * 2);
+
+                // Delete button is visible
+                if (DeleteButtonVisibility == Visibility.Visible)
+                {
+                    var deleteButtonWidth = (int)((double)Application.Current.Resources["SIZE_DeleteButtonWidth_Long"]);
+                    maxTextWidth -= deleteButtonWidth;
+                }
+
+                // Image
+                maxTextWidth -= ImageConstant.GetIconImageWidth(sender);
+                maxTextWidth -= defaultMargin;
+                if (maxTextWidth <= 0)
+                {
+                    TextWidth = 0;
+                }
+                else
+                {
+                    TextWidth = maxTextWidth;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtility.LogError(ex);
+            }
         }
     }
 }

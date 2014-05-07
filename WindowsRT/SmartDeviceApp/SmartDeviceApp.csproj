@@ -190,6 +190,7 @@
     <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingToValueConverter.cs" />
+    <Compile Include="Converters\SelectPrinterToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverter.cs" />
     <Compile Include="Converters\PrinterNameToTextConverter.cs" />
     <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />

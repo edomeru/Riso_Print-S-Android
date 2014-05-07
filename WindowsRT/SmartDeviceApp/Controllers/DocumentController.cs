@@ -127,14 +127,16 @@ namespace SmartDeviceApp.Controllers
 
                 await GenerateLogicalPages(0, 0); // Pre-load LogicalPages
             }
-            catch (FileNotFoundException)
+            catch (FileNotFoundException ex)
             {
                 // CopyAsync was not able to find the original source
+                LogUtility.LogError(ex);
                 _isFileLoaded = false;
                 Result = LoadDocumentResult.ErrorReadPdf;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                LogUtility.LogError(ex);
                 // Error in loading/reading TEMP_PDF_NAME
                 _isFileLoaded = false;
                 Result = LoadDocumentResult.ErrorReadPdf;
@@ -144,7 +146,7 @@ namespace SmartDeviceApp.Controllers
                 unchecked
                 {
                     // http://www.symantec.com/business/support/index?page=content&id=TECH12638
-                    if (e.HResult == (int)0x8007052B) // Hex error code for incorrect password
+                    if (ex.HResult == (int)0x8007052B) // Hex error code for incorrect password
                     {
                         Result = LoadDocumentResult.UnsupportedPdf;
                     }

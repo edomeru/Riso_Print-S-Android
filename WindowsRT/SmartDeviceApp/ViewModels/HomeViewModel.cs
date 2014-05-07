@@ -90,22 +90,37 @@ namespace SmartDeviceApp.ViewModels
 
         private async void OpenDocumentCommandExecute()
         {
-            FileOpenPicker openPicker = new FileOpenPicker();
-            openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            openPicker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-
-            openPicker.FileTypeFilter.Clear();
-            openPicker.FileTypeFilter.Add(".pdf");
-
-            Windows.Storage.StorageFile file = await openPicker.PickSingleFileAsync();
-            if (file != null)
+            try
             {
-                IsProgressRingActive = true;
-                Windows.Storage.Streams.IRandomAccessStream fileStream =
-                    await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
-                await MainController.FileActivationHandler(file);
-                new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
-                IsProgressRingActive = false;
+                FileOpenPicker openPicker = new FileOpenPicker();
+                openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+                openPicker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+
+                openPicker.FileTypeFilter.Clear();
+                openPicker.FileTypeFilter.Add(".pdf");
+
+                Windows.Storage.StorageFile file = await openPicker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    IsProgressRingActive = true;
+                    Windows.Storage.Streams.IRandomAccessStream fileStream =
+                        await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
+                    await MainController.FileActivationHandler(file);
+                    if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
+                    {
+                        new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+                    }
+                    IsProgressRingActive = false;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtility.LogError(ex);
+                DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
         }
 

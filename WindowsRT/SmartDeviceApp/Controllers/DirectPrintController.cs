@@ -28,12 +28,14 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">job name</param>
         /// <param name="file">actual PDF file</param>
         /// <param name="printer">printer</param>
-        public void SendPrintJob(string name, StorageFile file, Printer printer)
+        /// <param name="printSettings">print settings</param>
+        public void SendPrintJob(string name, StorageFile file, Printer printer,
+            PrintSettings printSettings)
         {
             DirectPrint.directprint_job job = new DirectPrint.directprint_job();
             job.job_name = name;
             job.file = file;
-            job.print_settings = CreateStringFromPrintSettings(printer.PrintSettings);
+            job.print_settings = CreateStringFromPrintSettings(printSettings);
             job.ip_address = printer.IpAddress;
             job.progress = 0;
             job.cancel_print = 0;

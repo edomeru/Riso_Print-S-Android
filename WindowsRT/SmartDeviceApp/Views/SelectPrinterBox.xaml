@@ -57,7 +57,7 @@
                                                 IconImage="ms-appx:///Resources/Images/img_btn_printer_status_online.png"
                                                 IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}}"
                                                 IsEnabled="True"
-                                                SeparatorVisibility="True"
+                                                SeparatorVisibility="{Binding Id, Converter={StaticResource SelectPrinterToSeparatorVisibilityConverter}}"
                                                 SubText="{Binding IpAddress}"
                                                 SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                                 Width="{Binding Width, ElementName=selectPrinterBox}"
