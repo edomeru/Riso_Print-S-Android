@@ -131,6 +131,7 @@
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
+    <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
@@ -329,6 +330,9 @@
     <Content Include="Common\ReadMe.txt" />
     <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
     <Content Include="Resources\Dummy\RZ1070.pdf" />
+    <Content Include="Resources\Dummy\test.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
@@ -623,6 +627,10 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\DirectPrint\DirectPrint.csproj">
+      <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
+      <Name>DirectPrint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SNMP\SNMP.csproj">
       <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
       <Name>SNMP</Name>

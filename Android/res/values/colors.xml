@@ -4,12 +4,12 @@
     <color name="bg_paper">#FFFFFF</color>
     
     <color name="theme_dark_1">#000000</color>
-    <color name="theme_dark_2">#242424</color>
+    <color name="theme_dark_2">#242424</color> <!-- gray 4 -->
     
     <color name="theme_light_1">#FFFFFF</color>
-    <color name="theme_light_2">#CDCDCD</color>
-    <color name="theme_light_3">#ADADAD</color>
-    <color name="theme_light_4">#919191</color>
+    <color name="theme_light_2">#CDCDCD</color> <!-- gray 1 -->
+    <color name="theme_light_3">#ADADAD</color> <!-- gray 2 -->
+    <color name="theme_light_4">#919191</color> <!-- gray 3 -->
     
     <color name="theme_color_1">#8541D8</color>
     <color name="theme_color_2">#5207B6</color>

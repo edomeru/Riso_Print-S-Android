@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Threading;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Controllers;
+using DirectPrint;
 
 namespace SmartDeviceApp
 {
@@ -36,7 +37,7 @@ namespace SmartDeviceApp
             InitializeComponent();
             Suspending += OnSuspending;
 
-            MainController.Initialize();
+            MainController.Initialize();            
         }
 
         /// <summary>
@@ -88,6 +89,9 @@ namespace SmartDeviceApp
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            //temp
+            DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
         }
 
         /// <summary>

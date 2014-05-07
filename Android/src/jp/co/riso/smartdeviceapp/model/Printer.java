@@ -8,34 +8,65 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Printer {
-    private PrintSettings mPrintSettings = null;
-    private int mId;
-    private String mName;
-    private String mIpAddress;
-    private int mPortSetting;
+public class Printer implements Parcelable {
+    private String mName = null;
+    private String mIpAddress = null;
+    private int mId = PrinterManager.EMPTY_ID;
+    private int mPortSetting = 0;
     
-    private Config mConfig;
-    private boolean mOnline;
+    private Config mConfig = null;
     
-    public Printer(String name, String ipAddress, PrintSettings printSettings) {
+    public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
         mPortSetting = 0;
         
         mConfig = new Config();
-        
-        if (printSettings == null) {
-            mPrintSettings = new PrintSettings();
-        } else {
-            mPrintSettings = new PrintSettings(printSettings);
-        }
     }
     
-    public Printer(String name, String ipAddress, boolean isDefault, PrintSettings printSettings) {
-        this(name, ipAddress, printSettings);
+    public static final Printer.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
+        public Printer createFromParcel(Parcel in) {
+            return new Printer(in);
+        }
+        
+        public Printer[] newArray(int size) {
+            return new Printer[size];
+        }
+    };
+    
+    public Printer(Parcel in) {
+        if (mConfig == null) {
+            mConfig = new Config();
+        }
+        
+        mName = in.readString();
+        mIpAddress = in.readString();
+        mId = in.readInt();
+        mPortSetting = in.readInt();
+        mConfig.readFromParcel(in);
+    }
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        if (mConfig == null) {
+            mConfig = new Config();
+        }
+        
+        out.writeString(mName);
+        out.writeString(mIpAddress);
+        out.writeInt(mId);
+        out.writeInt(mPortSetting);
+        mConfig.writeToParcel(out);
     }
     
     // ================================================================================
@@ -121,28 +152,15 @@ public class Printer {
     public void setConfig(Config config) {
         mConfig = config;
     }
-    
+
     /**
-     * @return the print settings (mPrintSettings)
-     */
-    public PrintSettings getPrintSettings() {
-        return mPrintSettings;
-    }
-    
-    /**
-     * updates the value of mPrintSettings
+     * Gets the print settings corresponding to the Printer
      * 
-     * @param printSettings
+     * @return Printer's print settings
      */
-    public void setPrintSettings(PrintSettings printSettings) {
-        this.mPrintSettings = new PrintSettings(printSettings);
-    }
-    
-    /**
-     * @return the online status (mOnline)
-     */
-    public boolean getOnlineStatus() {
-        return mOnline;
+    // TODO: For update
+    public PrintSettings getPrintSettings() {
+        return new PrintSettings(getId());
     }
     
     // ================================================================================
@@ -150,15 +168,15 @@ public class Printer {
     // ================================================================================
     
     public class Config {
-        public boolean mLprAvailable;
-        public boolean mRawAvailable;
-        public boolean mBookletAvailable;
-        public boolean mStaplerAvailable;
-        public boolean mPunch4Available;
-        public boolean mTrayFaceDownAvailable;
-        public boolean mTrayAutoStackAvailable;
-        public boolean mTrayTopAvailable;
-        public boolean mTrayStackAvailable;
+        private boolean mLprAvailable;
+        private boolean mRawAvailable;
+        private boolean mBookletAvailable;
+        private boolean mStaplerAvailable;
+        private boolean mPunch4Available;
+        private boolean mTrayFaceDownAvailable;
+        private boolean mTrayAutoStackAvailable;
+        private boolean mTrayTopAvailable;
+        private boolean mTrayStackAvailable;
         
         public Config() {
             mBookletAvailable = true;
@@ -312,6 +330,29 @@ public class Printer {
          */
         public void setTrayStackAvailable(boolean trayStackAvailable) {
             this.mTrayStackAvailable = trayStackAvailable;
+        }
+        
+        public void writeToParcel(Parcel out) {
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
+                    mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
+            
+            out.writeBooleanArray(config);
+        }
+        
+        public void readFromParcel(Parcel in) {
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
+                    mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
+            
+            in.readBooleanArray(config);
+            mConfig.mLprAvailable = config[0];
+            mConfig.mRawAvailable = config[1];
+            mConfig.mBookletAvailable = config[2];
+            mConfig.mStaplerAvailable = config[3];
+            mConfig.mPunch4Available = config[4];
+            mConfig.mTrayFaceDownAvailable = config[5];
+            mConfig.mTrayAutoStackAvailable = config[6];
+            mConfig.mTrayTopAvailable = config[7];
+            mConfig.mTrayStackAvailable = config[8];
         }
     }
 }
