@@ -618,7 +618,6 @@
     }
 }
 
-
 - (void)test011_changePrinter
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -633,15 +632,115 @@
     GHAssertEqualObjects(viewController.printer, [[PDFFileManager sharedManager] printDocument].printer, @"");
     GHAssertFalse(viewController.isDefaultSettingsMode, @"");
     GHAssertNotNil(viewController.printSettingsTree, @"");
-    
 
     [[PDFFileManager sharedManager] printDocument].printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:1];
     GHAssertEqualObjects(viewController.printer, [[PDFFileManager sharedManager] printDocument].printer, @"");
-    
-    
-    
 }
 
+-(void)test012_applyConstraints_Imposition
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    //scroll view to set layout section in middle
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:2];
+    [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    
+    PreviewSetting *previewSetting = viewController.previewSetting;
+    
+    previewSetting.booklet = NO;
+    previewSetting.imposition = kImposition4pages;
+
+    GHAssertEquals(previewSetting.impositionOrder, (NSInteger) kImpositionOrderUpperLeftToRight, @"");
+    
+    previewSetting.impositionOrder = kImpositionOrderUpperRightToBottom;
+    previewSetting.imposition = kImposition2Pages;
+    GHAssertEquals(previewSetting.impositionOrder, (NSInteger)kImpositionOrderRightToLeft, @"");
+    
+    previewSetting.imposition = kImposition4pages;
+    GHAssertEquals(previewSetting.impositionOrder, (NSInteger)kImpositionOrderUpperRightToLeft, @"");
+    
+    previewSetting.impositionOrder = kImpositionOrderUpperLeftToBottom;
+    previewSetting.imposition = kImposition2Pages;
+    GHAssertEquals(previewSetting.impositionOrder, (NSInteger)kImpositionOrderLeftToRight, @"");
+    
+    previewSetting.impositionOrder = kImpositionOrderRightToLeft;
+    previewSetting.imposition = kImpositionOff;
+    GHAssertEquals(previewSetting.impositionOrder, (NSInteger)kImpositionOrderLeftToRight, @"");
+}
+
+-(void)test013_applyConstraints_FinishingSideToStaple
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    //scroll view to set layout section in middle
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:2];
+    [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    
+    PreviewSetting *previewSetting = viewController.previewSetting;
+    
+    previewSetting.booklet = NO;
+    previewSetting.imposition = kImpositionOff;
+    previewSetting.finishingSide = kFinishingSideLeft;
+    previewSetting.staple = kStapleType1Pos;
+    
+    previewSetting.finishingSide = kFinishingSideTop;
+    GHAssertEquals(previewSetting.staple, kStapleTypeUpperLeft, @"");
+    
+    previewSetting.finishingSide = kFinishingSideRight;
+    GHAssertEquals(previewSetting.staple, kStapleType1Pos, @"");
+    
+    previewSetting.finishingSide = kFinishingSideTop;
+    GHAssertEquals(previewSetting.staple, kStapleTypeUpperRight, @"");
+}
+
+-(void)test014_applyConstraints_PunchFinishingSideOrientation
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    NSUInteger testPrinterIndex = 1;
+    
+    viewController.printerIndex = [NSNumber numberWithUnsignedInteger:testPrinterIndex];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    //scroll view to set layout section in middle
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:2];
+    [viewController.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    
+    PreviewSetting *previewSetting = viewController.previewSetting;
+    
+    previewSetting.booklet = NO;
+    previewSetting.imposition = kImpositionOff;
+    previewSetting.finishingSide = kFinishingSideLeft;
+    previewSetting.orientation = kOrientationPortrait;
+    previewSetting.punch = kPunchType3or4Holes;
+    
+    previewSetting.finishingSide = kFinishingSideTop;
+    GHAssertEquals(previewSetting.punch, (NSInteger)kPunchTypeNone, @"");
+    
+    previewSetting.punch = kPunchType3or4Holes;
+    GHAssertEquals(previewSetting.finishingSide, kFinishingSideLeft, @"");
+    
+    previewSetting.orientation = kOrientationLandscape;
+    GHAssertEquals(previewSetting.punch, (NSInteger)kPunchTypeNone, @"");
+
+    previewSetting.punch = kPunchType3or4Holes;
+    GHAssertEquals(previewSetting.finishingSide, kFinishingSideTop, @"");}
 
 
 @end

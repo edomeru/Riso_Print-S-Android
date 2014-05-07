@@ -16,7 +16,7 @@
 #import "PreviewSetting.h"
 #import "PrintPreviewHelper.h"
 #import "PrintDocument.h"
-
+#import "PDFPageContentViewController.h"
 
 @interface PrintPreviewViewController (Test)
 
@@ -44,6 +44,11 @@
 
 - (void)setupPageviewControllerWithBindSetting;
 - (void)setupTotalPageNum;
+- (void)previewSettingDidChange:(NSString *)keyChanged;
+- (BOOL)isNonPreviewbleSetting:(NSString *)settingKey;
+- (void)goToPage:(NSInteger)pageIndex;
+- (UIViewController *)nextViewController:(NSInteger)index;
+- (UIViewController *)previousViewController:(NSInteger)index;
 @end
 
 @interface PrintPreviewControllerTest : GHTestCase
@@ -415,6 +420,7 @@
     manager.printDocument.previewSetting.bookletLayout = kBookletLayoutRightToLeft;
     //TODO: Add checks
     
+    
     manager.printDocument.previewSetting.bookletLayout = kBookletLayoutTopToBottom;
     //TODO: Add checks
     
@@ -445,7 +451,184 @@
     
     
     manager.printDocument.previewSetting.orientation = kOrientationPortrait;
+    //TODO: Add Checks
     
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideRight;
+    //TODO: Add Checks
     
 }
+- (void)test009_isNonPreviewableSetting
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_COPIES] , @"");
+    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_OUTPUT_TRAY] , @"");
+    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_PAPER_TYPE] , @"");
+    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_SORT], @"");
+    GHAssertFalse([viewController isNonPreviewbleSetting:KEY_INPUT_TRAY], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:@"colorMode"] , @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:@"scaleToFit"], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:@"paperSize"], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_DUPLEX] , @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_ORIENTATION] , @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_PUNCH], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_STAPLE], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_BOOKLET], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_BOOKLET_LAYOUT], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_IMPOSITION], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_IMPOSITION_ORDER], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_FINISHING_SIDE], @"");
+    GHAssertTrue([viewController isNonPreviewbleSetting:KEY_BOOKLET_FINISH], @"");
+}
+
+- (void)test009_previewSettingDidChange_NotPreviewable
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    UIPageViewController *pageViewController = viewController.pageViewController;
+    
+    
+    [viewController previewSettingDidChange:KEY_COPIES];
+    //assert no change in preview
+    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
+    
+    [viewController previewSettingDidChange:KEY_OUTPUT_TRAY];
+    //assert no change in preview
+    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
+    
+    [viewController previewSettingDidChange:KEY_INPUT_TRAY];
+    //assert no change in preview
+    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
+    
+    [viewController previewSettingDidChange:KEY_PAPER_TYPE];
+    //assert no change in preview
+    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
+    
+    [viewController previewSettingDidChange:KEY_SORT];
+    //assert no change in preview
+    GHAssertEqualObjects(pageViewController, viewController.pageViewController, @"");
+}
+
+- (void)test009_goToPage
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+
+    manager.printDocument.previewSetting.booklet = YES;
+    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutLeftToRight;
+    [viewController goToPage:2];
+    NSArray *pageControllers = [viewController.pageViewController viewControllers];
+    PDFPageContentViewController *leftPage = [pageControllers objectAtIndex:0];
+    PDFPageContentViewController *rightPage = [pageControllers objectAtIndex:1];
+    GHAssertEquals(leftPage.pageIndex, (NSInteger)1, @"");
+    GHAssertEquals(rightPage.pageIndex, (NSInteger)2, @"");
+    
+    
+    [viewController goToPage:1];
+    pageControllers = [viewController.pageViewController viewControllers];
+    leftPage = [pageControllers objectAtIndex:0];
+    rightPage = [pageControllers objectAtIndex:1];
+    GHAssertEquals(leftPage.pageIndex, (NSInteger)1, @"");
+    GHAssertEquals(rightPage.pageIndex, (NSInteger)2, @"");
+    
+    manager.printDocument.previewSetting.booklet = YES;
+    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutRightToLeft;
+    [viewController goToPage:2];
+    pageControllers = [viewController.pageViewController viewControllers];
+    leftPage = [pageControllers objectAtIndex:0];
+    rightPage = [pageControllers objectAtIndex:1];
+    GHAssertEquals(leftPage.pageIndex, (NSInteger)2, @"");
+    GHAssertEquals(rightPage.pageIndex, (NSInteger)1, @"");
+    
+    [viewController goToPage:1];
+    pageControllers = [viewController.pageViewController viewControllers];
+    leftPage = [pageControllers objectAtIndex:0];
+    rightPage = [pageControllers objectAtIndex:1];
+    GHAssertEquals(leftPage.pageIndex, (NSInteger)2, @"");
+    GHAssertEquals(rightPage.pageIndex, (NSInteger)1, @"");
+}
+
+- (void)test009_nextViewController
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    PDFPageContentViewController *page = (PDFPageContentViewController *)[viewController nextViewController:0];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)1, @"");
+    
+    page = (PDFPageContentViewController *)[viewController nextViewController:2];
+    GHAssertNil(page, @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    page = (PDFPageContentViewController *)[viewController nextViewController:0];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)1, @"");
+    
+    page = (PDFPageContentViewController *)[viewController nextViewController:3];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)4, @"");
+    GHAssertTrue(page.isBookendPage,@"");
+    
+    page = (PDFPageContentViewController *)[viewController nextViewController:4];
+    GHAssertNil(page, @"");
+}
+
+- (void)test009_previousViewController
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    PDFPageContentViewController *page = (PDFPageContentViewController *)[viewController previousViewController:0];
+    GHAssertNil(page, @"");
+    
+    page = (PDFPageContentViewController *)[viewController previousViewController:2];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)1, @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    page = (PDFPageContentViewController *)[viewController previousViewController:0];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)5, @"");
+    GHAssertTrue(page.isBookendPage,@"");
+    
+    page = (PDFPageContentViewController *)[viewController previousViewController:1];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)0, @"");
+    
+    page = (PDFPageContentViewController *)[viewController previousViewController:5];
+    GHAssertNil(page, @"");
+}
+
 @end
