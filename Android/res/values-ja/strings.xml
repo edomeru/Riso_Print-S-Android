@@ -11,6 +11,7 @@
     <string name="ids_lbl_save">保存</string>
     <string name="ids_lbl_ok">OK</string>
     <string name="ids_lbl_cancel">キャンセル</string>
+    <string name="ids_lbl_no_name">No Name</string>
     <string name="ids_lbl_open_in_ios">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_android">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_winrt">ドキュメントを選択してください。</string>
@@ -144,9 +145,9 @@
     <string name="ids_lbl_print_job_failed">失敗しました。</string>
     <string name="ids_err_msg_cannot_add_printer">このプリンターはすでに登録されています。</string>
     <string name="ids_err_msg_invalid_ip_address">IP Addressを確認してください。</string>
-    <string name="ids_err_msg_max_printer_count">このプリンターはすでに登録されています。</string>
-    <string name="ids_err_msg_warning_cannot_find_printer">Saved Printer reached maximum count.</string>
-    <string name="ids_err_msg_pdf_wrong_password">Warning, Cannot find Printer.</string>
+    <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
+    <string name="ids_err_msg_warning_cannot_find_printer">Warning, Cannot find Printer.</string>
+    <string name="ids_err_msg_pdf_wrong_password">パスワードが正しくありません。確認してください。</string>
     <string name="ids_err_msg_no_selected_printer">プリンターを登録してください。</string>
     <string name="ids_err_msg_open_failed">ファイルが開けません。</string>
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>

@@ -60,19 +60,6 @@ public class SettingsFragment extends BaseFragment {
         };
         editText.setFilters(filterArray);
         
-        //TODO: Remove
-        // editText = (EditText) view.findViewById(R.id.pinCodeEditText);
-        // editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        // editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        
-        // editText.setText(prefs.getString(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE));
-        // editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(),
-        // AppConstants.PREF_KEY_PIN_CODE));
-        // filterArray = new InputFilter[] {
-        // new InputFilter.LengthFilter(PIN_CODE_LIMIT)
-        // };
-        editText.setFilters(filterArray);
-        
         if (!isTablet()) {
             Point screenSize = AppUtils.getScreenDimensions(getActivity());
             View rootView = view.findViewById(R.id.rootView);

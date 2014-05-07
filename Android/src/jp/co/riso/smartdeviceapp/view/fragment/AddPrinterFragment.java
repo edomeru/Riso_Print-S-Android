@@ -122,7 +122,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 dialogErrCb(mErrState);
             }
             else {
-                dialogCb(mSearchedPrinter);
+                if (mSearchedPrinter != null) {
+                    dialogCb(mSearchedPrinter);
+                }
             }
         }
     }
@@ -177,13 +179,15 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      *            Error code
      */
     private void dialogErrCb(int err) {
-        if (isTablet() && getActivity() != null && getActivity() instanceof MainActivity) {
-            MainActivity activity = (MainActivity) getActivity();
-            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+        if (isTablet()) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    return;
+                }
+            } else if (getActivity() == null) {
                 return;
             }
-        } else if (isTablet()) {
-            return;
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
         String errMsg = null;
@@ -335,11 +339,17 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(Printer printer) {
-        if(mPrinterManager.isCancelled()) {
+        if (mPrinterManager.isCancelled()) {
             return;
         }
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
+        } else if (printer.getName().isEmpty()) {
+            printer.setName(getResources().getString(R.string.ids_lbl_no_name));
+            if (mPrinterManager.savePrinterToDB(printer)) {
+                mAdded = true;
+                dialogCb(printer);
+            }
         } else if (mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
             dialogCb(printer);
