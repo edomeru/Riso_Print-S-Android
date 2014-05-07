@@ -138,6 +138,17 @@ public class WaitingDialogFragment extends DialogFragment {
         }
     }
     
+    public void setMessage(final String msg) {
+        getActivity().runOnUiThread(new Runnable() {
+            
+            @Override
+            public void run() {
+                ProgressDialog dialog = (ProgressDialog)getDialog();
+                dialog.setMessage(msg);
+            }
+        });
+    }
+    
     // ================================================================================
     // Internal Classes
     // ================================================================================
