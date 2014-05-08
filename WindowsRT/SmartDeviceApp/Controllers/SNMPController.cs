@@ -15,16 +15,33 @@ namespace SmartDeviceApp.Controllers
         public Action<string, string, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
         public Action<PrinterSearchItem> printerControllerDiscoverCallback { get; set; }
         public Action<string> printerControllerTimeout { get; set; }
-        public Action<string> printerControllerAddTimeout { get; set; }
+        public Action<string, string, List<string>> printerControllerAddTimeout { get; set; }
 
         public List<Printer> printerList {get; set;}
         private bool waiting;
 
-
+        SNMPDiscovery discovery;
         /**
          * Get Online Status functions
          * 
          * */
+
+        static SNMPController() { }
+
+        static readonly SNMPController _instance = new SNMPController();
+
+        /// <summary>
+        /// Singleton instance
+        /// </summary>
+        public static SNMPController Instance
+        {
+            get { return _instance; }
+        }
+
+        public void Initialize()
+        {
+            discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
+        }
 
         public void getStatus(string ip)
         {
@@ -51,16 +68,17 @@ namespace SmartDeviceApp.Controllers
 
         public void getDevice(string ip)
         {
-            //SNMPDevice device = new SNMPDevice(ip);
+            SNMPDevice device = new SNMPDevice(ip);
             //waiting = true;
-            //device.snmpControllerCallBackGetCapability = new Action<string, string, bool, List<string>>(handleGetCapability);
-            //device.beginRetrieveCapabilities();
+            device.snmpControllerCallBackGetCapability = new Action<SNMPDevice>(handleGetDevice);
+            device.snmpControllerDeviceTimeOut = new Action<SNMPDevice>(handleAddTimeout);
+            device.beginRetrieveCapabilities();
 
-            SNMPDiscovery discovery = new SNMPDiscovery("public", ip);
-            discovery.FromPrinterSearch = false;
-            discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleGetDevice);
-            discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleAddTimeout);
-            discovery.startDiscover();
+            //SNMPDiscovery discovery = new SNMPDiscovery("public", ip);
+            //discovery.FromPrinterSearch = false;
+            //discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleGetDevice);
+            //discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleAddTimeout);
+            //discovery.startDiscover();
         }
 
         private void handleGetDevice(SNMPDevice device)
@@ -80,7 +98,7 @@ namespace SmartDeviceApp.Controllers
 
         public void  startDiscover()
         {
-            SNMPDiscovery discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
+            //SNMPDiscovery discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
             //add callback
             discovery.FromPrinterSearch = true;
             discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
@@ -99,13 +117,46 @@ namespace SmartDeviceApp.Controllers
             printerControllerDiscoverCallback(printer);
         }
 
+        public Printer getPrinterFromSNMPDevice(string ip)
+        {
+            SNMPDevice device = discovery.SnmpDevices.First(x => x.getIpAddress() == ip);
+
+            Printer printer = new Printer();
+            printer.IpAddress = ip;
+            printer.Name = device.getSysName();
+            printer.IsOnline = true;
+            if (device.getCapabilities().Count > 0)
+            {
+                List<string> capabilitesList = device.getCapabilities();
+                printer.EnabledBooklet = (capabilitesList.ElementAt(0) == "true") ? true : false;
+                printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") ? true : false;
+                printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true") ? true : false;
+                printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true") ? true : false;
+                printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true") ? true : false;
+                printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true") ? true : false;
+                printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
+            }
+            else
+            {
+                printer.EnabledBooklet = true;
+                printer.EnabledStapler = true;
+                printer.EnabledPunchFour = true;
+                printer.EnabledTrayFacedown = true;
+                printer.EnabledTrayAutostack = true;
+                printer.EnabledTrayTop = true;
+                printer.EnabledTrayStack = true;
+            }
+
+            return printer;
+        }
+
         /**
          * Timeout
          * 
          * */
-        private void handleAddTimeout(string ip)
+        private void handleAddTimeout(SNMPDevice device)
         {
-            printerControllerAddTimeout(ip);
+            printerControllerAddTimeout(device.getIpAddress(), device.getSysName(), device.getCapabilities());
         }
 
         private void handleTimeout(string ip)

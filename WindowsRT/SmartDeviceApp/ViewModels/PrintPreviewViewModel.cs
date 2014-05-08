@@ -97,9 +97,12 @@ namespace SmartDeviceApp.ViewModels
 
         public void SetPageAreaGrid(Grid pageAreaGrid)
         {
-            _pageAreaGrid = pageAreaGrid;
-            _pageAreaGridOriginalHeight = _pageAreaGrid.ActualHeight;
-            _isPageAreaGridLoaded = true;
+            if (!_isPageAreaGridLoaded)
+            {   
+                _pageAreaGrid = pageAreaGrid;
+                _pageAreaGridOriginalHeight = _pageAreaGrid.ActualHeight;
+                _isPageAreaGridLoaded = true;
+            }
         }
 
         public void InitializeGestures()

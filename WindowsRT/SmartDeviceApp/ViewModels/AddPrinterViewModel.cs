@@ -181,7 +181,8 @@ namespace SmartDeviceApp.ViewModels
 
             if (isSuccessful)
             {
-                content = loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                DialogService.Instance.ShowError("IDS_LBL_ADD_SUCCESSFUL", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                
                 
             }
             else
@@ -214,10 +215,7 @@ namespace SmartDeviceApp.ViewModels
 
         public void DisplayMessage(string caption, string content)
         {
-            MessageAlert ma = new MessageAlert();
-            ma.Caption = caption;
-            ma.Content = content;
-            Messenger.Default.Send<MessageAlert>(ma);
+            DialogService.Instance.ShowMessage(content, caption, "Ok", null);
         }
 
         private void SetViewMode(VisibleRightPane viewMode)

@@ -153,9 +153,13 @@ namespace SmartDeviceApp.Controllers
 
                 PrinterController.Instance.DeletePrinterItemsEventHandler += PrinterDeleted;
             }
-            else
+            else if (DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf)
             {
-                // TODO: Notify ViewModel regarding error
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
+            }
+            else if (DocumentController.Instance.Result == LoadDocumentResult.UnsupportedPdf)
+            {
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
         }
 
@@ -313,21 +317,24 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void InitializeGestures()
         {
-            Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
-            bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
-                _currPrintSettings.BookletLayout);
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
+            {
+                Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
+                bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
+                    _currPrintSettings.BookletLayout);
 
-            Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
-            _printPreviewViewModel.RightPageActualSize = sampleSize;
-            if (_isBooklet)
-            {
-                _printPreviewViewModel.LeftPageActualSize = sampleSize;
+                Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
+                _printPreviewViewModel.RightPageActualSize = sampleSize;
+                if (_isBooklet)
+                {
+                    _printPreviewViewModel.LeftPageActualSize = sampleSize;
+                }
+                else
+                {
+                    _printPreviewViewModel.LeftPageActualSize = new Size();
+                }
+                _printPreviewViewModel.InitializeGestures();
             }
-            else
-            {
-                _printPreviewViewModel.LeftPageActualSize = new Size();
-            }
-            _printPreviewViewModel.InitializeGestures();
         }
 
         /// <summary>

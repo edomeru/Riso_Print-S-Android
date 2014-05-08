@@ -25,7 +25,7 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _willRefresh;
 
-        public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.AddPrinterFromSearchHandler AddPrinterFromSearchHandler;
         public event SmartDeviceApp.Controllers.PrinterController.SearchPrinterHandler SearchPrinterHandler;
 
         private ICommand _printerSearchItemSelected;
@@ -109,13 +109,13 @@ namespace SmartDeviceApp.ViewModels
         }
 
 
-        private void PrinterSearchItemSelectedExecute(PrinterSearchItem item)
+        private async Task PrinterSearchItemSelectedExecute(PrinterSearchItem item)
         {
             //Check if already added
             if (!item.IsInPrinterList)
             {
                 //add to printer
-                bool isSuccessful = AddPrinterHandler(item.Ip_address);
+                bool isSuccessful = await AddPrinterFromSearchHandler(item.Ip_address);
                 if (!isSuccessful)
                 {
                     //display error message TODO

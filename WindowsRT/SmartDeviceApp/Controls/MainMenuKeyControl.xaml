@@ -30,6 +30,9 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="buttonGrid">
         							<DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_White}"/>
         						</ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextKey}"/>
+                                </ObjectAnimationUsingKeyFrames>
         					</Storyboard>
         				</VisualState>
         				<VisualState x:Name="Disabled"/>
