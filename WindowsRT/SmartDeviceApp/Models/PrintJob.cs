@@ -118,6 +118,7 @@ namespace SmartDeviceApp.Models
     {
         private ObservableCollection<PrintJob> _jobs;
         public string PrinterName { get; set; }
+        public string IpAddress { get; set; }
         public ObservableCollection<PrintJob> Jobs
         {
             get { return _jobs; }
