@@ -18,6 +18,7 @@ using SmartDeviceApp.Common.Enum;
 using GalaSoft.MvvmLight.Command;
 using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Controls
 {
@@ -239,57 +240,82 @@ namespace SmartDeviceApp.Controls
         
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_isLoaded || Visibility == Visibility.Collapsed) return;
+            try
+            {
+                if (_isLoaded || Visibility == Visibility.Collapsed) return;
 
-            var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
-            var smallMargin = (int)((double)Application.Current.Resources["MARGIN_Small"]);
+                var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+                var smallMargin = (int)((double)Application.Current.Resources["MARGIN_Small"]);
 
-            // Get text width by subtracting widths and margins of visible components
-            int maxTextWidth = (int)keyValueControl.ActualWidth;
-            
-            // Left and right margins
-            maxTextWidth -= (defaultMargin * 2);
-            
-            // Icon is visible
-            if (IconVisibility == Visibility.Visible)
-            {
-                var imageWidth = ((BitmapImage)IconImage).PixelWidth;
-                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(sender);
-                maxTextWidth -= imageWidth;
-                maxTextWidth -= defaultMargin;
-            }
-            // RightButton is visible
-            if (RightButtonVisibility == Visibility.Visible)
-            {
-                var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
-                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
-                maxTextWidth -= rightButtonImageWidth;
-                maxTextWidth -= defaultMargin;
-            }
+                // Get text width by subtracting widths and margins of visible components
+                var keyValueControlWidth = (int)keyValueControl.ActualWidth;
+                if (keyValueControlWidth <= 0)
+                {
+                    var parent = (FrameworkElement)keyValueControl.Parent;
+                    if (parent != null)
+                    {
+                        keyValueControlWidth = (int)parent.ActualWidth;
+                        if (keyValueControlWidth <= 0)
+                        {
+                            throw new ArgumentException("Zero width element");
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Zero width element");
+                    }
+                }
+                int maxTextWidth = keyValueControlWidth;
 
-            // ValueContent is visible
-            var valueContent = ValueContent as FrameworkElement;
-            if (valueContent != null && valueContent.Visibility == Visibility.Visible)
-            {
-                maxTextWidth -= (int)valueContent.ActualWidth;
-                maxTextWidth -= defaultMargin;
-            }
+                // Left and right margins
+                maxTextWidth -= (defaultMargin * 2);
 
-            // Value is visible
-            if (ValueVisibility == Visibility.Visible && IsEnabled) // Note: If disabled, value is not visible
-            {
-                // Space between key and value texts
-                maxTextWidth -= smallMargin;
-                maxTextWidth /= 2;
-                // Set key and value to equal widths
-                KeyTextWidth = maxTextWidth;
-                ValueTextWidth = maxTextWidth;
+                // Icon is visible
+                if (IconVisibility == Visibility.Visible)
+                {
+                    var imageWidth = ((BitmapImage)IconImage).PixelWidth;
+                    if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(sender);
+                    maxTextWidth -= imageWidth;
+                    maxTextWidth -= defaultMargin;
+                }
+                // RightButton is visible
+                if (RightButtonVisibility == Visibility.Visible)
+                {
+                    var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
+                    if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
+                    maxTextWidth -= rightButtonImageWidth;
+                    maxTextWidth -= defaultMargin;
+                }
+
+                // ValueContent is visible
+                var valueContent = ValueContent as FrameworkElement;
+                if (valueContent != null && valueContent.Visibility == Visibility.Visible)
+                {
+                    maxTextWidth -= (int)valueContent.ActualWidth;
+                    maxTextWidth -= defaultMargin;
+                }
+
+                // Value is visible
+                if (ValueVisibility == Visibility.Visible && IsEnabled) // Note: If disabled, value is not visible
+                {
+                    // Space between key and value texts
+                    maxTextWidth -= smallMargin;
+                    maxTextWidth /= 2;
+                    // Set key and value to equal widths
+                    KeyTextWidth = maxTextWidth;
+
+                    ValueTextWidth = maxTextWidth;
+                }
+                else // only Key is visible
+                {
+                    KeyTextWidth = maxTextWidth;
+                }
+                _isLoaded = true;
             }
-            else // only Key is visible
+            catch (Exception ex)
             {
-                KeyTextWidth = maxTextWidth;
+                LogUtility.LogError(ex);
             }
-            _isLoaded = true;
         }
 
         private static void SetVisualState(DependencyObject obj, DependencyPropertyChangedEventArgs e)

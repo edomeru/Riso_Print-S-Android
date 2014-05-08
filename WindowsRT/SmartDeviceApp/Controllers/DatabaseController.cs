@@ -241,7 +241,16 @@ namespace SmartDeviceApp.Controllers
 
             try
             {
-                return await _dbConnection.InsertAsync(printer);
+                int i = await _dbConnection.InsertAsync(printer);
+                if (i > 0) //1 object inserted to table
+                {
+                    //get id of last inserted
+                    return printer.Id;
+                }
+                else
+                {
+                    return -1;
+                }
             }
             catch
             {
@@ -340,6 +349,19 @@ namespace SmartDeviceApp.Controllers
 
             try
             {
+                int count = await _dbConnection.Table<DefaultPrinter>().CountAsync();
+                if (count > 0)
+                {
+                    DefaultPrinter dp = await _dbConnection.Table<DefaultPrinter>().FirstAsync();
+
+                    if (printer.Id == dp.PrinterId)
+                    {
+                        //delete default.
+                        await _dbConnection.DeleteAsync(dp);
+                    }
+                }
+
+
                 return await _dbConnection.DeleteAsync(printer);
             }
             catch

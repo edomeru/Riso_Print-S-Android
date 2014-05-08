@@ -32,23 +32,30 @@ namespace SmartDeviceApp.Common.Utilities
 
         private static void GoToViewState(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue != null)
+            try
             {
-                switch ((ViewMode)e.NewValue)
+                if (e.NewValue != null)
                 {
-                    case ViewMode.MainMenuPaneVisible:
-                        VisualStateManager.GoToState((UserControl)obj, "MainMenuPaneVisibleState", true);
-                        break;
-                    case ViewMode.FullScreen:
-                        VisualStateManager.GoToState((UserControl)obj, "FullScreen", true);
-                        break;
-                    case ViewMode.RightPaneVisible_ResizedWidth:
-                        VisualStateManager.GoToState((UserControl)obj, "RightPaneVisible_ResizedViewState", true);
-                        break;
-                    case ViewMode.RightPaneVisible:
-                        VisualStateManager.GoToState((UserControl)obj, "RightPaneVisibleState", true);
-                        break;
+                    switch ((ViewMode)e.NewValue)
+                    {
+                        case ViewMode.MainMenuPaneVisible:
+                            VisualStateManager.GoToState((UserControl)obj, "MainMenuPaneVisibleState", true);
+                            break;
+                        case ViewMode.FullScreen:
+                            VisualStateManager.GoToState((UserControl)obj, "FullScreen", true);
+                            break;
+                        case ViewMode.RightPaneVisible_ResizedWidth:
+                            VisualStateManager.GoToState((UserControl)obj, "RightPaneVisible_ResizedViewState", true);
+                            break;
+                        case ViewMode.RightPaneVisible:
+                            VisualStateManager.GoToState((UserControl)obj, "RightPaneVisibleState", true);
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogUtility.LogError(ex);
             }
         }
 
