@@ -86,6 +86,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="progress">value</param>
         public void UpdateProgress(float progress)
         {
+            System.Diagnostics.Debug.WriteLine("[DirectPrintController] UpdateProgress:" + progress);
             if (UpdatePrintJobProgressEventHandler != null)
             {
                 UpdatePrintJobProgressEventHandler(progress);
@@ -98,6 +99,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="result">result value</param>
         public void ReceiveResult(int result)
         {
+            System.Diagnostics.Debug.WriteLine("[DirectPrintController] ReceiveResult:" + result);
             if (SetPrintJobResultEventHandler != null)
             {
                 SetPrintJobResultEventHandler(_printJob.job_name, _startTime, result);

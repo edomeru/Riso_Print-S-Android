@@ -48,7 +48,7 @@ namespace SmartDeviceApp.Controllers
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 
-            await DocumentController.Instance.Load(file, false);
+            await DocumentController.Instance.Load(file);
             await PrintPreviewController.Instance.Initialize();
         }
 
@@ -86,7 +86,7 @@ namespace SmartDeviceApp.Controllers
             await PrintPreviewController.Instance.Cleanup();
 
             StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
-            await DocumentController.Instance.Load(samplePdf, false);
+            await DocumentController.Instance.Load(samplePdf);
             await PrintPreviewController.Instance.Initialize();
         }
 
