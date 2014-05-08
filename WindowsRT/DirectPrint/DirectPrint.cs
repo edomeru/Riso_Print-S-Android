@@ -101,11 +101,13 @@ namespace DirectPrint
             socket = new TCPSocket();
             socket.connect(print_job.ip_address, PORT_LPR);
             socket.assignDelegate(receiveData);
+            /*
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
             (workItem) =>
             {
                 startLPRPrint(print_job);
             });
+            */
             //
 
             // Prepare PJL header

@@ -89,7 +89,7 @@ namespace SNMP
         public const string KEY_OID                     = "oid";
         public const string KEY_VAL                     = "val";
 
-        public const string BROADCAST_ADDRESS           = "192.168.0.255";//"255.255.255.255";
+        public const string BROADCAST_ADDRESS = "255.255.255.255";//"192.168.0.255";//
 
         public const string DEFAULT_COMMUNITY_NAME               = "public";
         public const string READ_COMMUNITY_NAME_SPECIAL_CHARS    = " \\'#\"";
