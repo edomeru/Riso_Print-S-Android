@@ -14,6 +14,7 @@ using Windows.Storage.Streams;
 namespace DirectPrint
 {
     public delegate void directprint_callback(int directprint_result);
+    public delegate void progress_callback(float progress);
 
     public class directprint_job
     {
@@ -23,6 +24,7 @@ namespace DirectPrint
         public string print_settings;
         public string ip_address;
         public directprint_callback callback;
+        public progress_callback progress_callback;
         
 
         //pthread_t main_thread;
@@ -35,8 +37,8 @@ namespace DirectPrint
 
     public class DirectPrint
     {
-        int PRINT_STATUS_OK = 0;
-        int PRINT_STATUS_ERROR = 1;
+        public const int PRINT_STATUS_OK = 0;
+        public const int PRINT_STATUS_ERROR = 1;
 
         string PORT_LPR = "515";
         string PORT_RAW = "9100";
@@ -61,51 +63,41 @@ namespace DirectPrint
 
         TCPSocket socket;
 
-        public DirectPrint(directprint_job job)
-        {
-            socket = new TCPSocket();
-            socket.connect(job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
-            {
-                startLPRPrint(job);
-            });
-        }
 
         private void nullCallBack(int val){
 
         }
 
+        private directprint_job print_job = null;
         public DirectPrint()
         {
-            directprint_job job = new directprint_job();
-            job.job_name = "SDA job";
-            job.filename = "test.pdf";//"PDF-0010pages.pdf";
-            job.print_settings = "";
-            job.ip_address = "192.168.1.206";//21//206//119
-            job.progress = 0;
-            job.cancel_print = 0;
-            job.callback = new directprint_callback(nullCallBack);
 
-            socket = new TCPSocket();
-            socket.connect(job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
-            {
-                startLPRPrint(job);
-            });
         }
 
         public async void startLPRPrint(directprint_job parameter)
         {
-            //FileOpenPicker openPicker = new FileOpenPicker();
-            //openPicker.FileTypeFilter.Add(".pdf");
-            //StorageFile filePickerFile = await openPicker.PickSingleFileAsync();
 
-            directprint_job print_job = parameter;
+            if (parameter == null)
+            {
+                if (print_job.callback != null)
+                {
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
+                return;
+            }
+
+            print_job = parameter;
+
+            //start socket
+            socket = new TCPSocket();
+            socket.connect(print_job.ip_address, PORT_LPR);
+            socket.assignDelegate(receiveData);
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            (workItem) =>
+            {
+                startLPRPrint(print_job);
+            });
+            //
 
             // Prepare PJL header
             string pjl_header = "";
@@ -161,6 +153,8 @@ namespace DirectPrint
                 }
                 return;
             }
+            print_job.progress += LPR_PREP_PROGRESS_STEP;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // CONTROL FILE : Prepare
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
@@ -207,6 +201,8 @@ namespace DirectPrint
                 }
                 return;
             }
+            print_job.progress += LPR_PREP_PROGRESS_STEP;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             /////////////////////////////////////////////////////////
             /// ADD CONTENT OF CONTROLFILE
@@ -246,7 +242,8 @@ namespace DirectPrint
             ///
             pos = 0;
             buffer[pos++] = 3;
-
+            print_job.progress = LPR_PREP_END_PROGRESS;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // Get file size
             var uri = new System.Uri("ms-appx:///Resources/Dummy/"+print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
@@ -267,6 +264,8 @@ namespace DirectPrint
 
             ulong total_data_size = (ulong)file_size;// +(ulong)pjl_header_size + (ulong)pjl_footer_size;
             String total_data_size_str = String.Format("{0}", (ulong)total_data_size);
+
+            float data_step = (70.0f / ((float)file_size / BUFFER_SIZE));
 
             for (i = 0; i < total_data_size_str.Length; i++)
             {
@@ -306,6 +305,8 @@ namespace DirectPrint
             {
                 totalbytes += (ulong)bytesRead;
                 socket.write(buffer, 0, bytesRead, false);
+                print_job.progress += data_step;
+                if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             }
             //fstream.Dispose();
 
@@ -318,6 +319,8 @@ namespace DirectPrint
             pos = 0;
             buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
+            print_job.progress = 99.0f;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -330,6 +333,8 @@ namespace DirectPrint
                 return;
             }
 
+            print_job.progress = 100.0f;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             if (print_job.callback != null){
                 print_job.callback(PRINT_STATUS_OK);
             }

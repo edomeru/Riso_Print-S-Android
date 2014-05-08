@@ -40,10 +40,14 @@ namespace SmartDeviceApp.Controllers
             job.progress = 0;
             job.cancel_print = 0;
 
-            // Process print job
-            DirectPrint.DirectPrint directPrint = new DirectPrint.DirectPrint(job);
+            job.callback = null;// TODO: add callback***
 
+
+            // Process print job
+            DirectPrint.DirectPrint directPrint = new DirectPrint.DirectPrint();
+            directPrint.startLPRPrint(job);
             // TODO: Error handling (result of directPrint)
+            
         }
 
         /// <summary>

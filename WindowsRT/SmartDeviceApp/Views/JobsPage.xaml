@@ -17,6 +17,8 @@
         </Style>        
         <DataTemplate x:Key="TEMPLATE_PrintJobItem">  
             <controls:GroupListControl Text="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}, ConverterParameter=false}" 
+                                       SubText="{Binding IpAddress}"
+                                       SubTextVisibility="Visible"
                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}">
                 <controls:GroupListControl.Margin>
