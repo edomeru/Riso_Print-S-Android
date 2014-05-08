@@ -6,22 +6,28 @@ import java.util.List;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import android.database.Cursor;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ImageView;
 
 public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainActivity> implements
         UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
     private static final String IPV4_ONLINE_PRINTER_ADDRESS = "192.168.1.206";
+    private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
     private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206";
+    private static final String INVALID_ADDRESS = "invalid";
+
 
     private PrinterManager mPrinterManager = null;
     private List<Printer> mPrintersList = null;
-
+    
     public PrinterManagerTest() {
         super(MainActivity.class);
     }
@@ -31,6 +37,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         assertNotNull(mPrinterManager);
 
+        mPrinterManager.isExists(INVALID_ADDRESS);
+        mPrinterManager.isExists(new Printer(INVALID_ADDRESS, INVALID_ADDRESS));
+        
         mPrintersList = mPrinterManager.getSavedPrintersList();
         assertNotNull(mPrintersList);
     }
@@ -71,7 +80,16 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testSetDefaultPrinter_NoDefaultPrinter() {
         try {
-            Printer printer = mPrinterManager.getSavedPrintersList().get(0);
+            Printer printer = null;
+            
+            if (mPrintersList != null) {
+                printer = mPrintersList.get(0);
+            }
+            if(printer == null) {
+                printer = new Printer("testSetDefaultPrinter_NoDefaultPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
+                mPrinterManager.savePrinterToDB(printer);
+            }
+            
             testClearDefaultPrinter();
             mPrinterManager.setDefaultPrinter(printer);
         } catch (Exception e) {
@@ -81,7 +99,11 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testSetDefaultPrinter_WithDefaultPrinter() {
         try {
-            Printer printer = mPrinterManager.getSavedPrintersList().get(0);
+            Printer printer = null;
+
+            if (mPrintersList != null) {
+                printer = mPrintersList.get(0);
+            }
             testSetDefaultPrinter_NoDefaultPrinter();
             mPrinterManager.setDefaultPrinter(printer);
         } catch (Exception e) {
@@ -173,8 +195,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             boolean isSearching = true;
             mPrinterManager.cancelPrinterSearch();
-
             isSearching = mPrinterManager.isSearching();
+            
             assertEquals(false, isSearching);
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -272,6 +294,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testCreateUpdateStatusThread() {
         try {
             mPrinterManager.createUpdateStatusThread();
+            
+            // Create another instance
+            mPrinterManager.createUpdateStatusThread();
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -281,7 +306,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     // Tests - cancelUpdateStatusThread
     // ================================================================================
 
-    public void testCancelUpdateStatusThread() {
+    public void testCancelUpdateStatusThread_DuringIdle() {
         try {
             mPrinterManager.cancelUpdateStatusThread();
         } catch (Exception e) {
@@ -289,6 +314,15 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
+    public void testCancelUpdateStatusThread_AfterCreate() {
+        try {
+            mPrinterManager.createUpdateStatusThread();
+            mPrinterManager.cancelUpdateStatusThread();
+
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
     // ================================================================================
     // Tests - updateOnlineStatus
     // ================================================================================
@@ -329,11 +363,24 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     // ================================================================================
     // Tests - onFoundDevice
     // ================================================================================
-
+    
+    public void testOnFoundDevice_ValidParameters() {
+        try {
+            mPrinterManager.setPrinterSearchCallback(this);
+            mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, "testOnEndDiscovery",
+                    new boolean[10]);
+            mPrinterManager.setPrinterSearchCallback(null);
+        } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
     public void testOnFoundDevice_NullManager() {
         try {
             mPrinterManager.onFoundDevice(null, IPV4_ONLINE_PRINTER_ADDRESS, "testOnEndDiscovery",
-                    new boolean[6]);
+                    new boolean[10]);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -344,7 +391,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testOnFoundDevice_NullIpAddress() {
         try {
             mPrinterManager.onFoundDevice(new SNMPManager(), null, "testOnEndDiscovery",
-                    new boolean[6]);
+                    new boolean[10]);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -355,7 +402,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testOnFoundDevice_NullName() {
         try {
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, null,
-                    new boolean[6]);
+                    new boolean[10]);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -374,26 +421,18 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
-    public void testOnFoundDevice_InvalidCapabilities() {
-        try {
-            mPrinterManager.onFoundDevice(null, IPV4_ONLINE_PRINTER_ADDRESS, "testOnEndDiscovery",
-                    new boolean[5]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (Exception e) {
-            fail(); // Error should not be thrown
-        }
-    }
-
     // ================================================================================
     // Tests - removePrinter
     // ================================================================================
 
     public void testRemovePrinter_ValidAndInvalidPrinter() {
         try {
-            Printer printer = mPrinterManager.getSavedPrintersList().get(0);
+            Printer printer = new Printer("testRemovePrinter_ValidAndInvalidPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
             boolean ret = false;
 
+            if (!mPrinterManager.isExists(printer)) {
+                mPrinterManager.savePrinterToDB(printer);
+            }
             ret = mPrinterManager.removePrinter(printer);
             assertEquals(true, ret);
 
@@ -412,6 +451,24 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             mPrinterManager.removePrinter(null);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    public void testRemovePrinter_IpAddressExists() {
+        try {
+            Printer printer = new Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS);
+            boolean ret = false;
+
+            if (!mPrinterManager.isExists(printer)) {
+                mPrinterManager.savePrinterToDB(printer);
+            }
+
+            printer.setName(IPV4_OFFLINE_PRINTER_ADDRESS);
+            ret = mPrinterManager.removePrinter(printer);
+            assertEquals(true, ret);
+
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -449,9 +506,13 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testSavePrinterToDB_ExsistingPrinter() {
         try {
-            Printer printer = mPrinterManager.getSavedPrintersList().get(0);
+            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
             boolean ret = false;
 
+            if (!mPrinterManager.isExists(printer)) {
+                mPrinterManager.savePrinterToDB(printer);
+            }
+            
             ret = mPrinterManager.savePrinterToDB(printer);
             assertEquals(false, ret);
         } catch (Exception e) {
@@ -468,16 +529,52 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             fail(); // Error should not be thrown
         }
     }
+    
+    public void testSavePrinterToDB_DefaultPrinter() {
+        try {
+            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter",
+                    IPV4_OFFLINE_PRINTER_ADDRESS);
+
+            for (int i = mPrintersList.size(); i > 0; i--) {
+                mPrinterManager.removePrinter(mPrintersList.get(i - 1));
+            }
+            
+            mPrinterManager.setPrintersCallback(this);
+            mPrinterManager.savePrinterToDB(printer);
+            mPrinterManager.setPrintersCallback(null);
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+
+    // ================================================================================
+    // Tests - getSavedPrintersList
+    // ================================================================================
+    
+    public void testGetSavedPrintersList_EmptyList() {
+        try {
+            for (int i = mPrintersList.size(); i > 0; i--) {
+                mPrinterManager.removePrinter(mPrintersList.get(i - 1));
+            }            
+            mPrinterManager.getSavedPrintersList();
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
 
     // ================================================================================
     // Tests - isExists
     // ================================================================================
 
-    public void testIsExists_ExsistingPrinter() {
+    public void testIsExists_ExistingPrinter() {
         try {
-            Printer printer = mPrinterManager.getSavedPrintersList().get(0);
+            Printer printer = new Printer("testIsExists_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
             boolean ret = false;
 
+            if(!mPrinterManager.isExists(printer)) {
+                mPrinterManager.savePrinterToDB(printer);
+            }
+            
             ret = mPrinterManager.isExists(printer);
             assertEquals(true, ret);
 
@@ -489,18 +586,19 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
-    public void testIsExists_NotExsistingPrinter() {
+    public void testIsExists_NotExistingPrinter() {
         try {
-            Printer printer = new Printer("testSavePrinterToDB_ValidPrinter",
+            Printer printer = new Printer("testIsExists_NotExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
             boolean ret = false;
-            for (Printer savedPrinter : mPrinterManager.getSavedPrintersList()) {
-                if (printer.getIpAddress().equals(savedPrinter.getIpAddress())) {
-                    printer = savedPrinter;
-                    break;
+            if (mPrinterManager.getSavedPrintersList() != null) {
+                for (Printer savedPrinter : mPrinterManager.getSavedPrintersList()) {
+                    if (printer.getIpAddress().equals(savedPrinter.getIpAddress())) {
+                        printer = savedPrinter;
+                        break;
+                    }
                 }
             }
-
             mPrinterManager.removePrinter(printer);
 
             ret = mPrinterManager.isExists(printer);
@@ -536,6 +634,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             boolean ret = false;
 
             ret = mPrinterManager.isOnline(IPV4_ONLINE_PRINTER_ADDRESS);
+            ret = mPrinterManager.isOnline(IPV6_ONLINE_PRINTER_ADDRESS);
+
             assertEquals(true, ret);
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -552,7 +652,108 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             fail(); // Error should not be thrown
         }
     }
+    
+    public void testIsOnline_NullAddress() {
+        try {
+            boolean ret = true;
 
+            ret = mPrinterManager.isOnline(null);
+            assertEquals(false, ret);
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    public void testIsOnline_InvalidAddress() {
+        try {
+            boolean ret = true;
+
+            ret = mPrinterManager.isOnline(INVALID_ADDRESS);
+            assertEquals(false, ret);
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+
+    // ================================================================================
+    // Tests - searchPrinter
+    // ================================================================================
+
+    public void testSearchPrinter_ValidIpAddress() {
+        try {
+            mPrinterManager.searchPrinter(IPV4_ONLINE_PRINTER_ADDRESS);            
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    public void testSearchPrinter_NullIpAddress() {
+        try {
+            mPrinterManager.searchPrinter(null);            
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    // ================================================================================
+    // Tests - UpdateOnlineStatusTask
+    // ================================================================================
+
+    public void testUpdateOnlineStatusTask_EmptyIpAddress() {
+        try {
+            mPrinterManager.new UpdateOnlineStatusTask(null, "").execute();
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+     
+    public void testUpdateOnlineStatusTask_ValidParameters() {
+        try {
+            mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_ONLINE_PRINTER_ADDRESS).execute();
+            mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_OFFLINE_PRINTER_ADDRESS).execute();
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    // ================================================================================
+    // Tests - UpdateOnlineStatusTask
+    // ================================================================================
+
+    public void testGetIdFromCursor_NullCursor() {
+        try {
+            mPrinterManager.getIdFromCursor(null, null);
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    public void testGetIdFromCursor_NullPrinter() {
+        try {
+            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+            Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null,
+                    KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] {IPV4_ONLINE_PRINTER_ADDRESS}, 
+                    null, null, null);
+            mPrinterManager.getIdFromCursor(cursor, null);
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+     
+    public void testGetIdFromCursor_ValidParameters() {
+        try {
+            Printer printer = new Printer("testGetIdFromCursor_ValidParameters", IPV4_ONLINE_PRINTER_ADDRESS);            
+            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+            Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null,
+                    KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] {IPV4_ONLINE_PRINTER_ADDRESS}, 
+                    null, null, null);
+            
+            mPrinterManager.getIdFromCursor(cursor, printer);
+            
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
     // ================================================================================
     // Interface
     // ================================================================================

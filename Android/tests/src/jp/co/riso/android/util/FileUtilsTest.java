@@ -12,8 +12,8 @@ import android.content.res.AssetManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
-    final private static String TEST_SRC_FILE = "help.html";
-    final private static String TEST_DST_FILE = "sample_dst.html";
+    final private static String TEST_SRC_FILE = "PDF-squarish.pdf";
+    final private static String TEST_DST_FILE = "sample_dst.pdf";
 
     private File mSrcFile = null;
     private File mDstFile = null;
@@ -49,8 +49,9 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
 
     public void testCopy_ValidParams() {
         try {
-            
-            mSrcFile = new File(getAssetPath(TEST_SRC_FILE));
+            String pdfPath = getAssetPath(TEST_SRC_FILE);
+
+            mSrcFile = new File(pdfPath);
             if (mSrcFile == null) {
                 fail();
             }
@@ -62,8 +63,6 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
             }
 
             FileUtils.copy(mSrcFile, mDstFile);
-        } catch (IOException e) {
-            fail();
         } catch (NullPointerException e) {
             fail();
         } catch (Exception e) {
@@ -96,8 +95,8 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
     // ================================================================================
 
     private String getAssetPath(String filename) {
-        File f = new File(getActivity().getCacheDir() + "/" + filename);
-        AssetManager assetManager = getInstrumentation().getContext().getAssets();
+        File f = new File(SmartDeviceApp.getAppContext().getCacheDir() + "/" + filename);
+        AssetManager assetManager = SmartDeviceApp.getAppContext().getAssets();
 
         if (!f.exists()) {
             try {

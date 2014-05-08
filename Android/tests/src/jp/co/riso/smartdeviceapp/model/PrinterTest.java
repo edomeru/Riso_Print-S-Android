@@ -6,10 +6,15 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer.Config;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import junit.framework.TestCase;
+import android.os.Bundle;
+import android.os.Parcel;
 
 public class PrinterTest extends TestCase {
     final private String PRINTER_NAME = "Test Printer";
     final private String PRINTER_ADDRESS = "192.168.1.206";
+    final private String PRINTER_TAG = "PRINTER_BUNDLE";
+    final private String PRINTER_ARRAY_TAG = "PRINTER_ARRAY_BUNDLE";
+
 
     public PrinterTest(String name) {
         super(name);
@@ -32,7 +37,44 @@ public class PrinterTest extends TestCase {
 
         assertNotNull(printer);
     }
+    
+    public void testConstructor_Parcel() {
+        Printer printer = new Printer(PRINTER_NAME, PRINTER_ADDRESS);
+        Printer printerArray[] = new Printer[2];
+        
+        // Create parcelable object and put to Bundle
+        Bundle bundlePut = new Bundle();
 
+        // Null config
+        printer.setConfig(null);
+        // Parcel in
+        bundlePut.putParcelable(PRINTER_TAG, printer);
+        // New Array
+        bundlePut.putParcelableArray(PRINTER_ARRAY_TAG, printerArray);
+        
+        // Save bundle to parcel
+        Parcel parcel = Parcel.obtain();
+        bundlePut.writeToParcel(parcel, 0);
+
+        parcel.setDataPosition(0);
+        Bundle bundleExtract = parcel.readBundle();
+        bundleExtract.setClassLoader(Printer.class.getClassLoader());
+        printer = bundleExtract.getParcelable(PRINTER_TAG);
+        bundleExtract.getParcelableArray(PRINTER_ARRAY_TAG);
+        
+        Printer createFromParcel = Printer.CREATOR.createFromParcel(parcel);
+        assertNotNull(createFromParcel);
+    }
+    
+    // ================================================================================
+    // Tests - newArray
+    // ================================================================================
+    
+    public void testNewArray_Parcel() {        
+        Printer printer[] = Printer.CREATOR.newArray(2);
+        assertNotNull(printer);
+    }
+    
     // ================================================================================
     // Tests - setId
     // ================================================================================
@@ -202,5 +244,32 @@ public class PrinterTest extends TestCase {
 
         printer.setId(AppConstants.CONST_MAX_PRINTER_COUNT + 1);
         printer.getPrintSettings();
+    }
+    
+    // ================================================================================
+    // Tests - describeContents
+    // ================================================================================
+
+    public void testDescribeContents() {
+        Printer printer = new Printer("", "");
+        printer.describeContents();
+    }
+    
+    // ================================================================================
+    // Tests - Config
+    // ================================================================================
+
+    public void testConfig() {
+        Printer printer = new Printer("", "");
+        printer.getConfig().isLprAvailable();
+        printer.getConfig().isRawAvailable();
+        printer.getConfig().isBookletAvailable();
+        printer.getConfig().isStaplerAvailable();
+        printer.getConfig().isPunch4Available();
+        printer.getConfig().isTrayFaceDownAvailable();
+        printer.getConfig().isTrayAutoStackAvailable();
+        printer.getConfig().isTrayTopAvailable();
+        printer.getConfig().isTrayStackAvailable();
+        printer.getConfig().isTrayTopAvailable();
     }
 }

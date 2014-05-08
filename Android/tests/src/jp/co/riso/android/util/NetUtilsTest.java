@@ -120,7 +120,7 @@ public class NetUtilsTest extends TestCase {
             "::z"
     };
     private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
-    private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4";
+    private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%eth0";
 
     public NetUtilsTest(String name) {
         super(name);
