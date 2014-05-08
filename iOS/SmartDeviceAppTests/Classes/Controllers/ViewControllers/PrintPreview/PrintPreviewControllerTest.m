@@ -49,6 +49,7 @@
 - (void)goToPage:(NSInteger)pageIndex;
 - (UIViewController *)nextViewController:(NSInteger)index;
 - (UIViewController *)previousViewController:(NSInteger)index;
+- (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index;
 @end
 
 @interface PrintPreviewControllerTest : GHTestCase
@@ -807,4 +808,45 @@
     [viewController previewView:viewController.previewView didChangeZoomMode:NO];
     GHAssertTrue([viewController.pageViewController.view isUserInteractionEnabled], @"");
     
-}@end
+}
+
+- (void)test025_viewControllerAtIndex
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    [manager setFileURL:testURL];
+    [manager setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    PDFPageContentViewController *page0 = (PDFPageContentViewController *)[viewController viewControllerAtIndex:0];
+    GHAssertNotNil(page0, @"");
+    GHAssertEquals(page0.pageIndex, (NSInteger)0, @"");
+    
+    PDFPageContentViewController *page1= (PDFPageContentViewController *)[viewController viewControllerAtIndex:1];
+    GHAssertNotNil(page1, @"");
+    GHAssertEquals(page1.pageIndex, (NSInteger)1, @"");
+    
+    PDFPageContentViewController *page2= (PDFPageContentViewController *)[viewController viewControllerAtIndex:2];
+    GHAssertNotNil(page2, @"");
+    GHAssertEquals(page2.pageIndex, (NSInteger)2, @"");
+    
+    GHAssertEqualObjects(page0, [viewController viewControllerAtIndex:0], @"");
+    GHAssertEqualObjects(page1, [viewController viewControllerAtIndex:1], @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    
+    PDFPageContentViewController *page = (PDFPageContentViewController *)[viewController viewControllerAtIndex:4];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)4, @"");
+    GHAssertTrue(page.isBookendPage,@"");
+    
+    page = (PDFPageContentViewController *)[viewController viewControllerAtIndex:5];
+    GHAssertNotNil(page, @"");
+    GHAssertEquals(page.pageIndex, (NSInteger)5, @"");
+    GHAssertTrue(page.isBookendPage,@"");
+}
+
+@end
