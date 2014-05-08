@@ -2,15 +2,21 @@ package jp.co.riso.android.util;
 
 import java.util.Locale;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.test.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.AndroidRuntimeException;
 import android.view.Display;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 
 public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
     
@@ -394,5 +400,75 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, "");
         
         assertNull(localized);
+    }
+    
+    //================================================================================
+    // Tests - changeChildrenFont
+    //================================================================================
+    
+    public void testChangeChildrenFont_ValidViewGroupValidFont() {
+        LinearLayout ll = new LinearLayout(getActivity());
+        
+        ll.addView(new TextView(getActivity()));
+        ll.addView(new View(getActivity()));
+        ll.addView(new Spinner(getActivity()));
+        ll.addView(new EditText(getActivity()));
+        ll.addView(new Switch(getActivity()));
+        
+        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+    }
+    
+    public void testChangeChildrenFont_NullViewGroupValidFont() {
+        AppUtils.changeChildrenFont(null, SmartDeviceApp.getAppFont());
+    }
+    
+    public void testChangeChildrenFont_ValidViewGroupNullFont() {
+        LinearLayout ll = new LinearLayout(getActivity());
+        
+        ll.addView(new TextView(getActivity()));
+        ll.addView(new View(getActivity()));
+        ll.addView(new Spinner(getActivity()));
+        ll.addView(new EditText(getActivity()));
+        ll.addView(new Switch(getActivity()));
+
+        AppUtils.changeChildrenFont(ll, null);
+    }
+    
+    public void testChangeChildrenFont_NullViewGroupNullFont() {
+        AppUtils.changeChildrenFont(null, null);
+    }
+    
+    //================================================================================
+    // Tests - getResourseId
+    //================================================================================
+    
+    public void testGetResourceId_Valid() {
+        int value = AppUtils.getResourseId("app_name", R.string.class, -1);
+        
+        assertFalse(-1 != value);
+    }
+
+    public void testGetResourceId_Null() {
+        int value = AppUtils.getResourseId(null, null, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_NullVariableName() {
+        int value = AppUtils.getResourseId(null, R.string.class, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_NullClass() {
+        int value = AppUtils.getResourseId("app_name", null, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_InvalidClass() {
+        int value = AppUtils.getResourseId("app_name", this.getClass(), -1);
+        
+        assertEquals(-1, value);
     }
 }

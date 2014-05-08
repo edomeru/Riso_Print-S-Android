@@ -274,7 +274,7 @@ public final class AppUtils {
      */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
     public static void changeChildrenFont(ViewGroup v, Typeface font) {
-        if (font == null) {
+        if (font == null || v == null) {
             return;
         }
         
