@@ -1739,12 +1739,14 @@ namespace SmartDeviceApp.Controllers
                 {
                     // TODO: Display progress dialog
 
-                    DirectPrintController dp = new DirectPrintController();
-                    dp.SendPrintJob(DocumentController.Instance.FileName,
-                        DocumentController.Instance.PdfFile, _selectedPrinter, _currPrintSettings);
-
-                    // TODO: Remove the following line
-                    UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));
+                    DirectPrintController directPrintController = new DirectPrintController(
+                        DocumentController.Instance.FileName,
+                        DocumentController.Instance.PdfFile,
+                        _selectedPrinter.IpAddress,
+                        _currPrintSettings,
+                        new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
+                        new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
+                    directPrintController.SendPrintJob();
                 }
                 else
                 {
@@ -1757,12 +1759,22 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        public void UpdatePrintJobProgress(int progress)
+        /// <summary>
+        /// Update progress value
+        /// </summary>
+        /// <param name="value">progress value</param>
+        public void UpdatePrintJobProgress(int value)
         {
             // TODO: Apply value to progress dialog
         }
 
-        public void UpdatePrintJobStatus(string name, DateTime date, int result)
+        /// <summary>
+        /// Processes print job result and saves the print job item to database.
+        /// </summary>
+        /// <param name="name">print job name</param>
+        /// <param name="date">date</param>
+        /// <param name="result">result</param>
+        public void UpdatePrintJobResult(string name, DateTime date, int result)
         {
             PrintJob printJob = new PrintJob()
             {
@@ -1778,6 +1790,10 @@ namespace SmartDeviceApp.Controllers
             {
                 // TODO: await Cleanup();
                 // TODO: Close preview and go to home
+            }
+            else if (result == (int)PrintJobResult.Error)
+            {
+                // TODO: Show error message, do not exit screen
             }
         }
 
