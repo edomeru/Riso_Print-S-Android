@@ -6,10 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.Instrumentation;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,7 +27,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
     public ConfirmDialogFragmentTest() {
         super(MainActivity.class);
-        mCallbackCalled = false;
+
     }
 
     public ConfirmDialogFragmentTest(Class<MainActivity> activityClass) {
@@ -41,6 +38,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
+        mCallbackCalled = false;
     }
 
     @Override
@@ -48,11 +46,11 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         super.tearDown();
     }
 
-    public void testNewInstanceWithMessage() {
+    public void testNewInstance_WithMessage() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
@@ -72,11 +70,11 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertEquals(NEGATIVE_BUTTON, neg.getText());
     }
 
-    public void testNewInstanceWithTitle() {
+    public void testNewInstance_WithTitle() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(TITLE, MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
@@ -90,7 +88,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(msg);
         assertEquals(MSG, ((TextView) msg).getText());
 
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
+        int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
@@ -108,11 +106,11 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
     }
 
-    public void testOnClickPositive() {
+    public void testOnClick_Positive() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
@@ -134,11 +132,11 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
     }
 
-    public void testOnClickNegative() {
+    public void testOnClick_Negative() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
@@ -161,13 +159,13 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
     }
 
-    public void testOnClickPositiveListener() {
+    public void testOnClick_PositiveListener() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.setTargetFragment(new MockCallback(), 1);
 
         c.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
@@ -192,13 +190,13 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         checkCallbackCalled();
     }
 
-    public void testOnClickNegativeListener() {
+    public void testOnClick_NegativeListener() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.setTargetFragment(new MockCallback(), 1);
         c.show(mActivity.getFragmentManager(), TAG);
 
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
@@ -223,85 +221,13 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         checkCallbackCalled();
     }
 
-
-    public void testChangeOrientation() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(TITLE, MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
-        assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-
-        View msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        View title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        Button pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        Button neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(pos);
-        assertNotNull(neg);
-
-        assertEquals(POSITIVE_BUTTON, pos.getText());
-        assertEquals(NEGATIVE_BUTTON, neg.getText());
-
-        changeOrientation();
-        getInstrumentation().waitForIdleSync();
-
-
-        //after rotation
-
-        fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        getInstrumentation().waitForIdleSync();
-        assertNotNull(fragment);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-
-        msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(pos);
-        assertNotNull(neg);
-
-        assertEquals(POSITIVE_BUTTON, pos.getText());
-        assertEquals(NEGATIVE_BUTTON, neg.getText());
-    }
-
-    public void testOnCancelKey() {
+    public void testOnCancel() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(TITLE, MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
         c.setTargetFragment(new MockCallback(), 1);
         c.show(getActivity().getFragmentManager(), TAG);
 
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
 
         Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(TAG);
@@ -316,7 +242,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         sendKeys(KeyEvent.KEYCODE_BACK);
 
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(getActivity().getFragmentManager().findFragmentByTag(TAG));
@@ -325,30 +251,41 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
 
+    //================================================================================
+    // Private
+    //================================================================================
+
     private void performClick(final Button button) throws Throwable {
         runTestOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 button.performClick();
             }
         });
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
     }
 
-    private void changeOrientation(){
-        int orientation = mActivity.getResources().getConfiguration().orientation;
-        int nextOrientation = orientation == Configuration.ORIENTATION_LANDSCAPE ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-
-        Instrumentation.ActivityMonitor monitor = new Instrumentation.ActivityMonitor(getActivity().getClass().getName(), null, false);
-        getInstrumentation().addMonitor(monitor);
-        getActivity().setRequestedOrientation(nextOrientation);
-        getInstrumentation().waitForIdleSync();
-        mActivity = (MainActivity) getInstrumentation().waitForMonitor(monitor);
-    }
+    //================================================================================
+    // Private methods
+    //================================================================================
 
     private void checkCallbackCalled() {
         assertTrue(mCallbackCalled);
     }
+
+    // wait some seconds so that you can see the change on emulator/device.
+    private void waitFewSeconds(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //================================================================================
+    // Internal Classes
+    //================================================================================
 
     // for testing only
     @SuppressLint("ValidFragment")

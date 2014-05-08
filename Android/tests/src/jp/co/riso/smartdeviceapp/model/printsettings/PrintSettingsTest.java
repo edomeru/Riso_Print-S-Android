@@ -3,14 +3,15 @@ package jp.co.riso.smartdeviceapp.model.printsettings;
 
 import java.util.HashMap;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.ApplicationTestCase;
 
-public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActivity> {
+public class PrintSettingsTest extends ApplicationTestCase<SmartDeviceApp> {
+
     private static final String PRINTER_ID = "prn_id";
     private static final String PRINTER_IP = "prn_ip_address";
     private static final String PRINTER_NAME = "prn_name";
@@ -57,12 +58,9 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     private PrintSettings mPrintSettings;
 
-    public PrintSettingsTest() {
-        super(MainActivity.class);
-    }
 
-    public PrintSettingsTest(Class<MainActivity> activityClass) {
-        super(activityClass);
+    public PrintSettingsTest(Class<SmartDeviceApp> applicationClass) {
+        super(applicationClass);
     }
 
     @Override
@@ -81,7 +79,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertNotNull(mPrintSettings);
     }
 
-    public void testPrintSettings() {
+    public void testConstructor() {
         PrintSettings settings = new PrintSettings();
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
@@ -107,7 +105,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
     }
 
-    public void testPrintSettingsPrintSettings() {
+    public void testConstructor_WithPrintSettings() {
 
         mPrintSettings.setValue(KEY_COLOR, 2);
         mPrintSettings.setValue(KEY_COPIES, 10);
@@ -124,8 +122,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertEquals(10, (int) settingValues.get(KEY_COPIES)); // from 1 to 10
         assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
         assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT)); // from 1 to
-        // 0
+        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT)); // from 1 to 0
         assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
@@ -141,7 +138,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     // must have default values
-    public void testPrintSettingsIntInvalid() {
+    public void testConstructor_WithInvalidPrinterID() {
         PrintSettings settings = new PrintSettings(-1);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
@@ -167,11 +164,10 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
     }
 
-    // must have default values
-    public void testPrintSettingsIntValid() {
+    public void testConstructor_WithPrinterID() {
         int printerId = -1;
 
-        DatabaseManager mManager = new DatabaseManager(getActivity());
+        DatabaseManager mManager = new DatabaseManager(getApplication());
 
         SQLiteDatabase db = mManager.getWritableDatabase();
 
@@ -222,7 +218,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
                     (int) settingValues.get(KEY_PUNCH));
             assertEquals(c.getInt(c.getColumnIndex(PRINTSETTING_OUTPUT_TRAY)),
                     (int) settingValues.get(KEY_OUTPUT_TRAY));
-            c.close();
+
         } else {
             // if not yet existing in database must be default values
             printerId = 1;
@@ -250,6 +246,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
             assertEquals(0, (int) settingValues.get(KEY_PUNCH));
             assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
         }
+        c.close();
         db.close();
     }
 
@@ -290,6 +287,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     public void testIsScaleToFit() {
         assertEquals(true, mPrintSettings.isScaleToFit());
+        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 0);
+        assertEquals(false, mPrintSettings.isScaleToFit());
     }
 
     public void testGetImposition() {
@@ -306,6 +305,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     public void testIsBooklet() {
         assertEquals(false, mPrintSettings.isBooklet());
+        mPrintSettings.setValue(KEY_BOOKLET, 1);
+        assertEquals(true, mPrintSettings.isBooklet());
     }
 
     public void testGetBookletFinish() {
@@ -328,37 +329,34 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertEquals(Preview.Punch.OFF, mPrintSettings.getPunch());
     }
 
-    public void testSavePrintSettingToDbInvalid() {
-        assertFalse(mPrintSettings.savePrintSettingToDB(-1));
-    }
-
     public void testSavePrintSettingToDb() {
         int printerId = -1;
 
-        DatabaseManager mManager = new DatabaseManager(getActivity());
-
+        DatabaseManager mManager = new DatabaseManager(getApplication());
+        HashMap<String, Integer> settingValues;
         SQLiteDatabase db = mManager.getWritableDatabase();
-
+        //initialize data
         Cursor c = db.query(PRINTER_TABLE, null, null, null, null, null, null);
         if (c.getCount() > 0) {
-            c.moveToFirst();
+            c.moveToLast();
             printerId = c.getInt(c.getColumnIndex(PRINTER_ID));
+            PrintSettings settings = new PrintSettings(printerId);
+            assertNotNull(settings);
+            settingValues = settings.getSettingValues();
         } else { // create data
-            printerId = 1;
+            printerId = 1000;
             ContentValues cv = new ContentValues();
             cv.put(PRINTER_ID, printerId);
-            cv.put(PRINTER_NAME, "test printersss");
+            cv.put(PRINTER_NAME, "test printers");
             cv.put(PRINTER_IP, "192.168.1.2");
 
             db.insert("Printer", null, cv);
-
-            db.close();
+            settingValues = mPrintSettings.getSettingValues();
         }
 
         c.close();
         db.close();
 
-        HashMap<String, Integer> settingValues = mPrintSettings.getSettingValues();
         assertNotNull(settingValues);
 
         assertTrue(mPrintSettings.savePrintSettingToDB(printerId));
@@ -428,6 +426,10 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
         c.close();
         db.close();
+    }
+
+    public void testSavePrintSettingToDbInvalid() {
+        assertFalse(mPrintSettings.savePrintSettingToDB(-1));
     }
 
 }

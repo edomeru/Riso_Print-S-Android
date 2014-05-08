@@ -11,6 +11,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
     private static final String TAG = "PauseableHandlerCallbackTest";
     private static final int MESSAGE_FORSTORING = 0x10001;
     private static final int MESSAGE_DONOTSTORE = 0x10002;
+    private static final int MESSAGE_FORSTORING_2 = 0x10003;
 
     private MockCallback mCallback;
     private boolean mMessageProcessed = false;
@@ -28,7 +29,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
+        mCallback = null;
         mMessageProcessed = false;
         mMessageStored = false;
     }
@@ -38,8 +39,9 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         super.tearDown();
     }
 
-    public void testConstructor_NullCallback() {
-        PauseableHandler handler = new PauseableHandler(null);
+    public void testConstructor_WithCallback() {
+        mCallback = new MockCallback();
+        PauseableHandler handler = new PauseableHandler(mCallback);
         assertNotNull(handler);
     }
 
@@ -49,23 +51,55 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
             @Override
             public void run(){
                 mHandler = new PauseableHandler(mCallback);
-                Message msg = Message.obtain(mHandler,5);
+                Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
 
                 mHandler.sendMessage(msg);
-                assertTrue(mHandler.hasStoredMessage(5));
-                assertTrue(mHandler.hasMessages(5));
+                assertTrue(mHandler.hasStoredMessage(MESSAGE_FORSTORING));
             }
         });
     }
 
-    public void testSendMessageCallback() {
+    public void testHasStoredMessage_Pause() {
+        mCallback = new MockCallback();
+        getInstrumentation().runOnMainSync(new Runnable(){
+            @Override
+            public void run(){
+                mHandler = new PauseableHandler(mCallback);
+                Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
+                mHandler.pause();
+                mHandler.sendMessage(msg);
+                assertTrue(mHandler.hasStoredMessage(MESSAGE_FORSTORING));
+
+                msg = Message.obtain(mHandler, MESSAGE_FORSTORING_2);
+                mHandler.sendMessage(msg);
+                assertTrue(mHandler.hasStoredMessage(MESSAGE_FORSTORING_2));
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        assertTrue(mMessageStored);
+        assertTrue(mHandler.hasStoredMessage(MESSAGE_FORSTORING));
+        assertTrue(mHandler.hasStoredMessage(MESSAGE_FORSTORING_2));
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            @Override
+            public void run(){
+                mHandler.resume();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        assertTrue(mMessageProcessed);
+        assertFalse(mHandler.hasStoredMessage(MESSAGE_FORSTORING));
+        assertFalse(mHandler.hasStoredMessage(MESSAGE_FORSTORING_2));
+    }
+
+    public void testHandleMessage() {
         mCallback = new MockCallback();
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
                 mHandler = new PauseableHandler(mCallback);
                 Message msg = Message.obtain(mHandler, MESSAGE_DONOTSTORE);
-                mHandler.sendMessage(msg);
+                mHandler.sendMessage(msg); //will call handleMessage
                 assertTrue(mHandler.hasMessages(MESSAGE_DONOTSTORE));
             }
         });
@@ -75,14 +109,14 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         assertFalse(mHandler.hasMessages(MESSAGE_DONOTSTORE));
     }
 
-    public void testSendMessageCallbackDelayed() {
+    public void testHandleMessage_WithDelay() {
         mCallback = new MockCallback();
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
                 mHandler = new PauseableHandler(mCallback);
                 Message msg = Message.obtain(mHandler, MESSAGE_DONOTSTORE);
-                mHandler.sendMessageDelayed(msg, 1000);
+                mHandler.sendMessageDelayed(msg, 1000); //will call handleMessage
                 assertTrue(mHandler.hasMessages(MESSAGE_DONOTSTORE));
             }
         });
@@ -96,11 +130,11 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().waitForIdleSync();
 
         assertTrue(mMessageProcessed);
-        assertFalse(mHandler.hasStoredMessage(5));
-        assertFalse(mHandler.hasMessages(5));
+        assertFalse(mHandler.hasStoredMessage(MESSAGE_DONOTSTORE));
+        assertFalse(mHandler.hasMessages(MESSAGE_DONOTSTORE));
     }
 
-    public void testSendMessageCallbackPause() {
+    public void testHandleMessage_PauseResume() {
         mCallback = new MockCallback();
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
@@ -130,7 +164,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         assertFalse(mHandler.hasMessages(MESSAGE_FORSTORING));
     }
 
-    public void testSendMessageCallbackPauseDelayed() {
+    public void testHandleMessage_PauseWithDelay() {
         mCallback = new MockCallback();
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
@@ -170,7 +204,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
 
     }
 
-    public void testSendMessageCallbackDelayedBeforePause() {
+    public void testHandleMessage_WithDelayBeforePause() {
         mCallback = new MockCallback();
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
@@ -207,6 +241,10 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         assertFalse(mHandler.hasStoredMessage(MESSAGE_FORSTORING));
         assertFalse(mHandler.hasMessages(MESSAGE_FORSTORING));
     }
+
+    //================================================================================
+    // Internal Class
+    //================================================================================
 
     private class MockCallback implements PauseableHandlerCallback {
         @Override

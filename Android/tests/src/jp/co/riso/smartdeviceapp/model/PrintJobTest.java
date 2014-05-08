@@ -46,25 +46,25 @@ public class PrintJobTest extends AndroidTestCase {
 
     public void testSetName() {
         pj.setName("new name.pdf");
-        assertEquals("new name.pdf",pj.getName());
+        assertEquals("new name.pdf", pj.getName());
     }
 
     public void testGetDate() {
-        assertEquals(date,pj.getDate());
+        assertEquals(date, pj.getDate());
     }
 
     public void testSetDate() {
         Date dateNew = new Date();
         pj.setDate(dateNew);
-        assertEquals(dateNew,pj.getDate());
+        assertEquals(dateNew, pj.getDate());
     }
 
     public void testGetResult() {
-        assertEquals(JobResult.SUCCESSFUL,pj.getResult());
+        assertEquals(JobResult.SUCCESSFUL, pj.getResult());
     }
 
     public void testSetResult() {
         pj.setResult(JobResult.ERROR);
-        assertEquals(JobResult.ERROR,pj.getResult());
+        assertEquals(JobResult.ERROR, pj.getResult());
     }
 }

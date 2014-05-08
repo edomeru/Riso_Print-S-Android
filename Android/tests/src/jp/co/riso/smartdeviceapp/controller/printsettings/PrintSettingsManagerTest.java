@@ -59,7 +59,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     private PrintSettingsManager mPrintSettingsMgr;
     private DatabaseManager mManager;
     private Context mContext;
-    private int printerId = 1;
+    private int printerId = 1000;
     private int settingId = 1;
     private int intValue = 1;
 
@@ -133,11 +133,11 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         assertEquals(1, c.getCount());
     }
 
-    public void test_getInstance() {
+    public void testGetInstance() {
         assertEquals(mPrintSettingsMgr, PrintSettingsManager.getInstance(mContext));
     }
 
-    public void test_getPrintSetting() {
+    public void testGetPrintSetting() {
         PrintSettings settings = mPrintSettingsMgr.getPrintSetting(printerId);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
@@ -161,16 +161,15 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         assertEquals(1, (int) settingValues.get(KEY_STAPLE));
         assertEquals(1, (int) settingValues.get(KEY_PUNCH));
         assertEquals(1, (int) settingValues.get(KEY_OUTPUT_TRAY));
-
     }
 
-    public void test_saveToDBDefaultValues() {
+    public void testSaveToDB_DefaultValues() {
         PrintSettings settings = new PrintSettings();
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        boolean result =        mPrintSettingsMgr.saveToDB(printerId, settings);
+        boolean result = mPrintSettingsMgr.saveToDB(printerId, settings);
         assertTrue(result);
 
         SQLiteDatabase db = mManager.getReadableDatabase();
@@ -225,19 +224,17 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         }, null, null, null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
-        assertEquals(settingId,  c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
+        assertEquals(settingId, c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         c.close();
     }
 
-    public void test_saveToDBInitial() {
+    public void testSaveToDB_InitialSave() {
         PrintSettings settings = new PrintSettings();
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
         SQLiteDatabase db = mManager.getWritableDatabase();
-
-
 
         db.delete(PRINTER_TABLE, null, null);
 

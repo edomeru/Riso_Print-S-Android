@@ -34,25 +34,37 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
         assertNotNull(handler);
     }
 
-    public void testSendMessageNoCallback() {
-
+    public void testHandleMessage() {
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
                 mHandler = new PauseableHandler(null);
 
                 Message msg = Message.obtain(mHandler, MESSAGE);
-                mHandler.sendMessage(msg);
-                assertTrue(mHandler.hasStoredMessage(MESSAGE));
+                mHandler.sendMessage(msg); //will call handleMessage
                 assertTrue(mHandler.hasMessages(MESSAGE));
             }
         });
         getInstrumentation().waitForIdleSync();
-        assertFalse(mHandler.hasStoredMessage(MESSAGE));
         assertFalse(mHandler.hasMessages(MESSAGE));
     }
 
-    public void testSendMessageNoCallbackDelayed() {
+    public void testHasStoredMessage() {
+        getInstrumentation().runOnMainSync(new Runnable(){
+            @Override
+            public void run(){
+                mHandler = new PauseableHandler(null);
+
+                Message msg = Message.obtain(mHandler, MESSAGE);
+                mHandler.sendMessage(msg); //will call handleMessage
+                assertTrue(mHandler.hasStoredMessage(MESSAGE));
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        assertFalse(mHandler.hasStoredMessage(MESSAGE));
+    }
+
+    public void testHandleMessage_PauseResume() {
 
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
@@ -61,7 +73,7 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
 
                 Message msg = Message.obtain(mHandler, MESSAGE);
                 mHandler.pause();
-                mHandler.sendMessage(msg);
+                mHandler.sendMessage(msg); //will call handleMessage
                 assertTrue(mHandler.hasStoredMessage(MESSAGE));
 
                 assertTrue(mHandler.hasMessages(MESSAGE));

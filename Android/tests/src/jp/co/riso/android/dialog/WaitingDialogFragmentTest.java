@@ -6,11 +6,8 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.Instrumentation;
-import android.app.ProgressDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +22,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     private static final String BUTTON_TITLE = "OK";
 
     private MainActivity mActivity;
+    private FragmentManager fm;
 
     private boolean mCallbackCalled = false;
 
@@ -40,6 +38,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
+        fm = mActivity.getFragmentManager();
         mCallbackCalled = false;
     }
 
@@ -48,18 +47,24 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         super.tearDown();
     }
 
-    public void testNewInstance() {
+
+    public void testNewInstance_Cancelable() {
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE) ;
         assertNotNull(w);
-        w.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        w.show(fm, TAG);
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        // wait some seconds so that you can see the change on emulator/device.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Fragment fragment = fm.findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
         AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
         assertNotNull(dialog);
         assertTrue(dialog.isShowing());
         assertTrue(((DialogFragment) fragment).isCancelable());
@@ -68,7 +73,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(msg);
         assertEquals(MSG, ((TextView) msg).getText());
 
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
+        int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
@@ -78,17 +83,41 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         assertNotNull(b);
         assertEquals(BUTTON_TITLE, b.getText());
-
+        w.dismissAllowingStateLoss();
     }
 
-    public void testOnCancelClicked() {
+    public void testNewInstance_NotCancelable() {
+        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE) ;
+        assertNotNull(w);
+        w.show(fm, TAG);
+        waitFewSeconds();
+
+        Fragment fragment = fm.findFragmentByTag(TAG);
+        assertTrue(fragment instanceof DialogFragment);
+        assertTrue(((DialogFragment) fragment).getShowsDialog());
+
+        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
+
+        assertNotNull(dialog);
+        assertTrue(dialog.isShowing());
+        assertFalse(((DialogFragment) fragment).isCancelable());
+
+        getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+        Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+        assertEquals("", b.getText());
+        assertFalse(dialog.getButton(DialogInterface.BUTTON_NEGATIVE).isShown());
+        w.dismissAllowingStateLoss();
+    }
+
+    public void testOnClick() {
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE) ;
         assertNotNull(w);
         w.setTargetFragment(new MockCallback(), 1);
-        w.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        w.show(fm, TAG);
+        waitFewSeconds();
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = fm.findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -110,22 +139,21 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         }
 
         assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
+        assertNull(fm.findFragmentByTag(TAG));
 
         assertTrue(mCallbackCalled);
 
     }
 
-    public void testOnCancelKey() {
+    public void testOnCancel() {
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE,MSG, true, BUTTON_TITLE) ;
         assertNotNull(w);
         w.setTargetFragment(new MockCallback(), 1);
-        w.show(mActivity.getFragmentManager(), TAG);
+        w.show(fm, TAG);
 
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = fm.findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -135,203 +163,17 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertTrue(dialog.isShowing());
         assertTrue(((DialogFragment) fragment).isCancelable());
 
-        sendKeys(KeyEvent.KEYCODE_BACK);
-
-        getInstrumentation().waitForIdleSync();
-
+        getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+        waitFewSeconds();
         assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
+        assertNull(fm.findFragmentByTag(TAG));
 
         assertTrue(mCallbackCalled);
     }
 
-    public void testNotCancelable() {
-        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE) ;
-        assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
-        w.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-        assertFalse(((DialogFragment) fragment).isCancelable());
-
-        Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertEquals("", b.getText());
-        assertFalse(dialog.getButton(DialogInterface.BUTTON_NEGATIVE).isShown());
-
-        sendKeys(KeyEvent.KEYCODE_BACK);
-        getInstrumentation().waitForIdleSync();
-
-        assertNotNull(((DialogFragment) fragment).getDialog());
-        assertNotNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
-
-        assertFalse(mCallbackCalled);
-    }
-
-    public void testOnCancelOutside() {
-        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE,MSG, true, BUTTON_TITLE) ;
-        assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
-
-        w.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-        assertTrue(((DialogFragment) fragment).isCancelable());
-
-        View msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        View title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(b);
-        assertEquals(BUTTON_TITLE, b.getText());
-
-        w.dismiss();
-        getInstrumentation().waitForIdleSync();
-
-        assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
-
-    }
-
-    public void testOnCancelLater() {
-        final WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE,MSG, true, BUTTON_TITLE) ;
-        assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
-        w.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-        final Fragment dialog = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(dialog instanceof DialogFragment);
-        assertTrue(((DialogFragment) dialog).getShowsDialog());
-        assertTrue(((DialogFragment) dialog).getDialog() instanceof ProgressDialog);
-        assertTrue(((DialogFragment) dialog).getDialog().isShowing());
-
-        assertEquals(BUTTON_TITLE,((AlertDialog) w.getDialog()).getButton(DialogInterface.BUTTON_NEGATIVE).getText());
-        assertNotNull(((AlertDialog) w.getDialog()).getButton(DialogInterface.BUTTON_NEGATIVE));
-
-        try {
-            dismisslater(w);
-        } catch (Throwable e) {
-            Log.d(TAG, e.getMessage());
-        }
-
-
-        assertNotNull(((DialogFragment) dialog).getDialog());
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Log.d(TAG, e.getMessage());
-        }
-        getInstrumentation().waitForIdleSync();
-
-        assertNull(((DialogFragment) dialog).getDialog());
-        //        try {
-        //            checkAfter((DialogFragment) dialog);
-        //        } catch (Throwable e) {
-        //            Log.d(TAG, e.getMessage());
-        //        }
-
-
-    }
-
-    public void testChangeOrientation() {
-        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE) ;
-        assertNotNull(w);
-        w.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-
-        View msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        View title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(b);
-
-        assertEquals(BUTTON_TITLE, b.getText());
-
-        changeOrientation();
-        getInstrumentation().waitForIdleSync();
-
-        //after rotation
-
-        fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        getInstrumentation().waitForIdleSync();
-        assertNotNull(fragment);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-
-        msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(b);
-
-        assertEquals(BUTTON_TITLE, b.getText());
-
-    }
-
-    private void changeOrientation(){
-        int orientation = mActivity.getResources().getConfiguration().orientation;
-        int nextOrientation = orientation == Configuration.ORIENTATION_LANDSCAPE ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-
-        Instrumentation.ActivityMonitor monitor = new Instrumentation.ActivityMonitor(mActivity.getClass().getName(), null, false);
-        getInstrumentation().addMonitor(monitor);
-        mActivity.setRequestedOrientation(nextOrientation);
-        getInstrumentation().waitForIdleSync();
-        mActivity = (MainActivity) getInstrumentation().waitForMonitor(monitor);
-    }
+    //================================================================================
+    // Private methods
+    //================================================================================
 
     private void performClick(final Button button) throws Throwable {
         mActivity.runOnUiThread(new Runnable() {
@@ -340,28 +182,28 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 button.performClick();
             }
         });
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
     }
 
-    private void dismisslater(final WaitingDialogFragment dialog) throws Throwable {
-
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Log.d(TAG, e.getMessage());
-                }
-                dialog.dismiss();
-            }
-        });
-
+    // wait for a few seconds so that you can see the change on emulator/device.
+    private void waitFewSeconds(){
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
+    //================================================================================
+    // Internal Class
+    //================================================================================
 
     // for testing only
     @SuppressLint("ValidFragment")
     public class MockCallback extends Fragment implements WaitingDialogListener {
+
+        public MockCallback(){
+        }
 
         @Override
         public void onCancel() {

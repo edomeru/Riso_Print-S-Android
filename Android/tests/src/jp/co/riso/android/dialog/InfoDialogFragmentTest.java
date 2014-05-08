@@ -4,13 +4,8 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.Instrumentation;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -42,11 +37,11 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
         super.tearDown();
     }
 
-    public void testNewInstanceWithMessage() {
+    public void testNewInstance_WithMessage() {
         InfoDialogFragment info = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE) ;
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
@@ -69,11 +64,11 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
     }
 
-    public void testNewInstanceWithTitle() {
+    public void testNewInstance_WithTitle() {
         InfoDialogFragment info = InfoDialogFragment.newInstance(TITLE, MSG, BUTTON_TITLE) ;
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+        waitFewSeconds();
 
         Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
@@ -89,7 +84,7 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
         assertNotNull(msg);
         assertEquals(MSG, ((TextView) msg).getText());
 
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
+        int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
@@ -99,152 +94,18 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         assertNotNull(b);
         assertEquals(BUTTON_TITLE, b.getText());
-
-
     }
 
-    public void testOnClick() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE) ;
-        assertNotNull(info);
-        info.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
+    //================================================================================
+    // Private methods
+    //================================================================================
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-        assertTrue(((DialogFragment) fragment).isCancelable());
-
-        Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(b);
-        assertEquals(BUTTON_TITLE, b.getText());
-
+    // wait some seconds so that you can see the change on emulator/device.
+    private void waitFewSeconds(){
         try {
-            performClick(b);
-        } catch (Throwable e) {
-            Log.d(TAG, e.getMessage());
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
-
-    }
-
-
-    public void testOnCancel() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE) ;
-        assertNotNull(info);
-        info.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-        assertTrue(((DialogFragment) fragment).isCancelable());
-
-        sendKeys(KeyEvent.KEYCODE_BACK);
-
-        getInstrumentation().waitForIdleSync();
-
-        assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
-    }
-
-
-    private void performClick(final Button button) throws Throwable {
-        runTestOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                button.performClick();
-            }
-        });
-        getInstrumentation().waitForIdleSync();
-    }
-
-
-    public void testChangeOrientation() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(TITLE, MSG, BUTTON_TITLE) ;
-        assertNotNull(info);
-        info.show(mActivity.getFragmentManager(), TAG);
-        getInstrumentation().waitForIdleSync();
-
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-
-        View msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        int titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        View title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(b);
-
-        assertEquals(BUTTON_TITLE, b.getText());
-
-        changeOrientation();
-        getInstrumentation().waitForIdleSync();
-
-        //after rotation
-
-        fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
-        getInstrumentation().waitForIdleSync();
-        assertNotNull(fragment);
-        assertTrue(fragment instanceof DialogFragment);
-        assertTrue(((DialogFragment) fragment).getShowsDialog());
-
-        dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
-
-        assertNotNull(dialog);
-        assertTrue(dialog.isShowing());
-
-        msg = dialog.findViewById(android.R.id.message);
-        assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
-
-        titleId = mActivity.getResources().getIdentifier( "alertTitle", "id", "android" );
-        assertFalse(titleId == 0);
-        title = dialog.findViewById(titleId);
-        assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
-
-        b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-        assertNotNull(b);
-
-        assertEquals(BUTTON_TITLE, b.getText());
-
-    }
-
-    private void changeOrientation(){
-        int orientation = mActivity.getResources().getConfiguration().orientation;
-        int nextOrientation = orientation == Configuration.ORIENTATION_LANDSCAPE ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-
-        Instrumentation.ActivityMonitor monitor = new Instrumentation.ActivityMonitor(mActivity.getClass().getName(), null, false);
-        getInstrumentation().addMonitor(monitor);
-        mActivity.setRequestedOrientation(nextOrientation);
-        getInstrumentation().waitForIdleSync();
-        mActivity = (MainActivity) getInstrumentation().waitForMonitor(monitor);
     }
 }
