@@ -59,6 +59,10 @@ namespace SmartDeviceApp.Controllers
         public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
 
+        // Cancel print
+        public delegate void CancelPrintEventHandler();
+        private CancelPrintEventHandler _cancelPrintEventHandler;
+
         // PageAreaGrid loaded
         public delegate void PageAreaGridLoadedEventHandler();
         public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
@@ -75,6 +79,7 @@ namespace SmartDeviceApp.Controllers
         private PrintPreviewViewModel _printPreviewViewModel;
         private SelectPrinterViewModel _selectPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private DirectPrintController _directPrintController;
         private string _screenName;
         private Printer _selectedPrinter;
         private PrintSettings _currPrintSettings;
@@ -107,6 +112,7 @@ namespace SmartDeviceApp.Controllers
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _pinCodeValueChangedEventHandler = new PinCodeValueChangedEventHandler(PinCodeValueChanged);
             _printEventHandler = new PrintEventHandler(Print);
+            _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
             _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
         }
@@ -1760,18 +1766,35 @@ namespace SmartDeviceApp.Controllers
             {
                 // TODO: Display progress dialog
 
-                DirectPrintController directPrintController = new DirectPrintController(
+                if (_directPrintController != null)
+                {
+                    _directPrintController.UnsubscribeEvents();
+                }
+                _directPrintController = new DirectPrintController(
                     DocumentController.Instance.FileName,
                     DocumentController.Instance.PdfFile,
                     _selectedPrinter.IpAddress,
                     _currPrintSettings,
                     new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
                     new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
-                directPrintController.SendPrintJob();
+                _directPrintController.SendPrintJob();
             }
             else
             {
                 // TODO: Display error message
+            }
+        }
+
+        /// <summary>
+        /// Event handler for Cancel button
+        /// </summary>
+        public void CancelPrint()
+        {
+            if (_directPrintController != null)
+            {
+                _directPrintController.CancelPrintJob();
+                _directPrintController.UnsubscribeEvents();
+                _directPrintController = null;
             }
         }
 
@@ -1810,6 +1833,12 @@ namespace SmartDeviceApp.Controllers
             else if (result == (int)PrintJobResult.Error)
             {
                 // TODO: Show error message, do not exit screen
+            }
+
+            if (_directPrintController != null)
+            {
+                _directPrintController.UnsubscribeEvents();
+                _directPrintController = null;
             }
         }
 

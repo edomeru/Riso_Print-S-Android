@@ -27,17 +27,18 @@ namespace SmartDeviceApp.Controllers
         public delegate void SetPrintJobResult(string name, DateTime date, int result);
         public event SetPrintJobResult SetPrintJobResultEventHandler;
 
+        private DirectPrint.DirectPrint _directPrint;
         private DirectPrint.directprint_job _printJob;
         private DateTime _startTime;
 
         private const string FORMAT_PRINT_SETTING_KVO = "{0}={1}\n";
 
-        public DirectPrintController(string name, StorageFile file, string printerIpAddress,
+        public DirectPrintController(string name, StorageFile file, string ipAddress,
             PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
             SetPrintJobResult resultEvent)
         {
-            UpdatePrintJobProgressEventHandler += progressEvent;
-            SetPrintJobResultEventHandler += resultEvent;
+            UpdatePrintJobProgressEventHandler = progressEvent;
+            SetPrintJobResultEventHandler = resultEvent;
 
             _printJob = new DirectPrint.directprint_job();
 
@@ -45,11 +46,20 @@ namespace SmartDeviceApp.Controllers
             _printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
             _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
-            _printJob.ip_address = printerIpAddress;
+            _printJob.ip_address = ipAddress;
             _printJob.callback = new DirectPrint.directprint_callback(ReceiveResult);
             _printJob.progress_callback = new DirectPrint.progress_callback(UpdateProgress);
             _printJob.progress = 0;
             _printJob.cancel_print = 0;
+        }
+
+        /// <summary>
+        /// Unregisters events
+        /// </summary>
+        public void UnsubscribeEvents()
+        {
+            UpdatePrintJobProgressEventHandler = null;
+            SetPrintJobResultEventHandler = null;
         }
 
         /// <summary>
@@ -58,8 +68,16 @@ namespace SmartDeviceApp.Controllers
         public void SendPrintJob()
         {
             _startTime = DateTime.Now;
-            DirectPrint.DirectPrint directPrint = new DirectPrint.DirectPrint();
-            directPrint.startLPRPrint(_printJob);
+            _directPrint = new DirectPrint.DirectPrint();
+            _directPrint.startLPRPrint(_printJob);
+        }
+
+        /// <summary>
+        /// Cancel print job processing
+        /// </summary>
+        public void CancelPrintJob()
+        {
+            _directPrint.cancelPrint();
         }
 
         /// <summary>
