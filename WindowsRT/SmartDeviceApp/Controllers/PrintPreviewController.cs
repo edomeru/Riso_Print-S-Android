@@ -1778,8 +1778,8 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Update progress value
         /// </summary>
-        /// <param name="value">progress value</param>
-        public void UpdatePrintJobProgress(int value)
+        /// <param name="progress">progress value</param>
+        public void UpdatePrintJobProgress(float progress)
         {
             // TODO: Apply value to progress dialog
         }

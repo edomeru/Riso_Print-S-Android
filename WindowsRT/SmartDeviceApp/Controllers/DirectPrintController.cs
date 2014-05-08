@@ -21,7 +21,7 @@ namespace SmartDeviceApp.Controllers
     public class DirectPrintController
     {
 
-        public delegate void UpdatePrintJobProgress(int value);
+        public delegate void UpdatePrintJobProgress(float progress);
         public event UpdatePrintJobProgress UpdatePrintJobProgressEventHandler;
 
         public delegate void SetPrintJobResult(string name, DateTime date, int result);
@@ -47,6 +47,7 @@ namespace SmartDeviceApp.Controllers
             _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
             _printJob.ip_address = printerIpAddress;
             _printJob.callback = new DirectPrint.directprint_callback(ReceiveResult);
+            _printJob.progress_callback = new DirectPrint.progress_callback(UpdateProgress);
             _printJob.progress = 0;
             _printJob.cancel_print = 0;
         }
@@ -64,12 +65,12 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for progress updates
         /// </summary>
-        /// <param name="value"></param>
-        public void UpdateProgress(int value)
+        /// <param name="progress">value</param>
+        public void UpdateProgress(float progress)
         {
             if (UpdatePrintJobProgressEventHandler != null)
             {
-                UpdatePrintJobProgressEventHandler(value);
+                UpdatePrintJobProgressEventHandler(progress);
             }
         }
 
