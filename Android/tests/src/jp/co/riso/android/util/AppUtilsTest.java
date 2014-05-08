@@ -86,6 +86,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // Tests - startActivityIntent
     //================================================================================
     
+	/*
     public void testStartActivityIntent_ValidContextAndActivity() {
     	try {
     		AppUtils.startActivityIntent(getActivity(), MainActivity.class);
@@ -95,6 +96,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     		fail(); // Error should not be thrown
     	}
     }
+    */
 	
     public void testStartActivityIntent_IntentWillBeNull() {
     	try {

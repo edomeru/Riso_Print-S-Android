@@ -4,19 +4,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainActivity> implements PDFFileManagerInterface {
     String mPdfPath;
     int mPdfPageCount;
     String mLargePdfPath;
+    String mPdfInSandboxPath;
     int mStatus;
     PDFFileManager mPdfManager;
 
@@ -34,11 +37,17 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfPath = getAssetPath("PDF-squarish.pdf");
         mPdfPageCount = 36; // page count of mPdfPath file
         
-        mLargePdfPath = Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf";
+        mPdfInSandboxPath = PDFFileManager.convertToSandboxPath("PDF-squarish2.pdf");
+        FileUtils.copy(new File(mPdfPath), new File(mPdfInSandboxPath));
+        
+        mLargePdfPath = mPdfPath;
+        //Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf";
         mStatus = 0;
         
         mPdfManager = new PDFFileManager(this);
         assertNotNull(mPdfManager);
+        
+        PDFFileManager.setHasNewPDFData(true);
     }
     
     protected void tearDown() throws Exception {
@@ -60,15 +69,35 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.setPDF("");
         assertEquals(mPdfManager.getPath(), "");
         assertEquals(mPdfManager.getFileName(), "");
-        assertEquals(mPdfManager.getSandboxPath(), Environment.getExternalStorageDirectory() + "/");
+        assertEquals(mPdfManager.getSandboxPath(), PDFFileManager.convertToSandboxPath(""));
     }
     
     public void testPath_Values() {
         mPdfManager.setPDF("/this/is/a/path");
         assertEquals(mPdfManager.getPath(), "/this/is/a/path");
         assertEquals(mPdfManager.getFileName(), "path");
-        assertEquals(mPdfManager.getSandboxPath(), Environment.getExternalStorageDirectory() + "/" + mPdfManager.getFileName());
+        assertEquals(mPdfManager.getSandboxPath(), PDFFileManager.convertToSandboxPath(mPdfManager.getFileName()));
     }
+    
+    //================================================================================
+    // Tests - convertToSandboxPath
+    //================================================================================
+
+    public void testConvertToSandboxPath_Valid() {
+        String sandbox = PDFFileManager.convertToSandboxPath("path.pdf");
+        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/path.pdf", sandbox);
+    }
+    
+    public void testConvertToSandboxPath_Empty() {
+        String sandbox = PDFFileManager.convertToSandboxPath("");
+        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/", sandbox);
+    }
+
+    public void testConvertToSandboxPath_Null() {
+        String sandbox = PDFFileManager.convertToSandboxPath(null);
+        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/", sandbox);
+    }
+    
     
     //================================================================================
     // Tests - is opened
@@ -93,6 +122,18 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
         assertFalse(mPdfManager.isInitialized());
+    }
+
+    public void testIsOpen_sandboxPath() {
+        assertFalse(mPdfManager.isInitialized());
+
+        mPdfManager.setPDF(mPdfInSandboxPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        assertTrue(mPdfManager.isInitialized());
+        
+        mPdfManager.closeDocument();
+        assertTrue(mPdfManager.isInitialized());
     }
     
     //================================================================================
@@ -121,20 +162,55 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     }
     
     //================================================================================
+    // Tests - get page dimensions
+    //================================================================================
+
+    public void testGetPageDimensions_Valid() {
+        mPdfManager.setPDF(mPdfPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        
+        float width = mPdfManager.getPageWidth();
+        float height = mPdfManager.getPageHeight();
+
+        assertTrue(width != 0);
+        assertTrue(height != 0);
+    }
+
+    public void testGetPageDimensions_Invalid() {
+        mPdfManager.setPDF("");
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
+        
+        float width = mPdfManager.getPageWidth();
+        float height = mPdfManager.getPageHeight();
+        
+        assertTrue(width == 0);
+        assertTrue(height == 0);
+    }
+    
+    //================================================================================
     // Tests - get page
     //================================================================================
 
     public void testGetPageBitmap_Valid() {
-        mPdfManager.setPDF(mLargePdfPath);
+        mPdfManager.setPDF(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
         
         Bitmap bmp = mPdfManager.getPageBitmap(0);
         assertNotNull(bmp);
     }
+
+    public void testGetPageBitmap_Uninitialized() {
+        mPdfManager.setPDF(mPdfPath);
+        
+        Bitmap bmp = mPdfManager.getPageBitmap(0);
+        assertNull(bmp);
+    }
     
     public void testGetPageBitmap_NegativePageNumber() {
-        mPdfManager.setPDF(mLargePdfPath);
+        mPdfManager.setPDF(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
         
@@ -143,7 +219,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     }
     
     public void testGetPageBitmap_GreaterThanPageCount() {
-        mPdfManager.setPDF(mLargePdfPath);
+        mPdfManager.setPDF(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
         

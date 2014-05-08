@@ -106,6 +106,9 @@ public class PDFFileManager {
      */
     public void setPDF(String path) {
         mIsInitialized = false;
+        mPageCount = 0;
+        mPageWidth = 0;
+        mPageHeight = 0;
         
         if (path == null) {
             mPath = null;
@@ -123,13 +126,11 @@ public class PDFFileManager {
         
         mPath = path;
         mFileName = file.getName();
-        mSandboxPath = PDFFileManager.getSandboxDir(file.getName());
+        mSandboxPath = PDFFileManager.convertToSandboxPath(file.getName());
         
         if (mPath.equalsIgnoreCase(mSandboxPath)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(KEY_NEW_PDF_DATA, false);
-            edit.commit();
+            // No need to copy
+            PDFFileManager.setHasNewPDFData(false);
         }
     }
     
@@ -170,14 +171,26 @@ public class PDFFileManager {
     }
     
     /**
-     * Gets the sandbox directory
+     * Appends the sandbox path to the filename
      * 
      * @param filename
      *            filename of the pdf
      * @return PDF sandbox directory
      */
-    public static String getSandboxDir(String filename) {
-        return SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/" + filename;
+    public static String convertToSandboxPath(String filename) {
+        String path = SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/";
+        if (filename != null) {
+            path = path + filename;
+        }
+        return path;
+    }
+    
+    public static void setHasNewPDFData(boolean newData) {
+        // Notify PDF File Data that there is a new PDF
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, newData);
+        edit.apply();
     }
     
     /**
@@ -364,10 +377,7 @@ public class PDFFileManager {
             if (status == PDF_OK) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
                 if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
-                    
-                    SharedPreferences.Editor edit = prefs.edit();
-                    edit.putBoolean(KEY_NEW_PDF_DATA, false);
-                    edit.commit();
+                    PDFFileManager.setHasNewPDFData(false);
                     
                     try {
                         FileUtils.copy(new File(mPath), new File(mSandboxPath));
