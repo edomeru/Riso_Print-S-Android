@@ -136,7 +136,7 @@
     <string name="ids_lbl_outputtray_top">トップトレイ</string>
     <string name="ids_lbl_outputtray_stacking">スタックトレイ</string>
     <string name="ids_lbl_authentication">認証</string>
-    <string name="ids_lbl_authentication_loginid">ログインID</string>
+    <string name="ids_lbl_authentication_secure_print">Secure Print</string>
     <string name="ids_lbl_authentication_pincode">PINコード</string>
     <string name="ids_lbl_off">Off</string>
     <string name="ids_lbl_help">ヘルプ</string>
