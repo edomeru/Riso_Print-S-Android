@@ -25,7 +25,7 @@ namespace DirectPrint
         public string ip_address;
         public directprint_callback callback;
         public progress_callback progress_callback;
-        
+
 
         //pthread_t main_thread;
         //pthread_mutex_t mutex;
@@ -64,7 +64,8 @@ namespace DirectPrint
         TCPSocket socket;
 
 
-        private void nullCallBack(int val){
+        private void nullCallBack(int val)
+        {
 
         }
 
@@ -72,6 +73,14 @@ namespace DirectPrint
         public DirectPrint()
         {
 
+        }
+
+        public void cancelPrint()
+        {
+            if (print_job != null)
+            {
+                print_job.cancel_print = 1;
+            }
         }
 
         public async void startLPRPrint(directprint_job parameter)
@@ -148,13 +157,23 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null){
+                if (print_job.callback != null)
+                {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
+            if (print_job.cancel_print == 1)
+            {
+                if (print_job.callback != null)
+                {
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
+                return;
+            }
+
 
             // CONTROL FILE : Prepare
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
@@ -196,7 +215,8 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null){
+                if (print_job.callback != null)
+                {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
                 return;
@@ -222,7 +242,16 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null){
+                if (print_job.callback != null)
+                {
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
+                return;
+            }
+            if (print_job.cancel_print == 1)
+            {
+                if (print_job.callback != null)
+                {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
                 return;
@@ -246,7 +275,7 @@ namespace DirectPrint
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // Get file size
-            var uri = new System.Uri("ms-appx:///Resources/Dummy/"+print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
+            var uri = new System.Uri("ms-appx:///Resources/Dummy/" + print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
             StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
             //Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.;
             //Windows.Storage.StorageFolder localFolder = Windows.ApplicationModel.Package.Current.;
@@ -287,7 +316,8 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null){
+                if (print_job.callback != null)
+                {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
                 return;
@@ -307,6 +337,15 @@ namespace DirectPrint
                 socket.write(buffer, 0, bytesRead, false);
                 print_job.progress += data_step;
                 if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
+
+                if (print_job.cancel_print == 1)
+                {
+                    if (print_job.callback != null)
+                    {
+                        print_job.callback(PRINT_STATUS_ERROR);
+                    }
+                    return;
+                }
             }
             //fstream.Dispose();
 
@@ -327,7 +366,8 @@ namespace DirectPrint
             int retval = 0;
             if ((retval = waitForAck()) != 0)
             {
-                if (print_job.callback != null){
+                if (print_job.callback != null)
+                {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
                 return;
@@ -335,7 +375,8 @@ namespace DirectPrint
 
             print_job.progress = 100.0f;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
-            if (print_job.callback != null){
+            if (print_job.callback != null)
+            {
                 print_job.callback(PRINT_STATUS_OK);
             }
             return;
@@ -349,7 +390,7 @@ namespace DirectPrint
                 // wait for data
             }
             datareceived = false;
-            
+
             return ack;
         }
 
