@@ -132,9 +132,10 @@ namespace SmartDeviceApp.Models
             }
         }
 
-        public PrintJobGroup(string printerName, ObservableCollection<PrintJob> jobs)
+        public PrintJobGroup(string printerName, string ipAddress, ObservableCollection<PrintJob> jobs)
         {
             PrinterName = printerName;
+            IpAddress = ipAddress;
             Jobs = jobs;
         }
     }
