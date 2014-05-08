@@ -43,7 +43,7 @@ namespace SmartDeviceApp.Controllers
             _printJob = new DirectPrint.directprint_job();
 
             _printJob.job_name = name;
-            _printJob.filename = name; // TODO: (confirm) To be deleted
+            //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
             _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
             _printJob.ip_address = ipAddress;

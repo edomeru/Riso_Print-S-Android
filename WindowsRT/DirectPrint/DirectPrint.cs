@@ -19,7 +19,7 @@ namespace DirectPrint
     public class directprint_job
     {
         public string job_name;
-        public string filename; // TODO: to be deleted. replaced by file
+        //public string filename; // TODO: to be deleted. replaced by file
         public StorageFile file;
         public string print_settings;
         public string ip_address;
@@ -277,16 +277,16 @@ namespace DirectPrint
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // Get file size
-            var uri = new System.Uri("ms-appx:///Resources/Dummy/" + print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
-            StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+            //var uri = new System.Uri("ms-appx:///Resources/Dummy/" + print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
+            //StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
             //Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.;
             //Windows.Storage.StorageFolder localFolder = Windows.ApplicationModel.Package.Current.;
             //StorageFile sampleFile = await localFolder.GetFileAsync("test.pdf");
             //StorageFile sampleFile = filePickerFile;
 
-            var fbuffer = await Windows.Storage.FileIO.ReadBufferAsync(sampleFile);
+            var fbuffer = await Windows.Storage.FileIO.ReadBufferAsync(print_job.file);
             DataReader fileDataReader = Windows.Storage.Streams.DataReader.FromBuffer(fbuffer);
-            BasicProperties pro = await sampleFile.GetBasicPropertiesAsync();
+            BasicProperties pro = await print_job.file.GetBasicPropertiesAsync();
             ulong file_size = pro.Size;
 
             byte[] filebuffer = new byte[file_size];
