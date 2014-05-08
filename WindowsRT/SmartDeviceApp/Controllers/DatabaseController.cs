@@ -381,27 +381,27 @@ namespace SmartDeviceApp.Controllers
             return null;
         }
 
-        /// <summary>
-        /// Retrieves the printer name
-        /// </summary>
-        /// <param name="id">printer ID</param>
-        /// <returns>task; printer name if found, empty string otherwise</returns>
-        public async Task<string> GetPrinterName(int id)
-        {
-            try
-            {
-                Printer printer = await _dbConnection.GetAsync<Printer>(id);
-                if (printer != null)
-                {
-                    return printer.Name;
-                }
-            }
-            catch
-            {
-                // Error handling here
-            }
-            return string.Empty;
-        }
+        ///// <summary>
+        ///// Retrieves the printer name
+        ///// </summary>
+        ///// <param name="id">printer ID</param>
+        ///// <returns>task; printer name if found, empty string otherwise</returns>
+        //public async Task<string> GetPrinterName(int id)
+        //{
+        //    try
+        //    {
+        //        Printer printer = await _dbConnection.GetAsync<Printer>(id);
+        //        if (printer != null)
+        //        {
+        //            return printer.Name;
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        // Error handling here
+        //    }
+        //    return string.Empty;
+        //}
 
         public async Task UpdatePortNumber(Printer printer)
         {
@@ -497,6 +497,30 @@ namespace SmartDeviceApp.Controllers
                 // Error handling here
             }
             return null;
+        }
+
+        /// <summary>
+        /// Insert an item into PrintSetting table
+        /// </summary>
+        /// <param name="printSettings">print settings to be added</param>
+        /// <returns>task; number for added rows</returns>
+        public async Task<int> InsertPrintSettings(PrintSettings printSettings)
+        {
+            if (printSettings == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                return await _dbConnection.InsertAsync(printSettings);
+            }
+            catch
+            {
+                // Error handling
+            }
+
+            return 0;
         }
 
         /// <summary>

@@ -59,6 +59,10 @@ namespace SmartDeviceApp.Controllers
         public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
 
+        // Cancel print
+        public delegate void CancelPrintEventHandler();
+        private CancelPrintEventHandler _cancelPrintEventHandler;
+
         // PageAreaGrid loaded
         public delegate void PageAreaGridLoadedEventHandler();
         public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
@@ -75,6 +79,7 @@ namespace SmartDeviceApp.Controllers
         private PrintPreviewViewModel _printPreviewViewModel;
         private SelectPrinterViewModel _selectPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private DirectPrintController _directPrintController;
         private string _screenName;
         private Printer _selectedPrinter;
         private PrintSettings _currPrintSettings;
@@ -107,6 +112,7 @@ namespace SmartDeviceApp.Controllers
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _pinCodeValueChangedEventHandler = new PinCodeValueChangedEventHandler(PinCodeValueChanged);
             _printEventHandler = new PrintEventHandler(Print);
+            _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
             _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
         }
@@ -209,12 +215,15 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public async void RegisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
             if (_resetPrintSettings)
             {
                 _selectedPrinter = null;
                 await SetSelectedPrinterAndPrintSettings(-1);
                 _resetPrintSettings = false;
+            }
+            else
+            {
+                PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
             }
         }
 
@@ -230,7 +239,7 @@ namespace SmartDeviceApp.Controllers
         /// Event handler when a printer is deleted
         /// </summary>
         /// <param name="printer">printer</param>
-        public async void PrinterDeleted(Printer printer)
+        public void PrinterDeleted(Printer printer)
         {
             if (_selectedPrinter.Id == printer.Id)
             {
@@ -297,6 +306,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
+            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
@@ -1732,31 +1742,16 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for Print button
         /// </summary>
-        public void Print()
+        public async void Print()
         {
             if (_selectedPrinter.Id > -1)
             {
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                // TODO: Check if printer is online (NetworkController)
-                bool isOnline = true;
-
-                if (isOnline)
-                {
-                    // TODO: Display progress dialog
-
-                    DirectPrintController dp = new DirectPrintController();
-                    dp.SendPrintJob(DocumentController.Instance.FileName,
-                        DocumentController.Instance.PdfFile, _selectedPrinter, _currPrintSettings);
-
-                    // TODO: Remove the following line
-                    UpdatePrintJobStatus(DocumentController.Instance.FileName, DateTime.Now, new Random().Next(2));
-                }
-                else
-                {
-                    // TODO: Display error message
-                }
+                NetworkController.Instance.networkControllerPingStatusCallback =
+                    new Action<string, bool>(GetPrinterStatus);
+                await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
             }
             else
             {
@@ -1764,12 +1759,65 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        public void UpdatePrintJobProgress(int progress)
+        /// <summary>
+        /// Checks the printer status before sending print job
+        /// </summary>
+        /// <param name="ipAddress">printer IP address</param>
+        /// <param name="isOnline">true when online, false otherwise</param>
+        public void GetPrinterStatus(string ipAddress, bool isOnline)
+        {
+            if (isOnline)
+            {
+                // TODO: Display progress dialog
+
+                if (_directPrintController != null)
+                {
+                    _directPrintController.UnsubscribeEvents();
+                }
+                _directPrintController = new DirectPrintController(
+                    DocumentController.Instance.FileName,
+                    DocumentController.Instance.PdfFile,
+                    _selectedPrinter.IpAddress,
+                    _currPrintSettings,
+                    new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
+                    new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
+                _directPrintController.SendPrintJob();
+            }
+            else
+            {
+                // TODO: Display error message
+            }
+        }
+
+        /// <summary>
+        /// Event handler for Cancel button
+        /// </summary>
+        public void CancelPrint()
+        {
+            if (_directPrintController != null)
+            {
+                _directPrintController.CancelPrintJob();
+                _directPrintController.UnsubscribeEvents();
+                _directPrintController = null;
+            }
+        }
+
+        /// <summary>
+        /// Update progress value
+        /// </summary>
+        /// <param name="progress">progress value</param>
+        public void UpdatePrintJobProgress(float progress)
         {
             // TODO: Apply value to progress dialog
         }
 
-        public void UpdatePrintJobStatus(string name, DateTime date, int result)
+        /// <summary>
+        /// Processes print job result and saves the print job item to database.
+        /// </summary>
+        /// <param name="name">print job name</param>
+        /// <param name="date">date</param>
+        /// <param name="result">result</param>
+        public void UpdatePrintJobResult(string name, DateTime date, int result)
         {
             PrintJob printJob = new PrintJob()
             {
@@ -1785,6 +1833,16 @@ namespace SmartDeviceApp.Controllers
             {
                 // TODO: await Cleanup();
                 // TODO: Close preview and go to home
+            }
+            else if (result == (int)PrintJobResult.Error)
+            {
+                // TODO: Show error message, do not exit screen
+            }
+
+            if (_directPrintController != null)
+            {
+                _directPrintController.UnsubscribeEvents();
+                _directPrintController = null;
             }
         }
 

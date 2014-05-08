@@ -99,16 +99,18 @@ namespace SmartDeviceApp.Controllers
             {
                 // Get printer name of the first element
                 string printerName = string.Empty;
-                PrintJob firstSample = group.FirstOrDefault();
-                if (firstSample != null)
+                PrintJob printJobSample = group.FirstOrDefault();
+                if (printJobSample != null)
                 {
-                    printerName = (await DatabaseController.Instance
-                        .GetPrinterName(firstSample.PrinterId));
+                    Printer printer = PrinterController.Instance.PrinterList
+                        .FirstOrDefault(prn => prn.Id == printJobSample.PrinterId);
+                    if (printer != null)
+                    {
+                        PrintJobGroup printJobGroup = new PrintJobGroup(printer.Name,
+                            printer.IpAddress, new ObservableCollection<PrintJob>(group));
+                        tempList.Add(printJobGroup);
+                    }
                 }
-
-                PrintJobGroup printJobGroup = new PrintJobGroup(printerName,
-                    new ObservableCollection<PrintJob>(group));
-                tempList.Add(printJobGroup);
             }
 
             _jobsViewModel.PrintJobsList = tempList;
@@ -137,18 +139,16 @@ namespace SmartDeviceApp.Controllers
                 }
                 else // Create new group
                 {
-                    string printerName = await DatabaseController.Instance
-                        .GetPrinterName(printJob.PrinterId);
-                    if (string.IsNullOrEmpty(printerName))
+                    Printer printer = PrinterController.Instance.PrinterList
+                        .FirstOrDefault(prn => prn.Id == printJob.PrinterId);
+                    if (printer != null)
                     {
-                        // TODO: Set printer name as "No Name"
+                        PrintJobGroup newPrintJobGroup = new PrintJobGroup(printer.Name,
+                            printer.IpAddress, new ObservableCollection<PrintJob>());
+                        newPrintJobGroup.Jobs.Add(printJob);
+                        _jobsViewModel.PrintJobsList.Add(newPrintJobGroup);
+                        _jobsViewModel.SortPrintJobsListToColumns();
                     }
-
-                    PrintJobGroup newPrintJobGroup = new PrintJobGroup(printerName.Trim(),
-                        new ObservableCollection<PrintJob>());
-                    newPrintJobGroup.Jobs.Add(printJob);
-                    _jobsViewModel.PrintJobsList.Add(newPrintJobGroup);
-                    _jobsViewModel.SortPrintJobsListToColumns();
                 }
             }
         }
