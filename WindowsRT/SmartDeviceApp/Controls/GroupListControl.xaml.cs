@@ -35,6 +35,12 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextWidthProperty =
             DependencyProperty.Register("TextWidth", typeof(double), typeof(GroupListControl), null);
 
+        public static readonly DependencyProperty SubTextProperty =
+            DependencyProperty.Register("SubText", typeof(string), typeof(GroupListControl), null);
+
+        public static readonly DependencyProperty SubTextVisibilityProperty =
+            DependencyProperty.Register("SubTextVisibility", typeof(Visibility), typeof(GroupListControl), new PropertyMetadata(Visibility.Collapsed));
+
         public static new readonly DependencyProperty ContentProperty =
            DependencyProperty.Register("Content", typeof(object), typeof(GroupListControl), null);
 
@@ -57,6 +63,18 @@ namespace SmartDeviceApp.Controls
         {
             get { return (double)GetValue(TextWidthProperty); }
             set { SetValue(TextWidthProperty, value); }
+        }
+
+        public string SubText
+        {
+            get { return (string)GetValue(SubTextProperty); }
+            set { SetValue(SubTextProperty, value); }
+        }
+
+        public Visibility SubTextVisibility
+        {
+            get { return (Visibility)GetValue(SubTextVisibilityProperty); }
+            set { SetValue(SubTextVisibilityProperty, value); }
         }
 
         public new object Content
@@ -87,10 +105,7 @@ namespace SmartDeviceApp.Controls
         {
             try
             {
-
-
                 if (_isLoaded) return;
-
                 var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
 
                 // Get text width by subtracting widths and margins of visible components
