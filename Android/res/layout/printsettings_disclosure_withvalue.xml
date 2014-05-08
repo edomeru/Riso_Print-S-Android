@@ -16,7 +16,8 @@
         android:text="@string/default_textview"
         android:duplicateParentState="true"
         android:textColor="@color/selector_printsettings_disclosure_text"
-        android:maxLines="2"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textSize="@dimen/printsettings_listvalue_text_size" />
 
     <ImageView
