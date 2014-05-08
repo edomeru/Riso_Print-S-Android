@@ -420,7 +420,7 @@ namespace SmartDeviceApp.Controllers
                 catch (Exception e)
                 {
                     var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                    _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                    DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     return;
                 }
                 
@@ -442,7 +442,7 @@ namespace SmartDeviceApp.Controllers
                     {
                         //error in adding;
                         var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                        _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     }
                     else
                     {
@@ -498,7 +498,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     //error in adding;
                     var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                    _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 }
                 else
                 {
@@ -620,7 +620,7 @@ namespace SmartDeviceApp.Controllers
             //check if _printerList is already full
             if (_printerList.Count() >= 10)//TODO: Change to CONSTANTS
             {
-                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_MAX_PRINTER_COUNT "));
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_MAX_PRINTER_COUNT", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return false;
             }
 
@@ -633,8 +633,7 @@ namespace SmartDeviceApp.Controllers
                 }
                 catch (Exception e)
                 {
-                    
-                    _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                    DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     return false;
                 }
                 
@@ -651,8 +650,7 @@ namespace SmartDeviceApp.Controllers
                     if (searchItem == null)
                     {
                         //error in adding;
-                        
-                        _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     }
                     else
                     {
@@ -675,7 +673,7 @@ namespace SmartDeviceApp.Controllers
 
             int result = await DatabaseController.Instance.DeletePrinter(printer);
 
-            if (result > 0)
+            if (result == 0)
             {
                 return false;
             }
