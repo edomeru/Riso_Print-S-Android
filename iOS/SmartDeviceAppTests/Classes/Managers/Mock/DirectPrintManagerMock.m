@@ -14,6 +14,7 @@
 
 - (directprint_job *)preparePrintJob;
 - (void)updateSuccess;
+- (void)updateError;
 
 @end
 
@@ -31,6 +32,13 @@
     id instance = self;
     [instance preparePrintJob];
     [instance updateSuccess];
+}
+
+- (void)printDocumentError
+{
+    id instance = self;
+    [instance preparePrintJob];
+    [instance updateError];
 }
 
 @end

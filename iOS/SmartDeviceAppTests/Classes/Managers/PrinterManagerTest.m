@@ -380,12 +380,10 @@ const float PM_SEARCH_TIMEOUT = 10;
     GHAssertFalse([printerManager deletePrinterAtIndex:1], @"");
 }
 
-- (void)test011_SearchForOnePrinter
+- (void)test011_SearchForOnlinePrinter
 {
     GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds for manual search to end", PM_SEARCH_TIMEOUT];
-    NSString* testIP = @"192.168.0.199"; //use an online printer IP
+    NSString* testIP = @"192.168.0.199";
     Swizzler *swizzler = [[Swizzler alloc] init];
     
     // clear existing printers
@@ -399,7 +397,7 @@ const float PM_SEARCH_TIMEOUT = 10;
     callbackPrinterFound = NO;
     [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
     [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
     [swizzler deswizzle];
     GHTestLog(@"-- check if callbacks were received");
     GHAssertTrue(callbackSearchEndCalled, @"");
@@ -415,7 +413,7 @@ const float PM_SEARCH_TIMEOUT = 10;
     callbackPrinterFound = NO;
     [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
     [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
     [swizzler deswizzle];
     GHTestLog(@"-- check if callbacks were received");
     GHAssertTrue(callbackSearchEndCalled, @"");
@@ -424,23 +422,104 @@ const float PM_SEARCH_TIMEOUT = 10;
     GHAssertTrue(callbackPrinterFound, @"");
 }
 
-- (void)test012_SearchForAllPrinters
+- (void)test012_SearchForOfflinePrinter
 {
     GHTestLog(@"# CHECK: PM can handle search callbacks. #");
+    NSString* testIP = @"192.168.0.199";
+    Swizzler *swizzler = [[Swizzler alloc] init];
+    
+    // clear existing printers
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- search for an offline printer");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    callbackPrinterFound = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterFail:)];
+    [printerManager searchForPrinter:testIP];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
+    [swizzler deswizzle];
+    GHTestLog(@"-- check if callbacks were received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertFalse(callbackFoundNewCalled, @"");
+    GHAssertFalse(callbackFoundOldCalled, @"");
+    GHAssertFalse(callbackPrinterFound, @"");
+}
+
+- (void)test013_SearchForAllPrintersSuccess
+{
+    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
+    Swizzler *swizzler = [[Swizzler alloc] init];
+    
+    // clear existing printers
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
     
     GHTestLog(@"-- search for all printers");
     callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    callbackPrinterFound = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForAvailablePrinters) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForAvailablePrintersSuccessful)];
     [printerManager searchForAllPrinters];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
+    [swizzler deswizzle];
     
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds for auto search to end", PM_SEARCH_TIMEOUT];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
-    
-    GHTestLog(@"-- check if end callback was received");
+    GHTestLog(@"-- check if callbacks were received");
     GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertTrue(callbackFoundNewCalled, @"");
+    GHAssertFalse(callbackFoundOldCalled, @"");
+    GHAssertTrue(callbackPrinterFound, @"");
+    GHTestLog(@"-- printers found were added");
+    
+    GHTestLog(@"-- search for all printers again");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    callbackPrinterFound = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForAvailablePrinters) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForAvailablePrintersSuccessful)];
+    [printerManager searchForAllPrinters];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
+    [swizzler deswizzle];
+    
+    GHTestLog(@"-- check if callbacks were received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertFalse(callbackFoundNewCalled, @"");
+    GHAssertTrue(callbackFoundOldCalled, @"");
+    GHAssertTrue(callbackPrinterFound, @"");
+    GHTestLog(@"-- printers found were added");
 }
 
-- (void)test013_StopSearching
+- (void)test014_SearchForAllPrintersFail
+{
+    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
+    Swizzler *swizzler = [[Swizzler alloc] init];
+    
+    // clear existing printers
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- search for all printers");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    callbackPrinterFound = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForAvailablePrinters) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForAvailablePrintersFail)];
+    [printerManager searchForAllPrinters];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
+    [swizzler deswizzle];
+    
+    GHTestLog(@"-- check if callbacks were received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertFalse(callbackFoundNewCalled, @"");
+    GHAssertFalse(callbackFoundOldCalled, @"");
+    GHAssertFalse(callbackPrinterFound, @"");
+    GHTestLog(@"-- printers found were added");
+}
+
+- (void)test015_StopSearching
 {
     GHTestLog(@"# CHECK: PM can stop searching. #");
     
@@ -448,12 +527,14 @@ const float PM_SEARCH_TIMEOUT = 10;
     [printerManager searchForPrinter:@"192.168.0.1"];
     [printerManager stopSearching];
     NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds after stopping search", PM_SEARCH_TIMEOUT];
+                     @"initiating search, then stopped, now waiting for %.2f seconds", PM_SEARCH_TIMEOUT];
     [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    
+    GHTestLog(@"-- check if callback was not received");
     GHAssertFalse(callbackSearchEndCalled, @"");
 }
 
-- (void)test014_Singleton
+- (void)test016_Singleton
 {
     GHTestLog(@"# CHECK: PM is indeed a singleton. #");
     
@@ -485,13 +566,17 @@ const float PM_SEARCH_TIMEOUT = 10;
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
 {
     NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
+    UIAlertView* alert;
     
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Printer Manager Test"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"HIDE"
-                                          otherButtonTitles:nil];
-    [alert show];
+    if (msg != nil)
+    {
+        alert = [[UIAlertView alloc] initWithTitle:@"Printer Search Test"
+                                           message:msg
+                                          delegate:self
+                                 cancelButtonTitle:@"HIDE"
+                                 otherButtonTitles:nil];
+        [alert show];
+    }
     
     BOOL done = NO;
     do
@@ -501,7 +586,8 @@ const float PM_SEARCH_TIMEOUT = 10;
             break;
     } while (!done);
     
-    [alert dismissWithClickedButtonIndex:0 animated:YES];
+    if (msg != nil)
+        [alert dismissWithClickedButtonIndex:0 animated:YES];
     
     return done;
 }

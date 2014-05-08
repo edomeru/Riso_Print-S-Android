@@ -12,5 +12,6 @@
 
 - (void)printDocumentViaLPR;
 - (void)printDocumentViaRaw;
+- (void)printDocumentError;
 
 @end

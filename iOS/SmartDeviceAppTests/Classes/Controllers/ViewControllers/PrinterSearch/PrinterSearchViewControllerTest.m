@@ -11,8 +11,9 @@
 #import "SearchResultCell.h"
 #import "PrinterDetails.h"
 #import "CXAlertView.h"
-
-const float PSC_SEARCH_TIMEOUT = 10.0f;
+#import "Swizzler.h"
+#import "PrinterManager.h"
+#import "PrinterManagerMock.h"
 
 @interface PrinterSearchViewController (UnitTest)
 
@@ -58,25 +59,27 @@ const float PSC_SEARCH_TIMEOUT = 10.0f;
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    Swizzler* swizzler = [[Swizzler alloc] init];
+    
     NSString* storyboardTitle = @"Main";
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
-    NSString* msg;
-    
     NSString* controllerIphoneName = @"PrinterSearchIphoneViewController";
+    [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForAllPrinters) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForAllPrintersSuccessful)];
     controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];
     GHAssertNotNil(controllerIphone, @"unable to instantiate controller (%@)", controllerIphoneName);
     GHAssertNotNil(controllerIphone.view, @"");
-    msg = [NSString stringWithFormat:@"wait for %.2f secs while iPhone screen is loading", PSC_SEARCH_TIMEOUT];
-    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:msg];
+    [swizzler deswizzle];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
     
     NSString* controllerIpadName = @"PrinterSearchIpadViewController";
+    [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForAllPrinters) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForAllPrintersSuccessful)];
     controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
-    msg = [NSString stringWithFormat:@"wait for %.2f secs while iPad screen is loading", PSC_SEARCH_TIMEOUT];
-    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:msg];
+    [swizzler deswizzle];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
 }
 
 // Run at end of all tests in the class
@@ -106,12 +109,21 @@ const float PSC_SEARCH_TIMEOUT = 10.0f;
 - (void)test001_IBOutletsBinding
 {
     GHTestLog(@"# CHECK: IBOutlets Binding. #");
+    NSIndexPath* indexPath;
+    SearchResultCell* cell;
     
     GHAssertNotNil([controllerIphone tableView], @"");
     GHAssertNil(controllerIphone.printersViewController, @"will only be non-nil on segue from Printers");
+    GHTestLog(@"-- get the first printer");
+    indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    cell = (SearchResultCell*)[[controllerIphone tableView] cellForRowAtIndexPath:indexPath];
+    GHAssertNotNil(cell, @"");
     
     GHAssertNotNil([controllerIpad tableView], @"");
     GHAssertNil(controllerIpad.printersViewController, @"will only be non-nil on segue from Printers");
+    indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    cell = (SearchResultCell*)[[controllerIphone tableView] cellForRowAtIndexPath:indexPath];
+    GHAssertNotNil(cell, @"");
 }
 
 - (void)test002_AddPrinter
@@ -119,45 +131,89 @@ const float PSC_SEARCH_TIMEOUT = 10.0f;
     GHTestLog(@"# CHECK: Add Printer.");
     UITableView* listPrinters;
     NSUInteger numPrinters = 0;
+    NSIndexPath* indexPath;
+    SearchResultCell* cell;
 
     GHTestLog(@"-- checking the list");
     listPrinters = [controllerIphone tableView];
     GHAssertNotNil(listPrinters, @"");
     numPrinters = [listPrinters numberOfRowsInSection:0];
-    GHAssertTrue(numPrinters > 0, @"make sure that there is at least 1 searchable printer available");
+    GHAssertTrue(numPrinters > 0, @"");
     
-    GHTestLog(@"-- adding one printer");
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    GHTestLog(@"-- adding the first printer");
+    indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [controllerIphone tableView:listPrinters didSelectRowAtIndexPath:indexPath];
-    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:nil];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
     [self removeSuccessAlert];
     
     GHTestLog(@"-- checking the list");
     listPrinters = [controllerIphone tableView];
     GHAssertNotNil(listPrinters, @"");
     numPrinters = [listPrinters numberOfRowsInSection:0];
-    GHAssertTrue(numPrinters > 0, @"there should at least be 1 printer (the added printer)");
+    GHAssertTrue(numPrinters > 0, @"the added printer must be in the list");
+    indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    cell = (SearchResultCell*)[[controllerIphone tableView] cellForRowAtIndexPath:indexPath];
+    GHAssertNotNil(cell, @"");
     
     GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
 }
 
-- (void)test003_Refresh
+- (void)test003_AddPrinterButMaximum
 {
-    GHTestLog(@"# CHECK: Refresh.");
-    NSString* msg = [NSString stringWithFormat:@"wait for %.2f secs while refreshing", PSC_SEARCH_TIMEOUT];
+    GHTestLog(@"# CHECK: Add Printer With Maximum.");
     UITableView* listPrinters;
-    NSUInteger numRegisteredPrinters = [[PrinterManager sharedPrinterManager] countSavedPrinters];
+    NSUInteger numPrinters = 0;
+    NSIndexPath* indexPath;
+    SearchResultCell* cell;
     
-    GHTestLog(@"-- refreshing");
-    [controllerIphone refresh];
-    [self waitForCompletion:PSC_SEARCH_TIMEOUT withMessage:msg];
+    GHTestLog(@"-- maxing-out the printers list");
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    while (pm.countSavedPrinters != 10)
+    {
+        PrinterDetails* pd = [[PrinterDetails alloc] init];
+        pd.name = @"RISO Printer";
+        pd.ip = @"192.168.100.104";
+        GHAssertTrue([pm registerPrinter:pd], @"");
+    }
+    
+    GHTestLog(@"-- checking the list");
     listPrinters = [controllerIphone tableView];
     GHAssertNotNil(listPrinters, @"");
-    NSUInteger numPrinters = [listPrinters numberOfRowsInSection:0];
-    GHAssertTrue(numPrinters >= numRegisteredPrinters, @"");
+    numPrinters = [listPrinters numberOfRowsInSection:0];
+    GHAssertTrue(numPrinters > 0, @"");
+    
+    GHTestLog(@"-- adding the last printer");
+    indexPath = [NSIndexPath indexPathForRow:numPrinters-1 inSection:0];
+    [controllerIphone tableView:listPrinters didSelectRowAtIndexPath:indexPath];
+    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
+    [self removeSuccessAlert];
+    
+    GHTestLog(@"-- checking the list");
+    listPrinters = [controllerIphone tableView];
+    GHAssertNotNil(listPrinters, @"");
+    numPrinters = [listPrinters numberOfRowsInSection:0];
+    GHAssertTrue(numPrinters > 0, @"the added printer must be in the list");
+    indexPath = [NSIndexPath indexPathForRow:numPrinters-1 inSection:0];
+    cell = (SearchResultCell*)[[controllerIphone tableView] cellForRowAtIndexPath:indexPath];
+    GHAssertNotNil(cell, @"");
 }
 
-- (void)test004_SearchResultCellOutlets
+- (void)test004_Refresh
+{
+    GHTestLog(@"# CHECK: Refresh.");
+    UITableView* listPrinters;
+    Swizzler* swizzler = [[Swizzler alloc] init];
+    
+    GHTestLog(@"-- refreshing");
+    [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForAllPrinters) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForAllPrintersSuccessful)];
+    [controllerIphone refresh];
+    [swizzler deswizzle];
+    [self waitForCompletion:5 withMessage:nil]; //wait for the refresh to end
+    listPrinters = [controllerIphone tableView];
+    GHAssertNotNil(listPrinters, @"");
+}
+
+- (void)test005_SearchResultCellOutlets
 {
     GHTestLog(@"# CHECK: SearchResultCell Outlets.");
     
@@ -186,7 +242,7 @@ const float PSC_SEARCH_TIMEOUT = 10.0f;
     GHAssertNotNil([cellIPad addIcon], @"");
 }
 
-- (void)test005_SearchResultCellSetters
+- (void)test006_SearchResultCellSetters
 {
     GHTestLog(@"# CHECK: SearchResultCell Setters.");
     NSString* printerName = @"RISO Printer";

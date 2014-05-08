@@ -281,12 +281,6 @@
     }
 }
 
-- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
-{
-    // will not be called since search will only be initiated
-    // if the IP is not yet registered
-}
-
 #pragma mark - TextFields
 
 - (void)dismissKeypad

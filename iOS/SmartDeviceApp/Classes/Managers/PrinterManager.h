@@ -30,6 +30,8 @@
  */
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails;
 
+@optional
+
 /**
  Notifies the delegate that an already saved printer was found.
  Provides some details about the printer.

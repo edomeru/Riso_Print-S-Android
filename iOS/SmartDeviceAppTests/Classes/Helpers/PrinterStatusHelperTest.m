@@ -9,14 +9,9 @@
 #import <GHUnitIOS/GHUnit.h>
 #import "PrinterStatusHelper.h"
 
-//use an online printer IP
-//static NSString* TEST_PRINTER_IP = @"192.168.0.198";
-static NSString* TEST_PRINTER_IP = @"192.168.0.199";
-
 @interface PrinterStatusHelperTest : GHTestCase <PrinterStatusHelperDelegate>
 {
     BOOL statusDidChangeCallbackReceived;
-    BOOL onlineStatus;
 }
 
 @end
@@ -58,22 +53,24 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 - (void)test001_Initialization
 {
     GHTestLog(@"# CHECK: PSHelper can be initialized. #");
+    NSString* printerIP = @"192.168.0.199";
     
     GHTestLog(@"-- creating the helper");
-    PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:TEST_PRINTER_IP];
+    PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:printerIP];
     GHAssertNotNil(psh, @"check initialization of PrinterStatusHelper");
     GHAssertFalse([psh isPolling], @"should not be polling");
-    GHAssertEqualStrings(psh.ipAddress, TEST_PRINTER_IP, @"");
+    GHAssertEqualStrings(psh.ipAddress, printerIP, @"");
 }
 
 - (void)test002_StartStop
 {
     GHTestLog(@"# CHECK: PSHelper can be started/stopped. #");
+    NSString* printerIP = @"192.168.0.199";
     float POLL_TIMEOUT = 5;
     NSString* msg;
     
     GHTestLog(@"-- creating the helper");
-    PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:TEST_PRINTER_IP];
+    PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:printerIP];
     GHAssertNotNil(psh, @"check initialization of PrinterStatusHelper");
     GHAssertFalse([psh isPolling], @"should not be polling");
     psh.delegate = self;
@@ -82,15 +79,16 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
     statusDidChangeCallbackReceived = NO;
     [psh startPrinterStatusPolling];
     
-    msg = [NSString stringWithFormat: @"wait for %.2f seconds for printer status polling to start", POLL_TIMEOUT];
+    msg = [NSString stringWithFormat:
+           @"wait for %.2f seconds for printer status polling to start", POLL_TIMEOUT];
     [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
     GHAssertTrue([psh isPolling], @"should now be polling");
     
     GHTestLog(@"-- waiting for status change callback");
-    msg = [NSString stringWithFormat: @"wait for %.2f seconds while waiting for the polling callback", POLL_TIMEOUT];
+    msg = [NSString stringWithFormat:
+           @"wait for %.2f seconds while waiting for the polling callback", POLL_TIMEOUT];
     [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
     GHAssertTrue(statusDidChangeCallbackReceived, @"");
-    GHAssertTrue(onlineStatus, [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP]);
     
     GHTestLog(@"-- stopping status poller");
     [psh stopPrinterStatusPolling];
@@ -102,7 +100,6 @@ static NSString* TEST_PRINTER_IP = @"192.168.0.199";
 - (void)statusDidChange:(BOOL)isOnline
 {
     statusDidChangeCallbackReceived = YES;
-    onlineStatus = isOnline;
 }
 
 #pragma mark - Utilities

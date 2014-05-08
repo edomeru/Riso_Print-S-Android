@@ -69,14 +69,22 @@
 {
     PrinterStatusView* statusView = [[PrinterStatusView alloc] init];
     GHAssertNotNil(statusView, @"");
-    NSString* onlinePrinterIP = @"192.168.0.199"; //use an online printer
+    NSString* printerIP = @"192.168.0.197";
 
-    statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:onlinePrinterIP];
+    statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printerIP];
     statusView.statusHelper.delegate = statusView;
+    
     [statusView.statusHelper startPrinterStatusPolling];
     [self waitForCompletion:5+1];
     [statusView.statusHelper stopPrinterStatusPolling];
-    GHAssertTrue(statusView.onlineStatus, @"check if the printer IP specified is online");
+    GHAssertNotNil(statusView.statusHelper, @"");
+    GHAssertFalse([statusView.statusHelper isPolling], @"");
+    
+    [statusView.statusHelper startPrinterStatusPolling];
+    [self waitForCompletion:5+1];
+    [statusView.statusHelper stopPrinterStatusPolling];
+    GHAssertNotNil(statusView.statusHelper, @"");
+    GHAssertFalse([statusView.statusHelper isPolling], @"");
 }
 
 #pragma mark - Utilities

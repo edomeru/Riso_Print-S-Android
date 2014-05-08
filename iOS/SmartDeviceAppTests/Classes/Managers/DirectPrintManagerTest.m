@@ -127,7 +127,7 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"Check if callbak is receieved"]);
+                 [NSString stringWithFormat:@"check if callback is receieved"]);
     GHAssertTrue(documentDidPrintSuccessfully,
                  [NSString stringWithFormat:@"check if printed successfullly"]);
 }
@@ -142,14 +142,17 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
     
     GHTestLog(@"-- printing the document");
     documentDidFinishCallbackReceived = NO;
+    Swizzler *swizzler = [[Swizzler alloc] init];
+    [swizzler swizzleInstanceMethod:[DirectPrintManager class] targetSelector:@selector(printDocumentViaLPR) swizzleClass:[DirectPrintManagerMock class] swizzleSelector:@selector(printDocumentError)];
     [dpm printDocumentViaLPR];
+    [swizzler deswizzle];
     [self waitForCompletion:10];
     GHTestLog(@"-- printing finished");
     
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"Check if callbak is receieved"]);
+                 [NSString stringWithFormat:@"check if callback is receieved"]);
     GHAssertFalse(documentDidPrintSuccessfully,
                  [NSString stringWithFormat:@"check if printing failed"]);
 }
