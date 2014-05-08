@@ -509,6 +509,30 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Insert an item into PrintSetting table
+        /// </summary>
+        /// <param name="printSettings">print settings to be added</param>
+        /// <returns>task; number for added rows</returns>
+        public async Task<int> InsertPrintSettings(PrintSettings printSettings)
+        {
+            if (printSettings == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                return await _dbConnection.InsertAsync(printSettings);
+            }
+            catch
+            {
+                // Error handling
+            }
+
+            return 0;
+        }
+
+        /// <summary>
         /// Updates a print setting in the database
         /// </summary>
         /// <param name="printSettings">print settings</param>

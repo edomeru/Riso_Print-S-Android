@@ -413,6 +413,7 @@ namespace SmartDeviceApp.Controllers
 
                 try
                 {
+                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
                     int id = await DatabaseController.Instance.InsertPrinter(printer);
                     printer.Id = id;
                     printer.IsOnline = true;
@@ -468,6 +469,7 @@ namespace SmartDeviceApp.Controllers
             printer.EnabledTrayStack = true;
 
             //insert to database
+            printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
             int id = await DatabaseController.Instance.InsertPrinter(printer);
             if (id < 0)
             {
@@ -627,6 +629,7 @@ namespace SmartDeviceApp.Controllers
             Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
                 try
                 {
+                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
                     int id = await DatabaseController.Instance.InsertPrinter(printer);
                     printer.Id = id;
                     printer.IsOnline = true;
