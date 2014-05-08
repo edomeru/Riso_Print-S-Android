@@ -61,51 +61,50 @@ namespace DirectPrint
 
         TCPSocket socket;
 
-        public DirectPrint(directprint_job job)
-        {
-            socket = new TCPSocket();
-            socket.connect(job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
-            {
-                startLPRPrint(job);
-            });
-        }
 
         private void nullCallBack(int val){
 
         }
 
+        private directprint_job print_job = null;
         public DirectPrint()
         {
-            directprint_job job = new directprint_job();
-            job.job_name = "SDA job";
-            job.filename = "test.pdf";//"PDF-0010pages.pdf";
-            job.print_settings = "";
-            job.ip_address = "192.168.1.206";//21//206//119
-            job.progress = 0;
-            job.cancel_print = 0;
-            job.callback = new directprint_callback(nullCallBack);
 
-            socket = new TCPSocket();
-            socket.connect(job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
+        }
+
+        public float getProgress()
+        {
+            if (print_job != null)
             {
-                startLPRPrint(job);
-            });
+                return print_job.progress;
+            }
+            else return 0;
         }
 
         public async void startLPRPrint(directprint_job parameter)
         {
-            //FileOpenPicker openPicker = new FileOpenPicker();
-            //openPicker.FileTypeFilter.Add(".pdf");
-            //StorageFile filePickerFile = await openPicker.PickSingleFileAsync();
 
-            directprint_job print_job = parameter;
+            if (parameter == null)
+            {
+                if (print_job.callback != null)
+                {
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
+                return;
+            }
+
+            print_job = parameter;
+
+            //start socket
+            socket = new TCPSocket();
+            socket.connect(print_job.ip_address, PORT_LPR);
+            socket.assignDelegate(receiveData);
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            (workItem) =>
+            {
+                startLPRPrint(print_job);
+            });
+            //
 
             // Prepare PJL header
             string pjl_header = "";
