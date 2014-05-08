@@ -1077,7 +1077,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         params.leftMargin = margin;
         params.rightMargin = margin;
         
-        EditText editText = (EditText) LayoutInflater.from(getContext()).inflate(R.layout.printsettings_input_alphanumeric, null);
+        EditText editText = (EditText) LayoutInflater.from(getContext()).inflate(R.layout.printsettings_input_pincode, null);
         editText.setId(ID_PIN_CODE_EDIT_TEXT);
         editText.setLayoutParams(params);
         
