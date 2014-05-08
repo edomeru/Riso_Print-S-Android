@@ -12,6 +12,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 import android.content.SharedPreferences;
@@ -122,7 +123,7 @@ public class PDFFileManager {
         
         mPath = path;
         mFileName = file.getName();
-        mSandboxPath = SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/" + file.getName();
+        mSandboxPath = PDFFileManager.getSandboxDir(file.getName());
         
         if (mPath.equalsIgnoreCase(mSandboxPath)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
@@ -166,6 +167,17 @@ public class PDFFileManager {
      */
     public float getPageHeight() {
         return mPageHeight;
+    }
+    
+    /**
+     * Gets the sandbox directory
+     * 
+     * @param filename
+     *            filename of the pdf
+     * @return PDF sandbox directory
+     */
+    public static String getSandboxDir(String filename) {
+        return SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/" + filename;
     }
     
     /**
