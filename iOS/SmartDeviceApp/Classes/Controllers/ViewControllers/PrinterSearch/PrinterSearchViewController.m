@@ -312,7 +312,7 @@
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEnded
+- (void)searchEndedwithResult:(BOOL)printerFound
 {
     // hide the searching indicator
     [self.refreshControl endRefreshing];

@@ -388,9 +388,12 @@ static PrinterManager* sharedPrinterManager = nil;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    //get the search result
+    BOOL result = [(NSNumber*)[notif object] boolValue];
+    
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.searchDelegate searchEnded];
+        [weakSelf.searchDelegate searchEndedwithResult:result];
     });
 }
 

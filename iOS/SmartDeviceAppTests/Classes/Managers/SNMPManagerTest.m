@@ -9,6 +9,7 @@
 #import <GHUnitIOS/GHUnit.h>
 #import "SNMPManager.h"
 #import "NotificationNames.h"
+#import "PrinterDetails.h"
 
 const float SNMPM_SEARCH_TIMEOUT = 10;
 
@@ -31,6 +32,7 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
     BOOL correctUseSNMPUnicastTimeout;
     BOOL notificationEndReceived;
     BOOL notificationAddReceived;
+    BOOL printerFound;
 }
 
 @end
@@ -95,9 +97,13 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
                      @"wait for %.2f seconds after initiating manual search", SNMPM_SEARCH_TIMEOUT];
     
     notificationEndReceived = NO;
-    [snmpManager searchForPrinter:@"192.168.0.1"];
+    notificationAddReceived = NO;
+    printerFound = NO;
+    [snmpManager searchForPrinter:@"192.168.0.199"];
     [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
     GHAssertTrue(notificationEndReceived, @"");
+    GHAssertTrue(notificationAddReceived, @"");
+    GHAssertTrue(printerFound, @"");
 }
 
 - (void)test002_SearchForAvailablePrinters
@@ -107,9 +113,13 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
                      @"wait for %.2f seconds after initiating device discovery", SNMPM_SEARCH_TIMEOUT];
     
     notificationEndReceived = NO;
-    [snmpManager searchForPrinter:@"192.168.0.1"];
+    notificationAddReceived = NO;
+    printerFound = NO;
+    [snmpManager searchForAvailablePrinters];
     [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
     GHAssertTrue(notificationEndReceived, @"");
+    GHAssertTrue(notificationAddReceived, @"");
+    GHAssertTrue(printerFound, @"");
 }
 
 - (void)test003_CancelSearch
@@ -142,13 +152,16 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
     
     //override setting
     [snmpManager setUseSNMPCommonLib:NO]; //use the fake search
+    [snmpManager setUseSNMPUnicastTimeout:NO];
     
     notificationEndReceived = NO;
     notificationAddReceived = NO;
+    printerFound = NO;
     [snmpManager searchForPrinter:@"192.168.0.1"];
     [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
     GHAssertTrue(notificationEndReceived, @"");
     GHAssertTrue(notificationAddReceived, @"");
+    GHAssertTrue(printerFound, @"");
     
     //override setting
     [snmpManager setUseSNMPCommonLib:NO]; //use the fake search
@@ -156,10 +169,12 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
     
     notificationEndReceived = NO;
     notificationAddReceived = NO;
+    printerFound = NO;
     [snmpManager searchForPrinter:@"192.168.0.1"];
     [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
     GHAssertTrue(notificationEndReceived, @"");
     GHAssertFalse(notificationAddReceived, @"");
+    GHAssertFalse(printerFound, @"");
 }
 
 - (void)test006_FakeSearchForAvailablePrinters
@@ -173,10 +188,12 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
     
     notificationEndReceived = NO;
     notificationAddReceived = NO;
+    printerFound = NO;
     [snmpManager searchForAvailablePrinters];
     [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
     GHAssertTrue(notificationEndReceived, @"");
     GHAssertTrue(notificationAddReceived, @"");
+    GHAssertTrue(printerFound, @"");
 }
 
 #pragma mark - Notification Callbacks
@@ -184,11 +201,19 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
 - (void)snmpManagerDidNotifyEnd:(NSNotification*)notif
 {
     notificationEndReceived = YES;
+    
+    printerFound = [(NSNumber*)[notif object] boolValue];
 }
 
 - (void)snmpManagerDidNotifyAdd:(NSNotification*)notif
 {
     notificationAddReceived = YES;
+    
+    PrinterDetails* pd = (PrinterDetails*)[notif object];
+    GHAssertNotNil(pd, @"");
+    GHAssertNotNil(pd.ip, @"");
+    GHAssertFalse(pd.enFinisher23Holes && pd.enFinisher24Holes, @"");
+    GHAssertTrue([pd.port intValue] == 0 || [pd.port intValue] == 1, @"");
 }
 
 #pragma mark - Utilities

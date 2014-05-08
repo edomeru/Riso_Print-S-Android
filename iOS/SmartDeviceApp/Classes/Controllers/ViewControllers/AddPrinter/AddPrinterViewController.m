@@ -27,12 +27,6 @@
 /** Flag that will be set to YES when at least one successful printer was added. */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
-/**
- Flag that indicates that a printer search was initiated, but
- either the printer was not found or the search timed-out.
- */
-@property (assign, nonatomic) BOOL willEndWithoutAdd;
-
 #pragma mark - UI Properties
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* progressIndicator;
@@ -226,7 +220,6 @@
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
 #endif
-    self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
     [self.printerManager searchForPrinter:trimmedIP];
     // callbacks for the search will be handled in delegate methods
     
@@ -241,9 +234,9 @@
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEnded
+- (void)searchEndedwithResult:(BOOL)printerFound
 {
-    if (self.willEndWithoutAdd)
+    if (!printerFound)
     {
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                         withTitle:kAlertTitlePrintersSearch
@@ -272,7 +265,6 @@
     NSLog(@"[INFO][AddPrinter] received NEW printer with IP=%@", printerDetails.ip);
     NSLog(@"[INFO][AddPrinter] updating UI");
 #endif
-    self.willEndWithoutAdd = NO; //search did not timeout
     
     if ([self.printerManager registerPrinter:printerDetails])
     {

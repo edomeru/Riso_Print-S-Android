@@ -44,6 +44,7 @@ const float PM_SEARCH_TIMEOUT = 10;
     BOOL callbackSearchEndCalled;
     BOOL callbackFoundNewCalled;
     BOOL callbackFoundOldCalled;
+    BOOL callbackPrinterFound;
 }
 
 @end
@@ -382,17 +383,45 @@ const float PM_SEARCH_TIMEOUT = 10;
 - (void)test011_SearchForOnePrinter
 {
     GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    
-    GHTestLog(@"-- search for one printer");
-    callbackSearchEndCalled = NO;
-    [printerManager searchForPrinter:@"192.168.0.197"]; //use an offline printer
-    
     NSString* msg = [NSString stringWithFormat:
                      @"wait for %.2f seconds for manual search to end", PM_SEARCH_TIMEOUT];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    NSString* testIP = @"192.168.0.199"; //use an online printer IP
+    Swizzler *swizzler = [[Swizzler alloc] init];
     
-    GHTestLog(@"-- check if end callback was received");
+    // clear existing printers
+    while (printerManager.countSavedPrinters != 0)
+        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
+    
+    GHTestLog(@"-- search for an online printer");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    callbackPrinterFound = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
+    [printerManager searchForPrinter:testIP];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    [swizzler deswizzle];
+    GHTestLog(@"-- check if callbacks were received");
     GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertTrue(callbackFoundNewCalled, @"");
+    GHAssertFalse(callbackFoundOldCalled, @"");
+    GHAssertTrue(callbackPrinterFound, @"");
+    GHTestLog(@"-- printer found was added");
+    
+    GHTestLog(@"-- searching for the same printer");
+    callbackSearchEndCalled = NO;
+    callbackFoundNewCalled = NO;
+    callbackFoundOldCalled = NO;
+    callbackPrinterFound = NO;
+    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
+    [printerManager searchForPrinter:testIP];
+    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
+    [swizzler deswizzle];
+    GHTestLog(@"-- check if callbacks were received");
+    GHAssertTrue(callbackSearchEndCalled, @"");
+    GHAssertFalse(callbackFoundNewCalled, @"");
+    GHAssertTrue(callbackFoundOldCalled, @"");
+    GHAssertTrue(callbackPrinterFound, @"");
 }
 
 - (void)test012_SearchForAllPrinters
@@ -432,52 +461,12 @@ const float PM_SEARCH_TIMEOUT = 10;
     GHAssertEqualObjects(printerManager, pmNew, @"should return the same object");
 }
 
-- (void)test015_ValidSearch
-{
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds for valid search to end", PM_SEARCH_TIMEOUT];
-    NSString* testIP = @"192.168.0.199"; //use an online printer IP
-
-    // clear existing printers
-    while (printerManager.countSavedPrinters != 0)
-        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
-    
-    GHTestLog(@"-- search for an online printer");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
-    [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
-    [swizzler deswizzle];
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertTrue(callbackFoundNewCalled, @"");
-    GHAssertFalse(callbackFoundOldCalled, @"");
-    
-    GHTestLog(@"-- printer found was added");
-    
-    GHTestLog(@"-- searching for the same printer");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
-    [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
-    [swizzler deswizzle];
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertFalse(callbackFoundNewCalled, @"");
-    GHAssertTrue(callbackFoundOldCalled, @"");
-}
-
 #pragma mark - PrinterSearchDelegate Methods
 
-- (void)searchEnded
+- (void)searchEndedwithResult:(BOOL)printerFound
 {
     callbackSearchEndCalled = YES;
+    callbackPrinterFound = printerFound;
 }
 
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails

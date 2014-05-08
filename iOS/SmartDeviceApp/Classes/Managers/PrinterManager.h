@@ -17,8 +17,10 @@
 
 /**
  Notifies the delegate that the search has ended.
+ @param found
+        YES if a printer was found, NO otherwise.
  */
-- (void)searchEnded;
+- (void)searchEndedwithResult:(BOOL)printerFound;
 
 /**
  Notifies the delegate that a new printer has been found.

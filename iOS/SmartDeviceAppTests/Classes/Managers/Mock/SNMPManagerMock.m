@@ -13,7 +13,7 @@
 @interface SNMPManager()
 
 - (void)addRealPrinter:(snmp_device*)device;
-- (void)endRealSearchWithResult:(BOOL)success;
+- (void)endSearchWithResult:(BOOL)success;
 
 @end
 
@@ -24,15 +24,14 @@
     SNMPManager *manager = [SNMPManager sharedSNMPManager];
     snmp_device *device = snmp_device_new([printerIP UTF8String]);
     [manager addRealPrinter:device];
-    [manager endRealSearchWithResult:(NO)];
+    [manager endSearchWithResult:(YES)];
     snmp_device_free(device);
 }
 
 - (void)searchForPrinterFail:(NSString*)printerIP
 {
     SNMPManager *manager = [SNMPManager sharedSNMPManager];
-    
-    [manager endRealSearchWithResult:(NO)];
+    [manager endSearchWithResult:(NO)];
 }
 
 

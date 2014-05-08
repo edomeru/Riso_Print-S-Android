@@ -11,6 +11,9 @@
 #import "Printer.h"
 #import "CXAlertView.h"
 #import "PrinterDetails.h"
+#import "Swizzler.h"
+#import "SNMPManager.h"
+#import "SNMPManagerMock.h"
 
 @interface AddPrinterViewController (UnitTest)
 
@@ -232,35 +235,33 @@
     [self waitForCompletion:10 withMessage:nil];
     [self removeResultAlert];
     GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
-    
-    GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
 }
 
-- (void)test006_SaveOfflinePrinter
-{
-    GHTestLog(@"# CHECK: Save Offline Printer. #");
-    NSString* offlinePrinterIP = @"192.168.0.197";
-    UITextField* inputText = [controllerIphone textIP];
-    
-    PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    while (pm.countSavedPrinters != 0)
-        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
-    
-    GHTestLog(@"-- adding an offline printer");
-    inputText.text = offlinePrinterIP;
-    [controllerIphone onSave:[controllerIphone saveButton]];
-    [self waitForCompletion:10 withMessage:nil];
-    [controllerIphone searchEnded]; //call callback twice (willEndWithoutAdd is wrong here in UT)
-    [self removeResultAlert];
-    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
-    
-    GHAssertTrue(controllerIphone.hasAddedPrinters, @"");
-}
+//- (void)test006_SaveOfflinePrinter
+//{
+//    GHTestLog(@"# CHECK: Save Offline Printer. #");
+//    NSString* offlinePrinterIP = @"192.168.0.1";
+//    UITextField* inputText = [controllerIphone textIP];
+//    Swizzler* swizzler = [[Swizzler alloc] init];
+//    
+//    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+//    while (pm.countSavedPrinters != 0)
+//        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+//    
+//    GHTestLog(@"-- adding an offline printer");
+//    inputText.text = offlinePrinterIP;
+//    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterFail:)];
+//    [controllerIphone onSave:[controllerIphone saveButton]];
+//    [swizzler deswizzle];
+//    [controllerIphone searchEndedwithResult:NO];
+//    [self removeResultAlert];
+//    GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
+//}
 
 - (void)test007_SaveButAlreadySaved
 {
     GHTestLog(@"# CHECK: Save Already Saved Printer. #");
-    NSString* onlinePrinterIP = @"192.168.0.199";
+    NSString* onlinePrinterIP = @"192.168.0.1";
     UITextField* inputText = [controllerIphone textIP];
     
     GHTestLog(@"-- registering one printer");
@@ -275,7 +276,6 @@
     GHTestLog(@"-- save the same printer");
     inputText.text = onlinePrinterIP;
     [controllerIphone onSave:[controllerIphone saveButton]];
-    [self waitForCompletion:2 withMessage:nil];
     [self removeResultAlert];
     GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 1, @"");
 }
@@ -294,14 +294,12 @@
     GHTestLog(@"-- save invalid IP1");
     inputText.text = invalidPrinterIP1;
     [controllerIphone onSave:[controllerIphone saveButton]];
-    [self waitForCompletion:2 withMessage:nil];
     [self removeResultAlert];
     GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0, @"");
     
     GHTestLog(@"-- save invalid IP2");
     inputText.text = invalidPrinterIP2;
     [controllerIphone onSave:[controllerIphone saveButton]];
-    [self waitForCompletion:2 withMessage:nil];
     [self removeResultAlert];
     GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0, @"");
 }
@@ -309,7 +307,7 @@
 - (void)test009_SaveButMaximum
 {
     GHTestLog(@"# CHECK: Save Already Saved Printer. #");
-    NSString* printerIP = @"192.168.0.199";
+    NSString* printerIP = @"192.168.0.1";
     NSUInteger printerMax = 10;
     UITextField* inputText = [controllerIphone textIP];
     
@@ -326,7 +324,6 @@
     GHTestLog(@"-- save another printer");
     inputText.text = printerIP;
     [controllerIphone onSave:[controllerIphone saveButton]];
-    [self waitForCompletion:2 withMessage:nil];
     [self removeResultAlert];
     GHAssertTrue([[PrinterManager sharedPrinterManager] countSavedPrinters] == printerMax, @"");
 }
