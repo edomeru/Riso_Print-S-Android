@@ -90,7 +90,7 @@
                                    Style="{StaticResource STYLE_TextListHeader}" />
                         <TextBlock x:Name="keySubText"
                                    Text="{Binding SubText, ElementName=groupListControl}"
-                                   Width="{Binding KeyTextWidth, ElementName=groupListControl}"
+                                   Width="{Binding TextWidth, ElementName=groupListControl}"
                                    Visibility="{Binding SubTextVisibility, ElementName=groupListControl}"
                                    Style="{StaticResource STYLE_TextKeySubText}">
                             <TextBlock.Margin>
