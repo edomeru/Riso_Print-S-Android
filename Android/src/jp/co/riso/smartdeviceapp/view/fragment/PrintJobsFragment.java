@@ -26,6 +26,9 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -33,9 +36,11 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
+public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener, Callback {
     
     private static final String TAG = "PrintJobsFragment";
+    private static final int MSG_SCROLL = 0;
+    
     private PrintJobsView mPrintJobsView;
     private PrintJobsGroupView mPrintGroupToDelete;
     // TODO: use of loading indicator
@@ -50,6 +55,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ConfirmDialogFragment mConfirmDialog;
     private ScrollView mScrollView;
     private int mScrollPosition;
+    private Handler mHandler;
     
     /**
      * Instantiate PrintJobsFragment
@@ -68,6 +74,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
+        mHandler = new Handler(this);
     }
     
     /** {@inheritDoc} */
@@ -180,7 +187,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void hideLoading() {
         if (!isTablet()) {
             getView().setBackgroundColor(getResources().getColor(R.color.theme_light_3));
-            mScrollView.scrollTo(0, mScrollPosition);
+            Message newMessage = Message.obtain(mHandler, MSG_SCROLL);
+            newMessage.arg1 = mScrollPosition;
+            mHandler.sendMessage(newMessage);
         }
         
         // mPrintJobsView.setVisibility(View.VISIBLE);
@@ -212,6 +221,17 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             mConfirmDialog = null;
         }
         
+    }
+    
+    // ================================================================================
+    // INTERFACE - Callback
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean handleMessage(Message msg) {
+        mScrollView.setScrollY(msg.arg1);
+        return true;
     }
     
     // ================================================================================
