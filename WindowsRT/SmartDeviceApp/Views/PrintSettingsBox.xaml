@@ -87,7 +87,7 @@
         <controls:KeyValueControl x:Name="printerButton"
                                   Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                   Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
-                                  ValueText="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}, ConverterParameter=true}"
+                                  ValueText="{Binding PrinterId, Converter={StaticResource SelectedPrinterIdToTextConverter}}"
                                   ValueSubText="{Binding PrinterIpAddress}"
                                   ValueSubTextVisibility="{Binding PrinterIpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                   IconVisibility="Collapsed"

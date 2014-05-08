@@ -47,6 +47,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
+        private int _printerId;
         private string _printerName;
         private string _printerIpAddress;
         private bool _isPrintPreview;
@@ -65,7 +66,18 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
         }
 
-        public int PrinterId { get; set; }
+        public int PrinterId
+        {
+            get { return _printerId; }
+            set
+            {
+                if (_printerId != value)
+                {
+                    _printerId = value;
+                    RaisePropertyChanged("PrinterId");
+                }
+            }
+        }
 
         public string PrinterName
         {

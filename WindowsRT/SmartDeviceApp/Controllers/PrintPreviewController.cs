@@ -215,12 +215,15 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public async void RegisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
             if (_resetPrintSettings)
             {
                 _selectedPrinter = null;
                 await SetSelectedPrinterAndPrintSettings(-1);
                 _resetPrintSettings = false;
+            }
+            else
+            {
+                PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
             }
         }
 
@@ -236,7 +239,7 @@ namespace SmartDeviceApp.Controllers
         /// Event handler when a printer is deleted
         /// </summary>
         /// <param name="printer">printer</param>
-        public async void PrinterDeleted(Printer printer)
+        public void PrinterDeleted(Printer printer)
         {
             if (_selectedPrinter.Id == printer.Id)
             {
@@ -303,6 +306,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
+            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
