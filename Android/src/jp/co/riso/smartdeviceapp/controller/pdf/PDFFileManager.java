@@ -298,7 +298,7 @@ public class PDFFileManager {
     // ================================================================================
     // Protected methods
     // ================================================================================
-    
+
     /**
      * Opens the document
      * 
@@ -310,15 +310,32 @@ public class PDFFileManager {
      *         PDF_INVALID_PATH = -10;
      */
     protected synchronized int openDocument() {
+        return openDocument(mPath);
+    }
+    
+    /**
+     * Opens the document
+     * 
+     * @param path
+     *            Path of the document to be opened
+     * 
+     * @return status of open <br>
+     *         PDF_OK = 0; <br>
+     *         PDF_ENCRYPTED = -1; <br>
+     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
+     *         PDF_DAMAGED = -3; <br>
+     *         PDF_INVALID_PATH = -10;
+     */
+    protected synchronized int openDocument(String path) {
         if (mDocument.is_opened()) {
             closeDocument();
         }
         
-        if (mPath == null || mPath.length() == 0) {
+        if (path == null || path.length() == 0) {
             return PDF_OPEN_FAILED;
         }
         
-        int status = mDocument.Open(mPath, null);
+        int status = mDocument.Open(path, null);
         
         switch (status) {
             case RADAEE_OK:
@@ -368,11 +385,8 @@ public class PDFFileManager {
                 return PDF_OPEN_FAILED;
             }
             
-            int status = openDocument();
-            
-            if (CONST_KEEP_DOCUMENT_CLOSED) {
-                closeDocument();
-            }
+            int status = openDocument(mPath);
+            closeDocument();
             
             if (status == PDF_OK) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
@@ -381,6 +395,7 @@ public class PDFFileManager {
                     
                     try {
                         FileUtils.copy(new File(mPath), new File(mSandboxPath));
+                        openDocument(mSandboxPath);
                     } catch (Exception e) {
                         return PDF_OPEN_FAILED;
                     }

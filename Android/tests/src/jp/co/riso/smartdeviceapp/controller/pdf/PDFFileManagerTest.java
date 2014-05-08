@@ -20,6 +20,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     int mPdfPageCount;
     String mLargePdfPath;
     String mPdfInSandboxPath;
+    String mEncryptedPdfPath;
     int mStatus;
     PDFFileManager mPdfManager;
 
@@ -36,6 +37,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         
         mPdfPath = getAssetPath("PDF-squarish.pdf");
         mPdfPageCount = 36; // page count of mPdfPath file
+        
+        mEncryptedPdfPath = getAssetPath("40RC4_Nitro.pdf");
         
         mPdfInSandboxPath = PDFFileManager.convertToSandboxPath("PDF-squarish2.pdf");
         FileUtils.copy(new File(mPdfPath), new File(mPdfInSandboxPath));
@@ -123,7 +126,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
         assertFalse(mPdfManager.isInitialized());
     }
-
+    
     public void testIsOpen_sandboxPath() {
         assertFalse(mPdfManager.isInitialized());
 
@@ -202,6 +205,15 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertNotNull(bmp);
     }
 
+    public void testGetPageBitmap_Flip() {
+        mPdfManager.setPDF(mPdfPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        
+        Bitmap bmp = mPdfManager.getPageBitmap(0, 1.0f, true, true);
+        assertNotNull(bmp);
+    }
+
     public void testGetPageBitmap_Uninitialized() {
         mPdfManager.setPDF(mPdfPath);
         
@@ -272,12 +284,6 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
     }
     
-    public void testOpenDocument_EmptyPdfPath() {
-        mPdfManager.setPDF("");
-        int status = mPdfManager.openDocument();
-        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
-    }
-    
     public void testOpenDocument_InvalidPdfPath() {
         mPdfManager.setPDF("not_a_valid_path");
         int status = mPdfManager.openDocument();
@@ -288,6 +294,18 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.setPDF(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
+    }
+    
+    public void testOpenDocument_EncrpyptedPath() {
+        mPdfManager.setPDF(mEncryptedPdfPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_ENCRYPTED);
+    }
+    
+    public void testOpenDocument_EmptyPdfPath() {
+        mPdfManager.setPDF("");
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
     }
 
     public void testOpenDocument_Opened() {
@@ -331,9 +349,9 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
-        // assume AsyncTask will be finished in 2 seconds.
+        // assume AsyncTask will be finished in 10 seconds.
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -348,9 +366,9 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
-        // assume AsyncTask will be finished in 2 seconds.
+        // assume AsyncTask will be finished in 10 seconds.
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -365,9 +383,9 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
-        // assume AsyncTask will be finished in 2 seconds.
+        // assume AsyncTask will be finished in 10 seconds.
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -382,9 +400,9 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.initializeAsync();
 
         getInstrumentation().waitForIdleSync();
-        // assume AsyncTask will be finished in 2 seconds.
+        // assume AsyncTask will be finished in 10 seconds.
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -454,21 +472,19 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     private String getAssetPath(String filename) {
         File f = new File(getActivity().getCacheDir() + "/" + filename);
         AssetManager assetManager = getInstrumentation().getContext().getAssets();
-        
-        if (!f.exists()) {
-            try {
-                InputStream is = assetManager.open(filename);
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-                
-                FileOutputStream fos = new FileOutputStream(f);
-                fos.write(buffer);
-                fos.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+
+        try {
+            InputStream is = assetManager.open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(buffer);
+            fos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         
         return f.getPath();
