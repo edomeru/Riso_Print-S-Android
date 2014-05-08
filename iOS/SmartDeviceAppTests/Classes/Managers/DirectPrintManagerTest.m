@@ -13,6 +13,8 @@
 #import "PrintDocument.h"
 #import "PrinterDetails.h"
 #import "CXAlertView.h"
+#import "Swizzler.h"
+#import "DirectPrintManagerMock.h"
 
 static NSString* TEST_PRINTER_IP_SUCCESS = @"192.168.0.198";
 static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
@@ -28,6 +30,7 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
 {
     DirectPrintManager* dpm;
     BOOL documentDidFinishCallbackReceived;
+    BOOL documentDidPrintSuccessfully;
 }
 
 @end
@@ -89,14 +92,19 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
     
     GHTestLog(@"-- printing the document");
     documentDidFinishCallbackReceived = NO;
+    Swizzler *swizzler = [[Swizzler alloc] init];
+    [swizzler swizzleInstanceMethod:[DirectPrintManager class] targetSelector:@selector(printDocumentViaLPR) swizzleClass:[DirectPrintManagerMock class] swizzleSelector:@selector(printDocumentViaLPR)];
     [dpm printDocumentViaLPR];
     [self waitForCompletion:10];
+    [swizzler deswizzle];
     GHTestLog(@"-- printing finished");
 
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP_SUCCESS]);
+                 [NSString stringWithFormat:@"Check if callbak is receieved"]);
+    GHAssertTrue(documentDidPrintSuccessfully,
+                 [NSString stringWithFormat:@"check if printed successfullly"]);
 }
 
 - (void)test002_PrintDocumentViaRAW
@@ -109,14 +117,19 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
     
     GHTestLog(@"-- printing the document");
     documentDidFinishCallbackReceived = NO;
+    Swizzler *swizzler = [[Swizzler alloc] init];
+    [swizzler swizzleInstanceMethod:[DirectPrintManager class] targetSelector:@selector(printDocumentViaRaw) swizzleClass:[DirectPrintManagerMock class] swizzleSelector:@selector(printDocumentViaRaw)];
     [dpm printDocumentViaRaw];
     [self waitForCompletion:10];
+    [swizzler deswizzle];
     GHTestLog(@"-- printing finished");
     
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP_SUCCESS]);
+                 [NSString stringWithFormat:@"Check if callbak is receieved"]);
+    GHAssertTrue(documentDidPrintSuccessfully,
+                 [NSString stringWithFormat:@"check if printed successfullly"]);
 }
 
 - (void)test003_PrintDocumentError
@@ -136,7 +149,9 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
     [self removeErrorDialogIfPresent];
     
     GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if printer=[%@] is online", TEST_PRINTER_IP_SUCCESS]);
+                 [NSString stringWithFormat:@"Check if callbak is receieved"]);
+    GHAssertFalse(documentDidPrintSuccessfully,
+                 [NSString stringWithFormat:@"check if printing failed"]);
 }
 
 #pragma mark - DirectPrintManagerDelegate Methods
@@ -144,6 +159,7 @@ static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
 - (void)documentDidFinishPrinting:(BOOL)successful
 {
     documentDidFinishCallbackReceived = YES;
+    documentDidPrintSuccessfully = successful;
 }
 
 #pragma mark - Utilities

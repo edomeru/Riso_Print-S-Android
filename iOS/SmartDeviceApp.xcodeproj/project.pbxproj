@@ -98,6 +98,7 @@
 		2D232D9918E580D1008D06C8 /* PrintSettingsItemSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9818E580D1008D06C8 /* PrintSettingsItemSwitchCell.m */; };
 		2D30FBBA191A32CC00B9DAC8 /* Swizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBB9191A32CC00B9DAC8 /* Swizzler.m */; };
 		2D30FBC6191A470200B9DAC8 /* SNMPManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */; };
+		2D30FBCC191A530700B9DAC8 /* DirectPrintManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */; };
 		2D58A9071913D4DE003FBC0B /* TestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
@@ -411,6 +412,8 @@
 		2D30FBB9191A32CC00B9DAC8 /* Swizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Swizzler.m; sourceTree = "<group>"; };
 		2D30FBC4191A470200B9DAC8 /* SNMPManagerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNMPManagerMock.h; sourceTree = "<group>"; };
 		2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNMPManagerMock.m; sourceTree = "<group>"; };
+		2D30FBCA191A530700B9DAC8 /* DirectPrintManagerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectPrintManagerMock.h; sourceTree = "<group>"; };
+		2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManagerMock.m; sourceTree = "<group>"; };
 		2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1000,6 +1003,8 @@
 		2D30FBC0191A464900B9DAC8 /* Mock */ = {
 			isa = PBXGroup;
 			children = (
+				2D30FBCA191A530700B9DAC8 /* DirectPrintManagerMock.h */,
+				2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */,
 				2D30FBC4191A470200B9DAC8 /* SNMPManagerMock.h */,
 				2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */,
 			);
@@ -1735,6 +1740,7 @@
 				3195C170191117F700197397 /* PreviewView.m in Sources */,
 				3195C172191117F700197397 /* PrinterStatusView.m in Sources */,
 				3195C174191117F700197397 /* AppDelegate.m in Sources */,
+				2D30FBCC191A530700B9DAC8 /* DirectPrintManagerMock.m in Sources */,
 				312B0DEC1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m in Sources */,
 				3195C177191117F700197397 /* PrintJobHistoryLayout.m in Sources */,
 				3195C179191117F700197397 /* ReplaceSegue.m in Sources */,

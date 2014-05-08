@@ -120,7 +120,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)updateSuccess
 {
-    [self.alertView dismiss];
+    [self.alertView performSelectorOnMainThread:@selector(dismiss) withObject:nil waitUntilDone:YES];
     
     [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
     
@@ -129,7 +129,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)updateError
 {
-    [self.alertView dismiss];
+    [self.alertView performSelectorOnMainThread:@selector(dismiss) withObject:nil waitUntilDone:YES];
     
     [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
     
