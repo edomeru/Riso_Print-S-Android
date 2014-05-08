@@ -241,16 +241,7 @@ namespace SmartDeviceApp.Controllers
 
             try
             {
-                int i = await _dbConnection.InsertAsync(printer);
-                if (i > 0) //1 object inserted to table
-                {
-                    //get id of last inserted
-                    return printer.Id;
-                }
-                else
-                {
-                    return -1;
-                }
+                return await _dbConnection.InsertAsync(printer);
             }
             catch
             {

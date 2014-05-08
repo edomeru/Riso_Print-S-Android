@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
     <Compile Include="Common\Utilities\GlobalizationUtilityTest.cs" />
+    <Compile Include="Controllers\PrinterControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

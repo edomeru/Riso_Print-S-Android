@@ -413,8 +413,11 @@ namespace SmartDeviceApp.Controllers
 
                 try
                 {
-                    int id = await DatabaseController.Instance.InsertPrinter(printer);
-                    printer.Id = id;
+                    int i = await DatabaseController.Instance.InsertPrinter(printer);
+                    if (i == 0)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                    }
                     printer.IsOnline = true;
                 }
                 catch (Exception e)
@@ -468,13 +471,12 @@ namespace SmartDeviceApp.Controllers
             printer.EnabledTrayStack = true;
 
             //insert to database
-            int id = await DatabaseController.Instance.InsertPrinter(printer);
-            if (id < 0)
+            int i = await DatabaseController.Instance.InsertPrinter(printer);
+            if (i == 0)
             {
-                return;
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
             }
 
-            printer.Id = id;
             printer.IsOnline = false;
             //printer.IsDefault = true; //for testing
 
@@ -627,8 +629,10 @@ namespace SmartDeviceApp.Controllers
             Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
                 try
                 {
-                    int id = await DatabaseController.Instance.InsertPrinter(printer);
-                    printer.Id = id;
+                    int i = await DatabaseController.Instance.InsertPrinter(printer);
+                    if (i == 0)
+                        return false;
+
                     printer.IsOnline = true;
                 }
                 catch (Exception e)
