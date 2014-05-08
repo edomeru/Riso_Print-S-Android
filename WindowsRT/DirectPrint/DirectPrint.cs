@@ -14,6 +14,7 @@ using Windows.Storage.Streams;
 namespace DirectPrint
 {
     public delegate void directprint_callback(int directprint_result);
+    public delegate void progress_callback(float progress);
 
     public class directprint_job
     {
@@ -23,6 +24,7 @@ namespace DirectPrint
         public string print_settings;
         public string ip_address;
         public directprint_callback callback;
+        public progress_callback progress_callback;
         
 
         //pthread_t main_thread;
@@ -70,15 +72,6 @@ namespace DirectPrint
         public DirectPrint()
         {
 
-        }
-
-        public float getProgress()
-        {
-            if (print_job != null)
-            {
-                return print_job.progress;
-            }
-            else return 0;
         }
 
         public async void startLPRPrint(directprint_job parameter)
@@ -161,6 +154,7 @@ namespace DirectPrint
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // CONTROL FILE : Prepare
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
@@ -208,6 +202,7 @@ namespace DirectPrint
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             /////////////////////////////////////////////////////////
             /// ADD CONTENT OF CONTROLFILE
@@ -248,6 +243,7 @@ namespace DirectPrint
             pos = 0;
             buffer[pos++] = 3;
             print_job.progress = LPR_PREP_END_PROGRESS;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // Get file size
             var uri = new System.Uri("ms-appx:///Resources/Dummy/"+print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
@@ -310,6 +306,7 @@ namespace DirectPrint
                 totalbytes += (ulong)bytesRead;
                 socket.write(buffer, 0, bytesRead, false);
                 print_job.progress += data_step;
+                if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             }
             //fstream.Dispose();
 
@@ -323,6 +320,7 @@ namespace DirectPrint
             buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
             print_job.progress = 99.0f;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -336,6 +334,7 @@ namespace DirectPrint
             }
 
             print_job.progress = 100.0f;
+            if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             if (print_job.callback != null){
                 print_job.callback(PRINT_STATUS_OK);
             }
