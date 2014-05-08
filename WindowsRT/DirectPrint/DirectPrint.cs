@@ -35,8 +35,8 @@ namespace DirectPrint
 
     public class DirectPrint
     {
-        int PRINT_STATUS_OK = 0;
-        int PRINT_STATUS_ERROR = 1;
+        public const int PRINT_STATUS_OK = 0;
+        public const int PRINT_STATUS_ERROR = 1;
 
         string PORT_LPR = "515";
         string PORT_RAW = "9100";
@@ -161,6 +161,7 @@ namespace DirectPrint
                 }
                 return;
             }
+            print_job.progress += LPR_PREP_PROGRESS_STEP;
 
             // CONTROL FILE : Prepare
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
@@ -207,6 +208,7 @@ namespace DirectPrint
                 }
                 return;
             }
+            print_job.progress += LPR_PREP_PROGRESS_STEP;
 
             /////////////////////////////////////////////////////////
             /// ADD CONTENT OF CONTROLFILE
@@ -246,7 +248,7 @@ namespace DirectPrint
             ///
             pos = 0;
             buffer[pos++] = 3;
-
+            print_job.progress = LPR_PREP_END_PROGRESS;
 
             // Get file size
             var uri = new System.Uri("ms-appx:///Resources/Dummy/"+print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
@@ -267,6 +269,8 @@ namespace DirectPrint
 
             ulong total_data_size = (ulong)file_size;// +(ulong)pjl_header_size + (ulong)pjl_footer_size;
             String total_data_size_str = String.Format("{0}", (ulong)total_data_size);
+
+            float data_step = (70.0f / ((float)file_size / BUFFER_SIZE));
 
             for (i = 0; i < total_data_size_str.Length; i++)
             {
@@ -306,6 +310,7 @@ namespace DirectPrint
             {
                 totalbytes += (ulong)bytesRead;
                 socket.write(buffer, 0, bytesRead, false);
+                print_job.progress += data_step;
             }
             //fstream.Dispose();
 
@@ -318,6 +323,7 @@ namespace DirectPrint
             pos = 0;
             buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
+            print_job.progress = 99.0f;
 
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -330,6 +336,7 @@ namespace DirectPrint
                 return;
             }
 
+            print_job.progress = 100.0f;
             if (print_job.callback != null){
                 print_job.callback(PRINT_STATUS_OK);
             }
