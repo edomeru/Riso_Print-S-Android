@@ -1725,37 +1725,46 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for Print button
         /// </summary>
-        public void Print()
+        public async void Print()
         {
             if (_selectedPrinter.Id > -1)
             {
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                // TODO: Check if printer is online (NetworkController)
-                bool isOnline = true;
-
-                if (isOnline)
-                {
-                    // TODO: Display progress dialog
-
-                    DirectPrintController directPrintController = new DirectPrintController(
-                        DocumentController.Instance.FileName,
-                        DocumentController.Instance.PdfFile,
-                        _selectedPrinter.IpAddress,
-                        _currPrintSettings,
-                        new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
-                        new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
-                    directPrintController.SendPrintJob();
-                }
-                else
-                {
-                    // TODO: Display error message
-                }
+                NetworkController.Instance.networkControllerPingStatusCallback =
+                    new Action<string, bool>(GetPrinterStatus);
+                await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
             }
             else
             {
                 // TODO: Display no selected printer message
+            }
+        }
+
+        /// <summary>
+        /// Checks the printer status before sending print job
+        /// </summary>
+        /// <param name="ipAddress">printer IP address</param>
+        /// <param name="isOnline">true when online, false otherwise</param>
+        public void GetPrinterStatus(string ipAddress, bool isOnline)
+        {
+            if (isOnline)
+            {
+                // TODO: Display progress dialog
+
+                DirectPrintController directPrintController = new DirectPrintController(
+                    DocumentController.Instance.FileName,
+                    DocumentController.Instance.PdfFile,
+                    _selectedPrinter.IpAddress,
+                    _currPrintSettings,
+                    new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
+                    new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
+                directPrintController.SendPrintJob();
+            }
+            else
+            {
+                // TODO: Display error message
             }
         }
 
