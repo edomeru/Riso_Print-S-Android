@@ -300,7 +300,7 @@
     }
 }
 
-- (void)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
+- (IBAction)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
 {
     // get the group swiped
     CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
@@ -324,7 +324,7 @@
               usingActionOnTap:@selector(tappedDeleteOneButton:)];
 }
 
-- (void)tappedGroup:(UIGestureRecognizer*)gestureRecognizer
+- (IBAction)tappedGroup:(UIGestureRecognizer*)gestureRecognizer
 {
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     // get the group tapped

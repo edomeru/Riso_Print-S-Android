@@ -16,9 +16,7 @@
 #import "Swizzler.h"
 #import "DirectPrintManagerMock.h"
 
-//use valid printer IPs
 static NSString* TEST_PRINTER_IP_SUCCESS = @"192.168.0.198";
-//static NSString* TEST_PRINTER_IP_SUCCESS = @"192.168.0.199";
 static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
 
 @interface DirectPrintManager (UnitTest)

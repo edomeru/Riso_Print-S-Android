@@ -17,24 +17,9 @@
 @interface PDFRenderOperation(Test)
 
 @property (nonatomic, strong) NSArray *pageIndices;
-/**
- Print Document object
- */
 @property (nonatomic, weak) PrintDocument *printDocument;
-
-/**
- Dimension of the ouput images
- */
 @property (nonatomic) CGSize size;
-
-/**
- Current that is being rendered
- */
 @property (nonatomic) NSUInteger currentPage;
-
-/**
- 
- */
 @property (nonatomic) BOOL isFrontPage;
 
 - (void)drawPagesInRect:(CGRect)rect inContext:(CGContextRef)contextRef;
@@ -47,8 +32,8 @@
 - (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat)margin;
 - (void)drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide;
 - (BOOL)shouldInvertImage;
-
 @end
+
 @interface PDFRenderOperationTest : GHTestCase
 
 @property (nonatomic,strong) UIImage *expectedImageUpperLeftStaple;
@@ -318,7 +303,6 @@
 
 -(void) test011_drawPunch4Hole
 {
-    
     Printer *printer = (Printer*)[DatabaseManager addObject:E_PRINTER];
     printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:YES];
     printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
@@ -347,7 +331,6 @@
 
 -(void) test012_drawPunch3Hole
 {
-    
     Printer *printer = (Printer*)[DatabaseManager addObject:E_PRINTER];
     printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:NO];
     printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:YES];
@@ -372,6 +355,131 @@
     CGContextRelease(context);
     CGColorSpaceRelease(cs);
     [DatabaseManager discardChanges];
+}
+
+-(void) test013_shouldInvertImage
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:nil size:testSize delegate:nil];
+
+    renderOperation.isFrontPage = YES;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    renderOperation.isFrontPage = NO;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingShortEdge;
+    GHAssertTrue([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideTop;
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    GHAssertTrue([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingShortEdge;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    CGSize landscapeTestSize = CGSizeMake(testSize.height, testSize.width);
+    renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:nil size:landscapeTestSize delegate:nil];
+    
+    renderOperation.isFrontPage = YES;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    renderOperation.isFrontPage = NO;
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    GHAssertTrue([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingShortEdge;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideTop;
+    manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
+    GHAssertFalse([renderOperation shouldInvertImage], @"");
+    
+    manager.printDocument.previewSetting.duplex = kDuplexSettingShortEdge;
+    GHAssertTrue([renderOperation shouldInvertImage], @"");
+}
+
+-(void) test014_drawFinishingStaple1Pos
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    manager.printDocument.previewSetting.staple = kStapleType1Pos;
+
+    PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:nil size:testSize delegate:nil];
+    CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
+    CGContextRef context = CGBitmapContextCreate(nil, testSize.width, testSize.height, 8, 0, cs, bitmapInfo);
+    
+    CGContextTranslateCTM(context, 0, testSize.height);
+    CGContextScaleCTM(context, 1.0, -1.0f);
+    
+    [renderOperation drawFinishing:context];
+    
+    UIImage *actualImage = [UIImage imageWithCGImage:CGBitmapContextCreateImage(context)];
+    
+    BOOL isImageEqual = [UIImagePNGRepresentation(actualImage) isEqualToData:UIImagePNGRepresentation([self getExpectedImageUpperLeftStaple])];
+    
+    GHAssertTrue(isImageEqual, @"");
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(cs);
+}
+
+-(void) test015_drawFinishingStaple2Pos
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    manager.printDocument.previewSetting.staple = kStapleType2Pos;
+    
+    PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:nil size:testSize delegate:nil];
+    CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
+    CGContextRef context = CGBitmapContextCreate(nil, testSize.width, testSize.height, 8, 0, cs, bitmapInfo);
+    
+    CGContextTranslateCTM(context, 0, testSize.height);
+    CGContextScaleCTM(context, 1.0, -1.0f);
+    
+    [renderOperation drawFinishing:context];
+    
+    UIImage *actualImage = [UIImage imageWithCGImage:CGBitmapContextCreateImage(context)];
+    
+    BOOL isImageEqual = [UIImagePNGRepresentation(actualImage) isEqualToData:UIImagePNGRepresentation([self getExpectedImage2PosLeftStaple])];
+    
+    GHAssertTrue(isImageEqual, @"");
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(cs);
+}
+
+-(void) test016_drawFinishingPunch
+{
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    manager.printDocument.previewSetting.finishingSide = kFinishingSideLeft;
+    manager.printDocument.previewSetting.punch = kPunchType2Holes;
+    
+    PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:nil size:testSize delegate:nil];
+    CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo)kCGImageAlphaNoneSkipLast;
+    CGContextRef context = CGBitmapContextCreate(nil, testSize.width, testSize.height, 8, 0, cs, bitmapInfo);
+    
+    CGContextTranslateCTM(context, 0, testSize.height);
+    CGContextScaleCTM(context, 1.0, -1.0f);
+    
+    [renderOperation drawFinishing:context];
+    
+    UIImage *actualImage = [UIImage imageWithCGImage:CGBitmapContextCreateImage(context)];
+    
+    BOOL isImageEqual = [UIImagePNGRepresentation(actualImage) isEqualToData:UIImagePNGRepresentation([self getExpectedImage2HolePunchLeft])];
+    
+    GHAssertTrue(isImageEqual, @"");
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(cs);
 }
 
 -(UIImage *)getExpectedImageUpperLeftStaple

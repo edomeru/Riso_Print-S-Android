@@ -32,6 +32,8 @@
 		286CE3F618F2264E00642A10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
+		2895A6E6191A3F9900865112 /* MenuButtonTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2895A6E5191A3F9900865112 /* MenuButtonTest.m */; };
+		2895A6E8191A421100865112 /* PrinterStatusViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2895A6E7191A421100865112 /* PrinterStatusViewTest.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
 		28B774671918A61500E97C60 /* AlertHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B774661918A61500E97C60 /* AlertHelperTest.m */; };
@@ -291,6 +293,8 @@
 		28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryHelper.m; sourceTree = "<group>"; };
 		28738EBA18EC01C4004ABDAD /* PrintJob+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PrintJob+Log.h"; sourceTree = "<group>"; };
 		28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PrintJob+Log.m"; sourceTree = "<group>"; };
+		2895A6E5191A3F9900865112 /* MenuButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButtonTest.m; sourceTree = "<group>"; };
+		2895A6E7191A421100865112 /* PrinterStatusViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusViewTest.m; sourceTree = "<group>"; };
 		28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryViewController.h; sourceTree = "<group>"; };
 		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
 		28A9173718E3D55900BA5232 /* PrintJobHistoryGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroupCell.h; sourceTree = "<group>"; };
@@ -1378,7 +1382,9 @@
 		312B0DF5191215AE0033FB55 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2895A6E5191A3F9900865112 /* MenuButtonTest.m */,
 				312B0DF7191216200033FB55 /* PreviewViewTest.m */,
+				2895A6E7191A421100865112 /* PrinterStatusViewTest.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1742,6 +1748,7 @@
 				3195C17D191117F700197397 /* SlideSegue.m in Sources */,
 				2D30FBC6191A470200B9DAC8 /* SNMPManagerMock.m in Sources */,
 				312B0DF219120E8D0033FB55 /* PDFPageContentViewControllerTest.m in Sources */,
+				2895A6E8191A421100865112 /* PrinterStatusViewTest.m in Sources */,
 				3195C17F191117F700197397 /* AddPrinterViewController.m in Sources */,
 				3195C181191117F700197397 /* RootViewController.m in Sources */,
 				3195C183191117F700197397 /* SlidingViewController.m in Sources */,
@@ -1781,6 +1788,7 @@
 				3195C1C5191117F700197397 /* PrintPreviewHelper.m in Sources */,
 				3195C1C7191117F700197397 /* PrintSettingsHelper.m in Sources */,
 				3195C1C9191117F700197397 /* RenderCache.m in Sources */,
+				2895A6E6191A3F9900865112 /* MenuButtonTest.m in Sources */,
 				3195C1CB191117F700197397 /* SettingsValidationHelper.m in Sources */,
 				3195C1CD191117F700197397 /* UIColor+Theme.m in Sources */,
 				3195C1CF191117F700197397 /* XMLParser.m in Sources */,
