@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SimplePing.h"
+#import "BackgroundManager.h"
 
 @protocol PrinterStatusHelperDelegate
 
@@ -15,7 +16,7 @@
 
 @end
 
-@interface PrinterStatusHelper : NSObject <SimplePingDelegate>
+@interface PrinterStatusHelper : NSObject <SimplePingDelegate, BackgroundManagerCancellable>
 
 @property (weak, nonatomic) id <PrinterStatusHelperDelegate> delegate;
 @property (strong, nonatomic) NSString *ipAddress;

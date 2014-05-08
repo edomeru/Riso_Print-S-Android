@@ -11,8 +11,9 @@
 #import "UIViewController+Segue.h"
 #import "PrintersIpadViewController.h"
 #import "PrinterManager.h"
+#import "BackgroundManager.h"
 
-@interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate, UIGestureRecognizerDelegate>
+@interface PrinterSearchViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate, PrinterSearchDelegate, UIGestureRecognizerDelegate, BackgroundManagerCancellable>
 
 /** Flag that will be set to YES when at least one successful printer was added. */
 @property (readonly, assign, nonatomic) BOOL hasAddedPrinters;
