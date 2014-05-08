@@ -83,49 +83,6 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 	}
 
     //================================================================================
-    // Tests - startActivityIntent
-    //================================================================================
-    
-	/*
-    public void testStartActivityIntent_ValidContextAndActivity() {
-    	try {
-    		AppUtils.startActivityIntent(getActivity(), MainActivity.class);
-    	} catch (NullPointerException e) {
-    		fail(); // Error should not be thrown
-    	} catch (ActivityNotFoundException e) {
-    		fail(); // Error should not be thrown
-    	}
-    }
-    */
-	
-    public void testStartActivityIntent_IntentWillBeNull() {
-    	try {
-    		AppUtils.startActivityIntent(null, null);
-    		fail(); // Error should be thrown
-    	} catch (NullPointerException e) {
-    		
-    	}
-    }
-    
-    public void testStartActivityIntent_ClassNotAnActivity() {
-    	try {
-    		AppUtils.startActivityIntent(getActivity(), AppUtils.class);
-    		fail(); // Error should be thrown
-    	} catch (ActivityNotFoundException e) {
-    		
-    	}
-    }
-    
-    public void testStartActivityIntent_InvalidContext() {
-    	try {
-    		AppUtils.startActivityIntent(getInstrumentation().getContext(), AppUtils.class);
-    		fail(); // Error should be thrown
-    	} catch (AndroidRuntimeException e) {
-    		
-    	}
-    }
-
-    //================================================================================
     // Tests - getLocaleCode
     //================================================================================
 

@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -29,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
@@ -58,30 +56,6 @@ public final class AppUtils {
         Intent intent = new Intent();
         intent.setClass(context, cls);
         return intent;
-    }
-    
-    /**
-     * Starts an Activity
-     * 
-     * @param context
-     *            Application Context
-     * @param cls
-     *            Activity class
-     */
-    public static void startActivityIntent(Context context, Class<?> cls) throws ActivityNotFoundException, NullPointerException, AndroidRuntimeException {
-        Intent intent = createActivityIntent(context, cls);
-        
-        if (intent == null) {
-            throw new NullPointerException("Cannot create intent");
-        } else {
-            try {
-                context.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                throw e;
-            } catch (AndroidRuntimeException e) {
-                throw e;
-            }
-        }
     }
     
     /**
