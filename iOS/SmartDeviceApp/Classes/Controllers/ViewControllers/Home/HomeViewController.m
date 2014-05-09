@@ -154,7 +154,10 @@
 
 - (IBAction)settingsAction:(id)sender
 {
-    [self performSegueTo:[SettingsViewController class]];
+    if ([self selectButton:sender])
+    {
+        [self performSegueTo:[SettingsViewController class]];
+    }
 }
 
 - (IBAction)helpAction:(id)sender
