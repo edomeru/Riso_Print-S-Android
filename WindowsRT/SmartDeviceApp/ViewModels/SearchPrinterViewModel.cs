@@ -54,7 +54,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     if (NetworkController.IsConnectedToNetwork)
                     {
-                        SearchPrinterHandler();
+                        SetStateRefreshState();
                     }
                     else
                     {

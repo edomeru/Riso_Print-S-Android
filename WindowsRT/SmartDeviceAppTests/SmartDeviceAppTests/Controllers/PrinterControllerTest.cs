@@ -34,6 +34,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public void Test_PrinterController_HandleAdd()
         {
+            DatabaseController.Instance.Initialize();
+
             string ip = "192.168.0.198";
             string name = "Test_Printer";
             bool isOnline = true;
@@ -65,6 +67,5 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(printer.EnabledTrayTop, true);
             Assert.AreEqual(printer.EnabledTrayStack, true);
         }
-
     }
 }

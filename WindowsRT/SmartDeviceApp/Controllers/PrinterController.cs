@@ -22,6 +22,9 @@ namespace SmartDeviceApp.Controllers
         static readonly PrinterController _instance = new PrinterController();
         private PrintSettingsController _printSettingsController;
 
+        public delegate void PollingHandler(bool willPoll);
+        private PollingHandler _pollingHandler;
+
         public delegate bool AddPrinterHandler(string ip);
         private AddPrinterHandler _addPrinterHandler;
 
@@ -61,6 +64,8 @@ namespace SmartDeviceApp.Controllers
         private PrintSettingsViewModel _printSettingsViewModel;
         private string _screenName;
 
+        private bool isPolling = false;
+
         //SNMPController snmpController = new SNMPController();
 
 
@@ -86,6 +91,7 @@ namespace SmartDeviceApp.Controllers
 
             _screenName = SmartDeviceApp.Common.Enum.ScreenMode.Printers.ToString();
 
+            _pollingHandler = new PollingHandler(setPolling);
             _addPrinterHandler = new AddPrinterHandler(addPrinter);
             _searchPrinterHandler = new SearchPrinterHandler(searchPrinters);
             _addPrinterFromSearchHandler = new AddPrinterFromSearchHandler(addPrinterFromSearch);
@@ -102,6 +108,7 @@ namespace SmartDeviceApp.Controllers
             _printersViewModel.OpenDefaultPrintSettingsHandler += _openDefaultPrintSettingsHandler;
             _printersViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
             _printersViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
+            _printersViewModel.PollingHandler += _pollingHandler;
 
             _searchPrinterViewModel.AddPrinterFromSearchHandler += _addPrinterFromSearchHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
@@ -110,6 +117,7 @@ namespace SmartDeviceApp.Controllers
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
             SNMPController.Instance.Initialize();
+
         }
 
         private async void handleOpenDefaultPrintSettings(Printer printer)
@@ -203,9 +211,6 @@ namespace SmartDeviceApp.Controllers
                 //sort printerlist
                 //sortPrinterList(indexOfDefaultPrinter);
                 _printerListTemp = _printerList;
-               
-                //await updateStatus();
-                startPolling();
             }
         }
 
@@ -217,21 +222,44 @@ namespace SmartDeviceApp.Controllers
             _printerList.Insert(0, defaultPrinter);
         }
 
-
-        public void startPolling()
+        public void setPolling(bool willPoll)
         {
+            if(willPoll)
+            {
+                startPolling();
+            }
+            else
+            {
+                endPolling();
+            }
+        }
+
+        private void startPolling()
+        {
+            isPolling = true;
             int period = 5000;
             var timerHandler = new TimerElapsedHandler(getStatus);
+
+            
 
             periodicTimer = ThreadPoolTimer.CreatePeriodicTimer(timerHandler, TimeSpan.FromMilliseconds(period));
         }
 
-        public void endPolling()
+        private void endPolling()
         {
+            isPolling = false;
             if (periodicTimer != null)
             {
                 periodicTimer.Cancel();
             }
+        }
+
+
+        public void getStatus(ThreadPoolTimer timer)
+        {
+            //call SNMP Controller get status here
+            updateStatus();
+
         }
 
         private async Task updateStatus()
@@ -248,7 +276,7 @@ namespace SmartDeviceApp.Controllers
 
                     i++;
                 }
-                while (i < _printerListTemp.Count);
+                while (i < _printerListTemp.Count && isPolling);
         }
 
         private async void handlePrinterStatus(string ip, bool isOnline)
@@ -259,15 +287,18 @@ namespace SmartDeviceApp.Controllers
             {
                 //find the printer TODO: error handling here when the printer is deleted while handling status
                 try{
-                    Printer printer = _printerList.First(x => x.IpAddress == ip);
-                    System.Diagnostics.Debug.WriteLine(printer.IpAddress);
-                    int index = _printerList.IndexOf(printer);
+                    if (isPolling)
+                    { 
+                        Printer printer = _printerList.First(x => x.IpAddress == ip);
+                        System.Diagnostics.Debug.WriteLine(printer.IpAddress);
+                        int index = _printerList.IndexOf(printer);
 
-                    //update status
-                    printer.IsOnline = isOnline;
+                        //update status
+                        printer.IsOnline = isOnline;
 
-                    System.Diagnostics.Debug.WriteLine(index);
-                    System.Diagnostics.Debug.WriteLine(isOnline);
+                        System.Diagnostics.Debug.WriteLine(index);
+                        System.Diagnostics.Debug.WriteLine(isOnline);
+                    }
                 }
                 catch(Exception e)
                 {
@@ -277,20 +308,6 @@ namespace SmartDeviceApp.Controllers
         }
 
 
-        public void getStatus(ThreadPoolTimer timer)
-        {
-            //call SNMP Controller get status here
-            updateStatus();
-            
-        }
-
-        public void updateOnlineStatus()
-        {
-            foreach (Printer printer in _printerList)
-            {
-                printer.IsOnline = !printer.IsOnline;
-            }
-        }
 
 
 
@@ -308,14 +325,14 @@ namespace SmartDeviceApp.Controllers
             if (!isValidIpAddress(ip))
             {
                 //display error theat ip is invalid
-                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_INVALID_IP_ADDRESS"));
+                DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return false;
             }
 
             //check if _printerList is already full
             if (_printerList.Count() >= 10)//TODO: Change to CONSTANTS
             {
-                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_MAX_PRINTER_COUNT "));
+                DialogService.Instance.ShowError("IDS_ERR_MSG_MAX_PRINTER_COUNT", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return false;
             }
 
@@ -328,7 +345,7 @@ namespace SmartDeviceApp.Controllers
             catch {
                 if (printer != null)
                 {
-                    _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                    DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     return false;
                 }
 
@@ -344,7 +361,7 @@ namespace SmartDeviceApp.Controllers
             if (printer != null)
             {
                 //cannot add, printer already in list
-                _addPrinterViewModel.DisplayMessage(loader.GetString("IDS_LBL_ADD_PRINTER"), loader.GetString("IDS_ERR_MSG_CANNOT_ADD_PRINTER"));
+                DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return false;
             }
 
@@ -460,7 +477,7 @@ namespace SmartDeviceApp.Controllers
         {
             //add to printerList
 
-            Printer printer = new Printer() { IpAddress = ip, Name = (name == null ? "No Name" : name)};
+            Printer printer = new Printer() { IpAddress = ip, Name = name};
 
             printer.EnabledBooklet = true;
             printer.EnabledStapler = true;
