@@ -41,6 +41,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     private boolean mDatabaseInitialized;
     
     /** {@inheritDoc} */
+    @SuppressWarnings("unused") // AppConstant.APP_SHOW_SPLASH is a config setting
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
 
@@ -63,13 +64,15 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                         mInitTask = new DBInitTask();
                         mInitTask.execute();
                     }
+                } else {
+                    mDatabaseInitialized = true;
                 }
             }
             
             setContentView(R.layout.activity_splash);
             
             if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
-                if (dbIsOK && !AppConstants.APP_SHOW_SPLASH) {
+                if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
                     runMainActivity();
                 } else {
                     mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);                    
