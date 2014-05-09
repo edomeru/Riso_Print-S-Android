@@ -12,6 +12,7 @@
 
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Models;
+using System;
 using System.Text;
 using Windows.Storage;
 
@@ -20,38 +21,91 @@ namespace SmartDeviceApp.Controllers
     public class DirectPrintController
     {
 
+        public delegate void UpdatePrintJobProgress(float progress);
+        public event UpdatePrintJobProgress UpdatePrintJobProgressEventHandler;
+
+        public delegate void SetPrintJobResult(string name, DateTime date, int result);
+        public event SetPrintJobResult SetPrintJobResultEventHandler;
+
+        private DirectPrint.DirectPrint _directPrint;
+        private DirectPrint.directprint_job _printJob;
+        private DateTime _startTime;
+
         private const string FORMAT_PRINT_SETTING_KVO = "{0}={1}\n";
 
-        /// <summary>
-        /// Prepare print job for printing
-        /// </summary>
-        /// <param name="name">job name</param>
-        /// <param name="file">actual PDF file</param>
-        /// <param name="printer">printer</param>
-        /// <param name="printSettings">print settings</param>
-        public void SendPrintJob(string name, StorageFile file, Printer printer,
-            PrintSettings printSettings)
+        public DirectPrintController(string name, StorageFile file, string ipAddress,
+            PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
+            SetPrintJobResult resultEvent)
         {
-            DirectPrint.directprint_job job = new DirectPrint.directprint_job();
-            job.job_name = name;
-            job.file = file;
-            job.print_settings = CreateStringFromPrintSettings(printSettings);
-            job.ip_address = printer.IpAddress;
-            job.progress = 0;
-            job.cancel_print = 0;
+            UpdatePrintJobProgressEventHandler = progressEvent;
+            SetPrintJobResultEventHandler = resultEvent;
 
-            job.callback = null;// TODO: add callback***
+            _printJob = new DirectPrint.directprint_job();
 
-
-            // Process print job
-            DirectPrint.DirectPrint directPrint = new DirectPrint.DirectPrint();
-            directPrint.startLPRPrint(job);
-            // TODO: Error handling (result of directPrint)
-            
+            _printJob.job_name = name;
+            _printJob.filename = name; // TODO: (confirm) To be deleted
+            _printJob.file = file;
+            _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
+            _printJob.ip_address = ipAddress;
+            _printJob.callback = new DirectPrint.directprint_callback(ReceiveResult);
+            _printJob.progress_callback = new DirectPrint.progress_callback(UpdateProgress);
+            _printJob.progress = 0;
+            _printJob.cancel_print = 0;
         }
 
         /// <summary>
-        /// Converts print settings into a string
+        /// Unregisters events
+        /// </summary>
+        public void UnsubscribeEvents()
+        {
+            UpdatePrintJobProgressEventHandler = null;
+            SetPrintJobResultEventHandler = null;
+        }
+
+        /// <summary>
+        /// Send print job for printing
+        /// </summary>
+        public void SendPrintJob()
+        {
+            _startTime = DateTime.Now;
+            _directPrint = new DirectPrint.DirectPrint();
+            _directPrint.startLPRPrint(_printJob);
+        }
+
+        /// <summary>
+        /// Cancel print job processing
+        /// </summary>
+        public void CancelPrintJob()
+        {
+            _directPrint.cancelPrint();
+        }
+
+        /// <summary>
+        /// Event handler for progress updates
+        /// </summary>
+        /// <param name="progress">value</param>
+        public void UpdateProgress(float progress)
+        {
+            if (UpdatePrintJobProgressEventHandler != null)
+            {
+                UpdatePrintJobProgressEventHandler(progress);
+            }
+        }
+
+        /// <summary>
+        /// Event handler for print job result
+        /// </summary>
+        /// <param name="result">result value</param>
+        public void ReceiveResult(int result)
+        {
+            if (SetPrintJobResultEventHandler != null)
+            {
+                SetPrintJobResultEventHandler(_printJob.job_name, _startTime, result);
+            }
+        }
+
+        /// <summary>
+        /// Converts print settings into a string understood by DirectPrintSettings class
         /// </summary>
         /// <param name="printSettings">print settings</param>
         /// <returns>converted print settings string</returns>

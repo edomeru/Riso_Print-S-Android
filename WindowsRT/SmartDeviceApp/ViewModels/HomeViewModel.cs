@@ -112,10 +112,6 @@ namespace SmartDeviceApp.ViewModels
                     }
                     IsProgressRingActive = false;
                 }
-                else
-                {
-                    throw new ArgumentException();
-                }
             }
             catch (Exception ex)
             {

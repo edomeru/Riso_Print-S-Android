@@ -181,6 +181,7 @@
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\SelectedPrinterIdToTextConverter.cs" />
     <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobToSeparatorVisibilityConverter.cs" />

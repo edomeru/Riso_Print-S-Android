@@ -201,6 +201,29 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Create default print settings for the printer
+        /// </summary>
+        /// <param name="printer"></param>
+        /// <returns></returns>
+        public async Task<int> CreatePrintSettings(Printer printer)
+        {
+            PrintSettings printSettings = new PrintSettings();
+            int deleted = 0;
+            if (printSettings != null)
+            {
+                deleted = await DatabaseController.Instance.InsertPrintSettings(printSettings);
+            }
+
+            if (deleted == 0)
+            {
+                // TODO: Display error?
+                return -1;
+            }
+
+            return printSettings.Id;
+        }
+
         #endregion Database Operations
 
         #region Print Settings Events
@@ -218,6 +241,7 @@ namespace SmartDeviceApp.Controllers
             if (_printerMap.TryGetValue(screenName, out printer))
             {
                 _printSettingsViewModel.PrinterName = printer.Name;
+                _printSettingsViewModel.PrinterId = printer.Id;
                 _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
             }
 

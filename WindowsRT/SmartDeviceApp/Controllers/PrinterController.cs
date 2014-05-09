@@ -125,6 +125,7 @@ namespace SmartDeviceApp.Controllers
             //get new print settings
             PrintSettingsController.Instance.Uninitialize(_screenName);
             _printSettingsViewModel.PrinterName = printer.Name;
+            _printSettingsViewModel.PrinterId = printer.Id;
             _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
             await PrintSettingsController.Instance.Initialize(_screenName, printer);
         }
@@ -430,6 +431,7 @@ namespace SmartDeviceApp.Controllers
 
                 try
                 {
+                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
                     int i = await DatabaseController.Instance.InsertPrinter(printer);
                     if (i == 0)
                     {
@@ -488,6 +490,7 @@ namespace SmartDeviceApp.Controllers
             printer.EnabledTrayStack = true;
 
             //insert to database
+            printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
             int i = await DatabaseController.Instance.InsertPrinter(printer);
             if (i == 0)
             {
@@ -646,6 +649,7 @@ namespace SmartDeviceApp.Controllers
             Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
                 try
                 {
+                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
                     int i = await DatabaseController.Instance.InsertPrinter(printer);
                     if (i == 0)
                         return false;
