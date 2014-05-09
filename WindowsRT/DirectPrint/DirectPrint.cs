@@ -193,7 +193,7 @@ namespace DirectPrint
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
-                                        HOST_NAME, "SDA User", print_job.job_name, dname, dname, print_job.job_name);
+                                        HOST_NAME, "SDA WinRT User", print_job.job_name, dname, dname, print_job.job_name);
             //string controlfile = String.Format("H{0}\nP{1}\nf{2}\nU{3}\nN{4}\n",
             //                HOST_NAME, "User", dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////

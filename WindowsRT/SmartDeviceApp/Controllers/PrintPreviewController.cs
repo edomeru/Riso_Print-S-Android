@@ -1878,7 +1878,7 @@ namespace SmartDeviceApp.Controllers
             {
                 // TODO: Confirm if message for success is needed here
                 DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
-                new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
+                //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
                 await Cleanup();
                 await DocumentController.Instance.Unload();
             }
@@ -1892,7 +1892,12 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
-            _printingPopup.IsOpen = false;
+
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            () =>
+            {
+                _printingPopup.IsOpen = false;
+            });            
         }
 
         #endregion Print
