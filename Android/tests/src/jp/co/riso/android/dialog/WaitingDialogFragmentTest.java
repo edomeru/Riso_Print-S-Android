@@ -185,7 +185,43 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(dialog);
         assertTrue(dialog.isShowing());
         assertTrue(((DialogFragment) fragment).isCancelable());
+        
+        // back button
+        getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+        waitFewSeconds();
+        assertNull(((DialogFragment) fragment).getDialog());
+        assertNull(fm.findFragmentByTag(TAG));
 
+        assertTrue(mCallbackCalled);
+    }
+    
+    public void testOnKey() {
+        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE) ;
+        assertNotNull(w);
+        w.setTargetFragment(new MockCallback(), 1);
+        w.show(fm, TAG);
+
+        waitFewSeconds();
+
+        Fragment fragment = fm.findFragmentByTag(TAG);
+        assertTrue(fragment instanceof DialogFragment);
+        assertTrue(((DialogFragment) fragment).getShowsDialog());
+
+        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
+
+        assertNotNull(dialog);
+        assertTrue(dialog.isShowing());
+        assertTrue(((DialogFragment) fragment).isCancelable());
+        
+        // not back button
+        getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
+        waitFewSeconds();
+        assertNotNull(((DialogFragment) fragment).getDialog());
+        assertNotNull(fm.findFragmentByTag(TAG));
+
+        assertFalse(mCallbackCalled);
+        
+        // back button
         getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
         waitFewSeconds();
         assertNull(((DialogFragment) fragment).getDialog());

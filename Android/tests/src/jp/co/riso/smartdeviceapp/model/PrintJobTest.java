@@ -77,4 +77,9 @@ public class PrintJobTest extends AndroidTestCase {
         pj.setResult(JobResult.ERROR);
         assertEquals(JobResult.ERROR, pj.getResult());
     }
+    
+    public void testJobResult() {
+        assertEquals(JobResult.ERROR, JobResult.valueOf("ERROR"));
+        assertEquals(JobResult.SUCCESSFUL, JobResult.valueOf("SUCCESSFUL"));
+    }
 }

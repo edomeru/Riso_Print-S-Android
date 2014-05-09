@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
@@ -121,8 +122,11 @@ public class PrintSettings {
     /**
      * Initialize static objects
      */
-    private static void initializeStaticObjects() {
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
+    protected static void initializeStaticObjects(String fileName) {
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), fileName);
+        if (xmlString == null) {
+            return;
+        }
         
         Document printSettingsContent = null;
         
@@ -349,6 +353,6 @@ public class PrintSettings {
         sGroupList = new ArrayList<Group>();
         sSettingMap = new HashMap<String, Setting>();
         
-        initializeStaticObjects();
+        initializeStaticObjects(AppConstants.XML_FILENAME);
     }
 }

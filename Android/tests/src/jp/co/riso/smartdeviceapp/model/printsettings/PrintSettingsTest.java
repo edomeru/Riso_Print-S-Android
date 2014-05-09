@@ -289,6 +289,8 @@ public class PrintSettingsTest extends AndroidTestCase {
 
     public void testIsScaleToFit() {
         assertEquals(true, mPrintSettings.isScaleToFit());
+        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 0);
+        assertEquals(false, mPrintSettings.isScaleToFit());
     }
 
     public void testGetImposition() {
@@ -305,6 +307,8 @@ public class PrintSettingsTest extends AndroidTestCase {
 
     public void testIsBooklet() {
         assertEquals(false, mPrintSettings.isBooklet());
+        mPrintSettings.setValue(KEY_BOOKLET, 1);
+        assertEquals(true, mPrintSettings.isBooklet());
     }
 
     public void testGetBookletFinish() {
@@ -427,5 +431,28 @@ public class PrintSettingsTest extends AndroidTestCase {
         c.close();
         db.close();
     }
-
+    
+    public void testInitializeStaticObjects() {
+        assertEquals(18, PrintSettings.sSettingMap.size());
+        assertEquals(3, PrintSettings.sGroupList.size());
+        PrintSettings.initializeStaticObjects("invalidFile");
+        
+        PrintSettings.initializeStaticObjects("db/initializeDB.sql");
+        // w/ values since initially loaded
+        assertEquals(18, PrintSettings.sSettingMap.size());
+        assertEquals(3, PrintSettings.sGroupList.size());
+    }
+    
+    public void testInitializeStaticObjects_Duplicate() {
+        PrintSettings.initializeStaticObjects("printsettings3.xml");
+        assertEquals(18, PrintSettings.sSettingMap.size());
+        int count = 0;
+        for (String key : PrintSettings.sSettingMap.keySet()) {
+            Setting s = PrintSettings.sSettingMap.get(key);
+            if (s.getAttributeValue("name").equals("colorMode")) {
+                count++;
+            }
+        }
+        assertEquals(1, count);
+    }
 }

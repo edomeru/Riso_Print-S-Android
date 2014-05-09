@@ -29,6 +29,10 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
         super.tearDown();
     }
 
+    public void testConstructor() {
+        assertNotNull(new DialogUtils());
+    }
+    
     public void testDisplayDialog() {
         InfoDialogFragment d = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE);
         DialogUtils.displayDialog(getActivity(), TAG, d);
@@ -37,7 +41,6 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
         assertTrue(dialog instanceof DialogFragment);
         assertTrue(((DialogFragment) dialog).getShowsDialog());
         assertTrue(((DialogFragment) dialog).getDialog().isShowing());
-
     }
 
     public void testDismissDialog() {
