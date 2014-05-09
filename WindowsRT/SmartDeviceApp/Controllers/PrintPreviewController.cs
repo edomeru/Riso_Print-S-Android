@@ -24,6 +24,10 @@ using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using Windows.ApplicationModel.Resources;
+using System.Windows.Input;
+using Windows.UI.Xaml.Controls.Primitives;
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.Common;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -91,6 +95,10 @@ namespace SmartDeviceApp.Controllers
         private uint _previewPageTotal;
         private static int _currPreviewPageIndex;
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
+
+        private ICommand _cancelPrintingCommand;
+        private Popup _printingPopup;
+        private MessageProgressBarControl _printingProgress;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -1758,6 +1766,21 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        public ICommand CancelPrintingCommand
+        {
+            get
+            {
+                if (_cancelPrintingCommand == null)
+                {
+                    _cancelPrintingCommand = new RelayCommand(
+                        () => CancelPrint(),
+                        () => true
+                    );
+                }
+                return _cancelPrintingCommand;
+            }
+        }
+
         /// <summary>
         /// Checks the printer status before sending print job
         /// </summary>
@@ -1770,7 +1793,12 @@ namespace SmartDeviceApp.Controllers
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                // TODO: Display progress dialog
+                // Display progress dialog
+                _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
+                _printingProgress.CancelCommand = CancelPrintingCommand;
+                _printingPopup = new Popup();
+                _printingPopup.Child = _printingProgress;
+                _printingPopup.IsOpen = true;
 
                 if (_directPrintController != null)
                 {
@@ -1805,6 +1833,7 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
+            _printingPopup.IsOpen = false;
         }
 
         /// <summary>
@@ -1814,7 +1843,7 @@ namespace SmartDeviceApp.Controllers
         public void UpdatePrintJobProgress(float progress)
         {
             System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
-            // TODO: Apply value to progress dialog
+            _printingProgress.ProgressValue = progress;
         }
 
         /// <summary>
@@ -1855,6 +1884,7 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
+            _printingPopup.IsOpen = false;
         }
 
         #endregion Print
