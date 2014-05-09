@@ -247,7 +247,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void processMessage(Message message) {
         switch (message.what) {
             case MSG_PRINT:
-                mWaitingDialog.dismiss();
+                DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
