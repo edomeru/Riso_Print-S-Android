@@ -17,6 +17,7 @@
 
 @property (strong, nonatomic) SimplePing* pinger;
 @property (assign, nonatomic) BOOL respondedToPing;
+@property (assign, nonatomic) BOOL cancelledToBackground;
 
 -(void) getPrinterStatus;
 
@@ -31,9 +32,17 @@
     if(self != nil)
     {
         self.ipAddress = [NSString stringWithString:ipAddress];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
     }
     
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 - (void)getPrinterStatus
@@ -136,6 +145,26 @@
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
     NSLog(@"[INFO][PrinterStatus] ping send failed %@", self.ipAddress);
 #endif
+}
+
+#pragma mark - Notifications
+
+- (void)willResignActive
+{
+    if (self.isPolling)
+    {
+        self.cancelledToBackground = YES;
+        [self stopPrinterStatusPolling];
+    }
+}
+
+- (void)willEnterForeground
+{
+    if (self.cancelledToBackground == YES)
+    {
+        self.cancelledToBackground = NO;
+        [self startPrinterStatusPolling];
+    }
 }
 
 @end
