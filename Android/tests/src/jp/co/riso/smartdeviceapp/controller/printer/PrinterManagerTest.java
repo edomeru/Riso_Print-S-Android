@@ -2,6 +2,7 @@
 package jp.co.riso.smartdeviceapp.controller.printer;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -14,16 +15,18 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ImageView;
 
 public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainActivity> implements
         UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
+    final CountDownLatch mSignal = new CountDownLatch(1);
     private static final String IPV4_ONLINE_PRINTER_ADDRESS = "192.168.1.206";
     private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
     private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206";
     private static final String INVALID_ADDRESS = "invalid";
-
+    private ImageView mImageView = null;
 
     private PrinterManager mPrinterManager = null;
     private List<Printer> mPrintersList = null;
@@ -42,6 +45,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
         mPrintersList = mPrinterManager.getSavedPrintersList();
         assertNotNull(mPrintersList);
+        
+        mImageView = new ImageView(getActivity());        
     }
 
     protected void tearDown() throws Exception {
@@ -82,7 +87,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             Printer printer = null;
             
-            if (mPrintersList != null) {
+            if (mPrintersList != null && !mPrintersList.isEmpty()) {
                 printer = mPrintersList.get(0);
             }
             if(printer == null) {
@@ -101,7 +106,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             Printer printer = null;
 
-            if (mPrintersList != null) {
+            if (mPrintersList != null && !mPrintersList.isEmpty()) {
                 printer = mPrintersList.get(0);
             }
             testSetDefaultPrinter_NoDefaultPrinter();
@@ -350,8 +355,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testUpdateOnlineStatus_NullIpAddress() {
         try {
-            mPrinterManager.updateOnlineStatus(null, new
-                    ImageView(SmartDeviceApp.getAppContext()));
+            mPrinterManager.updateOnlineStatus(null, mImageView);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -359,6 +363,18 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
+    public void testUpdateOnlineStatus_ValidParameters() {
+        mPrinterManager.updateOnlineStatus(IPV4_ONLINE_PRINTER_ADDRESS, mImageView);
+        try {
+            // Wait and Check if Address is ONLINE
+            getInstrumentation().waitForIdleSync();
+            Thread.sleep(10000);
+            getInstrumentation().waitForIdleSync();
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
     // ================================================================================
     // Tests - onEndDiscovery
     // ================================================================================
@@ -552,11 +568,11 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
-
-            for (int i = mPrintersList.size(); i > 0; i--) {
-                mPrinterManager.removePrinter(mPrintersList.get(i - 1));
+            if (!mPrintersList.isEmpty()) {
+                for (int i = mPrintersList.size(); i > 0; i--) {
+                    mPrinterManager.removePrinter(mPrintersList.get(i - 1));
+                }
             }
-            
             mPrinterManager.setPrintersCallback(this);
             mPrinterManager.savePrinterToDB(printer);
             mPrinterManager.setPrintersCallback(null);
@@ -571,9 +587,11 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testGetSavedPrintersList_EmptyList() {
         try {
-            for (int i = mPrintersList.size(); i > 0; i--) {
-                mPrinterManager.removePrinter(mPrintersList.get(i - 1));
-            }            
+            if (!mPrintersList.isEmpty()) {
+                for (int i = mPrintersList.size(); i > 0; i--) {
+                    mPrinterManager.removePrinter(mPrintersList.get(i - 1));
+                }
+            }
             mPrinterManager.getSavedPrintersList();
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -717,33 +735,47 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     // ================================================================================
 
     public void testUpdateOnlineStatusTask_EmptyIpAddress() {
+        mPrinterManager.new UpdateOnlineStatusTask(null, "")
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        
         try {
-            mPrinterManager.new UpdateOnlineStatusTask(null, "").execute();
+            // Wait and Check if Address is OFFLINE
+            getInstrumentation().waitForIdleSync();
+            Thread.sleep(1000);
+            getInstrumentation().waitForIdleSync();
+
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
     }
-     
+    
     public void testUpdateOnlineStatusTask_ValidOfflineParameters() {
-        try {                        
-            mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_OFFLINE_PRINTER_ADDRESS).execute();
-            // Check if Address is OFFLINE
-            assertEquals(false, mPrinterManager.isOnline(IPV4_OFFLINE_PRINTER_ADDRESS));
+        mPrinterManager.new UpdateOnlineStatusTask(mImageView, IPV4_OFFLINE_PRINTER_ADDRESS)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        try {
+            // Wait and Check if Address is OFFLINE
+            getInstrumentation().waitForIdleSync();
+            Thread.sleep(10000);
+            getInstrumentation().waitForIdleSync();
+
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
     }
     
     public void testUpdateOnlineStatusTask_ValidOnlineParameters() {
+        mPrinterManager.new UpdateOnlineStatusTask(mImageView, IPV4_ONLINE_PRINTER_ADDRESS)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         try {
-            mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_ONLINE_PRINTER_ADDRESS).execute();
-            // Check if Address is ONLINE
-            assertEquals(true, mPrinterManager.isOnline(IPV4_ONLINE_PRINTER_ADDRESS));
+            // Wait and Check if Address is ONLINE
+            getInstrumentation().waitForIdleSync();
+            Thread.sleep(10000);
+            getInstrumentation().waitForIdleSync();
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
     }
-    
+
     // ================================================================================
     // Tests - UpdateOnlineStatusTask
     // ================================================================================

@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 public class SNMPManagerTest extends TestCase implements
         SNMPManagerCallback {
     final CountDownLatch mSignal = new CountDownLatch(1);
-    final int TIMEOUT = 65;
+    final int TIMEOUT = 20;
     private static final String IPV4_ONLINE_RISO_PRINTER_ADDRESS = "192.168.1.206";
     private static final String IPV4_ONLINE_NONRISO_PRINTER_ADDRESS = "192.168.1.24";
     private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.24";

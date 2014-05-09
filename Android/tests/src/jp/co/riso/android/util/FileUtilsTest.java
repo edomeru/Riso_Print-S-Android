@@ -95,25 +95,23 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
     // ================================================================================
 
     private String getAssetPath(String filename) {
-        File f = new File(SmartDeviceApp.getAppContext().getCacheDir() + "/" + filename);
-        AssetManager assetManager = SmartDeviceApp.getAppContext().getAssets();
+        File f = new File(getActivity().getCacheDir() + "/" + filename);
+        AssetManager assetManager = getInstrumentation().getContext().getAssets();
 
-        if (!f.exists()) {
-            try {
-                InputStream is = assetManager.open(filename);
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-
-                FileOutputStream fos = new FileOutputStream(f);
-                fos.write(buffer);
-                fos.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            InputStream is = assetManager.open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(buffer);
+            fos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
+        
         return f.getPath();
     }
 
