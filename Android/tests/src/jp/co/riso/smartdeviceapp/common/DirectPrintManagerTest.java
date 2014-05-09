@@ -46,6 +46,22 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
         mgr.finalizeDirectPrint();
     }
 
+    public void testSetCallback_Null() {
+        mgr.setCallback(null);
+        mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
+        mgr.lprPrint();
+
+        //wait for response
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
+
+        assertFalse(mCallbackCalled);
+        mgr.finalizeDirectPrint();
+    }
+
     public void testSendCancelCommand() {
         mgr.setCallback(new MockCallback());
         mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
@@ -70,10 +86,42 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
         assertFalse(mCallbackCalled);
     }
 
+    public void testSendCancelCommand_NullCallback() {
+        mgr.setCallback(null);
+        mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
+        mgr.lprPrint();
+
+        //wait for response
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
+
+        assertFalse(mCallbackCalled);
+        mgr.sendCancelCommand();
+        //wait for response
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
+        getInstrumentation().waitForIdleSync();
+        assertFalse(mCallbackCalled);
+    }
+
+    //================================================================================
+    // Private methods
+    //================================================================================
+
     private void checkCallbackCalled() {
         assertTrue(mCallbackCalled);
         mCallbackCalled = false;
     }
+
+    //================================================================================
+    // Internal Classes
+    //================================================================================
 
     private class MockCallback implements DirectPrintCallback {
         @Override

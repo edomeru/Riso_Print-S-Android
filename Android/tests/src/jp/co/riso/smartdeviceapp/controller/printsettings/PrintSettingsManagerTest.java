@@ -226,7 +226,29 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         c.moveToFirst();
         assertEquals(settingId, c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         c.close();
+        db.close();
     }
+    
+    public void testSaveToDB_NullValues() {
+        PrintSettings settings = new PrintSettings();
+        assertNotNull(settings);
+        HashMap<String, Integer> settingValues = settings.getSettingValues();
+        assertNotNull(settingValues);
+
+        boolean result = mPrintSettingsMgr.saveToDB(999, null);
+        assertFalse(result);
+
+        SQLiteDatabase db = mManager.getReadableDatabase();
+        Cursor c = db.query(PRINTSETTING_TABLE, null, "prn_id=?", new String[] {
+                String.valueOf(999)
+        }, null, null, null);
+        assertEquals(0, c.getCount());
+       
+        c.close();
+
+        db.close();
+    }
+
 
     public void testSaveToDB_InitialSave() {
         PrintSettings settings = new PrintSettings();
@@ -302,5 +324,6 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         c.moveToFirst();
         assertEquals(newSettingId,  c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         c.close();
+        db.close();
     }
 }

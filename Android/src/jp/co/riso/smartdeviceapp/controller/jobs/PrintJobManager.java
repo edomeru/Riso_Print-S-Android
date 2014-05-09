@@ -211,6 +211,10 @@ public class PrintJobManager {
      * @return converted string
      */
     private String convertDateToString(Date date) {
+        if (date == null) {
+            date = new Date(0);
+        }
+        
         SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
         return sdf.format(date);

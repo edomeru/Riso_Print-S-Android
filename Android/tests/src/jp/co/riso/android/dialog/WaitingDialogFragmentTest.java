@@ -47,6 +47,29 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         super.tearDown();
     }
 
+    public void testNewInstance_WithNull() {
+        WaitingDialogFragment w = WaitingDialogFragment.newInstance(null, null, true, null) ;
+        assertNotNull(w);
+        w.show(fm, TAG);
+
+        // wait some seconds so that you can see the change on emulator/device.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Fragment fragment = fm.findFragmentByTag(TAG);
+        assertTrue(fragment instanceof DialogFragment);
+        assertTrue(((DialogFragment) fragment).getShowsDialog());
+
+        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
+        assertNotNull(dialog);
+        assertTrue(dialog.isShowing());
+        assertTrue(((DialogFragment) fragment).isCancelable());
+
+        w.dismissAllowingStateLoss();
+    }
 
     public void testNewInstance_Cancelable() {
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE) ;
@@ -146,7 +169,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnCancel() {
-        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE,MSG, true, BUTTON_TITLE) ;
+        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE) ;
         assertNotNull(w);
         w.setTargetFragment(new MockCallback(), 1);
         w.show(fm, TAG);

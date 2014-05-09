@@ -149,8 +149,8 @@ public class PrintJobManagerTest extends AndroidTestCase {
         assertEquals("Print Job Name", pj.get(1).getName());
         assertEquals(JobResult.SUCCESSFUL, pj.get(1).getResult());
         //invalid date uses value of Date(0) = January 1, 1970 00:00:00
-        assertTrue(mSdf.format(pj.get(0).getDate()).equals(
-                "1970-01-01 00:00:00"));
+        assertEquals("1970-01-01 00:00:00",
+                mSdf.format(pj.get(0).getDate()));
     }
 
     public void testGetPrintJobs_WithoutData() {
@@ -213,7 +213,6 @@ public class PrintJobManagerTest extends AndroidTestCase {
         pvalues.put(C_PJB_DATE, "2014-01-18 08:12:11");
 
         db.insert(TABLE, null, pvalues);
-
         db.close();
 
         List<PrintJob> pj = mPrintJobManager.getPrintJobs();
@@ -282,7 +281,6 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
         db = mManager.getWritableDatabase();
         db.insert("Printer", null, pvalues);
-
         db.close();
 
         printers = mPrintJobManager.getPrintersWithJobs();
@@ -465,7 +463,6 @@ public class PrintJobManagerTest extends AndroidTestCase {
 
     }
 
-
     public void testCreatePrintJob() {
         boolean result = false;
         Date date = null;
@@ -504,6 +501,88 @@ public class PrintJobManagerTest extends AndroidTestCase {
         db.close();
     }
 
+    public void testCreatePrintJob_Invalid() {
+        boolean result = false;
+        Date date = null;
+
+        SQLiteDatabase db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+        db.close();
+
+        try {
+            date = mSdf.parse("2014-03-17 13:12:11");
+        } catch (ParseException e) {
+            Log.e("PrintJobManagerTest", "convertSQLToDate parsing error.");
+        }
+
+        result = mPrintJobManager.createPrintJob(mPrinterId, "printjob.pdf", date,
+                JobResult.ERROR);
+        assertTrue(result);
+
+        assertTrue(mPrintJobManager.isRefreshFlag());
+
+        db = mManager.getWritableDatabase();
+
+        Cursor cur = db.query(TABLE, null, null, null, null, null, null);
+        assertNotNull(cur);
+        assertEquals(1, cur.getCount());
+        cur.moveToFirst();
+
+        assertEquals("printjob.pdf",
+                cur.getString(cur.getColumnIndex(C_PJB_NAME)));
+        assertEquals("2014-03-17 13:12:11",
+                cur.getString(cur.getColumnIndex(C_PJB_DATE)));
+        assertEquals(JobResult.ERROR.ordinal(),
+                cur.getInt(cur.getColumnIndex(C_PJB_RESULT)));
+        
+        cur.close();
+        
+        db.close();
+        
+        //not existing printer
+        result = mPrintJobManager.createPrintJob(-1, "printjob.pdf", date,
+                JobResult.ERROR);
+        assertFalse(result);
+        
+        //not existing printer
+        result = mPrintJobManager.createPrintJob(-1, null, null,
+                JobResult.ERROR);
+        assertFalse(result);
+    }
+    
+    public void testCreatePrintJob_NullValues() {
+        boolean result = false;
+ 
+        SQLiteDatabase db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+        db.close();
+
+        result = mPrintJobManager.createPrintJob(mPrinterId, null, null,
+                JobResult.ERROR);
+        assertTrue(result);
+
+        assertTrue(mPrintJobManager.isRefreshFlag());
+
+        db = mManager.getWritableDatabase();
+
+        Cursor cur = db.query(TABLE, null, null, null, null, null, null);
+        assertNotNull(cur);
+        assertEquals(1, cur.getCount());
+        cur.moveToFirst();
+
+        assertNull(cur.getString(cur.getColumnIndex(C_PJB_NAME)));
+        //invalid date uses value of Date(0) = January 1, 1970 00:00:00
+        assertEquals("1970-01-01 00:00:00",
+                cur.getString(cur.getColumnIndex(C_PJB_DATE)));
+        assertEquals(JobResult.ERROR.ordinal(),
+                cur.getInt(cur.getColumnIndex(C_PJB_RESULT)));
+        
+        cur.close();
+        
+        db.close();
+    }
+    
+    
     public void testDeleteWithPrinterId_Invalid() {
         boolean result = mPrintJobManager.deleteWithPrinterId(-1);
         assertFalse(result);
@@ -594,12 +673,10 @@ public class PrintJobManagerTest extends AndroidTestCase {
         assertEquals(mInitialFlag, mPrintJobManager.isRefreshFlag());
     }
 
-
     public void testSetFlag() {
         boolean flag = true;
         mPrintJobManager.setRefreshFlag(flag);
         assertEquals(flag, mPrintJobManager.isRefreshFlag());
-
     }
 
 }

@@ -46,6 +46,24 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         super.tearDown();
     }
 
+    public void testNewInstance_WithNull() {
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(null, null, null) ;
+        assertNotNull(c);
+        c.show(mActivity.getFragmentManager(), TAG);
+        waitFewSeconds();
+        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        assertTrue(fragment instanceof DialogFragment);
+        assertTrue(((DialogFragment) fragment).getShowsDialog());
+
+        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
+
+        assertNotNull(dialog);
+        assertTrue(dialog.isShowing());
+
+        c.dismissAllowingStateLoss();
+    }
+
+
     public void testNewInstance_WithMessage() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(MSG, POSITIVE_BUTTON, NEGATIVE_BUTTON) ;
         assertNotNull(c);
@@ -60,6 +78,10 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(dialog);
         assertTrue(dialog.isShowing());
 
+        View msg = dialog.findViewById(android.R.id.message);
+        assertNotNull(msg);
+        assertEquals(MSG, ((TextView) msg).getText());
+
         Button pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         Button neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
@@ -68,6 +90,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         assertEquals(POSITIVE_BUTTON, pos.getText());
         assertEquals(NEGATIVE_BUTTON, neg.getText());
+        c.dismissAllowingStateLoss();
     }
 
     public void testNewInstance_WithTitle() {
@@ -103,7 +126,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertEquals(POSITIVE_BUTTON, pos.getText());
         assertEquals(NEGATIVE_BUTTON, neg.getText());
 
-
+        c.dismissAllowingStateLoss();
     }
 
     public void testOnClick_Positive() {

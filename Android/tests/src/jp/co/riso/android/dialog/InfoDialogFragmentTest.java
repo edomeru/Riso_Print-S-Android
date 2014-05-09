@@ -37,6 +37,23 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
         super.tearDown();
     }
 
+    public void testNewInstance_WithNull() {
+        InfoDialogFragment info = InfoDialogFragment.newInstance(null, null) ;
+        assertNotNull(info);
+        info.show(mActivity.getFragmentManager(), TAG);
+        waitFewSeconds();
+
+        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        assertTrue(fragment instanceof DialogFragment);
+        assertTrue(((DialogFragment) fragment).getShowsDialog());
+
+        AlertDialog dialog = (AlertDialog) ((DialogFragment) fragment).getDialog();
+
+        assertNotNull(dialog);
+        assertTrue(dialog.isShowing());
+        info.dismissAllowingStateLoss();
+    }
+
     public void testNewInstance_WithMessage() {
         InfoDialogFragment info = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE) ;
         assertNotNull(info);
@@ -61,7 +78,7 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         assertNotNull(b);
         assertEquals(BUTTON_TITLE, b.getText());
-
+        info.dismissAllowingStateLoss();
     }
 
     public void testNewInstance_WithTitle() {
@@ -94,6 +111,7 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         assertNotNull(b);
         assertEquals(BUTTON_TITLE, b.getText());
+        info.dismissAllowingStateLoss();
     }
 
     //================================================================================

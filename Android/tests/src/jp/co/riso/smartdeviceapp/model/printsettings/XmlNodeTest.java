@@ -112,9 +112,14 @@ public class XmlNodeTest extends AndroidTestCase {
             }
         }
 
-        assertEquals("", mGroupList.get(0).getAttributeValue(null));
         assertEquals("", mOptionList.get(0).getAttributeValue("name"));
         assertEquals("colorMode", mSettingList.get(0).getAttributeValue("name"));
+    }
+    
+    public void testGetAttributeValue_NullValues() {
+        assertEquals("", mGroupList.get(0).getAttributeValue(null));
+        assertEquals("", mOptionList.get(0).getAttributeValue(null));
+        assertEquals("", mSettingList.get(0).getAttributeValue(null));
     }
 
 }
