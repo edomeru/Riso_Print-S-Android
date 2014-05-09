@@ -8,20 +8,14 @@
 
 #import "SettingsValidationHelper.h"
 
+
+
 @implementation SettingsValidationHelper
-+ (BOOL)shouldAcceptCardIDInput: (NSString *)inputString
-{
-    if(inputString.length > 128)
-    {
-        return NO;
-    }
-    
-    return YES;
-}
 
 + (kSettingsInputError)validateCardIDInput:(NSString *)inputString
 {
-    NSCharacterSet* validSet = [NSCharacterSet alphanumericCharacterSet];
+    NSString *validCharacters = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    NSCharacterSet* validSet = [NSCharacterSet characterSetWithCharactersInString:validCharacters];
     
     if([[inputString stringByTrimmingCharactersInSet:validSet] length] > 0)
     {

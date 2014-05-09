@@ -17,9 +17,6 @@
 
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details
 {
-    //TODO: replace title and message with localized strings
-    //TODO: replace OK with localized string
-    
     // get the title
     NSString* alertTitle;
     switch (title)
@@ -63,11 +60,11 @@
             break;
         
         case kAlertResultErrMaxPrinters:
-            alertMsg = @"The number of printers saved is already at maximum.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_MAX_PRINTER_COUNT, @"");
             break;
             
         case kAlertResultErrPrinterNotFound:
-            alertMsg = @"The printer was not found on the network.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER, @"");
             break;
             
         case kAlertResultErrPrinterDuplicate:
@@ -77,12 +74,13 @@
         case kAlertResultErrPrinterCannotBeAdded:
             alertMsg = @"The printer could not be added.";
             break;
-            //TODO: it would be better to explain why the printer could not be added
+            //TODO: only cause is DB error (registerPrinter: failed)
             
         case kAlertResultErrDefault:
         default:
             alertMsg = @"The operation could not be compeleted.";
             break;
+            //TODO: replace with localized string or remove if will not be used
     }
     
     //TODO: if using a custom AlertView, implement it here

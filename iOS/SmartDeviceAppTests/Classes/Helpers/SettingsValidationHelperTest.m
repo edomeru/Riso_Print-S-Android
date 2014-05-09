@@ -17,48 +17,16 @@
 {
     
 }
-- (void)test001_shouldAcceptCardIDInput_LessThan128Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertTrue(result, nil);
-}
 
-- (void)test002_shouldAcceptCardIDInput_MoreThan128Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//62Chars
-    [testString appendString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//+62Chars
-    [testString appendString: [testString substringToIndex:5]]; //+5Chars
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertFalse(result, nil);
-}
-
-- (void)test003_shouldAcceptCardIDInput_128Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//62Chars
-    [testString appendString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//+62Chars
-    [testString appendString: [testString substringToIndex:4]]; //+4Chars
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertTrue(result, nil);
-}
-
-- (void)test004_shouldAcceptCardIDInput_0Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:@""];
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertTrue(result, nil);
-}
-
-- (void)test005_validateCardIDInput_ValidChars
+- (void)test001_validateCardIDInput_ValidChars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
     kSettingsInputError result = [SettingsValidationHelper validateCardIDInput:testString];
     GHAssertTrue((result == kSettingsInputErrorNone) , nil);
 }
 
-- (void)test006_validateCardIDInput_InvalidChars
+- (void)test002_validateCardIDInput_InvalidChars
 {
-    
     NSString *invalidChars =@" +";//other characters ruled out by keyboard
     for(int i = 0; i < invalidChars.length; i++)
     {
@@ -69,7 +37,7 @@
     }
 }
 
-- (void)test007_errorMessages
+- (void)test003_errorMessages
 {
     NSArray *errorMessages = [NSArray arrayWithObjects: @"",
                                                         @"Card ID should be alphanumeric only",

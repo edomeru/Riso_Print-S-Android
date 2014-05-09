@@ -526,7 +526,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     NSString *key = [self.textFieldBindings objectForKey:[NSNumber numberWithInteger:textField.tag]];
     if([key isEqualToString:KEY_COPIES] == YES)
     {
-        if((textField.text.length + string.length) > 4)
+        if((textField.text.length + string.length - range.length) > 4)
         {
             return NO;
         }
@@ -540,7 +540,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     
     if([key isEqualToString:KEY_PIN_CODE] == YES)
     {
-        if((textField.text.length + string.length) > 8)
+        if((textField.text.length + string.length - range.length) > 8)
         {
             return NO;
         }
