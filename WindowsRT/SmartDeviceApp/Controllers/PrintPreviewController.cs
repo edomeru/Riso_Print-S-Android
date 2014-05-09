@@ -1874,29 +1874,30 @@ namespace SmartDeviceApp.Controllers
 
             JobController.Instance.SavePrintJob(printJob);
 
-            if (result == (int)PrintJobResult.Success)
-            {
-                // TODO: Confirm if message for success is needed here
-                DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
-                //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
-                await Cleanup();
-                await DocumentController.Instance.Unload();
-            }
-            else if (result == (int)PrintJobResult.Error)
-            {
-                DialogService.Instance.ShowError("IDS_LBL_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
-            }
 
-            if (_directPrintController != null)
-            {
-                _directPrintController.UnsubscribeEvents();
-                _directPrintController = null;
-            }
-
+            //UI processing stuff
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-            () =>
+            () => 
             {
                 _printingPopup.IsOpen = false;
+                if (result == (int)PrintJobResult.Success)
+                {
+                    // TODO: Confirm if message for success is needed here
+                    DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
+                    //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
+                    Cleanup();
+                    DocumentController.Instance.Unload();
+                }
+                else if (result == (int)PrintJobResult.Error)
+                {
+                    DialogService.Instance.ShowError("IDS_LBL_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
+                }
+
+                if (_directPrintController != null)
+                {
+                    _directPrintController.UnsubscribeEvents();
+                    _directPrintController = null;
+                }
             });            
         }
 
