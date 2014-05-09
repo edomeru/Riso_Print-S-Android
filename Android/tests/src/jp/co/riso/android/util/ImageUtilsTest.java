@@ -40,10 +40,10 @@ public class ImageUtilsTest extends ActivityInstrumentationTestCase2<MainActivit
 
     public void testRenderBmpToCanvas_ValidParameters() {
         try {
-            Bitmap bmp = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
+            Bitmap bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
 
             Rect rect = new Rect(0, 0, 0, 0);
-            Canvas canvas = new Canvas();
+            Canvas canvas = new Canvas(bmp);
             ImageUtils.renderBmpToCanvas(bmp, canvas, false);
             ImageUtils.renderBmpToCanvas(bmp, canvas, false, rect);
             ImageUtils.renderBmpToCanvas(bmp, canvas, false, 0, 0, 0, 1);
@@ -55,8 +55,10 @@ public class ImageUtilsTest extends ActivityInstrumentationTestCase2<MainActivit
 
     public void testRenderBmpToCanvas_NullBitmap() {
         try {
+            Bitmap bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+
             Rect rect = new Rect(0, 0, 0, 0);
-            Canvas canvas = new Canvas();
+            Canvas canvas = new Canvas(bmp);
             ImageUtils.renderBmpToCanvas(null, canvas, false);
             ImageUtils.renderBmpToCanvas(null, canvas, false, rect);
             ImageUtils.renderBmpToCanvas(null, canvas, false, 0, 0, 0, 1);
@@ -82,8 +84,8 @@ public class ImageUtilsTest extends ActivityInstrumentationTestCase2<MainActivit
     
     public void testRenderBmpToCanvas_NullRect() {
         try {
-            Bitmap bmp = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas();
+            Bitmap bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bmp);
 
             ImageUtils.renderBmpToCanvas(bmp, canvas, false, null);
         } catch (Exception e) {

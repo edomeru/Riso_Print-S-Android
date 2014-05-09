@@ -127,7 +127,8 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             "::z"
     };
     private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2%wlan0";
-    private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%eth0";
+    private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo";
+    private static final String IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
 
     public NetUtilsTest() {
         super(MainActivity.class);
@@ -151,17 +152,10 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         turnWifi(false);
         NetUtils netUtils = new NetUtils();
         assertNotNull(netUtils);
+        turnWifiOn();
     }
 
     public void testConstructor_WifiOn() {
-        try {
-            turnWifi(true);
-            // Wait for connection to be established
-            mSignal.await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            fail();
-        }
-
         NetUtils netUtils = new NetUtils();
         assertNotNull(netUtils);
     }
@@ -302,7 +296,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv6Address_NullIpAddress() {
         try {
-            InetAddress inetIpAddress = InetAddress.getByName(IPV6_ONLINE_PRINTER_ADDRESS);
+            InetAddress inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS);
             NetUtils.connectToIpv6Address(null, inetIpAddress);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
@@ -319,11 +313,25 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         }
     }
     
+    public void testConnectToIpv6Address_WifiDisabled() {
+        try {
+            turnWifi(false);
+            boolean isReachable = true;
+
+            isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, null);
+            assertEquals(false, isReachable);
+            
+            turnWifiOn();
+        } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
     // ================================================================================
     // Private
     // ================================================================================
 
-    protected void turnWifi(boolean enabled) {
+    private void turnWifi(boolean enabled) {
         try {
             WifiManager wifiManager = (WifiManager) getInstrumentation()
                     .getTargetContext().getSystemService(Context.WIFI_SERVICE);
@@ -332,4 +340,13 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         }
     }
     
+    private void turnWifiOn() {
+        try {
+            turnWifi(true);
+            // Wait for connection to be established
+            mSignal.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            fail();
+        }
+    }    
 }

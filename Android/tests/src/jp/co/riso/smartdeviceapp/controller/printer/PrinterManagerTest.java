@@ -36,10 +36,10 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         super.setUp();
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         assertNotNull(mPrinterManager);
-
-        mPrinterManager.isExists(INVALID_ADDRESS);
-        mPrinterManager.isExists(new Printer(INVALID_ADDRESS, INVALID_ADDRESS));
         
+        mPrinterManager.setPrinterSearchCallback(this);
+        mPrinterManager.setPrintersCallback(this);
+
         mPrintersList = mPrinterManager.getSavedPrintersList();
         assertNotNull(mPrintersList);
     }
@@ -371,16 +371,23 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
+    public void testOnEndDiscovery_ValidParameters() {
+        try {
+            mPrinterManager.onEndDiscovery(new SNMPManager(), -1);
+        } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        }
+    }
     // ================================================================================
     // Tests - onFoundDevice
     // ================================================================================
     
     public void testOnFoundDevice_ValidParameters() {
         try {
-            mPrinterManager.setPrinterSearchCallback(this);
-            mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, "testOnEndDiscovery",
+            // Trigger Printer Search
+            mPrinterManager.startPrinterSearch();
+            mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, "testOnFoundDevice_ValidParameters",
                     new boolean[10]);
-            mPrinterManager.setPrinterSearchCallback(null);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -390,7 +397,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testOnFoundDevice_NullManager() {
         try {
-            mPrinterManager.onFoundDevice(null, IPV4_ONLINE_PRINTER_ADDRESS, "testOnEndDiscovery",
+            mPrinterManager.onFoundDevice(null, IPV4_ONLINE_PRINTER_ADDRESS, "testOnFoundDevice_NullManager",
                     new boolean[10]);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
@@ -401,7 +408,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testOnFoundDevice_NullIpAddress() {
         try {
-            mPrinterManager.onFoundDevice(new SNMPManager(), null, "testOnEndDiscovery",
+            mPrinterManager.onFoundDevice(new SNMPManager(), null, "testOnFoundDevice_NullIpAddress",
                     new boolean[10]);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
@@ -424,7 +431,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testOnFoundDevice_NullCapabilities() {
         try {
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS,
-                    "testOnEndDiscovery", null);
+                    "testOnFoundDevice_NullCapabilities", null);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
