@@ -36,11 +36,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
-}
-
 - (void)getPrinterStatus
 {
     // update UI for current ping status
@@ -60,7 +55,6 @@
         self.pinger = [SimplePing simplePingWithHostName:self.ipAddress];
         self.pinger.delegate = self;
         
-        [[BackgroundManager sharedManager] addCancellableObject:self];
         [self.pinger start];
     }
 }
@@ -84,8 +78,6 @@
         [self.pollingTimer invalidate];
         self.pollingTimer = nil;
     }
-    
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
 }
 
 - (BOOL)isPolling
@@ -144,22 +136,6 @@
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
     NSLog(@"[INFO][PrinterStatus] ping send failed %@", self.ipAddress);
 #endif
-}
-
-#pragma mark - BackgroundCancellable
-- (void)cancelToBackground
-{
-    [self.pinger stop];
-}
-
-- (void)resumeFromBackground
-{
-    [self.pinger start];
-}
-
-- (BOOL)shouldResumeOnEnterForeground
-{
-    return YES;
 }
 
 @end

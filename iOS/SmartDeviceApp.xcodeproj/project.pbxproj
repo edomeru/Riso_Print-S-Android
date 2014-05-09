@@ -100,8 +100,6 @@
 		2D30FBBA191A32CC00B9DAC8 /* Swizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBB9191A32CC00B9DAC8 /* Swizzler.m */; };
 		2D30FBC6191A470200B9DAC8 /* SNMPManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */; };
 		2D30FBCC191A530700B9DAC8 /* DirectPrintManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */; };
-		2D4D1780191BA1D800D853B0 /* BackgroundManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4D177F191BA1D800D853B0 /* BackgroundManager.m */; };
-		2D4D1781191BA1D800D853B0 /* BackgroundManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4D177F191BA1D800D853B0 /* BackgroundManager.m */; };
 		2D58A9071913D4DE003FBC0B /* TestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
@@ -419,8 +417,6 @@
 		2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNMPManagerMock.m; sourceTree = "<group>"; };
 		2D30FBCA191A530700B9DAC8 /* DirectPrintManagerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectPrintManagerMock.h; sourceTree = "<group>"; };
 		2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManagerMock.m; sourceTree = "<group>"; };
-		2D4D177E191BA1D800D853B0 /* BackgroundManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundManager.h; sourceTree = "<group>"; };
-		2D4D177F191BA1D800D853B0 /* BackgroundManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundManager.m; sourceTree = "<group>"; };
 		2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1303,8 +1299,6 @@
 		2DA1AF2818E2EF9C00085F27 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				2D4D177E191BA1D800D853B0 /* BackgroundManager.h */,
-				2D4D177F191BA1D800D853B0 /* BackgroundManager.m */,
 				2DA1AF2918E2EF9C00085F27 /* DatabaseManager.h */,
 				2DA1AF2A18E2EF9C00085F27 /* DatabaseManager.m */,
 				2D1F23B51900FF6E00301D1E /* DirectPrintManager.h */,
@@ -1586,7 +1580,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DA1AF6718E2F08900085F27 /* InputHelper.m in Sources */,
-				2D4D1780191BA1D800D853B0 /* BackgroundManager.m in Sources */,
 				2D1F23AB1900FF5800301D1E /* CXAlertButtonItem.m in Sources */,
 				2D232D9318E56E45008D06C8 /* PrintSettingsOptionsHeaderCell.m in Sources */,
 				2D1F23241900D57300301D1E /* SettingsViewController.m in Sources */,
@@ -1731,7 +1724,6 @@
 				3195C148191117F700197397 /* PrinterDetails.m in Sources */,
 				3195C14A191117F700197397 /* PrintJob.m in Sources */,
 				3195C14C191117F700197397 /* PrintJobHistoryGroup.m in Sources */,
-				2D4D1781191BA1D800D853B0 /* BackgroundManager.m in Sources */,
 				3195C14E191117F700197397 /* PrintSetting.m in Sources */,
 				3195C150191117F700197397 /* PrinterCollectionViewCell.m in Sources */,
 				3195C152191117F700197397 /* PrintJobHistoryGroupCell.m in Sources */,
