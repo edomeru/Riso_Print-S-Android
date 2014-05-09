@@ -39,7 +39,6 @@ namespace SmartDeviceApp.Controllers
 
         private Document _document;
         private bool _isFileLoaded;
-        private bool _isFromFilePicker = true;
 
         /// <summary>
         /// Number of pages of the actual PDF file
@@ -62,16 +61,17 @@ namespace SmartDeviceApp.Controllers
         public LoadDocumentResult Result { get; private set; }
 
         /// <summary>
-        /// Flag to determine if document is loaded from FilePicker
+        /// Flag to determine if document is loaded
         /// </summary>
-        public bool IsFromFilePicker { 
+        public bool IsFileLoaded
+        {
             get
             {
-                return _isFromFilePicker;
+                return _isFileLoaded;
             }
             private set
             {
-                _isFromFilePicker = value;
+                _isFileLoaded = value;
             }
         }
 
@@ -94,16 +94,13 @@ namespace SmartDeviceApp.Controllers
         /// Copies the PDF to AppData temporary store and opens it
         /// </summary>
         /// <param name="file">source PDF file</param>
-        /// <param name="isFromFilePicker">true when opened from FilePicker, false from FileActivation event</param>
-        /// <returns></returns>
-        public async Task Load(StorageFile file, bool isFromFilePicker)
+        /// <returns>task</returns>
+        public async Task Load(StorageFile file)
         {
             if (file == null)
             {
                 return;
             }
-
-            IsFromFilePicker = isFromFilePicker;
 
             try
             {
@@ -166,6 +163,7 @@ namespace SmartDeviceApp.Controllers
                 _document = null;
             }
             _isFileLoaded = false;
+            //IsFromFilePicker = false;
         }
 
         /// <summary>
