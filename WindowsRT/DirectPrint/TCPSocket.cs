@@ -108,7 +108,12 @@ namespace DirectPrint
                 // detach the stream and close it
                 writer.DetachStream();
                 writer.Dispose();
-            }            
+            }
+
+            if (waitresponse)
+            {
+                read();
+            }
         }    
     }
 }
