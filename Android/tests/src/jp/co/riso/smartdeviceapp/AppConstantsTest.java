@@ -12,6 +12,10 @@ public class AppConstantsTest extends TestCase {
         super.tearDown();
     }
     
+    //================================================================================
+    // Tests - constructors
+    //================================================================================
+    
     public void testConstructor() {
         AppConstants appConstants = new AppConstants();
         assertNotNull(appConstants);
