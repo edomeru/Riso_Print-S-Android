@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Networking;
@@ -392,17 +393,24 @@ namespace DirectPrint
 
         private int waitForAck()
         {
-            DateTime starttime = DateTime.Now.ToUniversalTime();
-            while (!datareceived)
+            CancellationTokenSource cts = new CancellationTokenSource();
+            try
             {
-                //TODO: add timeout
-                // wait for data
-                if (DateTime.Now.Subtract(starttime).Seconds > 30)
+                cts.CancelAfter(10000);//set timeout value
+                while (!datareceived)
                 {
-                    return -1;
+                    if (socket != null) socket.read();
+                    // wait for data
+                    // read data
                 }
+                datareceived = false;
             }
-            datareceived = false;
+            catch (TaskCanceledException)
+            {
+                //operation timeout
+                return -1;
+            }
+            
 
             if (ack != 0)
             {
