@@ -1,0 +1,65 @@
+﻿<UserControl x:Name="messageProgressBarControl"
+    x:Class="SmartDeviceApp.Controls.MessageProgressBarControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
+    mc:Ignorable="d">
+    
+    <UserControl.Resources>
+        <ControlTemplate x:Key="TEMPLATE_CancelButton" TargetType="Button">
+            <Grid Background="{StaticResource BRUSH_Gray1}" 
+                  Width="{StaticResource SIZE_CancelButtonWidth_Short}" 
+                  Height="{StaticResource SIZE_CancelButtonHeight_Short}">
+                <TextBlock Text="{Binding Source=IDS_LBL_CANCEL, Converter={StaticResource ResourceStringToTextConverter}}" 
+                           Style="{StaticResource STYLE_TextBody}"></TextBlock>
+            </Grid>
+        </ControlTemplate>
+    </UserControl.Resources>    
+    <Grid x:Name="overlay">
+        <Grid.Background>
+            <SolidColorBrush Color="Black" Opacity="{StaticResource OPACITY_Message}"/>
+        </Grid.Background>
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center"
+              Background="{StaticResource BRUSH_White}">
+            <StackPanel Width="{StaticResource SIZE_MessageWidth}">
+                <StackPanel.Margin>
+                    <Thickness Top="{StaticResource MARGIN_Large}"
+                               Bottom="{StaticResource MARGIN_Default}"></Thickness>
+                </StackPanel.Margin>
+                <TextBlock x:Name="titleText"
+                            Text="{Binding Title, ElementName=messageProgressBarControl}"
+                            Visibility="{Binding TitleVisibility, ElementName=messageProgressBarControl}"
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource STYLE_TextHeader}"
+                            Foreground="{StaticResource BRUSH_Black}">
+                    <TextBlock.Margin>
+                        <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
+                    </TextBlock.Margin>
+                </TextBlock>
+                <TextBlock x:Name="content"
+                    Style="{StaticResource STYLE_TextBody}"
+                    Foreground="{StaticResource BRUSH_Black}"
+                    HorizontalAlignment="Center"
+                    Text="{Binding Content, ElementName=messageProgressBarControl}">
+                    <TextBlock.Margin>
+                        <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
+                    </TextBlock.Margin>
+                </TextBlock>
+                <ProgressBar x:Name="progressBar"
+                                IsIndeterminate="False"
+                                Maximum="100"
+                                Value="{Binding ProgressValue, ElementName=messageProgressBarControl}">
+                    <ProgressBar.Margin>
+                        <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
+                    </ProgressBar.Margin>
+                </ProgressBar>
+                <Button Command="{Binding CancelCommand, ElementName=messageProgressBarControl}"
+                        HorizontalAlignment="Right"
+                        Template="{StaticResource TEMPLATE_CancelButton}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

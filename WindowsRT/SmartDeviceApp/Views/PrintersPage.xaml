@@ -14,7 +14,7 @@
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Name="printersPage"
     x:Class="SmartDeviceApp.Views.PrintersPage"
-    
+    NavigationCacheMode="Enabled"
     mc:Ignorable="d"
     DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
 

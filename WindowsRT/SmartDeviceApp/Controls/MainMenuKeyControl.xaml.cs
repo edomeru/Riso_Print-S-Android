@@ -23,6 +23,9 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
         }
 
+        public static readonly DependencyProperty GroupNameProperty =
+            DependencyProperty.Register("GroupName", typeof(string), typeof(MainMenuKeyControl), null);
+
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(MainMenuKeyControl), null);
 
@@ -31,6 +34,15 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register("Command", typeof(ICommand), typeof(MainMenuKeyControl), null);
+
+        public static readonly DependencyProperty IndexProperty =
+           DependencyProperty.Register("Index", typeof(int), typeof(MainMenuKeyControl), null);
+
+        public string GroupName
+        {
+            get { return (string)GetValue(GroupNameProperty); }
+            set { SetValue(GroupNameProperty, value); }
+        }
 
         public string Text
         {
@@ -48,6 +60,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ICommand)GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
+        }
+
+        public int Index
+        {
+            get { return (int)GetValue(IndexProperty); }
+            set { SetValue(IndexProperty, value); }
         }
     }
 }

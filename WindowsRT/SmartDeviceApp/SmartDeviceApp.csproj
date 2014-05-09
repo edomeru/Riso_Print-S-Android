@@ -141,6 +141,9 @@
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
+    <Compile Include="Controls\MessageProgressBarControl.xaml.cs">
+      <DependentUpon>MessageProgressBarControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PortItemControl.xaml.cs">
       <DependentUpon>PortItemControl.xaml</DependentUpon>
     </Compile>
@@ -177,10 +180,12 @@
     </Compile>
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Converters\IntToBooleanConverter.cs" />
+    <Compile Include="Converters\MainMenuItemToIndexConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemToSeparatorVisibility.cs" />
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\MainItemIndexToIsCheckedConverter.cs" />
     <Compile Include="Converters\SelectedPrinterIdToTextConverter.cs" />
     <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
@@ -465,6 +470,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\MessageProgressBarControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PortItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
