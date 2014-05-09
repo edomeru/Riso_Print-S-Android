@@ -70,11 +70,11 @@ namespace SmartDeviceApp.Controllers
         {
             _startTime = DateTime.Now;
             _directPrint = new DirectPrint.DirectPrint();
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
-            {
+            //IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            //(workItem) =>
+            //{
                 _directPrint.startLPRPrint(_printJob);
-            });
+            //});
             
         }
 
