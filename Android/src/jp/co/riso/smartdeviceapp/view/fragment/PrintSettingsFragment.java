@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.Date;
+import java.util.Locale;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
@@ -204,8 +205,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
      */
     @Override
     public void onPrint(Printer printer, PrintSettings printSettings) {
-        if (printer == null || printSettings == null){
-
+        // do not print if mPdfPath is not set
+        if (mPdfPath != null && mPdfPath.isEmpty()) {
+            return;
+        }
+        
+        if (printer == null || printSettings == null) {
             String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
             String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
@@ -288,10 +293,16 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 mPauseableHandler.sendMessage(newMessage);
                 manager.finalizeDirectPrint();
                 break;
+            case DirectPrintManager.PRINT_STATUS_SENDING:
+                if (mWaitingDialog != null) {
+                    String strMsg = getResources().getString(R.string.ids_lbl_printing);
+                    String msg = String.format(Locale.getDefault(), "%s %.2f%%", strMsg, progress);
+                    mWaitingDialog.setMessage(msg);
+                }
+                break;
             case DirectPrintManager.PRINT_STATUS_STARTED:
             case DirectPrintManager.PRINT_STATUS_CONNECTING:
             case DirectPrintManager.PRINT_STATUS_CONNECTED:
-            case DirectPrintManager.PRINT_STATUS_SENDING:
                 break;
         }
     }

@@ -12,8 +12,10 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -105,6 +107,9 @@ public class PDFFileManager {
      */
     public void setPDF(String path) {
         mIsInitialized = false;
+        mPageCount = 0;
+        mPageWidth = 0;
+        mPageHeight = 0;
         
         if (path == null) {
             mPath = null;
@@ -114,21 +119,15 @@ public class PDFFileManager {
             return;
         }
         
-        if (SmartDeviceApp.getAppContext() == null) {
-            return;
-        }
-        
         File file = new File(path);
         
         mPath = path;
         mFileName = file.getName();
-        mSandboxPath = SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/" + file.getName();
+        mSandboxPath = PDFFileManager.convertToSandboxPath(file.getName());
         
         if (mPath.equalsIgnoreCase(mSandboxPath)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(KEY_NEW_PDF_DATA, false);
-            edit.commit();
+            // No need to copy
+            PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
         }
     }
     
@@ -166,6 +165,55 @@ public class PDFFileManager {
      */
     public float getPageHeight() {
         return mPageHeight;
+    }
+    
+    /**
+     * Appends the sandbox path to the filename
+     * 
+     * @param filename
+     *            filename of the pdf
+     * @return PDF sandbox directory
+     */
+    public static String convertToSandboxPath(String filename) {
+        String path = SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/";
+        if (filename != null) {
+            path = path + filename;
+        }
+        return path;
+    }
+    
+    /**
+     * Checks whether a new PDF is available through open-in
+     * 
+     * @param context
+     *            Application instance context
+     * @return A new PDF is available
+     */
+    public static boolean hasNewPDFData(Context context) {
+        if (context == null) {
+            return false;
+        }
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(KEY_NEW_PDF_DATA, false);
+    }
+    
+    /**
+     * @param context
+     *            Application instance context
+     * @param newData
+     *            New value for has PDF Flag
+     */
+    public static void setHasNewPDFData(Context context, boolean newData) {
+        if (context == null) {
+            return;
+        }
+        
+        // Notify PDF File Data that there is a new PDF
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, newData);
+        edit.apply();
     }
     
     /**
@@ -273,7 +321,7 @@ public class PDFFileManager {
     // ================================================================================
     // Protected methods
     // ================================================================================
-    
+
     /**
      * Opens the document
      * 
@@ -285,15 +333,32 @@ public class PDFFileManager {
      *         PDF_INVALID_PATH = -10;
      */
     protected synchronized int openDocument() {
+        return openDocument(mPath);
+    }
+    
+    /**
+     * Opens the document
+     * 
+     * @param path
+     *            Path of the document to be opened
+     * 
+     * @return status of open <br>
+     *         PDF_OK = 0; <br>
+     *         PDF_ENCRYPTED = -1; <br>
+     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
+     *         PDF_DAMAGED = -3; <br>
+     *         PDF_INVALID_PATH = -10;
+     */
+    protected synchronized int openDocument(String path) {
         if (mDocument.is_opened()) {
             closeDocument();
         }
         
-        if (mPath == null || mPath.length() == 0) {
+        if (path == null || path.length() == 0) {
             return PDF_OPEN_FAILED;
         }
         
-        int status = mDocument.Open(mPath, null);
+        int status = mDocument.Open(path, null);
         
         switch (status) {
             case RADAEE_OK:
@@ -339,26 +404,16 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
-            if (SmartDeviceApp.getAppContext() == null) {
-                return PDF_OPEN_FAILED;
-            }
-            
-            int status = openDocument();
-            
-            if (CONST_KEEP_DOCUMENT_CLOSED) {
-                closeDocument();
-            }
+            int status = openDocument(mPath);
+            closeDocument();
             
             if (status == PDF_OK) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-                if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
-                    
-                    SharedPreferences.Editor edit = prefs.edit();
-                    edit.putBoolean(KEY_NEW_PDF_DATA, false);
-                    edit.commit();
+                if (PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext())) {
+                    PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
                     
                     try {
                         FileUtils.copy(new File(mPath), new File(mSandboxPath));
+                        openDocument(mSandboxPath);
                     } catch (Exception e) {
                         return PDF_OPEN_FAILED;
                     }

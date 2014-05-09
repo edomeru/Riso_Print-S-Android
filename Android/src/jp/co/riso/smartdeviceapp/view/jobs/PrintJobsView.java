@@ -29,6 +29,8 @@ import android.widget.LinearLayout;
 
 public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListener {
     private static final int SWIPE_THRESHOLD = 50;
+    private static final int MIN_COLUMNS = 2;
+    
     private WeakReference<PrintJobsViewListener> mListenerRef;
     private List<PrintJob> mPrintJobs;
     private List<Printer> mPrinters;
@@ -151,12 +153,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * Initialize PrintJobsView
      */
     private void init() {
-        if (!isInEditMode()) {
-            setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            setOrientation(HORIZONTAL);
-            mDeleteAnimation = new DisplayDeleteAnimation();
-            mRunnable = new AddViewRunnable();
-        }
+        mDeleteAnimation = new DisplayDeleteAnimation();
+        mRunnable = new AddViewRunnable();
     }
     
     /**
@@ -206,6 +204,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     /**
+     * Gets the column with the least height
+     * 
      * @return index of the smallest column
      */
     private int getSmallestColumn() {
@@ -240,7 +240,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * Restores the UI state
      * 
      * @param pj
+     *          PrintJobsGroupView to be restored
      * @param printer
+     *          Printer to be restored
      */
     private void restoreUIstate(PrintJobsGroupView pj, Printer printer) {
         boolean isCollapsed = mCollapsedPrinters.contains(printer);
@@ -253,33 +255,40 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             }
         }
         
-        pj.restoreState(isCollapsed, mPrintJobToDelete, mPrinterToDelete);
+        pj.restoreState(isCollapsed, mPrinterToDelete);
     }
     
     /**
      * Add PrintJobsGroupView in columns
+     * 
+     * @param groupViewIdx
+     *          index of the PrintJobsGroupView in the list to be added
      */
-    private void placeInColumns() {
-        PrintJobsGroupView pjView = mPrintGroupViews.get(mGroupViewCtr);
-        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    private void placeInColumns(int groupViewIdx) {
+        int padding = getResources().getDimensionPixelSize(R.dimen.printjob_padding_side);
+        
+        PrintJobsGroupView pjView = mPrintGroupViews.get(groupViewIdx);
+        LayoutParams groupParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         if (getResources().getBoolean(R.bool.is_tablet)) {
-            lp.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
-            lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
-            lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
+            groupParams.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
+            pjView.setPadding(padding, 0, padding, 0);
         }
         pjView.setOrientation(VERTICAL);
         
         int col = getSmallestColumn();
-        mColumns.get(col).addView(pjView, lp);
-        mColumnsHeight[col] += pjView.getGroupHeight() + lp.topMargin; // update column height
+        mColumns.get(col).addView(pjView, groupParams);
+        mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
     }
     
     /**
      * Add Views in columns
      */
     private void addViewsToColumns() {
-        placeInColumns();
-        mGroupViewCtr++;
+        for (int i = 0; i < mPrintGroupViews.size(); i++){
+            placeInColumns(i);
+        }
+        
+        mGroupViewCtr = mPrintGroupViews.size();
         post(mRunnable);
     }
     
@@ -323,24 +332,38 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     /**
-     * creates columns
+     * creates column layouts as containers of PrintJobsGroupView
+     * 
+     * @param width
+     *          size of width available for Print Jobs View
      */
-    private void createColumns() {
-        int colNum = getResources().getBoolean(R.bool.is_tablet) ? getResources().getBoolean(R.bool.is_tablet_land) ? 3 : 2 : 1;
-        LayoutParams param = (LayoutParams) getLayoutParams();
+    private void createColumns(int width) {
+        int colNum = 1;
+        int columnWidth = getContext().getResources().getDimensionPixelSize(R.dimen.printers_view_width);
         
-        if (colNum > 1) {
-            param.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_column_margin_side);
-            param.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_column_margin_side);
+        if (getResources().getBoolean(R.bool.is_tablet)) {
+            // if tablet get number of columns based on whole width
+            colNum = Math.max(width / columnWidth, MIN_COLUMNS);
+            
+            if (colNum == MIN_COLUMNS) {
+                // adjust column width depending on whole width
+                columnWidth = Math.min(width / MIN_COLUMNS, columnWidth);
+            }
         }
         
         mColumnsHeight = new int[colNum];
         
         for (int i = 0; i < colNum; i++) {
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+            LayoutParams columnParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             mColumns.add(new LinearLayout(getContext()));
             mColumns.get(i).setOrientation(VERTICAL);
-            addView(mColumns.get(i), lp);
+            
+            //if tablet set column width
+            if (colNum > 1) {
+                columnParams.width = columnWidth;
+            }
+            
+            addView(mColumns.get(i), columnParams);
         }
     }
     
@@ -411,13 +434,14 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return ret;
     }
     
+    
     /** {@inheritDoc} */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         
         if (mInitialFlag) {
-            createColumns();
+            createColumns(r - l);
             mInitialFlag = false;
         }
         if (mGroupViewCtr < mPrintGroupViews.size()) {

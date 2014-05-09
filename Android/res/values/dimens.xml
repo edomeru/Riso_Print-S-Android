@@ -57,8 +57,8 @@
     <dimen name="preview_logo_margin">24dp</dimen>
         
     <dimen name="printjob_column_margin_side">16dp</dimen>
-    <dimen name="printjob_margin_side">2dp</dimen>
-    <dimen name="printjob_margin_top">4dp</dimen>
+    <dimen name="printjob_padding_side">4dp</dimen>
+    <dimen name="printjob_margin_top">8dp</dimen>
     <dimen name="printjob_status_padding_side">10dp</dimen>
     <dimen name="printjob_dateframe_padding_side">5dp</dimen>
     <dimen name="printjob_delbtn_padding_side">20dp</dimen>

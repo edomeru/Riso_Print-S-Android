@@ -404,14 +404,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 View disclosureView = (View) view.findViewById(ID_DISCLOSURE_VIEW);
                 if (disclosureView != null) {
                     if (enabled) {
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.VISIBLE);
                         view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
-                        disclosureView.setVisibility(View.VISIBLE);
                     } else if (hideControl) {
-                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
-                        disclosureView.setVisibility(View.GONE);
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.INVISIBLE);
+                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
                     } else {
-                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
-                        disclosureView.setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
                     }
                 } else {
                     boolean shouldHideControl = !enabled && hideControl;
@@ -706,8 +706,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private int getUpdatedStringId(String name, int id) {
         if (getPrinter() != null) {
             if (name.equals(PrintSettings.TAG_PUNCH)) {
-                if (id == R.string.ids_lbl_punch_3holes && getPrinter().getConfig().isPunch4Available()) {
-                    return R.string.ids_lbl_punch_4holes;
+                if (id == R.string.ids_lbl_punch_4holes && !getPrinter().getConfig().isPunch4Available()) {
+                    return R.string.ids_lbl_punch_3holes;
                 }
             }
         }

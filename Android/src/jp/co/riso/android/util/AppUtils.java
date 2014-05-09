@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -29,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
@@ -58,30 +56,6 @@ public final class AppUtils {
         Intent intent = new Intent();
         intent.setClass(context, cls);
         return intent;
-    }
-    
-    /**
-     * Starts an Activity
-     * 
-     * @param context
-     *            Application Context
-     * @param cls
-     *            Activity class
-     */
-    public static void startActivityIntent(Context context, Class<?> cls) throws ActivityNotFoundException, NullPointerException, AndroidRuntimeException {
-        Intent intent = createActivityIntent(context, cls);
-        
-        if (intent == null) {
-            throw new NullPointerException("Cannot create intent");
-        } else {
-            try {
-                context.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                throw e;
-            } catch (AndroidRuntimeException e) {
-                throw e;
-            }
-        }
     }
     
     /**
@@ -300,7 +274,7 @@ public final class AppUtils {
      */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
     public static void changeChildrenFont(ViewGroup v, Typeface font) {
-        if (font == null) {
+        if (font == null || v == null) {
             return;
         }
         
@@ -348,7 +322,7 @@ public final class AppUtils {
      */
     // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
-        if (variableName == null) {
+        if (variableName == null || c == null) {
             return defaultId;
         }
         
@@ -372,6 +346,10 @@ public final class AppUtils {
      * @return cache size
      */
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
+        if (activity == null) {
+            return 0;
+        }
+        
         ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
         
         // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.
