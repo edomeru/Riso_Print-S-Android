@@ -84,7 +84,19 @@ namespace DirectPrint
             }
         }
 
-        public async void startLPRPrint(directprint_job parameter)
+        public void startLPRPrint(directprint_job parameter)
+        {
+            /*
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            (workItem) =>
+            {
+                _startLPRPrint(parameter);
+            });
+            */
+            Task.Run(() => _startLPRPrint(parameter));
+        }
+
+        public async void _startLPRPrint(directprint_job parameter)
         {
 
             if (parameter == null)
@@ -393,24 +405,22 @@ namespace DirectPrint
 
         private int waitForAck()
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
-            try
+            long start = Environment.TickCount;
             {
-                cts.CancelAfter(10000);//set timeout value
+               
                 while (!datareceived)
                 {
                     if (socket != null) socket.read();
                     // wait for data
                     // read data
+
+                    if (Environment.TickCount - start > 10000){
+                        //operation timeout
+                        return -1;
+                    }
                 }
                 datareceived = false;
-            }
-            catch (TaskCanceledException)
-            {
-                //operation timeout
-                return -1;
-            }
-            
+            }            
 
             if (ack != 0)
             {

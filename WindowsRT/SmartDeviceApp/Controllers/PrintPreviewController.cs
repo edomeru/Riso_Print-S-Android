@@ -1809,8 +1809,9 @@ namespace SmartDeviceApp.Controllers
                     DocumentController.Instance.PdfFile,
                     _selectedPrinter.IpAddress,
                     _currPrintSettings,
-                    new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
-                    new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
+                    UpdatePrintJobProgress,
+                    UpdatePrintJobResult);
+                
                 _directPrintController.SendPrintJob();
 
                 //// TODO: Remove the following line. This is for testing only.
@@ -1843,7 +1844,14 @@ namespace SmartDeviceApp.Controllers
         public void UpdatePrintJobProgress(float progress)
         {
             System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
-            _printingProgress.ProgressValue = progress;
+            //_printingProgress.ProgressValue = progress;
+            
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            () =>
+            {
+                // Your UI update code goes here!
+                _printingProgress.ProgressValue = progress;
+            });
         }
 
         /// <summary>
