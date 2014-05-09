@@ -17,6 +17,7 @@
 
 @property (strong, nonatomic) SimplePing* pinger;
 @property (assign, nonatomic) BOOL respondedToPing;
+@property (assign, nonatomic) BOOL cancelledToBackground;
 
 -(void) getPrinterStatus;
 
@@ -31,6 +32,8 @@
     if(self != nil)
     {
         self.ipAddress = [NSString stringWithString:ipAddress];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
     }
     
     return self;
@@ -38,7 +41,8 @@
 
 - (void)dealloc
 {
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 - (void)getPrinterStatus
@@ -60,7 +64,6 @@
         self.pinger = [SimplePing simplePingWithHostName:self.ipAddress];
         self.pinger.delegate = self;
         
-        [[BackgroundManager sharedManager] addCancellableObject:self];
         [self.pinger start];
     }
 }
@@ -84,8 +87,6 @@
         [self.pollingTimer invalidate];
         self.pollingTimer = nil;
     }
-    
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
 }
 
 - (BOOL)isPolling
@@ -146,20 +147,24 @@
 #endif
 }
 
-#pragma mark - BackgroundCancellable
-- (void)cancelToBackground
+#pragma mark - Notifications
+
+- (void)willResignActive
 {
-    [self.pinger stop];
+    if (self.isPolling)
+    {
+        self.cancelledToBackground = YES;
+        [self stopPrinterStatusPolling];
+    }
 }
 
-- (void)resumeFromBackground
+- (void)willEnterForeground
 {
-    [self.pinger start];
-}
-
-- (BOOL)shouldResumeOnEnterForeground
-{
-    return YES;
+    if (self.cancelledToBackground == YES)
+    {
+        self.cancelledToBackground = NO;
+        [self startPrinterStatusPolling];
+    }
 }
 
 @end

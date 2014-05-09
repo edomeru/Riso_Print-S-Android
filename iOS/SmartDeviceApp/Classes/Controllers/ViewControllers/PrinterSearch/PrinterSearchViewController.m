@@ -144,11 +144,6 @@
     self.slideDirection = SlideRight;
 }
 
-- (void)dealloc
-{
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -287,8 +282,6 @@
         return;
     }
 
-    [[BackgroundManager sharedManager] addCancellableObject:self];
-    
     // clear the lists
 #if SORT_SEARCH_RESULTS
     [self.listOldPrinterNames removeAllObjects];
@@ -321,7 +314,6 @@
 
 - (void)searchEndedwithResult:(BOOL)printerFound
 {
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
     // hide the searching indicator
     [self.refreshControl endRefreshing];
     [self.refreshControl setHidden:YES];
@@ -483,23 +475,6 @@
 - (CGFloat)tableView:(UITableView*)tableView heightForRowAtIndexPath:(NSIndexPath*)indexPath
 {
     return 60.0f;
-}
-
-#pragma mark - BackgroundManagerCancellable
-- (void)cancelToBackground
-{
-    [self.printerManager stopSearching];
-}
-
-- (void)resumeFromBackground
-{
-    [[BackgroundManager sharedManager] removeCancellableObject:self];
-    [self refresh];
-}
-
-- (BOOL)shouldResumeOnEnterForeground
-{
-    return YES;
 }
 
 @end

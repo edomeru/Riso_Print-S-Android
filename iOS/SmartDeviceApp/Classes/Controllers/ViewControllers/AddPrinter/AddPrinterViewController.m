@@ -50,6 +50,8 @@
  */
 - (void)dismissKeypad;
 
+- (void)savePrinter;
+
 /**
  Adds a full-capability printer (for failed manual snmp search)
  */
@@ -152,6 +154,31 @@
 
 - (IBAction)onSave:(UIButton *)sender
 {
+    [self savePrinter];
+}
+
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.enBooklet = YES;
+    pd.enStaple = YES;
+    pd.enFinisher23Holes = NO;
+    pd.enFinisher24Holes = YES;
+    pd.enTrayAutoStacking = YES;
+    pd.enTrayFaceDown = YES;
+    pd.enTrayStacking = YES;
+    pd.enTrayTop = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
+    
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
+}
+
+- (void)savePrinter
+{
     [self dismissKeypad];
     
     // is it still possible to add a printer
@@ -213,26 +240,6 @@
     [self.textIP setEnabled:NO];
 }
 
-- (void)addFullCapabilityPrinter:(NSString *)ipAddress
-{
-    PrinterDetails *pd = [[PrinterDetails alloc] init];
-    pd.ip = ipAddress;
-    pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet = YES;
-    pd.enStaple = YES;
-    pd.enFinisher23Holes = NO;
-    pd.enFinisher24Holes = YES;
-    pd.enTrayAutoStacking = YES;
-    pd.enTrayFaceDown = YES;
-    pd.enTrayStacking = YES;
-    pd.enTrayTop = YES;
-    pd.enLpr = YES;
-    pd.enRaw = YES;
-    
-    [self.printerManager registerPrinter:pd];
-    self.hasAddedPrinters = YES;
-}
-
 #pragma mark - PrinterSearchDelegate
 
 - (void)searchEndedwithResult:(BOOL)printerFound
@@ -291,7 +298,14 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    [textField resignFirstResponder];
     [self dismissKeypad];
+    
+    if (textField.text.length > 0)
+    {
+        [self savePrinter];
+    }
+
     return YES;
 }
 
