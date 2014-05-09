@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
@@ -76,6 +77,15 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mListView.setLockScrollWhileRefreshing(false);
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
+        mListView.setTextPullToRefresh(null);
+        mListView.setTextReleaseToRefresh(null);
+        mListView.setTextRefreshing(null);
+        
+        RelativeLayout.LayoutParams progressLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_spinner).getLayoutParams();
+        progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        
+        RelativeLayout.LayoutParams arrowLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_image).getLayoutParams();
+        arrowLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
     }
     
     /** {@inheritDoc} */

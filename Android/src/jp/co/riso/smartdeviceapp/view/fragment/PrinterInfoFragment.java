@@ -9,10 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -45,13 +42,11 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
-    private TextView mStatus = null;
     private Switch mDefaultPrinter = null;
     private Spinner mPort = null;
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
-    Timer mUpdateStatusTimer = null;
     
     /** {@inheritDoc} */
     @Override
@@ -73,7 +68,6 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         
         mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
-        mStatus = (TextView) view.findViewById(R.id.inputStatus);
         mPort = (Spinner) view.findViewById(R.id.inputPort);
         mPort.setOnItemSelectedListener(this);
         
@@ -123,25 +117,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void onPause() {
-        super.onPause();
-        
-        if (mUpdateStatusTimer != null) {
-            mUpdateStatusTimer.cancel();
-            mUpdateStatusTimer = null;
-        }
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateOnlineStatus();
-    }
-    
+  
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -152,36 +128,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void setPrinter(Printer printer) {
         mPrinter = printer;
     }
-    
-    // ================================================================================
-    // Private Methods
-    // ================================================================================
-    
-    /**
-     * Updates the online/off-line status of the Printer
-     */
-    public void updateOnlineStatus() {
-        
-        if (mUpdateStatusTimer != null) {
-            return;
-        }
-        
-        mUpdateStatusTimer = new Timer();
-        mUpdateStatusTimer.schedule(new TimerTask() {
-            
-            @Override
-            public void run() {
-                try {
-                    if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
-                        mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
-                    }
-                } catch (Exception e) {
-                    mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
-                }
-            }
-        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
-    }
-    
+ 
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================

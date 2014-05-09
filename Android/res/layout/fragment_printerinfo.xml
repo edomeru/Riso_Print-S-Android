@@ -102,39 +102,6 @@
         android:layout_marginLeft="@dimen/printers_sub_separator_padding"
         android:background="@color/theme_light_1" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/printers_row_height"
-        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
-        android:layout_marginRight="@dimen/printers_sub_separator_padding"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="@string/ids_lbl_printer_status"
-            android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" />
-
-        <TextView
-            android:id="@+id/inputStatus"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="@string/ids_lbl_printer_status_offline"
-            android:textColor="@color/theme_light_1"
-            android:textSize="@dimen/printers_name_font_size" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_size"
-        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
-        android:background="@color/theme_light_1" />
 
     <LinearLayout
         android:layout_width="match_parent"
