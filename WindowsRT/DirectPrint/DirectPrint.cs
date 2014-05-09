@@ -113,16 +113,16 @@ namespace DirectPrint
 
             // Prepare PJL header
             string pjl_header = "";
-            //pjl_header += PJL_ESCAPE;
-            //pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
-            //pjl_header += PJL_LANGUAGE;
+            pjl_header += PJL_ESCAPE;
+            pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
+            pjl_header += PJL_LANGUAGE;
             int pjl_header_size = pjl_header.Length;
 
             // Prepare PJL footer
             string pjl_footer = "";
-            //pjl_footer += PJL_ESCAPE;
-            //pjl_footer += PJL_EOJ;
-            //pjl_footer += PJL_ESCAPE;
+            pjl_footer += PJL_ESCAPE;
+            pjl_footer += PJL_EOJ;
+            pjl_footer += PJL_ESCAPE;
             int pjl_footer_size = pjl_footer.Length;
 
             ////
@@ -308,9 +308,8 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            string test002 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -399,7 +398,7 @@ namespace DirectPrint
                 cts.CancelAfter(10000);//set timeout value
                 while (!datareceived)
                 {
-                    if (socket != null) socket.read();
+                    //if (socket != null) socket.read();
                     // wait for data
                     // read data
                 }

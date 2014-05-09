@@ -113,7 +113,6 @@ namespace DirectPrint
             if (socket != null)
                 try
                 {
-                    /*
                     DataReader reader = new DataReader(socket.InputStream);
                     // Set inputstream options so that we don't have to know the data size
                     await reader.LoadAsync(1);
@@ -126,7 +125,6 @@ namespace DirectPrint
                     }
 
                     reader.DetachStream();
-                    */
                 }
                 catch (Exception exception)
                 {
