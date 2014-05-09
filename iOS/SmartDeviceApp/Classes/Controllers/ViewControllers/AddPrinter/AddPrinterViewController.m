@@ -122,28 +122,10 @@
     self.printerManager.searchDelegate = self;
     self.hasAddedPrinters = NO;
     
-    // setup the header buttons
+    [self.progressIndicator setHidden:YES];
+    [self.saveButton setHidden:NO];
     [self.saveButton setEnabled:NO];
-}
-
-- (void)addFullCapabilityPrinter:(NSString *)ipAddress
-{
-    PrinterDetails *pd = [[PrinterDetails alloc] init];
-    pd.ip = ipAddress;
-    pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet = YES;
-    pd.enStaple = YES;
-    pd.enFinisher23Holes = NO;
-    pd.enFinisher24Holes = YES;
-    pd.enTrayAutoStacking = YES;
-    pd.enTrayFaceDown = YES;
-    pd.enTrayStacking = YES;
-    pd.enTrayTop = YES;
-    pd.enLpr = YES;
-    pd.enRaw = YES;
-    
-    [self.printerManager registerPrinter:pd];
-    self.hasAddedPrinters = YES;
+    [self.textIP setEnabled:YES];
 }
 
 #pragma mark - Segue
@@ -209,12 +191,13 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertHelper displayResult:kAlertResultErrNoNetwork
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
-        return;
-        
+
         [self addFullCapabilityPrinter:trimmedIP];
+        
+        return;
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
@@ -225,11 +208,29 @@
     
     // if UI needs to do other things, do it here
     
-    // show the searching indicator
     [self.progressIndicator startAnimating];
+    [self.saveButton setHidden:YES];
+    [self.textIP setEnabled:NO];
+}
+
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.enBooklet = YES;
+    pd.enStaple = YES;
+    pd.enFinisher23Holes = NO;
+    pd.enFinisher24Holes = YES;
+    pd.enTrayAutoStacking = YES;
+    pd.enTrayFaceDown = YES;
+    pd.enTrayStacking = YES;
+    pd.enTrayTop = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
     
-    // disable the save button
-    [self.saveButton setEnabled:NO];
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
 }
 
 #pragma mark - PrinterSearchDelegate
@@ -239,18 +240,16 @@
     if (!printerFound)
     {
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                        withTitle:kAlertTitlePrintersSearch
-                      withDetails:nil];
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         
         NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
         [self addFullCapabilityPrinter:trimmedIP];
     }
 
-    // hide the searching indicator
     [self.progressIndicator stopAnimating];
-    
-    // re-enable the save button
-    [self.saveButton setEnabled:YES];
+    [self.saveButton setHidden:NO];
+    [self.textIP setEnabled:YES];
     
     // if this is an iPad, reload the center panel
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -271,6 +270,7 @@
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
+        
         self.hasAddedPrinters = YES;
     }
     else

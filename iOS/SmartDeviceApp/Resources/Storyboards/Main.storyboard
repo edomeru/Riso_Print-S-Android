@@ -1045,14 +1045,21 @@
                                             <action selector="onSave:" destination="Awv-gP-Onf" eventType="touchUpInside" id="sGv-uM-GRM"/>
                                         </connections>
                                     </button>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="TyO-Rg-RpP" userLabel="Progress Indicator">
+                                        <rect key="frame" x="228" y="7" width="37" height="37"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="iMi-MC-7W1" firstAttribute="top" secondItem="rp9-FN-Vgd" secondAttribute="top" id="1ll-Z9-6vw"/>
+                                    <constraint firstAttribute="trailing" secondItem="TyO-Rg-RpP" secondAttribute="trailing" constant="5" id="EU8-D5-q53"/>
                                     <constraint firstItem="iMi-MC-7W1" firstAttribute="leading" secondItem="rp9-FN-Vgd" secondAttribute="leading" constant="16" id="GaS-1Y-gZO"/>
                                     <constraint firstAttribute="centerY" secondItem="kAx-cM-pCZ" secondAttribute="centerY" id="Jac-aP-p8k"/>
                                     <constraint firstAttribute="height" constant="48" id="Mnb-7J-CAx"/>
                                     <constraint firstAttribute="trailing" secondItem="kAx-cM-pCZ" secondAttribute="trailing" constant="8" id="cw2-OT-iGo"/>
+                                    <constraint firstAttribute="centerY" secondItem="TyO-Rg-RpP" secondAttribute="centerY" constant="-1" id="eqk-MN-XZS"/>
                                     <constraint firstAttribute="centerY" secondItem="iMi-MC-7W1" secondAttribute="centerY" id="oDx-yk-f2e"/>
                                 </constraints>
                             </view>
@@ -1079,17 +1086,10 @@
                                             <outlet property="delegate" destination="Awv-gP-Onf" id="E9F-9Z-VnN"/>
                                         </connections>
                                     </textField>
-                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="TyO-Rg-RpP" userLabel="Progress Indicator">
-                                        <rect key="frame" x="117" y="350" width="37" height="37"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="centerY" secondItem="TyO-Rg-RpP" secondAttribute="centerY" id="33O-gH-Ice"/>
                                     <constraint firstItem="sR4-xY-eU6" firstAttribute="top" secondItem="eHW-bw-Tw0" secondAttribute="top" constant="11" id="ARN-JK-svE"/>
-                                    <constraint firstAttribute="centerX" secondItem="TyO-Rg-RpP" secondAttribute="centerX" id="CsD-tb-tLO"/>
                                     <constraint firstItem="XFU-Op-cWZ" firstAttribute="top" secondItem="eHW-bw-Tw0" secondAttribute="top" constant="15" id="DjL-6A-KAC"/>
                                     <constraint firstItem="XFU-Op-cWZ" firstAttribute="leading" secondItem="eHW-bw-Tw0" secondAttribute="leading" constant="17" id="Hi9-sm-gxC"/>
                                     <constraint firstItem="sR4-xY-eU6" firstAttribute="leading" secondItem="XFU-Op-cWZ" secondAttribute="trailing" constant="8" symbolic="YES" id="JdM-fd-sM2"/>
@@ -1645,7 +1645,7 @@
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Mc-ty-cvj" userLabel="Content Parent View">
-                                <rect key="frame" x="0.0" y="48" width="320" height="412"/>
+                                <rect key="frame" x="0.0" y="48" width="320" height="432"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dM2-UF-FWF" userLabel="Content" customClass="DefaultView">
@@ -1819,9 +1819,15 @@
                                             <action selector="onSave:" destination="vvM-i0-l3B" eventType="touchUpInside" id="UKc-yR-OAw"/>
                                         </connections>
                                     </button>
+                                    <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="g0d-xd-vqb" userLabel="Progress Indicator">
+                                        <rect key="frame" x="228" y="7" width="37" height="37"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.32156862745098036" green="0.027450980392156862" blue="0.71372549019607845" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="g0d-xd-vqb" secondAttribute="trailing" constant="5" id="5JK-hs-MRy"/>
                                     <constraint firstAttribute="centerY" secondItem="KSA-EO-Vex" secondAttribute="centerY" id="BV4-Ik-gM9"/>
                                     <constraint firstItem="ydC-sb-GhE" firstAttribute="leading" secondItem="2fv-Qc-fr2" secondAttribute="trailing" constant="8" id="CHj-0i-kJX"/>
                                     <constraint firstAttribute="centerY" secondItem="2fv-Qc-fr2" secondAttribute="centerY" id="IgO-r6-EbD"/>
@@ -1830,6 +1836,7 @@
                                     <constraint firstAttribute="trailing" secondItem="ydC-sb-GhE" secondAttribute="trailing" constant="8" id="eJF-KR-aqB"/>
                                     <constraint firstItem="2fv-Qc-fr2" firstAttribute="leading" secondItem="KSA-EO-Vex" secondAttribute="trailing" constant="8" id="eUO-6O-XLY"/>
                                     <constraint firstAttribute="height" constant="48" id="p2n-Mq-xAj"/>
+                                    <constraint firstAttribute="centerY" secondItem="g0d-xd-vqb" secondAttribute="centerY" constant="-1" id="qU5-A0-PVq"/>
                                     <constraint firstItem="KSA-EO-Vex" firstAttribute="leading" secondItem="uTH-dB-3AV" secondAttribute="leading" constant="8" id="uBU-AD-q2C"/>
                                     <constraint firstAttribute="centerY" secondItem="ydC-sb-GhE" secondAttribute="centerY" id="yZ9-EW-qM6"/>
                                 </constraints>
@@ -1858,20 +1865,13 @@
                                             <outlet property="delegate" destination="vvM-i0-l3B" id="b4I-Yi-7Xj"/>
                                         </connections>
                                     </textField>
-                                    <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="g0d-xd-vqb" userLabel="Progress Indicator">
-                                        <rect key="frame" x="117" y="232" width="37" height="37"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="centerY" secondItem="g0d-xd-vqb" secondAttribute="centerY" id="0ek-bP-cNn"/>
                                     <constraint firstItem="bWK-ma-UK9" firstAttribute="top" secondItem="QjV-Lm-YW6" secondAttribute="top" constant="15" id="0s6-4w-5YR"/>
                                     <constraint firstItem="bWK-ma-UK9" firstAttribute="leading" secondItem="QjV-Lm-YW6" secondAttribute="leading" constant="17" id="5ys-Cq-1KS"/>
                                     <constraint firstAttribute="trailing" secondItem="Ok1-kX-gI3" secondAttribute="trailing" constant="11" id="Bui-rk-jWk"/>
                                     <constraint firstItem="Ok1-kX-gI3" firstAttribute="leading" secondItem="bWK-ma-UK9" secondAttribute="trailing" constant="8" id="Kbv-AP-Xk9"/>
-                                    <constraint firstAttribute="centerX" secondItem="g0d-xd-vqb" secondAttribute="centerX" id="TWK-20-8Gy"/>
                                     <constraint firstItem="Ok1-kX-gI3" firstAttribute="centerY" secondItem="bWK-ma-UK9" secondAttribute="centerY" id="mLY-7T-hv8"/>
                                 </constraints>
                             </view>
@@ -1910,7 +1910,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="PrintSettingsTableViewController" id="pPd-nr-YZr" customClass="PrintSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -3995,9 +3995,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="6HN-Y0-69S"/>
-        <segue reference="a4U-VG-JlJ"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="5pT-ga-236"/>
+        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="CWW-vD-UgO"/>
+        <segue reference="a4U-VG-JlJ"/>
     </inferredMetricsTieBreakers>
 </document>
