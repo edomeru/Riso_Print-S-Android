@@ -177,19 +177,21 @@ namespace SmartDeviceApp.ViewModels
         {
             string caption = "";
             string content = "";
+            string buttonText = "";
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
             if (isSuccessful)
             {
                 DialogService.Instance.ShowError("IDS_LBL_ADD_SUCCESSFUL", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                
-                
+
+                return;
             }
             else
             {
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    content = "The new printer is not online but was added successfully with default printer settings.";
+                    content = loader.GetString("IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
+                        loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
                 }
                 else
                 {
@@ -197,14 +199,15 @@ namespace SmartDeviceApp.ViewModels
                     content = loader.GetString("IDS_ERR_MSG_NETWORK_ERROR");
                 }
             }
-            caption = "Add Printer";
+            caption = loader.GetString("IDS_LBL_ADD_PRINTER");
+            buttonText = loader.GetString("IDS_LBL_OK");
             //clear data
             IpAddress = "";
             Username = "";
             Password = "";
 
             setVisibilities();
-            DisplayMessage(caption, content);
+            DisplayMessage(caption, content, buttonText);
         }
 
         public void setVisibilities()
@@ -213,9 +216,9 @@ namespace SmartDeviceApp.ViewModels
             IsProgressRingVisible = false;
         }
 
-        public void DisplayMessage(string caption, string content)
+        public void DisplayMessage(string caption, string content, string buttonText)
         {
-            DialogService.Instance.ShowMessage(content, caption, "Ok", null);
+            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, null);
         }
 
         private void SetViewMode(VisibleRightPane viewMode)

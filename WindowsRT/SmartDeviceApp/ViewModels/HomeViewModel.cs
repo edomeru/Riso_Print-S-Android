@@ -29,6 +29,8 @@ namespace SmartDeviceApp.ViewModels
 {
     public class HomeViewModel : ViewModelBase
     {
+        private const string PDF_EXTENSION = ".pdf";
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
         private ViewControlViewModel _viewControlViewModel;
@@ -94,10 +96,10 @@ namespace SmartDeviceApp.ViewModels
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
                 openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-                openPicker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+                openPicker.ViewMode = Windows.Storage.Pickers.PickerViewMode.List;
 
                 openPicker.FileTypeFilter.Clear();
-                openPicker.FileTypeFilter.Add(".pdf");
+                openPicker.FileTypeFilter.Add(PDF_EXTENSION);
 
                 Windows.Storage.StorageFile file = await openPicker.PickSingleFileAsync();
                 if (file != null)
@@ -112,13 +114,10 @@ namespace SmartDeviceApp.ViewModels
                     }
                     IsProgressRingActive = false;
                 }
-                else
-                {
-                    throw new ArgumentException();
-                }
             }
             catch (Exception ex)
             {
+                IsProgressRingActive = false;
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }

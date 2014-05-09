@@ -50,6 +50,7 @@ namespace SmartDeviceApp.ViewModels
          * */
         public event SmartDeviceApp.Controllers.PrinterController.OnNavigateToEventHandler OnNavigateToEventHandler;
         public event SmartDeviceApp.Controllers.PrinterController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.PollingHandler PollingHandler;
 
         public event SmartDeviceApp.Controllers.PrinterController.DeletePrinterHandler DeletePrinterHandler;
 
@@ -116,23 +117,42 @@ namespace SmartDeviceApp.ViewModels
 
             Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
+            Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
             Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
 
             
         }
 
+        private void ScreenModeChanged(Common.Enum.ScreenMode screenMode)
+        {
+            if(screenMode != Common.Enum.ScreenMode.Printers)
+            {
+                if (PollingHandler != null)
+                    PollingHandler(false);
+            }
+        }
+
         private void EnableMode(Common.Enum.ViewMode viewMode)
         {
+            
             if (_gestureController != null)
             {
-                if (viewMode == Common.Enum.ViewMode.FullScreen)
-                {
-                    _gestureController.EnableGestures();
-                }
+                var viewControlVM = new ViewModelLocator().ViewControlViewModel;
+                if (viewControlVM.ScreenMode == Common.Enum.ScreenMode.Printers)
+                { 
+                    if (viewMode == Common.Enum.ViewMode.FullScreen)
+                    {
+                        _gestureController.EnableGestures();
 
-                if (viewMode == Common.Enum.ViewMode.MainMenuPaneVisible)
-                {
-                    _gestureController.DisableGestures();
+                        //start polling
+                        PollingHandler(true);
+                    }
+                    else
+                    {
+                        //end polling
+                        PollingHandler(false);
+                        _gestureController.DisableGestures();
+                    }
                 }
             }
             
@@ -169,9 +189,9 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetRightPaneMode(VisibleRightPane visibleRightPane)
         {
-            if (_gestureController != null)
+            var viewControlVM = new ViewModelLocator().ViewControlViewModel;
+            if (viewControlVM.ScreenMode == Common.Enum.ScreenMode.Printers)
             {
-                _gestureController.DisableGestures();
                 switch (visibleRightPane)
                 {
                     case VisibleRightPane.Pane1:
