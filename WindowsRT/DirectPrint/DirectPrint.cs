@@ -113,7 +113,6 @@ namespace DirectPrint
             // Prepare PJL header
             string pjl_header = "";
             pjl_header += PJL_ESCAPE;
-            //***create_pjl(pjl_header, print_job->print_settings);
             pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
             pjl_header += PJL_LANGUAGE;
             int pjl_header_size = pjl_header.Length;
@@ -379,6 +378,7 @@ namespace DirectPrint
                 }
                 return;
             }
+            socket.disconnect();
 
             print_job.progress = 100.0f;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);

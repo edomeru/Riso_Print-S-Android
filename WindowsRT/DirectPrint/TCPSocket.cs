@@ -41,6 +41,14 @@ namespace DirectPrint
             await socket.ConnectAsync(h, port);
         }
 
+        internal async void disconnect()
+        {
+            if (socket != null)
+            {
+                socket.Dispose();
+            }
+        }
+
         internal async void write(byte[] data, int a,int b, bool waitresponse = true)
         {
             if (socket != null)
