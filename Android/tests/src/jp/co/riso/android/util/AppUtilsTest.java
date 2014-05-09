@@ -532,7 +532,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testGetCacheSizeBasedOnMemoryClass_Invalid() {
         int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(null);
         
-        assertTrue(memoryClass > 0);
+        assertTrue(memoryClass == 0);
     }
     
     //================================================================================
