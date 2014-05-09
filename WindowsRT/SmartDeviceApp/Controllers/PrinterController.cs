@@ -227,7 +227,8 @@ namespace SmartDeviceApp.Controllers
         {
             if(willPoll)
             {
-                startPolling();
+                if (PrinterList.Count > 0)
+                    startPolling();
             }
             else
             {
@@ -266,18 +267,22 @@ namespace SmartDeviceApp.Controllers
         private async Task updateStatus()
         {
                 int i = 0;
+            if (PrinterList.Count > 0)
+            {
                 do
                 {
-                    Printer printer = _printerListTemp.ElementAt(i);
-                    //request for eachs printer's printer status
-                    System.Diagnostics.Debug.WriteLine(printer.IpAddress);
+                    
+                        Printer printer = _printerListTemp.ElementAt(i);
+                        //request for eachs printer's printer status
 
-                    NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
-                    await NetworkController.Instance.pingDevice(printer.IpAddress);
+                        NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
+                        await NetworkController.Instance.pingDevice(printer.IpAddress);
 
-                    i++;
+                        i++;
+                    
                 }
                 while (i < _printerListTemp.Count && isPolling);
+            }
         }
 
         private async void handlePrinterStatus(string ip, bool isOnline)
@@ -291,14 +296,10 @@ namespace SmartDeviceApp.Controllers
                     if (isPolling)
                     { 
                         Printer printer = _printerList.First(x => x.IpAddress == ip);
-                        System.Diagnostics.Debug.WriteLine(printer.IpAddress);
                         int index = _printerList.IndexOf(printer);
 
                         //update status
                         printer.IsOnline = isOnline;
-
-                        System.Diagnostics.Debug.WriteLine(index);
-                        System.Diagnostics.Debug.WriteLine(isOnline);
                     }
                 }
                 catch(Exception e)
@@ -510,6 +511,8 @@ namespace SmartDeviceApp.Controllers
 
 
                 _addPrinterViewModel.handleAddIsSuccessful(false);
+
+                
             });
 
             //if added from printer search
@@ -712,6 +715,9 @@ namespace SmartDeviceApp.Controllers
             {
                 DeletePrinterItemsEventHandler(printer);
             }
+
+            if (PrinterList.Count == 0 && isPolling)
+                endPolling();
 
             return true;
         }
