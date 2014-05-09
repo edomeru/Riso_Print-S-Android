@@ -157,7 +157,7 @@ namespace DirectPrint
             socket.write(buffer, 0, pos);
             /////////////////////////////////////////////////////////
             /// READ ACK
-            if (waitForAck() != 0)
+            if (waitForAck() != 0)//TODO: no response here:
             {
                 if (print_job.callback != null)
                 {
@@ -210,9 +210,8 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            string test000 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -237,9 +236,7 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            string test001 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -293,7 +290,7 @@ namespace DirectPrint
             fileDataReader.ReadBytes(filebuffer);
 
 
-            ulong total_data_size = (ulong)file_size;// +(ulong)pjl_header_size + (ulong)pjl_footer_size;
+            ulong total_data_size = (ulong)file_size +(ulong)pjl_header_size + (ulong)pjl_footer_size;
             String total_data_size_str = String.Format("{0}", (ulong)total_data_size);
 
             float data_step = (70.0f / ((float)file_size / BUFFER_SIZE));
@@ -330,8 +327,13 @@ namespace DirectPrint
 
             //***write buffer to socket
             //socket.write(filebuffer, 0, pos);
+            
             ulong totalbytes = 0;
             int bytesRead = 0;
+
+            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length, false);
+            totalbytes += (ulong)pjl_header.Length;
+
             MemoryStream fstream = new MemoryStream(filebuffer);
             while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
@@ -349,6 +351,9 @@ namespace DirectPrint
                     return;
                 }
             }
+            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length, false);
+            totalbytes += (ulong)pjl_footer.Length;
+
             //fstream.Dispose();
 
             if (total_data_size != totalbytes)
@@ -387,11 +392,22 @@ namespace DirectPrint
 
         private int waitForAck()
         {
+            DateTime starttime = DateTime.Now.ToUniversalTime();
             while (!datareceived)
             {
+                //TODO: add timeout
                 // wait for data
+                if (DateTime.Now.Subtract(starttime).Seconds > 30)
+                {
+                    return -1;
+                }
             }
             datareceived = false;
+
+            if (ack != 0)
+            {
+                return ack;
+            }
 
             return ack;
         }

@@ -14,6 +14,7 @@ using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Models;
 using System;
 using System.Text;
+using Windows.Foundation;
 using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
@@ -69,7 +70,12 @@ namespace SmartDeviceApp.Controllers
         {
             _startTime = DateTime.Now;
             _directPrint = new DirectPrint.DirectPrint();
-            _directPrint.startLPRPrint(_printJob);
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            (workItem) =>
+            {
+                _directPrint.startLPRPrint(_printJob);
+            });
+            
         }
 
         /// <summary>
