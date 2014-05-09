@@ -113,16 +113,16 @@ namespace DirectPrint
 
             // Prepare PJL header
             string pjl_header = "";
-            pjl_header += PJL_ESCAPE;
-            pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
-            pjl_header += PJL_LANGUAGE;
+            //pjl_header += PJL_ESCAPE;
+            //pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
+            //pjl_header += PJL_LANGUAGE;
             int pjl_header_size = pjl_header.Length;
 
             // Prepare PJL footer
             string pjl_footer = "";
-            pjl_footer += PJL_ESCAPE;
-            pjl_footer += PJL_EOJ;
-            pjl_footer += PJL_ESCAPE;
+            //pjl_footer += PJL_ESCAPE;
+            //pjl_footer += PJL_EOJ;
+            //pjl_footer += PJL_ESCAPE;
             int pjl_footer_size = pjl_footer.Length;
 
             ////
