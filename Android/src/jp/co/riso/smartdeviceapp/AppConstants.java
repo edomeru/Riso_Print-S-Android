@@ -13,6 +13,8 @@ public class AppConstants {
     public static final long APP_SPLASH_DURATION = 2000;
     public static final String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
     
+    public static final String CONST_PDF_DIR = "pdfs";
+    
     // Part of Memory to be allocated to Print Preview
     // Bit shift operator
     // Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
