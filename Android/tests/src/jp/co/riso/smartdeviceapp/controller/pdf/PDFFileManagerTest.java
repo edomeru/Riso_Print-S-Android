@@ -50,11 +50,31 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager = new PDFFileManager(this);
         assertNotNull(mPdfManager);
         
-        PDFFileManager.setHasNewPDFData(true);
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), true);
     }
     
     protected void tearDown() throws Exception {
         super.tearDown();
+    }
+    
+    //================================================================================
+    // Tests - get/set has new PDF Data
+    //================================================================================
+    
+    public void testGetSetNewPDFData_Valid() {
+        boolean val = PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext());
+        assertTrue(val);
+        
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
+        assertFalse(PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext()));
+    }
+    
+    public void testGetSetNewPDFData_NullContext() {
+        boolean val = PDFFileManager.hasNewPDFData(null);
+        assertFalse(val);
+        
+        PDFFileManager.setHasNewPDFData(null, false);
+        assertFalse(PDFFileManager.hasNewPDFData(null));
     }
     
     //================================================================================

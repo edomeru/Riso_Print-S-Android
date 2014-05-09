@@ -322,7 +322,7 @@ public final class AppUtils {
      */
     // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
-        if (variableName == null) {
+        if (variableName == null || c == null) {
             return defaultId;
         }
         
@@ -346,6 +346,10 @@ public final class AppUtils {
      * @return cache size
      */
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
+        if (activity == null) {
+            return 0;
+        }
+        
         ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
         
         // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.

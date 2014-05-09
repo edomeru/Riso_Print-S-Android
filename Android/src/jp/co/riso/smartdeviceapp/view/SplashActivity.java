@@ -13,6 +13,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
@@ -162,7 +163,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         
 
         // Notify PDF File Data that there is a new PDF
-        PDFFileManager.setHasNewPDFData(data != null);
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), data != null);
         
         if (data != null) {
             launchIntent.setData(data);

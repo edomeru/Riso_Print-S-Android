@@ -15,6 +15,7 @@ import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -118,10 +119,6 @@ public class PDFFileManager {
             return;
         }
         
-        if (SmartDeviceApp.getAppContext() == null) {
-            return;
-        }
-        
         File file = new File(path);
         
         mPath = path;
@@ -130,7 +127,7 @@ public class PDFFileManager {
         
         if (mPath.equalsIgnoreCase(mSandboxPath)) {
             // No need to copy
-            PDFFileManager.setHasNewPDFData(false);
+            PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
         }
     }
     
@@ -185,9 +182,35 @@ public class PDFFileManager {
         return path;
     }
     
-    public static void setHasNewPDFData(boolean newData) {
+    /**
+     * Checks whether a new PDF is available through open-in
+     * 
+     * @param context
+     *            Application instance context
+     * @return A new PDF is available
+     */
+    public static boolean hasNewPDFData(Context context) {
+        if (context == null) {
+            return false;
+        }
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(KEY_NEW_PDF_DATA, false);
+    }
+    
+    /**
+     * @param context
+     *            Application instance context
+     * @param newData
+     *            New value for has PDF Flag
+     */
+    public static void setHasNewPDFData(Context context, boolean newData) {
+        if (context == null) {
+            return;
+        }
+        
         // Notify PDF File Data that there is a new PDF
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, newData);
         edit.apply();
@@ -381,17 +404,12 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
-            if (SmartDeviceApp.getAppContext() == null) {
-                return PDF_OPEN_FAILED;
-            }
-            
             int status = openDocument(mPath);
             closeDocument();
             
             if (status == PDF_OK) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-                if (prefs.getBoolean(KEY_NEW_PDF_DATA, false)) {
-                    PDFFileManager.setHasNewPDFData(false);
+                if (PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext())) {
+                    PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
                     
                     try {
                         FileUtils.copy(new File(mPath), new File(mSandboxPath));

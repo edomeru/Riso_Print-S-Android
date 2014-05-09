@@ -6,9 +6,11 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.test.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.Display;
 import android.view.View;
@@ -408,12 +410,27 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     
     public void testChangeChildrenFont_ValidViewGroupValidFont() {
         LinearLayout ll = new LinearLayout(getActivity());
+        LinearLayout ll2 = new LinearLayout(getActivity());
         
         ll.addView(new TextView(getActivity()));
         ll.addView(new View(getActivity()));
         ll.addView(new Spinner(getActivity()));
         ll.addView(new EditText(getActivity()));
         ll.addView(new Switch(getActivity()));
+        ll.addView(ll2);
+
+        TextView typeFace = new TextView(getActivity());
+        typeFace.setTypeface(null);
+        ll.addView(typeFace);
+        typeFace = new TextView(getActivity());
+        typeFace.setTypeface(SmartDeviceApp.getAppFont());
+        ll.addView(typeFace);
+        
+        ll2.addView(new TextView(getActivity()));
+        ll2.addView(new View(getActivity()));
+        ll2.addView(new Spinner(getActivity()));
+        ll2.addView(new EditText(getActivity()));
+        ll2.addView(new Switch(getActivity()));
         
         AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
     }
@@ -438,6 +455,24 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         AppUtils.changeChildrenFont(null, null);
     }
     
+    public void testChangeChildrenFont_InvalidAccess() {
+        LinearLayout ll = new LinearLayout(getActivity());
+        
+        ll.addView(new MockClass(getActivity()));
+        
+        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+    }
+    
+    public void testChangeChildrenFont_TypeFaceNull() {
+        LinearLayout ll = new LinearLayout(getActivity());
+
+        TextView nullTypeFace = new TextView(getActivity());
+        nullTypeFace.setTypeface(null);
+        ll.addView(nullTypeFace);
+        
+        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+    }
+    
     //================================================================================
     // Tests - getResourseId
     //================================================================================
@@ -445,7 +480,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testGetResourceId_Valid() {
         int value = AppUtils.getResourseId("app_name", R.string.class, -1);
         
-        assertFalse(-1 != value);
+        assertTrue(-1 != value);
     }
 
     public void testGetResourceId_Null() {
@@ -470,5 +505,54 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int value = AppUtils.getResourseId("app_name", this.getClass(), -1);
         
         assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_InvalidAccess() {
+        int value = AppUtils.getResourseId("app_name", MockClass.class, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_InvalidArgumentAccess() {
+        int value = AppUtils.getResourseId("app_name_2", MockClass.class, -1);
+        
+        assertEquals(-1, value);
+    }
+    
+    //================================================================================
+    // Test getCacheSizeBasedOnMemoryClass
+    //================================================================================
+
+    public void testGetCacheSizeBasedOnMemoryClass_Valid() {
+        int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(getActivity());
+        
+        assertTrue(memoryClass > 0);
+    }
+
+    public void testGetCacheSizeBasedOnMemoryClass_Invalid() {
+        int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(null);
+        
+        assertTrue(memoryClass > 0);
+    }
+    
+    //================================================================================
+    // Mock Classes
+    //================================================================================
+    
+    public final class MockClass extends View {
+        @SuppressWarnings("unused") // Invoked
+        private static final int app_name = 0x7f030000;
+        public static final float app_name_2 = 0x7f030000;
+        
+        public MockClass(Context context) {
+            super(context);
+        }
+        
+        protected Typeface getTypeface() {
+            return SmartDeviceApp.getAppFont();
+        }
+        
+        protected void setTypeface(Typeface tf) {
+        }
     }
 }
