@@ -121,7 +121,7 @@ public class SettingsFragment extends BaseFragment {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(mPrefKey, s.toString());
-            editor.commit();
+            editor.apply();
         }
 
         /** {@inheritDoc} */

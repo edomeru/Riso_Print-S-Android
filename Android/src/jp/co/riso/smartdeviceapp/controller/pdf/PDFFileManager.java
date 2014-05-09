@@ -128,7 +128,7 @@ public class PDFFileManager {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(KEY_NEW_PDF_DATA, false);
-            edit.commit();
+            edit.apply();
         }
     }
     
@@ -355,7 +355,7 @@ public class PDFFileManager {
                     
                     SharedPreferences.Editor edit = prefs.edit();
                     edit.putBoolean(KEY_NEW_PDF_DATA, false);
-                    edit.commit();
+                    edit.apply();
                     
                     try {
                         FileUtils.copy(new File(mPath), new File(mSandboxPath));

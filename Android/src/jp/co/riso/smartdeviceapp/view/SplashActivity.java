@@ -81,7 +81,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             if (getIntent() != null) {
                 String action = getIntent().getAction();
                 
-                if (Intent.ACTION_VIEW.equals(action)) {
+                if (Intent.ACTION_VIEW.equals(action) ||
+                        Intent.ACTION_SEND.equals(action)) {
                     runMainActivity();
                     return;
                 }
@@ -157,6 +158,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             if (Intent.ACTION_VIEW.equals(action)) {
                 data = getIntent().getData();
+            } else if (Intent.ACTION_SEND.equals(action)) {
+                data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
             }
         }
         
@@ -171,7 +174,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         edit.commit();
-
+        
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
         
         if (isTaskRoot()) {
@@ -254,7 +257,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             SharedPreferences.Editor editor = prefs.edit();
 
             editor.putInt(AppConstants.PREF_KEY_DB_VERSION, DatabaseManager.DATABASE_VERSION);
-            editor.commit();
+            editor.apply();
         }
     }
 }

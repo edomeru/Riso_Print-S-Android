@@ -23,8 +23,11 @@ public class AppConstants {
     public static final String PREF_KEY_LOGIN_ID = "pref_key_card_id";
     public static final String PREF_DEFAULT_LOGIN_ID = "";
     
-    public static final String PREF_KEY_PIN_CODE = "pref_key_pin_code";
-    public static final String PREF_DEFAULT_PIN_CODE = "";
+    public static final String PREF_KEY_AUTH_SECURE_PRINT = "pref_key_secure_print";
+    public static final boolean PREF_DEFAULT_AUTH_SECURE_PRINT = false;
+    
+    public static final String PREF_KEY_AUTH_PIN_CODE = "pref_key_pin_code";
+    public static final String PREF_DEFAULT_AUTH_PIN_CODE = "";
     
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     public static final int CONST_TIMEOUT_PING = 100;
