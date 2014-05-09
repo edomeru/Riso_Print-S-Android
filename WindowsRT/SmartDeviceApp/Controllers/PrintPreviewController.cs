@@ -1748,16 +1748,13 @@ namespace SmartDeviceApp.Controllers
         {
             if (_selectedPrinter.Id > -1)
             {
-                // Get latest print settings since non-preview related print settings may be updated
-                _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+                //// TODO: Check network
+                //NetworkController.Instance.networkControllerPingStatusCallback =
+                //    new Action<string, bool>(GetPrinterStatus);
+                //await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
 
-                NetworkController.Instance.networkControllerPingStatusCallback =
-                    new Action<string, bool>(GetPrinterStatus);
-                await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
-            }
-            else
-            {
-                // TODO: Display no selected printer message
+                // TODO: Remove this when ping is working
+                GetPrinterStatus(null, true);
             }
         }
 
@@ -1770,6 +1767,9 @@ namespace SmartDeviceApp.Controllers
         {
             if (isOnline)
             {
+                // Get latest print settings since non-preview related print settings may be updated
+                _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+
                 // TODO: Display progress dialog
 
                 if (_directPrintController != null)
@@ -1784,10 +1784,13 @@ namespace SmartDeviceApp.Controllers
                     new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
                     new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
                 _directPrintController.SendPrintJob();
+
+                //// TODO: Remove the following line. This is for testing only.
+                //UpdatePrintJobResult(DocumentController.Instance.FileName, DateTime.Now, 0);
             }
             else
             {
-                // TODO: Display error message
+                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
         }
 
@@ -1810,6 +1813,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="progress">progress value</param>
         public void UpdatePrintJobProgress(float progress)
         {
+            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
             // TODO: Apply value to progress dialog
         }
 
@@ -1819,8 +1823,10 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">print job name</param>
         /// <param name="date">date</param>
         /// <param name="result">result</param>
-        public void UpdatePrintJobResult(string name, DateTime date, int result)
+        public async void UpdatePrintJobResult(string name, DateTime date, int result)
         {
+            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobResult:" + result);
+
             PrintJob printJob = new PrintJob()
             {
                 PrinterId = _selectedPrinter.Id,
@@ -1833,12 +1839,15 @@ namespace SmartDeviceApp.Controllers
 
             if (result == (int)PrintJobResult.Success)
             {
-                // TODO: await Cleanup();
-                // TODO: Close preview and go to home
+                // TODO: Confirm if message for success is needed here
+                DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
+                new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
+                await Cleanup();
+                await DocumentController.Instance.Unload();
             }
             else if (result == (int)PrintJobResult.Error)
             {
-                // TODO: Show error message, do not exit screen
+                DialogService.Instance.ShowError("IDS_LBL_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
 
             if (_directPrintController != null)

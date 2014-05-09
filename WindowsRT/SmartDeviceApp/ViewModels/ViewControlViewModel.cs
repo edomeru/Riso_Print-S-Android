@@ -389,16 +389,16 @@ namespace SmartDeviceApp.ViewModels
 
         private void GoToHomePageExecute()
         {
-            if (DocumentController.Instance.IsFromFilePicker)
-            {
-                _navigationService.Navigate(typeof(HomePage));
-                ScreenMode = ScreenMode.Home;
-            }
-            else
+            if (DocumentController.Instance.IsFileLoaded)
             {
                 _navigationService.Navigate(typeof(PrintPreviewPage));
                 ScreenMode = ScreenMode.PrintPreview;
                 //new ViewModelLocator().PrintPreviewViewModel.InitializeGestures();
+            }
+            else
+            {
+                _navigationService.Navigate(typeof(HomePage));
+                ScreenMode = ScreenMode.Home;
             }
             ViewMode = ViewMode.FullScreen;
             SelectedMainMenuItem = 0;
