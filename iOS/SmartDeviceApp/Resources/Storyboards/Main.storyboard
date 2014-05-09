@@ -1178,7 +1178,7 @@
                                     <constraint firstAttribute="centerY" secondItem="FUI-6T-A5e" secondAttribute="centerY" id="v8f-Ke-jzh"/>
                                 </constraints>
                             </view>
-                            <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9XV-Rp-02s">
+                            <webView opaque="NO" contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9XV-Rp-02s">
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -1262,7 +1262,7 @@
                                     <constraint firstAttribute="height" constant="48" id="ts8-vB-htP"/>
                                 </constraints>
                             </view>
-                            <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JWb-Bs-Kp2">
+                            <webView opaque="NO" contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JWb-Bs-Kp2">
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -3995,9 +3995,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ax2-Mn-NH0"/>
-        <segue reference="Ysc-8g-iB4"/>
         <segue reference="CWW-vD-UgO"/>
+        <segue reference="6HN-Y0-69S"/>
         <segue reference="a4U-VG-JlJ"/>
+        <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>
