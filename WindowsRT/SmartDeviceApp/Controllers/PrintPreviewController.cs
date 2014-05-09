@@ -161,10 +161,12 @@ namespace SmartDeviceApp.Controllers
             }
             else if (DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf)
             {
+                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
             else if (DocumentController.Instance.Result == LoadDocumentResult.UnsupportedPdf)
             {
+                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
         }

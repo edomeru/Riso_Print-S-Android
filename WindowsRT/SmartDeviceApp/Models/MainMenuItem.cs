@@ -14,8 +14,8 @@ namespace SmartDeviceApp.Models
     {
         public string Text { get; set; }
         public ICommand Command { get; set; }
-
-        public MainMenuItem(string text, ICommand command, Visibility separatorVisibility)
+        
+        public MainMenuItem(string text, ICommand command)
         {
             Text = text;
             Command = command;

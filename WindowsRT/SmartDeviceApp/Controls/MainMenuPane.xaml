@@ -32,7 +32,9 @@
         <ListView.ItemTemplate>
             <DataTemplate>
                 <local:MainMenuKeyControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                                          Index="{Binding Converter={StaticResource MainMenuItemToIndexConverter}}"
                                           Command="{Binding Command}"
+                                          GroupName="mainMenuGroup"
                                           SeparatorVisibility="{Binding Converter={StaticResource MainMenuItemToSeparatorVisibilityConverter}}"
                                           Width="{Binding Width, ElementName=mainMenuPane}"/>
             </DataTemplate>
