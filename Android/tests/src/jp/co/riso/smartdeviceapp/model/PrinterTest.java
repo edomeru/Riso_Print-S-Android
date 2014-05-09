@@ -55,7 +55,8 @@ public class PrinterTest extends TestCase {
         // Save bundle to parcel
         Parcel parcel = Parcel.obtain();
         bundlePut.writeToParcel(parcel, 0);
-
+        printer.writeToParcel(parcel, 0);
+        
         parcel.setDataPosition(0);
         Bundle bundleExtract = parcel.readBundle();
         bundleExtract.setClassLoader(Printer.class.getClassLoader());

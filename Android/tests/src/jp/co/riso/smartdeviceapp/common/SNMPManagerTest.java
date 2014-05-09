@@ -101,7 +101,7 @@ public class SNMPManagerTest extends TestCase implements
 
             mSignal.await(TIMEOUT, TimeUnit.SECONDS);
 
-            assertEquals(false, mOnFoundDevice);
+            assertEquals(true, mOnFoundDevice);
             assertEquals(true, mOnEndDiscovery);
         } catch (Exception e) {
             fail(); // Error should not be thrown

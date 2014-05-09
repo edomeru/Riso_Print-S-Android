@@ -147,6 +147,17 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
+    public void testGetDefaultPrinter_WithDefaultPrinterActivityRestarted() {
+        try {
+            int defaultPrinter = -1;
+
+            defaultPrinter = mPrinterManager.getDefaultPrinter();
+            assertEquals(true, defaultPrinter >= 0);
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
     // ================================================================================
     // Tests - isCancelled
     // ================================================================================
@@ -706,10 +717,21 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
      
-    public void testUpdateOnlineStatusTask_ValidParameters() {
+    public void testUpdateOnlineStatusTask_ValidOfflineParameters() {
+        try {                        
+            mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_OFFLINE_PRINTER_ADDRESS).execute();
+            // Check if Address is OFFLINE
+            assertEquals(false, mPrinterManager.isOnline(IPV4_OFFLINE_PRINTER_ADDRESS));
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    public void testUpdateOnlineStatusTask_ValidOnlineParameters() {
         try {
             mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_ONLINE_PRINTER_ADDRESS).execute();
-            mPrinterManager.new UpdateOnlineStatusTask(new ImageView(SmartDeviceApp.getAppContext()), IPV4_OFFLINE_PRINTER_ADDRESS).execute();
+            // Check if Address is ONLINE
+            assertEquals(true, mPrinterManager.isOnline(IPV4_ONLINE_PRINTER_ADDRESS));
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }

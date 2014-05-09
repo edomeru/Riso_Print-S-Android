@@ -3,10 +3,17 @@ package jp.co.riso.android.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
+import android.content.Context;
+import android.net.wifi.WifiManager;
+import android.test.ActivityInstrumentationTestCase2;
 
-public class NetUtilsTest extends TestCase {
+public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>  {
+    final CountDownLatch mSignal = new CountDownLatch(1);
+
     private final String[] IPV4_INVALID_ADDRESS = {
             "0.1.2.3.4",
             "x.x.x.x",
@@ -119,11 +126,11 @@ public class NetUtilsTest extends TestCase {
             "z::8",
             "::z"
     };
-    private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
+    private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2%wlan0";
     private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%eth0";
 
-    public NetUtilsTest(String name) {
-        super(name);
+    public NetUtilsTest() {
+        super(MainActivity.class);
     }
 
     @Override
@@ -140,7 +147,21 @@ public class NetUtilsTest extends TestCase {
     // Tests - constructors
     // ================================================================================
 
-    public void testConstructor() {
+    public void testConstructor_WifiOff() {
+        turnWifi(false);
+        NetUtils netUtils = new NetUtils();
+        assertNotNull(netUtils);
+    }
+
+    public void testConstructor_WifiOn() {
+        try {
+            turnWifi(true);
+            // Wait for connection to be established
+            mSignal.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            fail();
+        }
+
         NetUtils netUtils = new NetUtils();
         assertNotNull(netUtils);
     }
@@ -297,4 +318,18 @@ public class NetUtilsTest extends TestCase {
             fail(); // Error should not be thrown
         }
     }
+    
+    // ================================================================================
+    // Private
+    // ================================================================================
+
+    protected void turnWifi(boolean enabled) {
+        try {
+            WifiManager wifiManager = (WifiManager) getInstrumentation()
+                    .getTargetContext().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(enabled);
+        } catch (Exception ignored) {
+        }
+    }
+    
 }
