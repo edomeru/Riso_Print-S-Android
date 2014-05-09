@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#define CARD_ID_MAX_INPUT 31
 /**
  An enumeration to identify input error in settings screen
  */
@@ -18,12 +18,6 @@ typedef enum
 } kSettingsInputError;
 
 @interface SettingsValidationHelper : NSObject
-/**
- Checks if the keyboard input for the Card ID field should be accepted
- @param inputString The input string with the last keyboard input
- @return YES if accepted; NO otherwise
- */
-+ (BOOL)shouldAcceptCardIDInput:(NSString *)inputString;
 /**
  Validates the current string in the Card ID field
  @param inputString The current string in the cardId textfield
