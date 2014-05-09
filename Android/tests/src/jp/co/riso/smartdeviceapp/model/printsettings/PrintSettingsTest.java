@@ -444,8 +444,11 @@ public class PrintSettingsTest extends AndroidTestCase {
     }
     
     public void testInitializeStaticObjects_Duplicate() {
-        PrintSettings.initializeStaticObjects("printsettings3.xml");
+        // w/ values since initially loaded
         assertEquals(18, PrintSettings.sSettingMap.size());
+        PrintSettings.initializeStaticObjects("printsettings.xml");
+        assertEquals(18, PrintSettings.sSettingMap.size());
+        assertEquals(6, PrintSettings.sGroupList.size());
         int count = 0;
         for (String key : PrintSettings.sSettingMap.keySet()) {
             Setting s = PrintSettings.sSettingMap.get(key);
