@@ -124,5 +124,22 @@ namespace SmartDeviceApp.Common.Utilities
             var dialog = new MessageDialog(message, title ?? string.Empty);
             await dialog.ShowAsync();
         }
+
+        public async Task ShowCustomMessageBox(string message, string title,  string buttonText, Action afterHideCallback)
+        {
+            var dialog = new MessageDialog(message, title ?? string.Empty);
+            dialog.Commands.Add(
+                new UICommand(
+                    buttonText,
+                    c =>
+                    {
+                        if (afterHideCallback != null)
+                        {
+                            afterHideCallback();
+                        }
+                    }));
+            dialog.CancelCommandIndex = 0;
+            await dialog.ShowAsync();
+        }
     }
 }

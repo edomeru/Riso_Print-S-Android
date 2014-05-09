@@ -136,7 +136,7 @@
                                               IsItemClickEnabled="True" SelectionMode="None"
                                                DataContext="{Binding}">
                             <controls:PrinterNameControl x:Name="printerName"  
-                                                                     Text="{Binding Name}"
+                                                                     Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
                                                                      RightButtonVisibility="Collapsed" 
                                                                      IsDefault="{Binding IsDefault}"
                                                                      IsOnline="{Binding IsOnline}"
@@ -152,7 +152,8 @@
 
                             <controls:KeyValueControl x:Name="ipAddress" 
                                                       IconVisibility="Collapsed"
-                                                          Text="Ip Address" ValueText="{Binding IpAddress}"
+                                                          Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                                      ValueText="{Binding IpAddress}"
                                                           RightButtonVisibility="Collapsed"
                                                           ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
@@ -160,7 +161,18 @@
                                                       Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
-                            <controls:PortItemControl x:Name="port"
+                            <controls:KeyValueControl x:Name="port" 
+                                                      IconVisibility="Collapsed"
+                                                          Text="{Binding Source=IDS_LBL_PORT, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                                      ValueText="{Binding Source=IDS_LBL_PORT_LPR, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                          RightButtonVisibility="Collapsed"
+                                                          ValueVisibility="Visible"
+                                                      SeparatorVisibility="Visible"
+                                                      Width="{Binding ItemWidth, ElementName=printerInfoView}"
+                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
+                                                      PressedColor="{StaticResource BRUSH_Gray2}"
+                                                      />
+                            <!--<controls:PortItemControl x:Name="port"
                                                              Text="Port"
                                                       IsRawSelected="{Binding PortSetting, Converter={StaticResource IntToBooleanConverter}, Mode=TwoWay}"
                                                       IconVisibility="Collapsed"
@@ -168,13 +180,13 @@
                                                         SeparatorVisibility="Visible"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
-                                                      />
+                                                      />-->
 
                             <!--<controls:KeyValueControl x:Name="port" 
                                                           Text="Port"
                                                           LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>-->
                             <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
-                                                                 Text="Set as Default Printer"
+                                                                 Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                                              IconVisibility="Collapsed"
                                                                  RightButtonVisibility="Collapsed"
                                                                  IsOn="{Binding IsDefault, Mode=TwoWay}"
@@ -183,7 +195,7 @@
                                                              PressedColor="{StaticResource BRUSH_Purple2}"/>
                             <controls:KeyValueControl x:Name="settings" 
                                                       IconVisibility="Collapsed"
-                                                          Text="Default Print Settings"
+                                                          Text="{Binding Source=IDS_LBL_DEFAULT_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
                                                       
                                                       RightButtonVisibility="Visible"
@@ -191,6 +203,7 @@
                                                       CommandParameter="{Binding}"
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
+                                                     SeparatorVisibility="Collapsed"
                                                       />
 
                         </ListView>

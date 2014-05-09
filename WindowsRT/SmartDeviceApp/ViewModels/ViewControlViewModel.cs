@@ -64,6 +64,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _screenMode = value;
                     RaisePropertyChanged("ScreenMode");
+                    Messenger.Default.Send<ScreenMode>(_screenMode); // Broadcast to all viewmodels that need to be updated
                 }
             }
         }
