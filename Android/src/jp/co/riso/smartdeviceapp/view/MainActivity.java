@@ -8,9 +8,20 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
-import com.radaee.pdf.Global;
-
+import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.AddPrinterFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrinterInfoFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrinterSearchFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment;
+import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
@@ -22,11 +33,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
-import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
-import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
+
+import com.radaee.pdf.Global;
 
 public class MainActivity extends BaseActivity {
     
@@ -55,8 +63,8 @@ public class MainActivity extends BaseActivity {
         mLeftLayout = (ViewGroup) findViewById(R.id.leftLayout);
         mRightLayout = (ViewGroup) findViewById(R.id.rightLayout);
         
-        mLeftLayout.getLayoutParams().width = (int)getDrawerWidth();
-        mRightLayout.getLayoutParams().width = (int)getDrawerWidth();
+        mLeftLayout.getLayoutParams().width = getDrawerWidth();
+        mRightLayout.getLayoutParams().width = getDrawerWidth();
         
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.img_btn_main_menu_normal, R.string.default_content_description,
                 R.string.default_content_description);
@@ -122,7 +130,7 @@ public class MainActivity extends BaseActivity {
     // ================================================================================
     // Public Functions
     // ================================================================================
-
+    
     /**
      * Open Drawer
      * 
@@ -132,8 +140,11 @@ public class MainActivity extends BaseActivity {
     public void openDrawer(int gravity) {
         closeDrawers();
         openDrawer(gravity, false);
+        if (gravity == Gravity.LEFT) {
+            ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
+        }
     }
-        
+    
     /**
      * Open Drawer
      * 
@@ -156,6 +167,7 @@ public class MainActivity extends BaseActivity {
     public void closeDrawers() {
         mDrawerLayout.setPreventInterceptTouches(false);
         mDrawerLayout.closeDrawers();
+        
     }
     
     /**
@@ -248,19 +260,25 @@ public class MainActivity extends BaseActivity {
         /**
          * Called when a drawer has settled in a completely closed state.
          */
+        @Override
         public void onDrawerClosed(View view) {
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
             if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
                 getFragmentManager().findFragmentById(R.id.rightLayout).onPause();
+                clearIconStates(false);
+            } else {
+                clearIconStates(true);
             }
             getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
+            
         }
         
         /**
          * Called when a drawer has settled in a completely opened state.
          */
+        @Override
         public void onDrawerOpened(View drawerView) {
             super.onDrawerOpened(drawerView);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -269,6 +287,35 @@ public class MainActivity extends BaseActivity {
                 getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
             }
             getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+        }
+        
+        private void clearIconStates(boolean isLeft) {
+            BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+            if (isLeft) {
+                View menuButton = mMainLayout.findViewById(BaseFragment.ID_MENU_ACTION_BUTTON);
+                
+                if (menuButton != null) {
+                    fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, false);
+                }
+            }
+            else {
+                Fragment rightLayout = getFragmentManager().findFragmentById(R.id.rightLayout);
+                if (rightLayout instanceof AddPrinterFragment) {
+                    fragment.setIconState(PrintersFragment.ID_MENU_ACTION_ADD_BUTTON, false);
+                } else if (rightLayout instanceof PrinterSearchFragment) {
+                    fragment.setIconState(PrintersFragment.ID_MENU_ACTION_SEARCH_BUTTON, false);
+                } else if (rightLayout instanceof PrintSettingsFragment) {
+                    if (fragment instanceof PrinterInfoFragment){
+                        fragment.setIconState(PrinterInfoFragment.ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, false);
+                    } else if (fragment instanceof PrintPreviewFragment){
+                        fragment.setIconState(PrintPreviewFragment.ID_PRINT_BUTTON, false);
+                    } else if (fragment instanceof PrintersFragment){
+                        ((PrintersFragment) fragment).setDefaultSettingSelected(false);
+                    } else if (fragment instanceof PrintJobsFragment){
+                        fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, false);
+                    }
+                }
+            }
         }
     }
 }

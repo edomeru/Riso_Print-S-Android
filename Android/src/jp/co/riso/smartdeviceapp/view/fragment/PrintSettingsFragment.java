@@ -117,7 +117,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void onPause() {
         super.onPause();
         
-        PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();        
+        PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();
         mPauseableHandler.pause();
     }
     
@@ -249,6 +249,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
+                    
+                    ((PrintPreviewFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).setIconState(PrintPreviewFragment.ID_PRINT_BUTTON, false);
                     ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
 
                     // Show dialog

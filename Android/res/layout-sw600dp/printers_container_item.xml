@@ -187,7 +187,7 @@
                     android:gravity="center_vertical"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_default_print_settings"
-                    android:textColor="@color/selector_printers_text"
+                    android:textColor="@color/selector_printers_defaultprint_text"
                     android:textSize="@dimen/printers_name_font_size" />
 
                 <ImageView

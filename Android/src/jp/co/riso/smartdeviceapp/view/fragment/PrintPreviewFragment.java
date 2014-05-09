@@ -148,9 +148,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPrintPreviewView.setBmpCache(mBmpCache);
         mPrintPreviewView.setListener(this);
         mPrintPreviewView.setVisibility(View.GONE);
-
+        
         mPageControls = view.findViewById(R.id.previewControls);
-
+        
         mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
         mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
@@ -411,6 +411,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
                         
+                        setIconState(v.getId(), true);
+                        
                         // Always make new
                         PrintSettingsFragment fragment = null;// (PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
                         if (fragment == null) {
@@ -462,9 +464,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     // ================================================================================
     
     /** {@inheritDoc} */
+    @Override
     public void onIndexChanged(int index) {
         updateSeekBarProgress(index);
         getActivity().runOnUiThread(new Runnable() {
+            @Override
             public void run() {
                 updatePageLabel();
             }
@@ -472,6 +476,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
     
     /** {@inheritDoc} */
+    @Override
     public int getControlsHeight() {
         if (mPageControls != null) {
             MarginLayoutParams params = (MarginLayoutParams) mPageControls.getLayoutParams();
@@ -481,6 +486,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
     
     /** {@inheritDoc} */
+    @Override
     public void zoomLevelChanged(float zoomLevel) {
         float percentage = (zoomLevel - 1.0f) * 4.0f;
         
@@ -494,8 +500,19 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
     
     /** {@inheritDoc} */
+    @Override
     public void setControlsEnabled(boolean enable) {
         mSeekBar.setEnabled(enable);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void setIconState(int id, boolean state) {
+        if (isTablet() && ((MainActivity) getActivity()).isDrawerOpen(Gravity.LEFT)) {
+            getView().findViewById(id).setSelected(state);
+        } else {
+            super.setIconState(id, state);
+        }
     }
     
     // ================================================================================
@@ -531,4 +548,5 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPrintPreviewView.setVisibility(msg.arg1);
         return true;
     }
+    
 }

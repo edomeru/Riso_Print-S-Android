@@ -38,8 +38,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
-    private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
+    public static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
+    private static final String KEY_SETTING_SELECTED = "fragment_printer_info_setting";
     
     private Printer mPrinter = null;
     
@@ -52,6 +53,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
     Timer mUpdateStatusTimer = null;
+    // private boolean mSettingState;
     
     /** {@inheritDoc} */
     @Override
@@ -108,12 +110,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     }
                 }
             }
+            //setSettingState(savedInstanceState.getBoolean(KEY_SETTING_SELECTED, false));
         }
         mPrinterName.setText(mPrinter.getName());
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
-        }        
+        }
         mPort.setSelection(mPrinter.getPortSetting());
     }
     
@@ -121,6 +124,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
+        // savedInstanceState.putBoolean(KEY_SETTING_SELECTED, ((MainActivity) getActivity()).isDrawerOpen(Gravity.RIGHT));
         super.onSaveInstanceState(savedInstanceState);
     }
     
@@ -139,6 +143,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onResume() {
         super.onResume();
+        //        if (mSettingState) {
+        //            setSettingState(true);
+        //            mSettingState = false;
+        //        }
         updateOnlineStatus();
     }
     
@@ -196,6 +204,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
+                        setIconState(v.getId(), true);
+                        //v.setSelected(true);
                         
                         mPrintSettingsFragment = null;
                         
@@ -258,4 +268,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing
     }
+    
+    //    public void setSettingState(boolean state) {
+    //        getView().findViewById(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON).setSelected(state);
+    //        mSettingState = state;
+    //    }
 }
