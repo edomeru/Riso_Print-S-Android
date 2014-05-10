@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>  {
@@ -288,10 +289,15 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv6Address_OnlineIpv6Address() {
         try {
-            boolean isReachable = false;            
-            String ipv6Addr = getLocalIpv6Address();
+            boolean isReachable = false;
+            String ipv6Addr = IPV6_STD_PRINTER_ADDRESS;
             assertNotNull(ipv6Addr);
             
+            // Ipv6 Address
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                ipv6Addr = getLocalIpv6Address();
+                assertNotNull(ipv6Addr);
+            }            
             isReachable = NetUtils.connectToIpv6Address(ipv6Addr, null);
             assertEquals(true, isReachable);
         } catch (NullPointerException e) {
