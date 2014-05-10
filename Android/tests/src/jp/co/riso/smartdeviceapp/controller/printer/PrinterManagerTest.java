@@ -3,6 +3,7 @@ package jp.co.riso.smartdeviceapp.controller.printer;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainActivity> implements
         UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
     final CountDownLatch mSignal = new CountDownLatch(1);
+    final int TIMEOUT = 20;
     private static final String IPV4_ONLINE_PRINTER_ADDRESS = "192.168.1.206";
     private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
     private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206";
@@ -174,6 +176,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             isCancelled = mPrinterManager.isCancelled();
             assertEquals(false, isCancelled);
+            
+            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -202,6 +206,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             isSearching = mPrinterManager.isSearching();
             assertEquals(true, isSearching);
+            
+            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -286,6 +292,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testStartPrinterSearch() {
         try {
             mPrinterManager.startPrinterSearch();
+            
+            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -404,6 +412,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             mPrinterManager.startPrinterSearch();
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, "testOnFoundDevice_ValidParameters",
                     new boolean[10]);
+            
+            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -670,8 +680,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             boolean ret = false;
 
             ret = mPrinterManager.isOnline(IPV4_ONLINE_PRINTER_ADDRESS);
+            assertEquals(true, ret);
+            
             ret = mPrinterManager.isOnline(IPV6_ONLINE_PRINTER_ADDRESS);
-
             assertEquals(true, ret);
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -717,7 +728,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testSearchPrinter_ValidIpAddress() {
         try {
-            mPrinterManager.searchPrinter(IPV4_ONLINE_PRINTER_ADDRESS);            
+            mPrinterManager.searchPrinter(IPV4_ONLINE_PRINTER_ADDRESS);    
+            
+            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -725,7 +738,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testSearchPrinter_NullIpAddress() {
         try {
-            mPrinterManager.searchPrinter(null);            
+            mPrinterManager.searchPrinter(null);
+            
+            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -757,7 +772,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             getInstrumentation().waitForIdleSync();
             Thread.sleep(10000);
             getInstrumentation().waitForIdleSync();
-
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -833,5 +847,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     @Override
     public void onSearchEnd() {
+        mSignal.countDown();
     }
 }
