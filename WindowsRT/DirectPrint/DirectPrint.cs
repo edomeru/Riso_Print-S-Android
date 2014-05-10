@@ -413,7 +413,8 @@ namespace DirectPrint
                     // wait for data
                     // read data
 
-                    if (Environment.TickCount - start > 10000){
+                    if (Environment.TickCount - start > TIMEOUT_RECEIVE)
+                    {
                         //operation timeout
                         return -1;
                     }
