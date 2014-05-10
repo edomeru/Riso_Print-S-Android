@@ -415,11 +415,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
         if(headerCell.expanded)
         {
-            [tableView insertRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationTop];
+            [tableView insertRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
         }
         else
         {
-            [tableView deleteRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationTop];
+            [tableView deleteRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
         }
     }
     else if (section > 0)
@@ -440,12 +440,12 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
             if (isExpanded)
             {
-                [tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationTop];
+                [tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
                 headerCell.expanded = NO;
             }
             else
             {
-                [tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationTop];
+                [tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
                 headerCell.expanded = YES;
             }
         }

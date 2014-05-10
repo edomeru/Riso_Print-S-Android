@@ -15,6 +15,7 @@
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
 #import "UIView+Localization.h"
+#import "PrinterLayout.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -54,28 +55,6 @@
    
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
-   
-    // Create insets for landscape and portrait orientations
-    CGRect frame = [[UIScreen mainScreen] bounds];
-    CGFloat basePortrait = MIN(frame.size.width, frame.size.height);
-    CGFloat baseLandscape = MAX(frame.size.width, frame.size.height);
-    int hInset;
-    hInset = (basePortrait  - (320.0f * 2 + 10.0f * 1)) / 2.0f;
-    self.insetPortrait = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
-    hInset = (baseLandscape - (320.0f * 3 + 10.0f * 2)) / 2.0f;
-    self.insetLandscape = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
-    
-    // Set insets based on current orientation
-    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-    {
-        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-        layout.sectionInset = self.insetLandscape;
-    }
-    else
-    {
-        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-        layout.sectionInset = self.insetPortrait;
-    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -156,25 +135,6 @@
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return NO;
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    [self.collectionView performBatchUpdates:^
-     {
-        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-        {
-            UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-            layout.sectionInset = self.insetLandscape;
-        }
-        else
-        {
-            UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-            layout.sectionInset = self.insetPortrait;
-        }
-     } completion:^(BOOL finished)
-     {
-     }];
 }
 
 - (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath

@@ -701,15 +701,10 @@
                                 <rect key="frame" x="0.0" y="48" width="600" height="736"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="7Ha-iE-cPn">
-                                    <size key="itemSize" width="320" height="270"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="10" minY="10" maxX="10" maxY="10"/>
-                                </collectionViewFlowLayout>
+                                <collectionViewLayout key="collectionViewLayout" id="WAe-zw-SDB" customClass="PrinterLayout"/>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="DmK-Jg-Hxh" customClass="PrinterCollectionViewCell">
-                                        <rect key="frame" x="140" y="10" width="320" height="270"/>
+                                        <rect key="frame" x="140" y="0.0" width="320" height="270"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="270"/>
@@ -940,6 +935,7 @@
                                             <constraint firstItem="uDu-fq-KZK" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" constant="20" id="xNw-iU-61a"/>
                                             <constraint firstAttribute="trailing" secondItem="QaJ-Ei-tgz" secondAttribute="trailing" id="z4J-Fv-RD1"/>
                                         </constraints>
+                                        <size key="customSize" width="320" height="270"/>
                                         <connections>
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
                                             <outlet property="defaultSettingsButton" destination="hEi-x2-OHw" id="H69-Iy-BLY"/>
@@ -3994,10 +3990,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="CWW-vD-UgO"/>
-        <segue reference="oE4-lZ-OOf"/>
-        <segue reference="6HN-Y0-69S"/>
         <segue reference="a4U-VG-JlJ"/>
+        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="CWW-vD-UgO"/>
         <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

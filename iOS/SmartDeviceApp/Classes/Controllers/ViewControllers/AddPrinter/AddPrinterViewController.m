@@ -99,7 +99,6 @@
 
 - (void)initialize
 {
-    self.isFixedSize = YES;
     self.slideDirection = SlideRight;
 }
 

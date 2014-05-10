@@ -58,6 +58,8 @@
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
 		2D0D74C218F2887B002B5E40 /* RenderCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0D74C118F2887B002B5E40 /* RenderCache.m */; };
 		2D0DE96318E3E9C8002DB0B4 /* PrintDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DE96218E3E9C8002DB0B4 /* PrintDocument.m */; };
+		2D13C5C9191CF38D001DC4FA /* PrinterLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D13C5C8191CF38D001DC4FA /* PrinterLayout.m */; };
+		2D13C5CA191CF38D001DC4FA /* PrinterLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D13C5C8191CF38D001DC4FA /* PrinterLayout.m */; };
 		2D157BF518ED5A960034F953 /* PDFRenderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BF418ED5A960034F953 /* PDFRenderOperation.m */; };
 		2D157BF818ED5B3E0034F953 /* PrintSettingsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BF718ED5B3E0034F953 /* PrintSettingsHelper.m */; };
 		2D157BFB18ED5B580034F953 /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BFA18ED5B580034F953 /* XMLParser.m */; };
@@ -346,6 +348,8 @@
 		2D0D74C118F2887B002B5E40 /* RenderCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenderCache.m; sourceTree = "<group>"; };
 		2D0DE96118E3E9C8002DB0B4 /* PrintDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintDocument.h; sourceTree = "<group>"; };
 		2D0DE96218E3E9C8002DB0B4 /* PrintDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintDocument.m; sourceTree = "<group>"; };
+		2D13C5C7191CF38D001DC4FA /* PrinterLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterLayout.h; sourceTree = "<group>"; };
+		2D13C5C8191CF38D001DC4FA /* PrinterLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterLayout.m; sourceTree = "<group>"; };
 		2D157BF318ED5A960034F953 /* PDFRenderOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFRenderOperation.h; sourceTree = "<group>"; };
 		2D157BF418ED5A960034F953 /* PDFRenderOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFRenderOperation.m; sourceTree = "<group>"; };
 		2D157BF618ED5B3E0034F953 /* PrintSettingsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsHelper.h; sourceTree = "<group>"; };
@@ -588,6 +592,8 @@
 		2801620E18EAB06000DFFE5E /* Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				2D13C5C7191CF38D001DC4FA /* PrinterLayout.h */,
+				2D13C5C8191CF38D001DC4FA /* PrinterLayout.m */,
 				2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */,
 				2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */,
 			);
@@ -1606,6 +1612,7 @@
 				2DA1AF2318E2EF9600085F27 /* PrintersViewController.m in Sources */,
 				2DA1AF5418E2EFCB00085F27 /* PrintSetting+Log.m in Sources */,
 				2DA1AEC518E2EF7D00085F27 /* PrinterDetails.m in Sources */,
+				2D13C5C9191CF38D001DC4FA /* PrinterLayout.m in Sources */,
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2D1F23A91900FF5800301D1E /* CXAlertButtonContainerView.m in Sources */,
 				2D1F23A71900FF5800301D1E /* CXAlertBackgroundWindow.m in Sources */,
@@ -1688,6 +1695,7 @@
 				3195C1E519111A7A00197397 /* PrintSettingsPrinterListTableViewControllerTest.m in Sources */,
 				3195C1E619111A7A00197397 /* PrintSettingsTableViewControllerTest.m in Sources */,
 				3195C1E719111A7A00197397 /* PrintSettingsViewControllerTest.m in Sources */,
+				2D13C5CA191CF38D001DC4FA /* PrinterLayout.m in Sources */,
 				3195C1ED19111A9F00197397 /* SettingsViewControllerTest.m in Sources */,
 				28052CE51911C651007982DF /* DatabaseManagerTest.m in Sources */,
 				28C9182219124B1F00CB582C /* DirectPrintManagerTest.m in Sources */,
