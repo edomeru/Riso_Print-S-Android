@@ -36,7 +36,7 @@
     <x:Double x:Key="SIZE_SidePaneWidthWithBorder">401</x:Double>
     <x:Double x:Key="SIZE_SidePaneWidth">400</x:Double>
     <x:Double x:Key="SIZE_SettingsPaneWidth">500</x:Double>
-    <x:Double x:Key="SIZE_MessageWidth">600</x:Double>
+    <x:Double x:Key="SIZE_MessageWidth">400</x:Double>
     <x:Double x:Key="SIZE_MessageHeight">200</x:Double>
     <x:Double x:Key="SIZE_ListItemHeight">60</x:Double>
     <x:Double x:Key="SIZE_ListIconWidth">48</x:Double>
@@ -53,8 +53,6 @@
     <x:Double x:Key="SIZE_DeleteButtonHeight_Long">60</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonWidth_Short">110</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonHeight_Short">50</x:Double>
-    <x:Double x:Key="SIZE_CancelButtonWidth_Short">110</x:Double>
-    <x:Double x:Key="SIZE_CancelButtonHeight_Short">40</x:Double>
 
     <x:Double x:Key="OPACITY_Message">0.3</x:Double>
     <!-- APP THEME CONSTANTS END-->
