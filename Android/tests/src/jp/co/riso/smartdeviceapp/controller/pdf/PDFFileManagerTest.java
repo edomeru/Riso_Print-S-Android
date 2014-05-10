@@ -40,7 +40,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         
         mEncryptedPdfPath = getAssetPath("40RC4_Nitro.pdf");
         
-        mPdfInSandboxPath = PDFFileManager.convertToSandboxPath("PDF-squarish2.pdf");
+        mPdfInSandboxPath = PDFFileManager.getSandboxPath();
         FileUtils.copy(new File(mPdfPath), new File(mPdfInSandboxPath));
         
         mLargePdfPath = mPdfPath;
@@ -85,42 +85,28 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.setPDF(null);
         assertNull(mPdfManager.getPath());
         assertNull(mPdfManager.getFileName());
-        assertNull(mPdfManager.getSandboxPath());
     }
     
     public void testPath_EmptyValues() {
         mPdfManager.setPDF("");
         assertEquals(mPdfManager.getPath(), "");
         assertEquals(mPdfManager.getFileName(), "");
-        assertEquals(mPdfManager.getSandboxPath(), PDFFileManager.convertToSandboxPath(""));
     }
     
     public void testPath_Values() {
         mPdfManager.setPDF("/this/is/a/path");
         assertEquals(mPdfManager.getPath(), "/this/is/a/path");
         assertEquals(mPdfManager.getFileName(), "path");
-        assertEquals(mPdfManager.getSandboxPath(), PDFFileManager.convertToSandboxPath(mPdfManager.getFileName()));
     }
     
     //================================================================================
     // Tests - convertToSandboxPath
     //================================================================================
 
-    public void testConvertToSandboxPath_Valid() {
-        String sandbox = PDFFileManager.convertToSandboxPath("path.pdf");
-        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/path.pdf", sandbox);
+    public void testGetSandboxPath() {
+        String sandbox = PDFFileManager.getSandboxPath();
+        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/" + AppConstants.CONST_TEMP_PDF_PATH, sandbox);
     }
-    
-    public void testConvertToSandboxPath_Empty() {
-        String sandbox = PDFFileManager.convertToSandboxPath("");
-        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/", sandbox);
-    }
-
-    public void testConvertToSandboxPath_Null() {
-        String sandbox = PDFFileManager.convertToSandboxPath(null);
-        assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/", sandbox);
-    }
-    
     
     //================================================================================
     // Tests - is opened
