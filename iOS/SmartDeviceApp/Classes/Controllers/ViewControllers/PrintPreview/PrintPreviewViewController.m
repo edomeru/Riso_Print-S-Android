@@ -15,6 +15,7 @@
 #import "PDFPageContentViewController.h"
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
+#import "AlertHelper.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -241,7 +242,10 @@
         }
         else
         {
-            // TODO: Error message
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [AlertHelper displayResult:kAlertResultFileCannotBeOpened withTitle:kAlertTitleDefault withDetails:nil];
+                [self.activityIndicator stopAnimating];
+            });
         }
     });
 }

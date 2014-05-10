@@ -76,6 +76,10 @@
             break;
             //TODO: only cause is DB error (registerPrinter: failed)
             
+        case kAlertResultFileCannotBeOpened:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
+            break;
+            
         case kAlertResultErrDefault:
         default:
             alertMsg = @"The operation could not be compeleted.";

@@ -36,6 +36,9 @@ typedef enum
     kAlertResultErrPrinterDuplicate,
     kAlertResultErrPrinterCannotBeAdded,
     
+    // error when opening invalid file
+    kAlertResultFileCannotBeOpened,
+    
     // default error message
     kAlertResultErrDefault
     
