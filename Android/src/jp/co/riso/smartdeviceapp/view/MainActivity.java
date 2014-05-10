@@ -268,7 +268,9 @@ public class MainActivity extends BaseActivity {
             if (mDrawerLayout.findViewById(R.id.rightLayout) == drawerView) {
                 getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
             }
-            getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+            if (!mResizeView) {
+                getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+            }
         }
     }
 }

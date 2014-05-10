@@ -168,6 +168,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         
 
         // Notify PDF File Data that there is a new PDF
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
         PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), data != null);
         
         if (data != null) {

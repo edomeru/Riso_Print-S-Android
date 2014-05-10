@@ -14,6 +14,7 @@ public class AppConstants {
     public static final String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
     
     public static final String CONST_PDF_DIR = "pdfs";
+    public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
     
     // Part of Memory to be allocated to Print Preview
     // Bit shift operator

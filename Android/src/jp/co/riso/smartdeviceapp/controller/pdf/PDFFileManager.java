@@ -30,6 +30,7 @@ public class PDFFileManager {
     public static final String TAG = "PDFFileManager";
     
     public static final String KEY_NEW_PDF_DATA = "new_pdf_data";
+    public static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
     
     public static final int PDF_OK = 0;
     public static final int PDF_ENCRYPTED = -1;
@@ -50,7 +51,6 @@ public class PDFFileManager {
     private Document mDocument;
     private String mPath;
     private String mFileName;
-    private String mSandboxPath;
     private WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
     private PDFInitTask mInitTask = null;
@@ -91,15 +91,6 @@ public class PDFFileManager {
     }
     
     /**
-     * Gets the path of the pdf in the app sandbox
-     * 
-     * @return Path from the app sandbax.
-     */
-    public String getSandboxPath() {
-        return mSandboxPath;
-    }
-    
-    /**
      * Sets the path of the PDF
      * 
      * @param path
@@ -114,7 +105,6 @@ public class PDFFileManager {
         if (path == null) {
             mPath = null;
             mFileName = null;
-            mSandboxPath = null;
             
             return;
         }
@@ -123,12 +113,13 @@ public class PDFFileManager {
         
         mPath = path;
         mFileName = file.getName();
-        mSandboxPath = PDFFileManager.convertToSandboxPath(file.getName());
+    }
+    
+    public void setSandboxPDF() {
+        setPDF(getSandboxPath());
+        mFileName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
-        if (mPath.equalsIgnoreCase(mSandboxPath)) {
-            // No need to copy
-            PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
-        }
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
     }
     
     /**
@@ -168,18 +159,13 @@ public class PDFFileManager {
     }
     
     /**
-     * Appends the sandbox path to the filename
+     * Appends the sandbox path
      * 
-     * @param filename
-     *            filename of the pdf
      * @return PDF sandbox directory
      */
-    public static String convertToSandboxPath(String filename) {
-        String path = SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/";
-        if (filename != null) {
-            path = path + filename;
-        }
-        return path;
+    public static final String getSandboxPath() {
+        return SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) 
+                + "/" + AppConstants.CONST_TEMP_PDF_PATH;
     }
     
     /**
@@ -213,6 +199,43 @@ public class PDFFileManager {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, newData);
+        if (newData) {
+            edit.remove(PDFFileManager.KEY_SANDBOX_PDF_NAME);
+        }
+        edit.apply();
+    }
+    
+    public static void clearSandboxPDFName(Context context) {
+        if (context == null) {
+            return;
+        }
+        
+        // Notify PDF File Data that there is a new PDF
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.remove(PDFFileManager.KEY_SANDBOX_PDF_NAME);
+        edit.apply();
+    }
+    
+    public static String getSandboxPDFName(Context context) {
+        if (context == null) {
+            return null;
+        }
+        
+        // Notify PDF File Data that there is a new PDF
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(KEY_SANDBOX_PDF_NAME, null);
+    }
+    
+    public static void setSandboxPDF(Context context, String fileName) {
+        if (context == null) {
+            return;
+        }
+        
+        // Notify PDF File Data that there is a new PDF
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, fileName);
         edit.apply();
     }
     
@@ -266,7 +289,7 @@ public class PDFFileManager {
         }
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Open(mSandboxPath, null);
+            mDocument.Open(mPath, null);
         } else {
             // TODO: re-check: For temporary fix of bug
             // mDocument.Close(); // This will clear the buffer
@@ -274,6 +297,10 @@ public class PDFFileManager {
         }
         
         Page page = mDocument.GetPage(pageNo);
+        
+        if (page == null) {
+            return null;
+        }
         
         float pageWidth = mDocument.GetPageWidth(pageNo) * scale;
         float pageHeight = mDocument.GetPageHeight(pageNo) * scale;
@@ -408,16 +435,26 @@ public class PDFFileManager {
             closeDocument();
             
             if (status == PDF_OK) {
+                File file = new File(mPath);
+                String fileName = file.getName();
+                String sandboxPath = PDFFileManager.getSandboxPath();
+                
                 if (PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext())) {
                     PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
                     
                     try {
-                        FileUtils.copy(new File(mPath), new File(mSandboxPath));
-                        openDocument(mSandboxPath);
+                        if (!mPath.equals(sandboxPath)) {
+                            FileUtils.copy(file, new File(sandboxPath));
+                        }
+
+                        PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), fileName);
                     } catch (Exception e) {
                         return PDF_OPEN_FAILED;
                     }
                 }
+                
+                mPath = sandboxPath;
+                openDocument(sandboxPath);
             }
             
             return status;
