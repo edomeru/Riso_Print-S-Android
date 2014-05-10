@@ -2684,45 +2684,8 @@
                                             <constraint firstItem="HPZ-sV-xv7" firstAttribute="leading" secondItem="iTG-Lt-qH7" secondAttribute="leading" constant="20" id="pna-yW-7ri"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OqN-MQ-6ac" userLabel="Row - Status">
-                                        <rect key="frame" x="0.0" y="135" width="320" height="45"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <subviews>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oca-sr-rXf" userLabel="Label - Status">
-                                                <rect key="frame" x="20" y="14" width="44" height="18"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Online" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kLg-fl-Snf" userLabel="Label - Printer Status">
-                                                <rect key="frame" x="266" y="14" width="44" height="18"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQs-r7-Dpq" userLabel="Separator">
-                                                <rect key="frame" x="20" y="44" width="300" height="1"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="1" id="lRR-Ot-0Ku"/>
-                                                </constraints>
-                                            </view>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstItem="HQs-r7-Dpq" firstAttribute="leading" secondItem="OqN-MQ-6ac" secondAttribute="leading" constant="20" id="I5g-FX-oCy"/>
-                                            <constraint firstAttribute="centerY" secondItem="kLg-fl-Snf" secondAttribute="centerY" id="ICN-Pb-UGP"/>
-                                            <constraint firstItem="oca-sr-rXf" firstAttribute="leading" secondItem="OqN-MQ-6ac" secondAttribute="leading" constant="20" id="S65-7s-dkT"/>
-                                            <constraint firstAttribute="trailing" secondItem="kLg-fl-Snf" secondAttribute="trailing" constant="10" id="Shs-7H-Sp8"/>
-                                            <constraint firstAttribute="centerY" secondItem="oca-sr-rXf" secondAttribute="centerY" id="TSP-9O-ShY"/>
-                                            <constraint firstAttribute="trailing" secondItem="HQs-r7-Dpq" secondAttribute="trailing" id="byc-TD-4bd"/>
-                                            <constraint firstAttribute="height" constant="45" id="hMv-tu-iUZ"/>
-                                            <constraint firstAttribute="bottom" secondItem="HQs-r7-Dpq" secondAttribute="bottom" id="nNI-kz-xbn"/>
-                                        </constraints>
-                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3po-Ej-HzX" userLabel="Row - Default Printer">
-                                        <rect key="frame" x="0.0" y="180" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="135" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set as Default Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kRb-dB-sEY" userLabel="Label - Default Printer">
@@ -2754,19 +2717,16 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="OqN-MQ-6ac" firstAttribute="leading" secondItem="X1u-iB-9Ff" secondAttribute="leading" id="3V4-lz-0Iv"/>
                                     <constraint firstItem="iTG-Lt-qH7" firstAttribute="top" secondItem="i81-0l-9XK" secondAttribute="bottom" id="9VT-De-gAe"/>
-                                    <constraint firstAttribute="trailing" secondItem="OqN-MQ-6ac" secondAttribute="trailing" id="DL7-aO-cAP"/>
                                     <constraint firstItem="bfI-gw-dvm" firstAttribute="leading" secondItem="X1u-iB-9Ff" secondAttribute="leading" id="MuA-Ui-UHf"/>
                                     <constraint firstItem="iTG-Lt-qH7" firstAttribute="leading" secondItem="X1u-iB-9Ff" secondAttribute="leading" id="V0H-ya-Yti"/>
                                     <constraint firstItem="i81-0l-9XK" firstAttribute="leading" secondItem="X1u-iB-9Ff" secondAttribute="leading" id="YPr-dM-tEK"/>
                                     <constraint firstAttribute="trailing" secondItem="3po-Ej-HzX" secondAttribute="trailing" id="a2d-XS-Vxf"/>
+                                    <constraint firstItem="3po-Ej-HzX" firstAttribute="top" secondItem="iTG-Lt-qH7" secondAttribute="bottom" id="dCQ-9e-lpp"/>
                                     <constraint firstAttribute="trailing" secondItem="iTG-Lt-qH7" secondAttribute="trailing" id="dKz-U5-Gjj"/>
                                     <constraint firstItem="3po-Ej-HzX" firstAttribute="leading" secondItem="X1u-iB-9Ff" secondAttribute="leading" id="fuk-b7-jFE"/>
                                     <constraint firstItem="bfI-gw-dvm" firstAttribute="top" secondItem="X1u-iB-9Ff" secondAttribute="top" id="iA7-B2-hWG"/>
                                     <constraint firstAttribute="trailing" secondItem="i81-0l-9XK" secondAttribute="trailing" id="li2-K3-UG0"/>
-                                    <constraint firstItem="OqN-MQ-6ac" firstAttribute="top" secondItem="iTG-Lt-qH7" secondAttribute="bottom" id="twk-TW-Vsh"/>
-                                    <constraint firstItem="3po-Ej-HzX" firstAttribute="top" secondItem="OqN-MQ-6ac" secondAttribute="bottom" id="vMC-Og-KLT"/>
                                     <constraint firstItem="i81-0l-9XK" firstAttribute="top" secondItem="bfI-gw-dvm" secondAttribute="bottom" id="xbf-Un-Ijn"/>
                                     <constraint firstAttribute="trailing" secondItem="bfI-gw-dvm" secondAttribute="trailing" id="y2y-Ae-O6f"/>
                                 </constraints>
@@ -2792,7 +2752,6 @@
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
                         <outlet property="portSelection" destination="kUh-T9-Pqa" id="3R4-3Z-0jS"/>
                         <outlet property="printerName" destination="bq8-54-Npp" id="8Wz-fh-pyx"/>
-                        <outlet property="printerStatus" destination="kLg-fl-Snf" id="fd8-jc-Eki"/>
                         <segue destination="pP7-fQ-WfE" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindFromPrinterInfo:" id="faf-6o-f0W"/>
                     </connections>
                 </viewController>
