@@ -266,6 +266,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void onAddedNewPrinter(Printer printer) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_NEW_PRINTER);
         newMessage.obj = printer;
+        newMessage.arg1 = 1;
         mHandler.sendMessage(newMessage);
     }
     
@@ -315,7 +316,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             case MSG_ADD_NEW_PRINTER:
                 Printer printer = (Printer) msg.obj;
                 if (isTablet()) {
-                    mPrinterTabletView.onAddedNewPrinter(printer);
+                    mPrinterTabletView.onAddedNewPrinter(printer, msg.arg1 > 0);
                 } else {
                     mPrinterAdapter.notifyDataSetChanged();
                 }
