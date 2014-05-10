@@ -1,14 +1,19 @@
 
 package jp.co.riso.android.util;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>  {
@@ -126,7 +131,6 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             "z::8",
             "::z"
     };
-    private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2%wlan0";
     private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo";
     private static final String IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
 
@@ -286,8 +290,15 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testConnectToIpv6Address_OnlineIpv6Address() {
         try {
             boolean isReachable = false;
-
-            isReachable = NetUtils.connectToIpv6Address(IPV6_ONLINE_PRINTER_ADDRESS, null);
+            String ipv6Addr = IPV6_STD_PRINTER_ADDRESS;
+            assertNotNull(ipv6Addr);
+            
+            // Ipv6 Address
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                ipv6Addr = getLocalIpv6Address();
+                assertNotNull(ipv6Addr);
+            }            
+            isReachable = NetUtils.connectToIpv6Address(ipv6Addr, null);
             assertEquals(true, isReachable);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
@@ -307,7 +318,9 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv6Address_NullInetAddressObject() {
         try {
-            NetUtils.connectToIpv6Address(IPV6_ONLINE_PRINTER_ADDRESS, null);
+            String ipv6Addr = getLocalIpv6Address();
+            assertNotNull(ipv6Addr);
+            NetUtils.connectToIpv6Address(ipv6Addr, null);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         }
@@ -348,5 +361,21 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         } catch (InterruptedException e) {
             fail();
         }
-    }    
+    }
+    
+    private String getLocalIpv6Address() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet6Address) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+        }
+        return null;
+    }
 }

@@ -300,10 +300,11 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     // wait some seconds so that you can see the change on emulator/device.
     private void waitFewSeconds(){
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        getInstrumentation().waitForIdleSync();
     }
 
     //================================================================================

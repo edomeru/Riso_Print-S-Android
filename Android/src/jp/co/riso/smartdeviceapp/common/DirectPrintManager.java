@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp.common;
 import java.lang.ref.WeakReference;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class DirectPrintManager {
     private static final String TAG = "DirectPrintManager";
@@ -27,10 +28,11 @@ public class DirectPrintManager {
     public static final int PRINT_STATUS_SENDING = 3;
     public static final int PRINT_STATUS_SENT = 4;
     
-    public native void initializeDirectPrint(String jobName, String fileName, String printSetting, String ipAddress);
-    public native void finalizeDirectPrint();
-    public native void lprPrint();
-    public native void cancel();
+    private native void initializeDirectPrint(String jobName, String fileName, String printSetting, String ipAddress);
+    private native void finalizeDirectPrint();
+    private native void lprPrint();
+    private native void cancel();
+    
     
     /**
      * Set Callback.
@@ -42,6 +44,23 @@ public class DirectPrintManager {
      */
     public void setCallback(DirectPrintCallback callback) {
         mCallbackRef = new WeakReference<DirectPrintCallback>(callback);
+    }
+    
+    /**
+     * Executes an LPR Print
+     * 
+     * @param jobName
+     * @param fileName
+     * @param printSetting
+     * @param ipAddress
+     */
+    public void executeLPRPrint(String jobName, String fileName, String printSetting, String ipAddress) {
+        initializeDirectPrint(jobName, fileName, printSetting, ipAddress);
+        lprPrint();
+    }
+    
+    public boolean isPrinting() {
+        return (mJob != 0);
     }
     
     /**
@@ -65,6 +84,16 @@ public class DirectPrintManager {
      * @param progress
      */
     private void onNotifyProgress(int status, float progress) {
+        Log.wtf(TAG, "onNotifyProgress " + status);
+        switch (status) {
+            case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
+            case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
+            case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
+            case DirectPrintManager.PRINT_STATUS_ERROR:
+            case DirectPrintManager.PRINT_STATUS_SENT:
+                finalizeDirectPrint();
+        }
+        
         if (mCallbackRef != null && mCallbackRef.get() != null) {
             mCallbackRef.get().onNotifyProgress(this, status, progress);
         }
@@ -108,8 +137,9 @@ public class DirectPrintManager {
         /** {@inheritDoc} */
         @Override
         protected Void doInBackground(Void... params) {
+            Log.wtf(TAG, "job id " + mJob);
             mManager.cancel();
-            mManager.finalizeDirectPrint();
+            finalizeDirectPrint();
             return null;
         }
 

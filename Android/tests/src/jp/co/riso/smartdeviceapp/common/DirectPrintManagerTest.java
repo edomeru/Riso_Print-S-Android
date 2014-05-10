@@ -5,10 +5,8 @@ import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.test.ActivityInstrumentationTestCase2;
 
-
 public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<MainActivity> {
     private DirectPrintManager mgr;
-    private boolean mCallbackCalled;
 
     public DirectPrintManagerTest() {
         super(MainActivity.class);
@@ -22,101 +20,94 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     protected void setUp() throws Exception {
         super.setUp();
         mgr = new DirectPrintManager();
-        mCallbackCalled = false;
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-
-    public void testSetCallback() {
-        mgr.setCallback(new MockCallback());
-        mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
-        mgr.lprPrint();
-
-        //wait for response
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            fail(e.toString());
+    
+    public void testDirectPrint_ValidCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
+        
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
         }
 
-        checkCallbackCalled();
-        mgr.finalizeDirectPrint();
+        assertTrue(callback.mCalled);
     }
-
-    public void testSetCallback_Null() {
+    
+    public void testDirectPrint_NullCallback() {
+        MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
-        mgr.lprPrint();
+        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
 
         //wait for response
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            fail(e.toString());
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
         }
 
-        assertFalse(mCallbackCalled);
-        mgr.finalizeDirectPrint();
+        assertFalse(callback.mCalled);
     }
-
+    
     public void testSendCancelCommand() {
-        mgr.setCallback(new MockCallback());
-        mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
-        mgr.lprPrint();
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
 
-        //wait for response
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            fail(e.toString());
-        }
-
-        checkCallbackCalled();
+        assertFalse(callback.mCalled);
         mgr.sendCancelCommand();
+        
         //wait for response
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            fail(e.toString());
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
         }
-        getInstrumentation().waitForIdleSync();
-        assertFalse(mCallbackCalled);
-    }
 
+        assertFalse(callback.mCalled);
+    }
+    
     public void testSendCancelCommand_NullCallback() {
+        MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.initializeDirectPrint("jobName", "fileName", "orientation=0", "192.168.1.123");
-        mgr.lprPrint();
+        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
 
-        //wait for response
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            fail(e.toString());
-        }
-
-        assertFalse(mCallbackCalled);
+        assertFalse(callback.mCalled);
         mgr.sendCancelCommand();
+        
         //wait for response
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            fail(e.toString());
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
         }
-        getInstrumentation().waitForIdleSync();
-        assertFalse(mCallbackCalled);
+
+        assertFalse(callback.mCalled);
     }
-
-    //================================================================================
-    // Private methods
-    //================================================================================
-
-    private void checkCallbackCalled() {
-        assertTrue(mCallbackCalled);
-        mCallbackCalled = false;
+    
+    public void test_SendCancelCommand_WithoutPrinting() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.sendCancelCommand();
     }
 
     //================================================================================
@@ -124,9 +115,12 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     //================================================================================
 
     private class MockCallback implements DirectPrintCallback {
+        
+        public boolean mCalled = false;
+        
         @Override
         public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
-            mCallbackCalled = true;
+            mCalled = true;
         }
     }
 

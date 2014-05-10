@@ -38,12 +38,15 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_finalizeDirectPrint(JNI
 {
     // Get job reference to Java object
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
-    directprint_job *job = (directprint_job *)m_job;
-    CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
-    (*env)->DeleteGlobalRef(env, state->instance);
-    free(state);
-    directprint_job_free(job);
-    (*env)->SetLongField(env, object, dp_job_field_id, 0);
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
+        CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
+        (*env)->DeleteGlobalRef(env, state->instance);
+        free(state);
+        directprint_job_free(job);
+        (*env)->SetLongField(env, object, dp_job_field_id, 0);
+    }
 }
 
 JNIEXPORT void
@@ -51,9 +54,12 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_lprPrint(JNIEnv *env, j
 {
     // Get job reference to Java object
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
-    directprint_job *job = (directprint_job *)m_job;
-    
-    directprint_job_lpr_print(job);
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
+        
+        directprint_job_lpr_print(job);
+    }
 }
 
 JNIEXPORT void
@@ -61,9 +67,12 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_cancel(JNIEnv *env, job
 {
     // Get job reference to Java object
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
-    directprint_job *job = (directprint_job *)m_job;
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
 
-    directprint_job_cancel(job);
+        directprint_job_cancel(job);
+    }
 }
 
 // Callback
