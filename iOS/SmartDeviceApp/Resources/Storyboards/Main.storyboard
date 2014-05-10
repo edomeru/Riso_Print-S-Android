@@ -538,10 +538,6 @@
                                             <constraint firstAttribute="height" constant="1" id="TJo-V2-1bg"/>
                                         </constraints>
                                     </view>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_logo_icon" translatesAutoresizingMaskIntoConstraints="NO" id="0LG-7N-E4H">
-                                        <rect key="frame" x="120" y="428" width="80" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="centerX" secondItem="0h3-GB-qyx" secondAttribute="centerX" id="4DX-mh-etR"/>
@@ -552,8 +548,6 @@
                                     <constraint firstAttribute="centerX" secondItem="LCb-DQ-C9T" secondAttribute="centerX" id="XrT-UI-zsy"/>
                                     <constraint firstAttribute="centerX" secondItem="J3F-04-3k8" secondAttribute="centerX" id="YwC-lX-e8w"/>
                                     <constraint firstItem="LCb-DQ-C9T" firstAttribute="top" secondItem="J3F-04-3k8" secondAttribute="bottom" constant="8" id="cxv-dU-Fq3"/>
-                                    <constraint firstItem="0LG-7N-E4H" firstAttribute="top" secondItem="J3F-04-3k8" secondAttribute="bottom" constant="144" id="jgj-Ak-9tU"/>
-                                    <constraint firstAttribute="centerX" secondItem="0LG-7N-E4H" secondAttribute="centerX" id="kNl-og-mRZ"/>
                                     <constraint firstAttribute="centerY" secondItem="J3F-04-3k8" secondAttribute="centerY" id="sgx-bQ-5QN"/>
                                     <constraint firstItem="0h3-GB-qyx" firstAttribute="top" secondItem="jBd-Bv-Jko" secondAttribute="bottom" constant="4" id="xxz-zO-gVw"/>
                                 </constraints>
@@ -3965,7 +3959,6 @@
         <image name="img_btn_search_printer_pressed" width="64" height="64"/>
         <image name="img_btn_submenu" width="64" height="64"/>
         <image name="img_home_icon" width="160" height="20"/>
-        <image name="img_logo_icon" width="80" height="22"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -3973,9 +3966,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="gq1-XZ-ede"/>
+        <segue reference="c8V-UF-iWe"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="CWW-vD-UgO"/>
+        <segue reference="5pT-ga-236"/>
         <segue reference="dDZ-0e-JG0"/>
     </inferredMetricsTieBreakers>
 </document>
