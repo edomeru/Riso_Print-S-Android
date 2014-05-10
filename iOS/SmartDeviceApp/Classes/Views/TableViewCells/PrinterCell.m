@@ -47,7 +47,7 @@
 - (void) setCellStyleForToDeleteCell
 {
     UIColor *bgColor = [UIColor purple2ThemeColor];
-    [self setBackgroundColor:bgColor];
+    [self.contentView setBackgroundColor:bgColor];
     [self.printerName setTextColor:[UIColor whiteThemeColor]];
     [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.deleteButton setHidden: NO];
@@ -58,7 +58,7 @@
 - (void) setCellStyleForDefaultCell
 {
     self.isDefaultPrinterCell = YES;
-    [self setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self.contentView setBackgroundColor:[UIColor gray4ThemeColor]];
     [self.printerName setTextColor:[UIColor whiteThemeColor]];
     [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.deleteButton setHidden: YES];
@@ -70,7 +70,7 @@
 {
     self.isDefaultPrinterCell = NO;
     UIColor *bgColor = [UIColor gray1ThemeColor];
-    [self setBackgroundColor:bgColor];
+    [self.contentView setBackgroundColor:bgColor];
     [self.printerName setTextColor:[UIColor blackThemeColor]];
     [self.ipAddress setTextColor:[UIColor blackThemeColor]];
     [self.deleteButton setHidden: YES];
