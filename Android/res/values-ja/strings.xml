@@ -123,8 +123,8 @@
     <string name="ids_lbl_staple">ステープル</string>
     <string name="ids_lbl_staple_upperleft">左1カ所</string>
     <string name="ids_lbl_staple_upperright">右1カ所</string>
-    <string name="ids_lbl_staple_2">2.0</string>
-    <string name="ids_lbl_staple_1">1.0</string>
+    <string name="ids_lbl_staple_2">2</string>
+    <string name="ids_lbl_staple_1">1</string>
     <string name="ids_lbl_punch">パンチ</string>
     <string name="ids_lbl_punch_2holes">2穴</string>
     <string name="ids_lbl_punch_3holes">3穴</string>

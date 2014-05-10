@@ -123,8 +123,8 @@
     <string name="ids_lbl_staple">Staple</string>
     <string name="ids_lbl_staple_upperleft">1 (Upper-left)</string>
     <string name="ids_lbl_staple_upperright">1 (Upper-right)</string>
-    <string name="ids_lbl_staple_2">2.0</string>
-    <string name="ids_lbl_staple_1">1.0</string>
+    <string name="ids_lbl_staple_2">2</string>
+    <string name="ids_lbl_staple_1">1</string>
     <string name="ids_lbl_punch">Punch</string>
     <string name="ids_lbl_punch_2holes">2 holes</string>
     <string name="ids_lbl_punch_3holes">3 holes</string>
