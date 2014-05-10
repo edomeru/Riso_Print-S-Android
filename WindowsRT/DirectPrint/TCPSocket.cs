@@ -15,27 +15,22 @@ namespace DirectPrint
 
         private StreamSocket socket = null;
 
-        Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
-        Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
-
-        public TCPSocket()
-        {
-            socket = new StreamSocket();
-        }
+        private Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
+        private Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
 
         public TCPSocket(string host, string port, Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {            
             socket = new StreamSocket();
-            this.connect(host, port);
+            this.setHost(host, port);
             this.dataReceivedHandler = d;
         }
 
-        internal void assignDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
+        internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {
             dataReceivedHandler = d;
         }
 
-        internal async void connect(string host, string port)
+        internal async void setHost(string host, string port)
         {
             HostName h = new HostName(host);
             await socket.ConnectAsync(h, port);
@@ -91,7 +86,7 @@ namespace DirectPrint
             }
         }
 
-        internal async void write(byte[] data, int a,int b, bool waitresponse = true)
+        internal async void write(byte[] data, int a,int b)
         {
             if (socket != null)
             {
@@ -108,11 +103,6 @@ namespace DirectPrint
                 // detach the stream and close it
                 writer.DetachStream();
                 writer.Dispose();
-            }
-
-            if (waitresponse)
-            {
-                read();
             }
         }    
     }

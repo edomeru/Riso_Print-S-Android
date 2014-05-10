@@ -41,26 +41,29 @@ namespace DirectPrint
         public const int PRINT_STATUS_OK = 0;
         public const int PRINT_STATUS_ERROR = 1;
 
-        string PORT_LPR = "515";
-        string PORT_RAW = "9100";
+        private const string PORT_LPR = "515";
+        private const string PORT_RAW = "9100";
 
-        int TIMEOUT_CONNECT = 10;
-        int TIMEOUT_RECEIVE = 30;
+        private const int TIMEOUT_CONNECT = 10;
+        private const int TIMEOUT_RECEIVE = 30;
 
-        int BUFFER_SIZE = 4096;
+        private const int BUFFER_SIZE = 4096;
 
-        string QUEUE_NAME = "normal";
-        string HOST_NAME = "SmartDeviceApp";
+        private const string QUEUE_NAME = "normal";
+        private const string HOST_NAME = "SmartDeviceApp";
 
-        string PJL_ESCAPE = "\x1B-12345X";
-        string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
-        string PJL_EOJ = "@PJL EOJ\x0d\x0a";
+        private const string PJL_ESCAPE = "\x1B-12345X";
+        private const string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
+        private const string PJL_EOJ = "@PJL EOJ\x0d\x0a";
 
-        float LPR_PREP_PROGRESS_STEP = 6.0f;
-        float LPR_PREP_END_PROGRESS = 20.0f;
-        float PJL_HEADER_PROGRESS_STEP = 5.0f;
-        float PJL_FOOTER_PROGRESS_STEP = 4.0f;
-        float END_PROGRESS = 100.0f;
+        private const float LPR_PREP_PROGRESS_STEP = 6.0f;
+        private const float LPR_PREP_END_PROGRESS = 20.0f;
+        private const float PJL_HEADER_PROGRESS_STEP = 5.0f;
+        private const float PJL_FOOTER_PROGRESS_STEP = 4.0f;
+        private const float END_PROGRESS = 100.0f;
+
+        private bool datareceived = false;
+        private int ack = 0;
 
         TCPSocket socket;
 
@@ -111,17 +114,7 @@ namespace DirectPrint
             print_job = parameter;
 
             //start socket
-            socket = new TCPSocket();
-            socket.connect(print_job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-            /*
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
-            {
-                startLPRPrint(print_job);
-            });
-            */
-            //
+            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
 
             // Prepare PJL header
             string pjl_header = "";
@@ -169,7 +162,7 @@ namespace DirectPrint
             socket.write(buffer, 0, pos);
             /////////////////////////////////////////////////////////
             /// READ ACK
-            if (waitForAck() != 0)//TODO: no response here:
+            if (waitForAck() != 0)
             {
                 if (print_job.callback != null)
                 {
@@ -333,23 +326,18 @@ namespace DirectPrint
                 return;
             }
 
-            //send file data
-
-
-            //***write buffer to socket
-            //socket.write(filebuffer, 0, pos);
-            
+            //send file data in chunks            
             ulong totalbytes = 0;
             int bytesRead = 0;
 
-            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length, false);
+            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
             totalbytes += (ulong)pjl_header.Length;
 
             MemoryStream fstream = new MemoryStream(filebuffer);
             while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
                 totalbytes += (ulong)bytesRead;
-                socket.write(buffer, 0, bytesRead, false);
+                socket.write(buffer, 0, bytesRead);
                 print_job.progress += data_step;
                 if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
@@ -362,17 +350,15 @@ namespace DirectPrint
                     return;
                 }
             }
-            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length, false);
+            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
             totalbytes += (ulong)pjl_footer.Length;
-
-            //fstream.Dispose();
 
             if (total_data_size != totalbytes)
             {
                 return;
             }
 
-            // close data file with a 0 ..
+            // close data file with a 0
             pos = 0;
             buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
@@ -403,36 +389,23 @@ namespace DirectPrint
         }
 
         private int waitForAck()
-        {
+        {            
             long start = Environment.TickCount;
+            datareceived = false;
+            socket.read();
+            while (!datareceived)
             {
-               
-                while (!datareceived)
+                if (Environment.TickCount - start > TIMEOUT_RECEIVE)
                 {
-                    //if (socket != null) socket.read();
-                    // wait for data
-                    // read data
-
-                    if (Environment.TickCount - start > TIMEOUT_RECEIVE)
-                    {
-                        //operation timeout
-                        return -1;
-                    }
+                    //operation timeout
+                    return -1;
                 }
-                datareceived = false;
-            }            
-
-            if (ack != 0)
-            {
-                return ack;
             }
+            datareceived = false;
 
             return ack;
         }
 
-
-        private bool datareceived = false;
-        private int ack = 0;
         public void receiveData(HostName hostname, byte[] data)
         {
             if (data != null)
