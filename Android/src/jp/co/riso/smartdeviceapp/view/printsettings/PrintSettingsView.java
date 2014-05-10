@@ -799,7 +799,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
             
             if (view instanceof Switch) {
+                ((Switch) view).setOnCheckedChangeListener(null);
                 ((Switch) view).setChecked(value == 1);
+                ((Switch) view).setOnCheckedChangeListener(this);
             }
         }
         
