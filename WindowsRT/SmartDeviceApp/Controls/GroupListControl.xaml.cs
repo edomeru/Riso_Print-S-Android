@@ -53,6 +53,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty DeleteButtonVisibilityProperty =
            DependencyProperty.Register("DeleteButtonVisibility", typeof(Visibility), typeof(GroupListControl), new PropertyMetadata(Visibility.Visible));
 
+        public static readonly DependencyProperty PressedHeaderColorProperty =
+            DependencyProperty.Register("PressedHeaderColor", typeof(SolidColorBrush), typeof(GroupListControl), null);
+
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
@@ -99,6 +102,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (Visibility)GetValue(DeleteButtonVisibilityProperty); }
             set { SetValue(DeleteButtonVisibilityProperty, value); }
+        }
+
+        public SolidColorBrush PressedHeaderColor
+        {
+            get { return (SolidColorBrush)GetValue(PressedHeaderColorProperty); }
+            set { SetValue(PressedHeaderColorProperty, value); }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

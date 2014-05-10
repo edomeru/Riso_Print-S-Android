@@ -77,6 +77,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ValueTextWidthProperty =
             DependencyProperty.Register("ValueTextWidth", typeof(double), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty ValueTextStyleProperty =
+            DependencyProperty.Register("ValueTextStyle", typeof(Style), typeof(KeyValueControl), null);
+
         public static readonly DependencyProperty ValueSubTextProperty =
             DependencyProperty.Register("ValueSubText", typeof(string), typeof(KeyValueControl), null);
 
@@ -136,6 +139,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (object)GetValue(ValueContentProperty); }
             set { SetValue(ValueContentProperty, value); }
+        }
+
+        public Style ValueTextStyle
+        {
+            get { return (Style)GetValue(ValueTextStyleProperty); }
+            set { SetValue(ValueTextStyleProperty, value); }
         }
 
         public ImageSource IconImage
@@ -228,12 +237,12 @@ namespace SmartDeviceApp.Controls
             var control = (KeyValueControl)obj;
             if ((bool)e.NewValue)
             {
-                VisualStateManager.GoToState(((KeyValueControl)obj).button, "Normal", true);
+                VisualStateManager.GoToState(control.button, "Normal", true);
                 control.button.IsEnabled = true;
             }
             else
             {
-                VisualStateManager.GoToState(((KeyValueControl)obj).button, "Disabled", true);
+                VisualStateManager.GoToState(control.button, "Disabled", true);
                 control.button.IsEnabled = false;
             }
         }
@@ -244,6 +253,17 @@ namespace SmartDeviceApp.Controls
             {
                 if (_isLoaded || Visibility == Visibility.Collapsed) return;
 
+                // Set value styles
+                if (ValueSubTextVisibility == Visibility.Visible) 
+                {
+                    ValueTextStyle = (Style)Application.Current.Resources["STYLE_TextValueWithSubText"];
+                }
+                else 
+                {
+                    ValueTextStyle = (Style)Application.Current.Resources["STYLE_TextValue"];
+                }
+
+                // Adjust text widths
                 var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
                 var smallMargin = (int)((double)Application.Current.Resources["MARGIN_Small"]);
 

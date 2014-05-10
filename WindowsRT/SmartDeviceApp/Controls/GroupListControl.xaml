@@ -32,7 +32,7 @@
             </Grid>
         </ControlTemplate>
         <ControlTemplate x:Key="TEMPLATE_ToggleButton" TargetType="ToggleButton">
-            <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
+            <Grid x:Name="listHeaderGrid" Style="{StaticResource STYLE_ListHeaderGrid}">
         		<VisualStateManager.VisualStateGroups>
         			<VisualStateGroup x:Name="CommonStates">
         				<VisualState x:Name="Normal">
@@ -71,7 +71,49 @@
                                 </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
                         </VisualState>
-        			</VisualStateGroup>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="listHeaderGrid">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PressedHeaderColor, ElementName=groupListControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="expandImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="collapseImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Visible</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="CheckedPressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="listHeaderGrid">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PressedHeaderColor, ElementName=groupListControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="expandImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Visible</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="collapseImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
         		</VisualStateManager.VisualStateGroups>   
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

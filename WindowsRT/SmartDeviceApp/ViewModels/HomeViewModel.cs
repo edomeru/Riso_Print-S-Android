@@ -20,6 +20,7 @@ using Windows.UI.Xaml;
 using Windows.Storage.Pickers;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
@@ -37,15 +38,12 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _openDocumentCommand;
         private bool _isProgressRingActive;
-        private bool _isOpenDocumentEnabled;
                 
         public HomeViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            SetViewMode(_viewControlViewModel.ViewMode);
-            IsOpenDocumentButtonEnabled = true;
             IsProgressRingActive = false;
         }
 
@@ -73,19 +71,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isProgressRingActive = value;
                     RaisePropertyChanged("IsProgressRingActive");
-                }
-            }
-        }
-
-        public bool IsOpenDocumentButtonEnabled
-        {
-            get { return _isOpenDocumentEnabled; }
-            set
-            {
-                if (_isOpenDocumentEnabled != value)
-                {
-                    _isOpenDocumentEnabled = value;
-                    RaisePropertyChanged("IsOpenDocumentButtonEnabled");
                 }
             }
         }
@@ -120,31 +105,6 @@ namespace SmartDeviceApp.ViewModels
                 IsProgressRingActive = false;
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
-            }
-        }
-
-        private void SetViewMode(ViewMode viewMode)
-        {
-            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
-            switch (viewMode)
-            {
-                case ViewMode.MainMenuPaneVisible:
-                    {
-                        IsOpenDocumentButtonEnabled = false;
-                        break;
-                    }
-
-                case ViewMode.FullScreen:
-                    {
-                        IsOpenDocumentButtonEnabled = true;
-                        break;
-                    }
-                case ViewMode.RightPaneVisible:
-                case ViewMode.RightPaneVisible_ResizedWidth: // NOTE: Technically not possible
-                    {
-                        IsOpenDocumentButtonEnabled = false;
-                        break;
-                    }
             }
         }
     }
