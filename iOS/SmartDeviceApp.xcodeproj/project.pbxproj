@@ -103,6 +103,8 @@
 		2D30FBC6191A470200B9DAC8 /* SNMPManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */; };
 		2D30FBCC191A530700B9DAC8 /* DirectPrintManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */; };
 		2D58A9071913D4DE003FBC0B /* TestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */; };
+		2D5AF0BB191E18DE0079510D /* CustomSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */; };
+		2D5AF0BC191E18DE0079510D /* CustomSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */; };
 		2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
@@ -423,6 +425,8 @@
 		2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManagerMock.m; sourceTree = "<group>"; };
 		2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
+		2D5AF0B9191E18DE0079510D /* CustomSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomSegmentedControl.h; sourceTree = "<group>"; };
+		2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomSegmentedControl.m; sourceTree = "<group>"; };
 		2D5FC7B618DA79EB00459B92 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B818DA7A5900459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5FC7B918DA7A6300459B92 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1111,6 +1115,8 @@
 				2DA1AF5818E2F01800085F27 /* CollectionViewCells */,
 				2DA1AECE18E2EF8500085F27 /* Extensions */,
 				2DA1AED918E2EF8500085F27 /* TableViewCells */,
+				2D5AF0B9191E18DE0079510D /* CustomSegmentedControl.h */,
+				2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */,
 				2DA1AECC18E2EF8500085F27 /* DefaultView.h */,
 				2DA1AECD18E2EF8500085F27 /* DefaultView.m */,
 				2DA1AED118E2EF8500085F27 /* MenuButton.h */,
@@ -1616,6 +1622,7 @@
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2D1F23A91900FF5800301D1E /* CXAlertButtonContainerView.m in Sources */,
 				2D1F23A71900FF5800301D1E /* CXAlertBackgroundWindow.m in Sources */,
+				2D5AF0BB191E18DE0079510D /* CustomSegmentedControl.m in Sources */,
 				2DA1AF2118E2EF9600085F27 /* PrintersIpadViewController.m in Sources */,
 				2D157BF818ED5B3E0034F953 /* PrintSettingsHelper.m in Sources */,
 				2DA1AEE218E2EF8500085F27 /* MenuScrollView.m in Sources */,
@@ -1696,6 +1703,7 @@
 				3195C1E619111A7A00197397 /* PrintSettingsTableViewControllerTest.m in Sources */,
 				3195C1E719111A7A00197397 /* PrintSettingsViewControllerTest.m in Sources */,
 				2D13C5CA191CF38D001DC4FA /* PrinterLayout.m in Sources */,
+				2D5AF0BC191E18DE0079510D /* CustomSegmentedControl.m in Sources */,
 				3195C1ED19111A9F00197397 /* SettingsViewControllerTest.m in Sources */,
 				28052CE51911C651007982DF /* DatabaseManagerTest.m in Sources */,
 				28C9182219124B1F00CB582C /* DirectPrintManagerTest.m in Sources */,

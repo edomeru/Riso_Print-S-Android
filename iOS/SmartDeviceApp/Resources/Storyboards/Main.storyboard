@@ -793,8 +793,8 @@
                                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PORT"/>
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
-                                                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="uOq-Y8-iQa" userLabel="Port Selection">
-                                                            <rect key="frame" x="154" y="-2" width="156" height="44"/>
+                                                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="uOq-Y8-iQa" userLabel="Port Selection" customClass="CustomSegmentedControl">
+                                                            <rect key="frame" x="154" y="5" width="156" height="31"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <segments>
                                                                 <segment title="First"/>
@@ -808,10 +808,11 @@
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="centerY" secondItem="JsL-Ew-m9U" secondAttribute="centerY" id="0Qq-qA-X9g"/>
+                                                        <constraint firstAttribute="bottom" secondItem="uOq-Y8-iQa" secondAttribute="bottom" constant="5" id="1je-uD-L4W"/>
                                                         <constraint firstItem="JsL-Ew-m9U" firstAttribute="leading" secondItem="oaT-Zo-6Kd" secondAttribute="leading" constant="20" id="2B9-IE-0hb"/>
+                                                        <constraint firstItem="uOq-Y8-iQa" firstAttribute="top" secondItem="oaT-Zo-6Kd" secondAttribute="top" constant="5" id="XI1-9S-cIS"/>
                                                         <constraint firstAttribute="trailing" secondItem="uOq-Y8-iQa" secondAttribute="trailing" constant="10" id="Xue-eS-6Fu"/>
                                                         <constraint firstAttribute="height" constant="40" id="tyA-QX-yPZ"/>
-                                                        <constraint firstAttribute="centerY" secondItem="uOq-Y8-iQa" secondAttribute="centerY" id="yeG-3l-ufa"/>
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uDu-fq-KZK" userLabel="Separator">
@@ -2652,8 +2653,8 @@
                                                     <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PORT"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
-                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="kUh-T9-Pqa" userLabel="Port Selection">
-                                                <rect key="frame" x="154" y="1" width="156" height="44"/>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="kUh-T9-Pqa" userLabel="Port Selection" customClass="CustomSegmentedControl">
+                                                <rect key="frame" x="154" y="5" width="156" height="36"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <segments>
                                                     <segment title="First"/>
@@ -2676,11 +2677,12 @@
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="Y3x-9G-PvK" secondAttribute="bottom" id="0I1-H9-hK2"/>
                                             <constraint firstItem="Y3x-9G-PvK" firstAttribute="leading" secondItem="iTG-Lt-qH7" secondAttribute="leading" constant="20" id="41L-sJ-MCS"/>
-                                            <constraint firstAttribute="centerY" secondItem="kUh-T9-Pqa" secondAttribute="centerY" id="6YK-7B-zii"/>
+                                            <constraint firstItem="kUh-T9-Pqa" firstAttribute="top" secondItem="iTG-Lt-qH7" secondAttribute="top" constant="5" id="9NH-tP-Th3"/>
                                             <constraint firstAttribute="centerY" secondItem="HPZ-sV-xv7" secondAttribute="centerY" id="D1q-RS-OgI"/>
                                             <constraint firstAttribute="trailing" secondItem="kUh-T9-Pqa" secondAttribute="trailing" constant="10" id="J7d-4K-qqI"/>
                                             <constraint firstAttribute="trailing" secondItem="Y3x-9G-PvK" secondAttribute="trailing" id="U0U-x7-D0E"/>
                                             <constraint firstAttribute="height" constant="45" id="ciz-JV-Vys"/>
+                                            <constraint firstAttribute="bottom" secondItem="kUh-T9-Pqa" secondAttribute="bottom" constant="5" id="hkt-kD-CK4"/>
                                             <constraint firstItem="HPZ-sV-xv7" firstAttribute="leading" secondItem="iTG-Lt-qH7" secondAttribute="leading" constant="20" id="pna-yW-7ri"/>
                                         </constraints>
                                     </view>
