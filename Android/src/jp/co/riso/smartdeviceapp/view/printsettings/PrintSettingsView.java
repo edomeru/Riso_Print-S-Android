@@ -8,7 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view.printsettings;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -34,23 +33,29 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -59,8 +64,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
-public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener, UpdateStatusCallback {
+public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener, UpdateStatusCallback, OnEditorActionListener {
     public static final String TAG = "PrintSettingsView";
     
     private static final String KEY_SELECTED_TITLES = "key_selected_titles";
@@ -181,6 +187,24 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         initializeAuthenticationSettingsView();
         
         initializeAuthenticationValues();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        View view = mMainLayout.findViewWithTag(PrintSettings.TAG_COPIES);
+        if (view != null && view instanceof EditText) {
+            Rect r = new Rect();
+            int[] coords = new int[2];
+            view.getHitRect(r);
+            view.getLocationOnScreen(coords);
+            r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
+            if (!r.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                checkEditTextValue((EditText)view);      
+                AppUtils.hideSoftKeyboard((Activity) getContext());    
+            }
+        }
+        return super.onInterceptTouchEvent(ev);
     }
     
     /**
@@ -801,6 +825,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             mPrintControls.findViewById(ID_PRINT_HEADER).setVisibility(View.VISIBLE);
             View selectedPrinter = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
             selectedPrinter.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
+            selectedPrinter.setClickable(true);
             
             View authenticationGroup = mMainLayout.findViewWithTag(KEY_TAG_AUTHENTICATION);
             authenticationGroup.setVisibility(View.VISIBLE);
@@ -811,6 +836,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             mPrintControls.findViewById(ID_PRINT_HEADER).setVisibility(View.GONE);
             View selectedPrinter = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
             selectedPrinter.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
+            selectedPrinter.setClickable(false);
 
             View authenticationGroup = mMainLayout.findViewWithTag(KEY_TAG_AUTHENTICATION);
             authenticationGroup.setVisibility(View.GONE);
@@ -1639,6 +1665,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             editText.setLayoutParams(params);
             editText.setTag(tag);
             editText.addTextChangedListener(new EditTextWatcher(tag, 1));
+            editText.setOnEditorActionListener(this);
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
@@ -2010,6 +2037,33 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
+    public void checkEditTextValue(TextView v) {
+        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
+            String value = v.getText().toString();
+            if (value.isEmpty()) {
+                v.setText(Integer.toString(1));
+            } else {
+                int val = Integer.parseInt(value);
+                if (val <= 0) {
+                    v.setText(Integer.toString(1));
+                }
+            }
+        }
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnEditorActionListener
+    // ================================================================================
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            checkEditTextValue(v);
+            return false;
+        }
+        return false;
+    }
+    
     // ================================================================================
     // Internal classes
     // ================================================================================
@@ -2033,21 +2087,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         public synchronized void afterTextChanged(Editable s) {
             if (!mEditing) {
                 mEditing = true;
-                
                 String digits = s.toString().replaceAll("\\D", "");
-                NumberFormat nf = NumberFormat.getIntegerInstance();
+                
                 try {
-                    String formatted = nf.format(Integer.parseInt(digits));
+                    String formatted = Integer.toString(Integer.parseInt(digits));
                     s.replace(0, s.length(), formatted);
                 } catch (NumberFormatException nfe) {
-                    s.replace(0, s.length(), "0");
                 }
                 
-                if (Integer.parseInt(s.toString()) <= mMinValue) {
-                    s.replace(0, s.length(), Integer.toString(mMinValue));
+                int value = mMinValue;
+                try {
+                    value = Integer.parseInt(s.toString());
+                } catch (NumberFormatException nfe) {
                 }
                 
-                if (updateValue(mTag, Integer.parseInt(s.toString()))) {
+                if (updateValue(mTag, value)) {
                     if (mListener != null) {
                         mListener.onPrintSettingsValueChanged(mPrintSettings);
                     }
