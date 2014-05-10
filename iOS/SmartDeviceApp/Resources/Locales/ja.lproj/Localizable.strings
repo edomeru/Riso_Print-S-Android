@@ -4,6 +4,7 @@
 "IDS_LBL_SAVE" = "保存";
 "IDS_LBL_OK" = "OK";
 "IDS_LBL_CANCEL" = "キャンセル";
+"IDS_LBL_NO_NAME" = "No Name";
 "IDS_LBL_OPEN_IN_IOS" = "ドキュメントを選択してください。";
 "IDS_LBL_OPEN_IN_ANDROID" = "ドキュメントを選択してください。";
 "IDS_LBL_OPEN_IN_WINRT" = "ドキュメントを選択してください。";
@@ -135,7 +136,6 @@
 "IDS_LBL_LEGAL" = "リーガル情報";
 "IDS_LBL_PRINT_JOB_SUCCESSFUL" = "成功しました。";
 "IDS_LBL_PRINT_JOB_FAILED" = "失敗しました。";
-"IDS_LBL_NO_NAME" = "No name";
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "このプリンターはすでに登録されています。";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "IP Addressを確認してください。";
 "IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";

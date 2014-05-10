@@ -299,16 +299,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
-            headerCell.groupLabel.localizationId = @"IDS_LBL_SECURE_PRINT";
+            headerCell.groupLabel.localizationId = IDS_LBL_AUTHENTICATION;
             headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
             cell = headerCell;
         }
         else
         {
             PrintSettingsItemInputCell *itemInputCell = [tableView dequeueReusableCellWithIdentifier:PINCODE_INPUT_CELL forIndexPath:indexPath];
-            itemInputCell.settingLabel.localizationId =  @"IDS_LBL_AUTHENTICATION_PINCODE";
+            itemInputCell.settingLabel.localizationId =  IDS_LBL_AUTHENTICATION_PINCODE;
             itemInputCell.valueTextField.secureTextEntry = YES;
-            itemInputCell.valueTextField.text = [[self.previewSetting valueForKey:KEY_PIN_CODE] stringValue];
+            itemInputCell.valueTextField.text = [self.previewSetting valueForKey:KEY_PIN_CODE];
             itemInputCell.valueTextField.tag = indexPath.section * 10 + indexPath.row;
             itemInputCell.valueTextField.delegate = self;
             [self.textFieldBindings setObject:KEY_PIN_CODE forKey:[NSNumber numberWithInteger:itemInputCell.valueTextField.tag]];
@@ -409,17 +409,20 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
     if(section == [self.supportedSettings count] + 1 && self.isDefaultSettingsMode == NO)
     {
-         PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
-         headerCell.expanded = ![[self.expandedSections objectAtIndex:section - 1] boolValue];
-         [self.expandedSections replaceObjectAtIndex:section - 1 withObject:[NSNumber numberWithBool:headerCell.expanded]];
-        NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
-        if(headerCell.expanded)
+        if (row == 0)
         {
-            [tableView insertRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
-        }
-        else
-        {
-            [tableView deleteRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
+            PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
+            headerCell.expanded = ![[self.expandedSections objectAtIndex:section - 1] boolValue];
+            [self.expandedSections replaceObjectAtIndex:section - 1 withObject:[NSNumber numberWithBool:headerCell.expanded]];
+            NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
+            if(headerCell.expanded)
+            {
+                [tableView insertRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
+            }
+            else
+            {
+                [tableView deleteRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
+            }
         }
     }
     else if (section > 0)
@@ -503,9 +506,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     NSString *key = [self.textFieldBindings objectForKey:[NSNumber numberWithInteger:textField.tag]];
-    NSInteger value = [textField.text integerValue];
     if([key isEqualToString:KEY_COPIES] == YES)
     {
+        NSInteger value = [textField.text integerValue];
         if(value == 0)
         {
             //if value in text field will be zero auto correct to minimum
@@ -520,8 +523,12 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
                 textField.text = [NSString stringWithFormat:@"%ld", (long)value];
             }
         }
+        [self.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];
     }
-    [self.previewSetting setValue:[NSNumber numberWithInteger:value] forKey:key];
+    else if ([key isEqualToString:KEY_PIN_CODE] == YES)
+    {
+        [self.previewSetting setValue:textField.text forKey:key];
+    }
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
