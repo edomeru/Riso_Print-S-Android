@@ -17,4 +17,6 @@
 @property (weak, nonatomic) IBOutlet UILabel* name;
 @property (weak, nonatomic) IBOutlet UILabel* timestamp;
 
+- (void)setDeleteState:(BOOL)isDelete;
+
 @end

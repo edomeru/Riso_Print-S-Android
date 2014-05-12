@@ -9,6 +9,7 @@
 #import "PrintJobHistoryGroupCell.h"
 #import "UIColor+Theme.h"
 #import "NSDate+Format.h"
+#import "DeleteButton.h"
 
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
@@ -227,39 +228,29 @@
         }
         
         // create the delete button
-        UIButton* deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [deleteButton setTitle:NSLocalizedString(IDS_LBL_DELETE, @"Delete")
-                      forState:UIControlStateNormal]; 
-        [deleteButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
-        [deleteButton setTitleEdgeInsets:UIEdgeInsetsMake(10.0f, 15.0f, 10.0f, 15.0f)];
-        [deleteButton setBackgroundColor:[UIColor whiteThemeColor]];
-        [deleteButton setUserInteractionEnabled:YES];
-        deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
+        // initial position offscreen
+        CGRect startPos = CGRectMake(jobCell.frame.size.width,
+                                     5.0f,
+                                     self.deleteAllButton.frame.size.width-15.0f,
+                                     jobCell.frame.size.height-10.0f);
+        // final position on top of timestamp
+        CGRect endPos = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f, 
+                                   5.0f,
+                                   self.deleteAllButton.frame.size.width-15.0f,
+                                   jobCell.frame.size.height-10.0f);
+        DeleteButton* deleteButton = [DeleteButton createAtOffscreenPosition:startPos
+                                                        withOnscreenPosition:endPos];
         deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
-        deleteButton.frame = CGRectMake(jobCell.frame.size.width, //initial position offscreen
-                                        5.0f,
-                                        self.deleteAllButton.frame.size.width-15.0f,
-                                        jobCell.frame.size.height-10.0f);
-        
-        // set the handler for the tap action
         [deleteButton addTarget:receiver
                          action:actionOnTap
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        jobCell.timestamp.hidden = YES;
-        [jobCell.name setTextColor:[UIColor whiteThemeColor]];
-        [jobCell setBackgroundColor:[UIColor purple2ThemeColor]];
+        [jobCell setDeleteState:YES];
         [jobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
         
-        // slide the button from offscreen to its place
-        [UIView animateWithDuration:0.2 animations:^
-        {
-            deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f, //final position onscreen
-                                            5.0f,
-                                            self.deleteAllButton.frame.size.width-15.0f,
-                                            jobCell.frame.size.height-10.0f);
-        }];
+        // slide the button from offscreen to its place over the timestamp
+        [deleteButton animateOnscreen:nil];
     }
 }
 
@@ -271,25 +262,13 @@
 
     // get the delete button
     PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
-    UIButton* deleteButton = (UIButton*)[[jobCell.contentView subviews] lastObject];
+    DeleteButton* deleteButton = (DeleteButton*)[[jobCell.contentView subviews] lastObject];
     
     // slide the button to offscreen
-    __weak PrintJobHistoryGroupCell* weakSelf = self;
-    [UIView animateWithDuration:0.2 animations:^
-    {
-         deleteButton.frame = CGRectMake(jobCell.frame.size.width, //final position offscreen
-                                         5.0f,
-                                         weakSelf.deleteAllButton.frame.size.width-15.0f,
-                                         jobCell.frame.size.height-10.0f);
-    } completion:^(BOOL finished)
+    [deleteButton animateOffscreen:^(BOOL finished)
     {
         [deleteButton removeFromSuperview];
-        jobCell.timestamp.hidden = NO;
-        [jobCell.name setTextColor:[UIColor blackThemeColor]];
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-            [jobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
-        else
-            [jobCell setBackgroundColor:[UIColor gray1ThemeColor]];
+        [jobCell setDeleteState:NO];
     }];
     
     self.jobWithDelete = nil;
