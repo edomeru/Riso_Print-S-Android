@@ -27,4 +27,18 @@
     // Configure the view for the selected state
 }
 
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    [super setHighlighted:highlighted animated:animated];
+    
+    if (highlighted)
+    {
+        self.contentView.backgroundColor = [UIColor purple1ThemeColor];
+    }
+    else
+    {
+        self.contentView.backgroundColor = [UIColor blackThemeColor];
+    }
+}
+
 @end
