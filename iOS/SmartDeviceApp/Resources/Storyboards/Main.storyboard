@@ -3453,44 +3453,64 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <prototypes>
-                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobHistoryItem" textLabel="jOI-uA-LVi" detailTextLabel="SMv-yv-mrb" imageView="s58-ns-R2z" rowHeight="45" style="IBUITableViewCellStyleValue1" id="cnq-2K-jWB" userLabel="PrintJobHistoryItem">
+                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobItem" rowHeight="45" id="cnq-2K-jWB" userLabel="PrintJobItem" customClass="PrintJobItemCell">
                                                             <rect key="frame" x="0.0" y="22" width="320" height="45"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cnq-2K-jWB" id="vvl-VO-Pci">
                                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
-                                                                    <view tag="5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="67X-EH-WaZ" userLabel="Separator">
+                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="67X-EH-WaZ" userLabel="Separator">
                                                                         <rect key="frame" x="55" y="44" width="265" height="1"/>
                                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                                     </view>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jOI-uA-LVi" userLabel="Name">
-                                                                        <rect key="frame" x="55" y="14" width="72" height="17"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_job_status_ok" translatesAutoresizingMaskIntoConstraints="NO" id="Ot3-gE-1qz" userLabel="Result">
+                                                                        <rect key="frame" x="5" y="0.0" width="45" height="45"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="45" id="itl-sW-Uh2"/>
+                                                                            <constraint firstAttribute="height" constant="45" id="nsD-on-qta"/>
+                                                                        </constraints>
+                                                                    </imageView>
+                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" verticalHuggingPriority="251" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qa7-a5-2Af" userLabel="Name">
+                                                                        <rect key="frame" x="55" y="15" width="115" height="16"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
-                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="img_btn_job_status_ok" id="s58-ns-R2z" userLabel="Result">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="45" height="45"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                    </imageView>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="2014/04/01 18:30" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SMv-yv-mrb" userLabel="Timestamp">
-                                                                        <rect key="frame" x="196" y="14" width="114" height="17"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="2014/04/01 08:30 AM" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iEn-yQ-oZe" userLabel="Timestamp">
+                                                                        <rect key="frame" x="170" y="15" width="140" height="16"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="140" id="ZsJ-vQ-fAY"/>
+                                                                        </constraints>
+                                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
                                                                 </subviews>
                                                                 <constraints>
+                                                                    <constraint firstAttribute="centerY" secondItem="Ot3-gE-1qz" secondAttribute="centerY" id="4Cg-Au-aFy"/>
+                                                                    <constraint firstItem="iEn-yQ-oZe" firstAttribute="leading" secondItem="Qa7-a5-2Af" secondAttribute="trailing" id="8gS-rI-itG"/>
                                                                     <constraint firstAttribute="trailing" secondItem="67X-EH-WaZ" secondAttribute="trailing" id="9Ca-EK-7rQ"/>
+                                                                    <constraint firstItem="Qa7-a5-2Af" firstAttribute="leading" secondItem="Ot3-gE-1qz" secondAttribute="trailing" constant="5" id="CMM-d2-ZtH"/>
                                                                     <constraint firstItem="67X-EH-WaZ" firstAttribute="top" secondItem="vvl-VO-Pci" secondAttribute="top" constant="44" id="FqR-KQ-k5v"/>
-                                                                    <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="s58-ns-R2z" secondAttribute="trailing" constant="10" id="Tgv-DQ-Xkn"/>
+                                                                    <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="Qa7-a5-2Af" secondAttribute="leading" id="KZF-MQ-B4g"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="iEn-yQ-oZe" secondAttribute="trailing" constant="10" id="Os8-mv-XJ0"/>
+                                                                    <constraint firstAttribute="centerY" secondItem="Qa7-a5-2Af" secondAttribute="centerY" id="aI8-Vv-ShF"/>
                                                                     <constraint firstAttribute="bottom" secondItem="67X-EH-WaZ" secondAttribute="bottom" id="dB4-5u-OnQ"/>
+                                                                    <constraint firstAttribute="centerY" secondItem="iEn-yQ-oZe" secondAttribute="centerY" id="kua-Mu-B7i"/>
+                                                                    <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="Ot3-gE-1qz" secondAttribute="trailing" constant="5" id="quX-af-Et1"/>
+                                                                    <constraint firstItem="Ot3-gE-1qz" firstAttribute="leading" secondItem="vvl-VO-Pci" secondAttribute="leading" constant="5" id="wg6-2A-7XP"/>
                                                                 </constraints>
                                                             </tableViewCellContentView>
+                                                            <connections>
+                                                                <outlet property="name" destination="Qa7-a5-2Af" id="LL9-gf-itM"/>
+                                                                <outlet property="result" destination="Ot3-gE-1qz" id="be9-Ox-p2h"/>
+                                                                <outlet property="separator" destination="67X-EH-WaZ" id="rIF-TF-dOq"/>
+                                                                <outlet property="timestamp" destination="iEn-yQ-oZe" id="CH5-g6-79d"/>
+                                                            </connections>
                                                         </tableViewCell>
                                                     </prototypes>
                                                     <connections>
@@ -3506,7 +3526,7 @@
                                                         <constraint firstAttribute="height" constant="32" id="hGM-YV-Pky"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
                                                     <state key="normal" title="RISO Printer 1">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -3523,7 +3543,7 @@
                                                         <constraint firstAttribute="height" constant="18" id="de8-cO-Cn4"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
                                                     <state key="normal" title="192.168.0.1">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -3722,44 +3742,65 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <prototypes>
-                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobHistoryItem" textLabel="UCm-MV-Qm5" detailTextLabel="ehT-9p-C2q" imageView="Tth-mL-Hff" rowHeight="45" style="IBUITableViewCellStyleValue1" id="aGA-NI-k55" userLabel="PrintJobHistoryItem">
+                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobItem" rowHeight="45" id="aGA-NI-k55" userLabel="PrintJobItem" customClass="PrintJobItemCell">
                                                             <rect key="frame" x="0.0" y="22" width="320" height="45"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aGA-NI-k55" id="y9x-zh-hd8">
                                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
-                                                                    <view tag="5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23C-LC-eEo" userLabel="Separator">
+                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23C-LC-eEo" userLabel="Separator">
                                                                         <rect key="frame" x="55" y="44" width="265" height="1"/>
                                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                                     </view>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UCm-MV-Qm5" userLabel="Name">
-                                                                        <rect key="frame" x="55" y="14" width="72" height="17"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_job_status_ok" translatesAutoresizingMaskIntoConstraints="NO" id="Mu4-vK-8R3" userLabel="Result">
+                                                                        <rect key="frame" x="5" y="0.0" width="45" height="45"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="height" constant="45" id="PfS-6p-kyl"/>
+                                                                            <constraint firstAttribute="width" constant="45" id="zYf-MO-Vsv"/>
+                                                                        </constraints>
+                                                                    </imageView>
+                                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print Job A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="btZ-rr-6hp" userLabel="Name">
+                                                                        <rect key="frame" x="55" y="15" width="115" height="16"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                                        <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                                        <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="2014/04/01 18:30" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" id="ehT-9p-C2q" userLabel="Timestamp">
-                                                                        <rect key="frame" x="196" y="14" width="114" height="17"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2014/04/01 08:30 AM" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WvI-X2-IYn" userLabel="Timestamp">
+                                                                        <rect key="frame" x="170" y="15" width="140" height="16"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="140" id="xBE-Wu-1VX"/>
+                                                                        </constraints>
+                                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
-                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="img_btn_job_status_ok" id="Tth-mL-Hff" userLabel="Result">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="45" height="45"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                    </imageView>
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstAttribute="bottom" secondItem="23C-LC-eEo" secondAttribute="bottom" id="1Pe-qh-CZr"/>
+                                                                    <constraint firstItem="WvI-X2-IYn" firstAttribute="leading" secondItem="btZ-rr-6hp" secondAttribute="trailing" id="GcW-4r-h2F"/>
+                                                                    <constraint firstItem="Mu4-vK-8R3" firstAttribute="leading" secondItem="y9x-zh-hd8" secondAttribute="leading" constant="5" id="aP7-zF-ZlC"/>
+                                                                    <constraint firstItem="23C-LC-eEo" firstAttribute="leading" secondItem="btZ-rr-6hp" secondAttribute="leading" id="bfY-Kn-GLe"/>
+                                                                    <constraint firstAttribute="centerY" secondItem="Mu4-vK-8R3" secondAttribute="centerY" id="bsP-hE-WBV"/>
                                                                     <constraint firstAttribute="trailing" secondItem="23C-LC-eEo" secondAttribute="trailing" id="di4-7R-O9p"/>
-                                                                    <constraint firstItem="23C-LC-eEo" firstAttribute="leading" secondItem="Tth-mL-Hff" secondAttribute="trailing" constant="10" id="hMM-HB-jLA"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="WvI-X2-IYn" secondAttribute="trailing" constant="10" id="eYx-O6-Lrr"/>
+                                                                    <constraint firstItem="23C-LC-eEo" firstAttribute="leading" secondItem="Mu4-vK-8R3" secondAttribute="trailing" constant="5" id="gQR-mJ-6hL"/>
+                                                                    <constraint firstAttribute="centerY" secondItem="WvI-X2-IYn" secondAttribute="centerY" id="uP5-1e-kKH"/>
+                                                                    <constraint firstAttribute="centerY" secondItem="btZ-rr-6hp" secondAttribute="centerY" id="uwN-mZ-OEm"/>
                                                                     <constraint firstItem="23C-LC-eEo" firstAttribute="top" secondItem="y9x-zh-hd8" secondAttribute="top" constant="44" id="vQb-SF-fyM"/>
+                                                                    <constraint firstItem="btZ-rr-6hp" firstAttribute="leading" secondItem="Mu4-vK-8R3" secondAttribute="trailing" constant="5" id="wfJ-sf-7i2"/>
                                                                 </constraints>
                                                             </tableViewCellContentView>
+                                                            <connections>
+                                                                <outlet property="name" destination="btZ-rr-6hp" id="qYu-Gw-dpP"/>
+                                                                <outlet property="result" destination="Mu4-vK-8R3" id="S9w-zw-BiE"/>
+                                                                <outlet property="separator" destination="23C-LC-eEo" id="ruf-Tr-LLA"/>
+                                                                <outlet property="timestamp" destination="WvI-X2-IYn" id="SFa-eI-U0p"/>
+                                                            </connections>
                                                         </tableViewCell>
                                                     </prototypes>
                                                     <connections>
@@ -3775,7 +3816,7 @@
                                                         <constraint firstAttribute="height" constant="32" id="dFU-bV-Ucd"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
                                                     <state key="normal" title="RISO Printer 1">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -3828,7 +3869,7 @@
                                                         <constraint firstAttribute="height" constant="18" id="m5Z-3U-zSa"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
                                                     <state key="normal" title="192.168.0.1">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -3933,6 +3974,23 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CP3-Lw-qY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="g7F-wa-IxO">
+            <objects>
+                <viewController id="CRa-xR-Peu" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="758-ls-9Be"/>
+                        <viewControllerLayoutGuide type="bottom" id="Dqa-6y-T61"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Kto-A2-Rny">
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wpN-LX-dmy" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -3966,9 +4024,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="c8V-UF-iWe"/>
-        <segue reference="ax2-Mn-NH0"/>
+        <segue reference="oE4-lZ-OOf"/>
         <segue reference="5pT-ga-236"/>
+        <segue reference="uoe-Al-ug4"/>
         <segue reference="dDZ-0e-JG0"/>
     </inferredMetricsTieBreakers>
 </document>
