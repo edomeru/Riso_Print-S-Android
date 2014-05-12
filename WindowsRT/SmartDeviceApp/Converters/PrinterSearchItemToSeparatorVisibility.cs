@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
 {
-    class PrinterSearchItemToSeparatorVisibility : IValueConverter
+    public class PrinterSearchItemToSeparatorVisibility : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

@@ -22,8 +22,8 @@
         </Style>
         <Style x:Key="STYLE_TextAppTitle" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
             <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>
-            <Setter Property="FontSize" Value="84"/>
-            <Setter Property="Margin" Value="0,40,0,30"/>
+            <Setter Property="FontSize" Value="86"/>
+            <Setter Property="Margin" Value="0,45,0,30"/>
         </Style>
         <Style x:Key="STYLE_TextOpenDocument" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
             <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>

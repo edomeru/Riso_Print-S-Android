@@ -13,7 +13,7 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null) return String.Empty;
+            if (value == null || !(value is PageNumberInfo)) return String.Empty;
             var pageNumber = value as PageNumberInfo;
             string formattedPageNumber = String.Empty;
             formattedPageNumber = (pageNumber.PageIndex + 1).ToString();

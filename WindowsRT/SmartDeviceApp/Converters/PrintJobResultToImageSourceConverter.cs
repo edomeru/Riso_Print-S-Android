@@ -19,8 +19,6 @@ namespace SmartDeviceApp.Converters
         private const string RESOURCE_IMAGES_LOCATION = "ms-appx:///Resources/Images/";
         private const string IMAGE_JOB_STATUS_OK = "img_btn_job_status_ok.png";
         private const string IMAGE_JOB_STATUS_NG = "img_btn_job_status_ng.png";
-        //private const string FILE_PATH_RES_IMAGE_JOB_STATUS_OK = "Resources/Images/img_btn_job_status_ok.png";
-        //private const string FILE_PATH_RES_IMAGE_JOB_STATUS_NG = "Resources/Images/img_btn_job_status_ng.png";
         
         public object Convert(object value, Type targetType, object parameter, string language)
         {

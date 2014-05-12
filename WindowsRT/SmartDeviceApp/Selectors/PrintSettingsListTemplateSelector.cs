@@ -20,16 +20,19 @@ namespace SmartDeviceApp.Selectors
         {
             PrintSetting printSetting = item as PrintSetting;
 
-            switch (printSetting.Type)
+            if (printSetting != null)
             {
-                case PrintSettingType.boolean:
-                    return ListViewItemToggleSwitchTemplate;
-                case PrintSettingType.numeric:
-                    return ListViewItemTextBoxTemplate;
-                case PrintSettingType.list:
-                    return ListViewItemListTemplate;
-                case PrintSettingType.unknown:
-                    return null;
+                switch (printSetting.Type)
+                {
+                    case PrintSettingType.boolean:
+                        return ListViewItemToggleSwitchTemplate;
+                    case PrintSettingType.numeric:
+                        return ListViewItemTextBoxTemplate;
+                    case PrintSettingType.list:
+                        return ListViewItemListTemplate;
+                    case PrintSettingType.unknown:
+                        return null;
+                }
             }
             return null;
         }

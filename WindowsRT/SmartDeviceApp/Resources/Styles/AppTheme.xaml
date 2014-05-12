@@ -62,7 +62,6 @@
     <conv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
-    <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
     <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
     <conv:MainMenuItemToIndexConverter x:Key="MainMenuItemToIndexConverter"/>
     <conv:MainItemIndexToIsCheckedConverter x:Key="MainItemIndexToIsCheckedConverter"/>

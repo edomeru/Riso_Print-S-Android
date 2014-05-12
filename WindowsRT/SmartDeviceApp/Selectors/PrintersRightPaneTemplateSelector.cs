@@ -33,7 +33,6 @@ namespace SmartDeviceApp.Selectors
                         case PrintersRightPaneMode.PrintSettings:
                             return PrintSettingsPaneTemplate;
                     }
-                    return AddPrinterPaneTemplate;
                 }
             }
             return null;
