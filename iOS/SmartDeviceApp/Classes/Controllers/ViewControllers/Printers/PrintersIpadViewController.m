@@ -16,6 +16,7 @@
 #import "PrintSettingsViewController.h"
 #import "UIView+Localization.h"
 #import "PrinterLayout.h"
+#import "CXAlertView.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -180,12 +181,25 @@
 {
     UIButton *deleteButton = (UIButton *)sender;
     
-    if ([self.printerManager deletePrinterAtIndex:deleteButton.tag])
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [self deletePrinterAtIndex:deleteButton.tag];
+                              [alertView dismiss];
+                          }];
+    [alertView show];
+}
+
+- (void) deletePrinterAtIndex:(NSUInteger)index
+{
+    if ([self.printerManager deletePrinterAtIndex:index])
     {
         //check if reference to default printer was also deleted
         if (![self.printerManager hasDefaultPrinter])
             self.defaultPrinterIndexPath = nil;
-        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:deleteButton.tag inSection:0];
+        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
         //set the view of the cell to stop polling for printer status
         PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
         [cell.statusView.statusHelper stopPrinterStatusPolling];

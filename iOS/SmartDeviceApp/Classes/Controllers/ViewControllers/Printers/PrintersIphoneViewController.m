@@ -12,6 +12,7 @@
 #import "PrinterCell.h"
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
+#import "CXAlertView.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define SEGUE_TO_PRINTSETTINGS  @"PrintersIphone-PrintSettings"
@@ -181,6 +182,19 @@
     }
 }
 - (IBAction)deleteButtonAction:(id)sender
+{
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"")  message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [self deletePrinter];
+                              [alertView dismiss];
+                          }];
+    [alertView show];
+}
+
+- (void) deletePrinter
 {
     if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
     {
