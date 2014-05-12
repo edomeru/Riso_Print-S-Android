@@ -125,17 +125,36 @@
         [self removeDeleteState];
         return;
     }
-    
-    if(self.selectedPrinterIndexPath != nil)
-    {
-        return;
-    }
+}
+
+- (IBAction)pressTableViewAction:(id)sender
+{
+    UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
     //else segue to printer info screen
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    if(indexPath != nil)
+    PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    if(press.state == UIGestureRecognizerStateBegan)
     {
-        self.selectedPrinterIndexPath = indexPath;
-        [self performSegueTo:[PrinterInfoViewController class]];
+        if(self.toDeleteIndexPath != nil)
+        {
+            [self removeDeleteState];
+            return;
+        }
+        
+        if(self.selectedPrinterIndexPath != nil)
+        {
+            return;
+        }
+        //else segue to printer info screen
+        [cell setHighlighted:YES];
+        if(indexPath != nil)
+        {
+            self.selectedPrinterIndexPath = indexPath;
+            [self performSegueTo:[PrinterInfoViewController class]];
+        }
+    }
+    else{
+        [cell setHighlighted:NO];
     }
 }
 

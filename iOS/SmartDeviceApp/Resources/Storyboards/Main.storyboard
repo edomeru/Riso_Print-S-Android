@@ -2841,7 +2841,7 @@
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
+                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -2942,6 +2942,7 @@
                                             <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="3Jp-xX-2fg"/>
                                             <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="eLp-sB-qot"/>
                                             <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="1kJ-ea-RHg"/>
+                                            <outletCollection property="gestureRecognizers" destination="TJp-mg-kzG" appends="YES" id="NC6-nS-h6H"/>
                                         </connections>
                                     </tableView>
                                 </subviews>
@@ -2994,9 +2995,14 @@
                 </swipeGestureRecognizer>
                 <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Table View">
                     <connections>
-                        <action selector="tapTableViewAction:" destination="jTA-Cg-WoR" id="sIf-n0-35A"/>
+                        <action selector="tapTableViewAction:" destination="jTA-Cg-WoR" id="OoC-Ea-E6z"/>
                     </connections>
                 </tapGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.10000000000000003" id="TJp-mg-kzG">
+                    <connections>
+                        <action selector="pressTableViewAction:" destination="jTA-Cg-WoR" id="X2B-Bg-7Fm"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="128" y="1457"/>
         </scene>
