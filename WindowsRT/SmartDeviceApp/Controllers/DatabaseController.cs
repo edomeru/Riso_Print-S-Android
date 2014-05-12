@@ -267,40 +267,40 @@ namespace SmartDeviceApp.Controllers
             return printerList;
         }
 
-        // TODO: Check usage. Use public async Task<int> UpdateDefaultPrinter(int printerId) below instead
-        public async Task<int> SetDefaultPrinter(int printerId)
-        {
-            try
-            {
-                if (printerId < 0)
-                {
-                    //delete value in table
-                }
-                else
-                {
-                    var existingDefault = await (_dbConnection.Table<DefaultPrinter>().FirstOrDefaultAsync());
+        //// TODO: Check usage. Use public async Task<int> UpdateDefaultPrinter(int printerId) below instead
+        //public async Task<int> SetDefaultPrinter(int printerId)
+        //{
+        //    try
+        //    {
+        //        if (printerId < 0)
+        //        {
+        //            //delete value in table
+        //        }
+        //        else
+        //        {
+        //            var existingDefault = await (_dbConnection.Table<DefaultPrinter>().FirstOrDefaultAsync());
 
-                    if (existingDefault != null)
-                    {
-                        // update default printer id
-                        existingDefault.PrinterId = (uint)printerId;
-                    }
-                    else
-                    {
-                        // no default printer, insert new
-                        DefaultPrinter dp = new DefaultPrinter();
-                        dp.PrinterId = (uint)printerId;
+        //            if (existingDefault != null)
+        //            {
+        //                // update default printer id
+        //                existingDefault.PrinterId = (uint)printerId;
+        //            }
+        //            else
+        //            {
+        //                // no default printer, insert new
+        //                DefaultPrinter dp = new DefaultPrinter();
+        //                dp.PrinterId = (uint)printerId;
 
-                        int success = await _dbConnection.InsertAsync(dp);
-                    }
-                }
-            }
-            catch
-            {
-                return 0;
-            }
-            return 1;
-        }
+        //                int success = await _dbConnection.InsertAsync(dp);
+        //            }
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        return 0;
+        //    }
+        //    return 1;
+        //}
 
         /// <summary>
         /// Updates a printer in the database
@@ -403,23 +403,23 @@ namespace SmartDeviceApp.Controllers
         //    return string.Empty;
         //}
 
-        public async Task UpdatePortNumber(Printer printer)
-        {
-            var db = new SQLite.SQLiteAsyncConnection(_databasePath);
+        //public async Task UpdatePortNumber(Printer printer)
+        //{
+        //    var db = new SQLite.SQLiteAsyncConnection(_databasePath);
 
-            try
-            {
-                var printerFromDB = await db.GetAsync<Printer>(printer.Id);
-                printerFromDB.PortSetting = printer.PortSetting;
+        //    try
+        //    {
+        //        var printerFromDB = await db.GetAsync<Printer>(printer.Id);
+        //        printerFromDB.PortSetting = printer.PortSetting;
 
-                int i = await db.UpdateAsync(printerFromDB);
-            }
-            catch
-            {
-                // Error handling here
-            }
-            return;
-        }
+        //        int i = await db.UpdateAsync(printerFromDB);
+        //    }
+        //    catch
+        //    {
+        //        // Error handling here
+        //    }
+        //    return;
+        //}
 
         #endregion Printer Table Operations
 
@@ -445,9 +445,9 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Sets the default printer in the database
         /// </summary>
-        /// <param name="printerId"></param>
-        /// <returns></returns>
-        public async Task<int> UpdateDefaultPrinter(int printerId)
+        /// <param name="printerId">printer ID</param>
+        /// <returns>task; number of updated rows</returns>
+        public async Task<int> SetDefaultPrinter(int printerId)
         {
             try
             {
@@ -456,13 +456,36 @@ namespace SmartDeviceApp.Controllers
 
                 if (existingDefault != null)
                 {
-                    // TODO: Verify if printer to be set as default printer exists before deletion
-                    // Or just assume that calls to this function is always an existing printer ?
-                    await _dbConnection.DeleteAsync(existingDefault);
+                    await DeleteDefaultPrinter();
                 }
 
-                DefaultPrinter newDefaultPrinter = new DefaultPrinter() { PrinterId = (uint)printerId };
+                DefaultPrinter newDefaultPrinter = new DefaultPrinter();
+                newDefaultPrinter.PrinterId = (uint)printerId;
                 return await _dbConnection.InsertAsync(newDefaultPrinter);
+            }
+            catch
+            {
+                // Error handling
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Deletes the existing default printer
+        /// </summary>
+        /// <returns>task; number of deleted items</returns>
+        public async Task<int> DeleteDefaultPrinter()
+        {
+            try
+            {
+                DefaultPrinter existingDefault = await _dbConnection.Table<DefaultPrinter>()
+                                                                    .FirstOrDefaultAsync();
+
+                if (existingDefault != null)
+                {
+                    return await _dbConnection.DeleteAsync(existingDefault);
+                }
             }
             catch
             {
@@ -483,11 +506,6 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; print settings if found, null otherwise</returns>
         public async Task<PrintSettings> GetPrintSettings(int id)
         {
-            if (id < 0)
-            {
-                return null;
-            }
-
             try
             {
                 return await _dbConnection.GetAsync<PrintSettings>(id);

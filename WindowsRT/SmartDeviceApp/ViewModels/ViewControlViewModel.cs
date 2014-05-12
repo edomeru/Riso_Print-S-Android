@@ -389,7 +389,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void GoToHomePageExecute()
         {
-            if (DocumentController.Instance.IsFileLoaded)
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
                 _navigationService.Navigate(typeof(PrintPreviewPage));
                 ScreenMode = ScreenMode.PrintPreview;
