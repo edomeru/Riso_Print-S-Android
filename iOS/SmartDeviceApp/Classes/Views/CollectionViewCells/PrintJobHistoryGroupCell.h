@@ -14,9 +14,17 @@
 
 @protocol PrintJobHistoryGroupCellDelegate <NSObject>
 
+@required
+- (void)didTapGroupHeader:(NSUInteger)groupTag;
+- (void)didTapDeleteAllButton:(UIButton*)button ofGroup:(NSUInteger)groupTag;
+- (BOOL)shouldPutDeleteButton:(NSUInteger)groupTag;
+- (void)willDeleteJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
+
 @end
 
 @interface PrintJobHistoryGroupCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
+
+@property (weak, nonatomic) id<PrintJobHistoryGroupCellDelegate> delegate;
 
 /**
  Sets-up the internal properties of the cell.
@@ -57,17 +65,6 @@
         the date and time
  */
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp;
-
-/**
- Adds a "DELETE" button to an item.
- @param gesture
-        the swipe gesture where the user expects the delete button to appear
- @param receiver
-        receiver for the "DELETE" button's tap action
- @param actionOnTap
-        method of the receiver that will be triggered when the "DELETE" button is tapped
- */
-- (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap;
 
 /**
  Removes an existing "DELETE" button from its items.
