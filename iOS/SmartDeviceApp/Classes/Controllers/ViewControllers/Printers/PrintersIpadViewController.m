@@ -111,6 +111,7 @@
     
     cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
+    cell.deleteButton.tag = indexPath.row;
     
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
@@ -175,53 +176,27 @@
 }
 
 #pragma mark - IBActions
-- (IBAction)printerCellLongPressedAction:(id)sender
-{
-    NSIndexPath *selectedIndexPath = [self.collectionView indexPathForItemAtPoint:[sender locationInView:self.collectionView]];
-    PrinterCollectionViewCell *cell = nil;
-    if(self.toDeleteIndexPath != nil)
-    {
-        cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
-        [cell setCellToBeDeletedState:NO];
-    }
-    
-    cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectedIndexPath];
-    self.toDeleteIndexPath = selectedIndexPath;
-    [cell setCellToBeDeletedState:YES];
-
-}
-
-- (IBAction)collectionViewTappedAction:(id)sender
-{
-    
-    if(self.toDeleteIndexPath != nil)
-    {
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
-        [cell setCellToBeDeletedState:NO];
-        self.toDeleteIndexPath = nil;
-    }
-}
-
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
-    if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
+    UIButton *deleteButton = (UIButton *)sender;
+    
+    if ([self.printerManager deletePrinterAtIndex:deleteButton.tag])
     {
         //check if reference to default printer was also deleted
         if (![self.printerManager hasDefaultPrinter])
             self.defaultPrinterIndexPath = nil;
-        
+        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:deleteButton.tag inSection:0];
         //set the view of the cell to stop polling for printer status
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
         [cell.statusView.statusHelper stopPrinterStatusPolling];
         cell.statusView.statusHelper.delegate = nil;
         
         cell.indexPath = nil;
         //set view to non default printer cell style
         [cell setAsDefaultPrinterCell:NO];
-        [cell setCellToBeDeletedState:NO];
         
         //remove cell from view
-        [self.collectionView deleteItemsAtIndexPaths:@[self.toDeleteIndexPath]];
+        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
         self.toDeleteIndexPath = nil;
     }
     else

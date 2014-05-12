@@ -23,6 +23,7 @@
 @property (nonatomic, weak) IBOutlet PrinterStatusView *statusView;
 @property (weak, nonatomic) IBOutlet UIView *cellHeader;
 @property (weak, nonatomic) IBOutlet UIButton *defaultSettingsButton;
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 @property (nonatomic, weak) id <PrinterCollectionViewCellDelegate> delegate;
 @property (nonatomic, weak) NSIndexPath *indexPath;
