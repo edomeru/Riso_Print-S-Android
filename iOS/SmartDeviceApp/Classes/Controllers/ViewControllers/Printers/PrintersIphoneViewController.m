@@ -125,6 +125,10 @@
         [self removeDeleteState];
         return;
     }
+    if(self.selectedPrinterIndexPath != nil)
+    {
+        return;
+    }
     //else segue to printer info screen
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
     self.selectedPrinterIndexPath = indexPath;
