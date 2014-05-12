@@ -135,10 +135,6 @@
     [self performSegueTo:[PrinterInfoViewController class]];
 }
 
-- (IBAction)tapTableView:(id)sender
-{
-    [self removeDeleteState];
-}
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
