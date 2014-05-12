@@ -2841,7 +2841,7 @@
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
+                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -2939,9 +2939,9 @@
                                         <connections>
                                             <outlet property="dataSource" destination="jTA-Cg-WoR" id="ttJ-3O-0oH"/>
                                             <outlet property="delegate" destination="jTA-Cg-WoR" id="gqw-Gc-ysw"/>
-                                            <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="JES-gw-B8O"/>
-                                            <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="OaU-Cb-NJY"/>
-                                            <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="xmF-Hn-V01"/>
+                                            <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="3Jp-xX-2fg"/>
+                                            <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="eLp-sB-qot"/>
+                                            <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="1kJ-ea-RHg"/>
                                         </connections>
                                     </tableView>
                                 </subviews>
@@ -2984,7 +2984,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7EE-4m-YZw" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <swipeGestureRecognizer direction="right" id="3yy-Wb-ueD" userLabel="Swipe Right Printer Cell">
                     <connections>
-                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="AKR-hi-45I"/>
+                        <action selector="swipeRightAction:" destination="jTA-Cg-WoR" id="rIK-il-yp5"/>
                     </connections>
                 </swipeGestureRecognizer>
                 <swipeGestureRecognizer direction="left" id="U8N-P0-69T" userLabel="Swipe Left Printer Cell">
@@ -2992,9 +2992,9 @@
                         <action selector="swipePrinterCellAction:" destination="jTA-Cg-WoR" id="Gt1-2q-Uxk"/>
                     </connections>
                 </swipeGestureRecognizer>
-                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Printer Cell">
+                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Table View">
                     <connections>
-                        <action selector="tapPrinterCellAction:" destination="jTA-Cg-WoR" id="6e8-XS-gQb"/>
+                        <action selector="tapTableViewAction:" destination="jTA-Cg-WoR" id="sIf-n0-35A"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
@@ -3990,9 +3990,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="dDZ-0e-JG0"/>
-        <segue reference="CWW-vD-UgO"/>
-        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="JPo-5o-n9C"/>
+        <segue reference="suq-fU-kcs"/>
+        <segue reference="a4U-VG-JlJ"/>
         <segue reference="uoe-Al-ug4"/>
     </inferredMetricsTieBreakers>
 </document>

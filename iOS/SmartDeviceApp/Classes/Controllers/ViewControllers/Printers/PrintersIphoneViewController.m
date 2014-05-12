@@ -33,7 +33,7 @@
 /**
  Action when the PrinterCell is tapped to segue to the PrinterInfo screen
  */
-- (IBAction)tapPrinterCellAction:(id)sender;
+- (IBAction)tapTableViewAction:(id)sender;
 
 @end
 
@@ -117,7 +117,7 @@
 
 #pragma mark - IBActions
 
-- (IBAction)tapPrinterCellAction:(id)sender
+- (IBAction)tapTableViewAction:(id)sender
 {
     //if a cell is in delete state, remove delete state
     if(self.toDeleteIndexPath != nil)
@@ -125,14 +125,18 @@
         [self removeDeleteState];
         return;
     }
+    
     if(self.selectedPrinterIndexPath != nil)
     {
         return;
     }
     //else segue to printer info screen
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    self.selectedPrinterIndexPath = indexPath;
-    [self performSegueTo:[PrinterInfoViewController class]];
+    if(indexPath != nil)
+    {
+        self.selectedPrinterIndexPath = indexPath;
+        [self performSegueTo:[PrinterInfoViewController class]];
+    }
 }
 
 - (IBAction)swipePrinterCellAction:(id)sender
@@ -148,6 +152,15 @@
     self.toDeleteIndexPath = selectedIndexPath;
 }
 
+- (IBAction)swipeRightAction:(id)sender
+{
+    //if a cell is in delete state, remove delete state
+    if(self.toDeleteIndexPath != nil)
+    {
+        [self removeDeleteState];
+        return;
+    }
+}
 - (IBAction)deleteButtonAction:(id)sender
 {
     if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
