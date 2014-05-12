@@ -581,7 +581,7 @@ namespace SmartDeviceApp.Controllers
 
             if (e.PropertyName == "PortSetting")
             {
-                await DatabaseController.Instance.UpdatePortNumber(printer);
+                await DatabaseController.Instance.UpdatePrinter(printer);
             }
         }
 

@@ -14,6 +14,7 @@ namespace SmartDeviceApp.Common.Enum
 {
     public enum LoadDocumentResult
     {
+        NotStarted,
         Successful,
         UnsupportedPdf,
         ErrorReadPdf
