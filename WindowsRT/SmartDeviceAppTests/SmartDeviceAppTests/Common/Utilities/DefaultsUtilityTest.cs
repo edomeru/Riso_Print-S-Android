@@ -15,10 +15,98 @@ namespace SmartDeviceAppTests.Common.Utilities
     public class DefaultsUtilityTest
     {
 
+        private const string TESTDATA_SQL_SCRIPT = "TestData/SqlScript/create_table_printer.sql";
+
+        [TestInitialize]
+        public async Task Initialize()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+        }
+
         [TestMethod]
         public async Task Test_LoadDefaultsFromSqlScript_Null()
         {
             await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+            // Note: no public properties to assert, check value from GetDefaultValueFromSqlScript()
+        }
+
+        [TestMethod]
+        public async Task Test_LoadDefaultsFromSqlScript_Valid()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            // Note: no public properties to assert, check value from GetDefaultValueFromSqlScript()
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Null_Boolean()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+            bool result = (bool)DefaultsUtility.GetDefaultValueFromSqlScript("random", ListValueType.Boolean);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Null_String()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+            string result = (string)DefaultsUtility.GetDefaultValueFromSqlScript("random", ListValueType.String);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Null_Integer()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+            int result = (int)DefaultsUtility.GetDefaultValueFromSqlScript("random", ListValueType.Int);
+            Assert.AreEqual(-1, result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Null_Other()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+            object result = DefaultsUtility.GetDefaultValueFromSqlScript("random", ListValueType.Enum);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Valid_Boolean_True()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            bool result = (bool)DefaultsUtility.GetDefaultValueFromSqlScript("prn_enabled_lpr", ListValueType.Boolean);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Valid_Boolean_False()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            bool result = (bool)DefaultsUtility.GetDefaultValueFromSqlScript("prn_enabled_raw", ListValueType.Boolean);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Valid_String_Exists()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            string result = (string)DefaultsUtility.GetDefaultValueFromSqlScript("prn_ip_address", ListValueType.String);
+            Assert.AreEqual("172.0.0.1", result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Valid_Integer_Parsed()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            int result = (int)DefaultsUtility.GetDefaultValueFromSqlScript("prn_port_setting", ListValueType.Int);
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public async Task Test_GetDefaultValueFromSqlScript_Valid_Integer_NotParsed()
+        {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            int result = (int)DefaultsUtility.GetDefaultValueFromSqlScript("prn_ip_address", ListValueType.Int);
+            Assert.AreEqual(-1, result);
         }
 
         [TestMethod]

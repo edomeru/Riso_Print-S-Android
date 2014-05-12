@@ -114,10 +114,15 @@
   <ItemGroup>
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
     <Compile Include="Common\Utilities\GlobalizationUtilityTest.cs" />
+    <Compile Include="Controllers\DocumentControllerTest.cs" />
     <Compile Include="Controllers\PrinterControllerTest.cs" />
+    <Compile Include="Controllers\DatabaseControllerTest.cs" />
+    <Compile Include="Controllers\DirectPrintControllerTest.cs" />
+    <Compile Include="Controllers\MainControllerTest.cs" />
+    <Compile Include="Controllers\StorageFileUtilityTest.cs" />
+    <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\HomeViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -125,6 +130,8 @@
     </AppxManifest>
     <None Include="packages.config" />
     <None Include="SmartDeviceAppTests_TemporaryKey.pfx" />
+    <Content Include="TestData\PDF\RZ1070.pdf" />
+    <Content Include="TestData\PDF\128AES_Acrobat.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\UnitTestLogo.scale-100.png">
@@ -139,6 +146,8 @@
     <Content Include="Images\UnitTestStoreLogo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\SqlScript\create_table_printer.sql" />
+    <Content Include="TestData\SqlScript\create_table_printsetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SmartDeviceApp\SmartDeviceApp.csproj">
