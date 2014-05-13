@@ -13,6 +13,7 @@
 #import "PListHelper.h"
 #import "AlertHelper.h"
 #import "UIColor+Theme.h"
+#import "DeleteButton.h"
 
 @interface PrintJobHistoryViewController ()
 
@@ -28,7 +29,7 @@
 @property (weak, nonatomic) IBOutlet PrintJobHistoryLayout* groupsViewLayout;
 
 /** Reference to the Delete All button. */
-@property (weak, nonatomic) UIButton* tappedDeleteAllButton;
+@property (weak, nonatomic) DeleteButton* tappedDeleteAllButton;
 
 #pragma mark - Data Properties
 
@@ -163,7 +164,6 @@
     // since we are using reusable cells, handle scrolling by forcing redraw of the cell
     [groupCell reloadContents];
     [groupCell clearHeader];
-    [groupCell clearDeleteAll];
     
     // check if a delete button was present while scrolling
     // (fixes bug when swiping-left on the top/bottom edges of the list then scrolling)
@@ -233,7 +233,7 @@
         return YES;
 }
 
-- (void)didTapDeleteAllButton:(UIButton*)button ofGroup:(NSUInteger)groupTag
+- (void)didTapDeleteAllButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag
 {
     // check if there is a delete button present
     if (self.groupWithDelete != nil)
@@ -252,8 +252,8 @@
         NSLog(@"[INFO][PrintJobCtrl] tapped delete all button=%ld", (long)groupIndex);
 #endif
         
-        [button setBackgroundColor:[UIColor purple2ThemeColor]];
-        [button setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
+        [button keepHighlighted:YES];
+        [button setHighlighted:YES];
         self.tappedDeleteAllButton = button;
         
         self.groupToDeleteIndex = groupIndex;
@@ -283,7 +283,7 @@
     }
 }
 
-- (void)didTapDeleteJobButton:button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag
+- (void)didTapDeleteJobButton:(DeleteButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag
 {
     // get the group to be modified
     PrintJobHistoryGroup* group;
@@ -407,8 +407,8 @@
         }
     }
     
-    [self.tappedDeleteAllButton setBackgroundColor:[UIColor whiteThemeColor]];
-    [self.tappedDeleteAllButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
+    [self.tappedDeleteAllButton keepHighlighted:NO];
+    [self.tappedDeleteAllButton setHighlighted:NO];
     self.tappedDeleteAllButton = nil;
 }
 

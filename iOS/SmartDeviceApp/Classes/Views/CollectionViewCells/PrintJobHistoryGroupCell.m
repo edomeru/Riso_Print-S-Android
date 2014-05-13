@@ -41,7 +41,7 @@
 @property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
 
 /** Removes the entire group. */
-@property (weak, nonatomic) IBOutlet UIButton* deleteAllButton;
+@property (weak, nonatomic) IBOutlet DeleteButton* deleteAllButton;
 
 /** The UI for displaying the list of print jobs. */
 @property (weak, nonatomic) IBOutlet UITableView* printJobsView;
@@ -60,8 +60,6 @@
 - (void)colorHeader;
 - (void)clearHeader;
 - (void)tappedHeader;
-- (void)colorDeleteAll;
-- (void)clearDeleteAll;
 - (void)tappedDeleteAll;
 - (void)tappedDeleteJob:(UIButton*)button;
 
@@ -192,10 +190,8 @@
     [self.groupIndicator addTarget:self action:@selector(tappedHeader)
                   forControlEvents:UIControlEventTouchUpInside];
     
-    [self.deleteAllButton addTarget:self action:@selector(colorDeleteAll)
-                   forControlEvents:UIControlEventTouchDown];
-    [self.deleteAllButton addTarget:self action:@selector(clearDeleteAll)
-                   forControlEvents:UIControlEventTouchDragOutside];
+    self.deleteAllButton.highlightedColor = [UIColor purple2ThemeColor];
+    self.deleteAllButton.highlightedTextColor = [UIColor whiteThemeColor];
     [self.deleteAllButton addTarget:self action:@selector(tappedDeleteAll)
                    forControlEvents:UIControlEventTouchUpInside];
 }
@@ -344,27 +340,12 @@
     [self clearHeader];
 }
 
-- (void)colorDeleteAll
-{
-    if ([self.delegate shouldHighlightDeleteAllButton])
-    {
-        [self.deleteAllButton setBackgroundColor:[UIColor purple2ThemeColor]];
-        [self.deleteAllButton setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
-    }
-}
-
-- (void)clearDeleteAll
-{
-    [self.deleteAllButton setBackgroundColor:[UIColor whiteThemeColor]];
-    [self.deleteAllButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
-}
-
 - (void)tappedDeleteAll
 {
-    [self.delegate didTapDeleteAllButton:(UIButton*)self.deleteAllButton ofGroup:self.tag];
+    [self.delegate didTapDeleteAllButton:self.deleteAllButton ofGroup:self.tag];
 }
 
-- (void)tappedDeleteJob:(UIButton*)button
+- (void)tappedDeleteJob:(DeleteButton*)button
 {
     NSInteger buttonTag = [button tag];
     NSUInteger groupTag = buttonTag/TAG_FACTOR;

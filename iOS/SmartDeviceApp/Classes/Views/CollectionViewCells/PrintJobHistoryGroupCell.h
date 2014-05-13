@@ -12,14 +12,16 @@
 #define GROUPCELL   @"PrintJobHistoryGroup"
 #define TAG_FACTOR  1000
 
+@class DeleteButton;
+
 @protocol PrintJobHistoryGroupCellDelegate <NSObject>
 
 @required
 - (void)didTapGroupHeader:(NSUInteger)groupTag;
 - (BOOL)shouldHighlightDeleteAllButton;
-- (void)didTapDeleteAllButton:(UIButton*)button ofGroup:(NSUInteger)groupTag;
+- (void)didTapDeleteAllButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag;
 - (BOOL)shouldPutDeleteButton:(NSUInteger)groupTag;
-- (void)didTapDeleteJobButton:(UIButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
+- (void)didTapDeleteJobButton:(DeleteButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
 
 @end
 
@@ -81,10 +83,5 @@
  Clears the highlight color of the group header.
  */
 - (void)clearHeader;
-
-/**
- Clears the highlight color of the delete all button.
- */
-- (void)clearDeleteAll;
 
 @end
