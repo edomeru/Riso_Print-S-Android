@@ -220,6 +220,14 @@
     }
 }
 
+- (BOOL)shouldHighlightDeleteAllButton
+{
+    if (self.groupWithDelete != nil)
+        return NO;
+    else
+        return YES;
+}
+
 - (void)didTapDeleteAllButton:(UIButton*)button ofGroup:(NSUInteger)groupTag
 {
     // check if there is a delete button present
@@ -269,7 +277,7 @@
     }
 }
 
-- (void)willDeleteJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag
+- (void)didTapDeleteJobButton:button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag
 {
     // get the group to be modified
     PrintJobHistoryGroup* group;

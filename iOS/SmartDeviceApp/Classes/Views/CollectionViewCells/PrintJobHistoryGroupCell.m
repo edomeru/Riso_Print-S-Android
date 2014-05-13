@@ -57,10 +57,12 @@
 #pragma mark - Methods
 
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture;
-- (void)highlightHeader;
+- (void)colorHeader;
 - (void)clearHeader;
-- (void)tappedGroupHeader;
-- (void)tappedDeleteGroup;
+- (void)tappedHeader;
+- (void)colorDeleteAll;
+- (void)clearDeleteAll;
+- (void)tappedDeleteAll;
 - (void)tappedDeleteJob:(UIButton*)button;
 
 @end
@@ -152,7 +154,7 @@
         [jobCell.separator setHidden:NO];
 }
 
-#pragma mark - Cell Data
+#pragma mark - Cell Initialization
 
 - (void)initWithTag:(NSInteger)tag
 {
@@ -167,17 +169,38 @@
     // prepare container for print jobs list
     self.listPrintJobs = [NSMutableArray array];
     
-    [self.groupName addTarget:self action:@selector(highlightHeader) forControlEvents:UIControlEventTouchDown];
-    [self.groupName addTarget:self action:@selector(tappedGroupHeader) forControlEvents:UIControlEventTouchUpInside];
+    // set group header events
     
-    [self.groupIP addTarget:self action:@selector(highlightHeader) forControlEvents:UIControlEventTouchDown];
-    [self.groupIP addTarget:self action:@selector(tappedGroupHeader) forControlEvents:UIControlEventTouchUpInside];
+    [self.groupName addTarget:self action:@selector(colorHeader)
+             forControlEvents:UIControlEventTouchDown];
+    [self.groupName addTarget:self action:@selector(clearHeader)
+             forControlEvents:UIControlEventTouchDragOutside];
+    [self.groupName addTarget:self action:@selector(tappedHeader)
+             forControlEvents:UIControlEventTouchUpInside];
     
-    [self.groupIndicator addTarget:self action:@selector(highlightHeader) forControlEvents:UIControlEventTouchDown];
-    [self.groupIndicator addTarget:self action:@selector(tappedGroupHeader) forControlEvents:UIControlEventTouchUpInside];
+    [self.groupIP addTarget:self action:@selector(colorHeader)
+           forControlEvents:UIControlEventTouchDown];
+    [self.groupIP addTarget:self action:@selector(clearHeader)
+           forControlEvents:UIControlEventTouchDragOutside];
+    [self.groupIP addTarget:self action:@selector(tappedHeader)
+           forControlEvents:UIControlEventTouchUpInside];
     
-    [self.deleteAllButton addTarget:self action:@selector(tappedDeleteGroup) forControlEvents:UIControlEventTouchUpInside];
+    [self.groupIndicator addTarget:self action:@selector(colorHeader)
+                  forControlEvents:UIControlEventTouchDown];
+    [self.groupIndicator addTarget:self action:@selector(clearHeader)
+                  forControlEvents:UIControlEventTouchDragOutside];
+    [self.groupIndicator addTarget:self action:@selector(tappedHeader)
+                  forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.deleteAllButton addTarget:self action:@selector(colorDeleteAll)
+                   forControlEvents:UIControlEventTouchDown];
+    [self.deleteAllButton addTarget:self action:@selector(clearDeleteAll)
+                   forControlEvents:UIControlEventTouchDragOutside];
+    [self.deleteAllButton addTarget:self action:@selector(tappedDeleteAll)
+                   forControlEvents:UIControlEventTouchUpInside];
 }
+
+#pragma mark - Cell Setters
 
 - (void)putGroupName:(NSString*)name
 {
@@ -302,28 +325,45 @@
     self.jobWithDelete = nil;
 }
 
-- (void)highlightHeader
+- (void)colorHeader
 {
-    [self.groupName setBackgroundColor:[UIColor purple2ThemeColor]];
-    [self.groupIP setBackgroundColor:[UIColor purple2ThemeColor]];
-    [self.groupIndicator setBackgroundColor:[UIColor purple2ThemeColor]];
+    UIColor* highlightColor = [UIColor purple2ThemeColor];
+    [self.groupName setBackgroundColor:highlightColor];
+    [self.groupIP setBackgroundColor:highlightColor];
+    [self.groupIndicator setBackgroundColor:highlightColor];
 }
 
 - (void)clearHeader
 {
-    [self.groupName setBackgroundColor:[UIColor blackThemeColor]];
-    [self.groupIP setBackgroundColor:[UIColor blackThemeColor]];
-    [self.groupIndicator setBackgroundColor:[UIColor blackThemeColor]];
+    UIColor* normalColor = [UIColor blackThemeColor];
+    [self.groupName setBackgroundColor:normalColor];
+    [self.groupIP setBackgroundColor:normalColor];
+    [self.groupIndicator setBackgroundColor:normalColor];
 }
 
-- (void)tappedGroupHeader
+- (void)tappedHeader
 {
-    [self highlightHeader];
+    [self colorHeader];
     [self.delegate didTapGroupHeader:self.tag];
     [self clearHeader];
 }
 
-- (void)tappedDeleteGroup
+- (void)colorDeleteAll
+{
+    if ([self.delegate shouldHighlightDeleteAllButton])
+    {
+        [self.deleteAllButton setBackgroundColor:[UIColor purple2ThemeColor]];
+        [self.deleteAllButton setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
+    }
+}
+
+- (void)clearDeleteAll
+{
+    [self.deleteAllButton setBackgroundColor:[UIColor whiteThemeColor]];
+    [self.deleteAllButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
+}
+
+- (void)tappedDeleteAll
 {
     [self.delegate didTapDeleteAllButton:(UIButton*)self.deleteAllButton ofGroup:self.tag];
 }
@@ -334,7 +374,7 @@
     NSUInteger groupTag = buttonTag/TAG_FACTOR;
     NSUInteger jobTag = buttonTag%TAG_FACTOR;
     
-    [self.delegate willDeleteJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag];
+    [self.delegate didTapDeleteJobButton:button ofJob:jobTag ofGroup:groupTag];
 }
 
 - (void)reloadContents

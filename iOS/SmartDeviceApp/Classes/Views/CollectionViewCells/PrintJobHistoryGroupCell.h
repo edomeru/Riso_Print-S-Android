@@ -16,9 +16,10 @@
 
 @required
 - (void)didTapGroupHeader:(NSUInteger)groupTag;
+- (BOOL)shouldHighlightDeleteAllButton;
 - (void)didTapDeleteAllButton:(UIButton*)button ofGroup:(NSUInteger)groupTag;
 - (BOOL)shouldPutDeleteButton:(NSUInteger)groupTag;
-- (void)willDeleteJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
+- (void)didTapDeleteJobButton:(UIButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
 
 @end
 
