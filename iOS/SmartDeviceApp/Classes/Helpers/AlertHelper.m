@@ -48,7 +48,7 @@
     switch (result)
     {
         case kAlertResultInfoPrinterAdded:
-            alertMsg = NSLocalizedString(IDS_LBL_ADD_SUCCESSFUL, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @"");
             break;
             
         case kAlertResultErrNoNetwork:
@@ -64,7 +64,7 @@
             break;
             
         case kAlertResultErrPrinterNotFound:
-            alertMsg = NSLocalizedString(IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER, @"");
             break;
             
         case kAlertResultErrPrinterDuplicate:
@@ -109,8 +109,8 @@
     switch (confirmation)
     {
         case kAlertConfirmationDeleteAllJobs:
-            alertTitle = NSLocalizedString(IDS_LBL_DELETE_JOBS_TITLE, @"");
-            alertMsg = NSLocalizedString(IDS_LBL_DELETE_JOBS_MSG, @"");
+            alertTitle = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS, @"");
             cancelButtonTitle = @"NO";
             confirmButtonTitle = @"YES";
             break;

@@ -64,6 +64,9 @@
 {
     [super viewDidLoad];
     
+    // Set placeholder
+    self.cardId.placeholder = NSLocalizedString(IDS_LBL_LOGIN_ID, @"");
+    
     //init text fields from values in plist
     //get current value of settings user defaults
     NSUserDefaults *appSettings = [NSUserDefaults standardUserDefaults];

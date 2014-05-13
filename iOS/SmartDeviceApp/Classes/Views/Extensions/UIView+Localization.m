@@ -10,8 +10,12 @@
 
 @implementation UIView (Localization)
 
-
 - (NSString *)localizationId
+{
+    return nil;
+}
+
+- (NSString *)uppercaseLocalizationId
 {
     return nil;
 }
@@ -30,6 +34,24 @@
         {
             UIButton *button = (UIButton *)self;
             [button setTitle:NSLocalizedString(upperCased, @"") forState:UIControlStateNormal];
+        }
+    }
+}
+
+- (void)setUppercaseLocalizationId:(NSString *)localizationId
+{
+    if (localizationId != nil)
+    {
+        NSString *upperCased = [localizationId uppercaseString];
+        if([self isKindOfClass:UILabel.class])
+        {
+            UILabel *label = (UILabel *)self;
+            [label setText:[NSLocalizedString(upperCased, @"") uppercaseString]];
+        }
+        else if ([self isKindOfClass:UIButton.class])
+        {
+            UIButton *button = (UIButton *)self;
+            [button setTitle:[NSLocalizedString(upperCased, @"") uppercaseString] forState:UIControlStateNormal];
         }
     }
 }

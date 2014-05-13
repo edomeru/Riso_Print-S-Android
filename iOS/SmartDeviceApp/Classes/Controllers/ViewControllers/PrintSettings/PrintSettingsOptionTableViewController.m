@@ -90,7 +90,7 @@
     if (indexPath.row == 0)
     {
         PrintSettingsOptionsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:OPTIONS_HEADER_CELL forIndexPath:indexPath];
-        headerCell.settingLabel.localizationId = [self.setting objectForKey:@"text"];
+        headerCell.settingLabel.uppercaseLocalizationId = [self.setting objectForKey:@"text"];
         headerCell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell = headerCell;
     }

@@ -88,7 +88,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     self.job = directprint_job_new([fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_LBL_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];
     self.alertView = alertView;
     [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"")
                              type:CXAlertViewButtonTypeDefault

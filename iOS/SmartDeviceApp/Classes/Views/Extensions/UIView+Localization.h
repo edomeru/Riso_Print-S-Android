@@ -11,5 +11,6 @@
 @interface UIView (Localization)
 
 @property (nonatomic, strong) NSString *localizationId;
+@property (nonatomic, strong) NSString *uppercaseLocalizationId;
 
 @end
