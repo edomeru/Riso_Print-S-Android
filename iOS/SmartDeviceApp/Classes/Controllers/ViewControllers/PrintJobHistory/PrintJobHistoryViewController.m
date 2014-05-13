@@ -38,6 +38,9 @@
 /** Keeps track of the index of the group that has the delete button. */
 @property (strong, nonatomic) NSIndexPath* groupWithDelete;
 
+/** Keeps track of the group index of the group set for deletion. */
+@property (assign, nonatomic) NSInteger groupToDeleteIndex;
+
 #pragma mark - Methods
 
 /** Tapping the Main Menu button displays the Main Menu panel. */
@@ -253,9 +256,10 @@
         [button setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
         self.tappedDeleteAllButton = button;
         
+        self.groupToDeleteIndex = groupIndex;
         [AlertHelper displayConfirmation:kAlertConfirmationDeleteAllJobs
                                forScreen:self
-                             withDetails:@[[NSNumber numberWithInteger:groupIndex], group.groupName]];
+                             withDetails:nil];
     }
 }
 
@@ -375,7 +379,7 @@
     if (buttonIndex == [alertView firstOtherButtonIndex])
     {
         // get the group
-        NSInteger groupIndex = alertView.tag;
+        NSInteger groupIndex = self.groupToDeleteIndex;
         PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
         
         // remove each job from the group
