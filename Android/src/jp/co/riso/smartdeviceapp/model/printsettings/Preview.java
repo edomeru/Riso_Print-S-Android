@@ -30,6 +30,7 @@ public class Preview {
         A6(105.0f, 148.0f),
         B4(257.0f, 364.0f),
         B5(182.0f, 257.0f),
+        B6(128.0f, 182.0f), // confirm value
         FOOLSCAP(216.0f, 340.0f),
         TABLOID(280.0f, 432.0f),
         LEGAL(216.0f, 356.0f),
@@ -157,7 +158,7 @@ public class Preview {
     }
     
     public enum BookletFinish {
-        PAPER_FOLDING, FOLD_AND_STAPLE;
+        OFF, PAPER_FOLDING, FOLD_AND_STAPLE;
     }
     
     public enum BookletLayout {
