@@ -336,19 +336,19 @@
 		28D7B31518EE48D300FE15BA /* NSDate+Format.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Format.m"; sourceTree = "<group>"; };
 		28FDEDDF18E53D5400423CFC /* PrintJobHistoryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroup.h; sourceTree = "<group>"; };
 		28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroup.m; sourceTree = "<group>"; };
-		2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0AEBFF185FDD2100810455 /* RISOSmartPrint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RISOSmartPrint.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AEC02185FDD2100810455 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D0AEC04185FDD2100810455 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2D0AEC06185FDD2100810455 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		2D0AEC0A185FDD2100810455 /* SmartDeviceApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Info.plist"; sourceTree = "<group>"; };
-		2D0AEC10185FDD2100810455 /* SmartDeviceApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SmartDeviceApp-Prefix.pch"; sourceTree = "<group>"; };
+		2D0AEC0A185FDD2100810455 /* RISOSmartPrint-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RISOSmartPrint-Info.plist"; sourceTree = "<group>"; };
+		2D0AEC10185FDD2100810455 /* RISOSmartPrint-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RISOSmartPrint-Prefix.pch"; sourceTree = "<group>"; };
 		2D0AEC24185FDD2100810455 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		2D0AEC48185FDE8100810455 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		2D0AEC4B185FDE8100810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartDeviceAppTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmartDeviceAppTests-Info.plist"; sourceTree = "<group>"; };
+		2D0AEC57185FE43200810455 /* RISOSmartPrintTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RISOSmartPrintTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0AEC5D185FE43200810455 /* RISOSmartPrintTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RISOSmartPrintTests-Info.plist"; sourceTree = "<group>"; };
 		2D0AEC61185FE43200810455 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2D0AEC63185FE43200810455 /* SmartDeviceAppTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SmartDeviceAppTests-Prefix.pch"; sourceTree = "<group>"; };
+		2D0AEC63185FE43200810455 /* RISOSmartPrintTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RISOSmartPrintTests-Prefix.pch"; sourceTree = "<group>"; };
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -803,8 +803,8 @@
 		2D0AEC00185FDD2100810455 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */,
-				2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */,
+				2D0AEBFF185FDD2100810455 /* RISOSmartPrint.app */,
+				2D0AEC57185FE43200810455 /* RISOSmartPrintTests.app */,
 				2D6C90FB18F4FA57002A7F48 /* libCommon.a */,
 			);
 			name = Products;
@@ -837,8 +837,8 @@
 		2D0AEC09185FDD2100810455 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				2D0AEC0A185FDD2100810455 /* SmartDeviceApp-Info.plist */,
-				2D0AEC10185FDD2100810455 /* SmartDeviceApp-Prefix.pch */,
+				2D0AEC0A185FDD2100810455 /* RISOSmartPrint-Info.plist */,
+				2D0AEC10185FDD2100810455 /* RISOSmartPrint-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -899,8 +899,8 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEC61185FE43200810455 /* main.m */,
-				2D0AEC5D185FE43200810455 /* SmartDeviceAppTests-Info.plist */,
-				2D0AEC63185FE43200810455 /* SmartDeviceAppTests-Prefix.pch */,
+				2D0AEC5D185FE43200810455 /* RISOSmartPrintTests-Info.plist */,
+				2D0AEC63185FE43200810455 /* RISOSmartPrintTests-Prefix.pch */,
 				2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */,
 				2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */,
 				2D30FBB8191A32CC00B9DAC8 /* Swizzler.h */,
@@ -1458,9 +1458,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2D0AEBFE185FDD2100810455 /* SmartDeviceApp */ = {
+		2D0AEBFE185FDD2100810455 /* RISOSmartPrint */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D0AEC34185FDD2100810455 /* Build configuration list for PBXNativeTarget "SmartDeviceApp" */;
+			buildConfigurationList = 2D0AEC34185FDD2100810455 /* Build configuration list for PBXNativeTarget "RISOSmartPrint" */;
 			buildPhases = (
 				2D0AEBFB185FDD2100810455 /* Sources */,
 				2D0AEBFC185FDD2100810455 /* Frameworks */,
@@ -1471,14 +1471,14 @@
 			dependencies = (
 				2D6C912818F4FC35002A7F48 /* PBXTargetDependency */,
 			);
-			name = SmartDeviceApp;
+			name = RISOSmartPrint;
 			productName = SmartDeviceApp;
-			productReference = 2D0AEBFF185FDD2100810455 /* SmartDeviceApp.app */;
+			productReference = 2D0AEBFF185FDD2100810455 /* RISOSmartPrint.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D0AEC56185FE43200810455 /* SmartDeviceAppTests */ = {
+		2D0AEC56185FE43200810455 /* RISOSmartPrintTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D0AEC7F185FE43200810455 /* Build configuration list for PBXNativeTarget "SmartDeviceAppTests" */;
+			buildConfigurationList = 2D0AEC7F185FE43200810455 /* Build configuration list for PBXNativeTarget "RISOSmartPrintTests" */;
 			buildPhases = (
 				2D0AEC53185FE43200810455 /* Sources */,
 				2D0AEC54185FE43200810455 /* Frameworks */,
@@ -1489,9 +1489,9 @@
 			);
 			dependencies = (
 			);
-			name = SmartDeviceAppTests;
+			name = RISOSmartPrintTests;
 			productName = SmartDeviceAppTests;
-			productReference = 2D0AEC57185FE43200810455 /* SmartDeviceAppTests.app */;
+			productReference = 2D0AEC57185FE43200810455 /* RISOSmartPrintTests.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2D6C90FA18F4FA57002A7F48 /* Common */ = {
@@ -1520,7 +1520,7 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = aLink;
 			};
-			buildConfigurationList = 2D0AEBFA185FDD2100810455 /* Build configuration list for PBXProject "SmartDeviceApp" */;
+			buildConfigurationList = 2D0AEBFA185FDD2100810455 /* Build configuration list for PBXProject "RISOSmartPrint" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1534,8 +1534,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2D0AEBFE185FDD2100810455 /* SmartDeviceApp */,
-				2D0AEC56185FE43200810455 /* SmartDeviceAppTests */,
+				2D0AEBFE185FDD2100810455 /* RISOSmartPrint */,
+				2D0AEC56185FE43200810455 /* RISOSmartPrintTests */,
 				2D6C90FA18F4FA57002A7F48 /* Common */,
 			);
 		};
@@ -1979,15 +1979,15 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
+				GCC_PREFIX_HEADER = "SmartDeviceApp/RISOSmartPrint-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
+				INFOPLIST_FILE = "SmartDeviceApp/RISOSmartPrint-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RISOSmartPrint;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2000,15 +2000,15 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SmartDeviceApp/SmartDeviceApp-Prefix.pch";
+				GCC_PREFIX_HEADER = "SmartDeviceApp/RISOSmartPrint-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "SmartDeviceApp/SmartDeviceApp-Info.plist";
+				INFOPLIST_FILE = "SmartDeviceApp/RISOSmartPrint-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RISOSmartPrint;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2026,13 +2026,13 @@
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
+				GCC_PREFIX_HEADER = "SmartDeviceAppTests/RISOSmartPrintTests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "SmartDeviceAppTests/SmartDeviceAppTests-Info.plist";
+				INFOPLIST_FILE = "SmartDeviceAppTests/RISOSmartPrintTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
@@ -2041,7 +2041,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RISOSmartPrintTests;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2059,9 +2059,9 @@
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SmartDeviceAppTests/SmartDeviceAppTests-Prefix.pch";
+				GCC_PREFIX_HEADER = "SmartDeviceAppTests/RISOSmartPrintTests-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "SmartDeviceAppTests/SmartDeviceAppTests-Info.plist";
+				INFOPLIST_FILE = "SmartDeviceAppTests/RISOSmartPrintTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
@@ -2070,7 +2070,7 @@
 					"-ObjC",
 					"-all_load",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RISOSmartPrintTests;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2120,7 +2120,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2D0AEBFA185FDD2100810455 /* Build configuration list for PBXProject "SmartDeviceApp" */ = {
+		2D0AEBFA185FDD2100810455 /* Build configuration list for PBXProject "RISOSmartPrint" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D0AEC32185FDD2100810455 /* Debug */,
@@ -2129,7 +2129,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D0AEC34185FDD2100810455 /* Build configuration list for PBXNativeTarget "SmartDeviceApp" */ = {
+		2D0AEC34185FDD2100810455 /* Build configuration list for PBXNativeTarget "RISOSmartPrint" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D0AEC35185FDD2100810455 /* Debug */,
@@ -2138,7 +2138,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D0AEC7F185FE43200810455 /* Build configuration list for PBXNativeTarget "SmartDeviceAppTests" */ = {
+		2D0AEC7F185FE43200810455 /* Build configuration list for PBXNativeTarget "RISOSmartPrintTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D0AEC7B185FE43200810455 /* Debug */,
