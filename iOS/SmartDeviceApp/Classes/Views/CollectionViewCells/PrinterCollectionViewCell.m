@@ -70,7 +70,6 @@ typedef enum {
         {
             [self.cellHeader setBackgroundColor:[UIColor gray4ThemeColor]];
             [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
-            [self.ipAddressLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
         case kPrinterCollectionCellTypeDelete:
@@ -78,7 +77,6 @@ typedef enum {
             UIColor *bgColor = [UIColor purple2ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
             [self.nameLabel setTextColor:[UIColor whiteThemeColor]];
-            [self.ipAddressLabel setTextColor:[UIColor whiteThemeColor]];
         }
             break;
         default:
@@ -86,7 +84,6 @@ typedef enum {
             UIColor *bgColor = [UIColor gray3ThemeColor];
             [self.cellHeader setBackgroundColor: bgColor];
             [self.nameLabel setTextColor:[UIColor blackThemeColor]];
-            [self.ipAddressLabel setTextColor:[UIColor blackThemeColor]];
         }
             break;
     }

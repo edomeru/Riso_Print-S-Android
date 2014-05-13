@@ -49,7 +49,7 @@
 
 - (void)initialize
 {
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad || self.printerIndex == nil)
     {
         self.isFixedSize = NO;
     }

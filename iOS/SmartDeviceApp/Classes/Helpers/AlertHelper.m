@@ -48,7 +48,7 @@
     switch (result)
     {
         case kAlertResultInfoPrinterAdded:
-            alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @"");
             break;
             
         case kAlertResultErrNoNetwork:

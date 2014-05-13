@@ -716,10 +716,10 @@
                                                                 <constraint firstAttribute="height" constant="30" id="kpx-bU-DXz"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLl-rF-Cku" userLabel="Name">
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLl-rF-Cku" userLabel="Name">
                                                             <rect key="frame" x="48" y="10" width="181" height="21"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button opaque="NO" alpha="0.94999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c" customClass="DeleteButton">
@@ -729,7 +729,7 @@
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="75" id="2Sj-fH-mfv"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <state key="normal" title="Delete">
                                                                 <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             </state>
@@ -3903,12 +3903,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="oE4-lZ-OOf"/>
-        <segue reference="a4U-VG-JlJ"/>
         <segue reference="CWW-vD-UgO"/>
-        <segue reference="uoe-Al-ug4"/>
-        <segue reference="5pT-ga-236"/>
+        <segue reference="9FD-bf-FdK"/>
+        <segue reference="a4U-VG-JlJ"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="c8V-UF-iWe"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -230,7 +230,7 @@
     if ([self.printerManager registerPrinter:printerDetails])
     {
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
-                         withTitle:kAlertTitlePrintersAdd
+                         withTitle:kAlertTitlePrintersSearch
                        withDetails:nil];
         self.hasAddedPrinters = YES;
         
