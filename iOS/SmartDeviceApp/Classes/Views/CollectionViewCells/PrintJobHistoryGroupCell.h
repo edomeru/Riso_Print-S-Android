@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PrintJobItemCell.h"
 
-#define GROUPCELL       @"PrintJobHistoryGroup"
-#define PRINTJOBCELL    @"PrintJobHistoryItem"
-
+#define GROUPCELL   @"PrintJobHistoryGroup"
 #define TAG_FACTOR  1000
 
 @protocol PrintJobHistoryGroupCellDelegate <NSObject>

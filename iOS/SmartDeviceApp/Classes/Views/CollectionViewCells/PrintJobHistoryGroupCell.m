@@ -17,8 +17,6 @@
 #define IDX_NAME                1
 #define IDX_TIMESTAMP           2
 
-#define TAG_SEPARATOR           5
-
 @interface PrintJobHistoryGroupCell ()
 
 #pragma mark - UI Properties
@@ -95,48 +93,50 @@
 
 - (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath
 {
-    UITableViewCell* printJobCell = [tableView dequeueReusableCellWithIdentifier:PRINTJOBCELL
-                                                                forIndexPath:indexPath];
-    
-    // get print job details (name, result, timestamp)
+    PrintJobItemCell* cell = [tableView dequeueReusableCellWithIdentifier:PRINTJOBCELL
+                                                                 forIndexPath:indexPath];
+
+    // get print job details (result, name, imestamp)
     NSArray* printJob = [self.listPrintJobs objectAtIndex:indexPath.row];
     
     // print job result
     BOOL result = [[printJob objectAtIndex:IDX_RESULT] boolValue];
     if (result)
-        printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
+        cell.result.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
     else
-        printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
+        cell.result.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
     
     // print job name
-    printJobCell.textLabel.text = [NSString stringWithFormat:@"%@", [printJob objectAtIndex:IDX_NAME]];
+    cell.name.text = [NSString stringWithFormat:@"%@", [printJob objectAtIndex:IDX_NAME]];
     
     // print job timestamp
-    printJobCell.detailTextLabel.text = [[printJob objectAtIndex:IDX_TIMESTAMP] formattedString];
-    printJobCell.detailTextLabel.hidden = NO;
+    cell.timestamp.text = [[printJob objectAtIndex:IDX_TIMESTAMP] formattedString];
+    cell.timestamp.hidden = NO;
     
     // clear tracker for the delete button
     self.jobWithDelete = nil;
     
-    return printJobCell;
+    return cell;
 }
 
 - (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)indexPath
 {
+    PrintJobItemCell* jobCell = (PrintJobItemCell*)cell;
+    
     // unified version-independent fix for the buggy UITableViewCell background color
     //  -- for iOS6 (always clear)
     //  -- for iOS7 (always white) 
     // colors set to default in storyboard, set programmatically here instead
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-        [cell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
+        [jobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
     else
-        [cell setBackgroundColor:[UIColor gray1ThemeColor]];
+        [jobCell setBackgroundColor:[UIColor gray1ThemeColor]];
     
     // if this is the last cell, hide the separator
     if (indexPath.row == [self.listPrintJobs count]-1)
-        [[cell.contentView viewWithTag:TAG_SEPARATOR] setHidden:YES];
+        [jobCell.separator setHidden:YES];
     else
-        [[cell.contentView viewWithTag:TAG_SEPARATOR] setHidden:NO];
+        [jobCell.separator setHidden:NO];
 }
 
 #pragma mark - Cell Data
@@ -217,8 +217,8 @@
         self.jobWithDelete = jobIndexPath;
         
         // check if this item already has a delete button
-        UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:jobIndexPath];
-        if ([[printJobCell.contentView subviews] count] == 5) //has an extra delete button
+        PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:jobIndexPath];
+        if ([[jobCell.contentView subviews] count] == 5) //has an extra delete button
         {
 #if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
             NSLog(@"[INFO][PrintJobCell] already has delete button, ignoring swipe");
@@ -236,10 +236,10 @@
         [deleteButton setUserInteractionEnabled:YES];
         deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
         deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
-        deleteButton.frame = CGRectMake(printJobCell.frame.size.width, //initial position offscreen
+        deleteButton.frame = CGRectMake(jobCell.frame.size.width, //initial position offscreen
                                         5.0f,
                                         self.deleteAllButton.frame.size.width-15.0f,
-                                        printJobCell.frame.size.height-10.0f);
+                                        jobCell.frame.size.height-10.0f);
         
         // set the handler for the tap action
         [deleteButton addTarget:receiver
@@ -247,10 +247,10 @@
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        printJobCell.detailTextLabel.hidden = YES;
-        [printJobCell.textLabel setTextColor:[UIColor whiteThemeColor]];
-        [printJobCell setBackgroundColor:[UIColor purple2ThemeColor]];
-        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
+        jobCell.timestamp.hidden = YES;
+        [jobCell.name setTextColor:[UIColor whiteThemeColor]];
+        [jobCell setBackgroundColor:[UIColor purple2ThemeColor]];
+        [jobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
         
         // slide the button from offscreen to its place
         [UIView animateWithDuration:0.2 animations:^
@@ -258,7 +258,7 @@
             deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f, //final position onscreen
                                             5.0f,
                                             self.deleteAllButton.frame.size.width-15.0f,
-                                            printJobCell.frame.size.height-10.0f);
+                                            jobCell.frame.size.height-10.0f);
         }];
     }
 }
@@ -270,26 +270,26 @@
 #endif
 
     // get the delete button
-    UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
-    UIButton* deleteButton = (UIButton*)[[printJobCell.contentView subviews] lastObject];
+    PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
+    UIButton* deleteButton = (UIButton*)[[jobCell.contentView subviews] lastObject];
     
     // slide the button to offscreen
     __weak PrintJobHistoryGroupCell* weakSelf = self;
     [UIView animateWithDuration:0.2 animations:^
     {
-         deleteButton.frame = CGRectMake(printJobCell.frame.size.width, //final position offscreen
+         deleteButton.frame = CGRectMake(jobCell.frame.size.width, //final position offscreen
                                          5.0f,
                                          weakSelf.deleteAllButton.frame.size.width-15.0f,
-                                         printJobCell.frame.size.height-10.0f);
+                                         jobCell.frame.size.height-10.0f);
     } completion:^(BOOL finished)
     {
         [deleteButton removeFromSuperview];
-        printJobCell.detailTextLabel.hidden = NO;
-        [printJobCell.textLabel setTextColor:[UIColor blackThemeColor]];
+        jobCell.timestamp.hidden = NO;
+        [jobCell.name setTextColor:[UIColor blackThemeColor]];
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-            [printJobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
+            [jobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
         else
-            [printJobCell setBackgroundColor:[UIColor gray1ThemeColor]];
+            [jobCell setBackgroundColor:[UIColor gray1ThemeColor]];
     }];
     
     self.jobWithDelete = nil;

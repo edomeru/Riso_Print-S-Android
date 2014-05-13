@@ -23,6 +23,7 @@
 		28052CEE1911D16F007982DF /* PrintJobHistoryGroupTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */; };
 		28052CEF1911D16F007982DF /* PrintJobHistoryViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */; };
 		28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */; };
+		280C096A192048DD00347991 /* PrintJobItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C0969192048DD00347991 /* PrintJobItemCell.m */; };
 		2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
@@ -290,6 +291,8 @@
 		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryLayout.h; sourceTree = "<group>"; };
 		2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayout.m; sourceTree = "<group>"; };
 		28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
+		280C0968192048DD00347991 /* PrintJobItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobItemCell.h; sourceTree = "<group>"; };
+		280C0969192048DD00347991 /* PrintJobItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobItemCell.m; sourceTree = "<group>"; };
 		28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelperTest.m; sourceTree = "<group>"; };
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
@@ -1145,8 +1148,8 @@
 			children = (
 				2DA1AEDA18E2EF8500085F27 /* PrinterCell.h */,
 				2DA1AEDB18E2EF8500085F27 /* PrinterCell.m */,
-				2DA1AEDC18E2EF8500085F27 /* SearchResultCell.h */,
-				2DA1AEDD18E2EF8500085F27 /* SearchResultCell.m */,
+				280C0968192048DD00347991 /* PrintJobItemCell.h */,
+				280C0969192048DD00347991 /* PrintJobItemCell.m */,
 				2D232D7918E5257C008D06C8 /* PrintSettingsHeaderCell.h */,
 				2D232D7A18E5257C008D06C8 /* PrintSettingsHeaderCell.m */,
 				2D232D9418E57DB0008D06C8 /* PrintSettingsItemInputCell.h */,
@@ -1163,6 +1166,8 @@
 				2D232D7418E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m */,
 				2D232D7618E517E3008D06C8 /* PrintSettingsPrinterItemCell.h */,
 				2D232D7718E517E3008D06C8 /* PrintSettingsPrinterItemCell.m */,
+				2DA1AEDC18E2EF8500085F27 /* SearchResultCell.h */,
+				2DA1AEDD18E2EF8500085F27 /* SearchResultCell.m */,
 			);
 			path = TableViewCells;
 			sourceTree = "<group>";
@@ -1604,6 +1609,7 @@
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
 				2DA1AEC618E2EF7D00085F27 /* PrintJob.m in Sources */,
 				2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */,
+				280C096A192048DD00347991 /* PrintJobItemCell.m in Sources */,
 				2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */,
 				2DA1AF1E18E2EF9600085F27 /* UIViewController+Segue.m in Sources */,
 				2DA1AF1C18E2EF9600085F27 /* RootViewController.m in Sources */,
