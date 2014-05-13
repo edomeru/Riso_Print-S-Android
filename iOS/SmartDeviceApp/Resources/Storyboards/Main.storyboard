@@ -691,7 +691,7 @@
                                     <constraint firstAttribute="centerY" secondItem="b1T-z4-dco" secondAttribute="centerY" id="uPl-bP-FbG"/>
                                 </constraints>
                             </view>
-                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="wgF-aL-OIc">
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="wgF-aL-OIc">
                                 <rect key="frame" x="0.0" y="48" width="600" height="736"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -722,7 +722,7 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <button opaque="NO" alpha="0.94999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c">
+                                                        <button opaque="NO" alpha="0.94999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c" customClass="DeleteButton">
                                                             <rect key="frame" x="245" y="0.0" width="75" height="40"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -733,7 +733,9 @@
                                                             <state key="normal" title="Delete">
                                                                 <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             </state>
-                                                            <state key="highlighted" image="img_btn_delete_printer_tablet"/>
+                                                            <state key="highlighted">
+                                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_DELETE"/>
                                                             </userDefinedRuntimeAttributes>
@@ -1901,8 +1903,8 @@
         <scene sceneID="90o-YW-6Lp">
             <objects>
                 <tableViewController storyboardIdentifier="PrintSettingsTableViewController" id="pPd-nr-YZr" customClass="PrintSettingsTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -2318,7 +2320,7 @@
         <scene sceneID="Y8c-KZ-voq">
             <objects>
                 <tableViewController storyboardIdentifier="PrintSettingsOptionTableViewController" id="hZX-Ok-b3V" customClass="PrintSettingsOptionTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="zly-OF-eWq">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="zly-OF-eWq">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
@@ -2841,7 +2843,7 @@
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
+                                    <tableView clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3lb-qN-g3W">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -3282,7 +3284,7 @@
         <scene sceneID="DR0-l5-2bT">
             <objects>
                 <tableViewController storyboardIdentifier="PrintSettingsPrinterListTableViewController" id="0Ud-GD-5mk" customClass="PrintSettingsPrinterListTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uaa-w3-8pN">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uaa-w3-8pN">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
@@ -3303,7 +3305,7 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="prd-Az-pMc">
-                                            <rect key="frame" x="36" y="8" width="31" height="15"/>
+                                            <rect key="frame" x="36" y="8" width="248" height="15"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
@@ -3325,7 +3327,7 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="971-Ih-2EA">
-                                            <rect key="frame" x="36" y="24" width="26" height="12"/>
+                                            <rect key="frame" x="36" y="24" width="248" height="12"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                             <nil key="highlightedColor"/>
@@ -3338,11 +3340,13 @@
                                         <constraint firstAttribute="bottom" secondItem="FEG-rf-3Kt" secondAttribute="bottom" id="72D-Kr-7by"/>
                                         <constraint firstItem="prd-Az-pMc" firstAttribute="top" secondItem="cli-Ny-RSq" secondAttribute="top" constant="8" id="Js4-Ul-TfH"/>
                                         <constraint firstItem="prd-Az-pMc" firstAttribute="leading" secondItem="FEG-rf-3Kt" secondAttribute="leading" id="Kzy-l0-Eht"/>
+                                        <constraint firstItem="rqq-cM-Far" firstAttribute="leading" secondItem="prd-Az-pMc" secondAttribute="trailing" id="MFF-eg-3rd"/>
                                         <constraint firstAttribute="trailing" secondItem="FEG-rf-3Kt" secondAttribute="trailing" id="VHA-XI-QRl"/>
                                         <constraint firstAttribute="trailing" secondItem="rqq-cM-Far" secondAttribute="trailing" constant="4" id="VmV-Lp-UpZ"/>
                                         <constraint firstAttribute="centerY" secondItem="rqq-cM-Far" secondAttribute="centerY" id="WVI-sg-0Ax"/>
                                         <constraint firstItem="Vct-aW-lbf" firstAttribute="leading" secondItem="cli-Ny-RSq" secondAttribute="leading" constant="2" id="aXT-yx-rno"/>
                                         <constraint firstItem="971-Ih-2EA" firstAttribute="leading" secondItem="Vct-aW-lbf" secondAttribute="trailing" constant="2" id="q1a-58-EEW"/>
+                                        <constraint firstItem="rqq-cM-Far" firstAttribute="leading" secondItem="971-Ih-2EA" secondAttribute="trailing" id="whv-jU-JyG"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -3424,7 +3428,7 @@
                                     <constraint firstAttribute="trailing" secondItem="C3K-55-hNX" secondAttribute="trailing" constant="16" id="q5T-uL-Mbr"/>
                                 </constraints>
                             </view>
-                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Rfc-0d-bR1" userLabel="iPhone - CollectionView">
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Rfc-0d-bR1" userLabel="iPhone - CollectionView">
                                 <rect key="frame" x="0.0" y="48" width="320" height="500"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -3683,7 +3687,7 @@
                                     <constraint firstAttribute="centerY" secondItem="NQw-8G-f7I" secondAttribute="centerY" id="ljX-Vc-jBN"/>
                                 </constraints>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rMa-FV-gDr" userLabel="iPad - CollectionView">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rMa-FV-gDr" userLabel="iPad - CollectionView">
                                 <rect key="frame" x="0.0" y="48" width="600" height="736"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
@@ -3886,23 +3890,6 @@
             </objects>
             <point key="canvasLocation" x="1223" y="3201"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="IfO-wR-JVz">
-            <objects>
-                <viewController id="EPk-b0-oNN" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="tsW-fk-Y37"/>
-                        <viewControllerLayoutGuide type="bottom" id="ZEf-4X-5Le"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="5Zv-yx-5w2">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="CP3-Lw-qY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -3913,7 +3900,6 @@
         <image name="img_btn_back_pressed" width="64" height="64"/>
         <image name="img_btn_default_print_settings" width="64" height="64"/>
         <image name="img_btn_default_print_settings_pressed" width="64" height="64"/>
-        <image name="img_btn_delete_printer_tablet" width="64" height="64"/>
         <image name="img_btn_job_status_ok" width="64" height="64"/>
         <image name="img_btn_main_menu_normal" width="64" height="64"/>
         <image name="img_btn_main_menu_pressed" width="64" height="64"/>
@@ -3936,12 +3922,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="5pT-ga-236"/>
-        <segue reference="uoe-Al-ug4"/>
-        <segue reference="dDZ-0e-JG0"/>
-        <segue reference="oE4-lZ-OOf"/>
-        <segue reference="JPo-5o-n9C"/>
-        <segue reference="suq-fU-kcs"/>
+        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="CWW-vD-UgO"/>
         <segue reference="a4U-VG-JlJ"/>
+        <segue reference="uoe-Al-ug4"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -17,6 +17,7 @@
 #import "UIView+Localization.h"
 #import "PrinterLayout.h"
 #import "CXAlertView.h"
+#import "DeleteButton.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -179,7 +180,8 @@
 #pragma mark - IBActions
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
-    UIButton *deleteButton = (UIButton *)sender;
+    DeleteButton *deleteButton = (DeleteButton *)sender;
+    [deleteButton setHighlighted:YES];
     
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")];
     
@@ -188,6 +190,7 @@
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [self deletePrinterAtIndex:deleteButton.tag];
                               [alertView dismiss];
+                              [deleteButton setHighlighted:NO];
                           }];
     [alertView show];
 }

@@ -73,9 +73,15 @@ const float ANIMATION_SPEED = 0.2f;
     [super setHighlighted:highlighted];
     
     if (highlighted)
+    {
         self.backgroundColor = [UIColor purple1ThemeColor];
+        [self setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateHighlighted];
+    }
     else
+    {
         self.backgroundColor = [UIColor whiteThemeColor];
+        [self setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark - Animation
