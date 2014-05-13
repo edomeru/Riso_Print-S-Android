@@ -8,7 +8,6 @@
 
 #import "PrinterCell.h"
 #import "UIColor+Theme.h"
-#import "DeleteButton.h"
 
 #define DELETE_BUTTON_TAG   99
 
@@ -123,9 +122,9 @@
     [self cancelDeleteButton];
 }
 
-- (void)tappedDeletePrinter:(UIButton*)button
+- (void)tappedDeletePrinter:(DeleteButton*)button
 {
-    [self.delegate didTapDeleteButton];
+    [self.delegate didTapDeleteButton:button];
 }
 
 - (void)cancelDeleteButton

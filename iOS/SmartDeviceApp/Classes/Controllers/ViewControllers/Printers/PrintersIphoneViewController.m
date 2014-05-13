@@ -204,8 +204,12 @@
     self.toDeleteIndexPath = selectedIndexPath;
 }
 
-- (void)didTapDeleteButton
+- (void)didTapDeleteButton:(DeleteButton*)button
 {
+    DeleteButton *deleteButton = (DeleteButton*)button;
+    [deleteButton keepHighlighted:YES];
+    [deleteButton setHighlighted:YES];
+    
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"")  message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
     
     [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
@@ -213,12 +217,16 @@
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [alertView dismiss];
                               [self removeDeleteState];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
                           }];
     [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
                              type:CXAlertViewButtonTypeDefault
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [self deletePrinter];
                               [alertView dismiss];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
                           }];
     [alertView show];
 }

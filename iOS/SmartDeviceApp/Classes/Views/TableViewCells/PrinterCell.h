@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "PrinterStatusView.h"
+#import "DeleteButton.h"
 
 @protocol PrinterCellDelegate <NSObject>
 
 @required
-- (void)didTapDeleteButton;
+- (void)didTapDeleteButton:(DeleteButton*)button;
 
 @end
 
