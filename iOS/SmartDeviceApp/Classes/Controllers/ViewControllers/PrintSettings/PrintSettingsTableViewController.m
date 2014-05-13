@@ -299,14 +299,14 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
-            headerCell.groupLabel.localizationId = IDS_LBL_AUTHENTICATION;
+            headerCell.groupLabel.uppercaseLocalizationId = IDS_LBL_AUTHENTICATION;
             headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
             cell = headerCell;
         }
         else
         {
             PrintSettingsItemInputCell *itemInputCell = [tableView dequeueReusableCellWithIdentifier:PINCODE_INPUT_CELL forIndexPath:indexPath];
-            itemInputCell.settingLabel.localizationId =  IDS_LBL_AUTHENTICATION_PINCODE;
+            itemInputCell.settingLabel.localizationId =  IDS_LBL_PIN_CODE;
             itemInputCell.valueTextField.secureTextEntry = YES;
             itemInputCell.valueTextField.text = [self.previewSetting valueForKey:KEY_PIN_CODE];
             itemInputCell.valueTextField.tag = indexPath.section * 10 + indexPath.row;
@@ -322,7 +322,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
-            headerCell.groupLabel.localizationId = [group objectForKey:@"text"];
+            headerCell.groupLabel.uppercaseLocalizationId = [group objectForKey:@"text"];
             headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
             cell = headerCell;
         }
