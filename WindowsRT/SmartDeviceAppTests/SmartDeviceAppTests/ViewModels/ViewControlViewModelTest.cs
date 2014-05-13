@@ -180,9 +180,9 @@ namespace SmartDeviceAppTests.ViewModels
             var mainMenuItems = new MainMenuItemList();
 
             // TODO: For update!!
-            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command);
+            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command, true);
             mainMenuItems.Add(mainMenuItem1);
-            var mainMenuItem2 = new MainMenuItem("MAIN_MENU_ITEM2", Test_Command);
+            var mainMenuItem2 = new MainMenuItem("MAIN_MENU_ITEM2", Test_Command, true);
             mainMenuItems.Add(mainMenuItem2);
 
             viewControlViewModel.MainMenuItems = mainMenuItems;
@@ -191,16 +191,7 @@ namespace SmartDeviceAppTests.ViewModels
             // For coverage only:
             Test_Command.Execute(null);
         }
-
-        [TestMethod]
-        public void Test_SelectedMainMenuItem()
-        {
-            // TODO: For update!!
-            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command);
-            viewControlViewModel.SelectedMainMenuItem = 1;
-            Assert.AreEqual(1, viewControlViewModel.SelectedMainMenuItem);
-        }
-
+        
         [TestMethod]
         public void Test_GoToHomePage()
         {
