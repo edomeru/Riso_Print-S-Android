@@ -77,4 +77,14 @@
  */
 - (void)reloadContents;
 
+/**
+ Clears the highlight color of the group header.
+ */
+- (void)clearHeader;
+
+/**
+ Clears the highlight color of the delete all button.
+ */
+- (void)clearDeleteAll;
+
 @end

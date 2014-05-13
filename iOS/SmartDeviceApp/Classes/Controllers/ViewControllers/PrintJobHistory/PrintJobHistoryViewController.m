@@ -159,6 +159,8 @@
     
     // since we are using reusable cells, handle scrolling by forcing redraw of the cell
     [groupCell reloadContents];
+    [groupCell clearHeader];
+    [groupCell clearDeleteAll];
     
     // check if a delete button was present while scrolling
     // (fixes bug when swiping-left on the top/bottom edges of the list then scrolling)
@@ -417,6 +419,10 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
+    if (self.groupWithDelete != nil)
+        [self removeDeleteButton]; //TODO: temporary fix for the misplaced delete button
+                                   //TODO: should redraw the delete button after rotate
+    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
