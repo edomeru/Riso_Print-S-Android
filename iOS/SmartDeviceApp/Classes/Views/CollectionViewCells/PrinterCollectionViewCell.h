@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class PrinterStatusView;
+@class DeleteButton;
 
 @protocol PrinterCollectionViewCellDelegate
 -(void) setDefaultPrinterCell:(BOOL) isDefaultOn forIndexPath:(NSIndexPath *) indexPath;
@@ -23,7 +24,7 @@
 @property (nonatomic, weak) IBOutlet PrinterStatusView *statusView;
 @property (weak, nonatomic) IBOutlet UIView *cellHeader;
 @property (weak, nonatomic) IBOutlet UIButton *defaultSettingsButton;
-@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+@property (weak, nonatomic) IBOutlet DeleteButton *deleteButton;
 
 @property (nonatomic, weak) id <PrinterCollectionViewCellDelegate> delegate;
 @property (nonatomic, weak) NSIndexPath *indexPath;

@@ -17,8 +17,8 @@
 #import "UIView+Localization.h"
 #import "PrinterLayout.h"
 #import "CXAlertView.h"
-#import "DeleteButton.h"
 #import "UIColor+Theme.h"
+#import "DeleteButton.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -133,6 +133,10 @@
     //[cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.statusView setStatus:NO];
     [cell.statusView.statusHelper startPrinterStatusPolling];
+    
+    cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
+    cell.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
+    
     return cell;
 }
 
@@ -181,9 +185,9 @@
 #pragma mark - IBActions
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
-    DeleteButton *deleteButton = (DeleteButton *)sender;
-    
-    [deleteButton setBackgroundColor: [UIColor purple1ThemeColor]];
+    DeleteButton *deleteButton = (DeleteButton*)sender;
+    [deleteButton keepHighlighted:YES];
+    [deleteButton setHighlighted:YES];
 
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:nil];
     
@@ -191,7 +195,8 @@
                              type:CXAlertViewButtonTypeDefault
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [alertView dismiss];
-                              [deleteButton setBackgroundColor: [UIColor whiteColor]];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
                           }];
     
     [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
@@ -199,7 +204,8 @@
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [self deletePrinterAtIndex:deleteButton.tag];
                               [alertView dismiss];
-                              [deleteButton setBackgroundColor: [UIColor whiteColor]];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
                           }];
     [alertView show];
 }

@@ -8,6 +8,7 @@
 
 #import "SearchResultCell.h"
 #import "PrinterSearchViewController.h"
+#import "UIColor+Theme.h"
 
 @interface SearchResultCell ()
 
@@ -38,6 +39,11 @@
 //implementation #2 : create view in storyboard, then just set hidden attribute here
     [self.oldIcon setHidden:NO];
     [self.addIcon setHidden:YES];
+    
+    [self setSelectionStyle:UITableViewCellSelectionStyleNone]; //disable cell selection
+    self.selectedBackgroundView = nil;
+    self.printerName.highlightedTextColor = [UIColor blackThemeColor];
+    self.printerIP.highlightedTextColor = [UIColor blackThemeColor];
 }
 
 - (void)setCellAsNewResult
@@ -48,6 +54,12 @@
 //implementation #2 : create view in storyboard, then just set hidden attribute here
     [self.oldIcon setHidden:YES];
     [self.addIcon setHidden:NO];
+    
+    UIView* highlightColor = [[UIView alloc] init];
+    highlightColor.backgroundColor = [UIColor purple1ThemeColor]; //same color of oldIcon
+    self.selectedBackgroundView = highlightColor;
+    self.printerName.highlightedTextColor = [UIColor whiteThemeColor];
+    self.printerIP.highlightedTextColor = [UIColor whiteThemeColor];
 }
 
 - (void)setContentsUsingName:(NSString*)printerName usingIP:(NSString*)printerIP

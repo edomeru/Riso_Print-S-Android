@@ -15,6 +15,7 @@ const float ANIMATION_SPEED = 0.2f;
 
 @property (assign, nonatomic) CGRect offscreenPos;
 @property (assign, nonatomic) CGRect onscreenPos;
+@property (assign, nonatomic) BOOL stayHighlighted;
 
 @end
 
@@ -46,8 +47,11 @@ const float ANIMATION_SPEED = 0.2f;
         [self setBackgroundColor:[UIColor whiteThemeColor]];
         [self setUserInteractionEnabled:YES];
         
+        self.highlightedColor = [UIColor purple1ThemeColor];
+        self.highlightedTextColor = [UIColor whiteThemeColor];
         self.offscreenPos = offscreen;
         self.onscreenPos = onscreen;
+        self.stayHighlighted = NO;
     }
     return self;
 }
@@ -68,14 +72,19 @@ const float ANIMATION_SPEED = 0.2f;
 
 #pragma mark - UI Properties
 
+- (void)keepHighlighted:(BOOL)enable
+{
+    self.stayHighlighted = enable;
+}
+
 - (void)setHighlighted:(BOOL)highlighted
 {
     [super setHighlighted:highlighted];
     
-    if (highlighted)
+    if (highlighted || self.stayHighlighted)
     {
-        self.backgroundColor = [UIColor purple1ThemeColor];
-        [self setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateHighlighted];
+        self.backgroundColor = self.highlightedColor;
+        [self setTitleColor:self.highlightedTextColor forState:UIControlStateNormal];
     }
     else
     {

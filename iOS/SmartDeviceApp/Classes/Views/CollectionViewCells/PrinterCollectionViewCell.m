@@ -8,6 +8,7 @@
 
 #import "PrinterCollectionViewCell.h"
 #import "UIColor+Theme.h"
+#import "DeleteButton.h"
 
 typedef enum {
     kPrinterCollectionCellTypeNormal,

@@ -10,8 +10,12 @@
 
 @interface DeleteButton : UIButton
 
+@property (strong, nonatomic) UIColor* highlightedColor;
+@property (strong, nonatomic) UIColor* highlightedTextColor;
+
 + (id)createAtOffscreenPosition:(CGRect)offscreen withOnscreenPosition:(CGRect)onscreen;
 
+- (void)keepHighlighted:(BOOL)enable;
 - (void)animateOnscreen:(void (^)(BOOL))completion;
 - (void)animateOffscreen:(void (^)(BOOL))completion;
 
