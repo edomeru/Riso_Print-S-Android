@@ -90,18 +90,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        
-        private string _searchPrintersPaneTitleText;
-        public string SearchPrintersPaneTitleText
-        {
-            get { return this._searchPrintersPaneTitleText; }
-            set
-            {
-                _searchPrintersPaneTitleText = value;
-                OnPropertyChanged("SearchPrintersPaneTitleText");
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(String propertyName)
         {
@@ -119,8 +107,6 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
             Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
-
-            
         }
 
         private void ScreenModeChanged(Common.Enum.ScreenMode screenMode)

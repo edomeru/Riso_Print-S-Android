@@ -66,6 +66,8 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(printer.EnabledTrayAutostack, true);
             Assert.AreEqual(printer.EnabledTrayTop, true);
             Assert.AreEqual(printer.EnabledTrayStack, true);
+
+
         }
     }
 }
