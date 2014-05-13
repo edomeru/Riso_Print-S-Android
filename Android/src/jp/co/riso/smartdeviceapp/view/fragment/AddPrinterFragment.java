@@ -159,7 +159,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             return;
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
-        String msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+        String msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
         ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
         info.setTargetFragment(this, 0);
         
@@ -196,8 +196,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else if (err == ERR_CAN_NOT_ADD_PRINTER) {
             errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else if (err == ERR_PRINTER_ADDED_WARNING) {
-            errMsg = getResources().getString(R.string.ids_err_msg_warning_cannot_find_printer);
-            errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+            errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
+            errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
         }
         DialogFragment info = null;
         

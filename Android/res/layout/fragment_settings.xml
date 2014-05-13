@@ -26,7 +26,7 @@
                 android:background="@drawable/selector_printsettings_title"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/home_title_padding"
-                android:text="@string/ids_lbl_card_reader_group"
+                android:text="@string/ids_lbl_authentication"
                 android:textAllCaps="true"
                 android:textColor="@color/theme_light_1" />
 
@@ -47,7 +47,7 @@
                     android:duplicateParentState="true"
                     android:paddingRight="@dimen/printsettings_menu_padding"
                     android:maxLines="2"
-                    android:text="@string/ids_lbl_card_id"
+                    android:text="@string/ids_lbl_login_id"
                     android:textColor="@color/theme_dark_1"
                     android:textSize="@dimen/home_text_size" />
 
