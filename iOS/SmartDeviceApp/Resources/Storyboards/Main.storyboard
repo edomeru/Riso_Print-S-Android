@@ -2941,8 +2941,6 @@
                                             <outlet property="dataSource" destination="jTA-Cg-WoR" id="ttJ-3O-0oH"/>
                                             <outlet property="delegate" destination="jTA-Cg-WoR" id="gqw-Gc-ysw"/>
                                             <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="eLp-sB-qot"/>
-                                            <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="1kJ-ea-RHg"/>
-                                            <outletCollection property="gestureRecognizers" destination="TJp-mg-kzG" appends="YES" id="NC6-nS-h6H"/>
                                         </connections>
                                     </tableView>
                                 </subviews>
@@ -2988,16 +2986,6 @@
                         <action selector="swipePrinterCellAction:" destination="jTA-Cg-WoR" id="Gt1-2q-Uxk"/>
                     </connections>
                 </swipeGestureRecognizer>
-                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Table View">
-                    <connections>
-                        <action selector="tapTableViewAction:" destination="jTA-Cg-WoR" id="OoC-Ea-E6z"/>
-                    </connections>
-                </tapGestureRecognizer>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.10000000000000003" id="TJp-mg-kzG">
-                    <connections>
-                        <action selector="pressTableViewAction:" destination="jTA-Cg-WoR" id="X2B-Bg-7Fm"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="128" y="1457"/>
         </scene>
