@@ -124,9 +124,6 @@
     <Compile Include="Controllers\JobControllerTest.cs" />
     <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
-    <Compile Include="Converters\ItemClickedConverterTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Converters\StringToVisibilityConverterTest.cs" />
     <Compile Include="Converters\SidePaneLineGeometryConverterTest.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverterTest.cs" />

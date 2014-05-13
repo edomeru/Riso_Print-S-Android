@@ -180,12 +180,10 @@
     </Compile>
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Converters\IntToBooleanConverter.cs" />
-    <Compile Include="Converters\MainMenuItemToIndexConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemToSeparatorVisibility.cs" />
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
-    <Compile Include="Converters\MainItemIndexToIsCheckedConverter.cs" />
     <Compile Include="Converters\SelectedPrinterIdToTextConverter.cs" />
     <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
@@ -206,7 +204,6 @@
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
-    <Compile Include="Converters\ItemClickedConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\JobGestureController.cs" />
