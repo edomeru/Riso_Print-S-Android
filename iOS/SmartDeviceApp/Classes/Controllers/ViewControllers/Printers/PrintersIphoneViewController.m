@@ -9,7 +9,6 @@
 #import "PrintersIphoneViewController.h"
 #import "Printer.h"
 #import "PrinterManager.h"
-#import "PrinterCell.h"
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
 #import "CXAlertView.h"
@@ -79,6 +78,7 @@
     static NSString* cellIdentifier = PRINTERCELL;
     PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
                                                         forIndexPath:indexPath];
+    cell.delegate = self;
     
     Printer* printer = [self.printerManager getPrinterAtIndex:indexPath.row];
     if ([self.printerManager isDefaultPrinter:printer])
@@ -162,6 +162,11 @@
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
+    if(selectedIndexPath.row == self.toDeleteIndexPath.row)
+    {
+        //swiped the same row that already has a delete button
+        return;
+    }
     if(selectedIndexPath != self.toDeleteIndexPath)
     {
         //remove delete state of other cells if any
@@ -172,7 +177,7 @@
     self.toDeleteIndexPath = selectedIndexPath;
 }
 
-- (IBAction)deleteButtonAction:(id)sender
+- (void)didTapDeleteButton
 {
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"")  message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")];
     
@@ -302,4 +307,13 @@
         self.toDeleteIndexPath = nil;
     }
 }
+
+#pragma mark - Rotation
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if (self.toDeleteIndexPath != nil)
+        [self removeDeleteState];
+}
+
 @end
