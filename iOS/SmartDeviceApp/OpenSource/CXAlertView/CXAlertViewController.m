@@ -68,4 +68,11 @@
 {
     return _rootViewControllerPrefersStatusBarHidden;
 }
+
+//SDA Fix: Added method override to keep status bar style when alert is shown
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 @end

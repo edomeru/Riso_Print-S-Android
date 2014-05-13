@@ -18,6 +18,6 @@
 + (UIColor *)gray4ThemeColor;
 + (UIColor *)purple1ThemeColor;
 + (UIColor *)purple2ThemeColor;
-+ (UIColor *)redThemeColor;
+//+ (UIColor *)redThemeColor;
 
 @end

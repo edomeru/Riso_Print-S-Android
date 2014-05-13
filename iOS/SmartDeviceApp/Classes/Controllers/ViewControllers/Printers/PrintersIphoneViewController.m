@@ -9,9 +9,9 @@
 #import "PrintersIphoneViewController.h"
 #import "Printer.h"
 #import "PrinterManager.h"
-#import "PrinterCell.h"
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
+#import "CXAlertView.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define SEGUE_TO_PRINTSETTINGS  @"PrintersIphone-PrintSettings"
@@ -33,7 +33,7 @@
 /**
  Action when the PrinterCell is tapped to segue to the PrinterInfo screen
  */
-- (IBAction)tapPrinterCellAction:(id)sender;
+- (IBAction)tapTableViewAction:(id)sender;
 
 @end
 
@@ -54,6 +54,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTableViewAction:)];
+    [self.tableView addGestureRecognizer:tap];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +81,7 @@
     static NSString* cellIdentifier = PRINTERCELL;
     PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
                                                         forIndexPath:indexPath];
+    cell.delegate = self;
     
     Printer* printer = [self.printerManager getPrinterAtIndex:indexPath.row];
     if ([self.printerManager isDefaultPrinter:printer])
@@ -98,7 +102,12 @@
     
     cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     cell.printerStatus.statusHelper.delegate = cell.printerStatus;
-
+    
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressTableViewAction:)];
+    press.minimumPressDuration = 0.1f;
+    press.delegate = self;
+    [cell.contentView addGestureRecognizer:press];
+    
     //[cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.printerStatus setStatus:NO];
     [cell.printerStatus.statusHelper startPrinterStatusPolling];
@@ -117,7 +126,7 @@
 
 #pragma mark - IBActions
 
-- (IBAction)tapPrinterCellAction:(id)sender
+- (IBAction)tapTableViewAction:(id)sender
 {
     //if a cell is in delete state, remove delete state
     if(self.toDeleteIndexPath != nil)
@@ -125,30 +134,104 @@
         [self removeDeleteState];
         return;
     }
-    //else segue to printer info screen
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    self.selectedPrinterIndexPath = indexPath;
-    [self performSegueTo:[PrinterInfoViewController class]];
 }
 
-- (IBAction)tapTableView:(id)sender
+- (IBAction)pressTableViewAction:(id)sender
 {
-    [self removeDeleteState];
+    UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
+    //else segue to printer info screen
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
+    PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    if(press.state == UIGestureRecognizerStateBegan)
+    {
+        if(self.toDeleteIndexPath != nil)
+        {
+            [self removeDeleteState];
+            return;
+        }
+        
+        if(self.selectedPrinterIndexPath != nil)
+        {
+            return;
+        }
+        //else segue to printer info screen
+        [cell setHighlighted:YES];
+        if(indexPath != nil)
+        {
+            self.selectedPrinterIndexPath = indexPath;
+            [self performSegueTo:[PrinterInfoViewController class]];
+        }
+    }
+    else{
+        [cell setHighlighted:NO];
+    }
+}
+
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]])
+    {
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[gestureRecognizer locationInView:self.tableView]];
+    
+        if(self.toDeleteIndexPath != nil && indexPath != nil && indexPath.row == self.toDeleteIndexPath.row)
+        {
+            return NO;
+        }
+        
+    }
+    return YES;
 }
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    if(selectedIndexPath != self.toDeleteIndexPath)
+    if(self.toDeleteIndexPath != nil)
     {
-        //remove delete state of other cells if any
-        [self removeDeleteState];
+        if(selectedIndexPath.row == self.toDeleteIndexPath.row)
+        {
+            //swiped the same row that already has a delete button
+            return;
+        }
+        else
+        
+        {
+            //remove delete state of other cells if any
+            [self removeDeleteState];
+        }
     }
+
     PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
     [cell setCellToBeDeletedState:YES];
     self.toDeleteIndexPath = selectedIndexPath;
 }
 
-- (IBAction)deleteButtonAction:(id)sender
+- (void)didTapDeleteButton:(DeleteButton*)button
+{
+    DeleteButton *deleteButton = (DeleteButton*)button;
+    [deleteButton keepHighlighted:YES];
+    [deleteButton setHighlighted:YES];
+    
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"")  message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [alertView dismiss];
+                              [self removeDeleteState];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
+                          }];
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [self deletePrinter];
+                              [alertView dismiss];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
+                          }];
+    [alertView show];
+}
+
+- (void) deletePrinter
 {
     if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
     {
@@ -191,7 +274,6 @@
             destController.isDefaultPrinter = YES;
         }
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
-        destController.onlineStatus = cell.printerStatus.onlineStatus;
         destController.delegate = self;
         [cell.printerStatus.statusHelper stopPrinterStatusPolling];
     }
@@ -266,4 +348,13 @@
         self.toDeleteIndexPath = nil;
     }
 }
+
+#pragma mark - Rotation
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if (self.toDeleteIndexPath != nil)
+        [self removeDeleteState];
+}
+
 @end

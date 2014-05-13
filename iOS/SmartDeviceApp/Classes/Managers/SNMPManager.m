@@ -60,14 +60,7 @@ static SNMPManager* sharedSNMPManager = nil;
  @param success
         YES if at least one printer was found, NO otherwise
  */
-- (void)endRealSearchWithResult:(BOOL)success;
-
-/**
- Handler for the Search End Callback of the Fake SNMP.
- Posts a notification that the search has ended.
- FOR DEBUGGING PURPOSES ONLY.
- */
-- (void)endFakeSearch;
+- (void)endSearchWithResult:(BOOL)success;
 
 @end
 
@@ -111,7 +104,7 @@ static SNMPManager* sharedSNMPManager = nil;
     {
         // "Fake" SNMP
         // 1. receive the Printer Added callback after 2 seconds
-        // 2. receive the Discovery Ended callback after 30 seconds
+        // 2. receive the Discovery Ended callback after 10 seconds
         // 3. if timeout is enabled, the Printer Added callback will never be received
         
         if (self.useSNMPUnicastTimeout)
@@ -126,8 +119,8 @@ static SNMPManager* sharedSNMPManager = nil;
             [self addFakePrinter:printerIP];
         }
         
-        [NSThread sleepForTimeInterval:28];
-        [self endFakeSearch];
+        [NSThread sleepForTimeInterval:8];
+        [self endSearchWithResult:!self.useSNMPUnicastTimeout];
     }
 }
 
@@ -146,7 +139,7 @@ static SNMPManager* sharedSNMPManager = nil;
     {
         // "Fake" SNMP
         //  1. receive the Printer Added callback every x seconds
-        //  2. receive the Discovery Ended callback after 30 seconds
+        //  2. receive the Discovery Ended callback after 10 seconds
         
         [NSThread sleepForTimeInterval:1];
         [self addFakePrinter:@"192.168.1.1"];
@@ -157,14 +150,14 @@ static SNMPManager* sharedSNMPManager = nil;
         [NSThread sleepForTimeInterval:2];
         [self addFakePrinter:@"192.168.3.3"];
         
-        [NSThread sleepForTimeInterval:5];
+        [NSThread sleepForTimeInterval:1];
         [self addFakePrinter:@"192.168.4.4"];
         
-        [NSThread sleepForTimeInterval:3];
+        [NSThread sleepForTimeInterval:1];
         [self addFakePrinter:@"192.168.5.5"];
         
-        [NSThread sleepForTimeInterval:17];
-        [self endFakeSearch];
+        [NSThread sleepForTimeInterval:3];
+        [self endSearchWithResult:YES];
     }
 }
 
@@ -195,8 +188,6 @@ static SNMPManager* sharedSNMPManager = nil;
     // parse the printer name, IP, and capabilities
     PrinterDetails* pd = [[PrinterDetails alloc] init];
     pd.name = [NSString stringWithFormat:@"%s", snmp_device_get_name(device)];
-    if (pd.name == nil || [pd.name isEqualToString:@""])
-        pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     pd.ip = [NSString stringWithFormat:@"%s", snmp_device_get_ip_address(device)];
     pd.port = [NSNumber numberWithInt:0]; //TODO: get proper port (LPR or RAW)
     pd.enBooklet = (snmp_device_get_capability_status(device, kSnmpCapabilityBooklet) > 0 ? YES : NO);
@@ -232,21 +223,6 @@ static SNMPManager* sharedSNMPManager = nil;
     });
 }
 
-- (void)endRealSearchWithResult:(BOOL)success
-{
-#if DEBUG_LOG_SNMP_MANAGER
-    NSLog(@"[INFO][SNMPM] ending real search, success=%@", success ? @"YES" : @"NO");
-#endif
-
-    // notify observer that the search has ended (background thread)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END
-                                                            object:nil];
-    });
-}
-
-#pragma mark - "Fake" SNMP Callback Handlers
-
 - (void)addFakePrinter:(NSString*)fakeIP
 {
 #if DEBUG_LOG_SNMP_MANAGER
@@ -259,8 +235,8 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.name = [NSString stringWithFormat:@"RISO Printer %@", pd.ip];
     pd.port = [NSNumber numberWithInt:0]; //TODO: use proper port (LPR or RAW)
     pd.enBooklet = YES;
-    pd.enFinisher23Holes = YES;
-    pd.enFinisher24Holes = NO;
+    pd.enFinisher23Holes = NO;
+    pd.enFinisher24Holes = YES;
     pd.enLpr = YES;
     pd.enRaw = YES;
     pd.enStaple = YES;
@@ -281,16 +257,16 @@ static SNMPManager* sharedSNMPManager = nil;
     });
 }
 
-- (void)endFakeSearch
+- (void)endSearchWithResult:(BOOL)success
 {
 #if DEBUG_LOG_SNMP_MANAGER
-    NSLog(@"[INFO][SNMPM] ending fake search");
+    NSLog(@"[INFO][SNMPM] ending search, success=%@", success ? @"YES" : @"NO");
 #endif
     
-    // notify observer that the "search" has ended (background thread)
+    // notify observer that the search has ended (background thread)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END
-                                                            object:nil];
+                                                            object:[NSNumber numberWithBool:success]];
     });
 }
 
@@ -309,7 +285,7 @@ static void snmpDiscoveryEndedCallback(snmp_context* context, int result)
     
     // let the SNMPManager handle the result
     SNMPManager* manager = [SNMPManager sharedSNMPManager];
-    [manager endRealSearchWithResult:(result > 0 ? YES : NO)];
+    [manager endSearchWithResult:(result > 0 ? YES : NO)];
 }
 
 static void snmpPrinterAddedCallback(snmp_context* context, snmp_device* device)

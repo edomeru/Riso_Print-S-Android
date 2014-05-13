@@ -9,6 +9,7 @@
 #import "PrintJobHistoryGroupCell.h"
 #import "UIColor+Theme.h"
 #import "NSDate+Format.h"
+#import "DeleteButton.h"
 
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
@@ -16,8 +17,6 @@
 #define IDX_RESULT              0
 #define IDX_NAME                1
 #define IDX_TIMESTAMP           2
-
-#define TAG_SEPARATOR           5
 
 @interface PrintJobHistoryGroupCell ()
 
@@ -42,7 +41,7 @@
 @property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
 
 /** Removes the entire group. */
-@property (weak, nonatomic) IBOutlet UIButton* deleteAllButton;
+@property (weak, nonatomic) IBOutlet DeleteButton* deleteAllButton;
 
 /** The UI for displaying the list of print jobs. */
 @property (weak, nonatomic) IBOutlet UITableView* printJobsView;
@@ -56,6 +55,13 @@
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 #pragma mark - Methods
+
+- (void)putDeleteButton:(UIGestureRecognizer*)gesture;
+- (void)colorHeader;
+- (void)clearHeader;
+- (void)tappedHeader;
+- (void)tappedDeleteAll;
+- (void)tappedDeleteJob:(UIButton*)button;
 
 @end
 
@@ -95,55 +101,63 @@
 
 - (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath
 {
-    UITableViewCell* printJobCell = [tableView dequeueReusableCellWithIdentifier:PRINTJOBCELL
-                                                                forIndexPath:indexPath];
+    PrintJobItemCell* cell = [tableView dequeueReusableCellWithIdentifier:PRINTJOBCELL
+                                                                 forIndexPath:indexPath];
     
-    // get print job details (name, result, timestamp)
+    // get print job details (result, name, imestamp)
     NSArray* printJob = [self.listPrintJobs objectAtIndex:indexPath.row];
     
     // print job result
     BOOL result = [[printJob objectAtIndex:IDX_RESULT] boolValue];
     if (result)
-        printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
+        cell.result.image = [UIImage imageNamed:IMAGE_JOB_STATUS_OK];
     else
-        printJobCell.imageView.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
+        cell.result.image = [UIImage imageNamed:IMAGE_JOB_STATUS_NG];
     
     // print job name
-    printJobCell.textLabel.text = [NSString stringWithFormat:@"%@", [printJob objectAtIndex:IDX_NAME]];
+    cell.name.text = [NSString stringWithFormat:@"%@", [printJob objectAtIndex:IDX_NAME]];
     
     // print job timestamp
-    printJobCell.detailTextLabel.text = [[printJob objectAtIndex:IDX_TIMESTAMP] formattedString];
-    printJobCell.detailTextLabel.hidden = NO;
+    cell.timestamp.text = [[printJob objectAtIndex:IDX_TIMESTAMP] formattedString];
+    cell.timestamp.hidden = NO;
+    
+    UISwipeGestureRecognizer* swipeLeft = [[UISwipeGestureRecognizer alloc]
+                                           initWithTarget:self                                                                                       action:@selector(putDeleteButton:)];
+    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    [cell addGestureRecognizer:swipeLeft];
     
     // clear tracker for the delete button
     self.jobWithDelete = nil;
     
-    return printJobCell;
+    return cell;
 }
 
 - (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)indexPath
 {
+    PrintJobItemCell* jobCell = (PrintJobItemCell*)cell;
+    
     // unified version-independent fix for the buggy UITableViewCell background color
     //  -- for iOS6 (always clear)
     //  -- for iOS7 (always white) 
     // colors set to default in storyboard, set programmatically here instead
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-        [cell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
+        [jobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
     else
-        [cell setBackgroundColor:[UIColor gray1ThemeColor]];
+        [jobCell setBackgroundColor:[UIColor gray1ThemeColor]];
     
     // if this is the last cell, hide the separator
     if (indexPath.row == [self.listPrintJobs count]-1)
-        [[cell.contentView viewWithTag:TAG_SEPARATOR] setHidden:YES];
+        [jobCell.separator setHidden:YES];
     else
-        [[cell.contentView viewWithTag:TAG_SEPARATOR] setHidden:NO];
+        [jobCell.separator setHidden:NO];
 }
 
-#pragma mark - Cell Data
+#pragma mark - Cell Initialization
 
 - (void)initWithTag:(NSInteger)tag
 {
     // set cell tags
+    self.tag = tag;
     self.groupName.tag = tag;
     self.groupIP.tag = tag;
     self.groupIndicator.tag = tag;
@@ -152,11 +166,44 @@
     
     // prepare container for print jobs list
     self.listPrintJobs = [NSMutableArray array];
+    
+    // set group header events
+    
+    [self.groupName addTarget:self action:@selector(colorHeader)
+             forControlEvents:UIControlEventTouchDown];
+    [self.groupName addTarget:self action:@selector(clearHeader)
+             forControlEvents:UIControlEventTouchDragOutside];
+    [self.groupName addTarget:self action:@selector(tappedHeader)
+             forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.groupIP addTarget:self action:@selector(colorHeader)
+           forControlEvents:UIControlEventTouchDown];
+    [self.groupIP addTarget:self action:@selector(clearHeader)
+           forControlEvents:UIControlEventTouchDragOutside];
+    [self.groupIP addTarget:self action:@selector(tappedHeader)
+           forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.groupIndicator addTarget:self action:@selector(colorHeader)
+                  forControlEvents:UIControlEventTouchDown];
+    [self.groupIndicator addTarget:self action:@selector(clearHeader)
+                  forControlEvents:UIControlEventTouchDragOutside];
+    [self.groupIndicator addTarget:self action:@selector(tappedHeader)
+                  forControlEvents:UIControlEventTouchUpInside];
+    
+    self.deleteAllButton.highlightedColor = [UIColor purple2ThemeColor];
+    self.deleteAllButton.highlightedTextColor = [UIColor whiteThemeColor];
+    [self.deleteAllButton addTarget:self action:@selector(tappedDeleteAll)
+                   forControlEvents:UIControlEventTouchUpInside];
 }
+
+#pragma mark - Cell Setters
 
 - (void)putGroupName:(NSString*)name
 {
-    [self.groupName setTitle:name forState:UIControlStateNormal];
+    if (name == nil || [name isEqualToString:@""])
+        [self.groupName setTitle:NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name") forState:UIControlStateNormal];
+    else
+        [self.groupName setTitle:name forState:UIControlStateNormal];
 }
 
 - (void)putGroupIP:(NSString*)ip
@@ -185,9 +232,9 @@
     [self.listPrintJobs addObject:printJob];
 }
 
-#pragma mark - Cell UI
+#pragma mark - Cell Actions
 
-- (void)putDeleteButton:(UIGestureRecognizer*)gesture handledBy:(id<PrintJobHistoryGroupCellDelegate>)receiver usingActionOnTap:(SEL)actionOnTap
+- (void)putDeleteButton:(UIGestureRecognizer*)gesture
 {
     // get the specific item swiped
     CGPoint swipedJob = [gesture locationInView:self.printJobsView];
@@ -200,22 +247,22 @@
 #endif
         return;
     }
-    else
-    {
 #if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
-        NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)jobIndexPath.row);
+    NSLog(@"[INFO][PrintJobCell] swiped left on item=%ld", (long)jobIndexPath.row);
 #endif
-        
-        // check if there is already a job with a delete button
-        if ((self.jobWithDelete != nil) && (self.jobWithDelete.row != jobIndexPath.row))
-        {
-            [self removeDeleteButton];
-        }
+    
+    // check if this is the same job
+    if ((self.jobWithDelete != nil) && (self.jobWithDelete.row == jobIndexPath.row))
+        return;
+    
+    // check first if there are other groups with a delete button
+    if ([self.delegate shouldPutDeleteButton:self.tag])
+    {
         self.jobWithDelete = jobIndexPath;
         
         // check if this item already has a delete button
-        UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:jobIndexPath];
-        if ([[printJobCell.contentView subviews] count] == 5) //has an extra delete button
+        PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:jobIndexPath];
+        if ([[jobCell.contentView subviews] count] == 5) //has an extra delete button
         {
 #if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
             NSLog(@"[INFO][PrintJobCell] already has delete button, ignoring swipe");
@@ -224,39 +271,29 @@
         }
         
         // create the delete button
-        UIButton* deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [deleteButton setTitle:NSLocalizedString(IDS_LBL_DELETE, @"Delete")
-                      forState:UIControlStateNormal]; 
-        [deleteButton setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
-        [deleteButton setTitleEdgeInsets:UIEdgeInsetsMake(10.0f, 15.0f, 10.0f, 15.0f)];
-        [deleteButton setBackgroundColor:[UIColor whiteThemeColor]];
-        [deleteButton setUserInteractionEnabled:YES];
-        deleteButton.titleLabel.font = [UIFont systemFontOfSize:13.0f];
+        // initial position offscreen
+        CGRect startPos = CGRectMake(jobCell.frame.size.width,
+                                     5.0f,
+                                     self.deleteAllButton.frame.size.width-15.0f,
+                                     jobCell.frame.size.height-10.0f);
+        // final position on top of timestamp
+        CGRect endPos = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f,
+                                   5.0f,
+                                   self.deleteAllButton.frame.size.width-15.0f,
+                                   jobCell.frame.size.height-10.0f);
+        DeleteButton* deleteButton = [DeleteButton createAtOffscreenPosition:startPos
+                                                        withOnscreenPosition:endPos];
         deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
-        deleteButton.frame = CGRectMake(printJobCell.frame.size.width, //initial position offscreen
-                                        5.0f,
-                                        self.deleteAllButton.frame.size.width-15.0f,
-                                        printJobCell.frame.size.height-10.0f);
-        
-        // set the handler for the tap action
-        [deleteButton addTarget:receiver
-                         action:actionOnTap
+        [deleteButton addTarget:self
+                         action:@selector(tappedDeleteJob:)
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        printJobCell.detailTextLabel.hidden = YES;
-        [printJobCell.textLabel setTextColor:[UIColor whiteThemeColor]];
-        [printJobCell setBackgroundColor:[UIColor purple2ThemeColor]];
-        [printJobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
+        [jobCell setDeleteState:YES];
+        [jobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
         
-        // slide the button from offscreen to its place
-        [UIView animateWithDuration:0.2 animations:^
-        {
-            deleteButton.frame = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f, //final position onscreen
-                                            5.0f,
-                                            self.deleteAllButton.frame.size.width-15.0f,
-                                            printJobCell.frame.size.height-10.0f);
-        }];
+        // slide the button from offscreen to its place over the timestamp
+        [deleteButton animateOnscreen:nil];
     }
 }
 
@@ -267,29 +304,54 @@
 #endif
 
     // get the delete button
-    UITableViewCell* printJobCell = [self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
-    UIButton* deleteButton = (UIButton*)[[printJobCell.contentView subviews] lastObject];
+    PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
+    DeleteButton* deleteButton = (DeleteButton*)[[jobCell.contentView subviews] lastObject];
     
     // slide the button to offscreen
-    __weak PrintJobHistoryGroupCell* weakSelf = self;
-    [UIView animateWithDuration:0.2 animations:^
-    {
-         deleteButton.frame = CGRectMake(printJobCell.frame.size.width, //final position offscreen
-                                         5.0f,
-                                         weakSelf.deleteAllButton.frame.size.width-15.0f,
-                                         printJobCell.frame.size.height-10.0f);
-    } completion:^(BOOL finished)
+    [deleteButton animateOffscreen:^(BOOL finished)
     {
         [deleteButton removeFromSuperview];
-        printJobCell.detailTextLabel.hidden = NO;
-        [printJobCell.textLabel setTextColor:[UIColor blackThemeColor]];
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-            [printJobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
-        else
-            [printJobCell setBackgroundColor:[UIColor gray1ThemeColor]];
+        [jobCell setDeleteState:NO];
     }];
     
     self.jobWithDelete = nil;
+}
+
+- (void)colorHeader
+{
+    UIColor* highlightColor = [UIColor purple2ThemeColor];
+    [self.groupName setBackgroundColor:highlightColor];
+    [self.groupIP setBackgroundColor:highlightColor];
+    [self.groupIndicator setBackgroundColor:highlightColor];
+}
+
+- (void)clearHeader
+{
+    UIColor* normalColor = [UIColor blackThemeColor];
+    [self.groupName setBackgroundColor:normalColor];
+    [self.groupIP setBackgroundColor:normalColor];
+    [self.groupIndicator setBackgroundColor:normalColor];
+}
+
+- (void)tappedHeader
+{
+    [self colorHeader];
+    [self.delegate didTapGroupHeader:self.tag];
+    [self clearHeader];
+}
+
+- (void)tappedDeleteAll
+{
+    [self.delegate didTapDeleteAllButton:self.deleteAllButton ofGroup:self.tag];
+}
+
+- (void)tappedDeleteJob:(DeleteButton*)button
+{
+    NSInteger buttonTag = [button tag];
+    NSUInteger groupTag = buttonTag/TAG_FACTOR;
+    NSUInteger jobTag = buttonTag%TAG_FACTOR;
+    
+    [self.delegate didTapDeleteJobButton:button ofJob:jobTag ofGroup:groupTag];
 }
 
 - (void)reloadContents
@@ -298,7 +360,7 @@
     // (to avoid the DELETE button appearing on another cell, since the cells are reusable)
     if (self.jobWithDelete != nil)
         [self removeDeleteButton];
-       
+    
     [self.printJobsView reloadData];
 }
 

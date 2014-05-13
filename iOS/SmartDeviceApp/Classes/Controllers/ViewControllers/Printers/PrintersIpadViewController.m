@@ -15,6 +15,10 @@
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
 #import "UIView+Localization.h"
+#import "PrinterLayout.h"
+#import "CXAlertView.h"
+#import "UIColor+Theme.h"
+#import "DeleteButton.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -54,28 +58,6 @@
    
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
-   
-    // Create insets for landscape and portrait orientations
-    CGRect frame = [[UIScreen mainScreen] bounds];
-    CGFloat basePortrait = MIN(frame.size.width, frame.size.height);
-    CGFloat baseLandscape = MAX(frame.size.width, frame.size.height);
-    int hInset;
-    hInset = (basePortrait  - (320.0f * 2 + 10.0f * 1)) / 2.0f;
-    self.insetPortrait = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
-    hInset = (baseLandscape - (320.0f * 3 + 10.0f * 2)) / 2.0f;
-    self.insetLandscape = UIEdgeInsetsMake(10.0f, hInset, 10.0f, hInset);
-    
-    // Set insets based on current orientation
-    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-    {
-        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-        layout.sectionInset = self.insetLandscape;
-    }
-    else
-    {
-        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-        layout.sectionInset = self.insetPortrait;
-    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -132,6 +114,7 @@
     
     cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
+    cell.deleteButton.tag = indexPath.row;
     
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
@@ -150,31 +133,16 @@
     //[cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
     [cell.statusView setStatus:NO];
     [cell.statusView.statusHelper startPrinterStatusPolling];
+    
+    cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
+    cell.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
+    
     return cell;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return NO;
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    [self.collectionView performBatchUpdates:^
-     {
-        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-        {
-            UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-            layout.sectionInset = self.insetLandscape;
-        }
-        else
-        {
-            UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-            layout.sectionInset = self.insetPortrait;
-        }
-     } completion:^(BOOL finished)
-     {
-     }];
 }
 
 - (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
@@ -215,53 +183,52 @@
 }
 
 #pragma mark - IBActions
-- (IBAction)printerCellLongPressedAction:(id)sender
-{
-    NSIndexPath *selectedIndexPath = [self.collectionView indexPathForItemAtPoint:[sender locationInView:self.collectionView]];
-    PrinterCollectionViewCell *cell = nil;
-    if(self.toDeleteIndexPath != nil)
-    {
-        cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
-        [cell setCellToBeDeletedState:NO];
-    }
-    
-    cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectedIndexPath];
-    self.toDeleteIndexPath = selectedIndexPath;
-    [cell setCellToBeDeletedState:YES];
-
-}
-
-- (IBAction)collectionViewTappedAction:(id)sender
-{
-    
-    if(self.toDeleteIndexPath != nil)
-    {
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
-        [cell setCellToBeDeletedState:NO];
-        self.toDeleteIndexPath = nil;
-    }
-}
-
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
-    if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
+    DeleteButton *deleteButton = (DeleteButton*)sender;
+    [deleteButton keepHighlighted:YES];
+    [deleteButton setHighlighted:YES];
+
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [alertView dismiss];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
+                          }];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [self deletePrinterAtIndex:deleteButton.tag];
+                              [alertView dismiss];
+                              [deleteButton keepHighlighted:NO];
+                              [deleteButton setHighlighted:NO];
+                          }];
+    [alertView show];
+}
+
+- (void) deletePrinterAtIndex:(NSUInteger)index
+{
+    if ([self.printerManager deletePrinterAtIndex:index])
     {
         //check if reference to default printer was also deleted
         if (![self.printerManager hasDefaultPrinter])
             self.defaultPrinterIndexPath = nil;
-        
+        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
         //set the view of the cell to stop polling for printer status
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.toDeleteIndexPath];
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
         [cell.statusView.statusHelper stopPrinterStatusPolling];
         cell.statusView.statusHelper.delegate = nil;
         
         cell.indexPath = nil;
         //set view to non default printer cell style
         [cell setAsDefaultPrinterCell:NO];
-        [cell setCellToBeDeletedState:NO];
         
         //remove cell from view
-        [self.collectionView deleteItemsAtIndexPaths:@[self.toDeleteIndexPath]];
+        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
         self.toDeleteIndexPath = nil;
     }
     else

@@ -89,6 +89,8 @@ void snmp_cancel(snmp_context *context);
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
 
+snmp_device *snmp_device_new(const char *ip_address);
+void snmp_device_free(snmp_device *device);
 const char *snmp_device_get_ip_address(snmp_device *device);
 const char *snmp_device_get_name(snmp_device *device);
 int snmp_device_get_capability_status(snmp_device *device, int capability);

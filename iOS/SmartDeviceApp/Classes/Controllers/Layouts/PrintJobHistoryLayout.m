@@ -24,6 +24,9 @@
 /** Vertical spacing between groups. */
 @property (assign, nonatomic) CGFloat interGroupSpacingY;
 
+/** Stores the fixed frame width of each group */
+@property (assign, nonatomic) CGFloat groupWidth;
+
 /** 
  The number of columns to be displayed.
  This layout assumes a vertical scrolling display, so the
@@ -87,6 +90,7 @@
     if (idiom == UIUserInterfaceIdiomPad)
     {
         //iPad
+        self.groupWidth = 320.0f;
         
         if (UIInterfaceOrientationIsLandscape(orientation))
         {
@@ -112,22 +116,25 @@
     else
     {
         //iPhone
+
         
         if (UIInterfaceOrientationIsLandscape(orientation))
         {
             CGRect screenRect = [[UIScreen mainScreen] bounds];
-            CGFloat inset = (screenRect.size.height - 320.0f) / 2.0f;
+            self.groupWidth = screenRect.size.height;
             
             self.interGroupSpacingY = 2.0f;
             self.interGroupSpacingX = 0.0f;
             self.numberOfColumns = 1;
             self.groupInsets = UIEdgeInsetsMake(0.0f,  //T
-                                                inset, //L
+                                                0.0f, //L
                                                 0.0f,  //B
-                                                inset);//R
+                                                0.0f);//R
         }
         else
         {
+            self.groupWidth = 320.0f;
+            
             self.interGroupSpacingY = 2.0f;
             self.interGroupSpacingX = 0.0f;
             self.numberOfColumns = 1;
@@ -196,7 +203,7 @@
     // group height = header height + (number of jobs * height per job)
     CGFloat groupHeight = 45.0f + ([self.delegate numberOfJobsForGroupAtIndexPath:indexPath] * 45.0f);
     // group width = fixed frame width
-    CGFloat groupWidth = 320.0f;
+    CGFloat groupWidth = self.groupWidth;
     CGSize groupSize = CGSizeMake(groupWidth, groupHeight);
     
 #if DEBUG_LOG_PRINT_JOB_LAYOUT

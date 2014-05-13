@@ -69,7 +69,7 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 - (void)setPrinter:(Printer *)printer
 {
     _printer = printer;
-    if(self.previewSetting != nil)
+    if(self.previewSetting != nil && printer != nil)
     {
         PreviewSetting *previewSetting = self.previewSetting;
         [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];

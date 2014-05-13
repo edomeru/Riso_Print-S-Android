@@ -462,7 +462,7 @@
 - (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat)margin
 {
     CGFloat xPos = FINISHING_MARGIN;
-    CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_WIDTH * 0.5f);
+    CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_HEIGHT * 0.5f);
     CGFloat xOffset = 0;
     CGFloat yOffset = self.size.height * 0.5f;
     CGFloat stapleRectHeight = STAPLE_SIDE_HEIGHT;
@@ -471,7 +471,7 @@
     
     if( finishingSide == kFinishingSideRight)
     {
-        xPos = self.size.width - margin;
+        xPos = self.size.width - margin - stapleRectWidth;
         stapleImageName = @"img_staple_right";
     }
     else if ( finishingSide == kFinishingSideTop)

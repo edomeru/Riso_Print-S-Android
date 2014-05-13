@@ -140,7 +140,6 @@
 
 - (void)initialize
 {
-    self.isFixedSize = YES;
     self.slideDirection = SlideRight;
 }
 
@@ -231,7 +230,7 @@
     if ([self.printerManager registerPrinter:printerDetails])
     {
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
-                         withTitle:kAlertTitlePrintersAdd
+                         withTitle:kAlertTitlePrintersSearch
                        withDetails:nil];
         self.hasAddedPrinters = YES;
         
@@ -243,7 +242,10 @@
         [self.listNewPrinterIP removeObjectAtIndex:row];
         [self.tableView reloadData];
 #else
-        [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
+        if (printerDetails.name == nil)
+            [self.listPrinterDetails setValue:@"" forKey:printerIP];
+        else
+            [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
         [self.tableView reloadData];
 #endif
         
@@ -309,7 +311,7 @@
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEnded
+- (void)searchEndedwithResult:(BOOL)printerFound
 {
     // hide the searching indicator
     [self.refreshControl endRefreshing];
@@ -357,7 +359,10 @@
 #else
     // save the printer name
     [self.listPrinterIP addObject:printerIP];
-    [self.listPrinterDetails setValue:printerName forKey:printerIP];
+    if (printerName == nil)
+        [self.listPrinterDetails setValue:@"" forKey:printerIP];
+    else
+        [self.listPrinterDetails setValue:printerName forKey:printerIP];
 #endif
     
     // reload the tableView

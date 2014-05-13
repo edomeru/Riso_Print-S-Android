@@ -49,14 +49,6 @@
 
 - (void)initialize
 {
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
-        self.isFixedSize = NO;
-    }
-    else
-    {
-        self.isFixedSize = YES;
-    }
     self.slideDirection = SlideRight;
 }
 
@@ -64,6 +56,15 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    if ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) && (self.printerIndex == nil))
+    {
+        self.isFixedSize = NO;
+    }
+    else
+    {
+        self.isFixedSize = YES;
+    }
     
     if(self.printerIndex != nil)
     {

@@ -27,12 +27,6 @@
 /** Flag that will be set to YES when at least one successful printer was added. */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
-/**
- Flag that indicates that a printer search was initiated, but
- either the printer was not found or the search timed-out.
- */
-@property (assign, nonatomic) BOOL willEndWithoutAdd;
-
 #pragma mark - UI Properties
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* progressIndicator;
@@ -55,6 +49,8 @@
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
+
+- (void)savePrinter;
 
 /**
  Adds a full-capability printer (for failed manual snmp search)
@@ -103,7 +99,6 @@
 
 - (void)initialize
 {
-    self.isFixedSize = YES;
     self.slideDirection = SlideRight;
 }
 
@@ -128,29 +123,10 @@
     self.printerManager.searchDelegate = self;
     self.hasAddedPrinters = NO;
     
-    // setup the header buttons
+    [self.progressIndicator setHidden:YES];
+    [self.saveButton setHidden:NO];
     [self.saveButton setEnabled:NO];
-}
-
-- (void)addFullCapabilityPrinter:(NSString *)ipAddress
-{
-    PrinterDetails *pd = [[PrinterDetails alloc] init];
-    pd.name = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
-    pd.ip = ipAddress;
-    pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet =YES;
-    pd.enFinisher23Holes = YES;
-    pd.enFinisher24Holes = YES;
-    pd.enLpr = YES;
-    pd.enRaw = YES;
-    pd.enStaple = YES;
-    pd.enTrayAutoStacking = YES;
-    pd.enTrayFaceDown = YES;
-    pd.enTrayStacking = YES;
-    pd.enTrayTop = YES;
-    
-    [self.printerManager registerPrinter:pd];
-    self.hasAddedPrinters = YES;
+    [self.textIP setEnabled:YES];
 }
 
 #pragma mark - Segue
@@ -176,6 +152,31 @@
 }
 
 - (IBAction)onSave:(UIButton *)sender
+{
+    [self savePrinter];
+}
+
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.enBooklet = YES;
+    pd.enStaple = YES;
+    pd.enFinisher23Holes = NO;
+    pd.enFinisher24Holes = YES;
+    pd.enTrayAutoStacking = YES;
+    pd.enTrayFaceDown = YES;
+    pd.enTrayStacking = YES;
+    pd.enTrayTop = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
+    
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
+}
+
+- (void)savePrinter
 {
     [self dismissKeypad];
     
@@ -216,49 +217,45 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertHelper displayResult:kAlertResultErrNoNetwork
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
-        return;
-        
+
         [self addFullCapabilityPrinter:trimmedIP];
+        
+        return;
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
 #endif
-    self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
     [self.printerManager searchForPrinter:trimmedIP];
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
     
-    // show the searching indicator
     [self.progressIndicator startAnimating];
-    
-    // disable the save button
-    [self.saveButton setEnabled:NO];
+    [self.saveButton setHidden:YES];
+    [self.textIP setEnabled:NO];
 }
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEnded
+- (void)searchEndedwithResult:(BOOL)printerFound
 {
-    if (self.willEndWithoutAdd)
+    if (!printerFound)
     {
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                        withTitle:kAlertTitlePrintersSearch
-                      withDetails:nil];
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         
         NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
         [self addFullCapabilityPrinter:trimmedIP];
     }
 
-    // hide the searching indicator
     [self.progressIndicator stopAnimating];
-    
-    // re-enable the save button
-    [self.saveButton setEnabled:YES];
+    [self.saveButton setHidden:NO];
+    [self.textIP setEnabled:YES];
     
     // if this is an iPad, reload the center panel
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -273,13 +270,13 @@
     NSLog(@"[INFO][AddPrinter] received NEW printer with IP=%@", printerDetails.ip);
     NSLog(@"[INFO][AddPrinter] updating UI");
 #endif
-    self.willEndWithoutAdd = NO; //search did not timeout
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
+        
         self.hasAddedPrinters = YES;
     }
     else
@@ -288,12 +285,6 @@
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
     }
-}
-
-- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
-{
-    // will not be called since search will only be initiated
-    // if the IP is not yet registered
 }
 
 #pragma mark - TextFields
@@ -306,7 +297,14 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    [textField resignFirstResponder];
     [self dismissKeypad];
+    
+    if (textField.text.length > 0)
+    {
+        [self savePrinter];
+    }
+
     return YES;
 }
 

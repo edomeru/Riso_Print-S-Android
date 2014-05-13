@@ -69,6 +69,11 @@
 @property (nonatomic, weak) UIPanGestureRecognizer *panner;
 
 /**
+ Double tap gesture recognizer for zooming out
+ */
+@property (nonatomic, weak) UITapGestureRecognizer *tapper;
+
+/**
  Current scale
  */
 @property (nonatomic) CGFloat scale;
@@ -209,12 +214,17 @@
     // Create gesture recognizers
     UIPinchGestureRecognizer *pincher = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
     UIPanGestureRecognizer *panner = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
+    UITapGestureRecognizer *tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
     pincher.delegate = self;
     panner.delegate = self;
+    tapper.delegate = self;
+    tapper.numberOfTapsRequired = 2; // Double tap
     [self.contentView addGestureRecognizer:pincher];
     [self.contentView addGestureRecognizer:panner];
+    [self.contentView addGestureRecognizer:tapper];
     self.pincher = pincher;
     self.panner = panner;
+    self.tapper = tapper;
     
     // Initialize properties/flags
     self.scale = 1.0f;
@@ -424,5 +434,24 @@
         [self snap];
     }
 }
+
+- (IBAction)tapAction:(id)sender
+{
+    if (self.scale > 1.0f)
+    {
+        self.scale = 1.0f;
+        self.position = CGPointZero;
+        self.xAlignConstraint.constant = 0.0f;
+        self.yAlignConstraint.constant = 0.0f;
+        self.sizeConstraint.constant = 0.0f;
+        
+        [UIView animateWithDuration:0.2f animations:^{
+            [self layoutIfNeeded];
+        }completion:^(BOOL finished){
+            [self.delegate previewView:self didChangeZoomMode:(self.scale > 1.0f)];
+        }];
+    }
+}
+  
 
 @end

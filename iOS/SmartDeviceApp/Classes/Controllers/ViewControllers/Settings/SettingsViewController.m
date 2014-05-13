@@ -64,6 +64,9 @@
 {
     [super viewDidLoad];
     
+    // Set placeholder
+    self.cardId.placeholder = NSLocalizedString(IDS_LBL_LOGIN_ID, @"");
+    
     //init text fields from values in plist
     //get current value of settings user defaults
     NSUserDefaults *appSettings = [NSUserDefaults standardUserDefaults];
@@ -116,7 +119,28 @@
 /*Checks the keyboard input if should be accepted in textfield*/
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return[SettingsValidationHelper shouldAcceptCardIDInput:[textField.text stringByAppendingString:string]];
+    if((textField.text.length - range.length) == CARD_ID_MAX_INPUT)
+    {
+        return NO;
+    }
+    
+    NSMutableString *newString = [NSMutableString stringWithString:textField.text];
+    BOOL shouldAccept = YES;
+    if([SettingsValidationHelper validateCardIDInput:string] == kSettingsInputErrorNone)
+    {
+        [newString deleteCharactersInRange:range];
+        if(newString.length + string.length > CARD_ID_MAX_INPUT)
+        {
+            [newString insertString:[string substringToIndex:CARD_ID_MAX_INPUT - newString.length] atIndex:range.location];
+            textField.text = newString;
+            shouldAccept = NO;
+        }
+    }
+    else
+    {
+        shouldAccept = NO;
+    }
+    return shouldAccept;
 }
 
 /*Called when editing in a textfield ends*/

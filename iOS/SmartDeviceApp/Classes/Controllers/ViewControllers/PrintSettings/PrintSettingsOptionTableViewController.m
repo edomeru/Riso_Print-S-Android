@@ -90,7 +90,7 @@
     if (indexPath.row == 0)
     {
         PrintSettingsOptionsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:OPTIONS_HEADER_CELL forIndexPath:indexPath];
-        headerCell.settingLabel.localizationId = [self.setting objectForKey:@"text"];
+        headerCell.settingLabel.uppercaseLocalizationId = [self.setting objectForKey:@"text"];
         headerCell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell = headerCell;
     }
@@ -117,7 +117,7 @@
 {
     if (indexPath.row == 0)
     {
-        [tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex + 1 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+        [self.navigationController popToRootViewControllerAnimated:YES];
         return;
     }
     
@@ -127,11 +127,6 @@
         self.selectedIndex = index;
         [self.previewSetting setValue:[self.optionValues objectAtIndex:index] forKey:self.key];
     }
-}
-
-- (IBAction)backButtonAction:(id)sender
-{
-    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 -(BOOL) isApplicableOption:(NSString *)option

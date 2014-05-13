@@ -8,6 +8,7 @@
 
 #import "PrinterCollectionViewCell.h"
 #import "UIColor+Theme.h"
+#import "DeleteButton.h"
 
 typedef enum {
     kPrinterCollectionCellTypeNormal,
@@ -16,7 +17,6 @@ typedef enum {
 }kPrinterCollectionCellType;
 
 @interface PrinterCollectionViewCell()
-@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 @property BOOL isDefaultPrinterCell;
 
 @end

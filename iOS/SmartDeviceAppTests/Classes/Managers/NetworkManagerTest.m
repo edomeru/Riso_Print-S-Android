@@ -53,7 +53,8 @@
 {
     GHTestLog(@"# CHECK: NM can check local wifi status. #");
     
-    GHAssertTrue([NetworkManager isConnectedToLocalWifi], @"must be connected to local wifi");
+    GHTestLog(@"-- assumption: device is connected to the local wifi");
+    GHAssertTrue([NetworkManager isConnectedToLocalWifi], @"");
 }
 
 @end
