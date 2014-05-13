@@ -189,7 +189,7 @@
     [deleteButton keepHighlighted:YES];
     [deleteButton setHighlighted:YES];
 
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:nil];
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
     
     [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
                              type:CXAlertViewButtonTypeDefault
