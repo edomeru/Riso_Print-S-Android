@@ -2941,7 +2941,6 @@
                                         <connections>
                                             <outlet property="dataSource" destination="jTA-Cg-WoR" id="ttJ-3O-0oH"/>
                                             <outlet property="delegate" destination="jTA-Cg-WoR" id="gqw-Gc-ysw"/>
-                                            <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="3Jp-xX-2fg"/>
                                             <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="eLp-sB-qot"/>
                                             <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="1kJ-ea-RHg"/>
                                             <outletCollection property="gestureRecognizers" destination="TJp-mg-kzG" appends="YES" id="NC6-nS-h6H"/>
@@ -2985,11 +2984,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7EE-4m-YZw" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <swipeGestureRecognizer direction="right" id="3yy-Wb-ueD" userLabel="Swipe Right Printer Cell">
-                    <connections>
-                        <action selector="swipeRightAction:" destination="jTA-Cg-WoR" id="rIK-il-yp5"/>
-                    </connections>
-                </swipeGestureRecognizer>
                 <swipeGestureRecognizer direction="left" id="U8N-P0-69T" userLabel="Swipe Left Printer Cell">
                     <connections>
                         <action selector="swipePrinterCellAction:" destination="jTA-Cg-WoR" id="Gt1-2q-Uxk"/>

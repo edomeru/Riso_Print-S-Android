@@ -25,13 +25,7 @@
     return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-    
-    // Configure the view for the selected state
-    self.contentView.backgroundColor = [UIColor gray1ThemeColor];
-}
+
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
@@ -43,7 +37,14 @@
     }
     else
     {
-        self.contentView.backgroundColor = [UIColor gray1ThemeColor];
+        if(self.isDefaultPrinterCell)
+        {
+            self.contentView.backgroundColor = [UIColor gray4ThemeColor];
+        }
+        else
+        {
+            self.contentView.backgroundColor = [UIColor gray1ThemeColor];
+        }
     }
     
 }
