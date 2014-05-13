@@ -219,7 +219,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             ret = -1;
             msg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else {
-            msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+            msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
         }
         
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));

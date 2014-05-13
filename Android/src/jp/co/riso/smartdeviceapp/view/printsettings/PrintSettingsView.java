@@ -1095,7 +1095,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         switchView.setId(ID_SECURE_PRINT_SWITCH);
         switchView.setOnCheckedChangeListener(this);
             
-        String titleText = getResources().getString(R.string.ids_lbl_authentication_secure_print);
+        String titleText = getResources().getString(R.string.ids_lbl_secure_print);
         addAuthenticationItemView(itemsGroup, titleText, switchView, KEY_TAG_SECURE_PRINT, true);
         
         params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.0f);
@@ -1109,7 +1109,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         editText.setId(ID_PIN_CODE_EDIT_TEXT);
         editText.setLayoutParams(params);
         
-        titleText = getResources().getString(R.string.ids_lbl_authentication_pincode);
+        titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, true);
         
         // Create Header

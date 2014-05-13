@@ -147,8 +147,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /** {@inheritDoc} */
     @Override
     public boolean showDeleteDialog() {
-        String title = getResources().getString(R.string.ids_lbl_delete_jobs_title);
-        String message = getResources().getString(R.string.ids_lbl_delete_jobs_msg);
+        String title = getResources().getString(R.string.ids_info_msg_delete_jobs_title);
+        String message = getResources().getString(R.string.ids_info_msg_delete_jobs);
         String confirmMsg = getResources().getString(R.string.ids_lbl_ok);
         String cancelMsg = getResources().getString(R.string.ids_lbl_cancel);
         

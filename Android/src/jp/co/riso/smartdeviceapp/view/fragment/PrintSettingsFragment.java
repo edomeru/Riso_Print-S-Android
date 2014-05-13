@@ -218,7 +218,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        String strMsg = getResources().getString(R.string.ids_lbl_printing);
+        String strMsg = getResources().getString(R.string.ids_info_msg_printing);
         String btnMsg = getResources().getString(R.string.ids_lbl_cancel);
         mWaitingDialog = WaitingDialogFragment.newInstance(null, strMsg, true, btnMsg);
         mWaitingDialog.setTargetFragment(this, 0);
@@ -256,7 +256,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                     ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
 
                     // Show dialog
-                    String strMsg = getString(R.string.ids_lbl_print_job_successful);
+                    String strMsg = getString(R.string.ids_info_msg_print_job_successful);
                     String btnMsg = getString(R.string.ids_lbl_ok);
                     InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
                     DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
@@ -265,7 +265,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
                     
                     // Show dialog
-                    String strMsg = getString(R.string.ids_lbl_print_job_failed);
+                    String strMsg = getString(R.string.ids_info_msg_print_job_failed);
                     String btnMsg = getString(R.string.ids_lbl_ok);
                     InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
                     DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
@@ -293,7 +293,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 break;
             case DirectPrintManager.PRINT_STATUS_SENDING:
                 if (mWaitingDialog != null) {
-                    String strMsg = getResources().getString(R.string.ids_lbl_printing);
+                    String strMsg = getResources().getString(R.string.ids_info_msg_printing);
                     String msg = String.format(Locale.getDefault(), "%s %.2f%%", strMsg, progress);
                     mWaitingDialog.setMessage(msg);
                 }
