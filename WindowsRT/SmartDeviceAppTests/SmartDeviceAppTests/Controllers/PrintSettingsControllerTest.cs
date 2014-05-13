@@ -164,17 +164,17 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(2, printSettings.PaperSize);
             Assert.IsTrue(printSettings.ScaleToFit);
             Assert.AreEqual(0, printSettings.PaperType);
-            Assert.AreEqual(1, printSettings.InputTray);
-            Assert.AreEqual(0, printSettings.Imposition);
-            Assert.AreEqual(0, printSettings.ImpositionOrder);
+            Assert.AreEqual(0, printSettings.InputTray);
+            Assert.AreEqual(1, printSettings.Imposition);
+            Assert.AreEqual(1, printSettings.ImpositionOrder);
             Assert.AreEqual(0, printSettings.Sort);
             Assert.IsFalse(printSettings.Booklet);
             Assert.AreEqual(0, printSettings.BookletFinishing);
             Assert.AreEqual(0, printSettings.BookletLayout);
             Assert.AreEqual(0, printSettings.FinishingSide);
-            Assert.AreEqual(0, printSettings.Staple);
+            Assert.AreEqual(2, printSettings.Staple);
             Assert.AreEqual(0, printSettings.Punch);
-            Assert.AreEqual(0, printSettings.OutputTray);
+            Assert.AreEqual(1, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
         }
