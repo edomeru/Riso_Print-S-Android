@@ -25,6 +25,29 @@
     return self;
 }
 
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
+    [super setSelected:selected animated:animated];
+    
+    // Configure the view for the selected state
+    self.contentView.backgroundColor = [UIColor gray1ThemeColor];
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    [super setHighlighted:highlighted animated:animated];
+    
+    if (highlighted)
+    {
+        self.contentView.backgroundColor = [UIColor purple2ThemeColor];
+    }
+    else
+    {
+        self.contentView.backgroundColor = [UIColor gray1ThemeColor];
+    }
+    
+}
+
 -(void) setCellToBeDeletedState:(BOOL) isCellForDelete
 {
     if(isCellForDelete == YES)

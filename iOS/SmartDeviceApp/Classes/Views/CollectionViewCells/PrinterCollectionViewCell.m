@@ -16,7 +16,6 @@ typedef enum {
 }kPrinterCollectionCellType;
 
 @interface PrinterCollectionViewCell()
-@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 @property BOOL isDefaultPrinterCell;
 
 @end

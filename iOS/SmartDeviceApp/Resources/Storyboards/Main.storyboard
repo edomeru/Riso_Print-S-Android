@@ -717,24 +717,44 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLl-rF-Cku" userLabel="Name">
-                                                            <rect key="frame" x="48" y="10" width="221" height="21"/>
+                                                            <rect key="frame" x="48" y="10" width="181" height="21"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <button opaque="NO" alpha="0.94999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c">
+                                                            <rect key="frame" x="245" y="0.0" width="75" height="40"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="75" id="2Sj-fH-mfv"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <state key="normal" title="Delete">
+                                                                <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            </state>
+                                                            <state key="highlighted" image="img_btn_delete_printer_tablet"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_DELETE"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                            <connections>
+                                                                <action selector="printerDeleteButtonAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="Ajy-Am-yhr"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                     <color key="backgroundColor" red="0.56862745098039214" green="0.56862745098039214" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
                                                     <gestureRecognizers/>
                                                     <constraints>
+                                                        <constraint firstAttribute="bottom" secondItem="tCl-QS-N9c" secondAttribute="bottom" id="6L5-j7-KLs"/>
                                                         <constraint firstItem="zpO-r2-dOD" firstAttribute="leading" secondItem="vc7-tr-dlt" secondAttribute="leading" constant="10" id="Gfo-1e-12f"/>
                                                         <constraint firstItem="OLl-rF-Cku" firstAttribute="leading" secondItem="zpO-r2-dOD" secondAttribute="trailing" constant="8" id="T0L-lv-1AL"/>
+                                                        <constraint firstAttribute="trailing" secondItem="tCl-QS-N9c" secondAttribute="trailing" id="WLp-kE-HGS"/>
+                                                        <constraint firstItem="tCl-QS-N9c" firstAttribute="top" secondItem="vc7-tr-dlt" secondAttribute="top" id="cBK-fv-bA9"/>
                                                         <constraint firstAttribute="height" constant="40" id="g60-KF-OJi"/>
                                                         <constraint firstAttribute="centerY" secondItem="zpO-r2-dOD" secondAttribute="centerY" id="gq1-de-d3r"/>
+                                                        <constraint firstItem="tCl-QS-N9c" firstAttribute="leading" secondItem="OLl-rF-Cku" secondAttribute="trailing" constant="16" id="ldu-9e-MNX"/>
                                                         <constraint firstAttribute="centerY" secondItem="OLl-rF-Cku" secondAttribute="centerY" id="xz4-Ua-eNG"/>
                                                     </constraints>
-                                                    <connections>
-                                                        <outletCollection property="gestureRecognizers" destination="HlX-fd-vdF" appends="YES" id="8d6-yo-MfU"/>
-                                                    </connections>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yUJ-yN-hjT" userLabel="Row - IP">
                                                     <rect key="frame" x="0.0" y="107" width="320" height="40"/>
@@ -894,20 +914,6 @@
                                                         <constraint firstItem="eY3-b2-Jeq" firstAttribute="leading" secondItem="SjP-Aq-fJU" secondAttribute="leading" constant="20" id="vzt-0B-R26"/>
                                                     </constraints>
                                                 </view>
-                                                <button hidden="YES" opaque="NO" alpha="0.94999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCl-QS-N9c">
-                                                    <rect key="frame" x="285" y="3" width="35" height="35"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="35" id="I89-eM-cqe"/>
-                                                        <constraint firstAttribute="width" constant="35" id="y6z-48-jx6"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
-                                                    <state key="normal" image="img_btn_delete_printer_tablet"/>
-                                                    <state key="highlighted" image="img_btn_delete_printer_tablet"/>
-                                                    <connections>
-                                                        <action selector="printerDeleteButtonAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="D67-pg-Ugw"/>
-                                                    </connections>
-                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -917,11 +923,9 @@
                                             <constraint firstItem="SjP-Aq-fJU" firstAttribute="top" secondItem="DUX-Tp-Hyn" secondAttribute="bottom" id="3y8-vi-QRG"/>
                                             <constraint firstAttribute="trailing" secondItem="dXr-Bg-3bc" secondAttribute="trailing" id="4yU-ja-Kx6"/>
                                             <constraint firstAttribute="trailing" secondItem="yUJ-yN-hjT" secondAttribute="trailing" id="7oV-T1-0HL"/>
-                                            <constraint firstItem="tCl-QS-N9c" firstAttribute="leading" secondItem="OLl-rF-Cku" secondAttribute="trailing" constant="16" id="Amk-Te-VGp"/>
                                             <constraint firstItem="QaJ-Ei-tgz" firstAttribute="top" secondItem="yUJ-yN-hjT" secondAttribute="bottom" id="Aq3-FG-g6t"/>
                                             <constraint firstItem="DUX-Tp-Hyn" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" constant="20" id="DNk-RA-U9j"/>
                                             <constraint firstAttribute="trailing" secondItem="DUX-Tp-Hyn" secondAttribute="trailing" id="MSI-H4-7M7"/>
-                                            <constraint firstAttribute="trailing" secondItem="tCl-QS-N9c" secondAttribute="trailing" id="MTZ-XD-1vA"/>
                                             <constraint firstItem="vc7-tr-dlt" firstAttribute="top" secondItem="DmK-Jg-Hxh" secondAttribute="top" id="O9x-pm-mJb"/>
                                             <constraint firstItem="QaJ-Ei-tgz" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" constant="20" id="OPU-I3-VVN"/>
                                             <constraint firstItem="SjP-Aq-fJU" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" id="OcA-Go-HBd"/>
@@ -934,7 +938,6 @@
                                             <constraint firstAttribute="trailing" secondItem="vc7-tr-dlt" secondAttribute="trailing" id="cqV-yq-dh3"/>
                                             <constraint firstItem="oaT-Zo-6Kd" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" id="ehi-dM-eaM"/>
                                             <constraint firstItem="yUJ-yN-hjT" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" id="koZ-A3-gby"/>
-                                            <constraint firstItem="OLl-rF-Cku" firstAttribute="centerY" secondItem="tCl-QS-N9c" secondAttribute="centerY" id="lca-bd-uDz"/>
                                             <constraint firstItem="oaT-Zo-6Kd" firstAttribute="top" secondItem="QaJ-Ei-tgz" secondAttribute="bottom" id="mzW-SV-ftG"/>
                                             <constraint firstItem="DUX-Tp-Hyn" firstAttribute="top" secondItem="dXr-Bg-3bc" secondAttribute="bottom" id="nwa-rT-Rzh"/>
                                             <constraint firstItem="vc7-tr-dlt" firstAttribute="leading" secondItem="DmK-Jg-Hxh" secondAttribute="leading" id="uF0-f7-38S"/>
@@ -947,18 +950,14 @@
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
                                             <outlet property="defaultSettingsButton" destination="hEi-x2-OHw" id="H69-Iy-BLY"/>
                                             <outlet property="defaultSwitch" destination="Xs2-X2-H9b" id="7kt-b4-tsC"/>
-                                            <outlet property="deleteButton" destination="tCl-QS-N9c" id="W5U-Vw-A4c"/>
+                                            <outlet property="deleteButton" destination="tCl-QS-N9c" id="Cpq-DW-TyL"/>
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
                                             <outlet property="nameLabel" destination="OLl-rF-Cku" id="2wp-TI-eY3"/>
                                             <outlet property="portSelection" destination="uOq-Y8-iQa" id="pAZ-IO-SEv"/>
                                             <outlet property="statusView" destination="zpO-r2-dOD" id="F4I-Sc-WnC"/>
-                                            <outletCollection property="gestureRecognizers" destination="ydW-FU-dB5" appends="YES" id="832-ao-Yxo"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="ydW-FU-dB5" appends="YES" id="yEc-lQ-Xhs"/>
-                                </connections>
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -988,16 +987,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tCH-ks-STu" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="HlX-fd-vdF">
-                    <connections>
-                        <action selector="printerCellLongPressedAction:" destination="ZEw-b3-LhF" id="Pyv-dF-5Wv"/>
-                    </connections>
-                </pongPressGestureRecognizer>
-                <tapGestureRecognizer id="ydW-FU-dB5">
-                    <connections>
-                        <action selector="collectionViewTappedAction:" destination="ZEw-b3-LhF" id="La4-Af-DCJ"/>
-                    </connections>
-                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-300" y="2268"/>
         </scene>
@@ -1913,7 +1902,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="PrintSettingsTableViewController" id="pPd-nr-YZr" customClass="PrintSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="u9s-nW-QAd">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -2944,16 +2933,16 @@
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="rJB-WH-qpf" id="YhY-j0-8dY"/>
                                                     <outlet property="separator" destination="fGJ-hZ-slT" id="G9k-Xa-iLb"/>
-                                                    <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="SOc-Og-K3j"/>
-                                                    <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="CF6-TP-3SW"/>
-                                                    <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="T1q-rt-9bf"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
                                         <connections>
                                             <outlet property="dataSource" destination="jTA-Cg-WoR" id="ttJ-3O-0oH"/>
                                             <outlet property="delegate" destination="jTA-Cg-WoR" id="gqw-Gc-ysw"/>
-                                            <outletCollection property="gestureRecognizers" destination="r2U-Vk-eVm" appends="YES" id="HYJ-KH-USY"/>
+                                            <outletCollection property="gestureRecognizers" destination="3yy-Wb-ueD" appends="YES" id="3Jp-xX-2fg"/>
+                                            <outletCollection property="gestureRecognizers" destination="U8N-P0-69T" appends="YES" id="eLp-sB-qot"/>
+                                            <outletCollection property="gestureRecognizers" destination="Kjs-6R-Ohx" appends="YES" id="1kJ-ea-RHg"/>
+                                            <outletCollection property="gestureRecognizers" destination="TJp-mg-kzG" appends="YES" id="NC6-nS-h6H"/>
                                         </connections>
                                     </tableView>
                                 </subviews>
@@ -2996,24 +2985,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7EE-4m-YZw" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <swipeGestureRecognizer direction="right" id="3yy-Wb-ueD" userLabel="Swipe Right Printer Cell">
                     <connections>
-                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="AKR-hi-45I"/>
+                        <action selector="swipeRightAction:" destination="jTA-Cg-WoR" id="rIK-il-yp5"/>
                     </connections>
                 </swipeGestureRecognizer>
-                <tapGestureRecognizer id="r2U-Vk-eVm" userLabel="Tap Table View">
-                    <connections>
-                        <action selector="tapTableView:" destination="jTA-Cg-WoR" id="Ut5-0V-Deo"/>
-                    </connections>
-                </tapGestureRecognizer>
                 <swipeGestureRecognizer direction="left" id="U8N-P0-69T" userLabel="Swipe Left Printer Cell">
                     <connections>
                         <action selector="swipePrinterCellAction:" destination="jTA-Cg-WoR" id="Gt1-2q-Uxk"/>
                     </connections>
                 </swipeGestureRecognizer>
-                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Printer Cell">
+                <tapGestureRecognizer id="Kjs-6R-Ohx" userLabel="Tap Table View">
                     <connections>
-                        <action selector="tapPrinterCellAction:" destination="jTA-Cg-WoR" id="6e8-XS-gQb"/>
+                        <action selector="tapTableViewAction:" destination="jTA-Cg-WoR" id="OoC-Ea-E6z"/>
                     </connections>
                 </tapGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.10000000000000003" id="TJp-mg-kzG">
+                    <connections>
+                        <action selector="pressTableViewAction:" destination="jTA-Cg-WoR" id="X2B-Bg-7Fm"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="128" y="1457"/>
         </scene>
@@ -3914,23 +3903,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CP3-Lw-qY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="g7F-wa-IxO">
-            <objects>
-                <viewController id="CRa-xR-Peu" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="758-ls-9Be"/>
-                        <viewControllerLayoutGuide type="bottom" id="Dqa-6y-T61"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Kto-A2-Rny">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="wpN-LX-dmy" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -3968,5 +3940,8 @@
         <segue reference="uoe-Al-ug4"/>
         <segue reference="dDZ-0e-JG0"/>
         <segue reference="oE4-lZ-OOf"/>
+        <segue reference="JPo-5o-n9C"/>
+        <segue reference="suq-fU-kcs"/>
+        <segue reference="a4U-VG-JlJ"/>
     </inferredMetricsTieBreakers>
 </document>
