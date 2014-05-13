@@ -105,6 +105,7 @@
     
     UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressTableViewAction:)];
     press.minimumPressDuration = 0.1f;
+    press.delegate = self;
     [cell.contentView addGestureRecognizer:press];
     
     //[cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
@@ -166,6 +167,20 @@
     }
 }
 
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]])
+    {
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[gestureRecognizer locationInView:self.tableView]];
+    
+        if(self.toDeleteIndexPath != nil && indexPath != nil && indexPath.row == self.toDeleteIndexPath.row)
+        {
+            return NO;
+        }
+        
+    }
+    return YES;
+}
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
