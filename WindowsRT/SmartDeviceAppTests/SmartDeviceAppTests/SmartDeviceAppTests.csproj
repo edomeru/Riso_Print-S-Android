@@ -119,7 +119,7 @@
     <Compile Include="Controllers\DatabaseControllerTest.cs" />
     <Compile Include="Controllers\DirectPrintControllerTest.cs" />
     <Compile Include="Controllers\MainControllerTest.cs" />
-    <Compile Include="Controllers\StorageFileUtilityTest.cs" />
+    <Compile Include="Common\Utilities\StorageFileUtilityTest.cs" />
     <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
     <Compile Include="Converters\ItemClickedConverterTest.cs">
