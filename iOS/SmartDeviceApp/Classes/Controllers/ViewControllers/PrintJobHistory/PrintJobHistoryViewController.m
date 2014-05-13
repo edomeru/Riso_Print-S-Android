@@ -43,20 +43,8 @@
 /** Tapping the Main Menu button displays the Main Menu panel. */
 - (IBAction)mainMenuAction:(UIButton*)sender;
 
-/** Tapping the printer name collapses/expands the group. */
-- (IBAction)tappedPrinterHeader:(UIButton*)sender;
-
-/** Tapping the DELETE ALL button removes the entire group from the display and from the database. */
-- (IBAction)tappedDeleteAllButton:(UIButton*)sender;
-
-/** Tapping the DELETE button on a print job removes the print job from the display and from the database. */
-- (void)tappedDeleteOneButton:(UIButton*)button;
-
-/** Swiping left on a print job displays the DELETE button. */
-- (IBAction)swipedLeft:(UIGestureRecognizer*)gestureRecognizer;
-
 /** Tapping anywhere on the UICollectionView hides any DELETE button displayed. */
-- (IBAction)tappedGroup:(UIGestureRecognizer*)gestureRecognizer;
+- (void)tappedCollection:(UIGestureRecognizer*)gestureRecognizer;
 
 /** Removes a displayed DELETE button from a group. */
 - (void)removeDeleteButton;
@@ -100,6 +88,12 @@
                                          forDevice:UIUserInterfaceIdiomPhone];
     }
     
+    UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(tappedCollection:)];
+    tapGesture.numberOfTapsRequired = 1;
+    tapGesture.numberOfTouchesRequired = 1;
+    [self.groupsView addGestureRecognizer:tapGesture];
+    
     self.groupWithDelete = nil;
     
     self.tappedDeleteAllButton = nil;
@@ -135,6 +129,7 @@
     // get the view
     PrintJobHistoryGroupCell* groupCell = [collectionView dequeueReusableCellWithReuseIdentifier:GROUPCELL
                                                                                     forIndexPath:indexPath];
+    groupCell.delegate = self;
     
     // get the model
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
@@ -164,6 +159,8 @@
     
     // since we are using reusable cells, handle scrolling by forcing redraw of the cell
     [groupCell reloadContents];
+    [groupCell clearHeader];
+    [groupCell clearDeleteAll];
     
     // check if a delete button was present while scrolling
     // (fixes bug when swiping-left on the top/bottom edges of the list then scrolling)
@@ -195,9 +192,9 @@
         return group.countPrintJobs;
 }
 
-#pragma mark - Actions
+#pragma mark - PrintJobHistoryGroupCellDelegate
 
-- (IBAction)tappedPrinterHeader:(UIButton*)sender
+- (void)didTapGroupHeader:(NSUInteger)groupTag
 {
     // check if there is a delete button present
     if (self.groupWithDelete != nil)
@@ -210,7 +207,7 @@
         // get the group to be modified
         PrintJobHistoryGroup* group;
         NSInteger groupIndex;
-        [self findGroupWithTag:[sender tag] outIndex:&groupIndex outGroup:&group];
+        [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
         
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
         NSLog(@"[INFO][PrintJobCtrl] tapped header=%ld", (long)groupIndex);
@@ -225,7 +222,15 @@
     }
 }
 
-- (IBAction)tappedDeleteAllButton:(UIButton*)sender
+- (BOOL)shouldHighlightDeleteAllButton
+{
+    if (self.groupWithDelete != nil)
+        return NO;
+    else
+        return YES;
+}
+
+- (void)didTapDeleteAllButton:(UIButton*)button ofGroup:(NSUInteger)groupTag
 {
     // check if there is a delete button present
     if (self.groupWithDelete != nil)
@@ -238,15 +243,15 @@
         // get the group to be modified
         PrintJobHistoryGroup* group;
         NSInteger groupIndex;
-        [self findGroupWithTag:[sender tag] outIndex:&groupIndex outGroup:&group];
+        [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
         
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
         NSLog(@"[INFO][PrintJobCtrl] tapped delete all button=%ld", (long)groupIndex);
 #endif
-
-        [sender setBackgroundColor:[UIColor purple2ThemeColor]];
-        [sender setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
-        self.tappedDeleteAllButton = sender;
+        
+        [button setBackgroundColor:[UIColor purple2ThemeColor]];
+        [button setTitleColor:[UIColor whiteThemeColor] forState:UIControlStateNormal];
+        self.tappedDeleteAllButton = button;
         
         [AlertHelper displayConfirmation:kAlertConfirmationDeleteAllJobs
                                forScreen:self
@@ -254,12 +259,29 @@
     }
 }
 
-- (void)tappedDeleteOneButton:(UIButton*)button
+- (BOOL)shouldPutDeleteButton:(NSUInteger)groupTag
 {
     // get the group to be modified
-    NSInteger buttonTag = [button tag];
-    NSUInteger groupTag = buttonTag/TAG_FACTOR;
-    NSUInteger jobTag = buttonTag%TAG_FACTOR;
+    PrintJobHistoryGroup* group;
+    NSInteger groupIndex;
+    [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
+    NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
+    
+    if ((self.groupWithDelete != nil) && (self.groupWithDelete != groupIndexPath))
+    {
+        [self removeDeleteButton];
+        return NO;
+    }
+    else
+    {
+        self.groupWithDelete = groupIndexPath;
+        return YES;
+    }
+}
+
+- (void)didTapDeleteJobButton:button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag
+{
+    // get the group to be modified
     PrintJobHistoryGroup* group;
     NSInteger groupIndex;
     [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
@@ -300,31 +322,9 @@
     }
 }
 
-- (IBAction)swipedLeft:(UIGestureRecognizer*)gestureRecognizer
-{
-    // get the group swiped
-    CGPoint swipedArea = [gestureRecognizer locationInView:self.groupsView];
-    NSIndexPath* groupIndexPath = [self.groupsView indexPathForItemAtPoint:swipedArea];
-    
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] swiped left on group=%ld", (long)groupIndexPath.item);
-#endif
-    
-    // check if another group has a delete button
-    if ((self.groupWithDelete != nil) && (self.groupWithDelete != groupIndexPath))
-        [self removeDeleteButton];
+#pragma mark - Actions
 
-    self.groupWithDelete = groupIndexPath;
-    
-    // add a delete button to the swiped group
-    PrintJobHistoryGroupCell* groupCell = (PrintJobHistoryGroupCell*)[self.groupsView
-                                                                      cellForItemAtIndexPath:groupIndexPath];
-    [groupCell putDeleteButton:gestureRecognizer
-                     handledBy:self
-              usingActionOnTap:@selector(tappedDeleteOneButton:)];
-}
-
-- (IBAction)tappedGroup:(UIGestureRecognizer*)gestureRecognizer
+- (void)tappedCollection:(UIGestureRecognizer*)gestureRecognizer
 {
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
     // get the group tapped
@@ -337,6 +337,8 @@
     if (self.groupWithDelete != nil)
         [self removeDeleteButton];
 }
+
+#pragma mark - Utilities
 
 - (void)removeDeleteButton
 {
@@ -417,6 +419,10 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
+    if (self.groupWithDelete != nil)
+        [self removeDeleteButton]; //TODO: temporary fix for the misplaced delete button
+                                   //TODO: should redraw the delete button after rotate
+    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:toInterfaceOrientation

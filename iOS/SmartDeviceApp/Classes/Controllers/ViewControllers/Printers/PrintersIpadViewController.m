@@ -17,6 +17,8 @@
 #import "UIView+Localization.h"
 #import "PrinterLayout.h"
 #import "CXAlertView.h"
+#import "DeleteButton.h"
+#import "UIColor+Theme.h"
 
 #define SEGUE_TO_ADD    @"PrintersIpad-AddPrinter"
 #define SEGUE_TO_SEARCH @"PrintersIpad-PrinterSearch"
@@ -179,15 +181,25 @@
 #pragma mark - IBActions
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
-    UIButton *deleteButton = (UIButton *)sender;
+    DeleteButton *deleteButton = (DeleteButton *)sender;
     
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")];
+    [deleteButton setBackgroundColor: [UIColor purple1ThemeColor]];
+
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:nil];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
+                              [alertView dismiss];
+                              [deleteButton setBackgroundColor: [UIColor whiteColor]];
+                          }];
     
     [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
                              type:CXAlertViewButtonTypeDefault
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [self deletePrinterAtIndex:deleteButton.tag];
                               [alertView dismiss];
+                              [deleteButton setBackgroundColor: [UIColor whiteColor]];
                           }];
     [alertView show];
 }

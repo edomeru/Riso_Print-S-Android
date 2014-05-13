@@ -24,6 +24,7 @@
 		28052CEF1911D16F007982DF /* PrintJobHistoryViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */; };
 		28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */; };
 		280C096A192048DD00347991 /* PrintJobItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C0969192048DD00347991 /* PrintJobItemCell.m */; };
+		280C097019206DF000347991 /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C096F19206DF000347991 /* DeleteButton.m */; };
 		2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
@@ -293,6 +294,8 @@
 		28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
 		280C0968192048DD00347991 /* PrintJobItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobItemCell.h; sourceTree = "<group>"; };
 		280C0969192048DD00347991 /* PrintJobItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobItemCell.m; sourceTree = "<group>"; };
+		280C096E19206DF000347991 /* DeleteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButton.h; sourceTree = "<group>"; };
+		280C096F19206DF000347991 /* DeleteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteButton.m; sourceTree = "<group>"; };
 		28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusHelperTest.m; sourceTree = "<group>"; };
 		282830FE18C7012B008B127C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2828313118C70699008B127C /* SmartDeviceApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartDeviceApp.xcdatamodel; sourceTree = "<group>"; };
@@ -1122,6 +1125,8 @@
 				2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */,
 				2DA1AECC18E2EF8500085F27 /* DefaultView.h */,
 				2DA1AECD18E2EF8500085F27 /* DefaultView.m */,
+				280C096E19206DF000347991 /* DeleteButton.h */,
+				280C096F19206DF000347991 /* DeleteButton.m */,
 				2DA1AED118E2EF8500085F27 /* MenuButton.h */,
 				2DA1AED218E2EF8500085F27 /* MenuButton.m */,
 				2DA1AED318E2EF8500085F27 /* MenuScrollView.h */,
@@ -1644,6 +1649,7 @@
 				28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */,
 				2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */,
 				2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */,
+				280C097019206DF000347991 /* DeleteButton.m in Sources */,
 				28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */,
 				2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */,
 				2DA1AF2418E2EF9600085F27 /* PrinterSearchViewController.m in Sources */,
