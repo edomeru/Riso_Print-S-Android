@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class BooleanToImageSourceConverterTest
@@ -32,19 +32,16 @@ namespace SmartDeviceAppTests.ViewModels
             value = false;
             result = booleanToImageSourceConverter.Convert(value, null, null, null);
             Assert.AreEqual("ms-appx:///Resources/Images/img_btn_printer_status_offline.scale - 100.png", result);
+
+            // Test invert
+            result = booleanToImageSourceConverter.Convert(value, null, true, null);
+            Assert.AreEqual("ms-appx:///Resources/Images/img_btn_printer_status_online.scale - 100.png", result);
         }
 
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = booleanToImageSourceConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() =>  booleanToImageSourceConverter.ConvertBack(null, null, null, null));
         }
     }
 }

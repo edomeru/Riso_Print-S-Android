@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Enum;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PageNumberFormatConverterTest
@@ -32,17 +32,10 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual("Page 1 / 10", result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = pageNumberFormatConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => pageNumberFormatConverter.ConvertBack(null, null, null, null));
         }
     }
 }

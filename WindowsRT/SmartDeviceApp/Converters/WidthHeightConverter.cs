@@ -26,6 +26,7 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            double width = Window.Current.Bounds.Width;
             if (value != null)
             {
                 ViewMode viewMode;
@@ -34,11 +35,11 @@ namespace SmartDeviceApp.Converters
                 {
                     if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
                     {
-                        return Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"];
+                        width = Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"];
                     }
                 }
             }
-            return Window.Current.Bounds.Width;
+            return width;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

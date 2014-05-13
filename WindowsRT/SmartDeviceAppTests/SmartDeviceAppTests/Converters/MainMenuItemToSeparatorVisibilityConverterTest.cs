@@ -11,7 +11,7 @@ using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class MainMenuItemToSeparatorVisibilityConverterTest
@@ -60,19 +60,15 @@ namespace SmartDeviceAppTests.ViewModels
             result = mainMenuItemToSeparatorVisibilityConverter.Convert(value, null, null, null);
             Assert.AreEqual(Visibility.Collapsed, result);
 
+            // For coverage only
+            Test_Command.Execute(null);
+
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = mainMenuItemToSeparatorVisibilityConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => mainMenuItemToSeparatorVisibilityConverter.ConvertBack(null, null, null, null));
         }
     }
 }

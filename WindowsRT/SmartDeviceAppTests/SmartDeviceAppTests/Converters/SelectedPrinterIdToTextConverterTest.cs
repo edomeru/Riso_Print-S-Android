@@ -8,7 +8,7 @@ using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class SelectedPrinterIdToTextConverterTest
@@ -35,14 +35,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = selectedPrinterIdToTextConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => selectedPrinterIdToTextConverter.ConvertBack(null, null, null, null));
         }
     }
 }

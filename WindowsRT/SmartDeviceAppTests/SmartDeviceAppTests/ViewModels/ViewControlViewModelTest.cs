@@ -187,6 +187,9 @@ namespace SmartDeviceAppTests.ViewModels
 
             viewControlViewModel.MainMenuItems = mainMenuItems;
             Assert.AreEqual(mainMenuItems, viewControlViewModel.MainMenuItems);
+
+            // For coverage only:
+            Test_Command.Execute(null);
         }
 
         [TestMethod]

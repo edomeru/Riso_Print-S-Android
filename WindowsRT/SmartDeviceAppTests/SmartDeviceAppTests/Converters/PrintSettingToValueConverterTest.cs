@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PrintSettingToValueConverterTest
@@ -110,19 +110,16 @@ namespace SmartDeviceAppTests.ViewModels
             result = printSettingToValueConverter.Convert(value1, null, parameter, null);
             Assert.AreEqual(intValue, result);
 
+            // Test wrong parameter
+            parameter = "TEST";
+            result = printSettingToValueConverter.Convert(value1, null, parameter, null);
+            Assert.AreEqual(null, result);
         }
 
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printSettingToValueConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => printSettingToValueConverter.ConvertBack(null, null, null, null));
         }
     }
 }

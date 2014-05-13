@@ -10,7 +10,7 @@ using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PrintJobToSeparatorVisibilityConverterTest
@@ -47,17 +47,10 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(Visibility.Collapsed, result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printJobToSeparatorVisibilityConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => printJobToSeparatorVisibilityConverter.ConvertBack(null, null, null, null));
         }
     }
 }

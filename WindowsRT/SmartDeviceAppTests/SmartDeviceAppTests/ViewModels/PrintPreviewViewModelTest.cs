@@ -12,7 +12,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Foundation;
 using SmartDeviceApp.Models;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -24,7 +24,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_PrintPreviewViewModel()
         {
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(printPreviewViewModel);
+            Assert.IsNotNull(printPreviewViewModel);
         }
 
         private void Test_EventHandler()
@@ -49,14 +49,14 @@ namespace SmartDeviceAppTests.ViewModels
             printPreviewViewModel.OnNavigatedFrom();
         }
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_SetPageAreaGrid()
         {
             var grid = new Grid();
             printPreviewViewModel.SetPageAreaGrid(grid);
         }
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_InitializeGestures()
         {
             // Note: Unreachable because cannot change value of _isPageAreaGridLoaded
@@ -72,7 +72,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var isLoadPageActive = true;
             printPreviewViewModel.IsLoadPageActive = isLoadPageActive;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsTrue(printPreviewViewModel.IsLoadPageActive);
+            Assert.IsTrue(printPreviewViewModel.IsLoadPageActive);
         }
 
         [TestMethod]
@@ -94,25 +94,25 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var documentTitleText = "DOCUMENT_TITLE_TEXT";
             printPreviewViewModel.DocumentTitleText = documentTitleText;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(documentTitleText, printPreviewViewModel.DocumentTitleText);
+            Assert.AreEqual(documentTitleText, printPreviewViewModel.DocumentTitleText);
         }
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_RightPageImage()
         {
             var rightPageImage = new BitmapImage();
             rightPageImage.UriSource = new Uri("ms-appx:///Resources/Images/RZ1070-page1.jpg");
             printPreviewViewModel.RightPageImage = rightPageImage;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(rightPageImage, printPreviewViewModel.RightPageImage);
+            Assert.AreEqual(rightPageImage, printPreviewViewModel.RightPageImage);
         }
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_LeftPageImage()
         {
             var leftPageImage = new BitmapImage();
             leftPageImage.UriSource = new Uri("ms-appx:///Resources/Images/RZ1070-page1.jpg");
             printPreviewViewModel.LeftPageImage = leftPageImage;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(leftPageImage, printPreviewViewModel.LeftPageImage);
+            Assert.AreEqual(leftPageImage, printPreviewViewModel.LeftPageImage);
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var rightPageActualSize = new Size(100, 100);
             printPreviewViewModel.RightPageActualSize = rightPageActualSize;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(rightPageActualSize, printPreviewViewModel.RightPageActualSize);
+            Assert.AreEqual(rightPageActualSize, printPreviewViewModel.RightPageActualSize);
         }
 
         [TestMethod]
@@ -128,7 +128,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var leftPageActualSize = new Size(100, 100);
             printPreviewViewModel.LeftPageActualSize = leftPageActualSize;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(leftPageActualSize, printPreviewViewModel.LeftPageActualSize);
+            Assert.AreEqual(leftPageActualSize, printPreviewViewModel.LeftPageActualSize);
         }
 
         [TestMethod]
@@ -138,7 +138,7 @@ namespace SmartDeviceAppTests.ViewModels
             printPreviewViewModel.PageViewMode = pageViewMode;
             pageViewMode = PageViewMode.TwoPageView;
             printPreviewViewModel.PageViewMode = pageViewMode;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(pageViewMode, printPreviewViewModel.PageViewMode);
+            Assert.AreEqual(pageViewMode, printPreviewViewModel.PageViewMode);
         }
 
         [TestMethod]
@@ -151,7 +151,7 @@ namespace SmartDeviceAppTests.ViewModels
             pageNumber = 1;
             printPreviewViewModel.UpdatePageIndexes(pageNumber);
             printPreviewViewModel.GoToPreviousPage.Execute(null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(printPreviewViewModel.GoToPreviousPage);
+            Assert.IsNotNull(printPreviewViewModel.GoToPreviousPage);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace SmartDeviceAppTests.ViewModels
             pageNumber = 9;
             printPreviewViewModel.UpdatePageIndexes(pageNumber);
             printPreviewViewModel.GoToNextPage.Execute(null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(printPreviewViewModel.GoToNextPage);
+            Assert.IsNotNull(printPreviewViewModel.GoToNextPage);
         }
 
         private void Test_GoToPageEventHandler(int idx)
@@ -188,7 +188,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var pageNumber = new PageNumberInfo(0, 10, PageViewMode.SinglePageView);
             printPreviewViewModel.PageNumber = pageNumber;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(pageNumber, printPreviewViewModel.PageNumber);
+            Assert.AreEqual(pageNumber, printPreviewViewModel.PageNumber);
         }
 
         [TestMethod]
@@ -211,7 +211,7 @@ namespace SmartDeviceAppTests.ViewModels
         public void Test_PageNumberSliderValueChange()
         {
             printPreviewViewModel.PageNumberSliderValueChange.Execute(null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(printPreviewViewModel.PageNumberSliderValueChange);
+            Assert.IsNotNull(printPreviewViewModel.PageNumberSliderValueChange);
         }
 
         [TestMethod]
@@ -219,7 +219,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             uint pageTotal = 10;
             printPreviewViewModel.PageTotal = pageTotal;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(pageTotal, printPreviewViewModel.PageTotal);
+            Assert.AreEqual(pageTotal, printPreviewViewModel.PageTotal);
         }
 
         [TestMethod]
@@ -227,7 +227,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             uint currentPageIndex = 10;
             printPreviewViewModel.CurrentPageIndex = currentPageIndex;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(currentPageIndex, printPreviewViewModel.CurrentPageIndex);
+            Assert.AreEqual(currentPageIndex, printPreviewViewModel.CurrentPageIndex);
         }
 
         [TestMethod]
@@ -235,7 +235,7 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var isPageNumberSliderEnabled = true;
             printPreviewViewModel.IsPageNumberSliderEnabled = isPageNumberSliderEnabled;
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(isPageNumberSliderEnabled, printPreviewViewModel.IsPageNumberSliderEnabled);
+            Assert.AreEqual(isPageNumberSliderEnabled, printPreviewViewModel.IsPageNumberSliderEnabled);
         }
     }
 }
