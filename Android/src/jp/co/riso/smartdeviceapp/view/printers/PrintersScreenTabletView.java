@@ -276,12 +276,12 @@ OnItemSelectedListener {
     public void setDefaultSettingSelected (boolean state) {
         if (mSettingViewHolder != null) {
             mSettingViewHolder.mPrintSettings.setSelected(state);
-            mSettingViewHolder = null;
         } else if (mSettingItem != PrinterManager.EMPTY_ID) {
             getChildAt(mSettingItem).findViewById(R.id.default_print_settings).setSelected(state);
         }
         if (!state) {
             mSettingItem = PrinterManager.EMPTY_ID;
+            mSettingViewHolder = null;
         }
     }
     
@@ -501,7 +501,7 @@ OnItemSelectedListener {
             case R.id.default_print_settings:
                 mSelectedPrinter = (Printer) v.getTag();
                 mSettingViewHolder = (ViewHolder) v.getTag(ID_TAG_DEFAULTSETTINGS);
-                v.setSelected(true);
+                setDefaultSettingSelected(true);
                 if (getContext() != null && getContext() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getContext();
                     

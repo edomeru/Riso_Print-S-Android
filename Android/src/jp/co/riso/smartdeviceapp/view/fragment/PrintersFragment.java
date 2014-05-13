@@ -147,6 +147,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
         if (isTablet()) {
             mDeleteItem = mPrinterTabletView.getDeleteItemPosition();
+            mSettingItem = PrinterManager.EMPTY_ID;
         } else {
             if (mListView != null) {
                 mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
@@ -251,7 +252,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        //                        v.setSelected(true);
                         if (isTablet()){
                             setIconState(v.getId(), true);
                         }
@@ -266,7 +266,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        //v.setSelected(true);
                         if (isTablet()){
                             setIconState(v.getId(), true);
                         }

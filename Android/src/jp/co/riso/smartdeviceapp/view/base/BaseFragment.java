@@ -29,18 +29,21 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     private static final String KEY_ICON_STATE = "icon_state";
     private static final String KEY_ICON_ID = "icon_id";
     
-    public boolean mIconState = false;
+    private boolean mIconState = false;
     private int mIconId = 0;
-
+    private int mIconIdToRestore = 0;
+    
     
     /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         if (savedInstanceState != null){
-            mIconState=savedInstanceState.getBoolean(KEY_ICON_STATE);
-            mIconId =savedInstanceState.getInt(KEY_ICON_ID);
+            mIconState = savedInstanceState.getBoolean(KEY_ICON_STATE);
+            mIconIdToRestore = savedInstanceState.getInt(KEY_ICON_ID);
         }
+        
         initializeFragment(savedInstanceState);
     }
     
@@ -92,9 +95,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onResume() {
         super.onResume();
-        //restore
-        if (mIconState) {
-            setIconState(mIconId, true);
+        // restore selected only if screen is rotated
+        if (mIconIdToRestore != 0 && mIconState) {
+            setIconState(mIconIdToRestore, true);
+            mIconIdToRestore = 0;
         }
         AppUtils.hideSoftKeyboard(getActivity());
     }
@@ -103,10 +107,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        
+
         outState.putBoolean(KEY_ICON_STATE, mIconState);
         outState.putInt(KEY_ICON_ID, mIconId);
-        
+        mIconIdToRestore = mIconId;
     }
     
     // ================================================================================
@@ -212,7 +216,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     }
     
     /**
-     * Sets icon selected state
+     * Sets icon's selected state
      * 
      * @param id
      *            icon id
@@ -223,7 +227,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         if (getView().findViewById(id) != null) {
             getView().findViewById(id).setSelected(state);
             mIconState = state;
-            mIconId  = id;
+            mIconId = id;
+
         }
     }
     

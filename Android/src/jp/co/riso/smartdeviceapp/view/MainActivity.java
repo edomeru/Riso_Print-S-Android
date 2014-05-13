@@ -291,6 +291,12 @@ public class MainActivity extends BaseActivity {
             }
         }
         
+        /**
+         * Clears the icon's selected states after the drawer is closed.
+         * 
+         * @param isLeft
+         *          true if left drawer is closed, false if right drawer
+         */
         private void clearIconStates(boolean isLeft) {
             BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
             if (isLeft) {

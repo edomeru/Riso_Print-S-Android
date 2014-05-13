@@ -512,16 +512,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mSeekBar.setEnabled(enable);
     }
     
-    /** {@inheritDoc} */
-    @Override
-    public void setIconState(int id, boolean state) {
-        if (isTablet() && ((MainActivity) getActivity()).isDrawerOpen(Gravity.LEFT)) {
-            getView().findViewById(id).setSelected(state);
-        } else {
-            super.setIconState(id, state);
-        }
-    }
-    
     // ================================================================================
     // INTERFACE - OnSeekBarChangeListener
     // ================================================================================
