@@ -13,11 +13,12 @@ namespace SmartDeviceApp.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var args = value as ItemClickEventArgs;
+            object result = null;
 
             if (args != null)
-                return args.ClickedItem;
+                result = args.ClickedItem;
 
-            return null;
+            return result;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,

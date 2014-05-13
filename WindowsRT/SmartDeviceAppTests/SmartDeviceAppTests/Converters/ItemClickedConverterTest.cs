@@ -7,37 +7,32 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
-namespace SmartDeviceAppTests.ViewModels
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class ItemClickedConverterTest
     {
         private ItemClickedConverter itemClickedConverter = new ItemClickedConverter();
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_Convert()
         {
             // Test null
             var result = itemClickedConverter.Convert(null, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(null, result);
+            Assert.AreEqual(null, result);
 
             var value = new ItemClickEventArgs();
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(value.ClickedItem, result);
+            result = itemClickedConverter.Convert(value, null, null, null);
+            Assert.AreEqual(value.ClickedItem, result);
         }
 
-        [UITestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = itemClickedConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => itemClickedConverter.ConvertBack(null, null, null, null));
         }
     }
 }

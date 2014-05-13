@@ -10,7 +10,7 @@ using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PrintSettingToSeparatorVisibilityConverterTest
@@ -44,7 +44,7 @@ namespace SmartDeviceAppTests.ViewModels
 
             // Test not last item
             var printSetting2 = new PrintSetting();
-            printSetting2.Text = "PRINT_SETTING1";
+            printSetting2.Text = "PRINT_SETTING2";
             printSettings.Add(printSetting2);
             group.PrintSettings = printSettings;
             printSettingsList = new PrintSettingList();
@@ -52,19 +52,25 @@ namespace SmartDeviceAppTests.ViewModels
             new ViewModelLocator().PrintSettingsViewModel.PrintSettingsList = printSettingsList;
             result = printSettingToSeparatorVisibilityConverter.Convert(value, null, null, null);
             Assert.AreEqual(Visibility.Visible, result);
+
+            // Test more than 1 group
+            var printSetting3 = new PrintSetting();
+            printSetting3.Text = "PRINT_SETTING3";
+            var printSettings2 = new List<PrintSetting>();
+            printSettings2.Add(printSetting3);
+            var group2 = new PrintSettingGroup();
+            group2.PrintSettings = printSettings2;
+            printSettingsList.Add(group2);
+            new ViewModelLocator().PrintSettingsViewModel.PrintSettingsList = printSettingsList;
+            value = printSetting3;
+            result = printSettingToSeparatorVisibilityConverter.Convert(value, null, null, null);
+            Assert.AreEqual(Visibility.Collapsed, result);
         }
 
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printSettingToSeparatorVisibilityConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => printSettingToSeparatorVisibilityConverter.ConvertBack(null, null, null, null));
         }
     }
 }

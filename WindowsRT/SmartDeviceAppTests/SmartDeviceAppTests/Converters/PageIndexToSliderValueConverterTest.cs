@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PageIndexToSliderValueConverterTest
@@ -41,7 +41,7 @@ namespace SmartDeviceAppTests.ViewModels
             result = pageIndexToSliderValueConverter.ConvertBack("TEST", null, null, null);
             Assert.AreEqual(0, result);
 
-            var value = 1;
+            uint value = 1;
             result = pageIndexToSliderValueConverter.ConvertBack(value, null, null, null);
             Assert.AreEqual(0, result);
         }

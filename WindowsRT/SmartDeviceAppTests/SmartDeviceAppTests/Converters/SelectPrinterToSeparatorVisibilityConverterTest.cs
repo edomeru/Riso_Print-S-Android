@@ -10,7 +10,7 @@ using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class SelectPrinterToSeparatorVisibilityConverterTest
@@ -47,19 +47,16 @@ namespace SmartDeviceAppTests.ViewModels
             new ViewModelLocator().SelectPrinterViewModel.PrinterList = printerList;
             result = selectPrinterToSeparatorVisibilityConverter.Convert(value, null, null, null);
             Assert.AreEqual(Visibility.Visible, result);
+
+            value = 1;
+            result = selectPrinterToSeparatorVisibilityConverter.Convert(value, null, null, null);
+            Assert.AreEqual(Visibility.Collapsed, result);
         }
 
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = selectPrinterToSeparatorVisibilityConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => selectPrinterToSeparatorVisibilityConverter.ConvertBack(null, null, null, null));
         }
     }
 }

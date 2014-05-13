@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PrintJobResultToImageSourceConverterTest
@@ -34,19 +34,16 @@ namespace SmartDeviceAppTests.ViewModels
             value = 1;
             result = printJobResultToImageSourceConverter.Convert(value, null, null, null);
             Assert.AreEqual(new Uri("ms-appx:///Resources/Images/img_btn_job_status_ng.png"), result);
+
+            value = 2;
+            result = printJobResultToImageSourceConverter.Convert(value, null, null, null);
+            Assert.AreEqual(null, result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printJobResultToImageSourceConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => printJobResultToImageSourceConverter.ConvertBack(null, null, null, null));
         }
     }
 }

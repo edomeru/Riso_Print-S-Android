@@ -8,7 +8,7 @@ using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class SelectedPrinterToBooleanConverterTest
@@ -37,16 +37,11 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
+        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = selectedPrinterToBooleanConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            // Note: Not implemented: Will throw exception
+            Assert.ThrowsException<NotImplementedException>(() => selectedPrinterToBooleanConverter.ConvertBack(null, null, null, null));
         }
     }
 }
