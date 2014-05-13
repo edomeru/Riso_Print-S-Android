@@ -207,7 +207,6 @@
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
     <Compile Include="Converters\ItemClickedConverter.cs" />
-    <Compile Include="Converters\ItemSelectedConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\JobGestureController.cs" />
@@ -337,8 +336,7 @@
     <Content Include="Assets\ja-JP\legal.html" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
-    <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
-    <Content Include="Resources\Dummy\RZ1070.pdf" />
+    <None Include="Resources\Dummy\RZ1070.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
@@ -347,18 +345,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\printsettings.xml" />
-    <Content Include="Resources\Dummy\RZ1070-page1.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page10.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page11.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page12.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page2.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page3.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page4.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page5.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page6.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
     <Content Include="Resources\Dummy\SampleData.sql" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />

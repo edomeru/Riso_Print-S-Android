@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
@@ -9,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Networking.Connectivity;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -24,24 +27,14 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
-        public async void Test_SearchPrinterViewModel_GetSetPrinterSearchList()
+        public void Test_SearchPrinterViewModel_GetSetPrinterSearchList()
         {
             ObservableCollection<PrinterSearchItem> tempList = new ObservableCollection<PrinterSearchItem>();
 
-            PrinterSearchItem p = new PrinterSearchItem();
-            await ExecuteOnUIThread(() =>
-            {
-                p.Ip_address = "192.168.0.1";
-                p.Name = "test";
-                p.IsInPrinterList = false;
-                tempList.Add(p);
-            });
             viewModel.PrinterSearchList = tempList;
             ObservableCollection<PrinterSearchItem> tempList2 = viewModel.PrinterSearchList;
 
             Assert.AreEqual(tempList, tempList2);
-
-
         }
 
         [TestMethod]
@@ -83,13 +76,49 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(viewModel.PrinterSearchItemSelected);
         }
 
-
-
-
-
-        public static IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action)
+        [Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer.UITestMethod]
+        public void Test_SearchPrinterViewModel_PrinterSearchItemSelectedNotInList()
         {
-            return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, action);
+            string ip = "192.168.0.1";
+            PrinterController.Instance.Initialize();
+            PrinterSearchItem p = new PrinterSearchItem();
+            p.Ip_address = ip;
+            p.IsInPrinterList = true;
+
+            viewModel.PrinterSearchItemSelected.Execute(p);
+            Assert.IsNotNull(viewModel.PrinterSearchItemSelected);
+        }
+
+        [TestMethod]
+        public void Test_SearchPrinterViewModel_SetViewModeWithNetwork()
+        {
+            // Note: Test for coverage only; No tests to assert
+            var viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            viewControlViewModel.ScreenMode = ScreenMode.Printers;
+            Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane1);
+        }
+
+        [TestMethod]
+        public void Test_SearchPrinterViewModel_SetViewModeWithOutNetwork()
+        {
+            // Note: Test for coverage only; No tests to assert
+            var viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            viewControlViewModel.ScreenMode = ScreenMode.Printers;
+            Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane1);
+        }
+
+        [TestMethod]
+        public void Test_SearchPrinterViewModel_SearchTimeout()
+        {
+            // Note: Test for coverage only; No tests to assert
+            viewModel.SearchTimeout();
+        }
+
+        [TestMethod]
+        public void Test_SearchPrinterViewModel_PrinterSearchRefreshed()
+        {
+            viewModel.PrinterSearchRefreshed.Execute(null);
+            Assert.IsNotNull(viewModel.PrinterSearchRefreshed);
         }
     }
 }

@@ -13,11 +13,10 @@ using Windows.Networking.Connectivity;
 
 namespace SmartDeviceApp.Controllers
 {
-    class NetworkController
+    public class NetworkController
     {
 
         public Action<string, bool> networkControllerPingStatusCallback { get; set; } //PrintersModule
-        private IOutputStream outputStream;
 
         static readonly NetworkController _instance = new NetworkController();
 
@@ -28,12 +27,6 @@ namespace SmartDeviceApp.Controllers
         public static NetworkController Instance
         {
             get { return _instance; }
-        }
-
-        DatagramSocket udpClient;
-        public void Initialize()
-        {
-            
         }
 
         StreamSocket tcpClient;

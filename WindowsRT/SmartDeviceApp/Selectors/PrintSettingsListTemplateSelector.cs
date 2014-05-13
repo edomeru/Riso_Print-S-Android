@@ -19,19 +19,26 @@ namespace SmartDeviceApp.Selectors
         protected override DataTemplate SelectTemplateCore (object item, DependencyObject container)
         {
             PrintSetting printSetting = item as PrintSetting;
-
-            switch (printSetting.Type)
+            DataTemplate template = null;
+            if (printSetting != null)
             {
-                case PrintSettingType.boolean:
-                    return ListViewItemToggleSwitchTemplate;
-                case PrintSettingType.numeric:
-                    return ListViewItemTextBoxTemplate;
-                case PrintSettingType.list:
-                    return ListViewItemListTemplate;
-                case PrintSettingType.unknown:
-                    return null;
+                switch (printSetting.Type)
+                {
+                    case PrintSettingType.boolean:
+                        template = ListViewItemToggleSwitchTemplate;
+                        break;
+                    case PrintSettingType.numeric:
+                        template = ListViewItemTextBoxTemplate;
+                        break;
+                    case PrintSettingType.list:
+                        template = ListViewItemListTemplate;
+                        break;
+                    case PrintSettingType.unknown:
+                        template = null;
+                        break;
+                }
             }
-            return null;
+            return template;
         }
     }
 }

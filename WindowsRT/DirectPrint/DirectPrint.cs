@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Networking;
@@ -19,7 +20,7 @@ namespace DirectPrint
     public class directprint_job
     {
         public string job_name;
-        public string filename; // TODO: to be deleted. replaced by file
+        //public string filename; // TODO: to be deleted. replaced by file
         public StorageFile file;
         public string print_settings;
         public string ip_address;
@@ -40,26 +41,29 @@ namespace DirectPrint
         public const int PRINT_STATUS_OK = 0;
         public const int PRINT_STATUS_ERROR = 1;
 
-        string PORT_LPR = "515";
-        string PORT_RAW = "9100";
+        private const string PORT_LPR = "515";
+        private const string PORT_RAW = "9100";
 
-        int TIMEOUT_CONNECT = 10;
-        int TIMEOUT_RECEIVE = 30;
+        private const int TIMEOUT_CONNECT = 10;
+        private const int TIMEOUT_RECEIVE = 30;
 
-        int BUFFER_SIZE = 4096;
+        private const int BUFFER_SIZE = 4096;
 
-        string QUEUE_NAME = "normal";
-        string HOST_NAME = "SmartDeviceApp";
+        private const string QUEUE_NAME = "normal";
+        private const string HOST_NAME = "SmartDeviceApp";
 
-        string PJL_ESCAPE = "\x1B-12345X";
-        string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
-        string PJL_EOJ = "@PJL EOJ\x0d\x0a";
+        private const string PJL_ESCAPE = "\x1B-12345X";
+        private const string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
+        private const string PJL_EOJ = "@PJL EOJ\x0d\x0a";
 
-        float LPR_PREP_PROGRESS_STEP = 6.0f;
-        float LPR_PREP_END_PROGRESS = 20.0f;
-        float PJL_HEADER_PROGRESS_STEP = 5.0f;
-        float PJL_FOOTER_PROGRESS_STEP = 4.0f;
-        float END_PROGRESS = 100.0f;
+        private const float LPR_PREP_PROGRESS_STEP = 6.0f;
+        private const float LPR_PREP_END_PROGRESS = 20.0f;
+        private const float PJL_HEADER_PROGRESS_STEP = 5.0f;
+        private const float PJL_FOOTER_PROGRESS_STEP = 4.0f;
+        private const float END_PROGRESS = 100.0f;
+
+        private bool datareceived = false;
+        private int ack = 0;
 
         TCPSocket socket;
 
@@ -83,7 +87,19 @@ namespace DirectPrint
             }
         }
 
-        public async void startLPRPrint(directprint_job parameter)
+        public void startLPRPrint(directprint_job parameter)
+        {
+            /*
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+            (workItem) =>
+            {
+                _startLPRPrint(parameter);
+            });
+            */
+            Task.Run(() => _startLPRPrint(parameter));
+        }
+
+        public async void _startLPRPrint(directprint_job parameter)
         {
 
             if (parameter == null)
@@ -98,20 +114,11 @@ namespace DirectPrint
             print_job = parameter;
 
             //start socket
-            socket = new TCPSocket();
-            socket.connect(print_job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
-            {
-                startLPRPrint(print_job);
-            });
-            //
+            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
 
             // Prepare PJL header
             string pjl_header = "";
             pjl_header += PJL_ESCAPE;
-            //***create_pjl(pjl_header, print_job->print_settings);
             pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
             pjl_header += PJL_LANGUAGE;
             int pjl_header_size = pjl_header.Length;
@@ -179,7 +186,7 @@ namespace DirectPrint
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
-                                        HOST_NAME, "SDA User", print_job.job_name, dname, dname, print_job.job_name);
+                                        HOST_NAME, "SDA WinRT User", print_job.job_name, dname, dname, print_job.job_name);
             //string controlfile = String.Format("H{0}\nP{1}\nf{2}\nU{3}\nN{4}\n",
             //                HOST_NAME, "User", dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////
@@ -208,9 +215,8 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            string test000 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -235,9 +241,7 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            string test001 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -275,23 +279,23 @@ namespace DirectPrint
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             // Get file size
-            var uri = new System.Uri("ms-appx:///Resources/Dummy/" + print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
-            StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+            //var uri = new System.Uri("ms-appx:///Resources/Dummy/" + print_job.filename);//RZ1070.pdf//UriSource = new Uri("ms-appx:///Resources/Dummy/" + filename);
+            //StorageFile sampleFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
             //Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.;
             //Windows.Storage.StorageFolder localFolder = Windows.ApplicationModel.Package.Current.;
             //StorageFile sampleFile = await localFolder.GetFileAsync("test.pdf");
             //StorageFile sampleFile = filePickerFile;
 
-            var fbuffer = await Windows.Storage.FileIO.ReadBufferAsync(sampleFile);
+            var fbuffer = await Windows.Storage.FileIO.ReadBufferAsync(print_job.file);
             DataReader fileDataReader = Windows.Storage.Streams.DataReader.FromBuffer(fbuffer);
-            BasicProperties pro = await sampleFile.GetBasicPropertiesAsync();
+            BasicProperties pro = await print_job.file.GetBasicPropertiesAsync();
             ulong file_size = pro.Size;
 
             byte[] filebuffer = new byte[file_size];
             fileDataReader.ReadBytes(filebuffer);
 
 
-            ulong total_data_size = (ulong)file_size;// +(ulong)pjl_header_size + (ulong)pjl_footer_size;
+            ulong total_data_size = (ulong)file_size +(ulong)pjl_header_size + (ulong)pjl_footer_size;
             String total_data_size_str = String.Format("{0}", (ulong)total_data_size);
 
             float data_step = (70.0f / ((float)file_size / BUFFER_SIZE));
@@ -309,9 +313,8 @@ namespace DirectPrint
 
             //***write buffer to socket
             socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            string test002 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -323,18 +326,18 @@ namespace DirectPrint
                 return;
             }
 
-            //send file data
-
-
-            //***write buffer to socket
-            //socket.write(filebuffer, 0, pos);
+            //send file data in chunks            
             ulong totalbytes = 0;
             int bytesRead = 0;
+
+            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
+            totalbytes += (ulong)pjl_header.Length;
+
             MemoryStream fstream = new MemoryStream(filebuffer);
             while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
                 totalbytes += (ulong)bytesRead;
-                socket.write(buffer, 0, bytesRead, false);
+                socket.write(buffer, 0, bytesRead);
                 print_job.progress += data_step;
                 if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
@@ -347,14 +350,15 @@ namespace DirectPrint
                     return;
                 }
             }
-            //fstream.Dispose();
+            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
+            totalbytes += (ulong)pjl_footer.Length;
 
             if (total_data_size != totalbytes)
             {
                 return;
             }
 
-            // close data file with a 0 ..
+            // close data file with a 0
             pos = 0;
             buffer[pos++] = 0;
             socket.write(buffer, 0, pos);
@@ -372,6 +376,7 @@ namespace DirectPrint
                 }
                 return;
             }
+            socket.disconnect();
 
             print_job.progress = 100.0f;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
@@ -384,19 +389,23 @@ namespace DirectPrint
         }
 
         private int waitForAck()
-        {
+        {            
+            long start = Environment.TickCount;
+            datareceived = false;
+            socket.read();
             while (!datareceived)
             {
-                // wait for data
+                if (Environment.TickCount - start > TIMEOUT_RECEIVE)
+                {
+                    //operation timeout
+                    return -1;
+                }
             }
             datareceived = false;
 
             return ack;
         }
 
-
-        private bool datareceived = false;
-        private int ack = 0;
         public void receiveData(HostName hostname, byte[] data)
         {
             if (data != null)

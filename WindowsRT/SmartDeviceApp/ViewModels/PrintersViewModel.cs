@@ -40,9 +40,6 @@ namespace SmartDeviceApp.ViewModels
 
         private ObservableCollection<Printer> _printerList;
 
-        private int _height;
-
-        
         /**
          * 
          * Delegates for controllers
@@ -67,16 +64,6 @@ namespace SmartDeviceApp.ViewModels
             if (OnNavigateFromEventHandler != null)
             {
                 OnNavigateFromEventHandler();
-            }
-        }
-
-        public int Height
-        {
-            get { return this._height; }
-            set
-            {
-                _height = value;
-                OnPropertyChanged("Height");
             }
         }
 

@@ -257,7 +257,7 @@ namespace SmartDeviceApp.Controllers
         }
 
 
-        public void getStatus(ThreadPoolTimer timer)
+        private void getStatus(ThreadPoolTimer timer)
         {
             //call SNMP Controller get status here
             updateStatus();
@@ -399,7 +399,7 @@ namespace SmartDeviceApp.Controllers
             return true;
         }
 
-        public async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
+        private async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
         {
 
             
@@ -581,7 +581,7 @@ namespace SmartDeviceApp.Controllers
 
             if (e.PropertyName == "PortSetting")
             {
-                await DatabaseController.Instance.UpdatePortNumber(printer);
+                await DatabaseController.Instance.UpdatePrinter(printer);
             }
         }
 

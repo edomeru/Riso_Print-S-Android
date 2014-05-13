@@ -213,6 +213,11 @@ namespace SmartDeviceApp.ViewModels
 
         private void PrintExecute()
         {
+            if (_printerId == -1)
+            {
+                DialogService.Instance.ShowError("IDS_ERR_MSG_NO_SELECTED_PRINTER", "IDS_APP_NAME", "IDS_LBL_OK", null);
+                return;
+            }
             if (ExecutePrintEventHandler != null)
             {
                 ExecutePrintEventHandler();

@@ -24,6 +24,10 @@ using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using Windows.ApplicationModel.Resources;
+using System.Windows.Input;
+using Windows.UI.Xaml.Controls.Primitives;
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.Common;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -91,6 +95,10 @@ namespace SmartDeviceApp.Controllers
         private uint _previewPageTotal;
         private static int _currPreviewPageIndex;
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
+
+        private ICommand _cancelPrintingCommand;
+        private Popup _printingPopup;
+        private MessageProgressBarControl _printingProgress;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -1748,16 +1756,28 @@ namespace SmartDeviceApp.Controllers
         {
             if (_selectedPrinter.Id > -1)
             {
-                // Get latest print settings since non-preview related print settings may be updated
-                _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+                //// TODO: Check network
+                //NetworkController.Instance.networkControllerPingStatusCallback =
+                //    new Action<string, bool>(GetPrinterStatus);
+                //await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
 
-                NetworkController.Instance.networkControllerPingStatusCallback =
-                    new Action<string, bool>(GetPrinterStatus);
-                await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
+                // TODO: Remove this when ping is working
+                GetPrinterStatus(null, true);
             }
-            else
+        }
+
+        public ICommand CancelPrintingCommand
+        {
+            get
             {
-                // TODO: Display no selected printer message
+                if (_cancelPrintingCommand == null)
+                {
+                    _cancelPrintingCommand = new RelayCommand(
+                        () => CancelPrint(),
+                        () => true
+                    );
+                }
+                return _cancelPrintingCommand;
             }
         }
 
@@ -1770,7 +1790,15 @@ namespace SmartDeviceApp.Controllers
         {
             if (isOnline)
             {
-                // TODO: Display progress dialog
+                // Get latest print settings since non-preview related print settings may be updated
+                _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+
+                // Display progress dialog
+                _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
+                _printingProgress.CancelCommand = CancelPrintingCommand;
+                _printingPopup = new Popup();
+                _printingPopup.Child = _printingProgress;
+                _printingPopup.IsOpen = true;
 
                 if (_directPrintController != null)
                 {
@@ -1781,13 +1809,17 @@ namespace SmartDeviceApp.Controllers
                     DocumentController.Instance.PdfFile,
                     _selectedPrinter.IpAddress,
                     _currPrintSettings,
-                    new DirectPrintController.UpdatePrintJobProgress(UpdatePrintJobProgress),
-                    new DirectPrintController.SetPrintJobResult(UpdatePrintJobResult));
+                    UpdatePrintJobProgress,
+                    UpdatePrintJobResult);
+                
                 _directPrintController.SendPrintJob();
+
+                //// TODO: Remove the following line. This is for testing only.
+                //UpdatePrintJobResult(DocumentController.Instance.FileName, DateTime.Now, 0);
             }
             else
             {
-                // TODO: Display error message
+                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
         }
 
@@ -1802,6 +1834,7 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
+            _printingPopup.IsOpen = false;
         }
 
         /// <summary>
@@ -1810,7 +1843,15 @@ namespace SmartDeviceApp.Controllers
         /// <param name="progress">progress value</param>
         public void UpdatePrintJobProgress(float progress)
         {
-            // TODO: Apply value to progress dialog
+            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
+            //_printingProgress.ProgressValue = progress;
+            
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            () =>
+            {
+                // Your UI update code goes here!
+                _printingProgress.ProgressValue = progress;
+            });
         }
 
         /// <summary>
@@ -1819,8 +1860,10 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">print job name</param>
         /// <param name="date">date</param>
         /// <param name="result">result</param>
-        public void UpdatePrintJobResult(string name, DateTime date, int result)
+        public async void UpdatePrintJobResult(string name, DateTime date, int result)
         {
+            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobResult:" + result);
+
             PrintJob printJob = new PrintJob()
             {
                 PrinterId = _selectedPrinter.Id,
@@ -1831,21 +1874,31 @@ namespace SmartDeviceApp.Controllers
 
             JobController.Instance.SavePrintJob(printJob);
 
-            if (result == (int)PrintJobResult.Success)
-            {
-                // TODO: await Cleanup();
-                // TODO: Close preview and go to home
-            }
-            else if (result == (int)PrintJobResult.Error)
-            {
-                // TODO: Show error message, do not exit screen
-            }
 
-            if (_directPrintController != null)
+            //UI processing stuff
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            () => 
             {
-                _directPrintController.UnsubscribeEvents();
-                _directPrintController = null;
-            }
+                _printingPopup.IsOpen = false;
+                if (result == (int)PrintJobResult.Success)
+                {
+                    // TODO: Confirm if message for success is needed here
+                    DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
+                    //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
+                    Cleanup();
+                    DocumentController.Instance.Unload();
+                }
+                else if (result == (int)PrintJobResult.Error)
+                {
+                    DialogService.Instance.ShowError("IDS_LBL_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
+                }
+
+                if (_directPrintController != null)
+                {
+                    _directPrintController.UnsubscribeEvents();
+                    _directPrintController = null;
+                }
+            });            
         }
 
         #endregion Print

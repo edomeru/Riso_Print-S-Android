@@ -50,7 +50,7 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("ProgressValue", typeof(double), typeof(MessageProgressBarControl), null);
 
         public static readonly DependencyProperty CancelCommandProperty =
-           DependencyProperty.Register("CancelCommand", typeof(ICommand), typeof(JobListItemControl), null);
+           DependencyProperty.Register("CancelCommand", typeof(ICommand), typeof(MessageProgressBarControl), null);
 
         public string Title
         {

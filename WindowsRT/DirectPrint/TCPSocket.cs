@@ -15,33 +15,78 @@ namespace DirectPrint
 
         private StreamSocket socket = null;
 
-        Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
-        Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
-
-        public TCPSocket()
-        {
-            socket = new StreamSocket();
-        }
+        private Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
+        private Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
 
         public TCPSocket(string host, string port, Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {            
             socket = new StreamSocket();
-            this.connect(host, port);
+            this.setHost(host, port);
             this.dataReceivedHandler = d;
         }
 
-        internal void assignDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
+        internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {
             dataReceivedHandler = d;
         }
 
-        internal async void connect(string host, string port)
+        internal async void setHost(string host, string port)
         {
             HostName h = new HostName(host);
             await socket.ConnectAsync(h, port);
         }
 
-        internal async void write(byte[] data, int a,int b, bool waitresponse = true)
+        internal void disconnect()
+        {
+            if (socket != null)
+            {
+                socket.Dispose();
+                socket = null;
+            }
+        }
+
+        internal async void read()
+        {
+            if (socket != null)
+            try
+            {
+                DataReader reader = new DataReader(socket.InputStream);
+                // Set inputstream options so that we don't have to know the data size
+                await reader.LoadAsync(1);
+                byte[] responseData = new byte[1];
+                reader.ReadBytes(responseData);
+
+                if (dataReceivedHandler != null)
+                {
+                    dataReceivedHandler(socket.Information.RemoteHostName, responseData);
+                }
+
+                reader.DetachStream();
+            }
+            catch (Exception exception)
+            {
+                /*
+                // If this is an unknown status, 
+                // it means that the error is fatal and retry will likely fail.
+                if (SocketError.GetStatus(exception.HResult) == SocketErrorStatus.Unknown)
+                {
+                    throw;
+                }
+
+                StatusText.Text = "Receive failed with error: " + exception.Message;
+                // Could retry, but for this simple example
+                // just close the socket.
+
+                closing = true;
+                clientSocket.Dispose();
+                clientSocket = null;
+                connected = false;
+                */
+                return;
+            }
+        }
+
+        internal async void write(byte[] data, int a,int b)
         {
             if (socket != null)
             {
@@ -58,45 +103,7 @@ namespace DirectPrint
                 // detach the stream and close it
                 writer.DetachStream();
                 writer.Dispose();
-
-                // Now try to receive data from server
-                if (waitresponse)
-                try
-                {
-                    DataReader reader = new DataReader(socket.InputStream);
-                    // Set inputstream options so that we don't have to know the data size
-                    await reader.LoadAsync(1);
-                    byte[] responseData = new byte[1];
-                    reader.ReadBytes(responseData);
-
-                    if (dataReceivedHandler != null){
-                        dataReceivedHandler(socket.Information.RemoteHostName,responseData);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    /*
-                    // If this is an unknown status, 
-                    // it means that the error is fatal and retry will likely fail.
-                    if (SocketError.GetStatus(exception.HResult) == SocketErrorStatus.Unknown)
-                    {
-                        throw;
-                    }
-
-                    StatusText.Text = "Receive failed with error: " + exception.Message;
-                    // Could retry, but for this simple example
-                    // just close the socket.
-
-                    closing = true;
-                    clientSocket.Dispose();
-                    clientSocket = null;
-                    connected = false;
-                    */
-                    return;
-                }
-
             }
-            
         }    
     }
 }

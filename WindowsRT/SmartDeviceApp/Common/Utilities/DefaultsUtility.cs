@@ -116,6 +116,8 @@ namespace SmartDeviceApp.Common.Utilities
                     value = (int.TryParse(strValue, out intValue)) ? intValue : -1;
                     break;
                 case ListValueType.String:
+                    value = strValue;
+                    break;
                 default:
                     // Do nothing
                     break;

@@ -65,12 +65,12 @@ namespace SmartDeviceApp.ViewModels
             
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(String propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //public void OnPropertyChanged(String propertyName)
+        //{
+        //    if (PropertyChanged != null)
+        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        //}
 
         public ObservableCollection<PrinterSearchItem> PrinterSearchList
         {
@@ -78,7 +78,7 @@ namespace SmartDeviceApp.ViewModels
             set
             {
                 _printerSearchList = value;
-                OnPropertyChanged("PrinterSearchList");
+                //OnPropertyChanged("PrinterSearchList");
             }
         }
 
@@ -88,7 +88,7 @@ namespace SmartDeviceApp.ViewModels
             set
             {
                 _willRefresh = value;
-                OnPropertyChanged("WillRefresh");
+                //OnPropertyChanged("WillRefresh");
             }
         }
 

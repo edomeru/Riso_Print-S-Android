@@ -14,6 +14,7 @@ using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Models;
 using System;
 using System.Text;
+using Windows.Foundation;
 using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
@@ -43,7 +44,7 @@ namespace SmartDeviceApp.Controllers
             _printJob = new DirectPrint.directprint_job();
 
             _printJob.job_name = name;
-            _printJob.filename = name; // TODO: (confirm) To be deleted
+            //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
             _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
             _printJob.ip_address = ipAddress;
@@ -77,7 +78,10 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void CancelPrintJob()
         {
-            _directPrint.cancelPrint();
+            if (_directPrint != null)
+            {
+                _directPrint.cancelPrint();
+            }
         }
 
         /// <summary>
@@ -86,6 +90,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="progress">value</param>
         public void UpdateProgress(float progress)
         {
+            System.Diagnostics.Debug.WriteLine("[DirectPrintController] UpdateProgress:" + progress);
             if (UpdatePrintJobProgressEventHandler != null)
             {
                 UpdatePrintJobProgressEventHandler(progress);
@@ -98,6 +103,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="result">result value</param>
         public void ReceiveResult(int result)
         {
+            System.Diagnostics.Debug.WriteLine("[DirectPrintController] ReceiveResult:" + result);
             if (SetPrintJobResultEventHandler != null)
             {
                 SetPrintJobResultEventHandler(_printJob.job_name, _startTime, result);

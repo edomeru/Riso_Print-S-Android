@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
@@ -31,8 +33,6 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_AddPrinterViewModel_SetVisibilities()
         {
-            
-
             viewModel.setVisibilities();
 
             Assert.AreEqual(true, viewModel.IsButtonVisible);
@@ -47,18 +47,10 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
-        public async  void Test_AddPrinterViewModel_GetSetPrinterSearchList()
+        public void Test_AddPrinterViewModel_GetSetPrinterSearchList()
         {
             ObservableCollection<PrinterSearchItem> tempList = new ObservableCollection<PrinterSearchItem>();
 
-            PrinterSearchItem p = new PrinterSearchItem();
-            await ExecuteOnUIThread(() =>
-            {
-                p.Ip_address = "192.168.0.1";
-                p.Name = "test";
-                p.IsInPrinterList = false;
-                tempList.Add(p);
-            });
             viewModel.PrinterSearchList = tempList;
             ObservableCollection<PrinterSearchItem> tempList2 = viewModel.PrinterSearchList;
 
@@ -104,6 +96,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_AddPrinterViewModel_AddPrinterCommandIpIsEmpty()
         {
+            PrinterController.Instance.Initialize();
             viewModel.IpAddress = "";
             viewModel.AddPrinter.Execute(null);
             Assert.IsNotNull(viewModel.AddPrinter);
@@ -122,9 +115,13 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(false, viewModel.IsProgressRingVisible);
         }
 
-        public static IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action)
+        [TestMethod]
+        public void Test_AddPrinterViewModel_SetRightPaneMode()
         {
-            return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, action);
+            // Note: Test for coverage only; No tests to assert
+            var viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            viewControlViewModel.ScreenMode = ScreenMode.Printers;
+            Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane2);
         }
     }
 }

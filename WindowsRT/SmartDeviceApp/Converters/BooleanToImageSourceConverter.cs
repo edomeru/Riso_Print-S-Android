@@ -13,7 +13,7 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (!(value is bool))
+            if (value == null || !(value is bool))
                 return DependencyProperty.UnsetValue;
             var isInvert = false;
             if (parameter != null) isInvert = System.Convert.ToBoolean(parameter);

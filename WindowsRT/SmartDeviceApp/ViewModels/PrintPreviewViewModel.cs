@@ -159,7 +159,8 @@ namespace SmartDeviceApp.ViewModels
                 
         private void SetViewMode(ViewMode viewMode)
         {
-            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
+            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
+                _viewControlViewModel.ScreenMode != ScreenMode.Home) return;
             switch (viewMode)
             {
                 case ViewMode.MainMenuPaneVisible:

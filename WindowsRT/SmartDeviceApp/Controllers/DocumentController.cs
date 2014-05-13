@@ -38,8 +38,6 @@ namespace SmartDeviceApp.Controllers
         private const string PDF_PASSWORD_EMPTY = "";
 
         private Document _document;
-        private bool _isFileLoaded;
-        private bool _isFromFilePicker = true;
 
         /// <summary>
         /// Number of pages of the actual PDF file
@@ -61,20 +59,6 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public LoadDocumentResult Result { get; private set; }
 
-        /// <summary>
-        /// Flag to determine if document is loaded from FilePicker
-        /// </summary>
-        public bool IsFromFilePicker { 
-            get
-            {
-                return _isFromFilePicker;
-            }
-            private set
-            {
-                _isFromFilePicker = value;
-            }
-        }
-
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
         // http://csharpindepth.com/Articles/General/Singleton.aspx
@@ -94,16 +78,13 @@ namespace SmartDeviceApp.Controllers
         /// Copies the PDF to AppData temporary store and opens it
         /// </summary>
         /// <param name="file">source PDF file</param>
-        /// <param name="isFromFilePicker">true when opened from FilePicker, false from FileActivation event</param>
-        /// <returns></returns>
-        public async Task Load(StorageFile file, bool isFromFilePicker)
+        /// <returns>task</returns>
+        public async Task Load(StorageFile file)
         {
             if (file == null)
             {
                 return;
             }
-
-            IsFromFilePicker = isFromFilePicker;
 
             try
             {
@@ -122,23 +103,13 @@ namespace SmartDeviceApp.Controllers
                 _document = new Document(file.Path, PdfFile.Path, pdfDocument);
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
-                _isFileLoaded = true;
                 Result = LoadDocumentResult.Successful;
 
                 await GenerateLogicalPages(0, 0); // Pre-load LogicalPages
             }
-            catch (FileNotFoundException ex)
-            {
-                // CopyAsync was not able to find the original source
-                LogUtility.LogError(ex);
-                _isFileLoaded = false;
-                Result = LoadDocumentResult.ErrorReadPdf;
-            }
             catch (Exception ex)
             {
                 LogUtility.LogError(ex);
-                // Error in loading/reading TEMP_PDF_NAME
-                _isFileLoaded = false;
                 Result = LoadDocumentResult.ErrorReadPdf;
 
                 // Check HResult value since LoadFromFileAsync returns error for
@@ -161,11 +132,11 @@ namespace SmartDeviceApp.Controllers
         public async Task Unload()
         {
             await StorageFileUtility.DeleteAllTempFiles();
-            if (_document != null)
-            {
-                _document = null;
-            }
-            _isFileLoaded = false;
+            _document = null;
+            PageCount = 0;
+            PdfFile = null;
+            FileName = null;
+            Result = LoadDocumentResult.NotStarted;
         }
 
         /// <summary>
@@ -178,8 +149,14 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task with generated LogicalPage(s)</returns>
         public async Task<List<LogicalPage>> GetLogicalPages(int basePageIndex, int numPages)
         {
-            List<LogicalPage> logicalPages = new List<LogicalPage>();
+            List<LogicalPage> logicalPages = null;
 
+            if (Result != LoadDocumentResult.Successful)
+            {
+                return logicalPages;
+            }
+
+            logicalPages = new List<LogicalPage>();
             int offset = 0;
             do
             {
@@ -221,7 +198,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task GenerateLogicalPages(int basePageIndex, int numPages)
         {
-            if (!_isFileLoaded)
+            if (Result != LoadDocumentResult.Successful)
             {
                 return;
             }
@@ -296,7 +273,7 @@ namespace SmartDeviceApp.Controllers
                         {
                             // Scale to destination condering the device's DPI
                             PdfPageRenderOptions opt = new PdfPageRenderOptions();
-                            double dpiScaleFactor = ImageConstant.DpiScaleFactor;
+                            double dpiScaleFactor = ImageConstant.GetDpiScaleFactor();
                             if (dpiScaleFactor > 1.0)
                             {
                                 opt.DestinationWidth = (uint)(pdfPage.Size.Width / dpiScaleFactor);

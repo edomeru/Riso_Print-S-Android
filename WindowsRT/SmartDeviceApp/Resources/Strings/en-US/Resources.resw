@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_APP_NAME" xml:space="preserve">
-    <value>SmartDeviceApp</value>
+    <value>RISO Smart Print</value>
   </data>
   <data name="IDS_LBL_BACK" xml:space="preserve">
     <value>Back</value>
@@ -561,7 +561,6 @@
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
   </data>
-  <!-- NOT IN WORDING LIST - START -->
   <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
     <value>Page {0} / {1}</value>
   </data>
@@ -574,5 +573,4 @@
   <data name="IDS_LBL_NO_NAME" xml:space="preserve">
     <value>No name</value>
   </data>
-  <!-- NOT IN WORDING LIST - END -->
 </root>

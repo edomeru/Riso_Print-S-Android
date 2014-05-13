@@ -12,6 +12,7 @@
 
 using Windows.Graphics.Display;
 using SmartDeviceApp.Controls;
+using System;
 
 namespace SmartDeviceApp.Common.Constants
 {
@@ -21,8 +22,20 @@ namespace SmartDeviceApp.Common.Constants
         #region Print Preview Page
 
         public const double BASE_DPI = 96.0;  // 96.0 DPI = 1 DIP
-        public static double DpiScaleFactor =
-            (int)DisplayInformation.GetForCurrentView().LogicalDpi / BASE_DPI;
+
+        public static double GetDpiScaleFactor()
+        {
+            try
+            {
+                return (int)DisplayInformation.GetForCurrentView().LogicalDpi / BASE_DPI;
+            }
+            catch (Exception)
+            {
+                // Error handling
+            }
+
+            return 1.0;
+        }
 
         #endregion Print Preview Page
 
