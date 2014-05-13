@@ -9,9 +9,12 @@
 package jp.co.riso.smartdeviceapp;
 
 public class AppConstants {
-    public static final boolean APP_SHOW_SPLASH = false;
-    public static final long APP_SPLASH_DURATION = 3000;
+    public static final boolean APP_SHOW_SPLASH = true;
+    public static final long APP_SPLASH_DURATION = 2000;
     public static final String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
+    
+    public static final String CONST_PDF_DIR = "pdfs";
+    public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
     
     // Part of Memory to be allocated to Print Preview
     // Bit shift operator
@@ -23,10 +26,14 @@ public class AppConstants {
     public static final String PREF_KEY_LOGIN_ID = "pref_key_card_id";
     public static final String PREF_DEFAULT_LOGIN_ID = "";
     
-    public static final String PREF_KEY_PIN_CODE = "pref_key_pin_code";
-    public static final String PREF_DEFAULT_PIN_CODE = "";
+    public static final String PREF_KEY_AUTH_SECURE_PRINT = "pref_key_secure_print";
+    public static final boolean PREF_DEFAULT_AUTH_SECURE_PRINT = false;
+    
+    public static final String PREF_KEY_AUTH_PIN_CODE = "pref_key_pin_code";
+    public static final String PREF_DEFAULT_AUTH_PIN_CODE = "";
     
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     public static final int CONST_TIMEOUT_PING = 100;
     public static final int CONST_UPDATE_INTERVAL = 5000; // 5 seconds
+    public static final String XML_FILENAME = "printsettings.xml";
 }

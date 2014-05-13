@@ -1,0 +1,50 @@
+﻿<base:PageBase x:Name="settingsPage"
+    x:Class="SmartDeviceApp.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="using:SmartDeviceApp.Common.Base"
+    xmlns:local="using:SmartDeviceApp.Views"
+    xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled" 
+    DataContext="{Binding SettingsViewModel, Source={StaticResource Locator}}">
+    
+    <base:PageBase.Resources>
+        <Style x:Key="STYLE_SettingsPane" TargetType="StackPanel">
+            <Style.Setters>
+                <Setter Property="Width" Value="{StaticResource SIZE_SettingsPaneWidth}"/>
+                <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
+                <Setter Property="Orientation" Value="Vertical"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+            </Style.Setters>
+        </Style>
+        <ControlTemplate x:Key="TEMPLATE_Header" TargetType="Grid">
+            
+        </ControlTemplate>
+    </base:PageBase.Resources>
+
+    <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=settingsPage}"
+                          Text="{Binding Source=IDS_LBL_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"
+                          Button1Visibility="Collapsed"
+                          Button2Visibility="Collapsed">
+        <StackPanel x:Name="settingsPane" Style="{StaticResource STYLE_SettingsPane}">
+            <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
+                <StackPanel Style="{StaticResource STYLE_StackLeft}">
+                    <TextBlock Text="{Binding Source=IDS_LBL_CARD_READER_GROUP, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                               Style="{StaticResource STYLE_TextListHeader}" />
+                </StackPanel>
+            </Grid>
+            <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_CARD_ID, Converter={StaticResource ResourceStringToTextConverter}}"
+                                        ValueText="{Binding CardId, Mode=TwoWay}"
+                                        IsNumeric="False"
+                                        IconVisibility="Collapsed"
+                                        SeparatorVisibility="Collapsed"
+                                        TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
+                                        TextBoxAlignment="Left"/>
+        </StackPanel>
+    </controls:ViewControl>
+</base:PageBase>
+

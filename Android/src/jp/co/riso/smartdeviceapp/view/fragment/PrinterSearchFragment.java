@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
@@ -73,9 +74,14 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
         mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
-        mListView.setLockScrollWhileRefreshing(false);
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
+        
+        RelativeLayout.LayoutParams progressLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_spinner).getLayoutParams();
+        progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        
+        RelativeLayout.LayoutParams arrowLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_image).getLayoutParams();
+        arrowLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
     }
     
     /** {@inheritDoc} */
@@ -203,7 +209,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public int onAddPrinter(Printer printer) {
         int ret = 0;
         
-        if (printer == null || mPrinterManager.isSearching()) {
+        if (printer == null) {
             return -1;
         }
         
@@ -213,7 +219,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             ret = -1;
             msg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else {
-            msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+            msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
         }
         
         InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));

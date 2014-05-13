@@ -28,6 +28,9 @@ public class InvalidCharacterFilter implements InputFilter {
      */
     public InvalidCharacterFilter(String invalidChars) {
         mCharSet = new HashSet<Character>();
+        if (invalidChars == null) {
+            return;
+        }
         for (int i = 0; i < invalidChars.length(); i++) {
             mCharSet.add(invalidChars.charAt(i));
         }

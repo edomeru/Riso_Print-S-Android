@@ -26,6 +26,9 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -33,9 +36,11 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
+public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener, Callback {
     
     private static final String TAG = "PrintJobsFragment";
+    private static final int MSG_SCROLL = 0;
+    
     private PrintJobsView mPrintJobsView;
     private PrintJobsGroupView mPrintGroupToDelete;
     // TODO: use of loading indicator
@@ -50,6 +55,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ConfirmDialogFragment mConfirmDialog;
     private ScrollView mScrollView;
     private int mScrollPosition;
+    private Handler mHandler;
     
     /**
      * Instantiate PrintJobsFragment
@@ -68,6 +74,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
+        mHandler = new Handler(this);
     }
     
     /** {@inheritDoc} */
@@ -140,8 +147,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /** {@inheritDoc} */
     @Override
     public boolean showDeleteDialog() {
-        String title = getResources().getString(R.string.ids_lbl_delete_jobs_title);
-        String message = getResources().getString(R.string.ids_lbl_delete_jobs_msg);
+        String title = getResources().getString(R.string.ids_info_msg_delete_jobs_title);
+        String message = getResources().getString(R.string.ids_info_msg_delete_jobs);
         String confirmMsg = getResources().getString(R.string.ids_lbl_ok);
         String cancelMsg = getResources().getString(R.string.ids_lbl_cancel);
         
@@ -180,7 +187,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void hideLoading() {
         if (!isTablet()) {
             getView().setBackgroundColor(getResources().getColor(R.color.theme_light_3));
-            mScrollView.scrollTo(0, mScrollPosition);
+            Message newMessage = Message.obtain(mHandler, MSG_SCROLL);
+            newMessage.arg1 = mScrollPosition;
+            mHandler.sendMessage(newMessage);
         }
         
         // mPrintJobsView.setVisibility(View.VISIBLE);
@@ -215,6 +224,17 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     }
     
     // ================================================================================
+    // INTERFACE - Callback
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean handleMessage(Message msg) {
+        mScrollView.setScrollY(msg.arg1);
+        return true;
+    }
+    
+    // ================================================================================
     // Internal Classes
     // ================================================================================
     
@@ -242,21 +262,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             if (mContextRef != null && mContextRef.get() != null) {
                 PrintJobManager pm = PrintJobManager.getInstance(mContextRef.get());
                 List<Printer> printers = pm.getPrintersWithJobs();
-                boolean printersChanged = false;
-                
-                if (mPrintersList != null) {
-                    if (mPrintersList.size() != printers.size()) {
-                        printersChanged = true;
-                    } else {
-                        for (int i = 0; i < printers.size(); i++){
-                            if (printers.get(i).getId() != mPrintersList.get(i).getId()) {
-                                printersChanged = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag() || printersChanged) {
+                // if initial data OR job is added OR printer w/jobs is deleted (no need to check if a printer is added since initially w/o print job)
+                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag() || mPrintersList.size() > printers.size()) {
                     mPrintJobsList = pm.getPrintJobs();
                     mPrintersList = printers;
                     pm.setRefreshFlag(false);

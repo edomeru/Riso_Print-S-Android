@@ -127,9 +127,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         
         for (int i = 0; i < MENU_ITEMS.length; i++) {
             view.findViewById(MENU_ITEMS[i]).setSelected(false);
+            view.findViewById(MENU_ITEMS[i]).setClickable(true);
         }
         
         view.findViewById(MENU_ITEMS[state]).setSelected(true);
+        view.findViewById(MENU_ITEMS[state]).setClickable(false);
     }
     
     /**

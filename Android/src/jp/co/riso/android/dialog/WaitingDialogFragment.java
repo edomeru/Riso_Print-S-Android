@@ -95,7 +95,8 @@ public class WaitingDialogFragment extends DialogFragment {
         
         dialog.setCanceledOnTouchOutside(false);
         dialog.setIndeterminate(true);
-        dialog.setCancelable(cancelable);
+        //http://developer.android.com/reference/android/app/DialogFragment.html#setCancelable(boolean)
+        setCancelable(cancelable);
         
         if (!cancelable) {
             // Disable the back button
@@ -136,6 +137,22 @@ public class WaitingDialogFragment extends DialogFragment {
             WaitingDialogListener listener = (WaitingDialogListener) getTargetFragment();
             listener.onCancel();
         }
+    }
+
+    /**
+     * Sets the message displayed in the Progress dialog.
+     * 
+     * @param msg String to be displayed
+     */
+    public void setMessage(final String msg) {
+        getActivity().runOnUiThread(new Runnable() {
+            
+            @Override
+            public void run() {
+                ProgressDialog dialog = (ProgressDialog)getDialog();
+                dialog.setMessage(msg);
+            }
+        });
     }
     
     // ================================================================================

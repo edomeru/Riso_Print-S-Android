@@ -272,9 +272,15 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     public void onClick(View v) {
         
         switch (v.getId()) {
-            case R.id.img_disclosure:
-                Printer printer = (Printer) v.getTag();
+            case R.id.printerListRow:
+                Printer printer = (Printer) v.findViewById(R.id.img_disclosure).getTag();
                 PrinterInfoFragment fragment = new PrinterInfoFragment();
+                fragment.setPrinter(printer);
+                switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
+                break;
+            case R.id.img_disclosure:
+                printer = (Printer) v.getTag();
+                fragment = new PrinterInfoFragment();
                 fragment.setPrinter(printer);
                 switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
                 break;

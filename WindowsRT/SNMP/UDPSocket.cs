@@ -19,10 +19,16 @@ namespace SNMP
         private DatagramSocket udpSocket;
 
         Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
+        Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
 
         internal void assignDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {
             dataReceivedHandler = d;
+        }
+
+        internal void assignTimeoutDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> t)
+        {
+            timeoutHandler = t;
         }
 
         private void socket_MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
@@ -35,12 +41,13 @@ namespace SNMP
             r.ReadBytes(buff);
             //NotifyUserFromAsyncThread("received : " + l + " bytes");            
 
-            dataReceivedHandler(args.RemoteAddress, buff);
+            if (dataReceivedHandler != null) dataReceivedHandler(args.RemoteAddress, buff);
         }
 
         internal void close()
         {
-            throw new NotImplementedException();
+            udpSocket.Dispose();
+            //throw new NotImplementedException();
         }
 
         internal void beginReceiving()
@@ -49,7 +56,7 @@ namespace SNMP
         }
 
         private int datacounter = 0;
-        internal async void sendData(byte[] data, string ipAddress, byte port, byte p2, int p3)
+        internal async void sendData(byte[] data, string ipAddress, byte port, byte timeout, int p3)
         {
             datacounter = 0;
 
@@ -67,6 +74,8 @@ namespace SNMP
             string p = port.ToString();
             //await udpSocket.BindServiceNameAsync("", connectionProfile.NetworkAdapter);
 
+
+            
             if (true)
             {
                 //EndpointPair endpoint = new EndpointPair(null, "", host, p);
@@ -85,7 +94,34 @@ namespace SNMP
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
+            startTimer(timeout, host);
         }
+
+
+        private bool isTimerRunning;
+        private async void startTimer(byte timeout, HostName host)
+        {
+            this.isTimerRunning = true;
+
+            //while (this.isTimerRunning)
+            {
+                await Task.Delay(timeout * 1000);
+
+                //HostName host = udpSocket.Information.RemoteAddress;
+                if (writer != null) writer.Dispose();
+                if (outputStream != null) outputStream.Dispose();
+                if (udpSocket != null) udpSocket.Dispose();
+                stopTimer();
+
+                if (timeoutHandler != null) timeoutHandler(host, null);
+            }
+        }
+
+        private void stopTimer()
+        {
+            this.isTimerRunning = false;
+        }
+
 
         public byte[] getSNMPPacket(string request, string community, string mibstring)
         {

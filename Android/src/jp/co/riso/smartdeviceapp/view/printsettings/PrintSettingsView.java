@@ -8,12 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.view.printsettings;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -33,21 +33,29 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -56,8 +64,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
-public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener, UpdateStatusCallback {
+public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener, UpdateStatusCallback, OnEditorActionListener {
     public static final String TAG = "PrintSettingsView";
     
     private static final String KEY_SELECTED_TITLES = "key_selected_titles";
@@ -66,6 +75,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private static final String KEY_SUB_SCROLL_POSITION = "key_sub_scroll_position";
     
     private static final String KEY_TAG_PRINTER = "key_tag_printer";
+    private static final String KEY_TAG_AUTHENTICATION = "key_tag_authentication";
+    private static final String KEY_TAG_SECURE_PRINT = "key_tag_secure_print";
+    private static final String KEY_TAG_PIN_CODE = "key_tag_pin_code";
     
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
@@ -95,7 +107,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private static final int ID_DISCLOSURE_VIEW = 0x1100000E;
     
-    private boolean mShowPrintControls = false;
+    private static final int ID_SECURE_PRINT_SWITCH = 0x1100000F;
+    private static final int ID_PIN_CODE_EDIT_TEXT = 0x1100001A;
+    
     private PrintSettings mPrintSettings = null;
     private int mPrinterId = PrinterManager.EMPTY_ID;
     private List<Printer> mPrintersList = null;
@@ -170,6 +184,27 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         initializeMainView();
         initializePrinterControls();
         initializePrintSettingsControls();
+        initializeAuthenticationSettingsView();
+        
+        initializeAuthenticationValues();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        View view = mMainLayout.findViewWithTag(PrintSettings.TAG_COPIES);
+        if (view != null && view instanceof EditText) {
+            Rect r = new Rect();
+            int[] coords = new int[2];
+            view.getHitRect(r);
+            view.getLocationOnScreen(coords);
+            r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
+            if (!r.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                checkEditTextValue((EditText)view);      
+                AppUtils.hideSoftKeyboard((Activity) getContext());    
+            }
+        }
+        return super.onInterceptTouchEvent(ev);
     }
     
     /**
@@ -404,14 +439,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 View disclosureView = (View) view.findViewById(ID_DISCLOSURE_VIEW);
                 if (disclosureView != null) {
                     if (enabled) {
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.VISIBLE);
                         view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
-                        disclosureView.setVisibility(View.VISIBLE);
                     } else if (hideControl) {
-                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
-                        disclosureView.setVisibility(View.GONE);
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.INVISIBLE);
+                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
                     } else {
-                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
-                        disclosureView.setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.listValueTextView).setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
                     }
                 } else {
                     boolean shouldHideControl = !enabled && hideControl;
@@ -706,8 +741,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private int getUpdatedStringId(String name, int id) {
         if (getPrinter() != null) {
             if (name.equals(PrintSettings.TAG_PUNCH)) {
-                if (id == R.string.ids_lbl_punch_3holes && getPrinter().getConfig().isPunch4Available()) {
-                    return R.string.ids_lbl_punch_4holes;
+                if (id == R.string.ids_lbl_punch_4holes && !getPrinter().getConfig().isPunch4Available()) {
+                    return R.string.ids_lbl_punch_3holes;
                 }
             }
         }
@@ -764,7 +799,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
             
             if (view instanceof Switch) {
+                ((Switch) view).setOnCheckedChangeListener(null);
                 ((Switch) view).setChecked(value == 1);
+                ((Switch) view).setOnCheckedChangeListener(this);
             }
         }
         
@@ -786,12 +823,28 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @param showPrintControls
      */
     public void setShowPrintControls(boolean showPrintControls) {
-        mShowPrintControls = showPrintControls;
-        
-        if (mShowPrintControls) {
-            mPrintControls.setVisibility(View.VISIBLE);
+        if (showPrintControls) {
+            mPrintControls.findViewById(ID_PRINT_HEADER).setVisibility(View.VISIBLE);
+            View selectedPrinter = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
+            selectedPrinter.findViewById(R.id.disclosureIndicator).setVisibility(View.VISIBLE);
+            selectedPrinter.setClickable(true);
+            
+            View authenticationGroup = mMainLayout.findViewWithTag(KEY_TAG_AUTHENTICATION);
+            authenticationGroup.setVisibility(View.VISIBLE);
+            
+            View targetGroup = (View) authenticationGroup.getTag(ID_COLLAPSE_TARGET_GROUP);
+            targetGroup.setVisibility(View.VISIBLE);
         } else {
-            mPrintControls.setVisibility(View.GONE);
+            mPrintControls.findViewById(ID_PRINT_HEADER).setVisibility(View.GONE);
+            View selectedPrinter = mPrintControls.findViewById(ID_PRINT_SELECTED_PRINTER);
+            selectedPrinter.findViewById(R.id.disclosureIndicator).setVisibility(View.GONE);
+            selectedPrinter.setClickable(false);
+
+            View authenticationGroup = mMainLayout.findViewWithTag(KEY_TAG_AUTHENTICATION);
+            authenticationGroup.setVisibility(View.GONE);
+            
+            View targetGroup = (View) authenticationGroup.getTag(ID_COLLAPSE_TARGET_GROUP);
+            targetGroup.setVisibility(View.GONE);
         }
     }
     
@@ -1000,6 +1053,98 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 addSettingsTitleView(group);
             }
         }
+    }
+    
+    // ================================================================================
+    // Authentication controls functions
+    // ================================================================================
+    
+    /**
+     * Add the authentication view sub items
+     * 
+     * @param ll
+     * @param titleText
+     * @param view
+     * @param tag
+     * @param withSeparator
+     */
+    private void addAuthenticationItemView(LinearLayout ll, String titleText, View view, String tag, boolean withSeparator) {
+        LinearLayout item = createItem(titleText, true, R.drawable.temp_img_printsettings_null, withSeparator, view);
+        item.setId(ID_SHOW_SUBVIEW_CONTAINER);
+        
+        item.setTag(tag);
+        
+        ll.addView(item);
+    }
+    
+    /**
+     * Initialize the authentication items
+     */
+    private void initializeAuthenticationSettingsView() {
+        LinearLayout itemsGroup = new LinearLayout(getContext());
+        itemsGroup.setOrientation(LinearLayout.VERTICAL);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.0f);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);
+        params.leftMargin = margin;
+        params.rightMargin = margin;
+        
+        Switch switchView = (Switch) LayoutInflater.from(getContext()).inflate(R.layout.printsettings_switch, null);
+        switchView.setLayoutParams(params);
+        switchView.setId(ID_SECURE_PRINT_SWITCH);
+        switchView.setOnCheckedChangeListener(this);
+            
+        String titleText = getResources().getString(R.string.ids_lbl_secure_print);
+        addAuthenticationItemView(itemsGroup, titleText, switchView, KEY_TAG_SECURE_PRINT, true);
+        
+        params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.0f);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        int width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_pincode_width);
+        params.width = width;
+        params.leftMargin = margin;
+        params.rightMargin = margin;
+        
+        EditText editText = (EditText) LayoutInflater.from(getContext()).inflate(R.layout.printsettings_input_pincode, null);
+        editText.setId(ID_PIN_CODE_EDIT_TEXT);
+        editText.setLayoutParams(params);
+        
+        titleText = getResources().getString(R.string.ids_lbl_pin_code);
+        addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, true);
+        
+        // Create Header
+        titleText = getResources().getString(R.string.ids_lbl_authentication);
+        
+        LinearLayout title = createTitle(titleText, true, R.drawable.selector_printsettings_collapsible, false, false);
+        title.setId(ID_COLLAPSE_CONTAINER);
+        title.setTag(ID_COLLAPSE_TARGET_GROUP, itemsGroup);
+        title.setTag(KEY_TAG_AUTHENTICATION);
+        title.setOnClickListener(this);
+        expandControl(title, false); // initially expand
+        
+        mPrintSettingsTitles.add(title); // Add to controls list
+        mMainLayout.addView(title);
+        
+        params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        itemsGroup.setLayoutParams(params);
+        mMainLayout.addView(itemsGroup);
+    }
+
+    /**
+     * Initialize the authentication setting values
+     */
+    private void initializeAuthenticationValues() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+
+        EditText pinCodeEditText = (EditText) mMainLayout.findViewById(ID_PIN_CODE_EDIT_TEXT);
+        pinCodeEditText.setText(pinCode);
+        
+        Switch securePrintSwitch = (Switch) mMainLayout.findViewById(ID_SECURE_PRINT_SWITCH);
+        securePrintSwitch.setChecked(isSecurePrint);
+        setSecurePrintEnabled(isSecurePrint);
     }
     
     // ================================================================================
@@ -1522,6 +1667,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             editText.setLayoutParams(params);
             editText.setTag(tag);
             editText.addTextChangedListener(new EditTextWatcher(tag, 1));
+            editText.setOnEditorActionListener(this);
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
@@ -1757,6 +1903,23 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         return null;
     }
     
+    /**
+     * Sets the secure print value. The UI and the persistent setting is updated
+     * 
+     * @param isEnabled
+     *            Secure Print is enabled.
+     */
+    private void setSecurePrintEnabled(boolean isEnabled) {
+        mMainLayout.findViewWithTag(KEY_TAG_PIN_CODE).setActivated(isEnabled);
+        mMainLayout.findViewById(ID_PIN_CODE_EDIT_TEXT).setVisibility(isEnabled ? View.VISIBLE : View.INVISIBLE);
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, isEnabled);
+        editor.apply();
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -1842,6 +2005,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     /** {@inheritDoc} */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView.getId() == ID_SECURE_PRINT_SWITCH) {
+            setSecurePrintEnabled(isChecked);
+            return;
+        }
+        
         if (updateValue(buttonView.getTag().toString(), isChecked ? 1 : 0)) {
             if (mListener != null) {
                 mListener.onPrintSettingsValueChanged(mPrintSettings);
@@ -1871,6 +2039,33 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
+    public void checkEditTextValue(TextView v) {
+        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
+            String value = v.getText().toString();
+            if (value.isEmpty()) {
+                v.setText(Integer.toString(1));
+            } else {
+                int val = Integer.parseInt(value);
+                if (val <= 0) {
+                    v.setText(Integer.toString(1));
+                }
+            }
+        }
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnEditorActionListener
+    // ================================================================================
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            checkEditTextValue(v);
+            return false;
+        }
+        return false;
+    }
+    
     // ================================================================================
     // Internal classes
     // ================================================================================
@@ -1894,21 +2089,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         public synchronized void afterTextChanged(Editable s) {
             if (!mEditing) {
                 mEditing = true;
-                
                 String digits = s.toString().replaceAll("\\D", "");
-                NumberFormat nf = NumberFormat.getIntegerInstance();
+                
                 try {
-                    String formatted = nf.format(Integer.parseInt(digits));
+                    String formatted = Integer.toString(Integer.parseInt(digits));
                     s.replace(0, s.length(), formatted);
                 } catch (NumberFormatException nfe) {
-                    s.replace(0, s.length(), "0");
                 }
                 
-                if (Integer.parseInt(s.toString()) <= mMinValue) {
-                    s.replace(0, s.length(), Integer.toString(mMinValue));
+                int value = mMinValue;
+                try {
+                    value = Integer.parseInt(s.toString());
+                } catch (NumberFormatException nfe) {
                 }
                 
-                if (updateValue(mTag, Integer.parseInt(s.toString()))) {
+                if (updateValue(mTag, value)) {
                     if (mListener != null) {
                         mListener.onPrintSettingsValueChanged(mPrintSettings);
                     }

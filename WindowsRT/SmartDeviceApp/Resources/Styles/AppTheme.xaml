@@ -1,0 +1,97 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Resources.Styles"
+    xmlns:conv="using:SmartDeviceApp.Converters">
+
+    <!-- APP THEME BRUSHES START -->
+    <SolidColorBrush x:Key="BRUSH_Gray1" Color="#CDCDCD" />
+    <SolidColorBrush x:Key="BRUSH_Gray2" Color="#ADADAD" />
+    <SolidColorBrush x:Key="BRUSH_Gray3" Color="#919191" />
+    <SolidColorBrush x:Key="BRUSH_Gray4" Color="#242424" />
+    <SolidColorBrush x:Key="BRUSH_Black" Color="#000000" />
+    <SolidColorBrush x:Key="BRUSH_White" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="BRUSH_Purple1" Color="#FF8541D8" />
+    <SolidColorBrush x:Key="BRUSH_Purple2" Color="#5207B6" />
+    <!-- APP THEME BRUSHES END -->
+
+    <!-- PRINT SETTING CONSTANTS START -->
+    <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>
+    <x:Int32 x:Key="MAXLENGTH_AuthenticationLoginId">31</x:Int32>
+    <!-- PRINT SETTING CONSTANTS END -->
+
+    <!-- APP THEME CONSTANTS START -->
+    <x:Double x:Key="MARGIN_Default">20</x:Double>
+    <x:Double x:Key="MARGIN_List">50</x:Double>
+    <x:Double x:Key="MARGIN_Large">30</x:Double>
+    <x:Double x:Key="MARGIN_Medium">10</x:Double>
+    <x:Double x:Key="MARGIN_Small">5</x:Double>
+    <x:Double x:Key="MARGIN_Tiny">2</x:Double>
+    <x:Double x:Key="MARGIN_LeftSidePane">401</x:Double>
+    <x:Double x:Key="MARGIN_RightSidePane">-401</x:Double> 
+    
+    <GridLength x:Key="SIZE_TitleBarHeight">50</GridLength>
+    <GridLength x:Key="SIZE_PageNumberSliderHeight">50</GridLength>
+    <GridLength x:Key="SIZE_PageNumberTextHeight">20</GridLength>
+    <x:Double x:Key="SIZE_SidePaneWidthWithBorder">401</x:Double>
+    <x:Double x:Key="SIZE_SidePaneWidth">400</x:Double>
+    <x:Double x:Key="SIZE_SettingsPaneWidth">500</x:Double>
+    <x:Double x:Key="SIZE_MessageWidth">600</x:Double>
+    <x:Double x:Key="SIZE_MessageHeight">200</x:Double>
+    <x:Double x:Key="SIZE_ListItemHeight">60</x:Double>
+    <x:Double x:Key="SIZE_ListIconWidth">48</x:Double>
+    <x:Double x:Key="SIZE_ListIconHeight">48</x:Double>
+    <x:Double x:Key="SIZE_ListButton1Width">20</x:Double>
+    <x:Double x:Key="SIZE_ListButton1Height">20</x:Double>
+    <x:Double x:Key="SIZE_ListButton2Width">22</x:Double>
+    <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
+    <x:Double x:Key="SIZE_ListValue_ToggleWidth">50</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Short">80</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Long">200</x:Double>
+    <x:Double x:Key="SIZE_ProgressRing">50</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonWidth_Long">150</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonHeight_Long">60</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonWidth_Short">110</x:Double>
+    <x:Double x:Key="SIZE_DeleteButtonHeight_Short">50</x:Double>
+    <x:Double x:Key="SIZE_CancelButtonWidth_Short">110</x:Double>
+    <x:Double x:Key="SIZE_CancelButtonHeight_Short">40</x:Double>
+
+    <x:Double x:Key="OPACITY_Message">0.3</x:Double>
+    <!-- APP THEME CONSTANTS END-->
+
+    <!-- APP CONVERTERS START -->
+    <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <conv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+    <conv:HeightConverter x:Key="HeightConverter"/>
+    <conv:IntToStringConverter x:Key="IntToStringConverter"/>
+    <conv:ItemSelectedConverter x:Key="ItemSelectedConverter"/>
+    <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
+    <conv:MainMenuItemToIndexConverter x:Key="MainMenuItemToIndexConverter"/>
+    <conv:MainItemIndexToIsCheckedConverter x:Key="MainItemIndexToIsCheckedConverter"/>
+    <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
+    <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
+    <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
+    <conv:PrinterNameToTextConverter x:Key="PrinterNameToTextConverter"/>
+    <conv:PrintJobListToGroupVisibilityConverter x:Key="PrintJobListToGroupVisibilityConverter"/>
+    <conv:PrintJobListWidthConverter x:Key="PrintJobListWidthConverter"/>
+    <conv:PrintJobResultToImageSourceConverter x:Key="PrintJobResultToImageSourceConverter"/>
+    <conv:PrintJobToSeparatorVisibilityConverter x:Key="PrintJobToSeparatorVisibilityConverter"/>
+    <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
+    <conv:PrintSettingOptionToSeparatorVisibilityConverter x:Key="PrintSettingOptionToSeparatorVisibilityConverter"/>
+    <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>
+    <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
+    <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
+    <conv:SelectedPrinterIdToTextConverter x:Key="SelectedPrinterIdToTextConverter"/>
+    <conv:SelectedPrinterToBooleanConverter x:Key="SelectedPrinterToBooleanConverter"/>
+    <conv:SelectPrinterToSeparatorVisibilityConverter x:Key="SelectPrinterToSeparatorVisibilityConverter"/>
+    <conv:SeparatorLineGeometryEndPointConverter x:Key="SeparatorLineGeometryEndPointConverter"/>
+    <conv:SeparatorLineGeometryStartPointConverter x:Key="SeparatorLineGeometryStartPointConverter"/>
+    <conv:SidePaneLineGeometryEndPointConverter x:Key="SidePaneLineGeometryEndPointConverter"/>
+    <conv:SidePaneLineGeometryStartPointConverter x:Key="SidePaneLineGeometryStartPointConverter"/>
+    <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    <conv:WidthConverter x:Key="WidthConverter"/>
+    <conv:IntToBooleanConverter x:Key="IntToBooleanConverter"/>
+    <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
+    <!-- APP CONVERTERS END -->
+
+</ResourceDictionary>

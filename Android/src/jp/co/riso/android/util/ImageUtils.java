@@ -29,6 +29,9 @@ public final class ImageUtils {
      *            color
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color) {
+        if(canvas == null) {
+            return;
+        }
         renderBmpToCanvas(bmp, canvas, color, new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
     }
     
@@ -45,6 +48,9 @@ public final class ImageUtils {
      *            rectangular coordinates
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, Rect rect) {
+        if (bmp == null || rect == null) {
+            return;
+        }
         int x = rect.centerX();
         int y = rect.centerY();
         
@@ -99,6 +105,9 @@ public final class ImageUtils {
      *            scale of y-axis
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scaleX, float scaleY) {
+        if (bmp == null || canvas == null) {
+            return;
+        }
         Paint paint = new Paint();
         
         if (!color) {

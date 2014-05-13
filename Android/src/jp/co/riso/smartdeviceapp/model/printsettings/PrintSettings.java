@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
@@ -99,28 +100,33 @@ public class PrintSettings {
     
     /**
      * Constructor
+     * <p>
+     * This method creates PrintSettings from the database using printer ID.
+     * If not existing in the database, default values are used.
      * 
      * @param printerId
      *            Printer ID
      */
     public PrintSettings(int printerId) {
-        this();
         PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
-        // will overwrite the value if values are retrieved
         
         PrintSettings printSettings = manager.getPrintSetting(printerId);
-        if (printSettings != null){
-            for (String key : printSettings.getSettingValues().keySet()) {
-                mSettingValues.put(key, printSettings.getSettingValues().get(key));
-            }
+        
+        mSettingValues = new HashMap<String, Integer>();
+        
+        for (String key : printSettings.getSettingValues().keySet()) {
+            mSettingValues.put(key, printSettings.getSettingValues().get(key));
         }
     }
     
     /**
      * Initialize static objects
      */
-    private static void initializeStaticObjects() {
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
+    protected static void initializeStaticObjects(String fileName) {
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), fileName);
+        if (xmlString == null) {
+            return;
+        }
         
         Document printSettingsContent = null;
         
@@ -170,7 +176,7 @@ public class PrintSettings {
     // ================================================================================
     
     /**
-     * @return PJL formatted string 
+     * @return PJL formatted string
      */
     public String formattedString() {
         StringBuffer strBuf = new StringBuffer();
@@ -182,7 +188,6 @@ public class PrintSettings {
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }
         
-        Log.wtf(TAG, strBuf.toString());
         return strBuf.toString();
     }
     
@@ -347,6 +352,6 @@ public class PrintSettings {
         sGroupList = new ArrayList<Group>();
         sSettingMap = new HashMap<String, Setting>();
         
-        initializeStaticObjects();
+        initializeStaticObjects(AppConstants.XML_FILENAME);
     }
 }

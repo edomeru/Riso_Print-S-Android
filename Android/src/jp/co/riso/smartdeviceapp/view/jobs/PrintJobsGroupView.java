@@ -129,16 +129,14 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
-     * Restore state
+     * Restores the UI state (collapsed state and print jobs group to delete)
      * 
      * @param isCollapsed
      *            collapsed state
-     * @param jobToDelete
-     *            print job to delete
      * @param printerToDelete
-     *            printer to be deleted
+     *            print jobs group to be deleted
      */
-    public void restoreState(boolean isCollapsed, PrintJob jobToDelete, Printer printerToDelete) {
+    public void restoreState(boolean isCollapsed, Printer printerToDelete) {
         boolean isDeleteAllClicked = printerToDelete != null && printerToDelete.equals(mPrinter);
         
         if (isCollapsed) {
@@ -235,7 +233,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      */
     private void init() {
         if (!isInEditMode()) {
-            mTitle = getResources().getString(R.string.ids_lbl_delete_jobs_title);
+            mTitle = getResources().getString(R.string.ids_info_msg_delete_jobs_title);
             mOkText = getResources().getString(R.string.ids_lbl_ok);
             mErrorMessage = getResources().getString(R.string.ids_err_msg_delete_failed);
             setOrientation(VERTICAL);
@@ -492,7 +490,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             v.findViewById(R.id.printJobGroupDelete).setSelected(true);
         }
     }
-
+    
     /**
      * delete print job group view
      */

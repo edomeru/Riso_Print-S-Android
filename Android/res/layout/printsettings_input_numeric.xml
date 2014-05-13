@@ -5,6 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:inputType="number"
-    android:maxLength="3" >
+    android:maxLength="4" >
 
 </EditText>
