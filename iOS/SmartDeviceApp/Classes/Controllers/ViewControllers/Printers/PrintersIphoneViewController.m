@@ -172,15 +172,6 @@
     self.toDeleteIndexPath = selectedIndexPath;
 }
 
-- (IBAction)swipeRightAction:(id)sender
-{
-    //if a cell is in delete state, remove delete state
-    if(self.toDeleteIndexPath != nil)
-    {
-        [self removeDeleteState];
-        return;
-    }
-}
 - (IBAction)deleteButtonAction:(id)sender
 {
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"")  message:NSLocalizedString(@"IDS_LBL_DELETE_JOBS_MSG", @"") cancelButtonTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")];
