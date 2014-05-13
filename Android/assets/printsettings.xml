@@ -155,6 +155,7 @@
             icon="temp_img_printsettings_null"
             type="list"
             default="0" >
+            <option>ids_lbl_off</option>
             <option>ids_lbl_booklet_finishing_fold</option>
             <option>ids_lbl_booklet_finishing_foldstaple</option>
         </setting>
@@ -213,7 +214,6 @@
             default="0" >
             <option>ids_lbl_outputtray_auto</option>
             <option>ids_lbl_outputtray_facedown</option>
-            <option>ids_lbl_outputtray_faceup</option>
             <option>ids_lbl_outputtray_top</option>
             <option>ids_lbl_outputtray_stacking</option>
         </setting>
