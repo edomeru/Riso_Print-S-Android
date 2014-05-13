@@ -84,7 +84,7 @@ public class DirectPrintManager {
      * @param progress
      */
     private void onNotifyProgress(int status, float progress) {
-        Log.wtf(TAG, "onNotifyProgress " + status);
+        Log.d(TAG, "onNotifyProgress " + status);
         switch (status) {
             case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
             case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:

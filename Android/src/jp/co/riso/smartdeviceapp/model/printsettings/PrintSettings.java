@@ -188,7 +188,6 @@ public class PrintSettings {
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }
         
-        Log.wtf(TAG, strBuf.toString());
         return strBuf.toString();
     }
     
