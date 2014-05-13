@@ -106,6 +106,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     // Create progress label
     UILabel *progressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    progressLabel.backgroundColor = [UIColor clearColor];
     progressLabel.textAlignment = NSTextAlignmentCenter;
     [progressView addSubview:progressLabel];
     [progressView addConstraint:[NSLayoutConstraint constraintWithItem:progressLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:progressView attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f]];
