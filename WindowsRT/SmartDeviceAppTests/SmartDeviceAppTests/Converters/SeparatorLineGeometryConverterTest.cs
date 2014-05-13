@@ -8,7 +8,7 @@ using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 using Windows.Foundation;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class SeparatorLineGeometryStartPointConverterTest
@@ -34,14 +34,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = separatorLineGeometryStartPointConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => separatorLineGeometryStartPointConverter.ConvertBack(null, null, null, null));
         }
     }
 
@@ -69,14 +62,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = separatorLineGeometryEndPointConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => separatorLineGeometryEndPointConverter.ConvertBack(null, null, null, null));
         }
     }
 }

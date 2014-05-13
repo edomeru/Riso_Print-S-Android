@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Enum;
 using Windows.Storage;
+using SmartDeviceAppTests.Common.Utilities;
+using SQLite;
+using System.IO;
 
 namespace SmartDeviceAppTests.Controllers
 {
@@ -15,6 +18,7 @@ namespace SmartDeviceAppTests.Controllers
     public class DatabaseControllerTest
     {
 
+        private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
         private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
 
         [TestInitialize]
@@ -23,14 +27,15 @@ namespace SmartDeviceAppTests.Controllers
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
             await DatabaseController.Instance.Initialize();
-            // Note: no public property to assert
         }
 
         [TestCleanup]
-        public void Cleanup()
+        public async Task Cleanup()
         {
+            string _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
+            SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(_databasePath);
+            await UnitTestUtility.DropAllTables(_dbConnection);
             DatabaseController.Instance.Cleanup();
-            // Note: no public property to assert
         }
 
         [TestMethod]
@@ -58,14 +63,18 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, result);
         }
 
-        //[TestMethod]
-        //public async Task Test_InsertPrinter_Invalid()
-        //{
-        //    Printer printer = new Printer();
-        //    await DatabaseController.Instance.InsertPrinter(printer);
-        //    int result = await DatabaseController.Instance.InsertPrinter(printer); // Insert twice
-        //    Assert.AreEqual(0, result);
-        //}
+        [TestMethod]
+        public void Test_InsertPrinter_Invalid()
+        {
+            //Printer printer = new Printer();
+            //await DatabaseController.Instance.InsertPrinter(printer);
+            //int result = await DatabaseController.Instance.InsertPrinter(printer); // Insert twice
+            //Assert.AreEqual(0, result);
+
+            {
+                Assert.Fail("Not yet implemented");
+            }
+        }
 
         [TestMethod]
         public async Task Test_InsertPrinter_Valid()
@@ -73,6 +82,7 @@ namespace SmartDeviceAppTests.Controllers
             Printer printer = new Printer();
             int result = await DatabaseController.Instance.InsertPrinter(printer);
             Assert.AreEqual(1, result);
+            Assert.IsTrue(printer.Id > -1);
         }
 
         [TestMethod]
@@ -184,16 +194,20 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(1, result);
         }
 
-        //[TestMethod]
-        //public async Task Test_SetDefaultPrinter_Invalid()
-        //{
-        //    Printer printer = new Printer();
-        //    await DatabaseController.Instance.InsertPrinter(printer);
-        //    await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+        [TestMethod]
+        public void Test_SetDefaultPrinter_Invalid()
+        {
+            //Printer printer = new Printer();
+            //await DatabaseController.Instance.InsertPrinter(printer);
+            //await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
 
-        //    int result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id); // Twice
-        //    Assert.AreEqual(0, result);
-        //}
+            //int result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id); // Twice
+            //Assert.AreEqual(0, result);
+
+            {
+                Assert.Fail("Not yet implemented");
+            }
+        }
 
         [TestMethod]
         public async Task Test_SetDefaultPrinter_Overwrite()
@@ -252,14 +266,18 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, result);
         }
 
-        //[TestMethod]
-        //public async Task Test_InsertPrintSettings_Invalid()
-        //{
-        //    PrintSettings printSettings = new PrintSettings();
-        //    await DatabaseController.Instance.InsertPrintSettings(printSettings);
-        //    int result = await DatabaseController.Instance.InsertPrintSettings(printSettings); // Insert twice
-        //    Assert.AreEqual(0, result);
-        //}
+        [TestMethod]
+        public void Test_InsertPrintSettings_Invalid()
+        {
+            //PrintSettings printSettings = new PrintSettings();
+            //await DatabaseController.Instance.InsertPrintSettings(printSettings);
+            //int result = await DatabaseController.Instance.InsertPrintSettings(printSettings); // Insert twice
+            //Assert.AreEqual(0, result);
+
+            {
+                Assert.Fail("Not yet implemented");
+            }
+        }
 
         [TestMethod]
         public async Task Test_InsertPrintSettings_Valid()
@@ -267,6 +285,7 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettings printSettings = new PrintSettings();
             int result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
             Assert.AreEqual(1, result);
+            Assert.IsTrue(printSettings.Id > -1);
         }
 
         [TestMethod]
@@ -335,21 +354,26 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, result);
         }
 
-        //[TestMethod]
-        //public async Task Test_InsertPrintJob_Invalid()
-        //{
-        //    PrintJob PrintJob = new PrintJob();
-        //    await DatabaseController.Instance.InsertPrintJob(PrintJob);
-        //    int result = await DatabaseController.Instance.InsertPrintJob(PrintJob); // Insert twice
-        //    Assert.AreEqual(0, result);
-        //}
+        [TestMethod]
+        public void Test_InsertPrintJob_Invalid()
+        {
+            //PrintJob PrintJob = new PrintJob();
+            //await DatabaseController.Instance.InsertPrintJob(PrintJob);
+            //int result = await DatabaseController.Instance.InsertPrintJob(PrintJob); // Insert twice
+            //Assert.AreEqual(0, result);
+
+            {
+                Assert.Fail("Not yet implemented");
+            }
+        }
 
         [TestMethod]
         public async Task Test_InsertPrintJob_Valid()
         {
-            PrintJob PrintJob = new PrintJob();
-            int result = await DatabaseController.Instance.InsertPrintJob(PrintJob);
+            PrintJob printJob = new PrintJob();
+            int result = await DatabaseController.Instance.InsertPrintJob(printJob);
             Assert.AreEqual(1, result);
+            Assert.IsTrue(printJob.Id > -1);
         }
 
         [TestMethod]

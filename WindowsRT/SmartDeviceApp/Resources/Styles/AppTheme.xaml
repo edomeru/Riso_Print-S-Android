@@ -62,9 +62,6 @@
     <conv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
-    <conv:ItemClickedConverter x:Key="ItemClickedConverter"/>
-    <conv:MainMenuItemToIndexConverter x:Key="MainMenuItemToIndexConverter"/>
-    <conv:MainItemIndexToIsCheckedConverter x:Key="MainItemIndexToIsCheckedConverter"/>
     <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>

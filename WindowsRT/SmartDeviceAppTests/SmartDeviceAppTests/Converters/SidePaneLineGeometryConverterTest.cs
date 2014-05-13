@@ -7,9 +7,9 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 using Windows.Foundation;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class SidePaneLineGeometryStartPointConverterTest
@@ -20,20 +20,15 @@ namespace SmartDeviceAppTests.ViewModels
         public void Test_Convert()
         {
             var result = sidePaneLineGeometryStartPointConverter.Convert(0, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(new Point(0, 0), result);
+            Assert.AreEqual(new Point(0, 0), result);
         }
 
         [TestMethod]
+        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = sidePaneLineGeometryStartPointConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            // Note: Not implemented: Will throw exception
+            Assert.ThrowsException<NotImplementedException>(() => sidePaneLineGeometryStartPointConverter.ConvertBack(null, null, null, null));
         }
     }
 
@@ -42,24 +37,17 @@ namespace SmartDeviceAppTests.ViewModels
     {
         private SidePaneLineGeometryEndPointConverter sidePaneLineGeometryEndPointConverter = new SidePaneLineGeometryEndPointConverter();
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_Convert()
         {
             var result = sidePaneLineGeometryEndPointConverter.Convert(0, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(new Point(0, Window.Current.Bounds.Height), result);
+            Assert.AreEqual(new Point(0, Window.Current.Bounds.Height), result);
         }
 
         [TestMethod]
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = sidePaneLineGeometryEndPointConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => sidePaneLineGeometryEndPointConverter.ConvertBack(null, null, null, null));
         }
     }
 }

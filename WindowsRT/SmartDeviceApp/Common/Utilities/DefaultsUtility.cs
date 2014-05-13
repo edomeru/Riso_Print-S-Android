@@ -79,8 +79,11 @@ namespace SmartDeviceApp.Common.Utilities
                     {
                         string[] tokens = line.Split(new char[] { ' ', ',' },
                             StringSplitOptions.RemoveEmptyEntries);
-                        // First token as key, last token as value
-                        _sqlScriptDefaults.Add(tokens[0], tokens[tokens.Length - 1]);
+                        // First token as key, last token as value. Ignore if there is existing.
+                        if (!_sqlScriptDefaults.ContainsKey(tokens[0]))
+                        {
+                            _sqlScriptDefaults.Add(tokens[0], tokens[tokens.Length - 1]);
+                        }
                     }
                 }
             }

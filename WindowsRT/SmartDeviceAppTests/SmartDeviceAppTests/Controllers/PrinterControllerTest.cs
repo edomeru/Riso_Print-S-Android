@@ -8,12 +8,27 @@ using System.Threading.Tasks;
 using System.Threading;
 using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
+using Windows.Storage;
 
 namespace SmartDeviceAppTests.Controllers
 {
     [TestClass]
     public class PrinterControllerTest
     {
+        private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
+
+        [TestInitialize]
+        public async Task Initialize()
+        {
+            // Initilize database
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+        }
+
+
+
+
         [TestMethod]
         public void Test_PrinterController_Initialize()
         {
@@ -42,7 +57,7 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PrinterController_AddPrinterPrinterAlreadyInList()
+        public void Test_PrinterController_AddPrinterPrinterMax()
         {
             string[] ips = { "192.168.0.1", "192.168.0.2", "192.168.0.3", "192.168.0.4", "192.168.0.5",
                            "192.168.0.6", "192.168.0.7", "192.168.0.8", "192.168.0.9", "192.168.0.10", "192.168.0.11"};
@@ -103,7 +118,7 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public void Test_PrinterController_GetSetPrinterList()
         {
-            ObservableCollection<Printer> printers = new ObservableCollection<Printer>;
+            ObservableCollection<Printer> printers = new ObservableCollection<Printer>();
             PrinterController.Instance.PrinterList = printers;
 
             Assert.AreEqual(printers, PrinterController.Instance.PrinterList);
@@ -112,7 +127,7 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public void Test_PrinterController_GetSetPrinterSearchList()
         {
-            ObservableCollection<PrinterSearchItem> printerSearch = new ObservableCollection<PrinterSearchItem>;
+            ObservableCollection<PrinterSearchItem> printerSearch = new ObservableCollection<PrinterSearchItem>();
             PrinterController.Instance.PrinterSearchList = printerSearch;
 
             Assert.AreEqual(printerSearch, PrinterController.Instance.PrinterSearchList);
@@ -133,7 +148,7 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PrinterController_AddFromPrinterSearch()
+        public void Test_PrinterController_AddFromPrinterSearchMax()
         {
             string[] ips = { "192.168.0.1", "192.168.0.2", "192.168.0.3", "192.168.0.4", "192.168.0.5",
                            "192.168.0.6", "192.168.0.7", "192.168.0.8", "192.168.0.9", "192.168.0.10"};
@@ -144,6 +159,26 @@ namespace SmartDeviceAppTests.Controllers
             }
 
             PrinterController.Instance.addPrinterFromSearch("192.168.0.11");
+        }
+
+        [TestMethod]
+        public void Test_PrinterController_AddFromPrinterSearchSame()
+        {
+            string[] ips = { "192.168.0.1", "192.168.0.2", "192.168.0.3", "192.168.0.4", "192.168.0.5",
+                           "192.168.0.6", "192.168.0.7", "192.168.0.8", "192.168.0.9"};
+            int firstCount = PrinterController.Instance.PrinterList.Count;
+            foreach (var ip in ips)
+            {
+                PrinterController.Instance.addPrinter(ip);
+            }
+
+            PrinterController.Instance.addPrinterFromSearch("192.168.0.9");
+        }
+
+        [TestMethod]
+        public void Test_PrinterController_AddFromPrinterSearch()
+        {
+            PrinterController.Instance.addPrinterFromSearch("192.168.0.9");
         }
     }
 }

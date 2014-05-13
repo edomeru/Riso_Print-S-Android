@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class ResourceStringToTextConverterTest
@@ -51,17 +51,10 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(String.Empty, result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = resourceStringToTextConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => resourceStringToTextConverter.ConvertBack(null, null, null, null));
         }
     }
 }

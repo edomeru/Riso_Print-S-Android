@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
     <Compile Include="Common\Utilities\GlobalizationUtilityTest.cs" />
+    <Compile Include="Common\Utilities\UnitTestUtility.cs" />
     <Compile Include="Controllers\DocumentControllerTest.cs" />
     <Compile Include="Controllers\NetworkControllerTest.cs" />
     <Compile Include="Controllers\PrinterControllerTest.cs" />
@@ -121,12 +122,10 @@
     <Compile Include="Controllers\DirectPrintControllerTest.cs" />
     <Compile Include="Controllers\MainControllerTest.cs" />
     <Compile Include="Controllers\SNMPControllerTest.cs" />
-    <Compile Include="Controllers\StorageFileUtilityTest.cs" />
+    <Compile Include="Common\Utilities\StorageFileUtilityTest.cs" />
+    <Compile Include="Controllers\JobControllerTest.cs" />
     <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
-    <Compile Include="Converters\ItemClickedConverterTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Converters\StringToVisibilityConverterTest.cs" />
     <Compile Include="Converters\SidePaneLineGeometryConverterTest.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverterTest.cs" />
@@ -181,6 +180,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="TestData\SqlScript\insert_printjob_extra.sql" />
+    <Content Include="TestData\SqlScript\insert_printjob_single.sql" />
+    <Content Include="TestData\SqlScript\insert_printer_single.sql" />
+    <Content Include="TestData\SqlScript\SampleData.sql" />
     <None Include="packages.config" />
     <None Include="SmartDeviceAppTests_TemporaryKey.pfx" />
     <Content Include="TestData\PDF\RZ1070.pdf" />
@@ -225,10 +228,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\netcore45\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <!--<Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
-    </Reference>-->
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images\" />

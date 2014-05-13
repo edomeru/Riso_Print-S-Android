@@ -6,33 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class WidthConverterTest
     {
         private WidthConverter widthConverter = new WidthConverter();
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_Convert()
         {
             var result = widthConverter.Convert(null, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(Window.Current.Bounds.Width, result);
+            Assert.AreEqual(Window.Current.Bounds.Width, result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = widthConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => widthConverter.ConvertBack(null, null, null, null));
         }
     }
 
@@ -41,29 +34,22 @@ namespace SmartDeviceAppTests.ViewModels
     {
         private ResizedViewWidthConverter resizedViewWidthConverter = new ResizedViewWidthConverter();
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_Convert()
         {
             // Test null
             var result = resizedViewWidthConverter.Convert(null, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(result);
+            Assert.IsNotNull(result);
 
             var value = "RightPaneVisible_ResizedWidth";
             result = resizedViewWidthConverter.Convert(value, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"], result);
+            Assert.AreEqual(Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"], result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = resizedViewWidthConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => resizedViewWidthConverter.ConvertBack(null, null, null, null));
         }
     }
 
@@ -72,24 +58,17 @@ namespace SmartDeviceAppTests.ViewModels
     {
         private PrintJobListWidthConverter printJobListWidthConverter = new PrintJobListWidthConverter();
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_Convert()
         {
             var result = printJobListWidthConverter.Convert(null, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(result);
+            Assert.IsNotNull(result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printJobListWidthConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => printJobListWidthConverter.ConvertBack(null, null, null, null));
         }
     }
 
@@ -98,24 +77,17 @@ namespace SmartDeviceAppTests.ViewModels
     {
         private HeightConverter heightConverter = new HeightConverter();
 
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_Convert()
         {
             var result = heightConverter.Convert(null, null, null, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(Window.Current.Bounds.Height, result);
+            Assert.AreEqual(Window.Current.Bounds.Height, result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = heightConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => heightConverter.ConvertBack(null, null, null, null));
         }
     }
 }

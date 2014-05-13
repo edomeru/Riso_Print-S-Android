@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PrintSettingOptionToBooleanConverterTest
@@ -44,16 +44,10 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
+        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printSettingOptionToBooleanConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            Assert.ThrowsException<NotImplementedException>(() => printSettingOptionToBooleanConverter.ConvertBack(null, null, null, null));
         }
     }
 }

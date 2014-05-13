@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
     Background="{StaticResource BRUSH_Gray4}">
-    
+        
     <Grid.ChildrenTransitions>
         <TransitionCollection>
             <PaneThemeTransition/>
@@ -24,7 +24,6 @@
     </Grid.ColumnDefinitions>
     <local:SidePaneTitleControl Grid.Row="0" Grid.Column="0"
                                 Title="{Binding Source=IDS_APP_NAME, Converter={StaticResource ResourceStringToTextConverter}}" ButtonVisibility="Collapsed" ProgressRingVisibility="Collapsed"/>
-
     <ListView x:Name="listView" 
               Grid.Row="1" Grid.Column="0"
               ItemsSource="{Binding Path=MainMenuItems}"
@@ -32,9 +31,9 @@
         <ListView.ItemTemplate>
             <DataTemplate>
                 <local:MainMenuKeyControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
-                                          Index="{Binding Converter={StaticResource MainMenuItemToIndexConverter}}"
                                           Command="{Binding Command}"
-                                          GroupName="mainMenuGroup"
+                                          GroupName="mainMenuGroup" 
+                                          IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                           SeparatorVisibility="{Binding Converter={StaticResource MainMenuItemToSeparatorVisibilityConverter}}"
                                           Width="{Binding Width, ElementName=mainMenuPane}"/>
             </DataTemplate>

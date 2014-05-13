@@ -272,19 +272,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public int SelectedMainMenuItem
-        {
-            get { return _selectedMainMenuItem; }
-            set
-            {
-                if (_selectedMainMenuItem != value)
-                {
-                    _selectedMainMenuItem = value;
-                    RaisePropertyChanged("SelectedMainMenuItem");
-                }
-            }
-        }
-
         public ICommand GoToHomePage
         {
             get
@@ -378,13 +365,12 @@ namespace SmartDeviceApp.ViewModels
         private void InitializeMainMenu()
         {
             MainMenuItems = new MainMenuItemList();
-            // TODO: Add handling to toggle preview page or home page
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_HOME", GoToHomePage));
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_PRINTERS", GoToPrintersPage));
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_JOBS", GoToJobsPage));
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_SETTINGS", GoToSettingsPage));
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_HELP", GoToHelpPage));
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_LEGAL", GoToLegalPage));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_HOME", GoToHomePage, true));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_PRINTERS", GoToPrintersPage, false));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_JOBS", GoToJobsPage, false));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_SETTINGS", GoToSettingsPage, false));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_HELP", GoToHelpPage, false));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_LEGAL", GoToLegalPage, false));
         }
 
         private void GoToHomePageExecute()
@@ -393,7 +379,6 @@ namespace SmartDeviceApp.ViewModels
             {
                 _navigationService.Navigate(typeof(PrintPreviewPage));
                 ScreenMode = ScreenMode.PrintPreview;
-                //new ViewModelLocator().PrintPreviewViewModel.InitializeGestures();
             }
             else
             {
@@ -401,7 +386,6 @@ namespace SmartDeviceApp.ViewModels
                 ScreenMode = ScreenMode.Home;
             }
             ViewMode = ViewMode.FullScreen;
-            SelectedMainMenuItem = 0;
         }
 
         private void GoToPrintersPageExecute()
@@ -409,7 +393,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(PrintersPage));
             ScreenMode = ScreenMode.Printers;
             ViewMode = ViewMode.FullScreen;
-            SelectedMainMenuItem = 1;
         }
 
         private void GoToJobsPageExecute()
@@ -417,7 +400,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(JobsPage));
             ScreenMode = ScreenMode.Jobs;
             ViewMode = ViewMode.FullScreen;
-            SelectedMainMenuItem = 2;
         }
 
         private void GoToSettingsPageExecute()
@@ -425,7 +407,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(SettingsPage));
             ScreenMode = ScreenMode.Settings;
             ViewMode = ViewMode.FullScreen;
-            SelectedMainMenuItem = 3;
         }
 
         private void GoToHelpPageExecute()
@@ -433,7 +414,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(HelpPage));
             ScreenMode = ScreenMode.Help;
             ViewMode = ViewMode.FullScreen;
-            SelectedMainMenuItem = 4;
         }
 
         private void GoToLegalPageExecute()
@@ -441,7 +421,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(LegalPage));
             ScreenMode = ScreenMode.Legal;
             ViewMode = ViewMode.FullScreen;
-            SelectedMainMenuItem = 5;
         }
 
         #endregion

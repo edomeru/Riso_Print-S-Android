@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Converters
 {
     [TestClass]
     public class PrintSettingOptionToSeparatorVisibilityConverterTest
@@ -64,17 +64,11 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(Visibility.Visible, result);
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void Test_ConvertBack()
         {
-            try
-            {
-                // Note: Not implemented: Will throw exception
-                var result = printSettingOptionToSeparatorVisibilityConverter.ConvertBack(null, null, null, null);
-            }
-            catch (NotImplementedException)
-            {
-            }
+            // Note: Not implemented: Will throw exception
+            Assert.ThrowsException<NotImplementedException>(() => printSettingOptionToSeparatorVisibilityConverter.ConvertBack(null, null, null, null));
         }
     }
 }

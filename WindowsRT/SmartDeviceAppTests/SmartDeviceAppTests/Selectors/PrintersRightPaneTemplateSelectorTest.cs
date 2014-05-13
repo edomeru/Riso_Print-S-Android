@@ -6,35 +6,35 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Windows.UI.Xaml;
 using SmartDeviceApp.Selectors;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
-namespace SmartDeviceAppTests.ViewModels
+namespace SmartDeviceAppTests.Selectors
 {
     [TestClass]
     public class PrintersRightPaneTemplateSelectorTest
     {
         
-        [UITestMethod]
+        [UI.UITestMethod]
         public void Test_SelectTemplateCore()
         {
             PrintersRightPaneTemplateSelector printersRightPaneTemplateSelector = new PrintersRightPaneTemplateSelector();
 
             var item = "AddPrinter";
             var result = printersRightPaneTemplateSelector.SelectTemplate(item, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(printersRightPaneTemplateSelector.AddPrinterPaneTemplate, result);
+            Assert.AreEqual(printersRightPaneTemplateSelector.AddPrinterPaneTemplate, result);
 
             item = "SearchPrinter";
             result = printersRightPaneTemplateSelector.SelectTemplate(item, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(printersRightPaneTemplateSelector.SearchPrinterPaneTemplate, result);
+            Assert.AreEqual(printersRightPaneTemplateSelector.SearchPrinterPaneTemplate, result);
 
             item = "PrintSettings";
             result = printersRightPaneTemplateSelector.SelectTemplate(item, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(printersRightPaneTemplateSelector.PrintSettingsPaneTemplate, result);
+            Assert.AreEqual(printersRightPaneTemplateSelector.PrintSettingsPaneTemplate, result);
 
             // Test null
             item = null;
             result = printersRightPaneTemplateSelector.SelectTemplate(item, null);
-            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(null, result);
+            Assert.AreEqual(null, result);
         }
     }
 }

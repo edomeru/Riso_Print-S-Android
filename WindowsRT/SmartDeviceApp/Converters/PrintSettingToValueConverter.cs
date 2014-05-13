@@ -73,6 +73,8 @@ namespace SmartDeviceApp.Converters
             // Convert to enum values
             Type type = null;
             _printSettingNameMap.TryGetValue(printSettingName, out type);
+
+            object result = null;
             if (type != null)
             {
                 if (type.Equals(typeof(ColorMode)) ||
@@ -91,12 +93,12 @@ namespace SmartDeviceApp.Converters
                     type.Equals(typeof(Punch)) ||
                     type.Equals(typeof(OutputTray)))
                 {
-                    return intValue;
+                    result = intValue;
                 }
             }
 
             // Unknown type
-            return null;
+            return result;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
