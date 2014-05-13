@@ -37,7 +37,7 @@ const float ANIMATION_SPEED = 0.2f;
     self = [super initWithFrame:offscreen];
     if (self)
     {
-        [self setTitle:NSLocalizedString(IDS_LBL_DELETE, @"Delete") forState:UIControlStateNormal];
+        [self setTitle:[NSLocalizedString(IDS_LBL_DELETE, @"Delete") uppercaseString] forState:UIControlStateNormal];
         [self setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
         [self setTitleEdgeInsets:UIEdgeInsetsMake(10.0f,    //T
                                                   15.0f,    //L

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D0AEC56185FE43200810455"
-               BuildableName = "SmartDeviceAppTests.app"
-               BlueprintName = "SmartDeviceAppTests"
-               ReferencedContainer = "container:SmartDeviceApp.xcodeproj">
+               BuildableName = "RISOSmartPrintTests.app"
+               BlueprintName = "RISOSmartPrintTests"
+               ReferencedContainer = "container:RISOSmartPrint.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D0AEC56185FE43200810455"
-            BuildableName = "SmartDeviceAppTests.app"
-            BlueprintName = "SmartDeviceAppTests"
-            ReferencedContainer = "container:SmartDeviceApp.xcodeproj">
+            BuildableName = "RISOSmartPrintTests.app"
+            BlueprintName = "RISOSmartPrintTests"
+            ReferencedContainer = "container:RISOSmartPrint.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D0AEC56185FE43200810455"
-            BuildableName = "SmartDeviceAppTests.app"
-            BlueprintName = "SmartDeviceAppTests"
-            ReferencedContainer = "container:SmartDeviceApp.xcodeproj">
+            BuildableName = "RISOSmartPrintTests.app"
+            BlueprintName = "RISOSmartPrintTests"
+            ReferencedContainer = "container:RISOSmartPrint.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D0AEC56185FE43200810455"
-            BuildableName = "SmartDeviceAppTests.app"
-            BlueprintName = "SmartDeviceAppTests"
-            ReferencedContainer = "container:SmartDeviceApp.xcodeproj">
+            BuildableName = "RISOSmartPrintTests.app"
+            BlueprintName = "RISOSmartPrintTests"
+            ReferencedContainer = "container:RISOSmartPrint.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

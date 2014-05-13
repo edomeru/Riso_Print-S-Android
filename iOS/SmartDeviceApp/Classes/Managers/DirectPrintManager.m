@@ -88,7 +88,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     self.job = directprint_job_new([fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_LBL_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];
     self.alertView = alertView;
     [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"")
                              type:CXAlertViewButtonTypeDefault
@@ -106,6 +106,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     // Create progress label
     UILabel *progressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    progressLabel.backgroundColor = [UIColor clearColor];
     progressLabel.textAlignment = NSTextAlignmentCenter;
     [progressView addSubview:progressLabel];
     [progressView addConstraint:[NSLayoutConstraint constraintWithItem:progressLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:progressView attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f]];
