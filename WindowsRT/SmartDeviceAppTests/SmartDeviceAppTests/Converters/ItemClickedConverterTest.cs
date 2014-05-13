@@ -34,7 +34,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = itemClickedConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {

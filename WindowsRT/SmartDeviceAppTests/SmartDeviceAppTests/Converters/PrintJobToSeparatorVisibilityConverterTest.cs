@@ -54,7 +54,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = printJobToSeparatorVisibilityConverter.ConvertBack(null, null, null, null);
-                Assert.Fail();
             }
             catch (NotImplementedException)
             {

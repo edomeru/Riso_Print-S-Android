@@ -18,6 +18,14 @@ namespace SmartDeviceAppTests.ViewModels
     {
         private JobsViewModel jobsViewModel = new ViewModelLocator().JobsViewModel;
 
+        private void Test_RemoveGroupedJobsEventHandler(int id)
+        {
+        }
+
+        private void Test_RemoveJobEventHandler(PrintJob job)
+        {
+        }
+
         [TestMethod]
         public void Test_JobsViewModel()
         {
@@ -27,12 +35,21 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_DeleteAllJobsCommand()
         {
+            JobController.RemoveGroupedJobsEventHandler eventHandler = new JobController.RemoveGroupedJobsEventHandler(Test_RemoveGroupedJobsEventHandler);
+            jobsViewModel.RemoveGroupedJobsEventHandler += eventHandler;
+            jobsViewModel.DeleteAllJobsCommand.Execute(1);
             Assert.IsNotNull(jobsViewModel.DeleteAllJobsCommand);
         }
 
         [TestMethod]
         public void Test_DeleteJobCommand()
         {
+            JobController.RemoveJobEventHandler eventHandler = new JobController.RemoveJobEventHandler(Test_RemoveJobEventHandler);
+            jobsViewModel.RemoveJobEventHandler += eventHandler;
+            var printJob = new PrintJob();
+            printJob.Id = 1;
+            printJob.Name = "PRINT_JOB";
+            jobsViewModel.DeleteJobCommand.Execute(printJob);
             Assert.IsNotNull(jobsViewModel.DeleteJobCommand);
         }
 
@@ -123,6 +140,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_SetViewMode()
         {
+            new ViewModelLocator().ViewControlViewModel.ScreenMode = ScreenMode.Jobs;
             // Note: Test for coverage only; No tests to assert
             Messenger.Default.Send<ViewMode>(ViewMode.MainMenuPaneVisible);
             Messenger.Default.Send<ViewMode>(ViewMode.FullScreen);

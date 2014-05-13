@@ -30,7 +30,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = sidePaneLineGeometryStartPointConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {
@@ -57,7 +56,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = sidePaneLineGeometryEndPointConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {

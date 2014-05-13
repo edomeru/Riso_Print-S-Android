@@ -19,6 +19,7 @@ namespace SmartDeviceApp.Selectors
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             PrintersRightPaneMode printersRightPaneMode;
+            DataTemplate template = null;
             if (item != null)
             {
                 var success = Enum.TryParse<PrintersRightPaneMode>(item.ToString(), out printersRightPaneMode);
@@ -27,15 +28,18 @@ namespace SmartDeviceApp.Selectors
                     switch (printersRightPaneMode)
                     {
                         case PrintersRightPaneMode.AddPrinter:
-                            return AddPrinterPaneTemplate;
+                            template = AddPrinterPaneTemplate;
+                            break;
                         case PrintersRightPaneMode.SearchPrinter:
-                            return SearchPrinterPaneTemplate;
+                            template = SearchPrinterPaneTemplate;
+                            break;
                         case PrintersRightPaneMode.PrintSettings:
-                            return PrintSettingsPaneTemplate;
+                            template = PrintSettingsPaneTemplate;
+                            break;
                     }
                 }
             }
-            return null;
+            return template;
         }
     }
 }

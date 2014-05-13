@@ -41,9 +41,15 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(selectedPrinterId, selectPrinterViewModel.SelectedPrinterId);
         }
 
+        private void Test_SelectedPrinterChangedEventHandler(int id)
+        {
+        }
+
         [TestMethod]
         public void Test_SelectPrinter()
         {
+            PrintPreviewController.SelectedPrinterChangedEventHandler eventHandler = new PrintPreviewController.SelectedPrinterChangedEventHandler(Test_SelectedPrinterChangedEventHandler);
+            selectPrinterViewModel.SelectPrinterEvent += eventHandler;
             var printer = new Printer();
             printer.Id = 0;
             selectPrinterViewModel.SelectPrinter.Execute(printer);

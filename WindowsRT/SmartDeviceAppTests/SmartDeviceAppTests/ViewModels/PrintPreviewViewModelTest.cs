@@ -84,6 +84,9 @@ namespace SmartDeviceAppTests.ViewModels
             Messenger.Default.Send<ViewMode>(ViewMode.FullScreen);
             Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible);
             Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible_ResizedWidth);
+
+            new ViewModelLocator().ViewControlViewModel.ScreenMode = ScreenMode.Jobs;
+            Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible_ResizedWidth);
         }
 
         [TestMethod]
@@ -133,6 +136,8 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var pageViewMode = PageViewMode.SinglePageView;
             printPreviewViewModel.PageViewMode = pageViewMode;
+            pageViewMode = PageViewMode.TwoPageView;
+            printPreviewViewModel.PageViewMode = pageViewMode;
             Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(pageViewMode, printPreviewViewModel.PageViewMode);
         }
 
@@ -159,18 +164,24 @@ namespace SmartDeviceAppTests.ViewModels
             printPreviewViewModel.GoToNextPage.Execute(null);
 
             pageNumber = 9;
+            printPreviewViewModel.UpdatePageIndexes(pageNumber);
             printPreviewViewModel.GoToNextPage.Execute(null);
             Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.IsNotNull(printPreviewViewModel.GoToNextPage);
+        }
+
+        private void Test_GoToPageEventHandler(int idx)
+        {
         }
 
         [TestMethod]
         public void Test_GoToPage()
         {
             // Note: Test for coverage only; No tests to assert
+            PrintPreviewController.GoToPageEventHandler eventHandler = new PrintPreviewController.GoToPageEventHandler(Test_GoToPageEventHandler);
+            printPreviewViewModel.GoToPageEventHandler += eventHandler;
             uint pageNumber = 0;
             printPreviewViewModel.GoToPage(pageNumber);
         }
-
 
         [TestMethod]
         public void Test_PageNumber()

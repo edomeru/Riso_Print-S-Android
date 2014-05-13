@@ -38,7 +38,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = separatorLineGeometryStartPointConverter.ConvertBack(null, null, null, null);
-                Assert.Fail();
             }
             catch (NotImplementedException)
             {
@@ -74,7 +73,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = separatorLineGeometryEndPointConverter.ConvertBack(null, null, null, null);
-                Assert.Fail();
             }
             catch (NotImplementedException)
             {

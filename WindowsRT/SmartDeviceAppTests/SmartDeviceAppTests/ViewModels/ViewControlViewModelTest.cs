@@ -195,7 +195,7 @@ namespace SmartDeviceAppTests.ViewModels
             // TODO: For update!!
             var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command);
             viewControlViewModel.SelectedMainMenuItem = 1;
-            Assert.AreEqual(mainMenuItem1, viewControlViewModel.SelectedMainMenuItem);
+            Assert.AreEqual(1, viewControlViewModel.SelectedMainMenuItem);
         }
 
         [TestMethod]

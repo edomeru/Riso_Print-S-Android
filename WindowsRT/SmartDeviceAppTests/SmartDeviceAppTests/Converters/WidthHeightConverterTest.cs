@@ -29,7 +29,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = widthConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {
@@ -61,7 +60,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = resizedViewWidthConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {
@@ -88,7 +86,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = printJobListWidthConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {
@@ -115,7 +112,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = heightConverter.ConvertBack(null, null, null, null);
-                Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.Fail();
             }
             catch (NotImplementedException)
             {

@@ -55,7 +55,6 @@ namespace SmartDeviceAppTests.ViewModels
             {
                 // Note: Not implemented: Will throw exception
                 var result = printerSearchItemToSeparatorVisibility.ConvertBack(null, null, null, null);
-                Assert.Fail();
             }
             catch (NotImplementedException)
             {

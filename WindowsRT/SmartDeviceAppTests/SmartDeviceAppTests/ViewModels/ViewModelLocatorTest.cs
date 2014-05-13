@@ -17,6 +17,8 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_ViewModelLocator()
         {
+            var test = new ViewModelLocator();
+            var viewModel = new ViewModelLocator().ViewControlViewModel;
             // Note: Cannot change value of ViewModelBase.IsInDesignModeStatic
             Assert.IsNotNull(viewModelLocator);
         }

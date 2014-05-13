@@ -31,6 +31,10 @@ namespace SmartDeviceAppTests.ViewModels
             printSetting.Type = PrintSettingType.list;
             result = printSettingsListTemplateSelector.SelectTemplate(printSetting, null);
             Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(printSettingsListTemplateSelector.ListViewItemListTemplate, result);
+
+            printSetting.Type = PrintSettingType.unknown;
+            result = printSettingsListTemplateSelector.SelectTemplate(printSetting, null);
+            Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Assert.AreEqual(null, result);
             
             // Test null
             result = printSettingsListTemplateSelector.SelectTemplate("TEST", null);

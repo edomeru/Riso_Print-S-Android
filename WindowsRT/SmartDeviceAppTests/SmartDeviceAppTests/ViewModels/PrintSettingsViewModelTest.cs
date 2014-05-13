@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -49,9 +50,20 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsTrue(printSettingsViewModel.IsPrintPreview);
         }
 
+        private void Test_PrintEventHandler()
+        {
+        }
+
         [TestMethod]
         public void Test_PrintCommand()
         {
+            printSettingsViewModel.PrinterId = -1;
+            printSettingsViewModel.PrintCommand.Execute(null);
+            Assert.IsNotNull(printSettingsViewModel.PrintCommand);
+
+            printSettingsViewModel.PrinterId = 0;
+            PrintPreviewController.PrintEventHandler eventHandler = new PrintPreviewController.PrintEventHandler(Test_PrintEventHandler);
+            printSettingsViewModel.ExecutePrintEventHandler += eventHandler;
             printSettingsViewModel.PrintCommand.Execute(null);
             Assert.IsNotNull(printSettingsViewModel.PrintCommand);
         }
@@ -59,6 +71,7 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_ListPrintersCommand()
         {
+            printSettingsViewModel.IsPrintPreview = true;
             printSettingsViewModel.ListPrintersCommand.Execute(null);
             Assert.IsNotNull(printSettingsViewModel.ListPrintersCommand);
         }
@@ -112,9 +125,16 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(printSettingsViewModel.SelectPrintSetting);
         }
 
+        private void Test_PinCodeValueChangedEventHandler(string pin)
+        {
+        }
+        
         [TestMethod]
         public void Test_AuthenticationLoginPinCode()
         {
+            PrintPreviewController.PinCodeValueChangedEventHandler eventHandler = new PrintPreviewController.PinCodeValueChangedEventHandler(Test_PinCodeValueChangedEventHandler);
+            printSettingsViewModel.PinCodeValueChangedEventHandler += eventHandler;
+
             var pinCode = "AUTHENTICATION_PIN_CODE";
             printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
             Assert.AreEqual(pinCode, printSettingsViewModel.AuthenticationLoginPinCode);
