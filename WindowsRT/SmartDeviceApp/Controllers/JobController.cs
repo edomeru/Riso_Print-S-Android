@@ -97,8 +97,7 @@ namespace SmartDeviceApp.Controllers
                                           .GroupBy(pj => pj.PrinterId).ToList();
             foreach (var group in orderedList)
             {
-                // Get printer name of the first element
-                string printerName = string.Empty;
+                // Get printer first element
                 PrintJob printJobSample = group.FirstOrDefault();
                 if (printJobSample != null)
                 {

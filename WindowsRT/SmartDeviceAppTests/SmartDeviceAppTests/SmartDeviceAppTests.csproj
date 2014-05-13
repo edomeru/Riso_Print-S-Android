@@ -114,12 +114,14 @@
   <ItemGroup>
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
     <Compile Include="Common\Utilities\GlobalizationUtilityTest.cs" />
+    <Compile Include="Common\Utilities\UnitTestUtility.cs" />
     <Compile Include="Controllers\DocumentControllerTest.cs" />
     <Compile Include="Controllers\PrinterControllerTest.cs" />
     <Compile Include="Controllers\DatabaseControllerTest.cs" />
     <Compile Include="Controllers\DirectPrintControllerTest.cs" />
     <Compile Include="Controllers\MainControllerTest.cs" />
     <Compile Include="Common\Utilities\StorageFileUtilityTest.cs" />
+    <Compile Include="Controllers\JobControllerTest.cs" />
     <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
     <Compile Include="Converters\ItemClickedConverterTest.cs">
@@ -176,6 +178,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="TestData\SqlScript\insert_printjob_extra.sql" />
+    <Content Include="TestData\SqlScript\insert_printjob_single.sql" />
+    <Content Include="TestData\SqlScript\insert_printer_single.sql" />
+    <Content Include="TestData\SqlScript\SampleData.sql" />
     <None Include="packages.config" />
     <None Include="SmartDeviceAppTests_TemporaryKey.pfx" />
     <Content Include="TestData\PDF\RZ1070.pdf" />
