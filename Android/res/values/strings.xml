@@ -31,9 +31,8 @@
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>
     <string name="ids_lbl_default_print_settings">Default Print Settings</string>
-    <string name="ids_lbl_authentication">AUTHENTICATION</string>
+    <string name="ids_lbl_authentication">Authentication</string>
     <string name="ids_lbl_login_id">Log-in ID</string>
-    <string name="ids_lbl_printer_search_group">PRINTER SEARCH</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
