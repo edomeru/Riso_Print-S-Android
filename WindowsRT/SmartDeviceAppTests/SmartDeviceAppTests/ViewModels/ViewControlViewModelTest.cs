@@ -180,9 +180,9 @@ namespace SmartDeviceAppTests.ViewModels
             var mainMenuItems = new MainMenuItemList();
 
             // TODO: For update!!
-            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command, true);
+            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command);
             mainMenuItems.Add(mainMenuItem1);
-            var mainMenuItem2 = new MainMenuItem("MAIN_MENU_ITEM2", Test_Command, true);
+            var mainMenuItem2 = new MainMenuItem("MAIN_MENU_ITEM2", Test_Command);
             mainMenuItems.Add(mainMenuItem2);
 
             viewControlViewModel.MainMenuItems = mainMenuItems;

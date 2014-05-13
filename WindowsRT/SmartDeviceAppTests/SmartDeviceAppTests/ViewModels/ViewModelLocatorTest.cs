@@ -28,12 +28,6 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
-        public void Test_MainMenuItemViewModel()
-        {
-            Assert.IsNotNull(viewModelLocator.MainMenuItemViewModel);
-        }
-
-        [TestMethod]
         public void Test_HomeViewModel()
         {
             Assert.IsNotNull(viewModelLocator.HomeViewModel);

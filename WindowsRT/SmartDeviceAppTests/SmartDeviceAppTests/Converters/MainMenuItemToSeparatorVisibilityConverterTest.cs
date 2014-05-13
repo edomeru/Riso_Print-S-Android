@@ -45,8 +45,8 @@ namespace SmartDeviceAppTests.ViewModels
             result = mainMenuItemToSeparatorVisibilityConverter.Convert("TEST", null, null, null);
             Assert.AreEqual(Visibility.Collapsed, result);
 
-            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command, true);
-            var mainMenuItem2 = new MainMenuItem("MAIN_MENU_ITEM2", Test_Command, true);
+            var mainMenuItem1 = new MainMenuItem("MAIN_MENU_ITEM1", Test_Command);
+            var mainMenuItem2 = new MainMenuItem("MAIN_MENU_ITEM2", Test_Command);
             var mainMenuItems = new MainMenuItemList();
             mainMenuItems.Add(mainMenuItem1);
             mainMenuItems.Add(mainMenuItem2);
