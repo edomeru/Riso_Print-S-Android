@@ -95,7 +95,8 @@ public class WaitingDialogFragment extends DialogFragment {
         
         dialog.setCanceledOnTouchOutside(false);
         dialog.setIndeterminate(true);
-        dialog.setCancelable(cancelable);
+        //http://developer.android.com/reference/android/app/DialogFragment.html#setCancelable(boolean)
+        setCancelable(cancelable);
         
         if (!cancelable) {
             // Disable the back button

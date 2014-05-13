@@ -85,17 +85,20 @@ public class PrintSettingsManager {
      * @return boolean result of insert/replace to DB, returns true if successful.
      */
     public boolean saveToDB(int printerId, PrintSettings printSettings) {
+        if (printSettings == null) {
+            return false;
+        }
+        
         boolean result = false;
         // save to PrintSetting table
         long rowid = mManager.insertOrReplace(KeyConstants.KEY_SQL_PRINTSETTING_TABLE, null,
                 createContentValues(printerId, printSettings));
-        
         // update pst_id of Printer table
         if (rowid != -1) {
             ContentValues cv = new ContentValues();
             cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, rowid);
             result = mManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv,
-                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] { String.valueOf(printerId) });
+                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
         }
         
         mManager.close();
@@ -114,7 +117,7 @@ public class PrintSettingsManager {
     private ContentValues createContentValues(int printerId, PrintSettings printSettings) {
         ContentValues cv = new ContentValues();
         cv.put(KeyConstants.KEY_SQL_PRINTER_ID, printerId);
-        
+
         for (String key : PrintSettings.sSettingMap.keySet()) {
             Setting setting = PrintSettings.sSettingMap.get(key);
             String dbKey = setting.getDbKey();
@@ -130,8 +133,8 @@ public class PrintSettingsManager {
         
         if (c.moveToFirst()) {
             if (!c.isNull(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTSETTING_ID))) {
-                int pst_id = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
-                cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pst_id);
+                int pstId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
+                cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pstId);
             }
         }
         

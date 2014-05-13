@@ -13,9 +13,9 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -166,17 +166,14 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             }
         }
         
+
         // Notify PDF File Data that there is a new PDF
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, false);
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), data != null);
         
         if (data != null) {
-            edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
             launchIntent.setData(data);
         }
-        
-        edit.commit();
         
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
         

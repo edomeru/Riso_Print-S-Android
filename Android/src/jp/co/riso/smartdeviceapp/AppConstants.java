@@ -13,6 +13,9 @@ public class AppConstants {
     public static final long APP_SPLASH_DURATION = 2000;
     public static final String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
     
+    public static final String CONST_PDF_DIR = "pdfs";
+    public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
+    
     // Part of Memory to be allocated to Print Preview
     // Bit shift operator
     // Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
@@ -32,4 +35,5 @@ public class AppConstants {
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     public static final int CONST_TIMEOUT_PING = 100;
     public static final int CONST_UPDATE_INTERVAL = 5000; // 5 seconds
+    public static final String XML_FILENAME = "printsettings.xml";
 }

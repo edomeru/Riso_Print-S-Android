@@ -213,9 +213,14 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
      * @param printer
      *            Printer object
      */
-    public void onAddedNewPrinter(Printer printer) {
+    public void onAddedNewPrinter(Printer printer, boolean isOnline) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_PRINTER);
         newMessage.obj = printer;
+        if (isOnline) {
+            newMessage.arg1 = 1;
+        } else {
+            newMessage.arg1 = 0;
+        }
         mHandler.sendMessage(newMessage);
     }
     
@@ -229,7 +234,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         mPrinterList = printer;
         mDeleteItem = deleteItem;
         for (int i = 0; i < printer.size(); i++) {
-            addToTabletPrinterScreen(printer.get(i));
+            addToTabletPrinterScreen(printer.get(i), false);
         }
         Message newMessage = Message.obtain(mHandler, MSG_SET_UPDATE_VIEWS);
         mHandler.sendMessage(newMessage);
@@ -360,7 +365,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
      * @param printer
      *            printer object
      */
-    private void addToTabletPrinterScreen(Printer printer) {
+    private void addToTabletPrinterScreen(Printer printer, boolean isOnline) {
         if (printer == null) {
             return;
         }
@@ -407,6 +412,9 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         viewHolder.mOnlineIndcator.setTag(pView);
         viewHolder.mPort.setTag(printer);
         
+        if (isOnline) {
+            viewHolder.mOnlineIndcator.setImageResource(R.drawable.img_btn_printer_status_online);
+        }
         setPrinterView(viewHolder);
     }
     
@@ -523,7 +531,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
                 }
                 return true;
             case MSG_ADD_PRINTER:
-                addToTabletPrinterScreen((Printer) msg.obj);
+                addToTabletPrinterScreen((Printer) msg.obj, msg.arg1 > 0);
                 return true;
         }
         return false;

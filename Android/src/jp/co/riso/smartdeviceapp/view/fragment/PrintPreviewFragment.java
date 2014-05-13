@@ -83,10 +83,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
             Uri data = null;
-            
-            if (getActivity().getIntent().getData() != null) {
-                data = getActivity().getIntent().getData();
-            }
+
+            data = getActivity().getIntent().getData();
             
             /*
             android.content.SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -99,8 +97,16 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             
             mPdfManager = new PDFFileManager(this);
             
-            if (data != null) {
-                mPdfManager.setPDF(data.getPath());
+            String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
+            if (pdfInSandbox == null) {
+                if (data != null) {
+                    mPdfManager.setPDF(data.getPath());
+                    
+                    // Automatically open asynchronously
+                    mPdfManager.initializeAsync();
+                }
+            } else {
+                mPdfManager.setSandboxPDF();
                 
                 // Automatically open asynchronously
                 mPdfManager.initializeAsync();
@@ -421,7 +427,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         }
                         
                         fragment.setPrinterId(mPrinterId);
-                        fragment.setPdfPath(mPdfManager.getSandboxPath());
+                        fragment.setPdfPath(mPdfManager.getPath());
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
@@ -442,19 +448,20 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public void onFileInitialized(int status) {
-        setPrintPreviewViewDisplayed(getView(), false);
-        
-        switch (status) {
-            case PDFFileManager.PDF_OK:
-                setPrintPreviewViewDisplayed(getView(), true);
-                break;
-            default:
-                String message = getPdfErrorMessage(status);
-                String button = getResources().getString(R.string.ids_lbl_ok);
-                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
-                break;
+        if (!isDetached()) {
+            setPrintPreviewViewDisplayed(getView(), false);
+            
+            switch (status) {
+                case PDFFileManager.PDF_OK:
+                    setPrintPreviewViewDisplayed(getView(), true);
+                    break;
+                default:
+                    String message = getPdfErrorMessage(status);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    break;
+            }
         }
-        
     }
     
     // ================================================================================

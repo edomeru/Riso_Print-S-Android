@@ -228,8 +228,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
-        mDirectPrintManager.initializeDirectPrint(jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
-        mDirectPrintManager.lprPrint();
+        mDirectPrintManager.executeLPRPrint(jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
     }
     
     // ================================================================================
@@ -247,7 +246,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void processMessage(Message message) {
         switch (message.what) {
             case MSG_PRINT:
-                mWaitingDialog.dismiss();
+                DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
@@ -291,7 +290,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
                 newMessage.arg1 = status;
                 mPauseableHandler.sendMessage(newMessage);
-                manager.finalizeDirectPrint();
                 break;
             case DirectPrintManager.PRINT_STATUS_SENDING:
                 if (mWaitingDialog != null) {

@@ -74,7 +74,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
         mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
-        mListView.setLockScrollWhileRefreshing(false);
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
         
@@ -210,7 +209,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public int onAddPrinter(Printer printer) {
         int ret = 0;
         
-        if (printer == null || mPrinterManager.isSearching()) {
+        if (printer == null) {
             return -1;
         }
         

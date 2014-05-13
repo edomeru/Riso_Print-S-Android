@@ -2,15 +2,23 @@ package jp.co.riso.android.util;
 
 import java.util.Locale;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.test.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
-import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.AndroidRuntimeException;
 import android.view.Display;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 
 public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
     
@@ -81,47 +89,6 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 		testIntent = AppUtils.createActivityIntent(getInstrumentation().getContext(), null);
         assertNull(testIntent);
 	}
-
-    //================================================================================
-    // Tests - startActivityIntent
-    //================================================================================
-    
-    public void testStartActivityIntent_ValidContextAndActivity() {
-    	try {
-    		AppUtils.startActivityIntent(getActivity(), MainActivity.class);
-    	} catch (NullPointerException e) {
-    		fail(); // Error should not be thrown
-    	} catch (ActivityNotFoundException e) {
-    		fail(); // Error should not be thrown
-    	}
-    }
-	
-    public void testStartActivityIntent_IntentWillBeNull() {
-    	try {
-    		AppUtils.startActivityIntent(null, null);
-    		fail(); // Error should be thrown
-    	} catch (NullPointerException e) {
-    		
-    	}
-    }
-    
-    public void testStartActivityIntent_ClassNotAnActivity() {
-    	try {
-    		AppUtils.startActivityIntent(getActivity(), AppUtils.class);
-    		fail(); // Error should be thrown
-    	} catch (ActivityNotFoundException e) {
-    		
-    	}
-    }
-    
-    public void testStartActivityIntent_InvalidContext() {
-    	try {
-    		AppUtils.startActivityIntent(getInstrumentation().getContext(), AppUtils.class);
-    		fail(); // Error should be thrown
-    	} catch (AndroidRuntimeException e) {
-    		
-    	}
-    }
 
     //================================================================================
     // Tests - getLocaleCode
@@ -435,5 +402,157 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, "");
         
         assertNull(localized);
+    }
+    
+    //================================================================================
+    // Tests - changeChildrenFont
+    //================================================================================
+    
+    public void testChangeChildrenFont_ValidViewGroupValidFont() {
+        LinearLayout ll = new LinearLayout(getActivity());
+        LinearLayout ll2 = new LinearLayout(getActivity());
+        
+        ll.addView(new TextView(getActivity()));
+        ll.addView(new View(getActivity()));
+        ll.addView(new Spinner(getActivity()));
+        ll.addView(new EditText(getActivity()));
+        ll.addView(new Switch(getActivity()));
+        ll.addView(ll2);
+
+        TextView typeFace = new TextView(getActivity());
+        typeFace.setTypeface(null);
+        ll.addView(typeFace);
+        typeFace = new TextView(getActivity());
+        typeFace.setTypeface(SmartDeviceApp.getAppFont());
+        ll.addView(typeFace);
+        
+        ll2.addView(new TextView(getActivity()));
+        ll2.addView(new View(getActivity()));
+        ll2.addView(new Spinner(getActivity()));
+        ll2.addView(new EditText(getActivity()));
+        ll2.addView(new Switch(getActivity()));
+        
+        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+    }
+    
+    public void testChangeChildrenFont_NullViewGroupValidFont() {
+        AppUtils.changeChildrenFont(null, SmartDeviceApp.getAppFont());
+    }
+    
+    public void testChangeChildrenFont_ValidViewGroupNullFont() {
+        LinearLayout ll = new LinearLayout(getActivity());
+        
+        ll.addView(new TextView(getActivity()));
+        ll.addView(new View(getActivity()));
+        ll.addView(new Spinner(getActivity()));
+        ll.addView(new EditText(getActivity()));
+        ll.addView(new Switch(getActivity()));
+
+        AppUtils.changeChildrenFont(ll, null);
+    }
+    
+    public void testChangeChildrenFont_NullViewGroupNullFont() {
+        AppUtils.changeChildrenFont(null, null);
+    }
+    
+    public void testChangeChildrenFont_InvalidAccess() {
+        LinearLayout ll = new LinearLayout(getActivity());
+        
+        ll.addView(new MockClass(getActivity()));
+        
+        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+    }
+    
+    public void testChangeChildrenFont_TypeFaceNull() {
+        LinearLayout ll = new LinearLayout(getActivity());
+
+        TextView nullTypeFace = new TextView(getActivity());
+        nullTypeFace.setTypeface(null);
+        ll.addView(nullTypeFace);
+        
+        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+    }
+    
+    //================================================================================
+    // Tests - getResourseId
+    //================================================================================
+    
+    public void testGetResourceId_Valid() {
+        int value = AppUtils.getResourseId("app_name", R.string.class, -1);
+        
+        assertTrue(-1 != value);
+    }
+
+    public void testGetResourceId_Null() {
+        int value = AppUtils.getResourseId(null, null, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_NullVariableName() {
+        int value = AppUtils.getResourseId(null, R.string.class, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_NullClass() {
+        int value = AppUtils.getResourseId("app_name", null, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_InvalidClass() {
+        int value = AppUtils.getResourseId("app_name", this.getClass(), -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_InvalidAccess() {
+        int value = AppUtils.getResourseId("app_name", MockClass.class, -1);
+        
+        assertEquals(-1, value);
+    }
+
+    public void testGetResourceId_InvalidArgumentAccess() {
+        int value = AppUtils.getResourseId("app_name_2", MockClass.class, -1);
+        
+        assertEquals(-1, value);
+    }
+    
+    //================================================================================
+    // Test getCacheSizeBasedOnMemoryClass
+    //================================================================================
+
+    public void testGetCacheSizeBasedOnMemoryClass_Valid() {
+        int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(getActivity());
+        
+        assertTrue(memoryClass > 0);
+    }
+
+    public void testGetCacheSizeBasedOnMemoryClass_Invalid() {
+        int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(null);
+        
+        assertTrue(memoryClass == 0);
+    }
+    
+    //================================================================================
+    // Mock Classes
+    //================================================================================
+    
+    public final class MockClass extends View {
+        @SuppressWarnings("unused") // Invoked
+        private static final int app_name = 0x7f030000;
+        public static final float app_name_2 = 0x7f030000;
+        
+        public MockClass(Context context) {
+            super(context);
+        }
+        
+        protected Typeface getTypeface() {
+            return SmartDeviceApp.getAppFont();
+        }
+        
+        protected void setTypeface(Typeface tf) {
+        }
     }
 }

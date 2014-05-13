@@ -145,7 +145,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.addPrinterButton) {
-            if (mSearchAdapterInterface.isMaxPrinterCountReached()) {
+            if (v.isActivated() || mSearchAdapterInterface.isMaxPrinterCountReached()) {
                 return;
             }
             Printer printer = getItem((Integer) v.getTag());
