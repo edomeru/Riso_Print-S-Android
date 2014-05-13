@@ -9,11 +9,11 @@ INSERT INTO Printer VALUES(8, 8, "192.168.0.8", "RISO_Printer8_with_very_very_ve
 INSERT INTO Printer VALUES(9, 9, "192.168.0.9", "RISO Printer9 with very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name", 1111, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO Printer VALUES(10, null, "192.168.0.10", "RISO Printer10 with no matching print settings", 1212, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
-INSERT INTO PrintSetting VALUES (1, 2, 0, 1, 2, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO PrintSetting VALUES (2, 1, 1, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO PrintSetting VALUES (1, 1, 0, 1, 2, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO PrintSetting VALUES (2, 2, 1, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO PrintSetting VALUES (3, 3, 1, 0, 9999, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 INSERT INTO PrintSetting VALUES (4, 4, 1, 0, 1, 0, 2, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0);
-INSERT INTO PrintSetting VALUES (5, 5, 1, 1, 1, 0, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2, 0, 0);
+INSERT INTO PrintSetting VALUES (5, 5, 1, 1, 1, 0, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2, 0, 1);
 INSERT INTO PrintSetting VALUES (6, 6, 1, 0, 2, 0, 2, 1, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 2, 0);
 INSERT INTO PrintSetting VALUES (7, 7, 1, 1, 2, 0, 2, 1, 0, 0, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO PrintSetting VALUES (8, 8, 1, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
