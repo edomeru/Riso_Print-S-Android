@@ -162,16 +162,21 @@
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    if(selectedIndexPath.row == self.toDeleteIndexPath.row)
+    if(self.toDeleteIndexPath != nil)
     {
-        //swiped the same row that already has a delete button
-        return;
+        if(selectedIndexPath.row == self.toDeleteIndexPath.row)
+        {
+            //swiped the same row that already has a delete button
+            return;
+        }
+        else
+        
+        {
+            //remove delete state of other cells if any
+            [self removeDeleteState];
+        }
     }
-    if(selectedIndexPath != self.toDeleteIndexPath)
-    {
-        //remove delete state of other cells if any
-        [self removeDeleteState];
-    }
+
     PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
     [cell setCellToBeDeletedState:YES];
     self.toDeleteIndexPath = selectedIndexPath;
