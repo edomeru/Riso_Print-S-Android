@@ -137,7 +137,6 @@ public class DirectPrintManager {
         /** {@inheritDoc} */
         @Override
         protected Void doInBackground(Void... params) {
-            Log.wtf(TAG, "job id " + mJob);
             mManager.cancel();
             finalizeDirectPrint();
             return null;
