@@ -22,23 +22,21 @@
 
 #pragma mark - UI Properties
 
-/** 
- Displays the name of the group (printer name) and acts as
- the toggle switch for collapsing/expanding the group.
- */
-@property (weak, nonatomic) IBOutlet UIButton* groupName;
-
 /**
- Displays the IP address of the printer and acts as
- the toggle switch for collapsing/expanding the group.
+ The hidden button covering the entire group header
+ responsible for reacting to the touch actions on 
+ the header.
  */
-@property (weak, nonatomic) IBOutlet UIButton* groupIP;
+@property (weak, nonatomic) IBOutlet UIButton *header;
 
-/**
- Displays collapsed/expanded state of the group and acts as
- the toggle switch for collapsing/expanding the group.
- */
-@property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
+/** Displays the printer name. */
+@property (weak, nonatomic) IBOutlet UILabel* groupName;
+
+/** Displays the printer IP address. */
+@property (weak, nonatomic) IBOutlet UILabel* groupIP;
+
+/** Displays "-" if the group is expanded, "+" if the group is collapsed. */
+@property (weak, nonatomic) IBOutlet UILabel* groupIndicator;
 
 /** Removes the entire group. */
 @property (weak, nonatomic) IBOutlet DeleteButton* deleteAllButton;
@@ -168,27 +166,10 @@
     self.listPrintJobs = [NSMutableArray array];
     
     // set group header events
-    
-    [self.groupName addTarget:self action:@selector(colorHeader)
-             forControlEvents:UIControlEventTouchDown];
-    [self.groupName addTarget:self action:@selector(clearHeader)
-             forControlEvents:UIControlEventTouchDragOutside];
-    [self.groupName addTarget:self action:@selector(tappedHeader)
-             forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.groupIP addTarget:self action:@selector(colorHeader)
-           forControlEvents:UIControlEventTouchDown];
-    [self.groupIP addTarget:self action:@selector(clearHeader)
-           forControlEvents:UIControlEventTouchDragOutside];
-    [self.groupIP addTarget:self action:@selector(tappedHeader)
-           forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.groupIndicator addTarget:self action:@selector(colorHeader)
-                  forControlEvents:UIControlEventTouchDown];
-    [self.groupIndicator addTarget:self action:@selector(clearHeader)
-                  forControlEvents:UIControlEventTouchDragOutside];
-    [self.groupIndicator addTarget:self action:@selector(tappedHeader)
-                  forControlEvents:UIControlEventTouchUpInside];
+    [self.header addTarget:self action:@selector(colorHeader) forControlEvents:UIControlEventTouchDown];
+    [self.header addTarget:self action:@selector(clearHeader) forControlEvents:UIControlEventTouchCancel];
+    [self.header addTarget:self action:@selector(clearHeader) forControlEvents:UIControlEventTouchDragOutside];
+    [self.header addTarget:self action:@selector(tappedHeader) forControlEvents:UIControlEventTouchUpInside];
     
     self.deleteAllButton.highlightedColor = [UIColor purple2ThemeColor];
     self.deleteAllButton.highlightedTextColor = [UIColor whiteThemeColor];
@@ -201,22 +182,22 @@
 - (void)putGroupName:(NSString*)name
 {
     if (name == nil || [name isEqualToString:@""])
-        [self.groupName setTitle:NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name") forState:UIControlStateNormal];
+        self.groupName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     else
-        [self.groupName setTitle:name forState:UIControlStateNormal];
+        self.groupName.text = name;
 }
 
 - (void)putGroupIP:(NSString*)ip
 {
-    [self.groupIP setTitle:ip forState:UIControlStateNormal];
+    self.groupIP.text = ip;
 }
 
 - (void)putIndicator:(BOOL)isCollapsed
 {
     if (isCollapsed)
-        [self.groupIndicator setTitle:@"+" forState:UIControlStateNormal];
+        self.groupIndicator.text = @"+";
     else
-        [self.groupIndicator setTitle:@"-" forState:UIControlStateNormal];
+        self.groupIndicator.text = @"-";
 }
 
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp

@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -3494,46 +3494,6 @@
                                                         <outlet property="delegate" destination="KTT-2M-GyJ" id="3It-ct-XS2"/>
                                                     </connections>
                                                 </tableView>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xec-Wp-7rm" userLabel="iPhone - Printer Name">
-                                                    <rect key="frame" x="40" y="0.0" width="180" height="32"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="hGM-YV-Pky"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
-                                                    <state key="normal" title="RISO Printer 1">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eW3-lk-n0J" userLabel="iPhone - Printer IP">
-                                                    <rect key="frame" x="40" y="27" width="180" height="18"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="18" id="de8-cO-Cn4"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
-                                                    <state key="normal" title="192.168.0.1">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MOS-FF-ZOf" userLabel="iPhone - Indicator">
-                                                    <rect key="frame" x="0.0" y="0.0" width="40" height="45"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="40" id="2tS-F6-i4d"/>
-                                                        <constraint firstAttribute="height" constant="45" id="ylc-wa-r9L"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <state key="normal" title="-">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uJ1-uS-srn" userLabel="iPhone - Delete All" customClass="DeleteButton">
                                                     <rect key="frame" x="220" y="0.0" width="100" height="45"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -3551,32 +3511,81 @@
                                                         <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_DELETE_ALL"/>
                                                     </userDefinedRuntimeAttributes>
                                                 </button>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IjS-vQ-2Db" userLabel="iPhone - -">
+                                                    <rect key="frame" x="0.0" y="0.0" width="40" height="45"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="40" id="2Bk-Kn-kKb"/>
+                                                        <constraint firstAttribute="height" constant="45" id="Kij-Xm-n4k"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t61-sQ-iOj" userLabel="iPhone - Name">
+                                                    <rect key="frame" x="40" y="-3" width="180" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="32" id="Cfd-SW-8aU"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KmG-ZI-cIv" userLabel="iPhone - IP">
+                                                    <rect key="frame" x="40" y="21" width="180" height="24"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="24" id="Fqj-e7-W5V"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7BL-O9-D6b" userLabel="iPhone - Header">
+                                                    <rect key="frame" x="0.0" y="0.0" width="220" height="45"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="45" id="9lY-PT-ftP"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                    <state key="normal">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="Xec-Wp-7rm" secondAttribute="trailing" id="5u8-a6-dRw"/>
-                                            <constraint firstItem="MOS-FF-ZOf" firstAttribute="leading" secondItem="dPu-Ft-Q41" secondAttribute="leading" id="8aV-CH-F8L"/>
+                                            <constraint firstItem="7BL-O9-D6b" firstAttribute="bottom" secondItem="IjS-vQ-2Db" secondAttribute="bottom" id="6Hl-WZ-dcv"/>
+                                            <constraint firstItem="IjS-vQ-2Db" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="9eO-de-1mC"/>
+                                            <constraint firstItem="IjS-vQ-2Db" firstAttribute="centerY" secondItem="uJ1-uS-srn" secondAttribute="centerY" id="AX9-3v-sNj"/>
                                             <constraint firstItem="dPu-Ft-Q41" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="BOA-jT-Nhn"/>
                                             <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="uJ1-uS-srn" secondAttribute="bottom" id="E1k-MR-srk"/>
-                                            <constraint firstItem="Xec-Wp-7rm" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="F9T-Fz-aGn"/>
+                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="t61-sQ-iOj" secondAttribute="trailing" id="Hxv-bY-0d4"/>
+                                            <constraint firstItem="IjS-vQ-2Db" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="I7v-i4-d3e"/>
+                                            <constraint firstItem="KmG-ZI-cIv" firstAttribute="top" secondItem="t61-sQ-iOj" secondAttribute="bottom" constant="-8" id="RGu-zS-xCg"/>
                                             <constraint firstAttribute="bottom" secondItem="dPu-Ft-Q41" secondAttribute="bottom" id="S25-v6-cHP"/>
                                             <constraint firstAttribute="trailing" secondItem="uJ1-uS-srn" secondAttribute="trailing" id="Wo3-V1-HRl"/>
-                                            <constraint firstItem="MOS-FF-ZOf" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="Xeu-78-wDt"/>
+                                            <constraint firstItem="7BL-O9-D6b" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="amA-gw-fgb"/>
                                             <constraint firstAttribute="trailing" secondItem="dPu-Ft-Q41" secondAttribute="trailing" id="fFZ-7q-fyY"/>
-                                            <constraint firstItem="Xec-Wp-7rm" firstAttribute="leading" secondItem="MOS-FF-ZOf" secondAttribute="trailing" id="g7g-Pw-0cu"/>
-                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="eW3-lk-n0J" secondAttribute="trailing" id="ggn-sW-Xgs"/>
-                                            <constraint firstItem="eW3-lk-n0J" firstAttribute="top" secondItem="Xec-Wp-7rm" secondAttribute="bottom" constant="-5" id="i2M-FB-81u"/>
-                                            <constraint firstItem="MOS-FF-ZOf" firstAttribute="baseline" secondItem="uJ1-uS-srn" secondAttribute="baseline" id="n41-dt-mz2"/>
-                                            <constraint firstItem="eW3-lk-n0J" firstAttribute="leading" secondItem="MOS-FF-ZOf" secondAttribute="trailing" id="pGF-io-lCh"/>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="eW3-lk-n0J" secondAttribute="bottom" id="w7n-lX-Pbb"/>
+                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="7BL-O9-D6b" secondAttribute="trailing" id="g75-xt-9Vb"/>
+                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="KmG-ZI-cIv" secondAttribute="trailing" id="kSm-OA-Wq4"/>
+                                            <constraint firstItem="t61-sQ-iOj" firstAttribute="leading" secondItem="IjS-vQ-2Db" secondAttribute="trailing" id="oGP-Tb-UW2"/>
+                                            <constraint firstItem="t61-sQ-iOj" firstAttribute="top" secondItem="uJ1-uS-srn" secondAttribute="top" constant="-3" id="qek-NZ-wQ2"/>
+                                            <constraint firstItem="7BL-O9-D6b" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="ueN-PR-5TL"/>
+                                            <constraint firstItem="KmG-ZI-cIv" firstAttribute="leading" secondItem="IjS-vQ-2Db" secondAttribute="trailing" id="x9K-fa-N1f"/>
                                         </constraints>
                                         <size key="customSize" width="320" height="500"/>
                                         <connections>
                                             <outlet property="deleteAllButton" destination="uJ1-uS-srn" id="zGN-SC-AcD"/>
-                                            <outlet property="groupIP" destination="eW3-lk-n0J" id="SjS-n5-XHB"/>
-                                            <outlet property="groupIndicator" destination="MOS-FF-ZOf" id="cWb-yX-ALG"/>
-                                            <outlet property="groupName" destination="Xec-Wp-7rm" id="A0Y-i5-wjO"/>
+                                            <outlet property="groupIP" destination="KmG-ZI-cIv" id="Lhg-9A-SIg"/>
+                                            <outlet property="groupIndicator" destination="IjS-vQ-2Db" id="Qmk-ld-LF5"/>
+                                            <outlet property="groupName" destination="t61-sQ-iOj" id="Lr8-Vc-SAR"/>
+                                            <outlet property="header" destination="7BL-O9-D6b" id="aAL-b1-UHB"/>
                                             <outlet property="printJobsView" destination="dPu-Ft-Q41" id="fTy-bE-aeH"/>
                                         </connections>
                                     </collectionViewCell>
@@ -3754,33 +3763,6 @@
                                                         <outlet property="delegate" destination="PlD-vX-hdR" id="PUu-hl-EiN"/>
                                                     </connections>
                                                 </tableView>
-                                                <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jg3-qz-mnm" userLabel="iPad - Printer Name">
-                                                    <rect key="frame" x="40" y="0.0" width="180" height="32"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="dFU-bV-Ucd"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
-                                                    <state key="normal" title="RISO Printer 1">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LVv-VU-mNA" userLabel="iPad - Indicator">
-                                                    <rect key="frame" x="0.0" y="0.0" width="40" height="45"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="40" id="rUT-Vo-b2P"/>
-                                                        <constraint firstAttribute="height" constant="45" id="smm-3d-7xd"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <state key="normal" title="-">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RPP-IB-0ns" userLabel="iPad - Delete All" customClass="DeleteButton">
                                                     <rect key="frame" x="220" y="0.0" width="100" height="45"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -3798,16 +3780,45 @@
                                                         <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_DELETE_ALL"/>
                                                     </userDefinedRuntimeAttributes>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kvz-2u-Gvk" userLabel="iPad - Printer IP">
-                                                    <rect key="frame" x="40" y="27" width="180" height="18"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dOa-DH-pgL" userLabel="iPad - -">
+                                                    <rect key="frame" x="0.0" y="0.0" width="40" height="45"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="18" id="m5Z-3U-zSa"/>
+                                                        <constraint firstAttribute="width" constant="40" id="Upn-l6-iov"/>
+                                                        <constraint firstAttribute="height" constant="45" id="i8B-2v-aeI"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="er5-Jf-qpo" userLabel="iPad - Name">
+                                                    <rect key="frame" x="40" y="-3" width="180" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="32" id="4nb-hM-0GH"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LB4-7s-mbt" userLabel="iPad - IP">
+                                                    <rect key="frame" x="40" y="21" width="180" height="24"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="24" id="xi2-K8-Ozs"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="-4" maxX="4" maxY="0.0"/>
-                                                    <state key="normal" title="192.168.0.1">
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hUQ-pc-7cC" userLabel="iPad - Header">
+                                                    <rect key="frame" x="0.0" y="0.0" width="220" height="45"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                    <state key="normal">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                 </button>
@@ -3815,28 +3826,32 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="Jg3-qz-mnm" firstAttribute="top" secondItem="PlD-vX-hdR" secondAttribute="top" id="0Le-Le-zc0"/>
+                                            <constraint firstItem="er5-Jf-qpo" firstAttribute="top" secondItem="dOa-DH-pgL" secondAttribute="top" constant="-3" id="6Xh-uV-Q3O"/>
+                                            <constraint firstItem="dOa-DH-pgL" firstAttribute="top" secondItem="RPP-IB-0ns" secondAttribute="top" id="7t4-lg-RYS"/>
+                                            <constraint firstItem="dOa-DH-pgL" firstAttribute="top" secondItem="PlD-vX-hdR" secondAttribute="top" id="D5t-qv-bEb"/>
                                             <constraint firstItem="QLA-jj-dA8" firstAttribute="leading" secondItem="PlD-vX-hdR" secondAttribute="leading" id="Drh-uJ-AgJ"/>
-                                            <constraint firstItem="LVv-VU-mNA" firstAttribute="top" secondItem="PlD-vX-hdR" secondAttribute="top" id="EXs-I9-2KQ"/>
-                                            <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="Kvz-2u-Gvk" secondAttribute="trailing" id="FEr-MT-8KJ"/>
+                                            <constraint firstItem="LB4-7s-mbt" firstAttribute="top" secondItem="er5-Jf-qpo" secondAttribute="bottom" constant="-8" id="F78-h6-q1J"/>
+                                            <constraint firstItem="hUQ-pc-7cC" firstAttribute="top" secondItem="PlD-vX-hdR" secondAttribute="top" id="FCf-oN-voM"/>
                                             <constraint firstAttribute="trailing" secondItem="QLA-jj-dA8" secondAttribute="trailing" id="FmO-GE-M2a"/>
+                                            <constraint firstItem="dOa-DH-pgL" firstAttribute="leading" secondItem="QLA-jj-dA8" secondAttribute="leading" id="GWg-RG-EJL"/>
+                                            <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="er5-Jf-qpo" secondAttribute="trailing" id="HET-pE-SYJ"/>
                                             <constraint firstAttribute="trailing" secondItem="RPP-IB-0ns" secondAttribute="trailing" id="HjF-ZP-lBn"/>
-                                            <constraint firstItem="Kvz-2u-Gvk" firstAttribute="leading" secondItem="LVv-VU-mNA" secondAttribute="trailing" id="Mqu-SH-jP1"/>
                                             <constraint firstAttribute="bottom" secondItem="QLA-jj-dA8" secondAttribute="bottom" id="Ut2-LN-s4q"/>
+                                            <constraint firstItem="hUQ-pc-7cC" firstAttribute="leading" secondItem="dOa-DH-pgL" secondAttribute="leading" id="VTF-cj-65F"/>
+                                            <constraint firstItem="er5-Jf-qpo" firstAttribute="leading" secondItem="dOa-DH-pgL" secondAttribute="trailing" id="fBU-9Z-2aH"/>
+                                            <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="LB4-7s-mbt" secondAttribute="trailing" id="gBS-Kp-vY0"/>
                                             <constraint firstItem="QLA-jj-dA8" firstAttribute="top" secondItem="RPP-IB-0ns" secondAttribute="bottom" id="gXy-DB-XtK"/>
-                                            <constraint firstItem="LVv-VU-mNA" firstAttribute="leading" secondItem="QLA-jj-dA8" secondAttribute="leading" id="hJm-Wa-KX6"/>
-                                            <constraint firstItem="Jg3-qz-mnm" firstAttribute="leading" secondItem="LVv-VU-mNA" secondAttribute="trailing" id="j3z-iV-jPU"/>
-                                            <constraint firstItem="Kvz-2u-Gvk" firstAttribute="top" secondItem="Jg3-qz-mnm" secondAttribute="bottom" constant="-5" id="nkd-Lx-8DB"/>
-                                            <constraint firstItem="QLA-jj-dA8" firstAttribute="top" secondItem="Kvz-2u-Gvk" secondAttribute="bottom" id="sgp-B2-pdz"/>
-                                            <constraint firstItem="LVv-VU-mNA" firstAttribute="baseline" secondItem="RPP-IB-0ns" secondAttribute="baseline" id="uWj-DW-Ehh"/>
-                                            <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="Jg3-qz-mnm" secondAttribute="trailing" id="yhY-dP-Ud5"/>
+                                            <constraint firstItem="LB4-7s-mbt" firstAttribute="leading" secondItem="dOa-DH-pgL" secondAttribute="trailing" id="i16-Ae-gB6"/>
+                                            <constraint firstItem="RPP-IB-0ns" firstAttribute="leading" secondItem="hUQ-pc-7cC" secondAttribute="trailing" id="rHv-Sa-Qkd"/>
+                                            <constraint firstItem="hUQ-pc-7cC" firstAttribute="bottom" secondItem="LB4-7s-mbt" secondAttribute="bottom" id="vms-yS-O6I"/>
                                         </constraints>
                                         <size key="customSize" width="320" height="736"/>
                                         <connections>
                                             <outlet property="deleteAllButton" destination="RPP-IB-0ns" id="LmF-2I-MFs"/>
-                                            <outlet property="groupIP" destination="Kvz-2u-Gvk" id="Tqx-G8-Op4"/>
-                                            <outlet property="groupIndicator" destination="LVv-VU-mNA" id="L3e-3C-LxN"/>
-                                            <outlet property="groupName" destination="Jg3-qz-mnm" id="qFL-Lb-oLO"/>
+                                            <outlet property="groupIP" destination="LB4-7s-mbt" id="EdS-bB-KsH"/>
+                                            <outlet property="groupIndicator" destination="dOa-DH-pgL" id="n12-5o-3cR"/>
+                                            <outlet property="groupName" destination="er5-Jf-qpo" id="us7-Z3-51v"/>
+                                            <outlet property="header" destination="hUQ-pc-7cC" id="h9V-CP-dOL"/>
                                             <outlet property="printJobsView" destination="QLA-jj-dA8" id="hQ4-0N-14l"/>
                                         </connections>
                                     </collectionViewCell>
@@ -3905,9 +3920,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="6HN-Y0-69S"/>
-        <segue reference="ax2-Mn-NH0"/>
         <segue reference="a4U-VG-JlJ"/>
+        <segue reference="oE4-lZ-OOf"/>
+        <segue reference="ax2-Mn-NH0"/>
         <segue reference="CWW-vD-UgO"/>
     </inferredMetricsTieBreakers>
 </document>
