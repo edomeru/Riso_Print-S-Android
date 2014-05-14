@@ -106,6 +106,10 @@
         {
             [((PrinterInfoViewController *)controller).printSettingsButton setSelected:NO];
         }
+        else
+        {
+            [self reloadData];
+        }
     }
 }
 

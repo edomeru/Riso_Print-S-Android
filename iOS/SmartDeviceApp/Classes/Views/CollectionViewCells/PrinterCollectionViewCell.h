@@ -21,7 +21,9 @@
 @property (weak, nonatomic) IBOutlet UIView *cellHeader;
 @property (weak, nonatomic) IBOutlet UIButton *defaultSettingsButton;
 @property (weak, nonatomic) IBOutlet DeleteButton *deleteButton;
+@property (weak, nonatomic) IBOutlet UIView *defaultSettingsRow;
 
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
 -(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
+- (void) setDefaultSettingsRowToSelected:(BOOL) isSelected;
 @end
