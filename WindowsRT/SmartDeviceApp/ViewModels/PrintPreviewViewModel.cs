@@ -45,6 +45,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private Grid _pageAreaGrid;
+        private UIElement _controlReference;
         private double _pageAreaGridOriginalHeight;
         private bool _isPageAreaGridLoaded;
         public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
@@ -101,6 +102,7 @@ namespace SmartDeviceApp.ViewModels
             {   
                 _pageAreaGrid = pageAreaGrid;
                 _pageAreaGridOriginalHeight = _pageAreaGrid.ActualHeight;
+                _controlReference = (UIElement)_pageAreaGrid.Parent;
                 _isPageAreaGridLoaded = true;
             }
         }
@@ -111,7 +113,6 @@ namespace SmartDeviceApp.ViewModels
             {
                 // Save page height to be used in resizing page images                
                 var scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
-                var pageAreaScrollViewer = (UIElement)_pageAreaGrid.Parent;
                 if (_gestureController != null) _gestureController.Dispose();
                 Size targetSize;
                 if (PageViewMode == PageViewMode.SinglePageView)
@@ -123,10 +124,19 @@ namespace SmartDeviceApp.ViewModels
                     var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
                     targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width + defaultMargin, RightPageActualSize.Height);                   
                 }
-                _gestureController = new PreviewGestureController(_pageAreaGrid, pageAreaScrollViewer,
+                _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
                        targetSize, scalingFactor,
                        new PreviewGestureController.SwipeRightDelegate(SwipeRight),
                        new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
+            }
+        }
+
+        public void Cleanup()
+        {
+            if (_gestureController != null)
+            {
+                 _gestureController.Dispose();
+                 _gestureController = null;
             }
         }
 

@@ -200,6 +200,8 @@ namespace SmartDeviceApp.Controllers
             _isDuplex = false;
             _isBooklet = false;
             _isReversePages = false;
+
+            _printPreviewViewModel.Cleanup();
         }
 
         /// <summary>

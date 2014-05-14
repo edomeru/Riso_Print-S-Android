@@ -386,6 +386,7 @@ namespace SmartDeviceApp.ViewModels
                 ScreenMode = ScreenMode.Home;
             }
             ViewMode = ViewMode.FullScreen;
+            MainMenuItems[0].IsChecked = true;
         }
 
         private void GoToPrintersPageExecute()
@@ -393,6 +394,7 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(PrintersPage));
             ScreenMode = ScreenMode.Printers;
             ViewMode = ViewMode.FullScreen;
+            MainMenuItems[1].IsChecked = true;
         }
 
         private void GoToJobsPageExecute()
@@ -400,6 +402,7 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(JobsPage));
             ScreenMode = ScreenMode.Jobs;
             ViewMode = ViewMode.FullScreen;
+            MainMenuItems[2].IsChecked = true;
         }
 
         private void GoToSettingsPageExecute()
@@ -407,6 +410,7 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(SettingsPage));
             ScreenMode = ScreenMode.Settings;
             ViewMode = ViewMode.FullScreen;
+            MainMenuItems[3].IsChecked = true;
         }
 
         private void GoToHelpPageExecute()
@@ -414,6 +418,7 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(HelpPage));
             ScreenMode = ScreenMode.Help;
             ViewMode = ViewMode.FullScreen;
+            MainMenuItems[4].IsChecked = true;
         }
 
         private void GoToLegalPageExecute()
@@ -421,6 +426,7 @@ namespace SmartDeviceApp.ViewModels
             _navigationService.Navigate(typeof(LegalPage));
             ScreenMode = ScreenMode.Legal;
             ViewMode = ViewMode.FullScreen;
+            MainMenuItems[5].IsChecked = true;
         }
 
         #endregion
