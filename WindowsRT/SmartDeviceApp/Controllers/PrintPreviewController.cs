@@ -1793,12 +1793,16 @@ namespace SmartDeviceApp.Controllers
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                // Display progress dialog
-                _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
-                _printingProgress.CancelCommand = CancelPrintingCommand;
-                _printingPopup = new Popup();
-                _printingPopup.Child = _printingProgress;
-                _printingPopup.IsOpen = true;
+                Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                () =>
+                {
+                    // Display progress dialog
+                    _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
+                    _printingProgress.CancelCommand = CancelPrintingCommand;
+                    _printingPopup = new Popup();
+                    _printingPopup.Child = _printingProgress;
+                    _printingPopup.IsOpen = true;
+                });
 
                 if (_directPrintController != null)
                 {
@@ -1834,7 +1838,11 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
-            _printingPopup.IsOpen = false;
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            () =>
+            {
+                _printingPopup.IsOpen = false;
+            });
         }
 
         /// <summary>
@@ -1884,7 +1892,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     // TODO: Confirm if message for success is needed here
                     DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
-                    //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
+                    new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
                     Cleanup();
                     DocumentController.Instance.Unload();
                 }

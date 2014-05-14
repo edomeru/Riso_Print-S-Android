@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
-using SmartDeviceApp.DummyControllers;
 using SmartDeviceApp.Controllers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;

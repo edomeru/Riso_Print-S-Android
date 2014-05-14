@@ -17,7 +17,7 @@
     <local:KeyValueControl.ValueContent>
         <RadioButton x:Name="radioButton"
                      GroupName="{Binding GroupName, ElementName=keyRadioButtonControl}"
-                     IsChecked="{Binding IsChecked, ElementName=keyRadioButtonControl}">
+                     IsChecked="{Binding IsChecked, ElementName=keyRadioButtonControl, Mode=TwoWay}">
             <RadioButton.Template>
                 <ControlTemplate>
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">

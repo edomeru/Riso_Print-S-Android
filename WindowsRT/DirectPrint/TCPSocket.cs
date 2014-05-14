@@ -88,21 +88,28 @@ namespace DirectPrint
 
         internal async void write(byte[] data, int a,int b)
         {
-            if (socket != null)
+            try
             {
-                DataWriter writer = new DataWriter(socket.OutputStream);
+                if (socket != null)
+                {
+                    DataWriter writer = new DataWriter(socket.OutputStream);
 
-                byte[] data2 = new byte[b - a];
-                Array.Copy(data, a, data2, 0, b - a);
+                    byte[] data2 = new byte[b - a];
+                    Array.Copy(data, a, data2, 0, b - a);
 
-                string test = System.Text.Encoding.UTF8.GetString(data2, 0, data2.Length);
+                    string test = System.Text.Encoding.UTF8.GetString(data2, 0, data2.Length);
 
-                writer.WriteBytes(data2);
-                //await writer.FlushAsync();
-                await writer.StoreAsync();
-                // detach the stream and close it
-                writer.DetachStream();
-                writer.Dispose();
+                    writer.WriteBytes(data2);
+                    //await writer.FlushAsync();
+                    await writer.StoreAsync();
+                    // detach the stream and close it
+                    writer.DetachStream();
+                    writer.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }    
     }

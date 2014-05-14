@@ -89,14 +89,14 @@ namespace DirectPrint
 
         public void startLPRPrint(directprint_job parameter)
         {
-            /*
+            //*
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
             (workItem) =>
             {
                 _startLPRPrint(parameter);
             });
-            */
-            Task.Run(() => _startLPRPrint(parameter));
+            //*/
+            //Task.Run(() => _startLPRPrint(parameter));
         }
 
         public async void _startLPRPrint(directprint_job parameter)
@@ -159,7 +159,18 @@ namespace DirectPrint
             buffer[pos++] = (byte)'\n';
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
+            try
+            {
+                socket.write(buffer, 0, pos);
+            }
+            catch (Exception e)
+            {
+                if (print_job.callback != null)
+                {
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
+                return;
+            }
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
@@ -178,6 +189,7 @@ namespace DirectPrint
                 {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
+                if (socket != null) socket.disconnect();
                 return;
             }
 
@@ -258,6 +270,7 @@ namespace DirectPrint
                 {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
+                if (socket != null) socket.disconnect();
                 return;
             }
 
@@ -347,6 +360,7 @@ namespace DirectPrint
                     {
                         print_job.callback(PRINT_STATUS_ERROR);
                     }
+                    if (socket != null) socket.disconnect();
                     return;
                 }
             }
