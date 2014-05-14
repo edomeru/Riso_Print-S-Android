@@ -363,12 +363,15 @@ static PrinterManager* sharedPrinterManager = nil;
     __weak PrinterManager* weakSelf = self;
     if ([self isIPAlreadyRegistered:printerInfoCapabilities.ip])
     {
-        // this is an old printer
-        // update the UI (UI thread)
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.searchDelegate printerSearchDidFoundOldPrinter:printerInfoCapabilities.ip
-                                                            withName:printerInfoCapabilities.name];
-        });
+        if ([self.searchDelegate respondsToSelector:@selector(printerSearchDidFoundOldPrinter:withName:)])
+        {
+            // this is an old printer
+            // update the UI (UI thread)
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.searchDelegate printerSearchDidFoundOldPrinter:printerInfoCapabilities.ip
+                                                                withName:printerInfoCapabilities.name];
+            });
+        }
     }
     else
     {
@@ -388,9 +391,12 @@ static PrinterManager* sharedPrinterManager = nil;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    //get the search result
+    BOOL result = [(NSNumber*)[notif object] boolValue];
+    
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.searchDelegate searchEnded];
+        [weakSelf.searchDelegate searchEndedwithResult:result];
     });
 }
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Use_SNMPCommonLib</key>
+	<true/>
+	<key>Use_SNMPUnicastTimeout</key>
+	<false/>
+	<key>Use_PrintJobHistoryTestData</key>
+	<true/>
+	<key>Printer_MaxCount</key>
+	<integer>10</integer>
+</dict>
+</plist>

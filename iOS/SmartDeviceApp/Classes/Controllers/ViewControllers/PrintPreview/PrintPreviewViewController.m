@@ -15,6 +15,7 @@
 #import "PDFPageContentViewController.h"
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
+#import "AlertHelper.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -241,7 +242,10 @@
         }
         else
         {
-            // TODO: Error message
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [AlertHelper displayResult:kAlertResultFileCannotBeOpened withTitle:kAlertTitleDefault withDetails:nil];
+                [self.activityIndicator stopAnimating];
+            });
         }
     });
 }
@@ -737,11 +741,11 @@
 
 #pragma mark - PrintDocument Delegate Methods
 
-- (void)previewSettingDidChange:(NSString *)keyChanged
+- (BOOL)previewSettingDidChange:(NSString *)keyChanged
 {
     if([self isNonPreviewableSetting:keyChanged] == YES)
     {
-        return;
+        return NO;
     }
     
     // Cancel all operations
@@ -765,6 +769,8 @@
     [self setupPageviewControllerWithBindSetting];
     
     [self goToPage:self.printDocument.currentPage];
+    
+    return YES;
 }
 
 - (BOOL)isNonPreviewableSetting:(NSString *)settingKey

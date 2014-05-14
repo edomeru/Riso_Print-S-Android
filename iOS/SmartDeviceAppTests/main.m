@@ -7,10 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <objc/runtime.h>
 
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, @"GHUnitIOSAppDelegate");
+#if GHUNIT_CLI
+        CFMessagePortCreateLocal(NULL, (CFStringRef)@"PurpleWorkspacePort", NULL, NULL, NULL);
+        class_replaceMethod([UIWindow class], @selector(_createContext), imp_implementationWithBlock(^{}), "v@:");
+#endif
+        return UIApplicationMain(argc, argv, nil, @"TestAppDelegate");
     }
 }

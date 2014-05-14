@@ -17,9 +17,6 @@
 
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details
 {
-    //TODO: replace title and message with localized strings
-    //TODO: replace OK with localized string
-    
     // get the title
     NSString* alertTitle;
     switch (title)
@@ -51,7 +48,7 @@
     switch (result)
     {
         case kAlertResultInfoPrinterAdded:
-            alertMsg = NSLocalizedString(IDS_LBL_ADD_SUCCESSFUL, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @"");
             break;
             
         case kAlertResultErrNoNetwork:
@@ -63,11 +60,11 @@
             break;
         
         case kAlertResultErrMaxPrinters:
-            alertMsg = @"The number of printers saved is already at maximum.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_MAX_PRINTER_COUNT, @"");
             break;
             
         case kAlertResultErrPrinterNotFound:
-            alertMsg = @"The printer was not found on the network.";
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER, @"");
             break;
             
         case kAlertResultErrPrinterDuplicate:
@@ -77,12 +74,17 @@
         case kAlertResultErrPrinterCannotBeAdded:
             alertMsg = @"The printer could not be added.";
             break;
-            //TODO: it would be better to explain why the printer could not be added
+            //TODO: only cause is DB error (registerPrinter: failed)
+            
+        case kAlertResultFileCannotBeOpened:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
+            break;
             
         case kAlertResultErrDefault:
         default:
             alertMsg = @"The operation could not be compeleted.";
             break;
+            //TODO: replace with localized string or remove if will not be used
     }
     
     //TODO: if using a custom AlertView, implement it here
@@ -97,7 +99,6 @@
 
 + (void)displayConfirmation:(kAlertConfirmation)confirmation forScreen:(id)screen withDetails:(NSArray*)details
 {
-    //TODO: replace title and message with localized strings
     //TODO: replace NO and YES with localized strings
     
     // get the title, message, and choices
@@ -108,9 +109,8 @@
     switch (confirmation)
     {
         case kAlertConfirmationDeleteAllJobs:
-            alertTitle = @"Print Job History Info";
-            alertMsg = [NSString stringWithFormat:
-                        @"Are you sure you want to delete all print jobs for %@?", details[1]];
+            alertTitle = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS, @"");
             cancelButtonTitle = @"NO";
             confirmButtonTitle = @"YES";
             break;
@@ -122,11 +122,6 @@
                                                        delegate:screen
                                               cancelButtonTitle:cancelButtonTitle
                                               otherButtonTitles:confirmButtonTitle, nil];
-    
-    // add tag (if available)
-    if (details != nil && [details[0] isKindOfClass:[NSNumber class]])
-        alertView.tag = [details[0] integerValue];
-    
     [alertView show];
 }
 

@@ -52,107 +52,34 @@
 - (void)test001_ReadUInt
 {
     GHTestLog(@"# CHECK: The UINT settings are correct. #");
+    // reads the UINT settings from SmartDeviceAppTests/PropertyList/SmartDeviceApp-Settings.plist
+    
+    GHTestLog(@"-- reading invalid");
+    NSUInteger defaultValue = [PListHelper readUint:99];
+    GHAssertTrue(defaultValue == 0, @"");
     
     GHTestLog(@"-- reading [Max Printer Count]");
     NSUInteger actualMaxPrinterCount = [PListHelper readUint:kPlistUintValMaxPrinters];
-    GHAssertEquals(actualMaxPrinterCount, (NSUInteger)20, @"");
+    GHAssertTrue(actualMaxPrinterCount == 10, @"");
 }
 
 - (void)test002_ReadBool
 {
     GHTestLog(@"# CHECK: The BOOL settings are correct. #");
+    // reads the BOOL settings from SmartDeviceAppTests/PropertyList/SmartDeviceApp-Settings.plist
+    
+    GHTestLog(@"-- reading invalid");
+    NSUInteger defaultValue = [PListHelper readBool:99];
+    GHAssertFalse(defaultValue, @"");
     
     GHTestLog(@"-- reading [Use SNMP Common Lib]");
-    BOOL useSNMPCommonLib = [PListHelper readBool:kPlistBoolValUseSNMP];
-    GHAssertTrue(useSNMPCommonLib, @"");
+    GHAssertTrue([PListHelper readBool:kPlistBoolValUseSNMP], @"");
     
     GHTestLog(@"-- reading [Use SNMP Timeout]");
-    BOOL useSNMPTimeout = [PListHelper readBool:kPlistBoolValUseSNMPTimeout];
-    GHAssertFalse(useSNMPTimeout, @"");
-}
-
-- (void)test003_ReadDefaultSettings
-{
-    GHTestLog(@"# CHECK: The Default Print Settings are correct. #");
+    GHAssertFalse([PListHelper readBool:kPlistBoolValUseSNMPTimeout], @"");
     
-    GHTestLog(@"-- reading [Default Print Settings]");
-    NSDictionary* actualDefaultPrintSettings = [PListHelper readDefaultPrintSettings];
-    
-    GHTestLog(@"-- reading Bind");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Bind"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading BookletBinding");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"BookletBinding"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading BookletTray");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"BookletTray"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading CatchTray");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"CatchTray"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading ColorMode");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"ColorMode"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading Copies");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Copies"] intValue], 1, nil);
-    
-    GHTestLog(@"-- reading Duplex");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Duplex"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading ImageQuality");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"ImageQuality"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading Pagination");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Pagination"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading PaperSize");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"PaperSize"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading PaperType");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"PaperType"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading Punch");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Punch"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading Sort");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Sort"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading Staple");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Staple"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading Zoom");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"Zoom"] intValue], 0, nil);
-    
-    GHTestLog(@"-- reading ZoomRate");
-    GHAssertEquals([[actualDefaultPrintSettings valueForKey:@"ZoomRate"] intValue], 100, nil);
-}
-
--(void) testReadApplicationSettings
-{
-    NSDictionary *appSettings = [PListHelper readApplicationSettings];
-    GHAssertNotNil(appSettings, @"");
-    NSString *cardId = (NSString *)[appSettings objectForKey:@"CardReaderID"];
-    GHAssertNotNil(cardId, @"");
-    NSString *communityName = (NSString *)[appSettings objectForKey:@"CommunityName"];
-    GHAssertNotNil(communityName, @"");
-}
-
-
--(void) testSetApplicationSettings
-{
-    NSMutableDictionary *appSettings = [[PListHelper readApplicationSettings] mutableCopy];
-    GHAssertNotNil(appSettings, @"");
-    NSString *testCardIDData = @"testCardID";
-    [appSettings setObject: testCardIDData forKey:@"CardReaderID"];
-    NSString *testCommunityName = @"testCommunityName";
-    [appSettings setObject: testCommunityName forKey:@"CommunityName"];
-    
-    [PListHelper setApplicationSettings:appSettings];
-    
-    NSDictionary *updatedDict = [PListHelper readApplicationSettings];
-    
-    GHAssertEqualStrings(testCardIDData, [updatedDict objectForKey:@"CardReaderID"], @"");
-    GHAssertEqualStrings(testCommunityName, [updatedDict objectForKey:@"CommunityName"], @"");
+    GHTestLog(@"-- reading [Use Print Job History Test Data]");
+    GHAssertTrue([PListHelper readBool:kPlistBoolValUsePrintJobTestData], @"");
 }
 
 @end

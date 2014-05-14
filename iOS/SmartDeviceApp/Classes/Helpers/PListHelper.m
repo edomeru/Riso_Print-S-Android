@@ -49,14 +49,6 @@ static NSDictionary* sharedSettingsDict = nil;
 
 #pragma mark - Readers
 
-+ (NSDictionary*)readDefaultPrintSettings
-{
-    if (sharedSettingsDict == nil)
-        [self setSharedSettingsDict];
-    
-    return [sharedSettingsDict objectForKey:@"PrintSettings_Default"];
-}
-
 + (NSUInteger)readUint:(kPlistUintVal)type
 {
     if (sharedSettingsDict == nil)
@@ -92,4 +84,5 @@ static NSDictionary* sharedSettingsDict = nil;
             return NO;
     }
 }
+
 @end

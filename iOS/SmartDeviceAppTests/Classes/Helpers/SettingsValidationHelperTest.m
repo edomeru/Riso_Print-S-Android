@@ -2,8 +2,8 @@
 //  SettingsValidationHelperTest.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/28/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <GHUnitIOS/GHUnit.h>
@@ -17,48 +17,16 @@
 {
     
 }
-- (void) testShouldAcceptCardIDInput_LessThan128Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertTrue(result, nil);
-}
 
--(void) testShouldAcceptCardIDInput_MoreThan128Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//62Chars
-    [testString appendString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//+62Chars
-    [testString appendString: [testString substringToIndex:5]]; //+5Chars
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertFalse(result, nil);
-}
-
--(void) testShouldAcceptCardIDInput_128Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//62Chars
-    [testString appendString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];//+62Chars
-    [testString appendString: [testString substringToIndex:4]]; //+4Chars
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertTrue(result, nil);
-}
-
--(void) testShouldAcceptCardIDInput_0Chars
-{
-    NSMutableString *testString = [NSMutableString stringWithString:@""];
-    BOOL result = [SettingsValidationHelper shouldAcceptCardIDInput:testString];
-    GHAssertTrue(result, nil);
-}
-
--(void) testValidateCardIDInput_ValidChars
+- (void)test001_validateCardIDInput_ValidChars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
     kSettingsInputError result = [SettingsValidationHelper validateCardIDInput:testString];
     GHAssertTrue((result == kSettingsInputErrorNone) , nil);
 }
 
--(void) testValidateCardIDInput_InvalidChars
+- (void)test002_validateCardIDInput_InvalidChars
 {
-    
     NSString *invalidChars =@" +";//other characters ruled out by keyboard
     for(int i = 0; i < invalidChars.length; i++)
     {
@@ -69,7 +37,7 @@
     }
 }
 
--(void) testErrorMessage
+- (void)test003_errorMessages
 {
     NSArray *errorMessages = [NSArray arrayWithObjects: @"",
                                                         @"Card ID should be alphanumeric only",
