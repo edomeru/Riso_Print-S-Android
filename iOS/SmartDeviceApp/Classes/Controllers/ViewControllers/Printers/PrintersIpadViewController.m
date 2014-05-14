@@ -66,8 +66,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark -
-#pragma mark CollectionViewDataSource
+#pragma mark - CollectionViewDataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
@@ -144,25 +143,17 @@
     return NO;
 }
 
-- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
-{
-    //get selected printer from list
-    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
-    
-    //set as default printer
-    return [self.printerManager registerDefaultPrinter:selectedPrinter];
-}
-
 #pragma mark - IBActions
+
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
     DeleteButton *deleteButton = (DeleteButton*)sender;
     [deleteButton keepHighlighted:YES];
     [deleteButton setHighlighted:YES];
 
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_LBL_PRINTERS, @"") message:NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS, @"") cancelButtonTitle:nil];
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
+    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"")
                              type:CXAlertViewButtonTypeDefault
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [alertView dismiss];
@@ -170,7 +161,7 @@
                               [deleteButton setHighlighted:NO];
                           }];
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
+    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_OK, @"")
                              type:CXAlertViewButtonTypeDefault
                           handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
                               [self deletePrinterAtIndex:deleteButton.tag];
@@ -179,45 +170,6 @@
                               [deleteButton setHighlighted:NO];
                           }];
     [alertView show];
-}
-
-- (void) deletePrinterAtIndex:(NSUInteger)index
-{
-    if ([self.printerManager deletePrinterAtIndex:index])
-    {
-        //check if reference to default printer was also deleted
-        if (![self.printerManager hasDefaultPrinter])
-            self.defaultPrinterIndexPath = nil;
-        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
-        //set the view of the cell to stop polling for printer status
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
-        [cell.statusView.statusHelper stopPrinterStatusPolling];
-        cell.statusView.statusHelper.delegate = nil;
-        
-        //set view to non default printer cell style
-        [cell setAsDefaultPrinterCell:NO];
-        
-        //remove cell from view
-        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
-        
-        //reload data of items after the deleted item to update the control tags of the next items
-        NSMutableArray *indexPathsToReload = [[NSMutableArray alloc] init];
-        NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:0];
-        for(NSInteger i = index; i < numberOfItems; i++)
-        {
-            NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-            [indexPathsToReload addObject:indexPath];
-        }
-        
-        [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
-        self.toDeleteIndexPath = nil;
-    }
-    else
-    {
-        [AlertHelper displayResult:kAlertResultErrDefault
-                        withTitle:kAlertTitlePrinters
-                      withDetails:nil];
-    }
 }
 
 - (IBAction)defaultPrinterSwitchAction:(id)sender
@@ -254,7 +206,6 @@
     }
 }
 
-
 - (IBAction)defaultSettingsButtonAction:(id)sender
 {
     UIButton* button = (UIButton *) sender;
@@ -270,6 +221,55 @@
     [self.printerManager savePrinterChanges];
 }
 
+#pragma mark - private helper methods
+
+- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
+{
+    //get selected printer from list
+    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
+    
+    //set as default printer
+    return [self.printerManager registerDefaultPrinter:selectedPrinter];
+}
+
+- (void) deletePrinterAtIndex:(NSUInteger)index
+{
+    if ([self.printerManager deletePrinterAtIndex:index])
+    {
+        //check if reference to default printer was also deleted
+        if (![self.printerManager hasDefaultPrinter])
+            self.defaultPrinterIndexPath = nil;
+        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
+        //set the view of the cell to stop polling for printer status
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
+        [cell.statusView.statusHelper stopPrinterStatusPolling];
+        cell.statusView.statusHelper.delegate = nil;
+        
+        //set view to non default printer cell style
+        [cell setAsDefaultPrinterCell:NO];
+        
+        //remove cell from view
+        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
+        
+        //reload data of items after the deleted item to update the control tags of the next items
+        NSMutableArray *indexPathsToReload = [[NSMutableArray alloc] init];
+        NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:0];
+        for(NSInteger i = index; i < numberOfItems; i++)
+        {
+            NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            [indexPathsToReload addObject:indexPath];
+        }
+        
+        [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
+        self.toDeleteIndexPath = nil;
+    }
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrDefault
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil];
+    }
+}
 
 #pragma mark - Segue
 
