@@ -1793,16 +1793,13 @@ namespace SmartDeviceApp.Controllers
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-                () =>
-                {
-                    // Display progress dialog
-                    _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
-                    _printingProgress.CancelCommand = CancelPrintingCommand;
-                    _printingPopup = new Popup();
-                    _printingPopup.Child = _printingProgress;
-                    _printingPopup.IsOpen = true;
-                });
+
+                // Display progress dialog
+                _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
+                _printingProgress.CancelCommand = CancelPrintingCommand;
+                _printingPopup = new Popup();
+                _printingPopup.Child = _printingProgress;
+                _printingPopup.IsOpen = true;
 
                 if (_directPrintController != null)
                 {
