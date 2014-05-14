@@ -109,11 +109,15 @@
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
     [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
     
-    cell.defaultSettingsButton.tag = indexPath.row;
+    //cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
     cell.defaultSwitch.tag = indexPath.row;
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDefaultSettingsRowAction:)];
+    
+    [cell.defaultSettingsRow addGestureRecognizer:tap];
+    [cell setDefaultSettingsRowToSelected:NO];
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
     // (the status view is not dealloc'd and it still sets
@@ -204,6 +208,16 @@
             self.defaultPrinterIndexPath = nil;
         }
     }
+}
+
+- (IBAction)tapDefaultSettingsRowAction:(id)sender
+{
+    UITapGestureRecognizer *tap = (UITapGestureRecognizer *) sender;
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint: [tap locationInView:self.collectionView]];
+    PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    self.selectedPrinterIndex = [NSNumber numberWithInteger:indexPath.row];
+    [cell setDefaultSettingsRowToSelected:YES];
+    [self performSegueTo:[PrintSettingsViewController class]];
 }
 
 - (IBAction)defaultSettingsButtonAction:(id)sender
@@ -297,7 +311,16 @@
 - (void)reloadData
 {
     [super reloadData];
-    [self.collectionView reloadData];
+    if(self.selectedPrinterIndex != nil)
+    {
+        NSIndexPath *indexPathToReload = [NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0];
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPathToReload]];
+        self.selectedPrinterIndex = nil;
+    }
+    else
+    {
+        [self.collectionView reloadData];
+    }
 }
 
 @end

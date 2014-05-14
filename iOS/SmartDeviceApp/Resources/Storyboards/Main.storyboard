@@ -895,7 +895,7 @@
                                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_DEFAULT_PRINT_SETTINGS"/>
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hEi-x2-OHw">
+                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hEi-x2-OHw">
                                                             <rect key="frame" x="282" y="6" width="30" height="30"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <constraints>
@@ -907,9 +907,6 @@
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
                                                             <state key="highlighted" image="img_btn_default_print_settings_pressed"/>
-                                                            <connections>
-                                                                <action selector="defaultSettingsButtonAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="m6Q-MJ-lLH"/>
-                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <constraints>
@@ -955,6 +952,8 @@
                                         <connections>
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
                                             <outlet property="defaultSettingsButton" destination="hEi-x2-OHw" id="H69-Iy-BLY"/>
+                                            <outlet property="defaultSettingsRow" destination="SjP-Aq-fJU" id="6Sp-dP-miI"/>
+                                            <outlet property="defaultSettingsRowLabel" destination="eY3-b2-Jeq" id="L6r-Ia-gVE"/>
                                             <outlet property="defaultSwitch" destination="Xs2-X2-H9b" id="7kt-b4-tsC"/>
                                             <outlet property="deleteButton" destination="tCl-QS-N9c" id="Cpq-DW-TyL"/>
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
