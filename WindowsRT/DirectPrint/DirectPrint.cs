@@ -89,17 +89,17 @@ namespace DirectPrint
 
         public void startLPRPrint(directprint_job parameter)
         {
-            //*
+            /*
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
             (workItem) =>
             {
                 _startLPRPrint(parameter);
             });
-            //*/
-            //Task.Run(() => _startLPRPrint(parameter));
+            */
+            Task.Run(() => _startLPRPrint(parameter));
         }
 
-        public async void _startLPRPrint(directprint_job parameter)
+        public async Task _startLPRPrint(directprint_job parameter)
         {
 
             if (parameter == null)

@@ -107,9 +107,9 @@ namespace DirectPrint
                     writer.Dispose();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }    
     }
