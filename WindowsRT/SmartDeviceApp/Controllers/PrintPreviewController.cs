@@ -1866,20 +1866,19 @@ namespace SmartDeviceApp.Controllers
         /// <param name="result">result</param>
         public void UpdatePrintJobResult(string name, DateTime date, int result)
         {
-            PrintJob printJob = new PrintJob()
-            {
-                PrinterId = _selectedPrinter.Id,
-                Name = name,
-                Date = date,
-                Result = result
-            };
-
-            JobController.Instance.SavePrintJob(printJob);
-
-            //UI processing stuff
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-            () => 
+            () =>
             {
+                PrintJob printJob = new PrintJob()
+                {
+                    PrinterId = _selectedPrinter.Id,
+                    Name = name,
+                    Date = date,
+                    Result = result
+                };
+
+                JobController.Instance.SavePrintJob(printJob);
+
                 _printingPopup.IsOpen = false;
                 if (result == (int)PrintJobResult.Success)
                 {
