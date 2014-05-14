@@ -132,6 +132,55 @@
         [self removeDeleteState];
 }
 
+
+#pragma mark - UIGestureRecognizerDelegate
+
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]])
+    {
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[gestureRecognizer locationInView:self.tableView]];
+        
+        if(self.toDeleteIndexPath != nil && indexPath != nil && indexPath.row == self.toDeleteIndexPath.row)
+        {
+            return NO;
+        }
+        
+    }
+    return YES;
+}
+
+#pragma mark - PrinterCellDelegate
+
+- (void)didTapDeleteButton:(DeleteButton*)button
+{
+    DeleteButton *deleteButton = (DeleteButton*)button;
+    [deleteButton keepHighlighted:YES];
+    [deleteButton setHighlighted:YES];
+    
+    __weak PrintersIphoneViewController* weakSelf = self;
+    
+    void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [alertView dismiss];
+        [weakSelf removeDeleteState];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
+    
+    void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [weakSelf deletePrinter];
+        [alertView dismiss];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
+    
+    [AlertHelper displayConfirmation:kAlertConfirmationDeletePrinter
+                   withCancelHandler:cancelled
+                  withConfirmHandler:confirmed];
+}
+
 #pragma mark - IBActions
 
 - (IBAction)tapTableViewAction:(id)sender
@@ -175,20 +224,6 @@
     }
 }
 
--(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
-{
-    if([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]])
-    {
-        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[gestureRecognizer locationInView:self.tableView]];
-    
-        if(self.toDeleteIndexPath != nil && indexPath != nil && indexPath.row == self.toDeleteIndexPath.row)
-        {
-            return NO;
-        }
-        
-    }
-    return YES;
-}
 - (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
@@ -210,64 +245,6 @@
     PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
     [cell setCellToBeDeletedState:YES];
     self.toDeleteIndexPath = selectedIndexPath;
-}
-
-- (void)didTapDeleteButton:(DeleteButton*)button
-{
-    DeleteButton *deleteButton = (DeleteButton*)button;
-    [deleteButton keepHighlighted:YES];
-    [deleteButton setHighlighted:YES];
-    
-    __weak PrintersIphoneViewController* weakSelf = self;
-    
-    void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
-    {
-        [alertView dismiss];
-        [weakSelf removeDeleteState];
-        [deleteButton keepHighlighted:NO];
-        [deleteButton setHighlighted:NO];
-    };
-    
-    void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
-    {
-        [weakSelf deletePrinter];
-        [alertView dismiss];
-        [deleteButton keepHighlighted:NO];
-        [deleteButton setHighlighted:NO];
-    };
-    
-    [AlertHelper displayConfirmation:kAlertConfirmationDeletePrinter
-                   withCancelHandler:cancelled
-                  withConfirmHandler:confirmed];
-}
-
-- (void) deletePrinter
-{
-    if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
-    {
-        //check if reference to default printer was also deleted
-        if (![self.printerManager hasDefaultPrinter])
-            self.defaultPrinterIndexPath = nil;
-        
-        //set the view of the cell to stop polling for printer status
-        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
-        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
-        
-        //set view to non default printer cell style
-        [cell setCellStyleForNormalCell];
-        
-        //remove cell from view
-        [self.tableView deleteRowsAtIndexPaths:@[self.toDeleteIndexPath]
-                              withRowAnimation:UITableViewRowAnimationAutomatic];
-        
-        self.toDeleteIndexPath = nil;
-    }
-    else
-    {
-        [AlertHelper displayResult:kAlertResultErrDelete
-                         withTitle:kAlertTitlePrinters
-                       withDetails:nil];
-    }
 }
 
 #pragma mark - Segue
@@ -347,6 +324,41 @@
     self.defaultPrinterIndexPath = indexPath;
     PrinterCell *selectedDefaultCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     [selectedDefaultCell setCellStyleForDefaultCell];
+}
+
+- (void) deletePrinter
+{
+    if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
+    {
+        //check if reference to default printer was also deleted
+        if (![self.printerManager hasDefaultPrinter])
+            self.defaultPrinterIndexPath = nil;
+        
+        //set the view of the cell to stop polling for printer status
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
+        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+        
+        //set view to non default printer cell style
+        [cell setCellStyleForNormalCell];
+        
+        //remove cell from view
+        [self.tableView deleteRowsAtIndexPaths:@[self.toDeleteIndexPath]
+                              withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+        if(self.toDeleteIndexPath.row > 0 && self.toDeleteIndexPath.row == [self.tableView numberOfRowsInSection:0])
+        {
+            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:self.toDeleteIndexPath.row - 1 inSection:0];
+            [self.tableView reloadRowsAtIndexPaths:@[lastIndexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }
+        
+        self.toDeleteIndexPath = nil;
+    }
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrDelete
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil];
+    }
 }
 
 -(void) removeDeleteState

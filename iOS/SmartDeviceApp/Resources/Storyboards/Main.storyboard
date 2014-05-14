@@ -861,7 +861,7 @@
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="onTintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
                                                             <connections>
-                                                                <action selector="defaultSwitchAction:" destination="DmK-Jg-Hxh" eventType="valueChanged" id="dKe-gw-fzd"/>
+                                                                <action selector="defaultPrinterSwitchAction:" destination="ZEw-b3-LhF" eventType="valueChanged" id="C2g-gX-t2i"/>
                                                             </connections>
                                                         </switch>
                                                     </subviews>
