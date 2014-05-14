@@ -1848,7 +1848,6 @@ namespace SmartDeviceApp.Controllers
         /// <param name="progress">progress value</param>
         public void UpdatePrintJobProgress(float progress)
         {
-            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
             //_printingProgress.ProgressValue = progress;
             
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
@@ -1865,10 +1864,8 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">print job name</param>
         /// <param name="date">date</param>
         /// <param name="result">result</param>
-        public async void UpdatePrintJobResult(string name, DateTime date, int result)
+        public void UpdatePrintJobResult(string name, DateTime date, int result)
         {
-            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobResult:" + result);
-
             PrintJob printJob = new PrintJob()
             {
                 PrinterId = _selectedPrinter.Id,
@@ -1886,11 +1883,8 @@ namespace SmartDeviceApp.Controllers
                 _printingPopup.IsOpen = false;
                 if (result == (int)PrintJobResult.Success)
                 {
-                    // TODO: Confirm if message for success is needed here
                     DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
                     new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
-                    Cleanup();
-                    DocumentController.Instance.Unload();
                 }
                 else if (result == (int)PrintJobResult.Error)
                 {
