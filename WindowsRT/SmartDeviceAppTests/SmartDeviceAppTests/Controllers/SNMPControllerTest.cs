@@ -60,7 +60,22 @@ namespace SmartDeviceAppTests.Controllers
         {
             // Note: Test for coverage only; No tests to assert
             SNMPController.Instance.Initialize();
+            SNMPController.Instance.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(Test_SNMPController_DiscoverCallback);
+            SNMPController.Instance.printerControllerTimeout = new Action<string>(Test_SNMPController_Timeout);
             SNMPController.Instance.startDiscover();
+
+        }
+
+        [TestMethod]
+        private void Test_SNMPController_DiscoverCallback(PrinterSearchItem item)
+        {
+            // Note: Test for coverage only; No tests to assert
+        }
+
+        [TestMethod]
+        private void Test_SNMPController_Timeout(string ip)
+        {
+            // Note: Test for coverage only; No tests to assert
         }
 
         [TestMethod]
@@ -82,5 +97,25 @@ namespace SmartDeviceAppTests.Controllers
             Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
             Assert.IsNotNull(printer);
         }
+
+        [TestMethod]
+        public void Test_SNMPController_GetPrinterFromSNMPDeviceWithCapabilities()
+        {
+            string ip = "192.168.0.1";
+            SNMPController.Instance.Initialize();
+            SNMPDevice device = new SNMPDevice(ip);
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            device.getCapabilities().Add("true");
+            SNMPController.Instance.Discovery.SnmpDevices.Add(device);
+            Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
+            Assert.IsNotNull(printer);
+        }
+
     }
 }

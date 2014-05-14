@@ -89,7 +89,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void AddPrinterExecute()
+        private async Task AddPrinterExecute()
         {
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
@@ -107,7 +107,8 @@ namespace SmartDeviceApp.ViewModels
 
             IsButtonVisible = false;
             IsProgressRingVisible = true;
-            if (AddPrinterHandler(IpAddress) == false)
+            bool result = await AddPrinterHandler(IpAddress);
+            if (result == false)
             {
                 setVisibilities();
             }
@@ -143,9 +144,7 @@ namespace SmartDeviceApp.ViewModels
 
             if (isSuccessful)
             {
-                DialogService.Instance.ShowMessage("IDS_LBL_ADD_SUCCESSFUL", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-
-                return;
+                content = loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
             }
             else
             {

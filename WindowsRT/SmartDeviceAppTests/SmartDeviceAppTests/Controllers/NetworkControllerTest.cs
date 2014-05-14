@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SmartDeviceApp.Controllers;
+using Windows.System.Threading;
 
 namespace SmartDeviceAppTests.Controllers
 {
@@ -17,22 +18,31 @@ namespace SmartDeviceAppTests.Controllers
             Assert.IsInstanceOfType(NetworkController.IsConnectedToNetwork, typeof(bool));
         }
 
+
         [TestMethod]
-        public void Test_NetworkController_PingDeviceSuccess()
+        public async Task Test_NetworkController_PingDeviceSuccess()
         {
             // Note: Test for coverage only; No tests to assert
             //change ip to a device that is online
             string ip = "192.168.0.199";
-            NetworkController.Instance.pingDevice(ip);
+            NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(Test_NetworkController_Callback);
+            await NetworkController.Instance.pingDevice(ip);
+
+        }
+
+        private void Test_NetworkController_Callback(string arg1, bool arg2)
+        {
+            
         }
 
         [TestMethod]
-        public void Test_NetworkController_PingDeviceFail()
+        public async Task Test_NetworkController_PingDeviceFail()
         {
             // Note: Test for coverage only; No tests to assert
             //change ip to a device that is not online
             string ip = "192.168.0.180";
-            NetworkController.Instance.pingDevice(ip);
+            NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(Test_NetworkController_Callback);
+            await NetworkController.Instance.pingDevice(ip);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
@@ -6,6 +7,7 @@ using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,6 +57,17 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
+        public void Test_PrintersViewModel_GridTapped()
+        {
+            PrinterController.Instance.Initialize();
+            PrinterController.Instance.PrinterList.Add(new Printer()
+                {
+                    IpAddress = "192.168.0.1"
+                });
+            Messenger.Default.Send<string>("ClearDelete");
+        }
+
+        [TestMethod]
         public void Test_PrintersViewModel_OpenDefaultPrintSettingsCommand()
         {
             Printer printer = new Printer();
@@ -62,6 +75,68 @@ namespace SmartDeviceAppTests.ViewModels
             viewModel.OpenDefaultPrinterSettings.Execute(printer);
 
             Assert.IsNotNull(viewModel.OpenDefaultPrinterSettings);
+        }
+
+        [TestMethod]
+        public void Test_PrintersViewModel_OnNavigatedTo()
+        {
+            PrinterController.Instance.Initialize();
+            viewModel.OnNavigatedTo();
+
+        }
+
+        [TestMethod]
+        public void Test_PrintersViewModel_OnNavigatedFrom()
+        {
+            PrinterController.Instance.Initialize();
+            viewModel.OnNavigatedFrom();
+
+        }
+
+        [TestMethod]
+        public void Test_PrintersViewModel_ScreenMode()
+        {
+            var viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            PrinterController.Instance.Initialize();
+            viewControlViewModel.ScreenMode = ScreenMode.Home;
+        }
+
+        [TestMethod]
+        public void Test_PrintersViewModel_ViewModeFullScreen()
+        {
+            PrinterController.Instance.Initialize();
+            PrintersGestureController gc = new PrintersGestureController();
+            viewModel.GestureController = gc;
+
+            var viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            viewControlViewModel.ScreenMode = ScreenMode.Printers;
+            viewControlViewModel.ViewMode = ViewMode.FullScreen;
+        }
+
+        [TestMethod]
+        public void Test_PrintersViewModel_ViewModeRightPane()
+        {
+            PrinterController.Instance.Initialize();
+            PrintersGestureController gc = new PrintersGestureController();
+            viewModel.GestureController = gc;
+
+            var viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            viewControlViewModel.ScreenMode = ScreenMode.Printers;
+            viewControlViewModel.ViewMode = ViewMode.RightPaneVisible;
+        }
+
+        [TestMethod]
+        public void Test_PrintersViewModel_PropertyChanged()
+        {
+            PrinterController.Instance.Initialize();
+            viewModel.PropertyChanged += new PropertyChangedEventHandler(viewModel_PropertyChanged);
+            viewModel.RightPaneMode = PrintersRightPaneMode.AddPrinter;
+            
+        }
+
+        private void viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // Note: Test for coverage only; No tests to assert
         }
     }
 }
