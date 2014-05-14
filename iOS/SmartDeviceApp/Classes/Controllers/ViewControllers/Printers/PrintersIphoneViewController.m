@@ -141,7 +141,16 @@
     {
         NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[gestureRecognizer locationInView:self.tableView]];
         
-        if(self.toDeleteIndexPath != nil && indexPath != nil && indexPath.row == self.toDeleteIndexPath.row)
+        if(self.toDeleteIndexPath != nil && indexPath != nil)
+        {
+            if(indexPath.row != self.toDeleteIndexPath.row)
+            {
+                 [self removeDeleteState];
+            }
+            return NO;
+        }
+        // don't accept if there is already a view controller infront 
+        if(self.childViewControllers.count > 0)
         {
             return NO;
         }
@@ -198,31 +207,33 @@
     UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
     //else segue to printer info screen
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-    PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+     PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    
+    if(indexPath == nil || (self.selectedPrinterIndexPath != nil && self.selectedPrinterIndexPath.row != indexPath.row))
+    {
+        [cell setHighlighted:NO];
+        self.selectedPrinterIndexPath = nil; //touch went to another row
+        return;
+    }
+    
     if(press.state == UIGestureRecognizerStateBegan)
     {
-        if(self.toDeleteIndexPath != nil)
-        {
-            [self removeDeleteState];
-            return;
-        }
-        
-        if(self.selectedPrinterIndexPath != nil)
-        {
-            return;
-        }
         //else segue to printer info screen
         [cell setHighlighted:YES];
+        self.selectedPrinterIndexPath = indexPath;
     }
     else if(press.state == UIGestureRecognizerStateEnded)
     {
-        if(indexPath != nil)
+        if(self.selectedPrinterIndexPath != nil)
         {
-            self.selectedPrinterIndexPath = indexPath;
             [self performSegueTo:[PrinterInfoViewController class]];
+            [cell performSelector:@selector(setHighlighted:) withObject:NO afterDelay:0.1f];
         }
-        [cell performSelector:@selector(setHighlighted:) withObject:NO afterDelay:0.1f];
-
+    }
+    else
+    {
+        [cell setHighlighted:NO];
+        self.selectedPrinterIndexPath = nil; //touch went to another row
     }
 }
 
