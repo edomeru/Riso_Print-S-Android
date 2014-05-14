@@ -32,22 +32,18 @@ namespace SmartDeviceAppTests.Controllers
 
         
         [TestMethod]
-        public void Test_SendPrintJob()
+        public async Task Test_SendPrintJob()
         {
-            //StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF);
-            //await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
-            //DirectPrintController directPrintController = new DirectPrintController(
-            //    "sample job", file, "172.0.0.1", new PrintSettings(), MockUpdatePrintJobProgress,
-            //    MockSetPrintJobResult);
+            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF);
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            DirectPrintController directPrintController = new DirectPrintController(
+                "sample job", file, "172.0.0.1", new PrintSettings(), MockUpdatePrintJobProgress,
+                MockSetPrintJobResult);
 
-            //directPrintController.SendPrintJob();
-            //// Note: no public property or return value to assert
+            directPrintController.SendPrintJob();
+            // Note: no public property or return value to assert
 
-            //await DefaultsUtility.LoadDefaultsFromSqlScript(null); // Cleanup
-
-            {
-                Assert.Fail("Not yet implemented");
-            }
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null); // Cleanup
         }
 
         [TestMethod]
@@ -61,25 +57,20 @@ namespace SmartDeviceAppTests.Controllers
             // Note: no public property or return value to assert
         }
 
-        // TODO: Crashing
         [TestMethod]
-        public void Test_CancelPrintJob_Valid()
+        public async Task Test_CancelPrintJob_Valid()
         {
-            //StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF);
-            //await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
-            //DirectPrintController directPrintController = new DirectPrintController(
-            //    "sample job", file, "172.0.0.1", new PrintSettings(), MockUpdatePrintJobProgress,
-            //    MockSetPrintJobResult);
-            //directPrintController.SendPrintJob();
+            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF);
+            await DefaultsUtility.LoadDefaultsFromSqlScript(TESTDATA_SQL_SCRIPT);
+            DirectPrintController directPrintController = new DirectPrintController(
+                "sample job", file, "172.0.0.1", new PrintSettings(), MockUpdatePrintJobProgress,
+                MockSetPrintJobResult);
+            directPrintController.SendPrintJob();
 
-            //directPrintController.CancelPrintJob();
-            //// Note: no public property or return value to assert
+            directPrintController.CancelPrintJob();
+            // Note: no public property or return value to assert
 
-            //await DefaultsUtility.LoadDefaultsFromSqlScript(null); // Cleanup
-
-            {
-                Assert.Fail("Not yet implemented");
-            }
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null); // Cleanup
         }
 
         [TestMethod]

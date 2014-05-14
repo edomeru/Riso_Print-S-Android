@@ -39,7 +39,7 @@ namespace SmartDeviceAppTests.Controllers
             //// Note: no public properties or return value to assert
 
             {
-                Assert.Fail("Not yet implemented");
+                Assert.Inconclusive("UI Test");
             }
         }
 
@@ -57,7 +57,7 @@ namespace SmartDeviceAppTests.Controllers
             //// Note: no public properties or return value to assert
 
             {
-                Assert.Fail("Not yet implemented");
+                Assert.Inconclusive("UI Test");
             }
         }
 
