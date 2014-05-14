@@ -63,7 +63,7 @@ public class PrintSettingsTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mPrintSettings = new PrintSettings();
+        mPrintSettings = new PrintSettings(); //default values
         //use "mock" context in order to not destroy the data
         mContext = new RenamingDelegatingContext(getContext(), "test_");
         //initialize the PrintSettingsManager and give the "mock" context
@@ -312,7 +312,7 @@ public class PrintSettingsTest extends AndroidTestCase {
     }
 
     public void testGetBookletFinish() {
-        assertEquals(Preview.BookletFinish.PAPER_FOLDING, mPrintSettings.getBookletFinish());
+        assertEquals(Preview.BookletFinish.OFF, mPrintSettings.getBookletFinish());
     }
 
     public void testGetBookletLayout() {
