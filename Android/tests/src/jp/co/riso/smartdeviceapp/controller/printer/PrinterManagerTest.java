@@ -196,7 +196,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testGetDefaultPrinter_WithDefaultPrinterActivityRestarted() {
         try {
-            initialize();            
+            mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
             int defaultPrinter = -1;
 
             defaultPrinter = mPrinterManager.getDefaultPrinter();
