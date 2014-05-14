@@ -167,15 +167,15 @@ namespace SmartDeviceApp.Controllers
 
                 PrinterController.Instance.DeletePrinterItemsEventHandler += PrinterDeleted;
             }
-            else if (DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf)
-            {
-                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
-                await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
-            }
             else if (DocumentController.Instance.Result == LoadDocumentResult.UnsupportedPdf)
             {
                 (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME", "IDS_LBL_OK", null);
+            }
+            else // DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf or LoadDocumentResult.NotStarted
+            {
+                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
         }
 
@@ -185,10 +185,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Cleanup()
         {
-            if (_printPreviewViewModel != null)
-            {
-                _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-            }
+            _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
             _printSettingsViewModel.PinCodeValueChangedEventHandler -= _pinCodeValueChangedEventHandler;
@@ -896,8 +893,8 @@ namespace SmartDeviceApp.Controllers
         private Size GetPreviewPageImageSize(Size paperSize, bool isPortrait)
         {
             // Get paper size and apply DPI
-            double length1 = paperSize.Width * ImageConstant.BASE_DPI;
-            double length2 = paperSize.Height * ImageConstant.BASE_DPI;
+            double length1 = (paperSize.Width * ImageConstant.FACTOR_MM_TO_IN) * ImageConstant.BASE_DPI;
+            double length2 = (paperSize.Height * ImageConstant.FACTOR_MM_TO_IN) * ImageConstant.BASE_DPI;
 
             Size pageImageSize = new Size();
             // Check orientation
@@ -1793,6 +1790,7 @@ namespace SmartDeviceApp.Controllers
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
+
                 // Display progress dialog
                 _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
                 _printingProgress.CancelCommand = CancelPrintingCommand;
@@ -1834,7 +1832,11 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
-            _printingPopup.IsOpen = false;
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            () =>
+            {
+                _printingPopup.IsOpen = false;
+            });
         }
 
         /// <summary>
@@ -1843,7 +1845,6 @@ namespace SmartDeviceApp.Controllers
         /// <param name="progress">progress value</param>
         public void UpdatePrintJobProgress(float progress)
         {
-            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
             //_printingProgress.ProgressValue = progress;
             
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
@@ -1860,33 +1861,26 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">print job name</param>
         /// <param name="date">date</param>
         /// <param name="result">result</param>
-        public async void UpdatePrintJobResult(string name, DateTime date, int result)
+        public void UpdatePrintJobResult(string name, DateTime date, int result)
         {
-            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobResult:" + result);
-
-            PrintJob printJob = new PrintJob()
-            {
-                PrinterId = _selectedPrinter.Id,
-                Name = name,
-                Date = date,
-                Result = result
-            };
-
-            JobController.Instance.SavePrintJob(printJob);
-
-
-            //UI processing stuff
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-            () => 
+            () =>
             {
+                PrintJob printJob = new PrintJob()
+                {
+                    PrinterId = _selectedPrinter.Id,
+                    Name = name,
+                    Date = date,
+                    Result = result
+                };
+
+                JobController.Instance.SavePrintJob(printJob);
+
                 _printingPopup.IsOpen = false;
                 if (result == (int)PrintJobResult.Success)
                 {
-                    // TODO: Confirm if message for success is needed here
                     DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
-                    //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
-                    Cleanup();
-                    DocumentController.Instance.Unload();
+                    new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
                 }
                 else if (result == (int)PrintJobResult.Error)
                 {
@@ -1898,7 +1892,7 @@ namespace SmartDeviceApp.Controllers
                     _directPrintController.UnsubscribeEvents();
                     _directPrintController = null;
                 }
-            });            
+            });
         }
 
         #endregion Print

@@ -124,6 +124,7 @@
     <Compile Include="Controllers\SNMPControllerTest.cs" />
     <Compile Include="Common\Utilities\StorageFileUtilityTest.cs" />
     <Compile Include="Controllers\JobControllerTest.cs" />
+    <Compile Include="Controllers\PrintSettingsControllerTest.cs" />
     <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
     <Compile Include="Converters\StringToVisibilityConverterTest.cs" />
@@ -183,6 +184,10 @@
     <Content Include="TestData\SqlScript\insert_printjob_extra.sql" />
     <Content Include="TestData\SqlScript\insert_printjob_single.sql" />
     <Content Include="TestData\SqlScript\insert_printer_single.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_punch.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_imposition.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_finishingside.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_booklet.sql" />
     <Content Include="TestData\SqlScript\SampleData.sql" />
     <None Include="packages.config" />
     <None Include="SmartDeviceAppTests_TemporaryKey.pfx" />

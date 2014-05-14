@@ -40,6 +40,7 @@
             <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_CARD_ID, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding CardId, Mode=TwoWay}"
                                         IsNumeric="False"
+                                        TextBoxMaxLength="{StaticResource MAXLENGTH_AuthenticationLoginId}"
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="Collapsed"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"

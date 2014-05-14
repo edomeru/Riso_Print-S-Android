@@ -18,6 +18,7 @@
     <!-- PRINT SETTING CONSTANTS START -->
     <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>
     <x:Int32 x:Key="MAXLENGTH_AuthenticationLoginId">31</x:Int32>
+    <x:Int32 x:Key="MAXLENGTH_AuthenticationPinCode">8</x:Int32>
     <!-- PRINT SETTING CONSTANTS END -->
 
     <!-- APP THEME CONSTANTS START -->
@@ -47,7 +48,8 @@
     <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
     <x:Double x:Key="SIZE_ListValue_ToggleWidth">50</x:Double>
     <x:Double x:Key="SIZE_ListValue_TextboxWidth_Short">80</x:Double>
-    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Long">200</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Medium">200</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Long">350</x:Double>
     <x:Double x:Key="SIZE_ProgressRing">50</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonWidth_Long">150</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonHeight_Long">60</x:Double>

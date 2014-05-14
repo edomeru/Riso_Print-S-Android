@@ -25,7 +25,7 @@ namespace SmartDeviceAppTests.Converters
             result = pageIndexToSliderValueConverter.Convert("TEST", null, null, null);
             Assert.AreEqual(0, result);
 
-            uint value = 0;
+            double value = 0;
             result = pageIndexToSliderValueConverter.Convert(value, null, null, null);
             Assert.AreEqual(1.0, result);
         }
@@ -41,7 +41,7 @@ namespace SmartDeviceAppTests.Converters
             result = pageIndexToSliderValueConverter.ConvertBack("TEST", null, null, null);
             Assert.AreEqual(0, result);
 
-            uint value = 1;
+            double value = 1;
             result = pageIndexToSliderValueConverter.ConvertBack(value, null, null, null);
             Assert.AreEqual(0, result);
         }

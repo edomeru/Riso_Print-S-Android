@@ -139,8 +139,8 @@
                 <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_AUTHENTICATION_PINCODE, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 ValueText="{Binding AuthenticationLoginPinCode, Mode=TwoWay}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                                                PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
-                                                PasswordMaxLength="{StaticResource MAXLENGTH_AuthenticationLoginId}"
+                                                PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
+                                                PasswordMaxLength="{StaticResource MAXLENGTH_AuthenticationPinCode}"
                                                 Width="{Binding Width, ElementName=printSettingsBox}"
                                                 IsEnabled="True"
                                                 PressedColor="{StaticResource BRUSH_Purple1}"/>

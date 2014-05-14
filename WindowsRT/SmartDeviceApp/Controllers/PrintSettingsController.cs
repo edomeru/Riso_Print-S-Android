@@ -92,6 +92,8 @@ namespace SmartDeviceApp.Controllers
                 return currPrintSettings;
             }
 
+            currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
+
             RegisterPrintSettingValueChanged(screenName);
 
             if (!_printerMap.ContainsKey(screenName))
@@ -101,11 +103,6 @@ namespace SmartDeviceApp.Controllers
             else
             {
                 _printerMap[screenName] = printer;
-            }
-
-            if (printer != null)
-            {
-                currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
             }
 
             if (!_printSettingsMap.ContainsKey(screenName))
@@ -204,21 +201,21 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Create default print settings for the printer
         /// </summary>
-        /// <param name="printer"></param>
-        /// <returns></returns>
+        /// <param name="printer">printer</param>
+        /// <returns>task; print setting ID</returns>
         public async Task<int> CreatePrintSettings(Printer printer)
         {
             PrintSettings printSettings = new PrintSettings();
-            int deleted = 0;
-            if (printSettings != null)
-            {
-                deleted = await DatabaseController.Instance.InsertPrintSettings(printSettings);
-            }
 
-            if (deleted == 0)
+            if (printer != null && printer.Id > -1)
             {
-                // TODO: Display error?
-                return -1;
+                printSettings.PrinterId = printer.Id;
+                int added = await DatabaseController.Instance.InsertPrintSettings(printSettings);
+                if (added == 0)
+                {
+                    // TODO: Display error?
+                    return -1;
+                }
             }
 
             return printSettings.Id;
@@ -234,34 +231,37 @@ namespace SmartDeviceApp.Controllers
         /// <param name="screenName">name of active screen</param>
         public void RegisterPrintSettingValueChanged(String screenName)
         {
-            _activeScreen = screenName;
-
-            // Refresh Printer
-            Printer printer = null;
-            if (_printerMap.TryGetValue(screenName, out printer))
+            if (!string.IsNullOrEmpty(screenName))
             {
-                _printSettingsViewModel.PrinterName = printer.Name;
-                _printSettingsViewModel.PrinterId = printer.Id;
-                _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
-            }
+                _activeScreen = screenName;
 
-            // Refresh Print Settings
-            PrintSettingList printSettingList = null;
-            if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
-            {
-                _printSettingsViewModel.PrintSettingsList = printSettingList;
-            }
-            PrintSettings printSettings = null;
-            if (_printSettingsMap.TryGetValue(screenName, out printSettings))
-            {
-                string pinCode = (string.IsNullOrEmpty(printSettings.PinCode)) ? string.Empty : printSettings.PinCode;
-                _printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
-            }
+                // Refresh Printer
+                Printer printer = null;
+                if (_printerMap.TryGetValue(screenName, out printer))
+                {
+                    _printSettingsViewModel.PrinterName = printer.Name;
+                    _printSettingsViewModel.PrinterId = printer.Id;
+                    _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+                }
 
-            // Show/hide other controls
-            _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
+                // Refresh Print Settings
+                PrintSettingList printSettingList = null;
+                if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
+                {
+                    _printSettingsViewModel.PrintSettingsList = printSettingList;
+                }
+                PrintSettings printSettings = null;
+                if (_printSettingsMap.TryGetValue(screenName, out printSettings))
+                {
+                    string pinCode = (string.IsNullOrEmpty(printSettings.PinCode)) ? string.Empty : printSettings.PinCode;
+                    _printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
+                }
 
-            PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                // Show/hide other controls
+                _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
+
+                PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+            }
         }
 
         /// <summary>
@@ -270,8 +270,11 @@ namespace SmartDeviceApp.Controllers
         /// <param name="screenName">name of active screen</param>
         public void UnregisterPrintSettingValueChanged(String screenName)
         {
-            _activeScreen = null;
-            PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            if (string.Equals(_activeScreen, screenName))
+            {
+                _activeScreen = null;
+                PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            }
         }
 
         #endregion Print Settings Events
@@ -375,7 +378,7 @@ namespace SmartDeviceApp.Controllers
 
             if (!printer.EnabledBooklet)
             {
-                printSettings.Booklet = false;
+                //printSettings.Booklet = false;
 
                 PrintSetting bookletPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET);
@@ -398,12 +401,17 @@ namespace SmartDeviceApp.Controllers
             }
             if (!printer.EnabledStapler)
             {
+                //printSettings.Staple = (int)Staple.Off;
+                //if (printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple)
+                //{
+                //    printSettings.BookletFinishing = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_BOOKLET_FINISH, ListValueType.Int);
+                //}
+
                 PrintSetting staplePrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
                 if (staplePrintSetting != null)
                 {
                     RemovePrintSetting(staplePrintSetting);
-                    printSettings.Staple = (int)Staple.Off;
                 }
                 PrintSetting bookletFinishPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
@@ -411,7 +419,6 @@ namespace SmartDeviceApp.Controllers
                 {
                     RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
                 }
-
             }
             if (!printer.EnabledPunchFour) // Meaning punch3
             {
@@ -1008,6 +1015,7 @@ namespace SmartDeviceApp.Controllers
 
                     isUpdated = true;
                 }
+                /* Constraints for Output Tray
                 if (outputTrayPrintSetting != null)
                 {
                     outputTrayPrintSetting.IsEnabled = true;
@@ -1015,6 +1023,7 @@ namespace SmartDeviceApp.Controllers
 
                     isUpdated = true;
                 }
+                 */
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = false;
@@ -1069,7 +1078,7 @@ namespace SmartDeviceApp.Controllers
 
             if (value == (int)FinishingSide.Left || value == (int)FinishingSide.Right)
             {
-                if (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperLeft)
+                if (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperRight)
                 {
                     staplePrintSetting.Value = (int)Staple.One;
                     printSettings.Staple = (int)Staple.One;
@@ -1346,7 +1355,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printSetting">source print setting</param>
         /// <param name="value">updated value</param>
         /// <returns>task; true if print preview needs to be refreshed, false otherwise</returns>
-        public async Task<bool> UpdatePrintSettings(PrintSetting printSetting, int value)
+        private async Task<bool> UpdatePrintSettings(PrintSetting printSetting, int value)
         {
             bool isPreviewAffected = false;
 
@@ -1534,7 +1543,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printSetting">source print setting</param>
         /// <param name="state">updated value</param>
         /// <returns>task; true </returns>
-        public async Task<bool> UpdatePrintSettings(PrintSetting printSetting, bool state)
+        private async Task<bool> UpdatePrintSettings(PrintSetting printSetting, bool state)
         {
             bool isPreviewAffected = false;
 
@@ -1621,7 +1630,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="pinCode">PIN code</param>
         public void SetPinCode(string screenName, string pinCode)
         {
-            if (_printSettingsMap.ContainsKey(screenName))
+            if (!string.IsNullOrEmpty(screenName) && _printSettingsMap.ContainsKey(screenName))
             {
                 _printSettingsMap[screenName].PinCode = string.IsNullOrEmpty(pinCode) ? null : pinCode;
             }
@@ -1681,6 +1690,10 @@ namespace SmartDeviceApp.Controllers
             if (_pagesPerSheetMap.ContainsKey(_activeScreen))
             {
                 _pagesPerSheetMap[_activeScreen] = pagesPerSheet;
+            }
+            else
+            {
+                _pagesPerSheetMap.Add(_activeScreen, pagesPerSheet);
             }
         }
 
