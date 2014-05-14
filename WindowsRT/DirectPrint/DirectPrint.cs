@@ -115,6 +115,18 @@ namespace DirectPrint
 
             //start socket
             socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
+            try
+            {
+                await socket.connect();
+            }
+            catch (Exception)
+            {
+                if (print_job.callback != null)
+                {
+                    print_job.callback(PRINT_STATUS_ERROR);
+                }
+                return; 
+            }
 
             // Prepare PJL header
             string pjl_header = "";
@@ -161,7 +173,7 @@ namespace DirectPrint
             //***write buffer to socket
             try
             {
-                socket.write(buffer, 0, pos);
+                await socket.write(buffer, 0, pos);
             }
             catch (Exception e)
             {
@@ -226,7 +238,7 @@ namespace DirectPrint
             buffer[pos++] = (byte)'\n';
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
             string test000 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
 
             /////////////////////////////////////////////////////////
@@ -252,7 +264,7 @@ namespace DirectPrint
             buffer[pos++] = 0;
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
             string test001 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -325,7 +337,7 @@ namespace DirectPrint
             buffer[pos++] = (byte)'\n';
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
             string test002 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
 
             /////////////////////////////////////////////////////////
@@ -343,14 +355,14 @@ namespace DirectPrint
             ulong totalbytes = 0;
             int bytesRead = 0;
 
-            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
+            await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
             totalbytes += (ulong)pjl_header.Length;
 
             MemoryStream fstream = new MemoryStream(filebuffer);
             while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
                 totalbytes += (ulong)bytesRead;
-                socket.write(buffer, 0, bytesRead);
+                await socket.write(buffer, 0, bytesRead);
                 print_job.progress += data_step;
                 if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
@@ -364,7 +376,7 @@ namespace DirectPrint
                     return;
                 }
             }
-            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
+            await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
             totalbytes += (ulong)pjl_footer.Length;
 
             if (total_data_size != totalbytes)
@@ -375,7 +387,7 @@ namespace DirectPrint
             // close data file with a 0
             pos = 0;
             buffer[pos++] = 0;
-            socket.write(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
             print_job.progress = 99.0f;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
@@ -420,13 +432,10 @@ namespace DirectPrint
             return ack;
         }
 
-        public void receiveData(HostName hostname, byte[] data)
+        public void receiveData(HostName hostname, byte data)
         {
-            if (data != null)
-            {
-                datareceived = true;
-                ack = data[0];
-            }
+            datareceived = true;
+            ack = data;
         }
     }
 }

@@ -15,25 +15,43 @@ namespace DirectPrint
 
         private StreamSocket socket = null;
 
-        private Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
-        private Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
+        private Windows.Foundation.TypedEventHandler<HostName, byte> dataReceivedHandler = null;
+        private Windows.Foundation.TypedEventHandler<HostName, byte> timeoutHandler = null;
 
-        public TCPSocket(string host, string port, Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
+        private HostName h = null;
+        private string port = "0";
+
+        public TCPSocket(string _host, string _port, Windows.Foundation.TypedEventHandler<HostName, byte> d)
         {            
             socket = new StreamSocket();
-            this.setHost(host, port);
+            setHost(_host, _port);
             this.dataReceivedHandler = d;
         }
 
-        internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
+        internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte> d)
         {
             dataReceivedHandler = d;
         }
 
-        internal async void setHost(string host, string port)
+        internal void setHost(string _host, string _port)
         {
-            HostName h = new HostName(host);
-            await socket.ConnectAsync(h, port);
+           h = new HostName(_host);
+           port = _port;
+        }
+
+        internal async Task connect()
+        {
+            if (socket != null)
+            {
+                try
+                {
+                    await socket.ConnectAsync(h, port);
+                }
+                catch
+                {                    
+                    throw;
+                }
+            }
         }
 
         internal void disconnect()
@@ -45,7 +63,7 @@ namespace DirectPrint
             }
         }
 
-        internal async void read()
+        internal async Task read()
         {
             if (socket != null)
             try
@@ -53,8 +71,8 @@ namespace DirectPrint
                 DataReader reader = new DataReader(socket.InputStream);
                 // Set inputstream options so that we don't have to know the data size
                 await reader.LoadAsync(1);
-                byte[] responseData = new byte[1];
-                reader.ReadBytes(responseData);
+                byte responseData = 0;
+                responseData = reader.ReadByte();
 
                 if (dataReceivedHandler != null)
                 {
@@ -86,12 +104,14 @@ namespace DirectPrint
             }
         }
 
-        internal async void write(byte[] data, int a,int b)
+        internal async Task write(byte[] data, int a,int b)
         {
             try
             {
                 if (socket != null)
                 {
+                    //if (socket.)
+
                     DataWriter writer = new DataWriter(socket.OutputStream);
 
                     byte[] data2 = new byte[b - a];
