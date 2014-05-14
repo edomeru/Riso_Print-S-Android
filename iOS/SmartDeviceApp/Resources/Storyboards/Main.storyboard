@@ -1146,6 +1146,7 @@
                                         <state key="normal" image="img_btn_main_menu_normal">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <state key="disabled" image="img_btn_main_menu_pressed"/>
                                         <state key="highlighted" image="img_btn_main_menu_pressed"/>
                                         <connections>
                                             <action selector="mainMenuAction:" destination="q52-no-4j2" eventType="touchUpInside" id="Vlp-jM-duf"/>
@@ -1230,6 +1231,7 @@
                                         <state key="normal" image="img_btn_main_menu_normal">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <state key="disabled" image="img_btn_main_menu_pressed"/>
                                         <state key="highlighted" image="img_btn_main_menu_pressed"/>
                                         <connections>
                                             <action selector="mainMenuAction:" destination="CcX-hU-zgH" eventType="touchUpInside" id="b2g-mI-FoZ"/>
@@ -3903,7 +3905,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="6HN-Y0-69S"/>
         <segue reference="ax2-Mn-NH0"/>
         <segue reference="a4U-VG-JlJ"/>
         <segue reference="CWW-vD-UgO"/>

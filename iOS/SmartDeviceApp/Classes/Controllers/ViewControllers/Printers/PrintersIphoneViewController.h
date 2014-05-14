@@ -12,6 +12,6 @@
 #import "PrinterInfoViewController.h"
 #import "PrinterCell.h"
 
-@interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate, PrinterInfoDelegate, PrinterCellDelegate, UIGestureRecognizerDelegate>
+@interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate, PrinterInfoDelegate, PrinterCellDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate>
 
 @end

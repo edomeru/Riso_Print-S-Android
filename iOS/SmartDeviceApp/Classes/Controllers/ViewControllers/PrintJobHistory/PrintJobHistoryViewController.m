@@ -165,18 +165,20 @@
     [groupCell reloadContents];
     [groupCell clearHeader];
     
-    // check if a delete button was present while scrolling
-    // (fixes bug when swiping-left on the top/bottom edges of the list then scrolling)
-    if (self.groupWithDelete != nil)
-        [self removeDeleteButton];
-    self.groupWithDelete = nil;
-    
     return groupCell;
 }
 
 - (BOOL)collectionView:(UICollectionView*)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath*)indexPath
 {
     return NO; //fix highlight
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView*)scrollView
+{
+    if (self.groupWithDelete != nil)
+        [self removeDeleteButton];
 }
 
 #pragma mark - PrintJobHistoryLayoutDelegate

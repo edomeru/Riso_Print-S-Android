@@ -124,6 +124,14 @@
     return cell;
 }
 
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView*)scrollView
+{
+    if (self.toDeleteIndexPath != nil)
+        [self removeDeleteState];
+}
+
 #pragma mark - IBActions
 
 - (IBAction)tapTableViewAction:(id)sender
