@@ -11,6 +11,7 @@ using Windows.Storage;
 using SmartDeviceAppTests.Common.Utilities;
 using SQLite;
 using System.IO;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceAppTests.Controllers
 {
@@ -64,16 +65,15 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_InsertPrinter_Invalid()
+        public async Task Test_InsertPrinter_Invalid()
         {
-            //Printer printer = new Printer();
-            //await DatabaseController.Instance.InsertPrinter(printer);
-            //int result = await DatabaseController.Instance.InsertPrinter(printer); // Insert twice
-            //Assert.AreEqual(0, result);
+            // Delete database to force error
+            DatabaseController.Instance.Cleanup();
+            await StorageFileUtility.DeleteFile(FILE_NAME_DATABASE, ApplicationData.Current.LocalFolder);
 
-            {
-                Assert.Fail("Not yet implemented");
-            }
+            Printer printer = new Printer();
+            int result = await DatabaseController.Instance.InsertPrinter(printer); // Insert twice
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -195,18 +195,18 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_SetDefaultPrinter_Invalid()
+        public async Task Test_SetDefaultPrinter_Invalid()
         {
-            //Printer printer = new Printer();
-            //await DatabaseController.Instance.InsertPrinter(printer);
-            //await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+            // Delete database to force error
+            DatabaseController.Instance.Cleanup();
+            await StorageFileUtility.DeleteFile(FILE_NAME_DATABASE, ApplicationData.Current.LocalFolder);
 
-            //int result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id); // Twice
-            //Assert.AreEqual(0, result);
+            Printer printer = new Printer();
+            await DatabaseController.Instance.InsertPrinter(printer);
+            await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
 
-            {
-                Assert.Fail("Not yet implemented");
-            }
+            int result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id); // Twice
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -267,16 +267,15 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_InsertPrintSettings_Invalid()
+        public async Task Test_InsertPrintSettings_Invalid()
         {
-            //PrintSettings printSettings = new PrintSettings();
-            //await DatabaseController.Instance.InsertPrintSettings(printSettings);
-            //int result = await DatabaseController.Instance.InsertPrintSettings(printSettings); // Insert twice
-            //Assert.AreEqual(0, result);
+            // Delete database to force error
+            DatabaseController.Instance.Cleanup();
+            await StorageFileUtility.DeleteFile(FILE_NAME_DATABASE, ApplicationData.Current.LocalFolder);
 
-            {
-                Assert.Fail("Not yet implemented");
-            }
+            PrintSettings printSettings = new PrintSettings();
+            int result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -355,16 +354,15 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_InsertPrintJob_Invalid()
+        public async Task Test_InsertPrintJob_Invalid()
         {
-            //PrintJob PrintJob = new PrintJob();
-            //await DatabaseController.Instance.InsertPrintJob(PrintJob);
-            //int result = await DatabaseController.Instance.InsertPrintJob(PrintJob); // Insert twice
-            //Assert.AreEqual(0, result);
+            // Delete database to force error
+            DatabaseController.Instance.Cleanup();
+            await StorageFileUtility.DeleteFile(FILE_NAME_DATABASE, ApplicationData.Current.LocalFolder);
 
-            {
-                Assert.Fail("Not yet implemented");
-            }
+            PrintJob PrintJob = new PrintJob();
+            int result = await DatabaseController.Instance.InsertPrintJob(PrintJob);
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
