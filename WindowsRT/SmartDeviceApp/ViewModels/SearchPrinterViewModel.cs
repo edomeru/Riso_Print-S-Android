@@ -58,20 +58,19 @@ namespace SmartDeviceApp.ViewModels
                     }
                     else
                     {
-                        var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                        DisplayMessage(loader.GetString("IDS_LBL_SEARCH_PRINTERS"), loader.GetString("IDS_ERR_MSG_NETWORK_ERROR"));
+                        DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
                     }
                 }
             }
             
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(String propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //public void OnPropertyChanged(String propertyName)
+        //{
+        //    if (PropertyChanged != null)
+        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        //}
 
         public ObservableCollection<PrinterSearchItem> PrinterSearchList
         {
@@ -79,7 +78,7 @@ namespace SmartDeviceApp.ViewModels
             set
             {
                 _printerSearchList = value;
-                OnPropertyChanged("PrinterSearchList");
+                //OnPropertyChanged("PrinterSearchList");
             }
         }
 
@@ -89,7 +88,7 @@ namespace SmartDeviceApp.ViewModels
             set
             {
                 _willRefresh = value;
-                OnPropertyChanged("WillRefresh");
+                //OnPropertyChanged("WillRefresh");
             }
         }
 
@@ -151,8 +150,7 @@ namespace SmartDeviceApp.ViewModels
             }
             else
             {
-                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                DisplayMessage(loader.GetString("IDS_LBL_SEARCH_PRINTERS"), loader.GetString("IDS_ERR_MSG_NETWORK_ERROR"));
+                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
             }
         }
 
@@ -165,14 +163,6 @@ namespace SmartDeviceApp.ViewModels
         {
             WillRefresh = true;
             Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
-        }
-
-        public void DisplayMessage(string caption, string content)
-        {
-            MessageAlert ma = new MessageAlert();
-            ma.Caption = caption;
-            ma.Content = content;
-            Messenger.Default.Send<MessageAlert>(ma);
         }
     }
 

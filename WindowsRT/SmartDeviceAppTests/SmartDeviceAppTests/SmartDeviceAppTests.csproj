@@ -116,10 +116,12 @@
     <Compile Include="Common\Utilities\GlobalizationUtilityTest.cs" />
     <Compile Include="Common\Utilities\UnitTestUtility.cs" />
     <Compile Include="Controllers\DocumentControllerTest.cs" />
+    <Compile Include="Controllers\NetworkControllerTest.cs" />
     <Compile Include="Controllers\PrinterControllerTest.cs" />
     <Compile Include="Controllers\DatabaseControllerTest.cs" />
     <Compile Include="Controllers\DirectPrintControllerTest.cs" />
     <Compile Include="Controllers\MainControllerTest.cs" />
+    <Compile Include="Controllers\SNMPControllerTest.cs" />
     <Compile Include="Common\Utilities\StorageFileUtilityTest.cs" />
     <Compile Include="Controllers\JobControllerTest.cs" />
     <Compile Include="Controllers\PrintSettingsControllerTest.cs" />
@@ -153,6 +155,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AddPrinterViewModelTest.cs" />
+    <Compile Include="ViewModels\PrintersViewModelTest.cs" />
+    <Compile Include="ViewModels\SearchPrinterViewModelTest.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelectorTest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -209,6 +214,10 @@
     <ProjectReference Include="..\..\SmartDeviceApp\SmartDeviceApp.csproj">
       <Project>{75ccce90-11aa-405d-a128-fea952708d15}</Project>
       <Name>SmartDeviceApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SNMP\SNMP.csproj">
+      <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
+      <Name>SNMP</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

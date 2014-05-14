@@ -24,21 +24,16 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private string _ipAddress;
-        private string _username;
-        private string _password;
 
         private ICommand _addPrinter;
 
         private bool _isProgressRingVisible;
         private bool _isButtonVisible;
 
-        private ImageSource _buttonImage;
-
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
 
         private ObservableCollection<PrinterSearchItem> _printerSearchList;
 
-        private string ADD_IMAGE = "ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png";
         private ViewControlViewModel _viewControlViewModel;
         public AddPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -47,9 +42,6 @@ namespace SmartDeviceApp.ViewModels
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
             IpAddress = "";
-            //Username = "";
-            //Password = "";
-            //ButtonImage = new ImageSource();
             IsProgressRingVisible = false;
             IsButtonVisible = true;
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
@@ -69,26 +61,6 @@ namespace SmartDeviceApp.ViewModels
             {
                 this._ipAddress = value;
                 OnPropertyChanged("IpAddress");
-            }
-        }
-
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                this._username = value;
-                OnPropertyChanged("Username");
-            }
-        }
-
-        public string Password
-        {
-            get { return _password; }
-            set
-            {
-                this._password = value;
-                OnPropertyChanged("Password");
             }
         }
 
@@ -117,7 +89,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void AddPrinterExecute()
+        private async Task AddPrinterExecute()
         {
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
@@ -135,7 +107,8 @@ namespace SmartDeviceApp.ViewModels
 
             IsButtonVisible = false;
             IsProgressRingVisible = true;
-            if (AddPrinterHandler(IpAddress) == false)
+            bool result = await AddPrinterHandler(IpAddress);
+            if (result == false)
             {
                 setVisibilities();
             }
@@ -162,17 +135,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public ImageSource ButtonImage
-        {
-            get { return _buttonImage; }
-            set
-            {
-                this._buttonImage = value;
-                OnPropertyChanged("ButtonImage");
-            }
-        }
-
-
         public void handleAddIsSuccessful(bool isSuccessful)
         {
             string caption = "";
@@ -182,9 +144,7 @@ namespace SmartDeviceApp.ViewModels
 
             if (isSuccessful)
             {
-                DialogService.Instance.ShowError("IDS_LBL_ADD_SUCCESSFUL", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-
-                return;
+                content = loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
             }
             else
             {
@@ -203,8 +163,6 @@ namespace SmartDeviceApp.ViewModels
             buttonText = loader.GetString("IDS_LBL_OK");
             //clear data
             IpAddress = "";
-            Username = "";
-            Password = "";
 
             setVisibilities();
             DisplayMessage(caption, content, buttonText);
@@ -229,8 +187,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     //clear data
                     IpAddress = "";
-                    Username = "";
-                    Password = "";
                 }
             }
 

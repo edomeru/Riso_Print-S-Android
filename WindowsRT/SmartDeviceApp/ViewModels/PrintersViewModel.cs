@@ -39,9 +39,6 @@ namespace SmartDeviceApp.ViewModels
 
         private ObservableCollection<Printer> _printerList;
 
-        private int _height;
-
-        
         /**
          * 
          * Delegates for controllers
@@ -69,16 +66,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public int Height
-        {
-            get { return this._height; }
-            set
-            {
-                _height = value;
-                OnPropertyChanged("Height");
-            }
-        }
-
         public ObservableCollection<Printer> PrinterList
         {
             get{ return this._printerList; }
@@ -86,18 +73,6 @@ namespace SmartDeviceApp.ViewModels
             {
                 _printerList = value;
                 OnPropertyChanged("PrinterList");
-            }
-        }
-
-        
-        private string _searchPrintersPaneTitleText;
-        public string SearchPrintersPaneTitleText
-        {
-            get { return this._searchPrintersPaneTitleText; }
-            set
-            {
-                _searchPrintersPaneTitleText = value;
-                OnPropertyChanged("SearchPrintersPaneTitleText");
             }
         }
 
@@ -118,8 +93,6 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
             Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
-
-            
         }
 
         private void ScreenModeChanged(Common.Enum.ScreenMode screenMode)
