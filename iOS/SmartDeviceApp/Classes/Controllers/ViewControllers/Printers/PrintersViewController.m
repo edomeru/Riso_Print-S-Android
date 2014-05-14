@@ -10,6 +10,7 @@
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
 #import "PrinterInfoViewController.h"
+#import "PrintSettingsViewController.h"
 #import "PrinterManager.h"
 
 @interface PrintersViewController ()
@@ -97,6 +98,14 @@
         PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
             [self reloadData];
+    }
+    else if([sender.sourceViewController isKindOfClass:[PrintSettingsViewController class]])
+    {
+        UIViewController* controller =  [[self childViewControllers] lastObject];
+        if([controller isKindOfClass:[PrinterInfoViewController class]])
+        {
+            [((PrinterInfoViewController *)controller).printSettingsButton setSelected:NO];
+        }
     }
 }
 

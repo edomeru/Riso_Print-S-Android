@@ -473,7 +473,7 @@
                                                 </connections>
                                             </slider>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PAGE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZT1-SS-2ii">
-                                                <rect key="frame" x="20" y="40" width="280" height="14"/>
+                                                <rect key="frame" x="0.0" y="40" width="320" height="14"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -481,8 +481,8 @@
                                             </label>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="ZT1-SS-2ii" secondAttribute="trailing" constant="20" id="14n-9I-H1I"/>
-                                            <constraint firstItem="ZT1-SS-2ii" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" constant="20" id="6hS-5i-fLk"/>
+                                            <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="ZT1-SS-2ii" secondAttribute="trailing" id="14n-9I-H1I"/>
+                                            <constraint firstItem="ZT1-SS-2ii" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" id="6hS-5i-fLk"/>
                                             <constraint firstAttribute="height" constant="60" id="Pk8-dR-V9V"/>
                                             <constraint firstItem="ZT1-SS-2ii" firstAttribute="top" secondItem="XgQ-UQ-sVe" secondAttribute="top" constant="40" id="aB4-tR-yDi"/>
                                             <constraint firstItem="k35-as-6xb" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" constant="20" id="p5c-dn-zTt"/>
@@ -576,8 +576,12 @@
                         <outlet property="activityIndicator" destination="Tfn-V2-BUp" id="COZ-vn-opT"/>
                         <outlet property="mainMenuButton" destination="31J-j4-hVx" id="bkC-U2-PZp"/>
                         <outlet property="pageLabel" destination="ZT1-SS-2ii" id="Wa5-ha-FVz"/>
+                        <outlet property="pageLabelRightConstraint" destination="14n-9I-H1I" id="i75-OV-GAJ"/>
+                        <outlet property="pageLabelTopConstraint" destination="aB4-tR-yDi" id="rPb-Gf-aZL"/>
                         <outlet property="pageNavArea" destination="XgQ-UQ-sVe" id="T70-W8-Oqa"/>
+                        <outlet property="pageNavAreaHeightConstraint" destination="Pk8-dR-V9V" id="72D-1R-pWJ"/>
                         <outlet property="pageScroll" destination="k35-as-6xb" id="415-cb-7Tb"/>
+                        <outlet property="pageScrollLeftConstraint" destination="p5c-dn-zTt" id="wWZ-ct-17P"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="TCH-Tx-hm1"/>
                         <outlet property="previewView" destination="GCh-6b-axd" id="WCl-Ct-mpT"/>
                         <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="mj6-GY-FhA"/>
@@ -2511,6 +2515,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="disabled" image="img_btn_print_settings_pressed"/>
+                                        <state key="selected" image="img_btn_default_print_settings_pressed"/>
                                         <state key="highlighted" image="img_btn_default_print_settings_pressed"/>
                                         <connections>
                                             <action selector="printSettingsAction:" destination="qXF-RA-AFJ" eventType="touchUpInside" id="09e-IU-u3n"/>
@@ -2737,6 +2742,7 @@
                         <outlet property="defaultPrinterSwitch" destination="V7Y-Ut-ufD" id="PGa-hq-szW"/>
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
                         <outlet property="portSelection" destination="kUh-T9-Pqa" id="3R4-3Z-0jS"/>
+                        <outlet property="printSettingsButton" destination="K5Y-yN-Wg9" id="jhy-7C-BMD"/>
                         <outlet property="printerName" destination="bq8-54-Npp" id="8Wz-fh-pyx"/>
                         <segue destination="pP7-fQ-WfE" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindFromPrinterInfo:" id="faf-6o-f0W"/>
                     </connections>
