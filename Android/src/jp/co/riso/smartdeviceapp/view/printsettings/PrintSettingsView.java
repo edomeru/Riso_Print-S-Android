@@ -559,16 +559,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         // Constraint #4 Punch
         if (tag.equals(PrintSettings.TAG_PUNCH)) {
-            if (value == Punch.HOLES_4.ordinal()) {
-                int finishValue = mPrintSettings.getFinishingSide().ordinal();
-                int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
-                if (finishValue != finishDefault) {
-                    if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
-                        updateValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE, finishDefault);
-                    }
-                }
-            }
-            
             if (value != Punch.OFF.ordinal()) {
                 int outputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_OUTPUT_TRAY);
                 if (outputTrayValue == OutputTray.FACEDOWN.ordinal()) {
@@ -1058,11 +1048,16 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         title.setTag(nameStr);
         title.setOnClickListener(this);
         expandControl(title, false); // initially expand
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) title.getLayoutParams();
+        int marginTop = getResources().getDimensionPixelSize(R.dimen.separator_size);
+        params.setMargins(0, marginTop, 0, 0);
+        title.setLayoutParams(params);
         
         mPrintSettingsTitles.add(title); // Add to controls list
         mMainLayout.addView(title);
         
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         itemsGroup.setLayoutParams(params);
         mMainLayout.addView(itemsGroup);
     }
