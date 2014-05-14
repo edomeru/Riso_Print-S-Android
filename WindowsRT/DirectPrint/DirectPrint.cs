@@ -104,10 +104,7 @@ namespace DirectPrint
 
             if (parameter == null)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 return;
             }
 
@@ -121,10 +118,7 @@ namespace DirectPrint
             }
             catch (Exception)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 return; 
             }
 
@@ -177,30 +171,21 @@ namespace DirectPrint
             }
             catch (Exception e)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 return;
             }
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             if (print_job.cancel_print == 1)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 if (socket != null) socket.disconnect();
                 return;
             }
@@ -245,10 +230,7 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 if (socket != null) socket.disconnect();
                 return;
             }
@@ -271,19 +253,13 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 if (socket != null) socket.disconnect();
                 return;
             }
             if (print_job.cancel_print == 1)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 if (socket != null) socket.disconnect();
                 return;
             }
@@ -346,10 +322,7 @@ namespace DirectPrint
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 return;
             }
 
@@ -370,10 +343,7 @@ namespace DirectPrint
 
                 if (print_job.cancel_print == 1)
                 {
-                    if (print_job.callback != null)
-                    {
-                        print_job.callback(PRINT_STATUS_ERROR);
-                    }
+                    triggerCallback(PRINT_STATUS_ERROR);
                     if (socket != null) socket.disconnect();
                     return;
                 }
@@ -398,10 +368,7 @@ namespace DirectPrint
             int retval = 0;
             if ((retval = waitForAck()) != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
                 if (socket != null) socket.disconnect();
                 return;
             }
@@ -409,12 +376,17 @@ namespace DirectPrint
 
             print_job.progress = 100.0f;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
-            if (print_job.callback != null)
-            {
-                print_job.callback(PRINT_STATUS_OK);
-            }
+            triggerCallback(PRINT_STATUS_OK);
             return;
             //end!
+        }
+
+        private void triggerCallback(int status)
+        {
+            if (print_job.callback != null)
+            {
+                print_job.callback(status);
+            }
         }
 
         private int waitForAck()
