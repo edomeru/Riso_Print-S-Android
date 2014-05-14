@@ -35,6 +35,11 @@
 @property (weak, nonatomic) IBOutlet UIView *splashView;
 @property (nonatomic, weak) IBOutlet PreviewView *previewView;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeightConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollLeftConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
+
 /**
  Page view controller
  */
@@ -208,6 +213,30 @@
     else if([[PDFFileManager sharedManager] fileAvailableForPreview])
     {
         [self setupPreview];
+    }
+}
+
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    //if phone and landscape, adjust the position of the page label and page scroll
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && self.pageNavArea.isHidden == NO)
+    {
+        if(UIInterfaceOrientationIsPortrait(self.interfaceOrientation) ==UIInterfaceOrientationPortrait)
+        {
+            self.pageNavAreaHeightConstraint.constant = 60;
+            self.pageScrollLeftConstraint.constant = 20;
+            self.pageLabelTopConstraint.constant = 40;
+            self.pageLabelRightConstraint.constant = 0;
+        }
+        else
+        {
+            CGFloat screenHeight = [[UIScreen mainScreen] bounds].size.height;
+            self.pageNavAreaHeightConstraint.constant = 30;
+            self.pageScrollLeftConstraint.constant = screenHeight * 0.25f;
+            self.pageLabelRightConstraint.constant = screenHeight * 0.75f;
+            self.pageLabelTopConstraint.constant = 10;
+        }
     }
 }
 
