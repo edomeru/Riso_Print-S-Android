@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CXAlertView.h"
 
 typedef enum
 {
@@ -36,6 +37,9 @@ typedef enum
     kAlertResultErrPrinterDuplicate,
     kAlertResultErrPrinterCannotBeAdded,
     
+    // error when deleting
+    kAlertResultErrDelete,
+    
     // error when opening invalid file
     kAlertResultFileCannotBeOpened,
     
@@ -46,7 +50,10 @@ typedef enum
 
 typedef enum
 {
-    kAlertConfirmationDeleteAllJobs
+    kAlertConfirmationDeleteAllJobs,
+    kAlertConfirmationDeleteJob,
+    
+    kAlertConfirmationDeletePrinter
     
 } kAlertConfirmation;
 
@@ -70,17 +77,17 @@ typedef enum
 
 /**
  Displays an AlertView asking for user confirmation.
+ The following buttons are available as a response:
+ (1) cancel, (2) OK.
  
  @param confirmation
         one of the defined kAlertConfirmation values
         (use kAlertConfirmation*)
- @param screen
-        the screen that will handle the user response
- @param details
-        array of extra information optionally needed when displaying
-        the alert -- 
-            kAlertConfirmationDeleteAllJobs: [0]=groupIndex,[1]=groupName;
+ @param cancelled
+        block to execute when the user presses cancel
+ @param confirmed
+        block to execute when the user presses OK
  */
-+ (void)displayConfirmation:(kAlertConfirmation)confirmation forScreen:(id)screen withDetails:(NSArray*)details;
++ (void)displayConfirmation:(kAlertConfirmation)confirmation withCancelHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))cancelled withConfirmHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))confirmed;
 
 @end

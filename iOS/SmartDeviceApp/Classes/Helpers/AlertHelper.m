@@ -7,7 +7,6 @@
 //
 
 #import "AlertHelper.h"
-#import "CXAlertView.h"
 
 @interface AlertHelper ()
 
@@ -76,6 +75,10 @@
             break;
             //TODO: only cause is DB error (registerPrinter: failed)
             
+        case kAlertResultErrDelete:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @"");
+            break;
+            
         case kAlertResultFileCannotBeOpened:
             alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
             break;
@@ -87,41 +90,46 @@
             //TODO: replace with localized string or remove if will not be used
     }
     
-    //TODO: if using a custom AlertView, implement it here
-    /*UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:alertTitle
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle
                                                         message:alertMsg
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];*/
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle message:alertMsg cancelButtonTitle:NSLocalizedString(IDS_LBL_OK, @"")];
+                                              cancelButtonTitle:NSLocalizedString(IDS_LBL_OK, @"")];
     [alertView show];
 }
 
-+ (void)displayConfirmation:(kAlertConfirmation)confirmation forScreen:(id)screen withDetails:(NSArray*)details
++ (void)displayConfirmation:(kAlertConfirmation)confirmation withCancelHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))cancelled withConfirmHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))confirmed;
 {
-    //TODO: replace NO and YES with localized strings
-    
-    // get the title, message, and choices
     NSString* alertTitle;
     NSString* alertMsg;
-    NSString* cancelButtonTitle;
-    NSString* confirmButtonTitle;
     switch (confirmation)
     {
         case kAlertConfirmationDeleteAllJobs:
             alertTitle = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @"");
             alertMsg = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS, @"");
-            cancelButtonTitle = @"NO";
-            confirmButtonTitle = @"YES";
+            break;
+            
+        case kAlertConfirmationDeleteJob:
+            alertTitle = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS, @"");
+            break;
+            
+        case kAlertConfirmationDeletePrinter:
+            alertTitle = NSLocalizedString(IDS_LBL_PRINTERS, @"");
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS, @"");
             break;
     }
     
-    //TODO: if using a custom AlertView, implement it here
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:alertTitle
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle
                                                         message:alertMsg
-                                                       delegate:screen
-                                              cancelButtonTitle:cancelButtonTitle
-                                              otherButtonTitles:confirmButtonTitle, nil];
+                                              cancelButtonTitle:nil];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:cancelled];
+    
+    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_OK, @"")
+                             type:CXAlertViewButtonTypeDefault
+                          handler:confirmed];
+    
     [alertView show];
 }
 

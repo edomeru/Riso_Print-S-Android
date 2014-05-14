@@ -52,6 +52,8 @@ const float ANIMATION_SPEED = 0.2f;
         self.offscreenPos = offscreen;
         self.onscreenPos = onscreen;
         self.stayHighlighted = NO;
+        
+        self.delegate = nil;
     }
     return self;
 }
@@ -79,6 +81,12 @@ const float ANIMATION_SPEED = 0.2f;
 
 - (void)setHighlighted:(BOOL)highlighted
 {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(shouldHighlightButton)])
+    {
+        if (![self.delegate shouldHighlightButton])
+            return;
+    }
+    
     [super setHighlighted:highlighted];
     
     if (highlighted || self.stayHighlighted)

@@ -115,6 +115,7 @@
     cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
+    cell.deleteButton.delegate = nil;
     
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
@@ -189,25 +190,26 @@
     [deleteButton keepHighlighted:YES];
     [deleteButton setHighlighted:YES];
 
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
+    __weak PrintersIpadViewController* weakSelf = self;
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [alertView dismiss];
-                              [deleteButton keepHighlighted:NO];
-                              [deleteButton setHighlighted:NO];
-                          }];
+    void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [alertView dismiss];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [self deletePrinterAtIndex:deleteButton.tag];
-                              [alertView dismiss];
-                              [deleteButton keepHighlighted:NO];
-                              [deleteButton setHighlighted:NO];
-                          }];
-    [alertView show];
+    void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [weakSelf deletePrinterAtIndex:deleteButton.tag];
+        [alertView dismiss];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
+
+    [AlertHelper displayConfirmation:kAlertConfirmationDeletePrinter
+                   withCancelHandler:cancelled
+                  withConfirmHandler:confirmed];
 }
 
 - (void) deletePrinterAtIndex:(NSUInteger)index
@@ -233,7 +235,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDefault
+        [AlertHelper displayResult:kAlertResultErrDelete
                         withTitle:kAlertTitlePrinters
                       withDetails:nil];
     }

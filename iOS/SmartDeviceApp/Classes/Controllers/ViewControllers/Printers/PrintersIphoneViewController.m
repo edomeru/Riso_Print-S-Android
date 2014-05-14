@@ -218,25 +218,27 @@
     [deleteButton keepHighlighted:YES];
     [deleteButton setHighlighted:YES];
     
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"")  message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
+    __weak PrintersIphoneViewController* weakSelf = self;
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [alertView dismiss];
-                              [self removeDeleteState];
-                              [deleteButton keepHighlighted:NO];
-                              [deleteButton setHighlighted:NO];
-                          }];
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [self deletePrinter];
-                              [alertView dismiss];
-                              [deleteButton keepHighlighted:NO];
-                              [deleteButton setHighlighted:NO];
-                          }];
-    [alertView show];
+    void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [alertView dismiss];
+        [weakSelf removeDeleteState];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
+    
+    void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [weakSelf deletePrinter];
+        [alertView dismiss];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
+    
+    [AlertHelper displayConfirmation:kAlertConfirmationDeletePrinter
+                   withCancelHandler:cancelled
+                  withConfirmHandler:confirmed];
 }
 
 - (void) deletePrinter
@@ -262,7 +264,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDefault
+        [AlertHelper displayResult:kAlertResultErrDelete
                          withTitle:kAlertTitlePrinters
                        withDetails:nil];
     }

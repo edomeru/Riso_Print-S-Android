@@ -9,7 +9,6 @@
 #import "PrintJobHistoryGroupCell.h"
 #import "UIColor+Theme.h"
 #import "NSDate+Format.h"
-#import "DeleteButton.h"
 
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
@@ -171,6 +170,7 @@
     [self.header addTarget:self action:@selector(clearHeader) forControlEvents:UIControlEventTouchDragOutside];
     [self.header addTarget:self action:@selector(tappedHeader) forControlEvents:UIControlEventTouchUpInside];
     
+    self.deleteAllButton.delegate = self;
     self.deleteAllButton.highlightedColor = [UIColor purple2ThemeColor];
     self.deleteAllButton.highlightedTextColor = [UIColor whiteThemeColor];
     [self.deleteAllButton addTarget:self action:@selector(tappedDeleteAll)
@@ -237,7 +237,7 @@
         return;
     
     // check first if there are other groups with a delete button
-    if ([self.delegate shouldPutDeleteButton:self.tag])
+    if ([self.delegate shouldPutDeleteJobButton:self.tag])
     {
         self.jobWithDelete = jobIndexPath;
         
@@ -300,10 +300,13 @@
 
 - (void)colorHeader
 {
-    UIColor* highlightColor = [UIColor purple2ThemeColor];
-    [self.groupName setBackgroundColor:highlightColor];
-    [self.groupIP setBackgroundColor:highlightColor];
-    [self.groupIndicator setBackgroundColor:highlightColor];
+    if ([self.delegate shouldHighlightGroupHeader])
+    {
+        UIColor* highlightColor = [UIColor purple2ThemeColor];
+        [self.groupName setBackgroundColor:highlightColor];
+        [self.groupIP setBackgroundColor:highlightColor];
+        [self.groupIndicator setBackgroundColor:highlightColor];
+    }
 }
 
 - (void)clearHeader
@@ -316,14 +319,12 @@
 
 - (void)tappedHeader
 {
-    [self colorHeader];
     [self.delegate didTapGroupHeader:self.tag];
-    [self clearHeader];
 }
 
 - (void)tappedDeleteAll
 {
-    [self.delegate didTapDeleteAllButton:self.deleteAllButton ofGroup:self.tag];
+    [self.delegate didTapDeleteGroupButton:self.deleteAllButton ofGroup:self.tag];
 }
 
 - (void)tappedDeleteJob:(DeleteButton*)button
@@ -343,6 +344,13 @@
         [self removeDeleteButton];
     
     [self.printJobsView reloadData];
+}
+
+#pragma mark - DeleteButtonDelegate
+
+- (BOOL)shouldHighlightButton
+{
+    return [self.delegate shouldHighlightDeleteGroupButton];
 }
 
 @end
