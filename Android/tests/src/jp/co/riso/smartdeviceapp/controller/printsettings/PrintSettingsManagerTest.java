@@ -2,18 +2,23 @@
 package jp.co.riso.smartdeviceapp.controller.printsettings;
 
 import java.util.HashMap;
+import java.util.List;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
-import android.test.RenamingDelegatingContext;
 
 public class PrintSettingsManagerTest extends AndroidTestCase {
 
+    private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206";
     private static final String PRINTER_ID = "prn_id";
     private static final String PRINTER_TABLE = "Printer";
     private static final String PRINTSETTING_TABLE = "PrintSetting";
@@ -59,54 +64,71 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     private PrintSettingsManager mPrintSettingsMgr;
     private DatabaseManager mManager;
     private Context mContext;
-    private int printerId = 1000;
-    private int settingId = 1;
-    private int intValue = 1;
+    private int mPrinterId = PrinterManager.EMPTY_ID;
+    private int mSettingId = 1;
+    private int mIntValue = 1;
 
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mContext = new RenamingDelegatingContext(getContext(), "test_");
-
-        mPrintSettingsMgr = PrintSettingsManager.getInstance(mContext);
-
+        PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        List<Printer> printersList = printerManager.getSavedPrintersList();
+        Printer printer = null;
+        
+        if(printersList.isEmpty()) {
+            printer = new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS);
+            printerManager.savePrinterToDB(printer);
+        } else {
+            printer = printersList.get(0);
+        }
+        mContext = SmartDeviceApp.getAppContext();
         mManager = new DatabaseManager(mContext);
+        mPrinterId = printer.getId();
+        
+        Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTSETTING_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID + "=?",
+                new String[] { String.valueOf(mPrinterId) }, null, null, null);
+        if (c.moveToFirst()) {
+            mSettingId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
+        }
+        
+        mPrintSettingsMgr = PrintSettingsManager.getInstance(mContext);
 
         SQLiteDatabase db = mManager.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(PRINTER_ID, printerId);
+        cv.put(PRINTER_ID, mPrinterId);
 
         db.insertWithOnConflict(PRINTER_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
 
-        cv.put(PRINTSETTING_ID, settingId);
-        cv.put(PRINTSETTING_BOOKLET, intValue);
-        cv.put(PRINTSETTING_BOOKLET_FINISH, intValue);
-        cv.put(PRINTSETTING_BOOKLET_LAYOUT, intValue);
-        cv.put(PRINTSETTING_COLOR, intValue);
-        cv.put(PRINTSETTING_COPIES, intValue);
-        cv.put(PRINTSETTING_DUPLEX, intValue);
-        cv.put(PRINTSETTING_FINISHING_SIDE, intValue);
-        cv.put(PRINTSETTING_IMPOSITION, intValue);
-        cv.put(PRINTSETTING_IMPOSITION_ORDER, intValue);
-        cv.put(PRINTSETTING_INPUT_TRAY, intValue);
-        cv.put(PRINTSETTING_ORIENTATION, intValue);
-        cv.put(PRINTSETTING_OUTPUT_TRAY, intValue);
-        cv.put(PRINTSETTING_PAPER_SIZE, intValue);
-        cv.put(PRINTSETTING_PAPER_TRAY, intValue);
-        cv.put(PRINTSETTING_PUNCH, intValue);
-        cv.put(PRINTSETTING_SCALE_TO_FIT, intValue);
-        cv.put(PRINTSETTING_SORT, intValue);
-        cv.put(PRINTSETTING_STAPLE, intValue);
+        cv.put(PRINTSETTING_ID, mSettingId);
+        cv.put(PRINTSETTING_BOOKLET, mIntValue);
+        cv.put(PRINTSETTING_BOOKLET_FINISH, mIntValue);
+        cv.put(PRINTSETTING_BOOKLET_LAYOUT, mIntValue);
+        cv.put(PRINTSETTING_COLOR, mIntValue);
+        cv.put(PRINTSETTING_COPIES, mIntValue);
+        cv.put(PRINTSETTING_DUPLEX, mIntValue);
+        cv.put(PRINTSETTING_FINISHING_SIDE, mIntValue);
+        cv.put(PRINTSETTING_IMPOSITION, mIntValue);
+        cv.put(PRINTSETTING_IMPOSITION_ORDER, mIntValue);
+        cv.put(PRINTSETTING_INPUT_TRAY, mIntValue);
+        cv.put(PRINTSETTING_ORIENTATION, mIntValue);
+        cv.put(PRINTSETTING_OUTPUT_TRAY, mIntValue);
+        cv.put(PRINTSETTING_PAPER_SIZE, mIntValue);
+        cv.put(PRINTSETTING_PAPER_TRAY, mIntValue);
+        cv.put(PRINTSETTING_PUNCH, mIntValue);
+        cv.put(PRINTSETTING_SCALE_TO_FIT, mIntValue);
+        cv.put(PRINTSETTING_SORT, mIntValue);
+        cv.put(PRINTSETTING_STAPLE, mIntValue);
 
         db.insertWithOnConflict(PRINTSETTING_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
         cv.clear();
-        cv.put(PRINTER_ID, printerId);
-        cv.put(PRINTSETTING_ID, settingId);
+        cv.put(PRINTER_ID, mPrinterId);
+        cv.put(PRINTSETTING_ID, mSettingId);
         db.update(PRINTER_TABLE, cv, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         });
 
+        db.close();
     }
 
     @Override
@@ -118,27 +140,38 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         db.close();
     }
 
-
+    // ================================================================================
+    // Tests - precondition
+    // ================================================================================
+    
     public void testPreConditions() {
         SQLiteDatabase db = mManager.getReadableDatabase();
         Cursor c = db.query(PRINTSETTING_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         }, null, null, null);
         assertEquals(1, c.getCount());
 
         db = mManager.getReadableDatabase();
         c = db.query(PRINTER_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         }, null, null, null);
         assertEquals(1, c.getCount());
     }
 
+    // ================================================================================
+    // Tests - getInstance
+    // ================================================================================
+    
     public void testGetInstance() {
         assertEquals(mPrintSettingsMgr, PrintSettingsManager.getInstance(mContext));
     }
 
+    // ================================================================================
+    // Tests - getPrintSetting
+    // ================================================================================
+    
     public void testGetPrintSetting() {
-        PrintSettings settings = mPrintSettingsMgr.getPrintSetting(printerId);
+        PrintSettings settings = mPrintSettingsMgr.getPrintSetting(mPrinterId);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
@@ -163,23 +196,27 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         assertEquals(1, (int) settingValues.get(KEY_OUTPUT_TRAY));
     }
 
+    // ================================================================================
+    // Tests - saveToDB
+    // ================================================================================
+    
     public void testSaveToDB_DefaultValues() {
         PrintSettings settings = new PrintSettings();
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        boolean result = mPrintSettingsMgr.saveToDB(printerId, settings);
+        boolean result = mPrintSettingsMgr.saveToDB(mPrinterId, settings);
         assertTrue(result);
 
         SQLiteDatabase db = mManager.getReadableDatabase();
         Cursor c = db.query(PRINTSETTING_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         }, null, null, null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
 
-        assertEquals(settingId,  c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
+        assertEquals(mSettingId,  c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         assertEquals((int) settingValues.get(KEY_COLOR),
                 c.getInt(c.getColumnIndex(PRINTSETTING_COLOR)));
         assertEquals((int) settingValues.get(KEY_ORIENTATION),
@@ -220,11 +257,11 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         c.close();
 
         c = db.query(PRINTER_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         }, null, null, null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
-        assertEquals(settingId, c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
+        assertEquals(mSettingId, c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         c.close();
         db.close();
     }
@@ -262,16 +299,16 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
 
 
         ContentValues cv = new ContentValues();
-        cv.put(PRINTER_ID, printerId);
+        cv.put(PRINTER_ID, mPrinterId);
 
         db.insertWithOnConflict(PRINTER_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
 
         db.close();
-        boolean result = mPrintSettingsMgr.saveToDB(printerId, settings);
+        boolean result = mPrintSettingsMgr.saveToDB(mPrinterId, settings);
         assertTrue(result);
         db = mManager.getReadableDatabase();
         Cursor c = db.query(PRINTSETTING_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         }, null, null, null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
@@ -318,7 +355,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         c.close();
 
         c = db.query(PRINTER_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(printerId)
+                String.valueOf(mPrinterId)
         }, null, null, null);
         assertEquals(1, c.getCount());
         c.moveToFirst();

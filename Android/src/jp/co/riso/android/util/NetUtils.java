@@ -115,11 +115,11 @@ public class NetUtils {
                 }
             }
         } catch (UnknownHostException e) {
-            Log.w(TAG, "UnknownHostException");
+            Log.w(TAG, "UnknownHostException caused by InetAddress.getByName()");
         } catch (IOException e) {
-            Log.w(TAG, "IOException");
+            Log.w(TAG, "IOException caused by inetIpAddress.isReachable()");
         } catch (NullPointerException e) {
-            Log.w(TAG, "NullPointerException");
+            Log.w(TAG, "NullPointerException caused by ipAddress.contains()");
         }
         return false;
     }
@@ -180,20 +180,46 @@ public class NetUtils {
         return IPV6_IPv4_DERIVED_PATTERN.matcher(ipAddress).matches();
     }
     
-    static {
+    /**
+     * Obtain pattern for standard IPv4 address
+     * 
+     * @return Pattern object for IPv4 Address
+     */
+    private static Pattern initializeIpv4Pattern_Standard() {
         String ipV4Segment = "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
-        String localInterface = "wlan0";
-        
-        IPV4_PATTERN = Pattern.compile(ipV4Segment);
-        
+        return Pattern.compile(ipV4Segment);
+    }
+    
+    /**
+     * Obtain pattern for IPv4 multicast address
+     * 
+     * @return Pattern object for IPv4 Multicast Address
+     */
+    private static Pattern initializeIpv4Pattern_Multicast() {
         // 224.0.0.0 - 239.255.255.250 Multicast address
         // 224.0.0.0 to 224.0.0.255, 224.0.1.0 to 238.255.255.255, 239.0.0.0 to 239.255.255.255
         // 255.255.255.255 Broadcast address
-        IPV4_MULTICAST_PATTERN = Pattern.compile("(2(?:2[4-9]|3\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)){3}|(255.){3}255)");
-        
-        IPV6_STD_PATTERN = Pattern.compile("((" + ipV6Segment + ":){7,7}" + ipV6Segment + ")"); // Pattern # 1
-        IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile("((" + ipV6Segment + ":){1,7}:" + // Pattern # 2
+        return Pattern.compile("(2(?:2[4-9]|3\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)){3}|(255.){3}255)");
+    }
+    
+    /**
+     * Obtain pattern for standard IPv6 address
+     * 
+     * @return Pattern object for IPv6 Address
+     */
+    private static Pattern initializeIpv6Pattern_Standard() {
+        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        return Pattern.compile("((" + ipV6Segment + ":){7,7}" + ipV6Segment + ")"); // Pattern # 1
+    }
+    
+    /**
+     * Obtain pattern for compressed IPv6 address
+     * 
+     * @return Pattern object for IPv6 Compressed Address
+     */
+    private static Pattern initializeIpv6Pattern_Compressed() {
+        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        return Pattern.compile("((" + ipV6Segment + ":){1,7}:" + // Pattern # 2
                 "|" + "(" + ipV6Segment + ":){1,6}:" + ipV6Segment + // Pattern # 3
                 "|" + "(" + ipV6Segment + ":){1,5}(:" + ipV6Segment + "){1,2}" + // Pattern # 4
                 "|" + "(" + ipV6Segment + ":){1,4}(:" + ipV6Segment + "){1,3}" + // Pattern # 5
@@ -202,22 +228,66 @@ public class NetUtils {
                 "|" + ipV6Segment + ":((:" + ipV6Segment + "){1,6})" + // Pattern # 8
                 "|" + ":((:" + ipV6Segment + "){1,7}|:)" + // Pattern # 9
                 ")");
-        IPV6_LINK_LOCAL_PATTERN = Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10
-        IPV6_IPv4_DERIVED_PATTERN = Pattern.compile("(::(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
-                "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
+    }
+    
+    /**
+     * Obtain pattern for local IPv6 address
+     * 
+     * @return Pattern object for IPv6 Local Address
+     */
+    private static Pattern initializeIpv6Pattern_Local() {
+        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        return Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10
         
-        IPV6_INTERFACE_NAMES = new ArrayList<String>();
+    }
+    
+    /**
+     * Obtain pattern for standard IPv6 address
+     * 
+     * @return Pattern object for IPv6 Derived from Ipv4 Address
+     */
+    private static Pattern initializeIpv6Pattern_Ipv4Derived() {
+        String ipV4Segment = "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
+        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        
+        return Pattern.compile("(::(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
+                "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
+    }
+    
+    /**
+     * Obtain Ipv6 Interface list
+     * 
+     * @return IPv6 Interface list
+     */
+    private static List<String> initializeIpv6InterfaceList() {
+        String localInterface = "wlan0";
+        
+        List<String> list = new ArrayList<String>();
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (int i = 0; i < interfaces.size(); i++) {
-                IPV6_INTERFACE_NAMES.add(interfaces.get(i).getName());
+                list.add(interfaces.get(i).getName());
             }
         } catch (SocketException e) {
             Log.w(TAG, "SocketException");
-            IPV6_INTERFACE_NAMES.add(localInterface);
+            list.add(localInterface);
         }
-        if (IPV6_INTERFACE_NAMES.contains(localInterface)) {
-            IPV6_INTERFACE_NAMES.set(0, localInterface);
+        if (list.contains(localInterface)) {
+            list.set(0, localInterface);
         }
+        return list;
+    }
+    
+    static {
+
+        IPV4_PATTERN = initializeIpv4Pattern_Standard();       
+        IPV4_MULTICAST_PATTERN = initializeIpv4Pattern_Multicast();
+
+        IPV6_INTERFACE_NAMES = initializeIpv6InterfaceList();
+
+        IPV6_STD_PATTERN = initializeIpv6Pattern_Standard();
+        IPV6_HEX_COMPRESSED_PATTERN = initializeIpv6Pattern_Compressed();
+        IPV6_LINK_LOCAL_PATTERN = initializeIpv6Pattern_Local();
+        IPV6_IPv4_DERIVED_PATTERN = initializeIpv6Pattern_Ipv4Derived();
     }
 }
