@@ -112,14 +112,23 @@ namespace DirectPrint
 
             //start socket
             socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
-            try
+            int connectretries = 0;
+            int maxretries = 4;
+            while (connectretries < maxretries)
             {
-                await socket.connect();
-            }
-            catch (Exception)
-            {
-                triggerCallback(PRINT_STATUS_ERROR);
-                return; 
+                try
+                {
+                    await socket.connect();
+                    connectretries = maxretries;
+                }
+                catch (Exception)
+                {
+                    if (connectretries++ >= maxretries)
+                    {
+                        triggerCallback(PRINT_STATUS_ERROR);
+                        return;
+                    }
+                }
             }
 
             // Prepare PJL header
