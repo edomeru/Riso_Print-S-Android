@@ -26,11 +26,23 @@ import android.widget.ImageView;
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
     
     public static final int ID_MENU_ACTION_BUTTON = 0x11000001;
+    private static final String KEY_ICON_STATE = "icon_state";
+    private static final String KEY_ICON_ID = "icon_id";
+    
+    private boolean mIconState = false;
+    private int mIconId = 0;
+    private int mIconIdToRestore = 0;
+    
     
     /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        if (savedInstanceState != null){
+            mIconState = savedInstanceState.getBoolean(KEY_ICON_STATE);
+            mIconIdToRestore = savedInstanceState.getInt(KEY_ICON_ID);
+        }
         
         initializeFragment(savedInstanceState);
     }
@@ -83,7 +95,22 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onResume() {
         super.onResume();
+        // restore selected only if screen is rotated
+        if (mIconIdToRestore != 0 && mIconState) {
+            setIconState(mIconIdToRestore, true);
+            mIconIdToRestore = 0;
+        }
         AppUtils.hideSoftKeyboard(getActivity());
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(KEY_ICON_STATE, mIconState);
+        outState.putInt(KEY_ICON_ID, mIconId);
+        mIconIdToRestore = mIconId;
     }
     
     // ================================================================================
@@ -188,6 +215,23 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         layout.addView(button, width, LayoutParams.MATCH_PARENT);
     }
     
+    /**
+     * Sets icon's selected state
+     * 
+     * @param id
+     *            icon id
+     * @param state
+     *            icon is in selected state
+     */
+    public void setIconState(int id, boolean state) {
+        if (getView().findViewById(id) != null) {
+            getView().findViewById(id).setSelected(state);
+            mIconState = state;
+            mIconId = id;
+
+        }
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnLayoutChangeListener
     // ================================================================================
@@ -219,5 +263,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
                 break;
         }
     }
+    
+    
     
 }

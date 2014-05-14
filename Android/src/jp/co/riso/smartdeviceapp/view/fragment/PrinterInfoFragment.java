@@ -35,7 +35,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
-    private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
+    public static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private Printer mPrinter = null;
@@ -107,7 +107,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
-        }        
+        }
         mPort.setSelection(mPrinter.getPortSetting());
     }
     
@@ -143,7 +143,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
-                        
+                        setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
                         if (mPrintSettingsFragment == null) {
