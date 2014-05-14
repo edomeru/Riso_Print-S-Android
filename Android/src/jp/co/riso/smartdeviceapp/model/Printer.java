@@ -201,9 +201,9 @@ public class Printer implements Parcelable {
         private boolean mRawAvailable;
         private boolean mBookletAvailable;
         private boolean mStaplerAvailable;
+        private boolean mPunch3Available;
         private boolean mPunch4Available;
         private boolean mTrayFaceDownAvailable;
-        private boolean mTrayAutoStackAvailable;
         private boolean mTrayTopAvailable;
         private boolean mTrayStackAvailable;
         
@@ -215,9 +215,9 @@ public class Printer implements Parcelable {
         public Config() {
             mBookletAvailable = true;
             mStaplerAvailable = true;
+            mPunch3Available = true;
             mPunch4Available = true;
             mTrayFaceDownAvailable = true;
-            mTrayAutoStackAvailable = true;
             mTrayTopAvailable = true;
             mTrayStackAvailable = true;
         }
@@ -287,6 +287,29 @@ public class Printer implements Parcelable {
         }
         
         /**
+         * @return Whether punch is available or not.
+         */
+        public boolean isPunchAvailable() {
+            return mPunch3Available || mPunch4Available;
+        }
+        
+        /**
+         * @return the mPunch3Available
+         */
+        public boolean isPunch3Available() {
+            return mPunch4Available;
+        }
+        
+        /**
+         * updates the value of mPunch4Available
+         * 
+         * @param punch3Available
+         */
+        public void setPunch3Available(boolean punch3Available) {
+            this.mPunch3Available = punch3Available;
+        }
+        
+        /**
          * @return the mPunch4Available
          */
         public boolean isPunch4Available() {
@@ -316,22 +339,6 @@ public class Printer implements Parcelable {
          */
         public void setTrayFaceDownAvailable(boolean trayFaceDownAvailable) {
             this.mTrayFaceDownAvailable = trayFaceDownAvailable;
-        }
-        
-        /**
-         * @return the mTrayAutoStackAvailable
-         */
-        public boolean isTrayAutoStackAvailable() {
-            return mTrayAutoStackAvailable;
-        }
-        
-        /**
-         * updates the value of mTrayAutoStackAvailable
-         * 
-         * @param trayAutoStackAvailable
-         */
-        public void setTrayAutoStackAvailable(boolean trayAutoStackAvailable) {
-            this.mTrayAutoStackAvailable = trayAutoStackAvailable;
         }
         
         /**
@@ -372,8 +379,8 @@ public class Printer implements Parcelable {
          * @param out
          */
         public void writeToParcel(Parcel out) {
-            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
-                    mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch3Available,
+                    mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
             
             out.writeBooleanArray(config);
         }
@@ -384,17 +391,17 @@ public class Printer implements Parcelable {
          * @param in
          */
         public void readFromParcel(Parcel in) {
-            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch4Available, mTrayFaceDownAvailable,
-                    mTrayAutoStackAvailable, mTrayTopAvailable, mTrayStackAvailable };
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch3Available,
+                    mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
             
             in.readBooleanArray(config);
             mConfig.mLprAvailable = config[0];
             mConfig.mRawAvailable = config[1];
             mConfig.mBookletAvailable = config[2];
             mConfig.mStaplerAvailable = config[3];
-            mConfig.mPunch4Available = config[4];
-            mConfig.mTrayFaceDownAvailable = config[5];
-            mConfig.mTrayAutoStackAvailable = config[6];
+            mConfig.mPunch3Available = config[4];
+            mConfig.mPunch4Available = config[5];
+            mConfig.mTrayFaceDownAvailable = config[6];
             mConfig.mTrayTopAvailable = config[7];
             mConfig.mTrayStackAvailable = config[8];
         }

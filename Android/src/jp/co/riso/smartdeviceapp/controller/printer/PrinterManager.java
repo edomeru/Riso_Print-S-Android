@@ -193,9 +193,9 @@ public class PrinterManager implements SNMPManagerCallback {
                 boolean rawAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_RAW);
                 boolean bookletAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_BOOKLET);
                 boolean staplerAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_STAPLER);
+                boolean punch3Available = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PUNCH3);
                 boolean punch4Available = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PUNCH4);
                 boolean trayFaceDownAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN);
-                boolean trayAutoStackAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK);
                 boolean trayTopAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYTOP);
                 boolean trayStackAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYSTACK);
                 
@@ -203,9 +203,9 @@ public class PrinterManager implements SNMPManagerCallback {
                 printer.getConfig().setRawAvailable(rawAvailable);
                 printer.getConfig().setBookletAvailable(bookletAvailable);
                 printer.getConfig().setStaplerAvailable(staplerAvailable);
+                printer.getConfig().setPunch3Available(punch3Available);
                 printer.getConfig().setPunch4Available(punch4Available);
                 printer.getConfig().setTrayFaceDownAvailable(trayFaceDownAvailable);
-                printer.getConfig().setTrayAutoStackAvailable(trayAutoStackAvailable);
                 printer.getConfig().setTrayTopAvailable(trayTopAvailable);
                 printer.getConfig().setTrayStackAvailable(trayStackAvailable);
                 mPrinterList.add(printer);
@@ -531,9 +531,9 @@ public class PrinterManager implements SNMPManagerCallback {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_RAW, (printer.getConfig().isRawAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_BOOKLET, (printer.getConfig().isBookletAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_STAPLER, (printer.getConfig().isStaplerAvailable() ? 1 : 0));
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PUNCH3, (printer.getConfig().isPunch3Available() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PUNCH4, (printer.getConfig().isPunch4Available() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN, (printer.getConfig().isTrayFaceDownAvailable() ? 1 : 0));
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYAUTOSTACK, (printer.getConfig().isTrayAutoStackAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYTOP, (printer.getConfig().isTrayTopAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYSTACK, (printer.getConfig().isTrayStackAvailable() ? 1 : 0));
         

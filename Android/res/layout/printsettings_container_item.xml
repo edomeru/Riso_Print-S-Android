@@ -31,6 +31,7 @@
             android:layout_marginLeft="@dimen/printsettings_menu_padding"
             android:layout_weight="1"
             android:maxLines="2"
+            android:ellipsize="end"
             android:duplicateParentState="true"
             android:text="@string/default_textview"
 	        android:textColor="@color/selector_printsettings_item_text"

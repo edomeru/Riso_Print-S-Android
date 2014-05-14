@@ -80,9 +80,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         
         mPrintSettingsView.setValueChangedListener(this);
         
-        mPrintSettingsView.setPrintSettings(mPrintSettings);
+        mPrintSettingsView.setInitialValues(mPrinterId, mPrintSettings);
         mPrintSettingsView.setShowPrintControls(mFragmentForPrinting);
-        mPrintSettingsView.setPrinterId(mPrinterId);
         
         TextView textView = (TextView) view.findViewById(R.id.titleTextView);
         textView.setText(R.string.ids_lbl_print_settings);

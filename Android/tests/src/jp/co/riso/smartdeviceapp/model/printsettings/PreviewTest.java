@@ -166,12 +166,10 @@ public class PreviewTest extends AndroidTestCase {
     public void testOutputTray() {
         assertEquals(0, OutputTray.AUTO.ordinal());
         assertEquals(1, OutputTray.FACEDOWN.ordinal());
-        assertEquals(2, OutputTray.FACEUP.ordinal());
-        assertEquals(3, OutputTray.TOP.ordinal());
-        assertEquals(4, OutputTray.STACKING.ordinal());
+        assertEquals(2, OutputTray.TOP.ordinal());
+        assertEquals(3, OutputTray.STACKING.ordinal());
         assertEquals(OutputTray.AUTO, OutputTray.valueOf("AUTO"));
         assertEquals(OutputTray.FACEDOWN, OutputTray.valueOf("FACEDOWN"));
-        assertEquals(OutputTray.FACEUP, OutputTray.valueOf("FACEUP"));
         assertEquals(OutputTray.TOP, OutputTray.valueOf("TOP"));
         assertEquals(OutputTray.STACKING, OutputTray.valueOf("STACKING"));
     }
