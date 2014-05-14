@@ -14,7 +14,7 @@ namespace SmartDeviceApp.Controllers
 {
     public class PreviewGestureController : IDisposable
     {
-        private const int SWIPE_THRESHOLD = 500;
+        private const int SWIPE_THRESHOLD = 100;
 
         private GestureRecognizer _gestureRecognizer;
         private UIElement _control;
