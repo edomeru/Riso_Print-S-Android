@@ -213,14 +213,16 @@
         }
         //else segue to printer info screen
         [cell setHighlighted:YES];
+    }
+    else if(press.state == UIGestureRecognizerStateEnded)
+    {
         if(indexPath != nil)
         {
             self.selectedPrinterIndexPath = indexPath;
             [self performSegueTo:[PrinterInfoViewController class]];
         }
-    }
-    else{
-        [cell setHighlighted:NO];
+        [cell performSelector:@selector(setHighlighted:) withObject:NO afterDelay:0.1f];
+
     }
 }
 
