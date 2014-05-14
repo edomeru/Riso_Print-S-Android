@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp.view.preview;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
@@ -450,38 +451,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // ================================================================================
     
     /**
-     * Get fit to aspect ratio size
-     * 
-     * @param srcWidth
-     *            Source width
-     * @param srcHeight
-     *            Source height
-     * @param destWidth
-     *            Destination width
-     * @param destHeight
-     *            Destination height
-     * @return New width and height
-     */
-    protected int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
-        float ratioSrc = srcWidth / srcHeight;
-        float ratioDest = (float) destWidth / destHeight;
-        
-        int newWidth = 0;
-        int newHeight = 0;
-        
-        if (ratioDest > ratioSrc) {
-            newHeight = destHeight;
-            newWidth = (int) (destHeight * ratioSrc);
-            
-        } else {
-            newWidth = destWidth;
-            newHeight = (int) (destWidth / ratioSrc);
-        }
-        
-        return new int[] { newWidth, newHeight };
-    }
-    
-    /**
      * Get curl view dimensions
      * 
      * @param screenWidth
@@ -505,7 +474,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
-        return getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
+        return AppUtils.getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
     
     /**
@@ -521,7 +490,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         // Compute margins based on the paper size in preview settings.
         float paperDisplaySize[] = getPaperDisplaySize();
         
-        return getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
+        return AppUtils.getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
     
     /**
@@ -1233,7 +1202,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int dim[] = getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
+                    int dim[] = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
                     if (mPrintSettings.isScaleToFit()) {
                         dim[0] = right - left;
                         dim[1] = bottom - top;

@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
@@ -235,7 +236,11 @@ public class PDFFileManager {
         // Notify PDF File Data that there is a new PDF
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = prefs.edit();
-        edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, fileName);
+        if (fileName == null) {
+            edit.remove(PDFFileManager.KEY_SANDBOX_PDF_NAME);
+        } else {
+            edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, fileName);
+        }
         edit.apply();
     }
     
@@ -448,7 +453,7 @@ public class PDFFileManager {
                         }
 
                         PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), fileName);
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         return PDF_OPEN_FAILED;
                     }
                 }
