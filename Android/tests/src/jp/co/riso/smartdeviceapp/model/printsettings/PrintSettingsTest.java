@@ -1,18 +1,33 @@
 
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
-import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.test.AndroidTestCase;
-import android.test.RenamingDelegatingContext;
+import android.test.ActivityInstrumentationTestCase2;
 
-public class PrintSettingsTest extends AndroidTestCase {
+public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActivity> {
+
+    public PrintSettingsTest() {
+        super(MainActivity.class);
+    }
+    
+    public PrintSettingsTest(Class<MainActivity> activityClass) {
+        super(activityClass);
+    }
+    
     private static final String PRINTER_ID = "prn_id";
     private static final String PRINTER_IP = "prn_ip_address";
     private static final String PRINTER_NAME = "prn_name";
@@ -58,16 +73,11 @@ public class PrintSettingsTest extends AndroidTestCase {
     private static final String KEY_OUTPUT_TRAY = "outputTray";
 
     private PrintSettings mPrintSettings;
-    private Context mContext;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         mPrintSettings = new PrintSettings(); //default values
-        //use "mock" context in order to not destroy the data
-        mContext = new RenamingDelegatingContext(getContext(), "test_");
-        //initialize the PrintSettingsManager and give the "mock" context
-        PrintSettingsManager.getInstance(mContext);
     }
 
     @Override
@@ -170,7 +180,7 @@ public class PrintSettingsTest extends AndroidTestCase {
     public void testConstructor_PrinterIdValid() {
         int printerId = -1;
 
-        DatabaseManager mManager = new DatabaseManager(mContext);
+        DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 
         SQLiteDatabase db = mManager.getWritableDatabase();
 
@@ -338,7 +348,7 @@ public class PrintSettingsTest extends AndroidTestCase {
     public void testSavePrintSettingToDb() {
         int printerId = -1;
 
-        DatabaseManager mManager = new DatabaseManager(mContext);
+        DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 
         SQLiteDatabase db = mManager.getWritableDatabase();
 
@@ -435,10 +445,24 @@ public class PrintSettingsTest extends AndroidTestCase {
     public void testInitializeStaticObjects() {
         assertEquals(18, PrintSettings.sSettingMap.size());
         assertEquals(3, PrintSettings.sGroupList.size());
-        PrintSettings.initializeStaticObjects("invalidFile");
         
-        PrintSettings.initializeStaticObjects("db/initializeDB.sql");
-        // w/ values since initially loaded
+        try {
+        PrintSettings.initializeStaticObjects(null);
+        } catch (NullPointerException e) {
+            fail("NullPointerException");
+        }
+        // blank content
+        PrintSettings.initializeStaticObjects("");
+        // without group end tag
+        PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingEndTag.xml"));
+        // without setting start tag
+        PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingStartTag.xml"));
+        // starting " does not have a corresponding "
+        PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingEndString.xml"));
+        // value is not enclosed in ""
+        PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingString.xml"));
+        
+        // w/ values since initially loaded - must still be equal to initial size
         assertEquals(18, PrintSettings.sSettingMap.size());
         assertEquals(3, PrintSettings.sGroupList.size());
     }
@@ -446,7 +470,7 @@ public class PrintSettingsTest extends AndroidTestCase {
     public void testInitializeStaticObjects_Duplicate() {
         // w/ values since initially loaded
         assertEquals(18, PrintSettings.sSettingMap.size());
-        PrintSettings.initializeStaticObjects("printsettings.xml");
+        PrintSettings.initializeStaticObjects(getFileContentsFromAssets("printsettings.xml"));
         assertEquals(18, PrintSettings.sSettingMap.size());
         assertEquals(6, PrintSettings.sGroupList.size());
         int count = 0;
@@ -458,4 +482,48 @@ public class PrintSettingsTest extends AndroidTestCase {
         }
         assertEquals(1, count);
     }
+    
+    public void testSSettingMap_ExistInDb() {
+        DatabaseManager mgr = new DatabaseManager(SmartDeviceApp.getAppContext());
+        SQLiteDatabase db = mgr.getReadableDatabase();
+        Cursor c = db.query("PrintSetting", null, null, null, null, null, null);
+        String[] columnNames = c.getColumnNames();
+        c.close();
+        db.close();
+        
+        List<String> columns = Arrays.asList(columnNames);
+        
+        for (String key : PrintSettings.sSettingMap.keySet()) {
+            Setting s = PrintSettings.sSettingMap.get(key);
+            assertTrue(columns.contains(s.getDbKey()));
+        }
+    }
+    
+ // ================================================================================
+    // Private methods
+    // ================================================================================
+ 
+    private String getFileContentsFromAssets(String assetFile) {
+        AssetManager assetManager = getInstrumentation().getContext().getAssets();
+        
+        StringBuilder buf = new StringBuilder();
+        InputStream stream;
+        try {
+            stream = assetManager.open(assetFile);
+            BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+            String str;
+            
+            while ((str = in.readLine()) != null) {
+                buf.append(str);
+            }
+            
+            in.close();
+        } catch (IOException e) {
+            return null;
+        }
+        
+        return buf.toString();
+    }
+
+
 }

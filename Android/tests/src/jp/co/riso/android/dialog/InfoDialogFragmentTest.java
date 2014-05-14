@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
+        wakeUpScreen();
     }
 
     @Override
@@ -125,5 +127,20 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void wakeUpScreen() {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mActivity.getWindow().addFlags(
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            }
+        });
+
+        waitFewSeconds();
     }
 }

@@ -13,6 +13,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -41,6 +42,8 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         mActivity = getActivity();
         fm = mActivity.getFragmentManager();
         mCallbackCalled = false;
+        
+        wakeUpScreen();
     }
 
     @Override
@@ -73,9 +76,9 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testNewInstance_NotCancelable() {
-        WaitingDialogFragment w = WaitingDialogFragment
-                .newInstance(TITLE, MSG, false, BUTTON_TITLE);
+        WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE);
         assertNotNull(w);
+        w.setRetainInstance(true);
         w.show(fm, TAG);
         waitFewSeconds();
 
@@ -276,6 +279,21 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void wakeUpScreen() {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mActivity.getWindow().addFlags(
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            }
+        });
+
+        waitFewSeconds();
     }
 
     // ================================================================================

@@ -5,6 +5,7 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.WindowManager;
 
 public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
     private static final String TAG = "DialogUtilsTest";
@@ -22,6 +23,7 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        wakeUpScreen();
     }
 
     @Override
@@ -32,7 +34,7 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
     public void testConstructor() {
         assertNotNull(new DialogUtils());
     }
-    
+
     public void testDisplayDialog() {
         InfoDialogFragment d = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE);
         DialogUtils.displayDialog(getActivity(), TAG, d);
@@ -61,16 +63,31 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
         assertNull(dialog);
     }
 
-    //================================================================================
+    // ================================================================================
     // Private methods
-    //================================================================================
+    // ================================================================================
 
     // wait some seconds so that you can see the change on emulator/device.
-    private void waitFewSeconds(){
+    private void waitFewSeconds() {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void wakeUpScreen() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().getWindow().addFlags(
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            }
+        });
+
+        waitFewSeconds();
     }
 }

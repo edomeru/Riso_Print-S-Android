@@ -122,12 +122,11 @@ public class PrintSettings {
     /**
      * Initialize static objects
      */
-    protected static void initializeStaticObjects(String fileName) {
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), fileName);
+    protected static void initializeStaticObjects(String xmlString) {
         if (xmlString == null) {
             return;
         }
-        
+
         Document printSettingsContent = null;
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -352,6 +351,7 @@ public class PrintSettings {
         sGroupList = new ArrayList<Group>();
         sSettingMap = new HashMap<String, Setting>();
         
-        initializeStaticObjects(AppConstants.XML_FILENAME);
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), AppConstants.XML_FILENAME);
+        initializeStaticObjects(xmlString);
     }
 }

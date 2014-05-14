@@ -11,6 +11,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         super.setUp();
         mActivity = getActivity();
         mCallbackCalled = false;
+        wakeUpScreen();
     }
 
     @Override
@@ -305,6 +307,21 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
             e.printStackTrace();
         }
         getInstrumentation().waitForIdleSync();
+    }
+    
+    private void wakeUpScreen() {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mActivity.getWindow().addFlags(
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            }
+        });
+
+        waitFewSeconds();
     }
 
     //================================================================================
