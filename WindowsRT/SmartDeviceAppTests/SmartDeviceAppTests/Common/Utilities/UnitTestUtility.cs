@@ -91,5 +91,24 @@ namespace SmartDeviceAppTests.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Checks is a file exists
+        /// </summary>
+        /// <param name="keyword">part of file name</param>
+        /// <param name="folderLocation">target location</param>
+        /// <returns>task; true if a file is found, false otherwise</returns>
+        public static async Task<bool> CheckIfFileExists(string keyword, StorageFolder folderLocation)
+        {
+            var files = await folderLocation.GetFilesAsync();
+            foreach (var file in files)
+            {
+                if (file.Name.Contains(keyword))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

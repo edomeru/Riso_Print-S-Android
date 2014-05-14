@@ -407,20 +407,20 @@ namespace SmartDeviceAppTests.Controllers
             // Note: no public properties or return value to assert
         }
 
-        [TestMethod]
-        public void Test_PrintSettingValueChanged_NotNull()
-        {
-            PrintSetting printSetting = new PrintSetting()
-            {
-                Name = PrintSettingConstant.NAME_VALUE_COLOR_MODE,
-                Type = PrintSettingType.numeric,
-                Value = 2,
-                Default = 1
-            };
+        //[TestMethod]
+        //public void Test_PrintSettingValueChanged_NotNull()
+        //{
+        //    PrintSetting printSetting = new PrintSetting()
+        //    {
+        //        Name = PrintSettingConstant.NAME_VALUE_COLOR_MODE,
+        //        Type = PrintSettingType.numeric,
+        //        Value = 2,
+        //        Default = 1
+        //    };
 
-            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
-        }
+        //    PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
+        //    // Note: no public properties or return value to assert
+        //}
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_UpdatePreview()
