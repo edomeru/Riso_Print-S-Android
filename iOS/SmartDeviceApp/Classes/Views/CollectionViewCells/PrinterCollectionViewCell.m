@@ -31,20 +31,6 @@ typedef enum {
     return self;
 }
 
-- (IBAction)defaultSwitchAction:(id)sender
-{
-    if (((UISwitch *) sender).on == YES)
-    {
-        [self.delegate setDefaultPrinterCell:YES forIndexPath:self.indexPath];
-        [self setAsDefaultPrinterCell: YES];
-    }
-    else
-    {
-        [self.delegate setDefaultPrinterCell:NO forIndexPath:self.indexPath];
-        [self setAsDefaultPrinterCell: NO];
-
-    }
-}
 
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell
 {

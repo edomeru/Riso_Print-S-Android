@@ -82,8 +82,6 @@
 {
     PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
                                                                                 forIndexPath:indexPath];
-    cell.delegate = self;
-    cell.indexPath = indexPath;
     
     Printer *printer = [self.printerManager getPrinterAtIndex:[indexPath item]];
     if ([self.printerManager isDefaultPrinter:printer])
@@ -115,6 +113,7 @@
     cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
+    cell.defaultSwitch.tag = indexPath.row;
     
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
@@ -152,34 +151,6 @@
     
     //set as default printer
     return [self.printerManager registerDefaultPrinter:selectedPrinter];
-}
-
-#pragma mark - PrinterCollectioViewCellDelegate methods
--(void) setDefaultPrinterCell:(BOOL) isDefaultOn forIndexPath:(NSIndexPath *) indexPath;
-{
-    if(isDefaultOn == YES)
-    {
-        if(indexPath != self.defaultPrinterIndexPath)
-        {
-            [self setDefaultPrinter:indexPath];
-            if(self.defaultPrinterIndexPath != nil)
-            {
-                PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-            
-                [cell setAsDefaultPrinterCell:FALSE];
-            }
-    
-            self.defaultPrinterIndexPath = indexPath;
-        }
-    }
-    else
-    {
-        if(indexPath == self.defaultPrinterIndexPath)
-        {
-            [self.printerManager deleteDefaultPrinter];
-            self.defaultPrinterIndexPath = nil;
-        }
-    }
 }
 
 #pragma mark - IBActions
@@ -223,12 +194,22 @@
         [cell.statusView.statusHelper stopPrinterStatusPolling];
         cell.statusView.statusHelper.delegate = nil;
         
-        cell.indexPath = nil;
         //set view to non default printer cell style
         [cell setAsDefaultPrinterCell:NO];
         
         //remove cell from view
         [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
+        
+        //reload data of items after the deleted item to update the control tags of the next items
+        NSMutableArray *indexPathsToReload = [[NSMutableArray alloc] init];
+        NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:0];
+        for(NSInteger i = index; i < numberOfItems; i++)
+        {
+            NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            [indexPathsToReload addObject:indexPath];
+        }
+        
+        [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
         self.toDeleteIndexPath = nil;
     }
     else
@@ -238,6 +219,41 @@
                       withDetails:nil];
     }
 }
+
+- (IBAction)defaultPrinterSwitchAction:(id)sender
+{
+    UISwitch *defaultSwitch = (UISwitch *) sender;
+    
+    if(defaultSwitch.on == YES)
+    {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:defaultSwitch.tag inSection:0];
+        if([self setDefaultPrinter:indexPath])
+        {
+            if(self.defaultPrinterIndexPath != nil)
+            {
+                PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+                
+                [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            }
+            
+            PrinterCollectionViewCell *newDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            
+            [newDefaultCell setAsDefaultPrinterCell:YES];
+            self.defaultPrinterIndexPath = indexPath;
+        }
+    }
+    else
+    {
+        if(self.defaultPrinterIndexPath != nil)
+        {
+            PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+            [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            [self.printerManager deleteDefaultPrinter];
+            self.defaultPrinterIndexPath = nil;
+        }
+    }
+}
+
 
 - (IBAction)defaultSettingsButtonAction:(id)sender
 {
