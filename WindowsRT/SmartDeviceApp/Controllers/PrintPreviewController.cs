@@ -893,8 +893,8 @@ namespace SmartDeviceApp.Controllers
         private Size GetPreviewPageImageSize(Size paperSize, bool isPortrait)
         {
             // Get paper size and apply DPI
-            double length1 = paperSize.Width * ImageConstant.BASE_DPI;
-            double length2 = paperSize.Height * ImageConstant.BASE_DPI;
+            double length1 = (paperSize.Width * ImageConstant.FACTOR_MM_TO_IN) * ImageConstant.BASE_DPI;
+            double length2 = (paperSize.Height * ImageConstant.FACTOR_MM_TO_IN) * ImageConstant.BASE_DPI;
 
             Size pageImageSize = new Size();
             // Check orientation
