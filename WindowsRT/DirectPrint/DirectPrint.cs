@@ -249,6 +249,7 @@ namespace DirectPrint
                 {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
+                if (socket != null) socket.disconnect();
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
@@ -274,6 +275,7 @@ namespace DirectPrint
                 {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
+                if (socket != null) socket.disconnect();
                 return;
             }
             if (print_job.cancel_print == 1)
@@ -400,6 +402,7 @@ namespace DirectPrint
                 {
                     print_job.callback(PRINT_STATUS_ERROR);
                 }
+                if (socket != null) socket.disconnect();
                 return;
             }
             socket.disconnect();
