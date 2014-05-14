@@ -120,6 +120,7 @@
 - (IBAction)printSettingsAction:(id)sender
 {
     [self.delegate segueToPrintSettings];
+    [self.printSettingsButton setSelected:YES];
 }
 
 - (IBAction)selectPortAction:(id)sender

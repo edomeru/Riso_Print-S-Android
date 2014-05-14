@@ -25,4 +25,7 @@
 @property BOOL isDefaultPrinter;
 /*Online status of printer*/
 @property (weak, nonatomic) id <PrinterInfoDelegate> delegate;
+/*Button to default print settings screen*/
+@property (weak, nonatomic) IBOutlet UIButton *printSettingsButton;
+
 @end

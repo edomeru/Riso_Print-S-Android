@@ -2509,6 +2509,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="disabled" image="img_btn_print_settings_pressed"/>
+                                        <state key="selected" image="img_btn_default_print_settings_pressed"/>
                                         <state key="highlighted" image="img_btn_default_print_settings_pressed"/>
                                         <connections>
                                             <action selector="printSettingsAction:" destination="qXF-RA-AFJ" eventType="touchUpInside" id="09e-IU-u3n"/>
@@ -2735,6 +2736,7 @@
                         <outlet property="defaultPrinterSwitch" destination="V7Y-Ut-ufD" id="PGa-hq-szW"/>
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
                         <outlet property="portSelection" destination="kUh-T9-Pqa" id="3R4-3Z-0jS"/>
+                        <outlet property="printSettingsButton" destination="K5Y-yN-Wg9" id="jhy-7C-BMD"/>
                         <outlet property="printerName" destination="bq8-54-Npp" id="8Wz-fh-pyx"/>
                         <segue destination="pP7-fQ-WfE" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindFromPrinterInfo:" id="faf-6o-f0W"/>
                     </connections>
