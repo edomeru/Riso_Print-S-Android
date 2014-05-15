@@ -138,7 +138,7 @@ namespace SmartDeviceAppTests.Controllers
             await JobController.Instance.Initialize();
 
             PrintJob printJob = new PrintJob() { PrinterId = 1, Name = "new.pdf", Result = 1 };
-            JobController.Instance.SavePrintJob(new PrintJob());
+            JobController.Instance.SavePrintJob(printJob);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
 
@@ -155,7 +155,7 @@ namespace SmartDeviceAppTests.Controllers
             await JobController.Instance.Initialize();
 
             PrintJob printJob = new PrintJob() { PrinterId = 2, Name = "new2.pdf", Result = 1 };
-            JobController.Instance.SavePrintJob(new PrintJob());
+            JobController.Instance.SavePrintJob(printJob);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
 
@@ -172,7 +172,7 @@ namespace SmartDeviceAppTests.Controllers
             await JobController.Instance.Initialize();
 
             PrintJob printJob = new PrintJob() { PrinterId = 1, Name = "new2.pdf", Result = 1 };
-            JobController.Instance.SavePrintJob(new PrintJob());
+            JobController.Instance.SavePrintJob(printJob);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
 
