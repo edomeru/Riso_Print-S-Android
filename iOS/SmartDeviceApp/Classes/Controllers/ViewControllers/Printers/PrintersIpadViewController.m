@@ -336,8 +336,8 @@
     [super reloadData];
     if(self.selectedPrinterIndex != nil)
     {
-        NSIndexPath *indexPathToReload = [NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0];
-        [self.collectionView reloadItemsAtIndexPaths:@[indexPathToReload]];
+        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0]];
+        [selectedCell setDefaultSettingsRowToSelected:NO];
         self.selectedPrinterIndex = nil;
     }
     else
