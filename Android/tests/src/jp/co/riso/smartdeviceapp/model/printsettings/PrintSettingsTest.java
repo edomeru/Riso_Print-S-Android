@@ -11,6 +11,7 @@ import java.util.List;
 
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.ContentValues;
 import android.content.res.AssetManager;
@@ -23,11 +24,11 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     public PrintSettingsTest() {
         super(MainActivity.class);
     }
-    
+
     public PrintSettingsTest(Class<MainActivity> activityClass) {
         super(activityClass);
     }
-    
+
     private static final String PRINTER_ID = "prn_id";
     private static final String PRINTER_IP = "prn_ip_address";
     private static final String PRINTER_NAME = "prn_name";
@@ -151,7 +152,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     // must have default values
     public void testConstructor_PrinterIdInvalid() {
-        PrintSettings settings = new PrintSettings(-1);
+        PrintSettings settings = new PrintSettings(PrinterManager.EMPTY_ID);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
@@ -342,7 +343,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testSavePrintSettingToDb_Invalid() {
-        assertFalse(mPrintSettings.savePrintSettingToDB(-1));
+        assertFalse(mPrintSettings.savePrintSettingToDB(PrinterManager.EMPTY_ID));
     }
 
     public void testSavePrintSettingToDb() {
@@ -441,13 +442,13 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         c.close();
         db.close();
     }
-    
+
     public void testInitializeStaticObjects() {
         assertEquals(18, PrintSettings.sSettingMap.size());
         assertEquals(3, PrintSettings.sGroupList.size());
-        
+
         try {
-        PrintSettings.initializeStaticObjects(null);
+            PrintSettings.initializeStaticObjects(null);
         } catch (NullPointerException e) {
             fail("NullPointerException");
         }
@@ -461,12 +462,12 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingEndString.xml"));
         // value is not enclosed in ""
         PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingString.xml"));
-        
+
         // w/ values since initially loaded - must still be equal to initial size
         assertEquals(18, PrintSettings.sSettingMap.size());
         assertEquals(3, PrintSettings.sGroupList.size());
     }
-    
+
     public void testInitializeStaticObjects_Duplicate() {
         // w/ values since initially loaded
         assertEquals(18, PrintSettings.sSettingMap.size());
@@ -482,7 +483,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         }
         assertEquals(1, count);
     }
-    
+
     public void testSSettingMap_ExistInDb() {
         DatabaseManager mgr = new DatabaseManager(SmartDeviceApp.getAppContext());
         SQLiteDatabase db = mgr.getReadableDatabase();
@@ -490,38 +491,38 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         String[] columnNames = c.getColumnNames();
         c.close();
         db.close();
-        
+
         List<String> columns = Arrays.asList(columnNames);
-        
+
         for (String key : PrintSettings.sSettingMap.keySet()) {
             Setting s = PrintSettings.sSettingMap.get(key);
             assertTrue(columns.contains(s.getDbKey()));
         }
     }
-    
- // ================================================================================
+
+    // ================================================================================
     // Private methods
     // ================================================================================
- 
+
     private String getFileContentsFromAssets(String assetFile) {
         AssetManager assetManager = getInstrumentation().getContext().getAssets();
-        
+
         StringBuilder buf = new StringBuilder();
         InputStream stream;
         try {
             stream = assetManager.open(assetFile);
             BufferedReader in = new BufferedReader(new InputStreamReader(stream));
             String str;
-            
+
             while ((str = in.readLine()) != null) {
                 buf.append(str);
             }
-            
+
             in.close();
         } catch (IOException e) {
             return null;
         }
-        
+
         return buf.toString();
     }
 

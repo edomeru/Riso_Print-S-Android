@@ -3,14 +3,14 @@ package jp.co.riso.smartdeviceapp.controller.printsettings;
 
 import java.util.HashMap;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
-import android.test.RenamingDelegatingContext;
 
 public class PrintSettingsManagerTest extends AndroidTestCase {
 
@@ -58,20 +58,17 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
 
     private PrintSettingsManager mPrintSettingsMgr;
     private DatabaseManager mManager;
-    private Context mContext;
     private int printerId = 1000;
     private int settingId = 1;
     private int intValue = 1;
 
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mContext = new RenamingDelegatingContext(getContext(), "test_");
 
-        mPrintSettingsMgr = PrintSettingsManager.getInstance(mContext);
+        mPrintSettingsMgr = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
 
-        mManager = new DatabaseManager(mContext);
+        mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 
         SQLiteDatabase db = mManager.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -134,7 +131,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     }
 
     public void testGetInstance() {
-        assertEquals(mPrintSettingsMgr, PrintSettingsManager.getInstance(mContext));
+        assertEquals(mPrintSettingsMgr, PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext()));
     }
 
     public void testGetPrintSetting() {
@@ -228,27 +225,26 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         c.close();
         db.close();
     }
-    
+
     public void testSaveToDB_NullValues() {
         PrintSettings settings = new PrintSettings();
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        boolean result = mPrintSettingsMgr.saveToDB(999, null);
+        boolean result = mPrintSettingsMgr.saveToDB(PrinterManager.EMPTY_ID, null);
         assertFalse(result);
 
         SQLiteDatabase db = mManager.getReadableDatabase();
         Cursor c = db.query(PRINTSETTING_TABLE, null, "prn_id=?", new String[] {
-                String.valueOf(999)
+                String.valueOf(PrinterManager.EMPTY_ID)
         }, null, null, null);
         assertEquals(0, c.getCount());
-       
+
         c.close();
 
         db.close();
     }
-
 
     public void testSaveToDB_InitialSave() {
         PrintSettings settings = new PrintSettings();

@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.controller.printsettings;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import android.content.ContentValues;
@@ -85,7 +86,7 @@ public class PrintSettingsManager {
      * @return boolean result of insert/replace to DB, returns true if successful.
      */
     public boolean saveToDB(int printerId, PrintSettings printSettings) {
-        if (printSettings == null) {
+        if (printerId == PrinterManager.EMPTY_ID || printSettings == null) {
             return false;
         }
         
@@ -117,7 +118,7 @@ public class PrintSettingsManager {
     private ContentValues createContentValues(int printerId, PrintSettings printSettings) {
         ContentValues cv = new ContentValues();
         cv.put(KeyConstants.KEY_SQL_PRINTER_ID, printerId);
-
+        
         for (String key : PrintSettings.sSettingMap.keySet()) {
             Setting setting = PrintSettings.sSettingMap.get(key);
             String dbKey = setting.getDbKey();

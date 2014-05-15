@@ -108,14 +108,17 @@ public class PrintSettings {
      *            Printer ID
      */
     public PrintSettings(int printerId) {
-        PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+        this();
         
-        PrintSettings printSettings = manager.getPrintSetting(printerId);
-        
-        mSettingValues = new HashMap<String, Integer>();
-        
-        for (String key : printSettings.getSettingValues().keySet()) {
-            mSettingValues.put(key, printSettings.getSettingValues().get(key));
+        // overwrite values if valid printer id
+        if (printerId != PrinterManager.EMPTY_ID) {
+            PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+            
+            PrintSettings printSettings = manager.getPrintSetting(printerId);
+            
+            for (String key : printSettings.getSettingValues().keySet()) {
+                mSettingValues.put(key, printSettings.getSettingValues().get(key));
+            }
         }
     }
     
@@ -126,7 +129,7 @@ public class PrintSettings {
         if (xmlString == null) {
             return;
         }
-
+        
         Document printSettingsContent = null;
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
