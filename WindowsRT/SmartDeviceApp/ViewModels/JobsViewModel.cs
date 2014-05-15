@@ -142,19 +142,28 @@ namespace SmartDeviceApp.ViewModels
             {
                 case ViewMode.MainMenuPaneVisible:
                     {
-                        _gestureController.DisableGestures();
+                        if (_gestureController != null)
+                        {
+                            _gestureController.DisableGestures();
+                        }
                         break;
                     }
 
                 case ViewMode.FullScreen:
                     {
-                        _gestureController.EnableGestures();
+                        if (_gestureController != null)
+                        {
+                            _gestureController.EnableGestures();
+                        }
                         break;
                     }
                 case ViewMode.RightPaneVisible:
                 case ViewMode.RightPaneVisible_ResizedWidth: // NOTE: Technically not possible
                     {
-                        _gestureController.EnableGestures();
+                        if (_gestureController != null)
+                        {
+                            _gestureController.EnableGestures();
+                        }
                         break;
                     }
             }

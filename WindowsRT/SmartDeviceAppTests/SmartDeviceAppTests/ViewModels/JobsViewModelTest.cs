@@ -140,12 +140,17 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_SetViewMode()
         {
+            var jobGestureController = new JobGestureController();
+            jobsViewModel.GestureController = jobGestureController;
             new ViewModelLocator().ViewControlViewModel.ScreenMode = ScreenMode.Jobs;
             // Note: Test for coverage only; No tests to assert
             Messenger.Default.Send<ViewMode>(ViewMode.MainMenuPaneVisible);
             Messenger.Default.Send<ViewMode>(ViewMode.FullScreen);
             Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible);
             Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible_ResizedWidth);
+
+            new ViewModelLocator().ViewControlViewModel.ScreenMode = ScreenMode.Home;
+            Messenger.Default.Send<ViewMode>(ViewMode.MainMenuPaneVisible);
         }
 
         [TestMethod()]
