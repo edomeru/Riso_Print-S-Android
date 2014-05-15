@@ -95,7 +95,7 @@ public class WaitingDialogFragment extends DialogFragment {
         
         dialog.setCanceledOnTouchOutside(false);
         dialog.setIndeterminate(true);
-        //http://developer.android.com/reference/android/app/DialogFragment.html#setCancelable(boolean)
+        // http://developer.android.com/reference/android/app/DialogFragment.html#setCancelable(boolean)
         setCancelable(cancelable);
         
         if (!cancelable) {
@@ -138,21 +138,28 @@ public class WaitingDialogFragment extends DialogFragment {
             listener.onCancel();
         }
     }
-
+    
     /**
      * Sets the message displayed in the Progress dialog.
      * 
-     * @param msg String to be displayed
+     * @param msg
+     *            String to be displayed
      */
     public void setMessage(final String msg) {
-        getActivity().runOnUiThread(new Runnable() {
+        if (getActivity() != null) {
             
-            @Override
-            public void run() {
-                ProgressDialog dialog = (ProgressDialog)getDialog();
-                dialog.setMessage(msg);
-            }
-        });
+            getActivity().runOnUiThread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    if (getDialog() != null) {
+                        ProgressDialog dialog = (ProgressDialog) getDialog();
+                        dialog.setMessage(msg);
+                    }
+                }
+            });
+        }
+        
     }
     
     // ================================================================================

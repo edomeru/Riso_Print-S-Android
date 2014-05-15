@@ -108,22 +108,24 @@ public class PrintSettings {
      *            Printer ID
      */
     public PrintSettings(int printerId) {
-        PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+        this();
         
-        PrintSettings printSettings = manager.getPrintSetting(printerId);
-        
-        mSettingValues = new HashMap<String, Integer>();
-        
-        for (String key : printSettings.getSettingValues().keySet()) {
-            mSettingValues.put(key, printSettings.getSettingValues().get(key));
+        // overwrite values if valid printer id
+        if (printerId != PrinterManager.EMPTY_ID) {
+            PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+            
+            PrintSettings printSettings = manager.getPrintSetting(printerId);
+            
+            for (String key : printSettings.getSettingValues().keySet()) {
+                mSettingValues.put(key, printSettings.getSettingValues().get(key));
+            }
         }
     }
     
     /**
      * Initialize static objects
      */
-    protected static void initializeStaticObjects(String fileName) {
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), fileName);
+    protected static void initializeStaticObjects(String xmlString) {
         if (xmlString == null) {
             return;
         }
@@ -352,6 +354,7 @@ public class PrintSettings {
         sGroupList = new ArrayList<Group>();
         sSettingMap = new HashMap<String, Setting>();
         
-        initializeStaticObjects(AppConstants.XML_FILENAME);
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), AppConstants.XML_FILENAME);
+        initializeStaticObjects(xmlString);
     }
 }
