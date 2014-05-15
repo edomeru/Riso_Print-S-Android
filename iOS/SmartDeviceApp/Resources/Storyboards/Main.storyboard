@@ -3422,14 +3422,14 @@
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewLayout key="collectionViewLayout" id="XZQ-To-wdd" userLabel="Layout-iPhone" customClass="PrintJobHistoryLayout"/>
                                 <cells>
-                                    <collectionViewCell clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="KTT-2M-GyJ" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
+                                    <collectionViewCell clipsSubviews="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="KTT-2M-GyJ" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dPu-Ft-Q41" userLabel="iPhone - TableView">
+                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dPu-Ft-Q41" userLabel="iPhone - TableView">
                                                     <rect key="frame" x="0.0" y="45" width="320" height="455"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -3437,7 +3437,7 @@
                                                         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobItem" rowHeight="45" id="cnq-2K-jWB" userLabel="PrintJobItem" customClass="PrintJobItemCell">
                                                             <rect key="frame" x="0.0" y="22" width="320" height="45"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cnq-2K-jWB" id="vvl-VO-Pci">
+                                                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="cnq-2K-jWB" id="vvl-VO-Pci">
                                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
@@ -3684,20 +3684,20 @@
                                     <constraint firstAttribute="centerY" secondItem="NQw-8G-f7I" secondAttribute="centerY" id="ljX-Vc-jBN"/>
                                 </constraints>
                             </view>
-                            <collectionView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rMa-FV-gDr" userLabel="iPad - CollectionView">
+                            <collectionView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rMa-FV-gDr" userLabel="iPad - CollectionView">
                                 <rect key="frame" x="0.0" y="48" width="600" height="736"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewLayout key="collectionViewLayout" id="Ko6-qP-yYm" userLabel="Layout-iPad" customClass="PrintJobHistoryLayout"/>
                                 <cells>
-                                    <collectionViewCell clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="PlD-vX-hdR" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
+                                    <collectionViewCell clipsSubviews="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="PlD-vX-hdR" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
                                         <rect key="frame" x="140" y="0.0" width="320" height="736"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="736"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="QLA-jj-dA8" userLabel="iPad - TableView">
+                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="QLA-jj-dA8" userLabel="iPad - TableView">
                                                     <rect key="frame" x="0.0" y="45" width="320" height="691"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -3705,7 +3705,7 @@
                                                         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobItem" rowHeight="45" id="aGA-NI-k55" userLabel="PrintJobItem" customClass="PrintJobItemCell">
                                                             <rect key="frame" x="0.0" y="22" width="320" height="45"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aGA-NI-k55" id="y9x-zh-hd8">
+                                                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="aGA-NI-k55" id="y9x-zh-hd8">
                                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
@@ -3925,8 +3925,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="9FD-bf-FdK"/>
         <segue reference="a4U-VG-JlJ"/>
-        <segue reference="oE4-lZ-OOf"/>
         <segue reference="ax2-Mn-NH0"/>
         <segue reference="CWW-vD-UgO"/>
     </inferredMetricsTieBreakers>

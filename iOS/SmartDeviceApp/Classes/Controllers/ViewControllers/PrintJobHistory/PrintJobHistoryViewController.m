@@ -99,6 +99,8 @@
                                           initWithTarget:self action:@selector(tappedCollection:)];
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
+    tapGesture.delaysTouchesBegan = NO;
+    tapGesture.delaysTouchesEnded = NO;
     [self.groupsView addGestureRecognizer:tapGesture];
     
     self.groupWithDelete = nil;
@@ -424,6 +426,14 @@
     [AlertHelper displayConfirmation:kAlertConfirmationDeleteJob
                    withCancelHandler:cancelled
                   withConfirmHandler:confirmed];
+}
+
+- (BOOL)shouldHighlightJob
+{
+    if (self.groupWithDelete != nil)
+        return NO;
+    else
+        return YES;
 }
 
 #pragma mark - Actions

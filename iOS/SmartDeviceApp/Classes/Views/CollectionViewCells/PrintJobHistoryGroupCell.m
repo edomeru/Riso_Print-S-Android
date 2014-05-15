@@ -123,6 +123,8 @@
     swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
     [cell addGestureRecognizer:swipeLeft];
     
+    [cell setBackgroundColors];
+    
     // clear tracker for the delete button
     self.jobWithDelete = nil;
     
@@ -132,21 +134,22 @@
 - (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)indexPath
 {
     PrintJobItemCell* jobCell = (PrintJobItemCell*)cell;
-    
-    // unified version-independent fix for the buggy UITableViewCell background color
-    //  -- for iOS6 (always clear)
-    //  -- for iOS7 (always white) 
-    // colors set to default in storyboard, set programmatically here instead
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-        [jobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
-    else
-        [jobCell setBackgroundColor:[UIColor gray1ThemeColor]];
-    
+        
     // if this is the last cell, hide the separator
     if (indexPath.row == [self.listPrintJobs count]-1)
         [jobCell.separator setHidden:YES];
     else
         [jobCell.separator setHidden:NO];
+}
+
+- (BOOL)tableView:(UITableView*)tableView shouldHighlightRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return [self.delegate shouldHighlightJob];
+}
+
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 #pragma mark - Cell Initialization
@@ -270,8 +273,9 @@
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        [jobCell setDeleteState:YES];
         [jobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
+        [jobCell markForDeletion:YES];
+        [deleteButton setHighlighted:NO];
         
         // slide the button from offscreen to its place over the timestamp
         [deleteButton animateOnscreen:nil];
@@ -291,8 +295,8 @@
     // slide the button to offscreen
     [deleteButton animateOffscreen:^(BOOL finished)
     {
+        [jobCell markForDeletion:NO];
         [deleteButton removeFromSuperview];
-        [jobCell setDeleteState:NO];
     }];
     
     self.jobWithDelete = nil;

@@ -9,7 +9,7 @@
 #import "DeleteButton.h"
 #import "UIColor+Theme.h"
 
-const float ANIMATION_SPEED = 0.2f;
+const float ANIMATION_SPEED = 0.1f;
 
 @interface DeleteButton()
 

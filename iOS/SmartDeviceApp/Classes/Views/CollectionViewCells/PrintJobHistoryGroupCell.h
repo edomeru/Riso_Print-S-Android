@@ -24,6 +24,7 @@
 - (void)didTapDeleteGroupButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag;
 - (BOOL)shouldPutDeleteJobButton:(NSUInteger)groupTag;
 - (void)didTapDeleteJobButton:(DeleteButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
+- (BOOL)shouldHighlightJob;
 
 @end
 
