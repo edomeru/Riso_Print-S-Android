@@ -43,13 +43,13 @@ namespace SmartDeviceAppTests.Controllers
             SNMPController.Instance.printerControllerAddTimeout = new Action<string,string,List<string>>(Test_SNMPController_HandleGetDeviceTimeout);
         }
 
-        [TestMethod]
+        
         private void Test_SNMPController_AddCallBack(string ip, string name, bool isOnline, List<string> cp)
         {
             // Note: Test for coverage only; No tests to assert
         }
 
-        [TestMethod]
+        
         private void Test_SNMPController_HandleGetDeviceTimeout(string ip, string name,List<string> cp)
         {
                // Note: Test for coverage only; No tests to assert
@@ -66,13 +66,13 @@ namespace SmartDeviceAppTests.Controllers
 
         }
 
-        [TestMethod]
+        
         private void Test_SNMPController_DiscoverCallback(PrinterSearchItem item)
         {
             // Note: Test for coverage only; No tests to assert
         }
 
-        [TestMethod]
+        
         private void Test_SNMPController_Timeout(string ip)
         {
             // Note: Test for coverage only; No tests to assert

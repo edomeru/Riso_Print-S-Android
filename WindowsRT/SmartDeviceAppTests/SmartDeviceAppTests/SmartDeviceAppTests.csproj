@@ -154,7 +154,12 @@
     <Compile Include="Converters\WidthHeightConverterTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\PrinterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SNMPTest\SNMPConstantsTest.cs" />
+    <Compile Include="SNMPTest\SNMPDeviceTest.cs" />
+    <Compile Include="SNMPTest\SNMPVariableTest.cs" />
+    <Compile Include="SNMPTest\UDPHelperTest.cs" />
     <Compile Include="ViewModels\AddPrinterViewModelTest.cs" />
     <Compile Include="ViewModels\PrintersViewModelTest.cs" />
     <Compile Include="ViewModels\SearchPrinterViewModelTest.cs" />

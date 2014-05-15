@@ -32,10 +32,6 @@ namespace SNMP
 
         }
 
-        public SNMPDiscovery()
-        {
-        }
-
         public SNMPDiscovery(string readCommunityName,string address)
         {
             {
