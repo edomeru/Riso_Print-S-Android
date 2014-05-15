@@ -207,33 +207,42 @@
     UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
     //else segue to printer info screen
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
-     PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     
-    if(indexPath == nil || (self.selectedPrinterIndexPath != nil && self.selectedPrinterIndexPath.row != indexPath.row))
+    if(indexPath == nil)
     {
-        [cell setHighlighted:NO];
-        self.selectedPrinterIndexPath = nil; //touch went to another row
+        PrinterCell  *selectedCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
+        [selectedCell setHighlighted:NO];
+        self.selectedPrinterIndexPath = nil;
         return;
     }
     
-    if(press.state == UIGestureRecognizerStateBegan)
+    UIGestureRecognizerState state = press.state;
+    if(press.state == UIGestureRecognizerStateChanged && self.selectedPrinterIndexPath.row == indexPath.row)
+    {
+        return;
+    }
+    
+    PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    if(state == UIGestureRecognizerStateBegan)
     {
         //else segue to printer info screen
         [cell setHighlighted:YES];
         self.selectedPrinterIndexPath = indexPath;
     }
-    else if(press.state == UIGestureRecognizerStateEnded)
+    else if(state == UIGestureRecognizerStateEnded)
     {
         if(self.selectedPrinterIndexPath != nil)
         {
             [self performSegueTo:[PrinterInfoViewController class]];
-            [cell performSelector:@selector(setHighlighted:) withObject:NO afterDelay:0.1f];
+            [cell performSelector:@selector(setHighlighted:) withObject:NO afterDelay:0.1f];//make the highlight linger
         }
     }
     else
     {
-        [cell setHighlighted:NO];
-        self.selectedPrinterIndexPath = nil; //touch went to another row
+        //touch went to another row
+        PrinterCell  *selectedCell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
+        [selectedCell setHighlighted:NO];
+        self.selectedPrinterIndexPath = nil;
     }
 }
 
