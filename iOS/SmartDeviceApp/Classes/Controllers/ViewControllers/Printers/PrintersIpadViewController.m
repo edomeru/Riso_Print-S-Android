@@ -115,10 +115,11 @@
     cell.deleteButton.delegate = nil;
     cell.defaultSwitch.tag = indexPath.row;
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDefaultSettingsRowAction:)];
-    
-    [cell.defaultSettingsRow addGestureRecognizer:tap];
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressDefaultSettingsRowAction:)];
+    press.minimumPressDuration = 0.1f;
+    [cell.defaultSettingsRow addGestureRecognizer:press];
     [cell setDefaultSettingsRowToSelected:NO];
+    
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
     // (the status view is not dealloc'd and it still sets
@@ -212,14 +213,34 @@
     }
 }
 
-- (IBAction)tapDefaultSettingsRowAction:(id)sender
+- (IBAction)pressDefaultSettingsRowAction:(id)sender
 {
-    UITapGestureRecognizer *tap = (UITapGestureRecognizer *) sender;
-    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint: [tap locationInView:self.collectionView]];
-    PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-    self.selectedPrinterIndex = [NSNumber numberWithInteger:indexPath.row];
-    [cell setDefaultSettingsRowToSelected:YES];
-    [self performSegueTo:[PrintSettingsViewController class]];
+    UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint: [press locationInView:self.collectionView]];
+
+    if(press.state == UIGestureRecognizerStateBegan)
+    {
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        [cell setDefaultSettingsRowToSelected:YES];
+        self.selectedPrinterIndex = [NSNumber numberWithInteger:indexPath.row];
+    }
+    else if(press.state == UIGestureRecognizerStateEnded)
+    {
+        if(self.selectedPrinterIndex != nil)
+        {
+            [self performSegueTo:[PrintSettingsViewController class]];
+        }
+    }
+    else
+    {
+        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0]];
+        if(indexPath == nil || indexPath.row != [self.selectedPrinterIndex integerValue] ||
+           CGRectContainsPoint(selectedCell.defaultSettingsRow.frame, [press locationInView:selectedCell.contentView]) == NO)
+        {
+            [selectedCell setDefaultSettingsRowToSelected:NO];
+            self.selectedPrinterIndex = nil;
+        }
+    }
 }
 
 - (IBAction)defaultSettingsButtonAction:(id)sender

@@ -2,7 +2,7 @@
 //  PrintSettingsPrinterListViewController.h
 //  RISOSmartPrint
 //
-//  Created by Amor Corazon Rio on 5/15/14.
+//  Created by a-LINK Group.
 //  Copyright (c) 2014 aLink. All rights reserved.
 //
 
