@@ -264,6 +264,7 @@
 		3195C1EE19111AA800197397 /* PDFFileManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C0791911133D00197397 /* PDFFileManagerTest.m */; };
 		3195C1EF19111B1F00197397 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AEC61185FE43200810455 /* main.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
+		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -557,6 +558,8 @@
 		3195C0891911142C00197397 /* SettingsViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerTest.m; sourceTree = "<group>"; };
 		31F32CD718F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListTableViewController.h; sourceTree = "<group>"; };
 		31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListTableViewController.m; sourceTree = "<group>"; };
+		31F5B69519248DDB002A29AD /* PrintSettingsPrinterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListViewController.h; sourceTree = "<group>"; };
+		31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1308,6 +1311,8 @@
 			children = (
 				2D232D8E18E56CE3008D06C8 /* PrintSettingsOptionTableViewController.h */,
 				2D232D8F18E56CE3008D06C8 /* PrintSettingsOptionTableViewController.m */,
+				31F5B69519248DDB002A29AD /* PrintSettingsPrinterListViewController.h */,
+				31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */,
 				2D232D7018E511D4008D06C8 /* PrintSettingsTableViewController.h */,
 				2D232D7118E511D4008D06C8 /* PrintSettingsTableViewController.m */,
 				2DA1AF1418E2EF9600085F27 /* PrintSettingsViewController.h */,
@@ -1611,6 +1616,7 @@
 				2D232D9618E57DB0008D06C8 /* PrintSettingsItemInputCell.m in Sources */,
 				2D1F23951900FCBB00301D1E /* Reachability.m in Sources */,
 				2D232D7818E517E3008D06C8 /* PrintSettingsPrinterItemCell.m in Sources */,
+				31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */,
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
 				2DA1AEC618E2EF7D00085F27 /* PrintJob.m in Sources */,
 				2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */,

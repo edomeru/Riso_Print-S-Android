@@ -2337,7 +2337,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ahb-u1-cp1">
+                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ahb-u1-cp1">
                                             <rect key="frame" x="4" y="10" width="24" height="24"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <constraints>
@@ -3184,10 +3184,10 @@
             </objects>
             <point key="canvasLocation" x="651" y="1457"/>
         </scene>
-        <!--PrintSettingsPrinterListViewController-->
+        <!--Print Settings Printer List View Controller-->
         <scene sceneID="OqI-sM-V51">
             <objects>
-                <viewController id="Wn7-PG-C0p" userLabel="PrintSettingsPrinterListViewController" sceneMemberID="viewController">
+                <viewController id="Wn7-PG-C0p" customClass="PrintSettingsPrinterListViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Xeg-4B-OTa"/>
                         <viewControllerLayoutGuide type="bottom" id="iek-zZ-OvX"/>
@@ -3200,7 +3200,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4yB-Lj-o7Y" userLabel="Back Button">
+                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4yB-Lj-o7Y" userLabel="Back Button">
                                         <rect key="frame" x="8" y="10" width="24" height="24"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -3212,13 +3212,11 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="highlighted" image="img_btn_back_pressed"/>
-                                        <connections>
-                                            <segue destination="TsJ-Cb-eB7" kind="unwind" unwindAction="unwindToPrintSettings:" id="WK7-Fq-WPc"/>
-                                        </connections>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PRINTERS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EvQ-hO-qme">
                                         <rect key="frame" x="40" y="14" width="272" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <gestureRecognizers/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -3228,6 +3226,7 @@
                                     </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstItem="4yB-Lj-o7Y" firstAttribute="leading" secondItem="0jn-TH-TiD" secondAttribute="leading" constant="8" id="7Zu-2s-1ZL"/>
                                     <constraint firstAttribute="centerY" secondItem="EvQ-hO-qme" secondAttribute="centerY" id="Jj0-kR-chv"/>
@@ -3236,6 +3235,9 @@
                                     <constraint firstItem="EvQ-hO-qme" firstAttribute="leading" secondItem="4yB-Lj-o7Y" secondAttribute="trailing" constant="8" id="SDt-XA-CLN"/>
                                     <constraint firstAttribute="height" constant="44" id="f9Z-ea-Xln"/>
                                 </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Cj3-tQ-vSy" appends="YES" id="SZE-YD-sQW"/>
+                                </connections>
                             </view>
                             <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6qU-x8-RIP">
                                 <rect key="frame" x="0.0" y="44" width="320" height="416"/>
@@ -3262,9 +3264,16 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="printerListHeader" destination="0jn-TH-TiD" id="m2l-6K-9xP"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xdI-5I-Tjc" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="TsJ-Cb-eB7" userLabel="Exit" sceneMemberID="exit"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="2.7755575615628914e-17" id="Cj3-tQ-vSy">
+                    <connections>
+                        <action selector="pressPrinterHeaderCellAction:" destination="Wn7-PG-C0p" id="hDZ-1d-oHP"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2219" y="145"/>
         </scene>
