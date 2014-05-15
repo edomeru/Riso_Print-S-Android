@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -48,6 +49,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private static final String C_SPACE = " ";
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
+    private static final int MSG_DELETEJOB = 2;
+    private static final int MSG_DELETEGROUP = 3;
     private static float DURATION_MULTIPLIER = 0.2f;
     
     private View mPrintGroupView;
@@ -125,7 +128,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * @return expanded height of PrintJobsGroupView
      */
     public int getGroupHeight() {
-        return (mPrintJobViews.size() + 1) * mRowHeight;
+        return ((mPrintJobViews.size() + 1) * mRowHeight) + ((mPrintJobViews.size() - 1) * mSeparatorHeight);
     }
     
     /**
@@ -157,7 +160,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         PrintJobManager pm = PrintJobManager.getInstance(getContext());
         boolean isSuccess = pm.deleteWithPrinterId(mPrinter.getId());
         if (isSuccess) {
-            deletePrintJobGroupView();
+            animateDeleteGroup();
             mPrintJobViews.clear();
         } else {
             mPrintJobGroupLayout.findViewById(R.id.printJobGroupDelete).setSelected(false);
@@ -430,7 +433,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                         /** {@inheritDoc} */
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            
                         }
                         
                         /** {@inheritDoc} */
@@ -453,6 +455,125 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         } else {
             collapseGroupView();
         }
+    }
+    
+    /**
+     * Animates deletion of a Print Job
+     * 
+     * @param v
+     *          View of a print job row to be deleted
+     */
+    private void animateDeleteJob(View v) {
+        int totalHeight = mRowHeight + mSeparatorHeight;
+        
+        if (mPrintJobViews.size() == 1) {
+            animateDeleteGroup();
+        } else {
+            final int jobToDelete = mPrintJobViews.indexOf(v);
+            
+            ScaleAnimation deleteAnim = new ScaleAnimation(1.0f, 1.0f, 1.0f, 0.0f);
+            deleteAnim.setDuration((int) (totalHeight * DURATION_MULTIPLIER));
+            
+            if (jobToDelete == mPrintJobViews.size() - 1) {
+                deleteAnim.setAnimationListener(new Animation.AnimationListener() {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+                    
+                    /** {@inheritDoc} */
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                    
+                    /** {@inheritDoc} */
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Message newMessage = Message.obtain(mHandler, MSG_DELETEJOB);
+                        newMessage.arg1 = jobToDelete;
+                        mHandler.sendMessage(newMessage);
+                    }
+                });
+            }
+            
+            mPrintJobViews.get(jobToDelete).clearAnimation();
+            mPrintJobViews.get(jobToDelete).startAnimation(deleteAnim);
+            
+            for (int i = jobToDelete + 1; i < mPrintJobViews.size(); i++) {
+                View child = mPrintJobViews.get(i);
+                TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -totalHeight);
+                animation.setDuration((int) (totalHeight * DURATION_MULTIPLIER));
+                
+                if (i == mPrintJobViews.size() - 1) {
+                    
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        /** {@inheritDoc} */
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
+                        
+                        /** {@inheritDoc} */
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                        
+                        /** {@inheritDoc} */
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            Message newMessage = Message.obtain(mHandler, MSG_DELETEJOB);
+                            newMessage.arg1 = jobToDelete;
+                            mHandler.sendMessage(newMessage);
+                        }
+                    });
+                }
+                child.clearAnimation();
+                child.startAnimation(animation);
+            }
+            mLayoutListener.animateGroups(PrintJobsGroupView.this, totalHeight, DURATION_MULTIPLIER, false);
+        }
+        
+    }
+    
+    /**
+     * Animates deletion of Print Jobs Group
+     * 
+     */
+    private void animateDeleteGroup() {
+        int totalHeight = 0;
+        
+        if (!mIsCollapsed) {
+            totalHeight = getGroupHeight();
+        } else if (getResources().getBoolean(R.bool.is_tablet)){
+            totalHeight = mRowHeight;
+        } else {
+            totalHeight = mRowHeight + mSeparatorHeight;
+        }
+        
+        ScaleAnimation animation = new ScaleAnimation(1.0f, 1.0f, 1.0f, 0.0f);
+        animation.setDuration((int) (totalHeight * DURATION_MULTIPLIER));
+        animation.setFillAfter(true);
+        
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            /** {@inheritDoc} */
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            
+            /** {@inheritDoc} */
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+            
+            /** {@inheritDoc} */
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Message newMessage = Message.obtain(mHandler, MSG_DELETEGROUP);
+                mHandler.sendMessage(newMessage);
+            }
+        });
+        mPrintGroupView.clearAnimation();
+        mPrintGroupView.startAnimation(animation);
+        mLayoutListener.animateGroups(PrintJobsGroupView.this, totalHeight, DURATION_MULTIPLIER, false);
     }
     
     /**
@@ -514,7 +635,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         boolean isSuccess = pm.deleteWithJobId(job.getId());
         if (isSuccess) {
             mGroupListener.deleteJobFromList((PrintJob) v.getTag());
-            deletePrintJobView(mPrintGroupView.findViewWithTag(job));
+            animateDeleteJob(mPrintGroupView.findViewWithTag(job));
         } else {
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
@@ -526,16 +647,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     /**
      * delete a print job view
      * 
-     * @param v
+     * @param i
+     *          index of Print Job View to be deleted
      */
-    private void deletePrintJobView(View v) {
-        for (int i = 0; i < mPrintJobViews.size(); i++) {
-            if (mPrintJobViews.get(i).equals(v)) {
-                mPrintJobViews.remove(i);
-                mPrintJobs.remove(i);
-            }
-        }
-        mJobsLayout.removeView(v);
+    private void deletePrintJobView(int i) {
+        mPrintJobs.remove(i);
+        mJobsLayout.removeView(mPrintJobViews.remove(i));
         
         if (mPrintJobViews.size() == 0) {
             deletePrintJobGroupView();
@@ -597,6 +714,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 return true;
             case MSG_EXPAND:
                 expandGroupView();
+                return true;
+            case MSG_DELETEJOB:
+                deletePrintJobView(msg.arg1);
+                return true;
+            case MSG_DELETEGROUP:
+                deletePrintJobGroupView();
                 return true;
         }
         return false;
@@ -673,10 +796,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          *            total height
          * @param durationMultiplier
          *            animate duration multiplier
-         * @param isCollapsed
-         *            collapse state of the print jobs group
+         * @param up
+         *            direction of animation; if true views translates upwards, else downwards
          */
-        public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean isCollapsed);
+        public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean up);
         
         /**
          * Callback for delete job
