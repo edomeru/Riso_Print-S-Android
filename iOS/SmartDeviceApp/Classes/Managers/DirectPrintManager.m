@@ -143,12 +143,15 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     self.isPrinting = NO;
     
     dispatch_sync(dispatch_get_main_queue(), ^{
+        [AlertHelper displayResult:kAlertResultPrintSuccessful withTitle:kAlertTitleDefault withDetails:nil withDismissHandler:^(CXAlertView *alertView, CXAlertButtonItem *button){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
+                [self.delegate documentDidFinishPrinting:YES];
+            });
+        }];
         [self.alertView dismiss];
     });
     
-    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
-    
-    [self.delegate documentDidFinishPrinting:YES];
 }
 
 - (void)updateError
@@ -156,15 +159,10 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     self.isPrinting = NO;
     
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.alertView dismiss];
-    });
-    
-    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
-    
-    [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
+        [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
+        [AlertHelper displayResult:kAlertResultPrintFailed withTitle:kAlertTitleDefault withDetails:nil];
         [self.delegate documentDidFinishPrinting:NO];
+        [self.alertView dismiss];
     });
 }
 
