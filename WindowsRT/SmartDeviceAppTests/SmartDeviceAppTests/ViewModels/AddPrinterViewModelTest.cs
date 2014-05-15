@@ -111,8 +111,6 @@ namespace SmartDeviceAppTests.ViewModels
             viewModel.AddPrinter.Execute(null);
             Assert.IsNotNull(viewModel.AddPrinter);
             Assert.AreEqual("192.168.0000.0", viewModel.IpAddress);
-            Assert.AreEqual(true, viewModel.IsButtonVisible);
-            Assert.AreEqual(false, viewModel.IsProgressRingVisible);
         }
 
         [TestMethod]
