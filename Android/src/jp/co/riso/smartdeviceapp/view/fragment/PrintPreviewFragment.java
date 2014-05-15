@@ -492,10 +492,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            mPrintPreviewView.setCurrentPage(progress);
-            updatePageLabel();
-        }
     }
     
     /** {@inheritDoc} */
@@ -506,6 +502,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+        mPrintPreviewView.setCurrentPage(progress);
+        updatePageLabel();
     }
     
     // ================================================================================
