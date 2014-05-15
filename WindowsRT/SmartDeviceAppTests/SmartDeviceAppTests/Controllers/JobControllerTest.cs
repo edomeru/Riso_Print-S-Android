@@ -24,8 +24,10 @@ namespace SmartDeviceAppTests.Controllers
         private SQLiteAsyncConnection _dbConnection;
         private JobsViewModel _jobsViewModel;
 
-        [TestInitialize]
-        public async Task Initialize()
+        // Cover Unit Tests using dotCover does not call TestInitialize
+        //[TestInitialize]
+        //public async Task Initialize()
+        private async Task Initialize()
         {
             _jobsViewModel = new ViewModelLocator().JobsViewModel;
 
@@ -40,8 +42,10 @@ namespace SmartDeviceAppTests.Controllers
             await DatabaseController.Instance.Initialize();
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        // Cover Unit Tests using dotCover does not call TestCleanup
+        //[TestCleanup]
+        //public void Cleanup()
+        private void Cleanup()
         {
             JobController.Instance.Cleanup();
             //DatabaseController.Instance.Cleanup(); // This should be ideal however since events (target methods) are not awaitable, we cannot reset connections
@@ -50,39 +54,53 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_Initialize_EmptyJobs()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
 
             await JobController.Instance.Initialize();
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             Assert.AreEqual(0, _jobsViewModel.PrintJobsList.Count);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_Initialize_SingleJob()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
 
             await JobController.Instance.Initialize();
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_Initialize_ExtraJob()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_extra.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
 
             await JobController.Instance.Initialize();
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_SavePrintJob_Null()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -90,11 +108,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.SavePrintJob(null);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(0, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_SavePrintJob_InvalidPrinter()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -102,11 +124,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.SavePrintJob(new PrintJob());
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(0, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_SavePrintJob_NewGroup_PrinterExists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -115,11 +141,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.SavePrintJob(new PrintJob());
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_SavePrintJob_NewGroup_PrinterNotExists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -128,11 +158,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.SavePrintJob(new PrintJob());
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_SavePrintJob_ExistingGroup_ValidPrinter()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -141,11 +175,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.SavePrintJob(new PrintJob());
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveJob_Null()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -153,11 +191,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveJob(null);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveJob_Invalid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -165,11 +207,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveJob(new PrintJob());
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveJob_LastGroupItem()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -178,11 +224,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveJob(printJob);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(0, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveJob_MoreGroupItems()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -191,11 +241,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveJob(printJob);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(54, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobs_InvalidPrinter()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -203,11 +257,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobs(-1);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobs_ValidPrinter_WithJobs()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -215,11 +273,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobs(7);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(48, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobs_ValidPrinter_WithoutJobs()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -227,11 +289,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobs(1);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(0, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobsByPrinter_Null()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -239,11 +305,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobsByPrinter(null);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobsByPrinter_InvalidPrinter()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printjob_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -251,11 +321,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobsByPrinter(new Printer());
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(1, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobsByPrinter_ValidPrinter_WithJobs()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -264,11 +338,15 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobsByPrinter(printer);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(48, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemoveGroupedJobsByPrinter_ValidPrinter_WithoutJobs()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
@@ -277,6 +355,8 @@ namespace SmartDeviceAppTests.Controllers
             JobController.Instance.RemoveGroupedJobsByPrinter(printer);
             Assert.IsNotNull(_jobsViewModel.PrintJobsList);
             //Assert.AreEqual(0, _jobsViewModel.PrintJobsList.Count); // Cannot assert since target method is not awaitable
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
     }

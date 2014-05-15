@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
 
-namespace SmartDeviceAppTests.Common.Utilities
+namespace SmartDeviceAppTests.Controllers
 {
     [TestClass]
     public class DocumentControllerTest
@@ -21,8 +21,10 @@ namespace SmartDeviceAppTests.Common.Utilities
         private const string TESTDATA_PDF_RANDOM = "TestData/SqlScript/create_table_printsetting.sql";
         private const string TESTDATA_PDF_NOT_EXISTS = "TestData/PDF/123sampletest.pdf";
 
-        [TestInitialize]
-        public async Task Initialize()
+        // Cover Unit Tests using dotCover does not call TestInitialize
+        //[TestInitialize]
+        //public async Task Initialize()
+        private async Task Cleanup()
         {
             await DocumentController.Instance.Unload();
         }
@@ -44,6 +46,8 @@ namespace SmartDeviceAppTests.Common.Utilities
             Assert.IsNotNull(DocumentController.Instance.FileName);
             Assert.AreEqual("RZ1070.pdf", DocumentController.Instance.FileName);
             Assert.AreEqual(LoadDocumentResult.Successful, DocumentController.Instance.Result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -55,6 +59,8 @@ namespace SmartDeviceAppTests.Common.Utilities
             Assert.IsNotNull(DocumentController.Instance.PdfFile);
             Assert.IsNull(DocumentController.Instance.FileName);
             Assert.AreEqual(LoadDocumentResult.UnsupportedPdf, DocumentController.Instance.Result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -66,6 +72,8 @@ namespace SmartDeviceAppTests.Common.Utilities
             Assert.IsNotNull(DocumentController.Instance.PdfFile);
             Assert.IsNull(DocumentController.Instance.FileName);
             Assert.AreEqual(LoadDocumentResult.ErrorReadPdf, DocumentController.Instance.Result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -76,6 +84,8 @@ namespace SmartDeviceAppTests.Common.Utilities
             Assert.IsNull(DocumentController.Instance.PdfFile);
             Assert.IsNull(DocumentController.Instance.FileName);
             Assert.AreEqual(LoadDocumentResult.NotStarted, DocumentController.Instance.Result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -94,6 +104,8 @@ namespace SmartDeviceAppTests.Common.Utilities
             List<LogicalPage> result = await DocumentController.Instance.GetLogicalPages(0, 2);
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Count); // Count should be same as requested
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -105,6 +117,8 @@ namespace SmartDeviceAppTests.Common.Utilities
             List<LogicalPage> result = await DocumentController.Instance.GetLogicalPages(11, 5);
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count); // Should only be one since it is the last page, regardless of request count
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -122,6 +136,8 @@ namespace SmartDeviceAppTests.Common.Utilities
 
             await DocumentController.Instance.GenerateLogicalPages(0, 4);
             // Note: no public property or return value to assert
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -130,8 +146,10 @@ namespace SmartDeviceAppTests.Common.Utilities
             StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
             await DocumentController.Instance.Load(file);
 
-            await DocumentController.Instance.GenerateLogicalPages(10, 4);
+            await DocumentController.Instance.GenerateLogicalPages(11, 4);
             // Note: no public property or return value to assert
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
     }
