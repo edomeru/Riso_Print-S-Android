@@ -232,6 +232,21 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         }
     }
     
+    /**
+     * Resets the icon states to not selected
+     */
+    public void clearIconStates() {
+        if (getView() != null) {
+            View menuButton = getView().findViewById(BaseFragment.ID_MENU_ACTION_BUTTON);
+            
+            if (menuButton != null) {
+                setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, false);
+            }
+        }
+        mIconState = false;
+        mIconId = 0;
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnLayoutChangeListener
     // ================================================================================
@@ -263,7 +278,4 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
                 break;
         }
     }
-    
-    
-    
 }

@@ -232,6 +232,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         // The activity must call the GL surface view's onPause() on activity onPause().
         mPrintPreviewView.onPause();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearIconStates() {
+        super.clearIconStates();
+        setIconState(ID_PRINT_BUTTON, false);
+    }
     
     // ================================================================================
     // Public functions

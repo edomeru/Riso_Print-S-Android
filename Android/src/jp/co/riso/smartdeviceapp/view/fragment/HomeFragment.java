@@ -189,7 +189,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         String tag = FRAGMENT_TAGS[state];
         
         // Check retained fragments
-        Fragment fragment = fm.findFragmentByTag(tag);
+        BaseFragment fragment = (BaseFragment) fm.findFragmentByTag(tag);
         if (fragment == null) {
             switch (state) {
                 case STATE_PRINTPREVIEW:
@@ -215,6 +215,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             ft.add(R.id.mainLayout, fragment, tag);
         } else {
             ft.attach(fragment);
+        }
+        
+        if (fragment instanceof BaseFragment) {
+            setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
         }
         
         ft.commit();
