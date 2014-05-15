@@ -152,5 +152,29 @@ namespace SmartDeviceAppTests.Controllers
             await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
+        [TestMethod]
+        public async Task Test_GenerageLogicalPages_Loaded_BeforeStart()
+        {
+            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
+            await DocumentController.Instance.Load(file);
+
+            await DocumentController.Instance.GenerateLogicalPages(-1, 4);
+            // Note: no public property or return value to assert
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_GenerageLogicalPages_Loaded_AfterEnd()
+        {
+            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
+            await DocumentController.Instance.Load(file);
+
+            await DocumentController.Instance.GenerateLogicalPages(100, 4);
+            // Note: no public property or return value to assert
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
     }
 }

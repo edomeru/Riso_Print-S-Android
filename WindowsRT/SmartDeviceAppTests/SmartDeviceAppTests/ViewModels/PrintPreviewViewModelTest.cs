@@ -68,6 +68,13 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
+        public void Test_Cleanup()
+        {
+            // Note: Test for coverage only; No tests to assert
+            printPreviewViewModel.Cleanup();
+        }
+
+        [TestMethod]
         public void Test_IsLoadPageActive()
         {
             var isLoadPageActive = true;
@@ -80,6 +87,8 @@ namespace SmartDeviceAppTests.ViewModels
         {
             // Note: Test for coverage only; No tests to assert
             // Also covers EnablePreviewGestures, EnablePreviewGestures
+            new ViewModelLocator().ViewControlViewModel.ScreenMode = ScreenMode.PrintPreview;
+            Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible_ResizedWidth);
             Messenger.Default.Send<ViewMode>(ViewMode.MainMenuPaneVisible);
             Messenger.Default.Send<ViewMode>(ViewMode.FullScreen);
             Messenger.Default.Send<ViewMode>(ViewMode.RightPaneVisible);

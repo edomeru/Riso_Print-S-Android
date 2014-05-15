@@ -10,7 +10,7 @@ using Windows.Storage.Streams;
 
 namespace DirectPrint
 {
-    class TCPSocket
+    public class TCPSocket
     {
 
         private StreamSocket socket = null;
@@ -28,10 +28,10 @@ namespace DirectPrint
             this.dataReceivedHandler = d;
         }
 
-        internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte> d)
-        {
-            dataReceivedHandler = d;
-        }
+        //internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte> d)
+        //{
+        //    dataReceivedHandler = d;
+        //}
 
         internal void setHost(string _host, string _port)
         {

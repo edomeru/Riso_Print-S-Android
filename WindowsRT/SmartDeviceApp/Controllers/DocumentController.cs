@@ -219,9 +219,9 @@ namespace SmartDeviceApp.Controllers
             int endPageIndex = basePageIndex + midPt;
             int startPageIndex = endPageIndex - (midPt * 2);
             // Compute start page based on end page
-            if ((startPageIndex + MAX_PAGES) > pageCount)
+            if ((startPageIndex + maxPages) > pageCount)
             {
-                startPageIndex = startPageIndex - ((startPageIndex + MAX_PAGES) - pageCount);
+                startPageIndex = startPageIndex - ((startPageIndex + maxPages) - pageCount);
             }
             // Reset to 0 when out of bounds
             if (startPageIndex < 0)
@@ -243,14 +243,10 @@ namespace SmartDeviceApp.Controllers
         /// Generates a page to JPEG then saved to AppData temporary store
         /// </summary>
         /// <param name="pageIndex">page index</param>
-        /// <returns>task</returns>
+        /// <returns>task; logical pages</returns>
         private async Task<LogicalPage> GenerateLogicalPage(int pageIndex)
         {
             var pageCount = _document.PdfDocument.PageCount;
-            if (pageIndex < 0 || pageIndex > pageCount - 1)
-            {
-                return null;
-            }
 
             // Convert page to JPEG
             LogicalPage logicalPage = null;
