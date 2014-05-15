@@ -470,13 +470,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void zoomLevelChanged(float zoomLevel) {
         float percentage = (zoomLevel - 1.0f) * 4.0f;
         
-        int height = mPageControls.getHeight();
-        mPageControls.setTranslationY(height * percentage);
-        
         mPageControls.setAlpha(1.0f - percentage);
         
-        mPageControls.setScaleX(zoomLevel);
-        mPageControls.setScaleY(zoomLevel);
+        //int height = mPageControls.getHeight();
+        //mPageControls.setTranslationY(height * percentage);
+        
+        //mPageControls.setScaleX(zoomLevel);
+        //mPageControls.setScaleY(zoomLevel);
     }
     
     /** {@inheritDoc} */

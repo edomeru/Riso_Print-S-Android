@@ -37,14 +37,17 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.widget.FrameLayout;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 
-public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener {
+public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener, OnGestureListener, OnDoubleTapListener {
     public static final String TAG = "PrintPreviewView";
     
     private static final float DEFAULT_MARGIN_IN_MM = 0;
@@ -89,6 +92,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // Zoom/pan related variables
     
     private ScaleGestureDetector mScaleDetector;
+    private GestureDetector mDoubleTapDetector;
     private float mZoomLevel = BASE_ZOOM_LEVEL;
     
     private int mPtrIdx = INVALID_IDX;
@@ -151,6 +155,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         if (!isInEditMode()) {
             mPrintSettings = new PrintSettings(); // Should not be null
             mScaleDetector = new ScaleGestureDetector(getContext(), this);
+            mDoubleTapDetector = new GestureDetector(getContext(), this);
+            mDoubleTapDetector.setOnDoubleTapListener(this);
             
             initializeCurlView();
             loadResources();
@@ -222,6 +228,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             if (mZoomLevel == BASE_ZOOM_LEVEL) {
                 return mCurlView.dispatchTouchEvent(ev);
             } else {
+                if (mDoubleTapDetector.onTouchEvent(ev)) {
+                    return true;
+                }
                 return processTouchEvent(ev);
             }
         }
@@ -829,14 +838,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
     
-    // ================================================================================
-    // INTERFACE - OnScaleGestureListener
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public boolean onScale(ScaleGestureDetector detector) {
-        mZoomLevel  = mZoomLevel * detector.getScaleFactor();
+    private void setZoomLevel(float zoomLevel) {
+        mZoomLevel  = zoomLevel;
         if (mZoomLevel <= BASE_ZOOM_LEVEL) {
             mZoomLevel = BASE_ZOOM_LEVEL;
         }
@@ -850,7 +853,78 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         mCurlView.setZoomLevel(mZoomLevel);
         mCurlView.requestRender();
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnDoubleTapListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        setZoomLevel(BASE_ZOOM_LEVEL);
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnGestureListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onLongPress(MotionEvent e) {
         
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnScaleGestureListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        setZoomLevel(mZoomLevel * detector.getScaleFactor());
         return true;
     }
     
