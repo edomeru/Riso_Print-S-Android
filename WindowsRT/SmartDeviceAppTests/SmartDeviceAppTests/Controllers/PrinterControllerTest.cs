@@ -31,6 +31,10 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_Initialize()
         {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
             await DatabaseController.Instance.InsertPrinter(printer);
@@ -145,6 +149,10 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_DeletePrinter()
         {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
 
@@ -155,11 +163,41 @@ namespace SmartDeviceAppTests.Controllers
             PrinterController.Instance.setPolling(true);
 
             await DatabaseController.Instance.InsertPrinter(printer);
+            await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
             int firstCount = PrinterController.Instance.PrinterList.Count - 1;
 
             await PrinterController.Instance.deletePrinter("192.168.0.1");
 
             Assert.AreEqual(firstCount, PrinterController.Instance.PrinterList.Count);
+        }
+
+        [TestMethod]
+        public async Task Test_PrinterController_DeletePrinterWithDeletePrinterItemsEventHandler()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+
+            Printer printer = new Printer();
+            printer.IpAddress = "192.168.0.1";
+
+            await PrinterController.Instance.Initialize();
+
+            PrinterController.Instance.PrinterList.Add(printer);
+
+
+            PrinterController.Instance.setPolling(true);
+
+            await DatabaseController.Instance.InsertPrinter(printer);
+
+            PrinterController.Instance.DeletePrinterItemsEventHandler += RemoveGroupedJobsByPrinter;
+
+            await PrinterController.Instance.deletePrinter("192.168.0.1");
+        }
+
+        private void RemoveGroupedJobsByPrinter(Printer printer)
+        {
+            
         }
 
         [TestMethod]
@@ -200,6 +238,10 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_AddFromPrinterSearch()
         {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+
             await PrinterController.Instance.Initialize();
             string ip = "192.168.0.2";
             
@@ -207,6 +249,29 @@ namespace SmartDeviceAppTests.Controllers
             SNMPController.Instance.Discovery.SnmpDevices.Add(new SNMPDevice(ip));
             Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
             
+            await PrinterController.Instance.addPrinterFromSearch("192.168.0.2");
+        }
+
+        
+
+        [TestMethod]
+        public async Task Test_PrinterController_AddFromPrinterSearchInPrinterSearchList()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+
+            await PrinterController.Instance.Initialize();
+            string ip = "192.168.0.2";
+
+
+            SNMPController.Instance.Discovery.SnmpDevices.Add(new SNMPDevice(ip));
+            Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
+
+            PrinterSearchItem item = new PrinterSearchItem();
+            item.Ip_address = ip;
+            PrinterController.Instance.PrinterSearchList.Add(item);
+
             await PrinterController.Instance.addPrinterFromSearch("192.168.0.2");
         }
 
@@ -238,6 +303,29 @@ namespace SmartDeviceAppTests.Controllers
         {
             PrinterController.Instance.Initialize();
             PrinterController.Instance.searchPrinters();
+        }
+
+        [TestMethod]
+        public async Task Test_PrinterController_PropertyChanged()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+
+            Printer printer = new Printer();
+            printer.IpAddress = "192.168.0.1";
+            await DatabaseController.Instance.InsertPrinter(printer);
+
+            Printer printer2 = new Printer();
+            printer2.IpAddress = "192.168.0.2";
+            await DatabaseController.Instance.InsertPrinter(printer2);
+
+            await PrinterController.Instance.Initialize();
+
+            PrinterController.Instance.PrinterList.ElementAt(0).WillBeDeleted = true;
+            PrinterController.Instance.PrinterList.ElementAt(0).IsDefault = true;
+            
+
         }
     }
 }

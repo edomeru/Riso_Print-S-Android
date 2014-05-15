@@ -588,11 +588,11 @@ namespace SmartDeviceApp.Controllers
                     }
                  }
             }
-
-            if (e.PropertyName == "PortSetting")
-            {
-                await DatabaseController.Instance.UpdatePrinter(printer);
-            }
+            //For future use
+            //if (e.PropertyName == "PortSetting")
+            //{
+            //    await DatabaseController.Instance.UpdatePrinter(printer);
+            //}
         }
 
         
@@ -689,21 +689,15 @@ namespace SmartDeviceApp.Controllers
                 _printerListTemp = _printerList;
                 
 
-                if (PrinterSearchList.Count > 0) { 
+                if (PrinterSearchList.Count > 0) {
+                    
                     PrinterSearchItem searchItem = PrinterSearchList.First(x => x.Ip_address == ip);
-                    if (searchItem == null)
-                    {
-                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                        Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                        {
-                            //error in adding;
-                            await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                        });
-                    }
-                    else
+                   
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                    Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
                         searchItem.IsInPrinterList = true;
-                    }
+                    });
                 }
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
