@@ -22,6 +22,7 @@
 #define IP_ADDRESS_LENGTH 128
 #define MIB_STRING_LENGTH 256
 #define TIMEOUT 10
+#define IPV6_LINK_LOCAL_PREFIX "fe80"
 
 #define PDL_VALUE 54 // PDF
 
@@ -148,7 +149,14 @@ void snmp_manual_discovery(snmp_context *context, const char *ip_address)
     int result = inet_pton(AF_INET6, ip_address, &ip_v6);
     if (result == 1)
     {
-        snprintf(context->ip_address, IP_ADDRESS_LENGTH - 1, "udp6:[%s]", ip_address);
+        if (strncmp(ip_address, IPV6_LINK_LOCAL_PREFIX, strlen(IPV6_LINK_LOCAL_PREFIX)) == 0)
+        {
+            snprintf(context->ip_address, IP_ADDRESS_LENGTH - 1, "udp6:[%s%%en0]", ip_address);
+        }
+        else
+        {
+            snprintf(context->ip_address, IP_ADDRESS_LENGTH - 1, "udp6:[%s]", ip_address);
+        }
     }
     else
     {
@@ -189,6 +197,7 @@ void *do_discovery(void *parameter)
     session.callback = snmp_discovery_callback;
     session.callback_magic = context;
     session.retries = 0;
+    session.securityName = 0;
     
     if (strcmp(context->ip_address, BROADCAST_ADDRESS) != 0)
     {
@@ -205,6 +214,7 @@ void *do_discovery(void *parameter)
         {
             free(session.peername);
             free(session.community);
+            free(session.securityName);
             free(password);
             snmp_call_end_callback(context, -1);
             
@@ -311,6 +321,10 @@ void *do_discovery(void *parameter)
     snmp_close(ss);
     free(session.peername);
     free(session.community);
+    if (session.securityName != 0)
+    {
+        free(session.securityName);
+    }
     
     pthread_join(caps_thread, 0);
     
@@ -590,7 +604,7 @@ int snmp_extract_ip_address(netsnmp_pdu *pdu, char *ip_address)
     {
         char ipv6Addr[IP_ADDRESS_LENGTH];
         inet_ntop(AF_INET6, &(to->sin6_addr), ipv6Addr, IP_ADDRESS_LENGTH);
-        sprintf(ip_address, "udp6:[%s%%en0]", ipv6Addr);
+        sprintf(ip_address, "%s", ipv6Addr);
     }
     
     return 1;
@@ -669,8 +683,28 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
     // Initialize session
     snmp_sess_init(&session);
     
+    // Prepare IP Address
+    char ip_address[IP_ADDRESS_LENGTH];
+    struct in6_addr ip_v6;
+    int result = inet_pton(AF_INET6, device->ip_address, &ip_v6);
+    if (result == 1)
+    {
+        if (strncmp(ip_address, IPV6_LINK_LOCAL_PREFIX, strlen(IPV6_LINK_LOCAL_PREFIX)) == 0)
+        {
+            sprintf(ip_address, "udp6:[%s%%en0]", device->ip_address);
+        }
+        else
+        {
+            sprintf(ip_address, "udp6:[%s]", device->ip_address);
+        }
+    }
+    else
+    {
+        sprintf(ip_address, "%s", device->ip_address);
+    }
+        
     // Setup session information
-    session.peername = strdup(device->ip_address);
+    session.peername = strdup(ip_address);
     
     // Initialize SNMPv1
     session.version = SNMP_VERSION_1;
