@@ -297,7 +297,7 @@
             [indexPathsToReload addObject:indexPath];
         }
         
-        [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
+        [self refreshControlTagsOfCellsAtIndexPaths:indexPathsToReload];
         self.toDeleteIndexPath = nil;
     }
     else
@@ -305,6 +305,22 @@
         [AlertHelper displayResult:kAlertResultErrDelete
                         withTitle:kAlertTitlePrinters
                       withDetails:nil];
+    }
+}
+
+-(void) refreshControlTagsOfCellsAtIndexPaths:(NSArray *)indexPaths
+{
+    if(indexPaths == nil)
+    {
+        return;
+    }
+    
+    for(NSIndexPath *indexPath in indexPaths)
+    {
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        cell.deleteButton.tag = indexPath.row;
+        cell.defaultSwitch.tag = indexPath.row;
+        cell.portSelection.tag = indexPath.row;
     }
 }
 
