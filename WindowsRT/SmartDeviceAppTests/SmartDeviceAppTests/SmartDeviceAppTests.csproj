@@ -204,7 +204,7 @@
     <None Include="SmartDeviceAppTests_TemporaryKey.pfx" />
     <Content Include="TestData\PDF\RZ1070.pdf" />
     <Content Include="TestData\PDF\128AES_Acrobat.pdf" />
-    <None Include="TestData\PDF\PDF-lorem.pdf" />
+    <Content Include="TestData\PDF\PDF-lorem.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\UnitTestLogo.scale-100.png">
