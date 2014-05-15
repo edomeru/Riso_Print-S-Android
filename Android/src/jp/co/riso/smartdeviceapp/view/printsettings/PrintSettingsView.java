@@ -43,6 +43,7 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -1105,9 +1106,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         params.leftMargin = margin;
         params.rightMargin = margin;
         
-        EditText editText = (EditText) LayoutInflater.from(getContext()).inflate(R.layout.printsettings_input_pincode, null);
+        EditText editText = (EditText) LayoutInflater.from(getContext()).inflate(R.layout.printsettings_input_edittext, null);
         editText.setId(ID_PIN_CODE_EDIT_TEXT);
         editText.setLayoutParams(params);
+        
+        editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        editText.setFilters(new InputFilter[] {
+                new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
+        });
         
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, true);
@@ -1663,11 +1669,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             int width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_width);
             params.width = width;
             
-            EditText editText = (EditText) li.inflate(R.layout.printsettings_input_numeric, null);
+            EditText editText = (EditText) li.inflate(R.layout.printsettings_input_edittext, null);
+            editText.setActivated(true);
             editText.setLayoutParams(params);
             editText.setTag(tag);
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editText.setFilters(new InputFilter[] {
+                    new InputFilter.LengthFilter(AppConstants.CONST_COPIES_LIMIT)
+            });
             editText.addTextChangedListener(new EditTextWatcher(tag, 1));
             editText.setOnEditorActionListener(this);
+            
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
@@ -1911,13 +1923,24 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      */
     private void setSecurePrintEnabled(boolean isEnabled) {
         mMainLayout.findViewWithTag(KEY_TAG_PIN_CODE).setActivated(isEnabled);
-        mMainLayout.findViewById(ID_PIN_CODE_EDIT_TEXT).setVisibility(isEnabled ? View.VISIBLE : View.INVISIBLE);
+        
+        EditText editText = (EditText) mMainLayout.findViewById(ID_PIN_CODE_EDIT_TEXT);
+        editText.setEnabled(isEnabled);
+        editText.setActivated(isEnabled);
+        //mMainLayout.findViewById(ID_PIN_CODE_EDIT_TEXT).setActivated(isEnabled ? View.VISIBLE : View.INVISIBLE);
+        //mMainLayout.findViewById(ID_PIN_CODE_EDIT_TEXT).setVisibility(isEnabled ? View.VISIBLE : View.INVISIBLE);
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, isEnabled);
         editor.apply();
+        
+        if (isEnabled) {
+            editText.setText(prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE));
+        } else {
+            editText.setText("");
+        }
     }
     
     // ================================================================================
