@@ -62,12 +62,6 @@ public class SDADrawerLayout extends DrawerLayout {
         
         return super.onInterceptTouchEvent(ev);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        return super.onTouchEvent(ev);
-    }
     
     /**
      * Set prevent intercept touches

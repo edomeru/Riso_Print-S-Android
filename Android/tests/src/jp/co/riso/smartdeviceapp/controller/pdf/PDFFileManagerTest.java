@@ -11,8 +11,10 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainActivity> implements PDFFileManagerInterface {
@@ -100,13 +102,89 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     }
     
     //================================================================================
-    // Tests - convertToSandboxPath
+    // Tests - getSandboxPath
     //================================================================================
 
     public void testGetSandboxPath() {
         String sandbox = PDFFileManager.getSandboxPath();
         assertEquals(SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/" + AppConstants.CONST_TEMP_PDF_PATH, sandbox);
     }
+    
+    //================================================================================
+    // Tests - clearSandboxPDFName
+    //================================================================================
+    
+    public void testClearSandboxPDFName() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, "NOT");
+        edit.apply();
+        
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+        
+        assertFalse(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME));
+    }
+    
+    public void testClearSandboxPDFName_NoKey() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.remove(PDFFileManager.KEY_SANDBOX_PDF_NAME);
+        edit.apply();
+        
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+        
+        assertFalse(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME));
+    }
+    
+    public void testClearSandboxPDFName_NullContext() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, "NOT");
+        edit.apply();
+        
+        PDFFileManager.clearSandboxPDFName(null);
+
+        assertTrue(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME));
+    }
+    
+    //================================================================================
+    // Tests - get/setSandboxPDFName
+    //================================================================================
+    
+    public void testGetSetSandboxPDFName_Valid() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+        
+        PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), "NO.pdf");
+        
+        assertTrue(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME));
+        
+        String sandboxName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
+        assertEquals("NO.pdf", sandboxName);
+    }
+    
+    public void testGetSetSandboxPDFName_NoKeyInPreferences() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+
+        PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), null);
+        assertFalse(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME));
+        
+        String sandboxName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
+        assertNull(sandboxName);
+    }
+    
+    public void testGetSetSandboxPDFName_NullContext() {
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+
+        PDFFileManager.setSandboxPDF(null, null);
+        String sandboxName = PDFFileManager.getSandboxPDFName(null);
+        assertNull(sandboxName);
+    }
+    
+    //================================================================================
+    // Tests - clearSandboxPDFName
+    //================================================================================
     
     //================================================================================
     // Tests - is opened

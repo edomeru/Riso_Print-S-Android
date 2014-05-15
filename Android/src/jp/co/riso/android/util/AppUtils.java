@@ -357,4 +357,36 @@ public final class AppUtils {
         
         return 1024 * 1024 * memClass;
     }
+    
+    /**
+     * Get fit to aspect ratio size
+     * 
+     * @param srcWidth
+     *            Source width
+     * @param srcHeight
+     *            Source height
+     * @param destWidth
+     *            Destination width
+     * @param destHeight
+     *            Destination height
+     * @return New width and height
+     */
+    public static int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
+        float ratioSrc = srcWidth / srcHeight;
+        float ratioDest = (float) destWidth / destHeight;
+        
+        int newWidth = 0;
+        int newHeight = 0;
+        
+        if (ratioDest > ratioSrc) {
+            newHeight = destHeight;
+            newWidth = (int) (destHeight * ratioSrc);
+            
+        } else {
+            newWidth = destWidth;
+            newHeight = (int) (destWidth / ratioSrc);
+        }
+        
+        return new int[] { newWidth, newHeight };
+    }
 }
