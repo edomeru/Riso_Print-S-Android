@@ -264,6 +264,10 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         assertEquals(mSettingId, c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         c.close();
         db.close();
+        
+        // Retry save
+        result = mPrintSettingsMgr.saveToDB(mPrinterId, settings);
+        assertTrue(result);
     }
     
     public void testSaveToDB_NullValues() {

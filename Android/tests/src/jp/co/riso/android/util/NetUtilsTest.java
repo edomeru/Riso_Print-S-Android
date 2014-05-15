@@ -133,6 +133,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     };
     private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo";
     private static final String IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
+    private static final String IPV6_STD_OFFLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb3";
 
     public NetUtilsTest() {
         super(MainActivity.class);
@@ -286,7 +287,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
             
-            isReachable = NetUtils.connectToIpv6Address(IPV6_STD_PRINTER_ADDRESS + "wlan0", inetIpAddress);
+            isReachable = NetUtils.connectToIpv6Address(IPV6_STD_OFFLINE_PRINTER_ADDRESS + "%wlan0", inetIpAddress);
             assertEquals(false, isReachable);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
