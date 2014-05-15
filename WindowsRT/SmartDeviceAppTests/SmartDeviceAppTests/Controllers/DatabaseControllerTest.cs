@@ -22,16 +22,20 @@ namespace SmartDeviceAppTests.Controllers
         private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
         private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
 
-        [TestInitialize]
-        public async Task Initialize()
+        // Cover Unit Tests using dotCover does not call TestInitialize
+        //[TestInitialize]
+        //public async Task Initialize()
+        private async Task Initialize()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
             await DatabaseController.Instance.Initialize();
         }
 
-        [TestCleanup]
-        public async Task Cleanup()
+        // Cover Unit Tests using dotCover does not call TestCleanup
+        //[TestCleanup]
+        //public async Task Cleanup()
+        private async Task Cleanup()
         {
             string _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
             SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(_databasePath);
@@ -79,10 +83,14 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_InsertPrinter_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer = new Printer();
             int result = await DatabaseController.Instance.InsertPrinter(printer);
             Assert.AreEqual(1, result);
             Assert.IsTrue(printer.Id > -1);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -111,11 +119,15 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_UpdatePrinter_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer);
             printer.PortSetting = 1;
             int result = await DatabaseController.Instance.UpdatePrinter(printer);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -138,10 +150,14 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_DeletePrinter_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer);
             int result = await DatabaseController.Instance.DeletePrinter(printer);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -154,12 +170,16 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_GetPrinter_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer);
 
             Printer result = await DatabaseController.Instance.GetPrinter(printer.Id);
             Assert.IsNotNull(result);
             Assert.AreEqual(printer.Id, result.Id);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -174,6 +194,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_GetDefaultPrinter_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await DatabaseController.Instance.DeleteDefaultPrinter();
             Printer printer = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer);
@@ -182,16 +204,22 @@ namespace SmartDeviceAppTests.Controllers
             DefaultPrinter result = await DatabaseController.Instance.GetDefaultPrinter();
             Assert.IsNotNull(result);
             Assert.AreEqual(printer.Id, (int)result.PrinterId);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_SetDefaultPrinter_New()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer);
 
             int result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -212,6 +240,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_SetDefaultPrinter_Overwrite()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer1 = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer1);
             await DatabaseController.Instance.SetDefaultPrinter(printer1.Id);
@@ -220,6 +250,8 @@ namespace SmartDeviceAppTests.Controllers
             await DatabaseController.Instance.InsertPrinter(printer2);
             int result = await DatabaseController.Instance.SetDefaultPrinter(printer2.Id);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -233,12 +265,16 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_DeleteDefaultPrinter_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             Printer printer = new Printer();
             await DatabaseController.Instance.InsertPrinter(printer);
             await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
 
             int result = await DatabaseController.Instance.DeleteDefaultPrinter();
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -251,12 +287,16 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_GetPrintSettings_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintSettings printSettings = new PrintSettings();
             await DatabaseController.Instance.InsertPrintSettings(printSettings);
 
             PrintSettings result = await DatabaseController.Instance.GetPrintSettings(printSettings.Id);
             Assert.IsNotNull(result);
             Assert.AreEqual(printSettings.Id, result.Id);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -281,10 +321,14 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_InsertPrintSettings_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintSettings printSettings = new PrintSettings();
             int result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
             Assert.AreEqual(1, result);
             Assert.IsTrue(printSettings.Id > -1);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -305,11 +349,15 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_UpdatePrintSettings_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintSettings printSettings = new PrintSettings();
             await DatabaseController.Instance.InsertPrintSettings(printSettings);
             printSettings.Imposition = (int)Imposition.TwoUp;
             int result = await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -332,10 +380,14 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_DeletePrintSettings_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintSettings printSettings = new PrintSettings();
             await DatabaseController.Instance.InsertPrintSettings(printSettings);
             int result = await DatabaseController.Instance.DeletePrintSettings(printSettings);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -368,10 +420,14 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_InsertPrintJob_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintJob printJob = new PrintJob();
             int result = await DatabaseController.Instance.InsertPrintJob(printJob);
             Assert.AreEqual(1, result);
             Assert.IsTrue(printJob.Id > -1);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -392,11 +448,15 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_UpdatePrintJob_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintJob PrintJob = new PrintJob();
             await DatabaseController.Instance.InsertPrintJob(PrintJob);
             PrintJob.Result = (int)PrintJobResult.Error;
             int result = await DatabaseController.Instance.UpdatePrintJob(PrintJob);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -419,10 +479,14 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_DeletePrintJob_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             PrintJob PrintJob = new PrintJob();
             await DatabaseController.Instance.InsertPrintJob(PrintJob);
             int result = await DatabaseController.Instance.DeletePrintJob(PrintJob);
             Assert.AreEqual(1, result);
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
     }

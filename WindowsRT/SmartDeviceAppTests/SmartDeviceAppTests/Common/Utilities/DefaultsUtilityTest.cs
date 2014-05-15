@@ -17,11 +17,12 @@ namespace SmartDeviceAppTests.Common.Utilities
 
         private const string TESTDATA_SQL_SCRIPT = "TestData/SqlScript/create_table_printer.sql";
 
-        [TestInitialize]
-        public async Task Initialize()
-        {
-            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
-        }
+        // Cover Unit Tests using dotCover does not call TestInitialize
+        //[TestInitialize]
+        //public async Task Initialize()
+        //{
+        //    await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+        //}
 
         [TestMethod]
         public async Task Test_LoadDefaultsFromSqlScript_Null()
@@ -131,8 +132,10 @@ namespace SmartDeviceAppTests.Common.Utilities
         }
 
         [TestMethod]
-        public void Test_GetDefaultPrintSettings_Null()
+        public async Task Test_GetDefaultPrintSettings_Null()
         {
+            await DefaultsUtility.LoadDefaultsFromSqlScript(null);
+
             PrintSettings printSettings =
                 DefaultsUtility.GetDefaultPrintSettings(null);
             Assert.IsNotNull(printSettings);

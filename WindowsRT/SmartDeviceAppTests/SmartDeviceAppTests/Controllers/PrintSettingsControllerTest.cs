@@ -27,8 +27,10 @@ namespace SmartDeviceAppTests.Controllers
         private PrintSettingsViewModel _jobsViewModel;
         private string _screenName;
 
-        [TestInitialize]
-        public async Task Initialize()
+        // Cover Unit Tests using dotCover does not call TestInitialize
+        //[TestInitialize]
+        //public async Task Initialize()
+        private async Task Initialize()
         {
             _jobsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
@@ -43,8 +45,10 @@ namespace SmartDeviceAppTests.Controllers
             await DatabaseController.Instance.Initialize();
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        // Cover Unit Tests using dotCover does not call TestCleanup
+        //[TestCleanup]
+        //public void Cleanup()
+        private void Cleanup()
         {
             //PrintSettingsController.Instance.Uninitialize(_screenName);
             _screenName = null;
@@ -81,6 +85,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_Initialize_MapNewEntry_FullPrinterCapabilities()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -109,11 +115,15 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_Initialize_MapExistingEntry()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -144,11 +154,15 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, newPrintSettings.OutputTray);
             Assert.IsNull(newPrintSettings.LoginId);
             Assert.IsNull(newPrintSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_Initialize_NoPrinterCapabilities()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -177,11 +191,15 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(1, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_Initialize_NoPrintSettings()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -210,6 +228,8 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -229,6 +249,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_Uninitialize_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -236,11 +258,15 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_Uninitialize_NotExists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -248,61 +274,87 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSettingsController.Instance.Uninitialize("random");
+
+           Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemovePrintSettings_Null()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             PrintSettingsController.Instance.RemovePrintSettings(null);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemovePrintSettings_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
             PrintSettingsController.Instance.RemovePrintSettings(printer);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_RemovePrintSettings_Invalid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             Printer printer = await _dbConnection.GetAsync<Printer>(10);
             PrintSettingsController.Instance.RemovePrintSettings(printer);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_CreatePrintSettings_Null()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             int result = await PrintSettingsController.Instance.CreatePrintSettings(null);
             Assert.AreEqual(-1, result);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_CreatePrintSettings_Valid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             Printer printer = new Printer() { Id = 2, IpAddress = "172.0.0.1", Name = "new printer" };
             printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
             Assert.AreEqual(2, printer.PrintSettingId);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_CreatePrintSettings_Invalid()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             Printer printer = new Printer() { IpAddress = "172.0.0.1", Name = "new printer" };
             printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
             Assert.AreEqual(-1, printer.PrintSettingId);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -329,6 +381,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_RegisterPrintSettingValueChanged_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
@@ -336,6 +390,8 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -362,6 +418,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_UnregisterPrintSettingValueChanged_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
@@ -369,6 +427,8 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -425,6 +485,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_UpdatePreview()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -442,12 +504,16 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+           Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_ColorMode()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -464,11 +530,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Orientation()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -485,11 +555,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Copies()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -506,11 +580,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 100);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Duplex()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -527,11 +605,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_PaperSize()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -548,11 +630,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 5);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_ScaleToFit()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -569,11 +655,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_PaperType()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -590,11 +680,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_InputTray()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -611,11 +705,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromOff_ToTwoUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -632,11 +730,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromOff_ToFourUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -653,11 +755,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromTwoUpLeft_ToFourUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -674,11 +780,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromTwoUpRight_ToFourUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -695,12 +805,16 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromTwoUpRight_ToOff()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -717,11 +831,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromFourUpLeftToRight_ToTwoUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -738,11 +856,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromFourUpRightToLeft_ToTwoUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -759,11 +881,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromFourUpLeftToBottom_ToTwoUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -780,11 +906,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromFourUpRightToBottom_ToTwoUp()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -801,11 +931,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Imposition_FromFourUpRightToBottom_ToOff()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -822,11 +956,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_ImpositionOrder()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -843,11 +981,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Sort()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -864,11 +1006,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Bool_Booklet_FromFalse()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_booklet.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -885,11 +1031,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Bool_Booklet_FromTrue()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_booklet.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -906,11 +1056,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_BookletFinishing()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_booklet.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -927,11 +1081,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_BookletLayout()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_booklet.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -948,11 +1106,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromLeftStapleOff()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -969,11 +1131,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromLeftStapleOn()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -990,11 +1156,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleOff()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1011,11 +1181,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleOnLeft_ToLeft()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1032,11 +1206,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+           Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleOnLeft_ToRight()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1053,11 +1231,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleOnRight_ToLeft()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1074,11 +1256,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleOnRight_ToRight()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1095,11 +1281,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleTwo_ToLeft()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1116,11 +1306,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromTopStapleTwo_ToRight()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1137,11 +1331,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromRightStapleOff()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1158,11 +1356,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromRightStapleOn_ToLeft()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1179,11 +1381,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_FinishingSide_FromRightStapleOn_ToRight()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_finishingside.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1200,11 +1406,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Staple()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1221,11 +1431,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Punch_FromOffOutputTrayAuto()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_punch.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1242,11 +1456,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Punch_FromOffOutputTrayOthers()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_punch.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1263,11 +1481,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Punch_FromTwoHolesOutputTrayAuto()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_punch.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1284,11 +1506,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Punch_FromTwoHolesOutputTrayOthers()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_punch.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1305,11 +1531,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Punch_FromFourHolesOutputTrayAuto()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_punch.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1326,11 +1556,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Punch_FromFourHolesOutputTrayOthers()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_punch.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1347,11 +1581,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_OutputTray()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
@@ -1368,6 +1606,8 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -1394,6 +1634,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_GetCurrentPrintSettings_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -1424,6 +1666,8 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -1450,6 +1694,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_GetPagesPerSheet_ExistsScreenName_NullPinCode()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -1458,11 +1704,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.SetPinCode(_screenName, null);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_GetPagesPerSheet_ExistsScreenName_EmptyPinCode()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -1471,11 +1721,15 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.SetPinCode(_screenName, string.Empty);
             // Note: no public properties or return value to assert
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
         public async Task Test_GetPagesPerSheet_ExistsScreenName_ValidPinCode()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -1484,8 +1738,9 @@ namespace SmartDeviceAppTests.Controllers
 
             PrintSettingsController.Instance.SetPinCode(_screenName, "pincode");
             // Note: no public properties or return value to assert
-        }
 
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
 
         [TestMethod]
         public void Test_GetPagesPerSheet_Null()
@@ -1511,6 +1766,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_GetPagesPerSheet_Exists()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
 
             _screenName = ScreenMode.PrintPreview.ToString();
@@ -1519,6 +1776,8 @@ namespace SmartDeviceAppTests.Controllers
 
             int pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);
             Assert.AreEqual(2, pagesPerSheet);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         #region Mock Functions

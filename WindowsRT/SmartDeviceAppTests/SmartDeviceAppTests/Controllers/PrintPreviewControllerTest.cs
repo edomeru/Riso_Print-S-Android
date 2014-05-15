@@ -38,8 +38,10 @@ namespace SmartDeviceAppTests.Controllers
         private StorageFolder _tempFolder;
         private SQLiteAsyncConnection _dbConnection;
 
-        [TestInitialize]
-        public async Task Initialize()
+        // Cover Unit Tests using dotCover does not call TestInitialize
+        //[TestInitialize]
+        //public async Task Initialize()
+        private async Task Initialize()
         {
             _homeViewModel = new ViewModelLocator().HomeViewModel;
             _tempFolder = ApplicationData.Current.TemporaryFolder;
@@ -55,8 +57,10 @@ namespace SmartDeviceAppTests.Controllers
             await DatabaseController.Instance.Initialize();
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        // Cover Unit Tests using dotCover does not call TestCleanup
+        //[TestCleanup]
+        //public void Cleanup()
+        private void Cleanup()
         {
             _homeViewModel = null;
             _tempFolder = null;
@@ -123,8 +127,12 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_Cleanup()
         {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
             await PrintPreviewController.Instance.Cleanup();
             Assert.IsFalse(await UnitTestUtility.CheckIfFileExists(PREFIX_PREVIEW_PAGE_IMAGE, _tempFolder));
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [UI.UITestMethod]
