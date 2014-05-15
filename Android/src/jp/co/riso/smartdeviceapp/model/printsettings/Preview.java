@@ -158,7 +158,7 @@ public class Preview {
     }
     
     public enum BookletFinish {
-        PAPER_FOLDING, FOLD_AND_STAPLE;
+        OFF, PAPER_FOLDING, FOLD_AND_STAPLE;
     }
     
     public enum BookletLayout {
