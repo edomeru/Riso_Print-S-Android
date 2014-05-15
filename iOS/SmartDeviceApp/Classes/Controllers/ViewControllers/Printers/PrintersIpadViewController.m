@@ -66,8 +66,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark -
-#pragma mark CollectionViewDataSource
+#pragma mark - CollectionViewDataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
@@ -82,8 +81,6 @@
 {
     PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
                                                                                 forIndexPath:indexPath];
-    cell.delegate = self;
-    cell.indexPath = indexPath;
     
     Printer *printer = [self.printerManager getPrinterAtIndex:[indexPath item]];
     if ([self.printerManager isDefaultPrinter:printer])
@@ -112,9 +109,16 @@
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
     [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
     
-    cell.defaultSettingsButton.tag = indexPath.row;
+    //cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
+    cell.deleteButton.delegate = nil;
+    cell.defaultSwitch.tag = indexPath.row;
+    
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressDefaultSettingsRowAction:)];
+    press.minimumPressDuration = 0.1f;
+    [cell.defaultSettingsRow addGestureRecognizer:press];
+    [cell setDefaultSettingsRowToSelected:NO];
     
     // fix for the unconnected helper still polling when the
     // cell and the PrinterStatusViews are reused on reload
@@ -145,97 +149,97 @@
     return NO;
 }
 
-- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
-{
-    //get selected printer from list
-    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
-    
-    //set as default printer
-    return [self.printerManager registerDefaultPrinter:selectedPrinter];
-}
-
-#pragma mark - PrinterCollectioViewCellDelegate methods
--(void) setDefaultPrinterCell:(BOOL) isDefaultOn forIndexPath:(NSIndexPath *) indexPath;
-{
-    if(isDefaultOn == YES)
-    {
-        if(indexPath != self.defaultPrinterIndexPath)
-        {
-            [self setDefaultPrinter:indexPath];
-            if(self.defaultPrinterIndexPath != nil)
-            {
-                PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-            
-                [cell setAsDefaultPrinterCell:FALSE];
-            }
-    
-            self.defaultPrinterIndexPath = indexPath;
-        }
-    }
-    else
-    {
-        if(indexPath == self.defaultPrinterIndexPath)
-        {
-            [self.printerManager deleteDefaultPrinter];
-            self.defaultPrinterIndexPath = nil;
-        }
-    }
-}
-
 #pragma mark - IBActions
+
 - (IBAction)printerDeleteButtonAction:(id)sender
 {
     DeleteButton *deleteButton = (DeleteButton*)sender;
     [deleteButton keepHighlighted:YES];
     [deleteButton setHighlighted:YES];
 
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(@"IDS_LBL_PRINTERS", @"") message:NSLocalizedString(@"IDS_INFO_MSG_DELETE_JOBS", @"") cancelButtonTitle:nil];
+    __weak PrintersIpadViewController* weakSelf = self;
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_CANCEL", @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [alertView dismiss];
-                              [deleteButton keepHighlighted:NO];
-                              [deleteButton setHighlighted:NO];
-                          }];
+    void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [alertView dismiss];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
     
-    [alertView addButtonWithTitle:NSLocalizedString(@"IDS_LBL_OK", @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [self deletePrinterAtIndex:deleteButton.tag];
-                              [alertView dismiss];
-                              [deleteButton keepHighlighted:NO];
-                              [deleteButton setHighlighted:NO];
-                          }];
-    [alertView show];
+    void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [weakSelf deletePrinterAtIndex:deleteButton.tag];
+        [alertView dismiss];
+        [deleteButton keepHighlighted:NO];
+        [deleteButton setHighlighted:NO];
+    };
+
+    [AlertHelper displayConfirmation:kAlertConfirmationDeletePrinter
+                   withCancelHandler:cancelled
+                  withConfirmHandler:confirmed];
 }
 
-- (void) deletePrinterAtIndex:(NSUInteger)index
+- (IBAction)defaultPrinterSwitchAction:(id)sender
 {
-    if ([self.printerManager deletePrinterAtIndex:index])
+    UISwitch *defaultSwitch = (UISwitch *) sender;
+    
+    if(defaultSwitch.on == YES)
     {
-        //check if reference to default printer was also deleted
-        if (![self.printerManager hasDefaultPrinter])
-            self.defaultPrinterIndexPath = nil;
-        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
-        //set the view of the cell to stop polling for printer status
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
-        [cell.statusView.statusHelper stopPrinterStatusPolling];
-        cell.statusView.statusHelper.delegate = nil;
-        
-        cell.indexPath = nil;
-        //set view to non default printer cell style
-        [cell setAsDefaultPrinterCell:NO];
-        
-        //remove cell from view
-        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
-        self.toDeleteIndexPath = nil;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:defaultSwitch.tag inSection:0];
+        if([self setDefaultPrinter:indexPath])
+        {
+            if(self.defaultPrinterIndexPath != nil)
+            {
+                PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+                
+                [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            }
+            
+            PrinterCollectionViewCell *newDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            
+            [newDefaultCell setAsDefaultPrinterCell:YES];
+            self.defaultPrinterIndexPath = indexPath;
+        }
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDefault
-                        withTitle:kAlertTitlePrinters
-                      withDetails:nil];
+        if(self.defaultPrinterIndexPath != nil)
+        {
+            PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+            [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            [self.printerManager deleteDefaultPrinter];
+            self.defaultPrinterIndexPath = nil;
+        }
+    }
+}
+
+- (IBAction)pressDefaultSettingsRowAction:(id)sender
+{
+    UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint: [press locationInView:self.collectionView]];
+
+    if(press.state == UIGestureRecognizerStateBegan)
+    {
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        [cell setDefaultSettingsRowToSelected:YES];
+        self.selectedPrinterIndex = [NSNumber numberWithInteger:indexPath.row];
+    }
+    else if(press.state == UIGestureRecognizerStateEnded)
+    {
+        if(self.selectedPrinterIndex != nil)
+        {
+            [self performSegueTo:[PrintSettingsViewController class]];
+        }
+    }
+    else
+    {
+        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0]];
+        if(indexPath == nil || indexPath.row != [self.selectedPrinterIndex integerValue] ||
+           CGRectContainsPoint(selectedCell.defaultSettingsRow.frame, [press locationInView:selectedCell.contentView]) == NO)
+        {
+            [selectedCell setDefaultSettingsRowToSelected:NO];
+            self.selectedPrinterIndex = nil;
+        }
     }
 }
 
@@ -254,6 +258,55 @@
     [self.printerManager savePrinterChanges];
 }
 
+#pragma mark - private helper methods
+
+- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
+{
+    //get selected printer from list
+    Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
+    
+    //set as default printer
+    return [self.printerManager registerDefaultPrinter:selectedPrinter];
+}
+
+- (void) deletePrinterAtIndex:(NSUInteger)index
+{
+    if ([self.printerManager deletePrinterAtIndex:index])
+    {
+        //check if reference to default printer was also deleted
+        if (![self.printerManager hasDefaultPrinter])
+            self.defaultPrinterIndexPath = nil;
+        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
+        //set the view of the cell to stop polling for printer status
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
+        [cell.statusView.statusHelper stopPrinterStatusPolling];
+        cell.statusView.statusHelper.delegate = nil;
+        
+        //set view to non default printer cell style
+        [cell setAsDefaultPrinterCell:NO];
+        
+        //remove cell from view
+        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
+        
+        //reload data of items after the deleted item to update the control tags of the next items
+        NSMutableArray *indexPathsToReload = [[NSMutableArray alloc] init];
+        NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:0];
+        for(NSInteger i = index; i < numberOfItems; i++)
+        {
+            NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            [indexPathsToReload addObject:indexPath];
+        }
+        
+        [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
+        self.toDeleteIndexPath = nil;
+    }
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrDelete
+                        withTitle:kAlertTitlePrinters
+                      withDetails:nil];
+    }
+}
 
 #pragma mark - Segue
 
@@ -281,7 +334,16 @@
 - (void)reloadData
 {
     [super reloadData];
-    [self.collectionView reloadData];
+    if(self.selectedPrinterIndex != nil)
+    {
+        NSIndexPath *indexPathToReload = [NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0];
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPathToReload]];
+        self.selectedPrinterIndex = nil;
+    }
+    else
+    {
+        [self.collectionView reloadData];
+    }
 }
 
 @end

@@ -11,10 +11,6 @@
 @class PrinterStatusView;
 @class DeleteButton;
 
-@protocol PrinterCollectionViewCellDelegate
--(void) setDefaultPrinterCell:(BOOL) isDefaultOn forIndexPath:(NSIndexPath *) indexPath;
-@end
-
 @interface PrinterCollectionViewCell : UICollectionViewCell
 
 @property (nonatomic, weak) IBOutlet UILabel *nameLabel;
@@ -25,9 +21,9 @@
 @property (weak, nonatomic) IBOutlet UIView *cellHeader;
 @property (weak, nonatomic) IBOutlet UIButton *defaultSettingsButton;
 @property (weak, nonatomic) IBOutlet DeleteButton *deleteButton;
+@property (weak, nonatomic) IBOutlet UIView *defaultSettingsRow;
 
-@property (nonatomic, weak) id <PrinterCollectionViewCellDelegate> delegate;
-@property (nonatomic, weak) NSIndexPath *indexPath;
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
 -(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
+- (void) setDefaultSettingsRowToSelected:(BOOL) isSelected;
 @end

@@ -36,16 +36,19 @@
     if (highlighted)
     {
         self.contentView.backgroundColor = [UIColor purple2ThemeColor];
+        [self.printerName setTextColor:[UIColor whiteThemeColor]];
+        [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
+        [self.separator setBackgroundColor:[UIColor purple2ThemeColor]];
     }
     else
     {
         if(self.isDefaultPrinterCell)
         {
-            self.contentView.backgroundColor = [UIColor gray4ThemeColor];
+            [self setCellStyleForDefaultCell];
         }
         else
         {
-            self.contentView.backgroundColor = [UIColor gray1ThemeColor];
+             [self setCellStyleForNormalCell];
         }
     }
     

@@ -9,7 +9,6 @@
 #import "PrintJobHistoryGroupCell.h"
 #import "UIColor+Theme.h"
 #import "NSDate+Format.h"
-#import "DeleteButton.h"
 
 #define IMAGE_JOB_STATUS_OK     @"img_btn_job_status_ok"
 #define IMAGE_JOB_STATUS_NG     @"img_btn_job_status_ng"
@@ -22,23 +21,21 @@
 
 #pragma mark - UI Properties
 
-/** 
- Displays the name of the group (printer name) and acts as
- the toggle switch for collapsing/expanding the group.
- */
-@property (weak, nonatomic) IBOutlet UIButton* groupName;
-
 /**
- Displays the IP address of the printer and acts as
- the toggle switch for collapsing/expanding the group.
+ The hidden button covering the entire group header
+ responsible for reacting to the touch actions on 
+ the header.
  */
-@property (weak, nonatomic) IBOutlet UIButton* groupIP;
+@property (weak, nonatomic) IBOutlet UIButton *header;
 
-/**
- Displays collapsed/expanded state of the group and acts as
- the toggle switch for collapsing/expanding the group.
- */
-@property (weak, nonatomic) IBOutlet UIButton* groupIndicator;
+/** Displays the printer name. */
+@property (weak, nonatomic) IBOutlet UILabel* groupName;
+
+/** Displays the printer IP address. */
+@property (weak, nonatomic) IBOutlet UILabel* groupIP;
+
+/** Displays "-" if the group is expanded, "+" if the group is collapsed. */
+@property (weak, nonatomic) IBOutlet UILabel* groupIndicator;
 
 /** Removes the entire group. */
 @property (weak, nonatomic) IBOutlet DeleteButton* deleteAllButton;
@@ -126,6 +123,8 @@
     swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
     [cell addGestureRecognizer:swipeLeft];
     
+    [cell setBackgroundColors];
+    
     // clear tracker for the delete button
     self.jobWithDelete = nil;
     
@@ -135,21 +134,22 @@
 - (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)indexPath
 {
     PrintJobItemCell* jobCell = (PrintJobItemCell*)cell;
-    
-    // unified version-independent fix for the buggy UITableViewCell background color
-    //  -- for iOS6 (always clear)
-    //  -- for iOS7 (always white) 
-    // colors set to default in storyboard, set programmatically here instead
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-        [jobCell setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
-    else
-        [jobCell setBackgroundColor:[UIColor gray1ThemeColor]];
-    
+        
     // if this is the last cell, hide the separator
     if (indexPath.row == [self.listPrintJobs count]-1)
         [jobCell.separator setHidden:YES];
     else
         [jobCell.separator setHidden:NO];
+}
+
+- (BOOL)tableView:(UITableView*)tableView shouldHighlightRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return [self.delegate shouldHighlightJob];
+}
+
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 #pragma mark - Cell Initialization
@@ -168,28 +168,12 @@
     self.listPrintJobs = [NSMutableArray array];
     
     // set group header events
+    [self.header addTarget:self action:@selector(colorHeader) forControlEvents:UIControlEventTouchDown];
+    [self.header addTarget:self action:@selector(clearHeader) forControlEvents:UIControlEventTouchCancel];
+    [self.header addTarget:self action:@selector(clearHeader) forControlEvents:UIControlEventTouchDragOutside];
+    [self.header addTarget:self action:@selector(tappedHeader) forControlEvents:UIControlEventTouchUpInside];
     
-    [self.groupName addTarget:self action:@selector(colorHeader)
-             forControlEvents:UIControlEventTouchDown];
-    [self.groupName addTarget:self action:@selector(clearHeader)
-             forControlEvents:UIControlEventTouchDragOutside];
-    [self.groupName addTarget:self action:@selector(tappedHeader)
-             forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.groupIP addTarget:self action:@selector(colorHeader)
-           forControlEvents:UIControlEventTouchDown];
-    [self.groupIP addTarget:self action:@selector(clearHeader)
-           forControlEvents:UIControlEventTouchDragOutside];
-    [self.groupIP addTarget:self action:@selector(tappedHeader)
-           forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.groupIndicator addTarget:self action:@selector(colorHeader)
-                  forControlEvents:UIControlEventTouchDown];
-    [self.groupIndicator addTarget:self action:@selector(clearHeader)
-                  forControlEvents:UIControlEventTouchDragOutside];
-    [self.groupIndicator addTarget:self action:@selector(tappedHeader)
-                  forControlEvents:UIControlEventTouchUpInside];
-    
+    self.deleteAllButton.delegate = self;
     self.deleteAllButton.highlightedColor = [UIColor purple2ThemeColor];
     self.deleteAllButton.highlightedTextColor = [UIColor whiteThemeColor];
     [self.deleteAllButton addTarget:self action:@selector(tappedDeleteAll)
@@ -201,22 +185,22 @@
 - (void)putGroupName:(NSString*)name
 {
     if (name == nil || [name isEqualToString:@""])
-        [self.groupName setTitle:NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name") forState:UIControlStateNormal];
+        self.groupName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
     else
-        [self.groupName setTitle:name forState:UIControlStateNormal];
+        self.groupName.text = name;
 }
 
 - (void)putGroupIP:(NSString*)ip
 {
-    [self.groupIP setTitle:ip forState:UIControlStateNormal];
+    self.groupIP.text = ip;
 }
 
 - (void)putIndicator:(BOOL)isCollapsed
 {
     if (isCollapsed)
-        [self.groupIndicator setTitle:@"+" forState:UIControlStateNormal];
+        self.groupIndicator.text = @"+";
     else
-        [self.groupIndicator setTitle:@"-" forState:UIControlStateNormal];
+        self.groupIndicator.text = @"-";
 }
 
 - (void)putPrintJob:(NSString*)name withResult:(BOOL)result withTimestamp:(NSDate*)timestamp
@@ -256,7 +240,7 @@
         return;
     
     // check first if there are other groups with a delete button
-    if ([self.delegate shouldPutDeleteButton:self.tag])
+    if ([self.delegate shouldPutDeleteJobButton:self.tag])
     {
         self.jobWithDelete = jobIndexPath;
         
@@ -289,8 +273,9 @@
                forControlEvents:UIControlEventTouchUpInside];
         
         // add to the view
-        [jobCell setDeleteState:YES];
         [jobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
+        [jobCell markForDeletion:YES];
+        [deleteButton setHighlighted:NO];
         
         // slide the button from offscreen to its place over the timestamp
         [deleteButton animateOnscreen:nil];
@@ -310,8 +295,8 @@
     // slide the button to offscreen
     [deleteButton animateOffscreen:^(BOOL finished)
     {
+        [jobCell markForDeletion:NO];
         [deleteButton removeFromSuperview];
-        [jobCell setDeleteState:NO];
     }];
     
     self.jobWithDelete = nil;
@@ -319,10 +304,13 @@
 
 - (void)colorHeader
 {
-    UIColor* highlightColor = [UIColor purple2ThemeColor];
-    [self.groupName setBackgroundColor:highlightColor];
-    [self.groupIP setBackgroundColor:highlightColor];
-    [self.groupIndicator setBackgroundColor:highlightColor];
+    if ([self.delegate shouldHighlightGroupHeader])
+    {
+        UIColor* highlightColor = [UIColor purple2ThemeColor];
+        [self.groupName setBackgroundColor:highlightColor];
+        [self.groupIP setBackgroundColor:highlightColor];
+        [self.groupIndicator setBackgroundColor:highlightColor];
+    }
 }
 
 - (void)clearHeader
@@ -335,14 +323,12 @@
 
 - (void)tappedHeader
 {
-    [self colorHeader];
     [self.delegate didTapGroupHeader:self.tag];
-    [self clearHeader];
 }
 
 - (void)tappedDeleteAll
 {
-    [self.delegate didTapDeleteAllButton:self.deleteAllButton ofGroup:self.tag];
+    [self.delegate didTapDeleteGroupButton:self.deleteAllButton ofGroup:self.tag];
 }
 
 - (void)tappedDeleteJob:(DeleteButton*)button
@@ -362,6 +348,13 @@
         [self removeDeleteButton];
     
     [self.printJobsView reloadData];
+}
+
+#pragma mark - DeleteButtonDelegate
+
+- (BOOL)shouldHighlightButton
+{
+    return [self.delegate shouldHighlightDeleteGroupButton];
 }
 
 @end

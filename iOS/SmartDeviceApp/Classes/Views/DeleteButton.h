@@ -8,7 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DeleteButtonDelegate <NSObject>
+
+@optional
+- (BOOL)shouldHighlightButton;
+
+@end
+
 @interface DeleteButton : UIButton
+
+@property (weak, nonatomic) id<DeleteButtonDelegate> delegate;
 
 @property (strong, nonatomic) UIColor* highlightedColor;
 @property (strong, nonatomic) UIColor* highlightedTextColor;

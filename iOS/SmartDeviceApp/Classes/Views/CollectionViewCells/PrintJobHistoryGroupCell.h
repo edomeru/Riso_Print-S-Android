@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PrintJobItemCell.h"
+#import "DeleteButton.h"
 
 #define GROUPCELL   @"PrintJobHistoryGroup"
 #define TAG_FACTOR  1000
@@ -17,15 +18,17 @@
 @protocol PrintJobHistoryGroupCellDelegate <NSObject>
 
 @required
+- (BOOL)shouldHighlightGroupHeader;
 - (void)didTapGroupHeader:(NSUInteger)groupTag;
-- (BOOL)shouldHighlightDeleteAllButton;
-- (void)didTapDeleteAllButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag;
-- (BOOL)shouldPutDeleteButton:(NSUInteger)groupTag;
+- (BOOL)shouldHighlightDeleteGroupButton;
+- (void)didTapDeleteGroupButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag;
+- (BOOL)shouldPutDeleteJobButton:(NSUInteger)groupTag;
 - (void)didTapDeleteJobButton:(DeleteButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
+- (BOOL)shouldHighlightJob;
 
 @end
 
-@interface PrintJobHistoryGroupCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
+@interface PrintJobHistoryGroupCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate, DeleteButtonDelegate>
 
 @property (weak, nonatomic) id<PrintJobHistoryGroupCellDelegate> delegate;
 

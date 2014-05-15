@@ -18,6 +18,7 @@ typedef enum {
 
 @interface PrinterCollectionViewCell()
 @property BOOL isDefaultPrinterCell;
+@property (weak, nonatomic) IBOutlet UILabel *defaultSettingsRowLabel;
 
 @end
 @implementation PrinterCollectionViewCell
@@ -31,20 +32,6 @@ typedef enum {
     return self;
 }
 
-- (IBAction)defaultSwitchAction:(id)sender
-{
-    if (((UISwitch *) sender).on == YES)
-    {
-        [self.delegate setDefaultPrinterCell:YES forIndexPath:self.indexPath];
-        [self setAsDefaultPrinterCell: YES];
-    }
-    else
-    {
-        [self.delegate setDefaultPrinterCell:NO forIndexPath:self.indexPath];
-        [self setAsDefaultPrinterCell: NO];
-
-    }
-}
 
 -(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell
 {
@@ -110,6 +97,19 @@ typedef enum {
     }
 }
 
+- (void) setDefaultSettingsRowToSelected:(BOOL) isSelected;
+{
+    if(isSelected)
+    {
+        [self.defaultSettingsRow setBackgroundColor:[UIColor purple2ThemeColor]];
+        [self.defaultSettingsRowLabel setTextColor:[UIColor whiteThemeColor]];
+    }
+    else
+    {
+       [self.defaultSettingsRow setBackgroundColor:[UIColor gray2ThemeColor]];
+        [self.defaultSettingsRowLabel setTextColor:[UIColor blackThemeColor]];
+    }
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

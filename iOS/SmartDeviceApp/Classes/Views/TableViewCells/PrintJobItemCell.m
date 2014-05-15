@@ -24,22 +24,36 @@
 
 #pragma mark - UI Properties
 
-- (void)setDeleteState:(BOOL)isDelete
+- (void)setBackgroundColors
 {
-    if (isDelete)
+    UIView* normalBackground = [[UIView alloc] init];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        normalBackground.backgroundColor = [UIColor gray2ThemeColor];
+    else
+        normalBackground.backgroundColor = [UIColor gray1ThemeColor];
+    self.backgroundView = normalBackground;
+    
+    UIView* highlightedBackground = [[UIView alloc] init];
+    highlightedBackground.backgroundColor = [UIColor purple2ThemeColor];
+    self.selectedBackgroundView = highlightedBackground;
+}
+
+- (void)markForDeletion:(BOOL)marked
+{
+    if (marked)
     {
         self.timestamp.hidden = YES;
         [self.name setTextColor:[UIColor whiteThemeColor]];
-        [self.contentView setBackgroundColor:[UIColor purple2ThemeColor]];
+        [self.backgroundView setBackgroundColor:[UIColor purple2ThemeColor]];
     }
     else
     {
         self.timestamp.hidden = NO;
-        [self.name setTextColor:[UIColor blackThemeColor]];
+        [self.name setTextColor:[UIColor blackColor]];
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-            [self.contentView setBackgroundColor:[UIColor gray2ThemeColor]]; //set to be darker than background
+            [self.backgroundView setBackgroundColor:[UIColor gray2ThemeColor]];
         else
-            [self.contentView setBackgroundColor:[UIColor gray1ThemeColor]];
+            [self.backgroundView setBackgroundColor:[UIColor gray1ThemeColor]];
     }
 }
 

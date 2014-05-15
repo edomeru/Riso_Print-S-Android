@@ -29,7 +29,7 @@
 @property (weak, nonatomic) IBOutlet PrintJobHistoryLayout* groupsViewLayout;
 
 /** Reference to the Delete All button. */
-@property (weak, nonatomic) DeleteButton* tappedDeleteAllButton;
+@property (weak, nonatomic) DeleteButton* tappedDeleteButton;
 
 #pragma mark - Data Properties
 
@@ -39,8 +39,11 @@
 /** Keeps track of the index of the group that has the delete button. */
 @property (strong, nonatomic) NSIndexPath* groupWithDelete;
 
-/** Keeps track of the group index of the group set for deletion. */
+/** Keeps track of the index of the group marked for deletion. */
 @property (assign, nonatomic) NSInteger groupToDeleteIndex;
+
+/** Keeps track of the index of the job marked for deletion. */
+@property (assign, nonatomic) NSInteger jobToDeleteIndex;
 
 #pragma mark - Methods
 
@@ -98,11 +101,15 @@
                                           initWithTarget:self action:@selector(tappedCollection:)];
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
+    tapGesture.delaysTouchesBegan = NO;
+    tapGesture.delaysTouchesEnded = NO;
     [self.groupsView addGestureRecognizer:tapGesture];
     
     self.groupWithDelete = nil;
+    self.groupToDeleteIndex = -1;
+    self.jobToDeleteIndex = -1;
     
-    self.tappedDeleteAllButton = nil;
+    self.tappedDeleteButton = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -141,14 +148,12 @@
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
     // put the model contents into the view
-    
     [groupCell initWithTag:group.tag]; // use a tag that is independent of the list or view position
                                        // (to support deleting groups later without need for reloading)
     
     [groupCell putGroupName:group.groupName];
     [groupCell putGroupIP:group.groupIP];
     [groupCell putIndicator:group.isCollapsed];
-    
     if (!group.isCollapsed)
     {
         // put the print jobs one-by-one
@@ -166,12 +171,6 @@
     // since we are using reusable cells, handle scrolling by forcing redraw of the cell
     [groupCell reloadContents];
     [groupCell clearHeader];
-    
-    // check if a delete button was present while scrolling
-    // (fixes bug when swiping-left on the top/bottom edges of the list then scrolling)
-    if (self.groupWithDelete != nil)
-        [self removeDeleteButton];
-    self.groupWithDelete = nil;
     
     return groupCell;
 }
@@ -199,6 +198,14 @@
 
 #pragma mark - PrintJobHistoryGroupCellDelegate
 
+- (BOOL)shouldHighlightGroupHeader
+{
+    if (self.groupWithDelete != nil)
+        return NO;
+    else
+        return YES;
+}
+
 - (void)didTapGroupHeader:(NSUInteger)groupTag
 {
     // check if there is a delete button present
@@ -215,7 +222,7 @@
         [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
         
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-        NSLog(@"[INFO][PrintJobCtrl] tapped header=%ld", (long)groupIndex);
+        NSLog(@"[INFO][PrintJobCtrl] tapped header [%@],[%ld]", group.groupIP, groupIndex);
 #endif
         
         // toggle collapsed/expanded
@@ -227,7 +234,7 @@
     }
 }
 
-- (BOOL)shouldHighlightDeleteAllButton
+- (BOOL)shouldHighlightDeleteGroupButton
 {
     if (self.groupWithDelete != nil)
         return NO;
@@ -235,7 +242,7 @@
         return YES;
 }
 
-- (void)didTapDeleteAllButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag
+- (void)didTapDeleteGroupButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag
 {
     // check if there is a delete button present
     if (self.groupWithDelete != nil)
@@ -249,23 +256,76 @@
         PrintJobHistoryGroup* group;
         NSInteger groupIndex;
         [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
+        self.groupToDeleteIndex = groupIndex;
         
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-        NSLog(@"[INFO][PrintJobCtrl] tapped delete all button=%ld", (long)groupIndex);
+        NSLog(@"[INFO][PrintJobCtrl] tapped delete group [%@],[%ld]", group.groupIP, groupIndex);
 #endif
         
         [button keepHighlighted:YES];
         [button setHighlighted:YES];
-        self.tappedDeleteAllButton = button;
+        self.tappedDeleteButton = button;
         
-        self.groupToDeleteIndex = groupIndex;
+        __weak PrintJobHistoryViewController* weakSelf = self;
+        
+        void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+        {
+            [alertView dismiss];
+            
+            [weakSelf.tappedDeleteButton keepHighlighted:NO];
+            [weakSelf.tappedDeleteButton setHighlighted:NO];
+            weakSelf.tappedDeleteButton = nil;
+            
+            weakSelf.groupToDeleteIndex = -1;
+        };
+
+        void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+        {
+            [alertView dismiss];
+            
+            [weakSelf.tappedDeleteButton keepHighlighted:NO];
+            [weakSelf.tappedDeleteButton setHighlighted:NO];
+            weakSelf.tappedDeleteButton = nil;
+            
+            // get the group
+            NSInteger groupIndex = weakSelf.groupToDeleteIndex;
+            PrintJobHistoryGroup* group = [weakSelf.listPrintJobHistoryGroups objectAtIndex:groupIndex];
+            
+            // remove each job from the group
+            BOOL bRemovedAllJobs = NO;
+            while (group.countPrintJobs != 0)
+            {
+                bRemovedAllJobs = [group removePrintJobAtIndex:0];
+                if (!bRemovedAllJobs)
+                    break; // avoids corrupting the list and/or DB
+            }
+            if (bRemovedAllJobs)
+            {
+                // remove this group from the data source
+                [weakSelf.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+                
+                // remove the cell from the view
+                NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
+                [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+            }
+            else
+            {
+                [AlertHelper displayResult:kAlertResultErrDelete
+                                 withTitle:kAlertTitlePrintJobHistory
+                               withDetails:nil];
+            }
+            
+
+            weakSelf.groupToDeleteIndex = -1;
+        };
+        
         [AlertHelper displayConfirmation:kAlertConfirmationDeleteAllJobs
-                               forScreen:self
-                             withDetails:nil];
+                       withCancelHandler:cancelled
+                      withConfirmHandler:confirmed];
     }
 }
 
-- (BOOL)shouldPutDeleteButton:(NSUInteger)groupTag
+- (BOOL)shouldPutDeleteJobButton:(NSUInteger)groupTag
 {
     // get the group to be modified
     PrintJobHistoryGroup* group;
@@ -293,39 +353,89 @@
     [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
     
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] tapped delete button=%ld", (long)groupIndex);
+        NSLog(@"[INFO][PrintJobCtrl] tapped delete job [%@],[%ld]", group.groupIP, groupIndex);
 #endif
     
-    // remove the print job
-    BOOL bRemovedJob = [group removePrintJobAtIndex:jobTag];
-    if (bRemovedJob)
+    self.groupToDeleteIndex = groupIndex;
+    self.jobToDeleteIndex = jobTag;
+    
+    [button keepHighlighted:YES];
+    [button setHighlighted:YES];
+    self.tappedDeleteButton = button;
+
+    __weak PrintJobHistoryViewController* weakSelf = self;
+
+    void (^cancelled)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
     {
-        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
+        [alertView dismiss];
+
+        [weakSelf.tappedDeleteButton keepHighlighted:NO];
+        [weakSelf.tappedDeleteButton setHighlighted:NO];
+        weakSelf.tappedDeleteButton = nil;
         
-        if ([group countPrintJobs] == 0)
+        [weakSelf removeDeleteButton];
+        
+        weakSelf.groupToDeleteIndex = -1;
+        weakSelf.jobToDeleteIndex = -1;
+    };
+    void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [alertView dismiss];
+        
+        [weakSelf.tappedDeleteButton keepHighlighted:NO];
+        [weakSelf.tappedDeleteButton setHighlighted:NO];
+        weakSelf.tappedDeleteButton = nil;
+        
+        // get the group
+        NSInteger groupIndex = weakSelf.groupToDeleteIndex;
+        PrintJobHistoryGroup* group = [weakSelf.listPrintJobHistoryGroups objectAtIndex:groupIndex];
+        
+        // remove the print job
+        BOOL bRemovedJob = [group removePrintJobAtIndex:weakSelf.jobToDeleteIndex];
+        if (bRemovedJob)
         {
-            // no more jobs for this group
+            NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
             
-            // remove this group from the data source
-            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+            if ([group countPrintJobs] == 0)
+            {
+                // no more jobs for this group
+                // remove the group from data source and the view
+                [weakSelf.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+                [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+            }
+            else
+            {
+                // group still has jobs
+                // reload the view
+                [weakSelf.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
+            }
             
-            // remove the cell from the view
-            [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+            weakSelf.groupWithDelete = nil;
         }
         else
         {
-            // group still has jobs
+            [AlertHelper displayResult:kAlertResultErrDelete
+                             withTitle:kAlertTitlePrintJobHistory
+                           withDetails:nil];
             
-            // just reload the view
-            [self.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
+            [weakSelf removeDeleteButton];
         }
-    }
+        
+        weakSelf.groupToDeleteIndex = -1;
+        weakSelf.jobToDeleteIndex = -1;
+    };
+
+    [AlertHelper displayConfirmation:kAlertConfirmationDeleteJob
+                   withCancelHandler:cancelled
+                  withConfirmHandler:confirmed];
+}
+
+- (BOOL)shouldHighlightJob
+{
+    if (self.groupWithDelete != nil)
+        return NO;
     else
-    {
-        [AlertHelper displayResult:kAlertResultErrDefault
-                         withTitle:kAlertTitlePrintJobHistory
-                       withDetails:nil];
-    }
+        return YES;
 }
 
 #pragma mark - Actions
@@ -374,51 +484,19 @@
     *group = grp;
 }
 
-#pragma mark - Delete Confirmation
-
-- (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == [alertView firstOtherButtonIndex])
-    {
-        // get the group
-        NSInteger groupIndex = self.groupToDeleteIndex;
-        PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:groupIndex];
-        
-        // remove each job from the group
-        BOOL bRemovedAllJobs = NO;
-        while (group.countPrintJobs != 0)
-        {
-            bRemovedAllJobs = [group removePrintJobAtIndex:0];
-            if (!bRemovedAllJobs)
-                break; // avoids corrupting the list and/or DB
-        }
-        if (bRemovedAllJobs)
-        {
-            // remove this group from the data source
-            [self.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
-            
-            // remove the cell from the view
-            NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
-            [self.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
-        }
-        else
-        {
-            [AlertHelper displayResult:kAlertResultErrDefault
-                             withTitle:kAlertTitlePrintJobHistory
-                           withDetails:nil];
-        }
-    }
-    
-    [self.tappedDeleteAllButton keepHighlighted:NO];
-    [self.tappedDeleteAllButton setHighlighted:NO];
-    self.tappedDeleteAllButton = nil;
-}
-
 #pragma mark - Segue
 
 - (IBAction)unwindToPrintJobHistory:(UIStoryboardSegue*)sender
 {
     [self.mainMenuButton setEnabled:YES];
+}
+
+#pragma mark - Scrolling
+
+- (void)scrollViewDidScroll:(UIScrollView*)scrollView
+{
+    if (self.groupWithDelete != nil)
+        [self removeDeleteButton];
 }
 
 #pragma mark - Rotation
