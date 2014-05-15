@@ -17,7 +17,6 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -37,7 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PrintersFragment extends BaseFragment implements PrintersCallback, UpdateStatusCallback, Callback {
+public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     public static final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
@@ -46,7 +45,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     private static final int MSG_ADD_NEW_PRINTER = 0x1;
-    private static final int MSG_INITIALIZE_ONLINE_STATUS = 0x2;
     
     private Handler mHandler = null;
     // ListView parameters
@@ -60,6 +58,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private int mDeleteItem = PrinterManager.EMPTY_ID;
     private Parcelable mScrollState = null;
     private int mSettingItem = PrinterManager.EMPTY_ID;;
+    private Runnable mUpdateOnlineStatus = null;
     
     
     /** {@inheritDoc} */
@@ -75,6 +74,15 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
+        mUpdateOnlineStatus = new Runnable() {
+            @Override
+            public void run() {
+               /* Update online status*/
+                updateOnlineStatus();
+               /* Run every 5 seconds */
+               mHandler.postDelayed(this, AppConstants.CONST_UPDATE_INTERVAL);
+            }
+         };
     }
     
     /** {@inheritDoc} */
@@ -97,9 +105,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mListView = (ListView) view.findViewById(R.id.printer_list);
         }
         mPrinterManager.setPrintersCallback(this);
-        mPrinterManager.setUpdateStatusCallback(this);
+        
         mHandler.sendMessage(newMessage);
-        mHandler.sendEmptyMessageDelayed(MSG_INITIALIZE_ONLINE_STATUS, 10);
+        mHandler.post(mUpdateOnlineStatus);
     }
     
     /** {@inheritDoc} */
@@ -137,13 +145,16 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (!activity.isDrawerOpen(Gravity.RIGHT) && mPrinterManager.isSearching()) {
             mPrinterManager.cancelPrinterSearch();
         }
+        
+        if (mUpdateOnlineStatus != null && mHandler != null) {
+            mHandler.post(mUpdateOnlineStatus);
+        }
     }
     
     /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
-        mPrinterManager.cancelUpdateStatusThread();
         
         if (isTablet()) {
             mDeleteItem = mPrinterTabletView.getDeleteItemPosition();
@@ -152,6 +163,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             if (mListView != null) {
                 mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
             }
+        }
+        
+        if (mUpdateOnlineStatus != null && mHandler != null) {
+            mHandler.removeCallbacks(mUpdateOnlineStatus);
         }
     }
     
@@ -236,6 +251,34 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         return false;
     }
     
+    /**
+     * Updates the online status for the whole view 
+     */
+    private void updateOnlineStatus() {
+        int childCount = 0;
+        if(isTablet()) {
+           childCount = mPrinterTabletView.getChildCount(); 
+        } else {
+            childCount = mListView.getChildCount(); 
+        }
+        
+        for (int i = 0; i < childCount; i++) {
+            View targetView = null;
+            if (isTablet()) {
+                if (mPrinterTabletView != null && mPrinterTabletView.getChildAt(i) != null) {
+                    targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
+            } else {
+                if (mListView != null && mListView.getChildAt(i) != null) {
+                    targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
+                }
+            }
+            if (targetView != null) {
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
+            }
+        }
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -294,30 +337,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     // ================================================================================
-    // INTERFACE - UpdateStatusCallback
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public void updateOnlineStatus() {
-        for (int i = 0; i < mPrinter.size(); i++) {
-            View targetView = null;
-            if (isTablet()) {
-                if (mPrinterTabletView != null && mPrinterTabletView.getChildAt(i) != null) {
-                    targetView = mPrinterTabletView.getChildAt(i).findViewById(R.id.img_onOff);
-                }
-            } else {
-                if (mListView != null && mListView.getChildAt(i) != null) {
-                    targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
-                }
-            }
-            if (targetView != null) {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
-            }
-        }
-    }
-    
-    // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
     
@@ -344,11 +363,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     mPrinterAdapter.notifyDataSetChanged();
                 }
                 return true;
-            case MSG_INITIALIZE_ONLINE_STATUS:
-                mPrinterManager.createUpdateStatusThread();
-                return true;
         }
         return false;
     }
-    
 }
