@@ -1223,7 +1223,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 } else {
                     curY += addY;
                     if (i % getRowsPerSheet() == getRowsPerSheet() - 1) {
-                        curY = beginPos[0];
+                        curY = beginPos[1];
                         curX += addX;
                     }
                 }
