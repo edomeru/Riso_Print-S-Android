@@ -182,14 +182,17 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      *
      * @param ev
      */
-    public void processTouchEvent(MotionEvent ev) {
+    public boolean processTouchEvent(MotionEvent ev) {
         if (ev.getPointerCount() == 1) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (mPtrIdx == INVALID_IDX) {
-                        mPtrIdx = ev.getActionIndex();
-                        mPtrDownPos.set(ev.getX(), ev.getY());
-                        mPtrLastPos.set(ev.getX(), ev.getY());
+                        if (mCurlView.isViewHit(ev.getX(), ev.getY())) {
+                            mPtrIdx = ev.getActionIndex();
+                            mPtrDownPos.set(ev.getX(), ev.getY());
+                            mPtrLastPos.set(ev.getX(), ev.getY());
+                            return true;
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -198,14 +201,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         mCurlView.requestRender();
                         
                         mPtrLastPos.set(ev.getX(), ev.getY());
+                        return true;
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     mPtrIdx = -1;
-                    break;
+                    return true;
             }
         }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -215,26 +220,21 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         if (!mScaleDetector.isInProgress() && ev.getPointerCount() == 1) {
             if (mZoomLevel == BASE_ZOOM_LEVEL) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    getChildAt(i).dispatchTouchEvent(ev);
-                }                
+                return mCurlView.dispatchTouchEvent(ev);
             } else {
-                processTouchEvent(ev);
+                return processTouchEvent(ev);
             }
-        } else {
-            MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
-                    SystemClock.uptimeMillis(), 
-                    MotionEvent.ACTION_CANCEL, 
-                    ev.getX(), ev.getY(), 0);
-            
-            processTouchEvent(e);
-            
-            for (int i = 0; i < getChildCount(); i++) {
-                getChildAt(i).dispatchTouchEvent(e);
-            }
-            
-            e.recycle();
         }
+        
+        MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
+                SystemClock.uptimeMillis(), 
+                MotionEvent.ACTION_CANCEL, 
+                ev.getX(), ev.getY(), 0);
+        
+        processTouchEvent(e);
+        mCurlView.dispatchTouchEvent(e);
+        
+        e.recycle();
         
         return true;
     }

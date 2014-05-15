@@ -93,6 +93,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 	private int mBindPosition = BIND_LEFT;
 
+	private float mZoomLevel = 1.0f;
+
 	/**
 	 * Default constructor.
 	 */
@@ -266,6 +268,31 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	}
 	
 	/**
+	 * Checks if the curl view is hit on the coordinates
+	 * 
+	 * @param x
+	 * @param y
+	 * @return Is hit
+	 */
+	public boolean isViewHit(float x, float y) {
+		PointF pos = new PointF(x, y);
+		mRenderer.translate(pos);
+		
+		pos.x /= mZoomLevel;
+		pos.y /= mZoomLevel;
+
+		RectF rect = getDropShadowRect();
+		if ((pos.y > rect.top) || (pos.y < rect.bottom)) {
+			return false;
+		}
+		if ((pos.x > rect.right) || (pos.x < rect.left)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Prevent touch out of margin
 	 * 
 	 * @param rightRect
@@ -297,12 +324,26 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		}
 
 		// We need page rects quite extensively so get them for later use.
-		RectF rightRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
-		RectF leftRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+		RectF rightRect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
+		RectF leftRect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_LEFT));
 
 		// Store pointer position.
 		mPointerPos.mPos.set(me.getX(), me.getY());
 		mRenderer.translate(mPointerPos.mPos);
+
+		rightRect.left *= mZoomLevel;
+		rightRect.right *= mZoomLevel;
+		rightRect.top *= mZoomLevel;
+		rightRect.bottom *= mZoomLevel;
+		
+		leftRect.left *= mZoomLevel;
+		leftRect.right *= mZoomLevel;
+		leftRect.top *= mZoomLevel;
+		leftRect.bottom *= mZoomLevel;
+
+		mPointerPos.mPos.x /= mZoomLevel;
+		mPointerPos.mPos.y /= mZoomLevel;
+
 		if (mEnableTouchPressure) {
 			mPointerPos.mPressure = me.getPressure();
 		} else {
@@ -828,6 +869,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	}
 
 	public void setZoomLevel(float zoomLevel) {
+		mZoomLevel = zoomLevel;
 		mRenderer.setZoomLevel(zoomLevel);
 	}
 
