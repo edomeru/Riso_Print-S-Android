@@ -133,6 +133,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     };
     private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo";
     private static final String IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
+    private static final String IPV6_STD_OFFLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb3";
 
     public NetUtilsTest() {
         super(MainActivity.class);
@@ -279,28 +280,75 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testConnectToIpv6Address_OfflineIpv6Address() {
         try {
             boolean isReachable = true;
+            InetAddress inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS);
 
-            isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, null);
+            isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, inetIpAddress);
             assertEquals(false, isReachable);
+            
+            mSignal.await(500, TimeUnit.MILLISECONDS);
+            
+            isReachable = NetUtils.connectToIpv6Address(IPV6_STD_OFFLINE_PRINTER_ADDRESS + "%wlan0", inetIpAddress);
+            assertEquals(false, isReachable);
+            
+            mSignal.await(500, TimeUnit.MILLISECONDS);
         } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        } catch (InterruptedException e) {
+            fail(); // Error should not be thrown
+        } catch (UnknownHostException e) {
             fail(); // Error should not be thrown
         }
     }
 
     public void testConnectToIpv6Address_OnlineIpv6Address() {
         try {
+            int retry = 10;
             boolean isReachable = false;
+            InetAddress inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS);
             String ipv6Addr = IPV6_STD_PRINTER_ADDRESS;
-            assertNotNull(ipv6Addr);
             
             // Ipv6 Address
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 ipv6Addr = getLocalIpv6Address();
                 assertNotNull(ipv6Addr);
-            }            
-            isReachable = NetUtils.connectToIpv6Address(ipv6Addr, null);
+            }
+            
+            while (retry > 0) {
+                isReachable = NetUtils.connectToIpv6Address(ipv6Addr, inetIpAddress);
+                if (isReachable) {
+                    break;
+                }
+                mSignal.await(1, TimeUnit.SECONDS);
+                retry--;
+            }
             assertEquals(true, isReachable);
+
+            mSignal.await(500, TimeUnit.MILLISECONDS);
+            
+            if (ipv6Addr.contains("%")) {
+                String[] newIpString = ipv6Addr.split("%");
+                if (newIpString != null) {
+                    ipv6Addr = newIpString[0];
+                }
+            }
+            // Reset retry
+            retry = 10;
+            while (retry > 0) {
+                isReachable = NetUtils.connectToIpv6Address(ipv6Addr, inetIpAddress);
+                if (isReachable) {
+                    break;
+                }
+                mSignal.await(1, TimeUnit.SECONDS);
+                retry--;
+            }
+            assertEquals(true, isReachable);
+            
+            mSignal.await(500, TimeUnit.MILLISECONDS);
         } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        } catch (InterruptedException e) {
+            fail(); // Error should not be thrown
+        } catch (UnknownHostException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -309,9 +357,13 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         try {
             InetAddress inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS);
             NetUtils.connectToIpv6Address(null, inetIpAddress);
+            
+            mSignal.await(500, TimeUnit.MILLISECONDS);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (UnknownHostException e) {
+            fail(); // Error should not be thrown
+        } catch (InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -321,7 +373,11 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             String ipv6Addr = getLocalIpv6Address();
             assertNotNull(ipv6Addr);
             NetUtils.connectToIpv6Address(ipv6Addr, null);
+            
+            mSignal.await(500, TimeUnit.MILLISECONDS);
         } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        } catch (InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -357,7 +413,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         try {
             turnWifi(true);
             // Wait for connection to be established
-            mSignal.await(10, TimeUnit.SECONDS);
+            mSignal.await(15, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             fail();
         }
