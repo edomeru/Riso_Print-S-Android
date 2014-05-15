@@ -43,6 +43,8 @@ namespace SmartDeviceApp.Controllers
         public void Initialize()
         {
             Discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
+            Discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
+            Discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
         }
 
         /**
@@ -77,8 +79,6 @@ namespace SmartDeviceApp.Controllers
         public void  startDiscover()
         {
             Discovery.FromPrinterSearch = true;
-            Discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
-            Discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
             Discovery.startDiscover();
         }
 

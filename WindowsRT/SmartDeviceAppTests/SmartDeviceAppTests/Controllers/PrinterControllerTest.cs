@@ -64,12 +64,15 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PrinterController_AddPrinter()
+        public async Task Test_PrinterController_AddPrinter()
         {
-            PrinterController.Instance.Initialize();
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await DatabaseController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             string ip = "192.168.0.198";
             int firstCount = PrinterController.Instance.PrinterList.Count;
-            PrinterController.Instance.addPrinter(ip);
+            await PrinterController.Instance.addPrinter(ip);
 
         }
 
