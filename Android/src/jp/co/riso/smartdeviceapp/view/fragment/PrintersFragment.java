@@ -151,6 +151,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         } else {
             if (mListView != null) {
                 mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
+            } else {
+                mDeleteItem = PrinterManager.EMPTY_ID;
             }
         }
     }

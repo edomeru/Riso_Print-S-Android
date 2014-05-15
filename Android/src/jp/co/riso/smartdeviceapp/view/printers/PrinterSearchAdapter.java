@@ -52,11 +52,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View separator = null;
         String printerName = printer.getName();
-        
-        if(printerName.isEmpty()) {
-            printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
-            printer.setName(printerName);
-        }
+               
         if (convertView == null) {
             convertView = inflater.inflate(layoutId, parent, false);
             AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
@@ -71,7 +67,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             viewHolder.mAddedIndicator.setTag(position);
             
             // Set listener for Add Button
-            viewHolder.mAddedIndicator.setOnClickListener(this);
+            convertView.setOnClickListener(this);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -85,10 +81,15 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         } else {
             separator.setVisibility(View.VISIBLE);
         }
+        viewHolder.mAddedIndicator.setClickable(false);
         if (mPrinterManager.isExists(printer)) {
+            convertView.setClickable(false);
             viewHolder.mAddedIndicator.setActivated(true);
         } else {
             viewHolder.mAddedIndicator.setActivated(false);
+        }
+        if(printerName.isEmpty()) {
+            viewHolder.mPrinterName.setText(getContext().getResources().getString(R.string.ids_lbl_no_name));
         }
         return convertView;
     }
@@ -130,11 +131,6 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
          *            searched printer
          */
         public int onAddPrinter(Printer printer);
-        
-        /**
-         * Checks if the maximum printer count is reached
-         */
-        public boolean isMaxPrinterCountReached();
     }
     
     // ================================================================================
@@ -144,11 +140,13 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.addPrinterButton) {
-            if (v.isActivated() || mSearchAdapterInterface.isMaxPrinterCountReached()) {
+        if (v.getId() == R.id.printer_search_row) {
+            ViewHolder viewHolder = (ViewHolder) v.getTag();
+            Printer printer = getItem((Integer) viewHolder.mAddedIndicator.getTag());
+            
+            if (viewHolder.mAddedIndicator.isActivated()) {
                 return;
             }
-            Printer printer = getItem((Integer) v.getTag());
             if (mSearchAdapterInterface.onAddPrinter(printer) != -1) {
                 v.setActivated(true);
             }

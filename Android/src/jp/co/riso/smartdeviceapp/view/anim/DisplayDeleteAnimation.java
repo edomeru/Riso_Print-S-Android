@@ -41,6 +41,15 @@ public class DisplayDeleteAnimation {
         
         View deleteButton = view.findViewById(deleteId);
         
+        for (int i = 0; i < ids.length; i++) {
+            View viewToHide = view.findViewById(ids[i]);
+            if (viewToHide != null) {
+                {
+                    viewToHide.setVisibility(View.GONE);
+                }
+            }
+        }
+        
         if (deleteButton != null) {
             deleteButton.setVisibility(View.VISIBLE);
             if (animate) {
@@ -53,30 +62,6 @@ public class DisplayDeleteAnimation {
                 }
                 deleteButton.clearAnimation();
                 deleteButton.startAnimation(translate);
-            }
-        }
-        
-        for (int i = 0; i < ids.length; i++) {
-            View viewToHide = view.findViewById(ids[i]);
-            if (viewToHide != null) {
-                if (animate) {
-                    AlphaAnimation alpha = new AlphaAnimation(1.0f, 0.0f);
-                    alpha.setDuration(ANIM_DURATION);
-                    
-                    HideOnFadeAnimationListener listener = new HideOnFadeAnimationListener();
-                    listener.setView(viewToHide);
-                    
-                    alpha.setAnimationListener(listener);
-                    
-                    if (viewToHide.getAnimation() != null) {
-                        viewToHide.getAnimation().setAnimationListener(null);
-                        viewToHide.getAnimation().cancel();
-                    }
-                    viewToHide.clearAnimation();
-                    viewToHide.startAnimation(alpha);
-                } else {
-                    viewToHide.setVisibility(View.INVISIBLE);
-                }
             }
         }
     }
@@ -116,7 +101,7 @@ public class DisplayDeleteAnimation {
                 deleteButton.startAnimation(translate);
                 
             } else {
-                deleteButton.setVisibility(View.INVISIBLE);
+                deleteButton.setVisibility(View.GONE);
             }
         }
         
@@ -126,7 +111,7 @@ public class DisplayDeleteAnimation {
                 viewToHide.setVisibility(View.VISIBLE);
                 if (animate) {
                     AlphaAnimation alpha = new AlphaAnimation(0.0f, 1.0f);
-                    alpha.setDuration(ANIM_DURATION);
+                    alpha.setDuration(ANIM_DURATION*3);
                     
                     if (viewToHide.getAnimation() != null) {
                         viewToHide.getAnimation().setAnimationListener(null);
@@ -161,7 +146,7 @@ public class DisplayDeleteAnimation {
             if (mViewReference != null) {
                 final View view = mViewReference.get();
                 if (view != null) {
-                    view.setVisibility(View.INVISIBLE);
+                    view.setVisibility(View.GONE);
                 }
             }
         }

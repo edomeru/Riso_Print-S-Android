@@ -64,6 +64,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         ViewHolder viewHolder = null;
         Printer printer = getItem(position);
         View separator = null;
+        String printerName = printer.getName();
         
         if (convertView == null) {
             convertView = inflater.inflate(mLayoutId, parent, false);
@@ -81,7 +82,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             viewHolder.mDeleteButton.setTag(convertView);
             
             convertView.setOnClickListener(this);
-            viewHolder.mDiscloseImage.setOnClickListener(this);
             viewHolder.mDeleteButton.setOnClickListener(this);
             
             convertView.setTag(viewHolder);
@@ -108,6 +108,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             convertView.setActivated(false);
         }
         
+        if (printerName == null || printerName.isEmpty()) {
+            viewHolder.mPrinterName.setText(getContext().getResources().getString(R.string.ids_lbl_no_name));
+        }
         separator = convertView.findViewById(R.id.printers_separator);
         if (position == getCount() - 1) {
             separator.setVisibility(View.GONE);
@@ -278,17 +281,12 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 fragment.setPrinter(printer);
                 switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
                 break;
-            case R.id.img_disclosure:
-                printer = (Printer) v.getTag();
-                fragment = new PrinterInfoFragment();
-                fragment.setPrinter(printer);
-                switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
-                break;
             case R.id.btn_delete:
                 PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
                 ViewHolder viewHolder = (ViewHolder) printerContainer.getTag();
                 printer = (Printer) viewHolder.mDiscloseImage.getTag();
-                viewHolder.mDeleteButton.setAnimation(null);
+                viewHolder.mDiscloseImage.setAnimation(null);
+                viewHolder.mDeleteButton.setAnimation(null);                
                 viewHolder.mDeleteButton.setVisibility(View.GONE);
                 
                 Message newMessage = Message.obtain(mHandler, MSG_REMOVE_PRINTER);
