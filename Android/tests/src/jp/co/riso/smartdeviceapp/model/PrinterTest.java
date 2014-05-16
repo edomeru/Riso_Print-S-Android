@@ -64,6 +64,7 @@ public class PrinterTest extends TestCase {
         bundleExtract.getParcelableArray(PRINTER_ARRAY_TAG);
         
         Printer createFromParcel = Printer.CREATOR.createFromParcel(parcel);
+        parcel.recycle();
         assertNotNull(createFromParcel);
     }
     
@@ -266,9 +267,9 @@ public class PrinterTest extends TestCase {
         printer.getConfig().isRawAvailable();
         printer.getConfig().isBookletAvailable();
         printer.getConfig().isStaplerAvailable();
+        printer.getConfig().isPunch3Available();
         printer.getConfig().isPunch4Available();
         printer.getConfig().isTrayFaceDownAvailable();
-        printer.getConfig().isTrayAutoStackAvailable();
         printer.getConfig().isTrayTopAvailable();
         printer.getConfig().isTrayStackAvailable();
         printer.getConfig().isTrayTopAvailable();

@@ -30,7 +30,7 @@ public class Preview {
         A6(105.0f, 148.0f),
         B4(257.0f, 364.0f),
         B5(182.0f, 257.0f),
-        B6(128.0f, 182.0f), // confirm value
+        B6(128.0f, 182.0f),
         FOOLSCAP(216.0f, 340.0f),
         TABLOID(280.0f, 432.0f),
         LEGAL(216.0f, 356.0f),
@@ -210,6 +210,6 @@ public class Preview {
     }
     
     public enum OutputTray {
-        AUTO, FACEDOWN, FACEUP, TOP, STACKING;
+        AUTO, FACEDOWN, TOP, STACKING;
     }
 }
