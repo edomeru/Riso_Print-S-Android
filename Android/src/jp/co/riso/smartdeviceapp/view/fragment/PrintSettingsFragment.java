@@ -255,7 +255,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
-                    
+                    ((PrintPreviewFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).clearIconStates();
                     ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
                     
                     // Show dialog

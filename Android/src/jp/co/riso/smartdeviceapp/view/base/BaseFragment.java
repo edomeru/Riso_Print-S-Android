@@ -98,8 +98,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         // restore selected only if screen is rotated
         if (mIconIdToRestore != 0 && mIconState) {
             setIconState(mIconIdToRestore, true);
-            mIconIdToRestore = 0;
         }
+        mIconIdToRestore = 0;
         AppUtils.hideSoftKeyboard(getActivity());
     }
     
@@ -107,7 +107,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        
         outState.putBoolean(KEY_ICON_STATE, mIconState);
         outState.putInt(KEY_ICON_ID, mIconId);
         mIconIdToRestore = mIconId;
@@ -228,7 +228,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             getView().findViewById(id).setSelected(state);
             mIconState = state;
             mIconId = id;
-
+            
         }
     }
     
