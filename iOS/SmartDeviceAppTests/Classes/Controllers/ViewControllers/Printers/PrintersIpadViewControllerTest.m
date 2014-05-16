@@ -14,6 +14,7 @@
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
 #import "PrinterStatusView.h"
+#import "DeleteButton.h"
 
 @interface PrintersIpadViewController (UnitTest)
 
