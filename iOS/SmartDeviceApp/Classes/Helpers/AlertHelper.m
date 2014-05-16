@@ -19,7 +19,7 @@
     [self displayResult:result withTitle:title withDetails:details withDismissHandler:nil];
 }
 
-+ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))handler
++ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(CXAlertViewHandler)handler;
 {
     // get the title
     NSString* alertTitle;
@@ -105,16 +105,8 @@
     
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle
                                                         message:alertMsg
-                                              cancelButtonTitle:nil];
-    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_OK, @"") type:CXAlertViewButtonTypeCancel handler:^(CXAlertView *alertView, CXAlertButtonItem *button){
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [alertView dismiss];
-            if (handler)
-            {
-                handler(alertView, button);
-            }
-        });
-    }];
+                                              cancelButtonTitle:NSLocalizedString(IDS_LBL_OK, @"")];
+    alertView.didDismissHandler = handler;
     
     [alertView show];
 }

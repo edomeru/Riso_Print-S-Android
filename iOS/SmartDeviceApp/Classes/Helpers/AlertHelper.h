@@ -95,7 +95,7 @@ typedef enum
  @param handler
         block to handle event when alert view is dismissed
  */
-+ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))handler;
++ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(CXAlertViewHandler)handler;
 
 /**
  Displays an AlertView asking for user confirmation.
