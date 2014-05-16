@@ -122,7 +122,7 @@ static PrinterManager* sharedPrinterManager = nil;
     
     // set the online status
     // since the printer will only be added if online, initial setting is YES
-    newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
+    newPrinter.onlineStatus = [NSNumber numberWithBool:printerDetails.isPrinterFound];//[NSNumber numberWithBool:YES];
     
     // save the Printer and PrintSetting objects to DB
     if ([DatabaseManager saveChanges])
@@ -375,6 +375,7 @@ static PrinterManager* sharedPrinterManager = nil;
     {
         // this is a new printer
         // update the UI (UI thread)
+        printerInfoCapabilities.isPrinterFound =YES;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.searchDelegate printerSearchDidFoundNewPrinter:printerInfoCapabilities];
         });

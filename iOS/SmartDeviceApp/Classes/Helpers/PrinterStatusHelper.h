@@ -8,11 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "SimplePing.h"
+@class PrinterStatusHelper;
 
 @protocol PrinterStatusHelperDelegate
-
--(void)statusDidChange:(BOOL)isOnline;
-
+-(void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline;
 @end
 
 @interface PrinterStatusHelper : NSObject <SimplePingDelegate>

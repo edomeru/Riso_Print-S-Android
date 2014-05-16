@@ -34,6 +34,8 @@
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
 @property (nonatomic, strong) NSNumber *selectedPrinterIndex;
+@property (nonatomic, strong) NSMutableOrderedSet *statusHelpers;
+
 
 #pragma mark - Instance Methods
 
@@ -58,6 +60,7 @@
    
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
+    self.statusHelpers = [[NSMutableOrderedSet alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -79,8 +82,7 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
-                                                                                forIndexPath:indexPath];
+    PrinterCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     
     Printer *printer = [self.printerManager getPrinterAtIndex:[indexPath item]];
     if ([self.printerManager isDefaultPrinter:printer])
@@ -124,18 +126,26 @@
     // cell and the PrinterStatusViews are reused on reload
     // (the status view is not dealloc'd and it still sets
     // the status on its previous cell)
-    if ([cell.statusView.statusHelper isPolling])
+    /*if ([cell.statusView.statusHelper isPolling])
     {
         [cell.statusView.statusHelper stopPrinterStatusPolling];
         cell.statusView.statusHelper.delegate = nil;
+    }*/
+    
+    if([self.statusHelpers count] <= indexPath.row || [self.statusHelpers objectAtIndex:indexPath.row] == nil)
+    {
+        PrinterStatusHelper *printerStatusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+        printerStatusHelper.delegate = self;
+        [printerStatusHelper startPrinterStatusPolling];
+        [self.statusHelpers setObject:printerStatusHelper atIndex:indexPath.row];
     }
     
     // since cells may be reused, create a new helper for this cell
-    cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
-    cell.statusView.statusHelper.delegate = cell.statusView;
+    //cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+    //cell.statusView.statusHelper.delegate = cell.statusView;
 
-    //[cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
-    [cell.statusView setStatus:NO];
+    [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
+    //[cell.statusView setStatus:NO];
     [cell.statusView.statusHelper startPrinterStatusPolling];
     
     cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
@@ -148,6 +158,20 @@
 {
     return NO;
 }
+
+-(void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange :(BOOL)isOnline
+{
+    NSUInteger index = [self.statusHelpers indexOfObject:statusHelper];
+    Printer *printer = [self.printerManager getPrinterAtIndex:index];
+    
+    printer.onlineStatus = [NSNumber numberWithBool:isOnline];
+    PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow: index inSection:0]];
+    if(cell != nil) //cell returned will be nil if cell for row is not visible
+    {
+        [cell.statusView setStatus:isOnline];
+    }
+}
+
 
 #pragma mark - IBActions
 
@@ -279,8 +303,12 @@
         NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
         //set the view of the cell to stop polling for printer status
         PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
-        [cell.statusView.statusHelper stopPrinterStatusPolling];
-        cell.statusView.statusHelper.delegate = nil;
+        //[cell.statusView.statusHelper stopPrinterStatusPolling];
+        //cell.statusView.statusHelper.delegate = nil;
+        
+	PrinterStatusHelper *printerStatus = [self.statusHelpers objectAtIndex:index];
+        [printerStatus stopPrinterStatusPolling];
+        [self.statusHelpers removeObjectAtIndex:index];
         
         //set view to non default printer cell style
         [cell setAsDefaultPrinterCell:NO];

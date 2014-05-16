@@ -50,7 +50,7 @@
     }
 }
 
-- (void) statusDidChange: (BOOL) isOnline
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline statusDidChange: (BOOL) isOnline
 {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
     NSString* onlineStatus = isOnline ? @"YES" : @"NO";
