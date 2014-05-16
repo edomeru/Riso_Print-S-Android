@@ -2874,19 +2874,22 @@
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jZk-UU-XZR" userLabel="Delete">
-                                                            <rect key="frame" x="215" y="5" width="89" height="34"/>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jZk-UU-XZR" userLabel="Delete" customClass="DeleteButton">
+                                                            <rect key="frame" x="320" y="5" width="90" height="34"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="89" id="B7h-OB-ltx"/>
+                                                                <constraint firstAttribute="width" constant="90" id="B7h-OB-ltx"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="8" maxY="0.0"/>
-                                                            <state key="normal" title="Delete">
+                                                            <state key="normal" title="DELETE">
                                                                 <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="tapDeleteButtonAction:" destination="jTA-Cg-WoR" eventType="touchUpInside" id="EFF-Ht-3WH"/>
+                                                            </connections>
                                                         </button>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" highlightedImage="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="UoX-YQ-VNL" userLabel="Disclosure">
                                                             <rect key="frame" x="288" y="11" width="22" height="22"/>
@@ -2917,14 +2920,13 @@
                                                         <constraint firstItem="jZk-UU-XZR" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="5" id="Bff-uC-BG0"/>
                                                         <constraint firstAttribute="centerY" secondItem="UoX-YQ-VNL" secondAttribute="centerY" id="Bgp-SU-TGw"/>
                                                         <constraint firstItem="3Th-tv-56b" firstAttribute="leading" secondItem="rJB-WH-qpf" secondAttribute="trailing" constant="10" id="C3B-vl-v6p"/>
-                                                        <constraint firstAttribute="centerY" secondItem="jZk-UU-XZR" secondAttribute="centerY" id="H3E-dk-6M5"/>
                                                         <constraint firstItem="BVA-iB-fru" firstAttribute="leading" secondItem="rJB-WH-qpf" secondAttribute="trailing" constant="10" id="QBJ-II-uY9"/>
                                                         <constraint firstAttribute="bottom" secondItem="fGJ-hZ-slT" secondAttribute="bottom" id="SUG-jl-b4n"/>
                                                         <constraint firstAttribute="bottom" secondItem="jZk-UU-XZR" secondAttribute="bottom" constant="5" id="aSC-CM-2Se"/>
                                                         <constraint firstItem="fGJ-hZ-slT" firstAttribute="leading" secondItem="BVA-iB-fru" secondAttribute="leading" id="c5G-FA-EvG"/>
                                                         <constraint firstAttribute="centerY" secondItem="rJB-WH-qpf" secondAttribute="centerY" id="hHm-6j-Lce"/>
                                                         <constraint firstItem="UoX-YQ-VNL" firstAttribute="leading" secondItem="BVA-iB-fru" secondAttribute="trailing" constant="16" id="ihS-v1-lux"/>
-                                                        <constraint firstAttribute="trailing" secondItem="jZk-UU-XZR" secondAttribute="trailing" constant="16" id="isA-wU-8Hc"/>
+                                                        <constraint firstAttribute="trailing" secondItem="jZk-UU-XZR" secondAttribute="trailing" constant="-90" id="isA-wU-8Hc"/>
                                                         <constraint firstItem="rJB-WH-qpf" firstAttribute="leading" secondItem="yJX-Vz-3ka" secondAttribute="leading" constant="10" id="j2N-gc-PAA"/>
                                                         <constraint firstAttribute="trailing" secondItem="UoX-YQ-VNL" secondAttribute="trailing" constant="10" id="lWs-cB-Pv8"/>
                                                         <constraint firstItem="3Th-tv-56b" firstAttribute="top" secondItem="yJX-Vz-3ka" secondAttribute="top" constant="24" id="phg-rt-BYU"/>
@@ -2941,7 +2943,8 @@
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="rJB-WH-qpf" id="YhY-j0-8dY"/>
                                                     <outlet property="separator" destination="fGJ-hZ-slT" id="G9k-Xa-iLb"/>
-                                                    <outlet property="spaceToDisclosureButton" destination="ihS-v1-lux" id="EFj-HB-vDc"/>
+                                                    <outlet property="spaceDeleteButtonToSuperview" destination="isA-wU-8Hc" id="jMe-tc-acu"/>
+                                                    <outlet property="spacePrinterNameToDisclosureButton" destination="ihS-v1-lux" id="uLB-Ox-5GJ"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
@@ -3480,26 +3483,47 @@
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
+                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qua-l2-VH5" userLabel="Delete" customClass="DeleteButton">
+                                                                        <rect key="frame" x="320" y="5" width="85" height="35"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="85" id="Ea9-az-57y"/>
+                                                                        </constraints>
+                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                        <state key="normal" title="DELETE">
+                                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                                        </state>
+                                                                        <connections>
+                                                                            <action selector="tappedDeleteJob:" destination="KTT-2M-GyJ" eventType="touchUpInside" id="vVv-py-Nlp"/>
+                                                                        </connections>
+                                                                    </button>
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstAttribute="centerY" secondItem="Ot3-gE-1qz" secondAttribute="centerY" id="4Cg-Au-aFy"/>
                                                                     <constraint firstItem="iEn-yQ-oZe" firstAttribute="leading" secondItem="Qa7-a5-2Af" secondAttribute="trailing" id="8gS-rI-itG"/>
                                                                     <constraint firstAttribute="trailing" secondItem="67X-EH-WaZ" secondAttribute="trailing" id="9Ca-EK-7rQ"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="Qua-l2-VH5" secondAttribute="trailing" constant="-85" id="BfG-8f-UKc"/>
                                                                     <constraint firstItem="Qa7-a5-2Af" firstAttribute="leading" secondItem="Ot3-gE-1qz" secondAttribute="trailing" constant="5" id="CMM-d2-ZtH"/>
                                                                     <constraint firstItem="67X-EH-WaZ" firstAttribute="top" secondItem="vvl-VO-Pci" secondAttribute="top" constant="44" id="FqR-KQ-k5v"/>
                                                                     <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="Qa7-a5-2Af" secondAttribute="leading" id="KZF-MQ-B4g"/>
                                                                     <constraint firstAttribute="trailing" secondItem="iEn-yQ-oZe" secondAttribute="trailing" constant="10" id="Os8-mv-XJ0"/>
                                                                     <constraint firstAttribute="centerY" secondItem="Qa7-a5-2Af" secondAttribute="centerY" id="aI8-Vv-ShF"/>
                                                                     <constraint firstAttribute="bottom" secondItem="67X-EH-WaZ" secondAttribute="bottom" id="dB4-5u-OnQ"/>
+                                                                    <constraint firstItem="Qua-l2-VH5" firstAttribute="top" secondItem="vvl-VO-Pci" secondAttribute="top" constant="5" id="hYg-co-WHa"/>
                                                                     <constraint firstAttribute="centerY" secondItem="iEn-yQ-oZe" secondAttribute="centerY" id="kua-Mu-B7i"/>
+                                                                    <constraint firstAttribute="bottom" secondItem="Qua-l2-VH5" secondAttribute="bottom" constant="5" id="q9Y-D6-1F8"/>
                                                                     <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="Ot3-gE-1qz" secondAttribute="trailing" constant="5" id="quX-af-Et1"/>
                                                                     <constraint firstItem="Ot3-gE-1qz" firstAttribute="leading" secondItem="vvl-VO-Pci" secondAttribute="leading" constant="5" id="wg6-2A-7XP"/>
                                                                 </constraints>
                                                             </tableViewCellContentView>
                                                             <connections>
+                                                                <outlet property="deleteButton" destination="Qua-l2-VH5" id="b8k-Db-GJ3"/>
                                                                 <outlet property="name" destination="Qa7-a5-2Af" id="LL9-gf-itM"/>
                                                                 <outlet property="result" destination="Ot3-gE-1qz" id="be9-Ox-p2h"/>
                                                                 <outlet property="separator" destination="67X-EH-WaZ" id="rIF-TF-dOq"/>
+                                                                <outlet property="spaceDeleteButtonToSuperView" destination="BfG-8f-UKc" id="bLq-Bt-UGX"/>
                                                                 <outlet property="timestamp" destination="iEn-yQ-oZe" id="CH5-g6-79d"/>
                                                             </connections>
                                                         </tableViewCell>
@@ -3749,16 +3773,35 @@
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     </label>
+                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hxr-8a-gdW" userLabel="Delete" customClass="DeleteButton">
+                                                                        <rect key="frame" x="320" y="5" width="85" height="35"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="85" id="AFC-3H-AKs"/>
+                                                                        </constraints>
+                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                        <state key="normal" title="DELETE">
+                                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                                        </state>
+                                                                        <connections>
+                                                                            <action selector="tappedDeleteJob:" destination="PlD-vX-hdR" eventType="touchUpInside" id="CcF-LT-LT7"/>
+                                                                        </connections>
+                                                                    </button>
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstAttribute="bottom" secondItem="23C-LC-eEo" secondAttribute="bottom" id="1Pe-qh-CZr"/>
                                                                     <constraint firstItem="WvI-X2-IYn" firstAttribute="leading" secondItem="btZ-rr-6hp" secondAttribute="trailing" id="GcW-4r-h2F"/>
+                                                                    <constraint firstItem="hxr-8a-gdW" firstAttribute="top" secondItem="y9x-zh-hd8" secondAttribute="top" constant="5" id="Sam-Vo-Rgl"/>
                                                                     <constraint firstItem="Mu4-vK-8R3" firstAttribute="leading" secondItem="y9x-zh-hd8" secondAttribute="leading" constant="5" id="aP7-zF-ZlC"/>
                                                                     <constraint firstItem="23C-LC-eEo" firstAttribute="leading" secondItem="btZ-rr-6hp" secondAttribute="leading" id="bfY-Kn-GLe"/>
                                                                     <constraint firstAttribute="centerY" secondItem="Mu4-vK-8R3" secondAttribute="centerY" id="bsP-hE-WBV"/>
                                                                     <constraint firstAttribute="trailing" secondItem="23C-LC-eEo" secondAttribute="trailing" id="di4-7R-O9p"/>
                                                                     <constraint firstAttribute="trailing" secondItem="WvI-X2-IYn" secondAttribute="trailing" constant="10" id="eYx-O6-Lrr"/>
                                                                     <constraint firstItem="23C-LC-eEo" firstAttribute="leading" secondItem="Mu4-vK-8R3" secondAttribute="trailing" constant="5" id="gQR-mJ-6hL"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="hxr-8a-gdW" secondAttribute="trailing" constant="-85" id="hee-9A-cij"/>
+                                                                    <constraint firstAttribute="bottom" secondItem="hxr-8a-gdW" secondAttribute="bottom" constant="5" id="syf-Xc-m1y"/>
                                                                     <constraint firstAttribute="centerY" secondItem="WvI-X2-IYn" secondAttribute="centerY" id="uP5-1e-kKH"/>
                                                                     <constraint firstAttribute="centerY" secondItem="btZ-rr-6hp" secondAttribute="centerY" id="uwN-mZ-OEm"/>
                                                                     <constraint firstItem="23C-LC-eEo" firstAttribute="top" secondItem="y9x-zh-hd8" secondAttribute="top" constant="44" id="vQb-SF-fyM"/>
@@ -3766,9 +3809,11 @@
                                                                 </constraints>
                                                             </tableViewCellContentView>
                                                             <connections>
+                                                                <outlet property="deleteButton" destination="hxr-8a-gdW" id="sie-cF-u4Z"/>
                                                                 <outlet property="name" destination="btZ-rr-6hp" id="qYu-Gw-dpP"/>
                                                                 <outlet property="result" destination="Mu4-vK-8R3" id="S9w-zw-BiE"/>
                                                                 <outlet property="separator" destination="23C-LC-eEo" id="ruf-Tr-LLA"/>
+                                                                <outlet property="spaceDeleteButtonToSuperView" destination="hee-9A-cij" id="vSI-yR-BGU"/>
                                                                 <outlet property="timestamp" destination="WvI-X2-IYn" id="SFa-eI-U0p"/>
                                                             </connections>
                                                         </tableViewCell>
@@ -3935,9 +3980,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="ax2-Mn-NH0"/>
         <segue reference="9FD-bf-FdK"/>
         <segue reference="a4U-VG-JlJ"/>
-        <segue reference="ax2-Mn-NH0"/>
-        <segue reference="CWW-vD-UgO"/>
+        <segue reference="JPo-5o-n9C"/>
     </inferredMetricsTieBreakers>
 </document>
