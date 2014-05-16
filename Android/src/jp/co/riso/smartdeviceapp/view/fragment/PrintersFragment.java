@@ -76,12 +76,12 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mUpdateOnlineStatus = new Runnable() {
             @Override
             public void run() {
-               /* Update online status*/
+                /* Update online status*/
                 updateOnlineStatus();
-               /* Run every 5 seconds */
-               mHandler.postDelayed(this, AppConstants.CONST_UPDATE_INTERVAL);
+                /* Run every 5 seconds */
+                mHandler.postDelayed(this, AppConstants.CONST_UPDATE_INTERVAL);
             }
-         };
+        };
     }
     
     /** {@inheritDoc} */
@@ -179,7 +179,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mPrinterTabletView.setDefaultSettingSelected(state);
         }
     }
-
+    
     /** {@inheritDoc} */
     @Override
     public void clearIconStates() {
@@ -200,6 +200,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (isMaxPrinterCountReached()) {
             return;
         }
+        if (isTablet()){
+            setIconState(ID_MENU_ACTION_SEARCH_BUTTON, true);
+        }
         PrinterSearchFragment fragment = new PrinterSearchFragment();
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH);
     }
@@ -210,6 +213,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private void displayAddPrinterFragment() {
         if (isMaxPrinterCountReached()) {
             return;
+        }
+        if (isTablet()){
+            setIconState(ID_MENU_ACTION_ADD_BUTTON, true);
         }
         AddPrinterFragment fragment = new AddPrinterFragment();
         switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
@@ -259,7 +265,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Updates the online status for the whole view 
+     * Updates the online status for the whole view
      */
     private void updateOnlineStatus() {
         int childCount = 0;
@@ -302,9 +308,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        if (isTablet()){
-                            setIconState(v.getId(), true);
-                        }
                         displayPrinterSearchFragment();
                     } else {
                         activity.closeDrawers();
@@ -316,9 +319,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        if (isTablet()){
-                            setIconState(v.getId(), true);
-                        }
                         displayAddPrinterFragment();
                     } else {
                         activity.closeDrawers();
