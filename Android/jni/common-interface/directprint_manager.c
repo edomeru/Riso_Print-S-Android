@@ -10,7 +10,7 @@
 void print_callback(directprint_job *print_job, int status, float progress);
 
 JNIEXPORT void 
-Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address)
+Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address)
 {
     // Create cache object
     CommonJNIState *state = (CommonJNIState *)malloc(sizeof(CommonJNIState));
@@ -18,11 +18,13 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(J
     state->instance = (*env)->NewGlobalRef(env, object);
 
     // Create direct print job
+    const char *native_user_name = (*env)->GetStringUTFChars(env, user_name, 0);
     const char *native_job_name = (*env)->GetStringUTFChars(env, job_name, 0);
     const char *native_file_name = (*env)->GetStringUTFChars(env, file_name, 0);
     const char *native_print_setting = (*env)->GetStringUTFChars(env, print_setting, 0);
     const char *native_ip_address = (*env)->GetStringUTFChars(env, ip_address, 0);
-    directprint_job *job = directprint_job_new(native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
+
+    directprint_job *job = directprint_job_new(native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
     (*env)->ReleaseStringUTFChars(env, job_name, native_job_name);
     (*env)->ReleaseStringUTFChars(env, file_name, native_file_name);
     (*env)->ReleaseStringUTFChars(env, print_setting, native_print_setting);
@@ -38,12 +40,15 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_finalizeDirectPrint(JNI
 {
     // Get job reference to Java object
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
-    directprint_job *job = (directprint_job *)m_job;
-    CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
-    (*env)->DeleteGlobalRef(env, state->instance);
-    free(state);
-    directprint_job_free(job);
-    (*env)->SetLongField(env, object, dp_job_field_id, 0);
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
+        CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
+        (*env)->DeleteGlobalRef(env, state->instance);
+        free(state);
+        directprint_job_free(job);
+        (*env)->SetLongField(env, object, dp_job_field_id, 0);
+    }
 }
 
 JNIEXPORT void
@@ -51,9 +56,25 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_lprPrint(JNIEnv *env, j
 {
     // Get job reference to Java object
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
-    directprint_job *job = (directprint_job *)m_job;
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
+        
+        directprint_job_lpr_print(job);
+    }
+}
+
+JNIEXPORT void
+Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_rawPrint(JNIEnv *env, jobject object)
+{
+    // Get job reference to Java object
+    jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
+    if (m_job != 0)
+    {
+    	directprint_job *job = (directprint_job *)m_job;
     
-    directprint_job_lpr_print(job);
+    	directprint_job_raw_print(job);
+    }
 }
 
 JNIEXPORT void
@@ -61,9 +82,12 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_cancel(JNIEnv *env, job
 {
     // Get job reference to Java object
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
-    directprint_job *job = (directprint_job *)m_job;
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
 
-    directprint_job_cancel(job);
+        directprint_job_cancel(job);
+    }
 }
 
 // Callback

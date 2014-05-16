@@ -21,6 +21,7 @@ public class SmartDeviceApp extends Application {
     private static volatile Context sContext;
     private static volatile Typeface sAppFont;
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate() {
         SmartDeviceApp.sContext = getApplicationContext();
@@ -30,10 +31,20 @@ public class SmartDeviceApp extends Application {
         initializeSharedPrefs();
     }
 
+    /**
+     * Retrieve the application context
+     * 
+     * @return SmartDeviceAPP context
+     */
     public static Context getAppContext() {
         return SmartDeviceApp.sContext;
     }
 
+    /**
+     * Retrieve the application font
+     * 
+     * @return SmartDeviceAPP font
+     */
     public static Typeface getAppFont() {
         return SmartDeviceApp.sAppFont;
     }
@@ -48,7 +59,6 @@ public class SmartDeviceApp extends Application {
         
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
-        hashMap.put(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE);
         
         for (String key : hashMap.keySet()) {
             String val = hashMap.get(key);
@@ -57,6 +67,6 @@ public class SmartDeviceApp extends Application {
             }
         }
         
-        editor.commit();
+        editor.apply();
     }
 }

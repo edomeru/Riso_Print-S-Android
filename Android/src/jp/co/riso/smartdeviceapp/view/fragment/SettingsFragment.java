@@ -15,21 +15,18 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class SettingsFragment extends BaseFragment {
-    
-    public static final int LOGIN_ID_LIMIT = 128;
-    public static final int PIN_CODE_LIMIT = 8;
     
     /** {@inheritDoc} */
     @Override
@@ -51,25 +48,27 @@ public class SettingsFragment extends BaseFragment {
         
         EditText editText = (EditText) view.findViewById(R.id.loginIdEditText);
         
+        editText.setActivated(true);
         editText.setText(prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID));
         editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_LOGIN_ID));
 
         filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(LOGIN_ID_LIMIT),
+                new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT),
                 new AlphaNumericFilter()
         };
         editText.setFilters(filterArray);
         
-        editText = (EditText) view.findViewById(R.id.pinCodeEditText);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        
-        editText.setText(prefs.getString(AppConstants.PREF_KEY_PIN_CODE, AppConstants.PREF_DEFAULT_PIN_CODE));
-        editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_PIN_CODE));
-        filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(PIN_CODE_LIMIT)
-        };
-        editText.setFilters(filterArray);
+        if (!isTablet()) {
+            Point screenSize = AppUtils.getScreenDimensions(getActivity());
+            View rootView = view.findViewById(R.id.rootView);
+            if (rootView == null) {
+                return;
+            }
+            ViewGroup.LayoutParams params = rootView.getLayoutParams();
+            if (screenSize.x > screenSize.y) {
+                params.width = screenSize.y;
+            }
+        }
     }
     
     /** {@inheritDoc} */
@@ -101,6 +100,14 @@ public class SettingsFragment extends BaseFragment {
         private Context mContext;
         private String mPrefKey;
         
+        /**
+         * Constructor
+         * 
+         * @param context
+         *            Context
+         * @param prefKey
+         *            Shared preference key
+         */
         public SharedPreferenceTextWatcher(Context context, String prefKey) {
             mContext = context;
             mPrefKey = prefKey;
@@ -112,7 +119,7 @@ public class SettingsFragment extends BaseFragment {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(mPrefKey, s.toString());
-            editor.commit();
+            editor.apply();
         }
 
         /** {@inheritDoc} */

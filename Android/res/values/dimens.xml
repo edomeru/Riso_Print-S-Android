@@ -33,6 +33,7 @@
     <dimen name="printsettings_list_value_width">180dp</dimen>
     <dimen name="printsettings_separator_padding">40dp</dimen>
     <dimen name="printsettings_input_width">80dp</dimen>
+    <dimen name="printsettings_input_pincode_width">120dp</dimen>
     <dimen name="printsettings_input_padding_lr">8dp</dimen>
     <dimen name="printsettings_input_padding_tb">6dp</dimen>
     <dimen name="printsettings_input_text_size">16dp</dimen>
@@ -57,8 +58,8 @@
     <dimen name="preview_logo_margin">24dp</dimen>
         
     <dimen name="printjob_column_margin_side">16dp</dimen>
-    <dimen name="printjob_margin_side">2dp</dimen>
-    <dimen name="printjob_margin_top">4dp</dimen>
+    <dimen name="printjob_padding_side">4dp</dimen>
+    <dimen name="printjob_margin_top">8dp</dimen>
     <dimen name="printjob_status_padding_side">10dp</dimen>
     <dimen name="printjob_dateframe_padding_side">5dp</dimen>
     <dimen name="printjob_delbtn_padding_side">20dp</dimen>
@@ -68,6 +69,7 @@
     <dimen name="printjob_row_height">52dp</dimen>
     <dimen name="printjob_icon_width">30dp</dimen>
     <dimen name="printjob_groupicon_width">12dp</dimen>
+    <dimen name="printjob_separator_padding">50dp</dimen>
 
     <dimen name="splash_logo_width">256dp</dimen>
     <dimen name="splash_logo_height">32dp</dimen>

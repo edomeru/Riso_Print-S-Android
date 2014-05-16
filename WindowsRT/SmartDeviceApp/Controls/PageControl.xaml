@@ -1,0 +1,37 @@
+﻿<UserControl x:Name="pageControl"
+    x:Class="SmartDeviceApp.Controls.PageControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Controls"
+    xmlns:controls="clr-namespace:SmartDeviceApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    
+    <UserControl.Resources>
+        <Style x:Key="STYLE_PageImageBorder" TargetType="Border">
+            <Style.Setters>
+                <Setter Property="BorderBrush" Value="{StaticResource BRUSH_White}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="Auto"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="STYLE_PageImage" TargetType="Image" BasedOn="{StaticResource STYLE_AlignCenter}">
+            <Style.Setters>
+                <Setter Property="Stretch" Value="Uniform"/>
+                <!--<Setter Property="Visibility" Value="Collapsed"/>-->
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid x:Name="pageGrid" 
+          Visibility="{Binding ElementName=pageControl, Path=Visibility}"
+          HorizontalAlignment="{Binding ElementName=pageControl, Path=HorizontalAlignment}"
+          Margin="{Binding ElementName=pageControl, Path=Margin}">
+        <Border x:Name="pageBorder" Style="{StaticResource STYLE_PageImageBorder}">
+            <Image x:Name="pageImage" Source="{Binding ElementName=pageControl, Path=Image}" Style="{StaticResource STYLE_PageImage}" />
+        </Border>        
+    </Grid>
+    
+</UserControl>

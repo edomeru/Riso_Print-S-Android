@@ -1,2 +1,8 @@
 # OS X
 .DS_Store
+WindowsRT/ARM
+WindowsRT/DirectPrintSettings/ARM
+WindowsRT/SmartDeviceApp.opensdf
+WindowsRT/SmartDeviceApp.sdf
+WindowsRT/Debug/
+WindowsRT/DirectPrintSettings/Debug/

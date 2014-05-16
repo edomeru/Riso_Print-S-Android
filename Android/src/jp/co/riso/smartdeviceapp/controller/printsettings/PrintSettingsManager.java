@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.controller.printsettings;
 
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import android.content.ContentValues;
@@ -21,10 +22,19 @@ public class PrintSettingsManager {
     
     private DatabaseManager mManager;
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     */
     private PrintSettingsManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
+    /**
+     * @param context
+     * @return PrintSettingsManager instance
+     */
     public static PrintSettingsManager getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new PrintSettingsManager(context);
@@ -55,7 +65,7 @@ public class PrintSettingsManager {
                         printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
                         break;
                     case Setting.TYPE_BOOLEAN:
-                        printSettings.setValue(key, Boolean.parseBoolean(DatabaseManager.getStringFromCursor(c, setting.getDbKey())) ? 1 : 0);
+                        printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
                         break;
                 }
             }
@@ -76,17 +86,20 @@ public class PrintSettingsManager {
      * @return boolean result of insert/replace to DB, returns true if successful.
      */
     public boolean saveToDB(int printerId, PrintSettings printSettings) {
+        if (printerId == PrinterManager.EMPTY_ID || printSettings == null) {
+            return false;
+        }
+        
         boolean result = false;
         // save to PrintSetting table
         long rowid = mManager.insertOrReplace(KeyConstants.KEY_SQL_PRINTSETTING_TABLE, null,
                 createContentValues(printerId, printSettings));
-        
         // update pst_id of Printer table
         if (rowid != -1) {
             ContentValues cv = new ContentValues();
             cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, rowid);
             result = mManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv,
-                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] { String.valueOf(printerId) });
+                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
         }
         
         mManager.close();
@@ -110,15 +123,9 @@ public class PrintSettingsManager {
             Setting setting = PrintSettings.sSettingMap.get(key);
             String dbKey = setting.getDbKey();
             
-            switch (setting.getType()) {
-                case Setting.TYPE_LIST:
-                case Setting.TYPE_NUMERIC:
-                    cv.put(dbKey, printSettings.getValue(key));
-                    break;
-                case Setting.TYPE_BOOLEAN:
-                    cv.put(dbKey, printSettings.getValue(key) == 1 ? true : false);
-                    break;
-            }
+            // no need to convert since BOOL is also stored as integer in SQLite DB
+            // http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
+            cv.put(dbKey, printSettings.getValue(key));
         }
         
         // get pst_id of the current printer
@@ -127,8 +134,8 @@ public class PrintSettingsManager {
         
         if (c.moveToFirst()) {
             if (!c.isNull(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTSETTING_ID))) {
-                int pst_id = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
-                cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pst_id);
+                int pstId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
+                cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pstId);
             }
         }
         

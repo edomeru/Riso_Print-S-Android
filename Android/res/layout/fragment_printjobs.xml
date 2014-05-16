@@ -28,7 +28,10 @@
                 <jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
                     android:id="@+id/printJobsView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content" 
+                    android:orientation="horizontal" 
+                    android:gravity="center_horizontal"
+                    >
                 </jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView>
                 
             </LinearLayout>

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="12E55" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3400" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="DefaultPrinter" representedClassName="DefaultPrinter" syncable="YES">
         <relationship name="printer" maxCount="1" deletionRule="Nullify" destinationEntity="Printer" inverseName="defaultprinter" inverseEntity="Printer" syncable="YES"/>
     </entity>
     <entity name="Printer" representedClassName="Printer" syncable="YES">
-        <attribute name="enabled_bind" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="enabled_booklet_binding" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="enabled_duplex" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_booklet" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_finisher_2_3_holes" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_finisher_2_4_holes" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_lpr" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="enabled_pagination" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_raw" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_staple" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_tray_auto_stacking" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_tray_face_down" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_tray_stacking" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_tray_top" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="ip_address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="onlineStatus" transient="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -26,22 +29,24 @@
         <relationship name="printer" maxCount="1" deletionRule="Nullify" destinationEntity="Printer" inverseName="printjob" inverseEntity="Printer" syncable="YES"/>
     </entity>
     <entity name="PrintSetting" representedClassName="PrintSetting" syncable="YES">
-        <attribute name="bind" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="booklet_binding" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="booklet_tray" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="catch_tray" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="color_mode" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="copies" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="duplex" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="image_quality" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="pagination" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="paper_size" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="paper_type" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="booklet" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="bookletFinish" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="bookletLayout" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="colorMode" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="copies" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="duplex" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="finishingSide" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="imposition" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="impositionOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="inputTray" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="orientation" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="outputTray" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="paperSize" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="paperType" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="punch" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scaleToFit" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="sort" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="staple" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="zoom" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="zoom_rate" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="printer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Printer" inverseName="printsetting" inverseEntity="Printer" syncable="YES"/>
     </entity>
     <elements>

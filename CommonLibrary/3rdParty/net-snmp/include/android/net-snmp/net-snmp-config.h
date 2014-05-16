@@ -241,7 +241,9 @@
 /* #undef HAVE_GETVFSSTAT */
 
 /* Define to 1 if you have the <grp.h> header file. */
+/* #undef HAVE_GRP_H */
 //#define HAVE_GRP_H 1
+
 
 /* Define to 1 if you have the `hasmntopt' function. */
 /* #undef HAVE_HASMNTOPT */
@@ -287,6 +289,7 @@
 
 /* Define to 1 if the system has the type `in_addr_t'. */
 /* #undef HAVE_IN_ADDR_T */
+#define HAVE_IN_ADDR_T 1
 
 /* Define to 1 if you have the <ioctls.h> header file. */
 /* #undef HAVE_IOCTLS_H */
@@ -637,7 +640,6 @@
 /* #undef HAVE_RAND */
 
 /* Define to 1 if you have the `random' function. */
-/* #undef HAVE_RANDOM */
 #define HAVE_RANDOM 1
 
 /* Define to 1 if you have the `readdir' function. */
@@ -1307,13 +1309,6 @@
 /* sysctl works to get boottime, etc... */
 /* #undef NETSNMP_CAN_USE_SYSCTL */
 
-/* configure options specified */
-#define NETSNMP_CONFIGURE_OPTIONS " 'CFLAGS=-mthumb' 'LDFLAGS=-Bstatic' '--prefix=/Users/seph/Repos/temp-/net-snmp/' '--with-sys-contact=@@.no.where' '--with-sys-location=Unknown' '--with-logfile=/var/log/snmpd.log' '--with-persistent-directory=/var/net-snmp' '--enable-mini-agent' '--disable-perl' '--without-perl-modules' '--disable-scripts' '--disable-embedded-perl' '--disable-perl-cc-checks' '--disable-agent' '--disable-applications' '--disable-shared' '--with-out-mib-modules=mibII/vacm_conf,mibII/vacm_vars' '--with-openssl=internal' '--host=arm-linux-androideabi' '--enable-shared=no' '--enable-ipv6' 'host_alias=arm-linux-androideabi' 'CC=arm-linux-androideabi-clang'"
-
-/* default location to look for mibs to load using the above tokens and/or
-   those in the MIBS envrionment variable */
-#define NETSNMP_DEFAULT_MIBDIRS "$HOME/.snmp/mibs:/Users/seph/Repos/temp-/net-snmp/share/snmp/mibs"
-
 /* default mib files to load, specified by path. */
 /* #undef NETSNMP_DEFAULT_MIBFILES */
 
@@ -1330,7 +1325,7 @@
 /* #undef NETSNMP_DISABLE_MD5 */
 
 /* Define if mib loading and parsing code should not be included */
-/* #undef NETSNMP_DISABLE_MIB_LOADING */
+#define NETSNMP_DISABLE_MIB_LOADING 1
 
 /* Define if SNMP SET support should be disabled */
 /* #undef NETSNMP_DISABLE_SET_SUPPORT */
@@ -1392,7 +1387,7 @@
 /* #undef NETSNMP_NO_ROOT_ACCESS */
 
 /* Define if you want to remove all SET/write access from the code */
-/* #undef NETSNMP_NO_WRITE_SUPPORT */
+#define NETSNMP_NO_WRITE_SUPPORT 1
 
 /* umask permissions to set up persistent files with */
 #define NETSNMP_PERSISTENT_MASK 077
@@ -1751,15 +1746,9 @@
 /* #undef NETSNMP_DEFAULT_CLIENT_SEND_BUF */
 /* #undef NETSNMP_DEFAULT_CLIENT_RECV_BUF */
 
-/* net-snmp's major path names */
-#define SNMPLIBPATH "/Users/seph/Repos/temp-/net-snmp/lib/snmp"
-#define SNMPSHAREPATH "/Users/seph/Repos/temp-/net-snmp/share/snmp"
-#define SNMPCONFPATH "/Users/seph/Repos/temp-/net-snmp/etc/snmp"
-#define SNMPDLMODPATH "/Users/seph/Repos/temp-/net-snmp/lib/snmp/dlmod"
-
 /* NETSNMP_LOGFILE:  If defined it closes stdout/err/in and opens this in 
    out/err's place.  (stdin is closed so that sh scripts won't wait for it) */
-#define NETSNMP_LOGFILE "/var/log/snmpd.log"
+/* #undef NETSNMP_LOGFILE */
 
 /* default system contact */
 #define NETSNMP_SYS_CONTACT "@@.no.where"

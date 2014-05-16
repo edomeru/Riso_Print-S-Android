@@ -71,6 +71,10 @@ public class PauseableHandler extends Handler {
         }
     }
     
+    /**
+     * @param what
+     * @return true if there are any pending posts of messages with code 'what' in the message queue.
+     */
     final public boolean hasStoredMessage(int what) {
         boolean contains = hasMessages(what);
         

@@ -33,9 +33,9 @@ namespace SNMP
         public const byte SNMP_SNMPV2_TRAP            = 0xA7;
 
 
-        public const byte SNMP_BROADCAST_SEND_TIMEOUT         = 20;
-        public const byte SNMP_GETCAPABILITY_SEND_TIMEOUT     = 20;
-        public const byte SNMP_GETCAPABILITY_RECEIVE_TIMEOUT  = 20;
+        public const byte SNMP_BROADCAST_SEND_TIMEOUT         = 10;
+        public const byte SNMP_GETCAPABILITY_SEND_TIMEOUT     = 10;
+        public const byte SNMP_GETCAPABILITY_RECEIVE_TIMEOUT  = 10;
 
         enum SNMPRequestError
         {
@@ -59,6 +59,19 @@ namespace SNMP
         public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANG       = "1.3.6.1.2.1.43.15.1.1.2";
         public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGLEVEL  = "1.3.6.1.2.1.43.15.1.1.3";
 
+        //marjun
+        public const string MIB_GETNEXTOID_SYSID = "1.3.6.1.2.1.1.2"; // sysObjectId
+        public const string MIB_GETNEXTOID_SYSDESC = "1.3.6.1.2.1.1.1"; // sysDescr
+        public const string MIB_GETNEXTOID_GENERALNAME = "1.3.6.1.4.1.24807.1.2.1.1.1"; // ijGeneralName
+        public const string MIB_GETNEXTOID_BOOKLET = "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.3"; // Booklet unit
+        public const string MIB_GETNEXTOID_STAPLER = "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.20"; // Stapler
+        public const string MIB_GETNEXTOID_4HOLES = "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.1"; // Finisher 2/4 holes
+        public const string MIB_GETNEXTOID_3HOLES = "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.2"; // Finisher 2/3 holes
+        public const string MIB_GETNEXTOID_TRAY_FACEDOWN = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.1"; // Tray face-down
+        public const string MIB_GETNEXTOID_TRAY_AUTO = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.2"; // Tray auto-stacking
+        public const string MIB_GETNEXTOID_TRAY_TOP = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.3"; // Tray top
+        public const string MIB_GETNEXTOID_TRAY_STACK = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.4"; // Tray stack
+
         // For OID tokens greater than 127
         public const int SNMP_2_EXP_7                = 128;
         public const int SNMP_2_EXP_14               = 16384;
@@ -76,7 +89,7 @@ namespace SNMP
         public const string KEY_OID                     = "oid";
         public const string KEY_VAL                     = "val";
 
-        public const string BROADCAST_ADDRESS           = "255.255.255.255";
+        public const string BROADCAST_ADDRESS = "255.255.255.255";//"192.168.0.255";//
 
         public const string DEFAULT_COMMUNITY_NAME               = "public";
         public const string READ_COMMUNITY_NAME_SPECIAL_CHARS    = " \\'#\"";

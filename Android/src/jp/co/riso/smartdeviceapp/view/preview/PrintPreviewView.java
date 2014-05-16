@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp.view.preview;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
@@ -37,14 +38,17 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.widget.FrameLayout;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 
-public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener {
+public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener, OnGestureListener, OnDoubleTapListener {
     public static final String TAG = "PrintPreviewView";
     
     private static final float DEFAULT_MARGIN_IN_MM = 0;
@@ -89,26 +93,52 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // Zoom/pan related variables
     
     private ScaleGestureDetector mScaleDetector;
+    private GestureDetector mDoubleTapDetector;
     private float mZoomLevel = BASE_ZOOM_LEVEL;
     
     private int mPtrIdx = INVALID_IDX;
     private PointF mPtrDownPos = new PointF();
     private PointF mPtrLastPos = new PointF();
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     *            Context
+     * @param attrs
+     *            Attributes
+     * @param defStyle
+     *            Default style
+     */
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     *            Context
+     * @param attrs
+     *            Attributes
+     */
     public PrintPreviewView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     *            Context
+     */
     public PrintPreviewView(Context context) {
         super(context);
         init();
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
@@ -119,37 +149,57 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
     }
     
+    /**
+     * Initialize PrintPreviewView
+     */
     public void init() {
         if (!isInEditMode()) {
             mPrintSettings = new PrintSettings(); // Should not be null
             mScaleDetector = new ScaleGestureDetector(getContext(), this);
+            mDoubleTapDetector = new GestureDetector(getContext(), this);
+            mDoubleTapDetector.setOnDoubleTapListener(this);
             
             initializeCurlView();
             loadResources();
         }
     }
     
+    /**
+     * Inform the curl view that the activity is paused. 
+     */
     public void onPause() {
         mCurlView.onPause();
     }
     
+    /**
+     * Inform the curl view that the activity is resumed. 
+     */
     public void onResume() {
         mCurlView.onResume();
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return true;
     }
     
-    public void processTouchEvent(MotionEvent ev) {
+    /**
+     * Process touch event
+     *
+     * @param ev
+     */
+    public boolean processTouchEvent(MotionEvent ev) {
         if (ev.getPointerCount() == 1) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (mPtrIdx == INVALID_IDX) {
-                        mPtrIdx = ev.getActionIndex();
-                        mPtrDownPos.set(ev.getX(), ev.getY());
-                        mPtrLastPos.set(ev.getX(), ev.getY());
+                        if (mCurlView.isViewHit(ev.getX(), ev.getY())) {
+                            mPtrIdx = ev.getActionIndex();
+                            mPtrDownPos.set(ev.getX(), ev.getY());
+                            mPtrLastPos.set(ev.getX(), ev.getY());
+                            return true;
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -158,42 +208,43 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         mCurlView.requestRender();
                         
                         mPtrLastPos.set(ev.getX(), ev.getY());
+                        return true;
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     mPtrIdx = -1;
-                    break;
+                    return true;
             }
         }
+        return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         mScaleDetector.onTouchEvent(ev);
         
         if (!mScaleDetector.isInProgress() && ev.getPointerCount() == 1) {
             if (mZoomLevel == BASE_ZOOM_LEVEL) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    getChildAt(i).dispatchTouchEvent(ev);
-                }                
+                return mCurlView.dispatchTouchEvent(ev);
             } else {
-                processTouchEvent(ev);
+                if (mDoubleTapDetector.onTouchEvent(ev)) {
+                    return true;
+                }
+                return processTouchEvent(ev);
             }
-        } else {
-            MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
-                    SystemClock.uptimeMillis(), 
-                    MotionEvent.ACTION_CANCEL, 
-                    ev.getX(), ev.getY(), 0);
-            
-            processTouchEvent(e);
-            
-            for (int i = 0; i < getChildCount(); i++) {
-                getChildAt(i).dispatchTouchEvent(e);
-            }
-            
-            e.recycle();
         }
+        
+        MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
+                SystemClock.uptimeMillis(), 
+                MotionEvent.ACTION_CANCEL, 
+                ev.getX(), ev.getY(), 0);
+        
+        processTouchEvent(e);
+        mCurlView.dispatchTouchEvent(e);
+        
+        e.recycle();
         
         return true;
     }
@@ -202,24 +253,45 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // Public methods
     // ================================================================================
     
+    /**
+     * Load Bitmap resources such as staple and punch
+     */
     public void loadResources() {
         mStapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_staple);
         mPunchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_punch);
     }
     
+    /**
+     * Free the native object associated with the Bitmap loaded by method loadResources()
+     */
     public void freeResources() {
         mStapleBmp.recycle();
         mPunchBmp.recycle();
     }
     
+    /**
+     * Request that the curl view renderer render a frame.
+     */
     public void refreshView() {
         mCurlView.requestRender(); 
     }
     
+    /**
+     * Sets the PDF Manager
+     * 
+     * @param pdfManager
+     *            PDF Manager
+     */
     public void setPdfManager(PDFFileManager pdfManager) {
         mPdfManager = pdfManager;
     }
     
+    /**
+     * Set the Print Settings
+     * 
+     * @param printSettings
+     *            Print Settings
+     */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = printSettings;
         
@@ -232,10 +304,19 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.requestLayout();
     }
     
+    /**
+     * Set the Bitmap Cache
+     * 
+     * @param bmpCache
+     *            Bitmap cache
+     */
     public void setBmpCache(LruCache<String, Bitmap> bmpCache) {
         mBmpCache = bmpCache;
     }
     
+    /**
+     * Set the default margins
+     */
     public void setDefaultMargins() {
         setMarginLeftInMm(DEFAULT_MARGIN_IN_MM);
         setMarginRightInMm(DEFAULT_MARGIN_IN_MM);
@@ -243,64 +324,134 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         setMarginBottomInMm(DEFAULT_MARGIN_IN_MM);
     }
     
+    /**
+     * Set the Left Margin
+     * 
+     * @param marginLeft
+     *            Left margin
+     */
     public void setMarginLeftInMm(float marginLeft) {
         mMarginLeft = marginLeft;
     }
     
+    /**
+     * Set the Right Margin
+     * 
+     * @param marginRight
+     *            Right margin
+     */
     public void setMarginRightInMm(float marginRight) {
         mMarginRight = marginRight;
     }
     
+    /**
+     * Set the Top Margin
+     * 
+     * @param marginTop
+     *            Top margin
+     */
     public void setMarginTopInMm(float marginTop) {
         mMarginTop = marginTop;
     }
     
+    /**
+     * Set the Bottom Margin
+     * 
+     * @param marginBottom
+     *            Bottom margin
+     */
     public void setMarginBottomInMm(float marginBottom) {
         mMarginBottom = marginBottom;
     }
     
+    /**
+     * Set the Preview Controls Listener
+     * 
+     * @param listener
+     *            Preview Controls listener
+     */
     public void setListener(PreviewControlsListener listener) {
         mListener = listener;
     }
     
+    /**
+     * Checks if last page curl is allowed
+     * 
+     * @return true is last page curl is allowed
+     */
     public boolean getAllowLastPageCurl() {
         return mCurlView.getAllowLastPageCurl();
     }
     
+    /**
+     * @return current curl page index
+     */
     public int getCurrentPage() {
         return mCurlView.getCurrentIndex();
     }
     
+    /**
+     * Set current curl page index
+     * 
+     * @param page
+     *            page index
+     */
     public void setCurrentPage(int page) {
         mCurlView.setCurrentIndex(page);
     }
     
-    public int getPageCount() {
+    /**
+     * @return faces count
+     */
+    public int getFaceCount() {
         if (mPdfManager == null) {
             return 0;
         }
         
         // will depend on PDF and pagination, always false for now
         int count = mPdfManager.getPageCount();
-        
-        if (isTwoPageDisplayed()) {
-            count = (int) Math.ceil(count / 2.0f);
-        }
-        
         count = (int) Math.ceil(count / (double) getPagesPerSheet());
-        
-        if (mPrintSettings.isBooklet()) {
-            int modulo = count % 2;
-            if (count > 0) {
-                count = count + 2 - modulo;
+
+        if (isTwoPageDisplayed()) {
+            count = AppUtils.getNextIntegerMultiple(count, 2);
+            
+            if (mPrintSettings.isBooklet()) {
+                count = AppUtils.getNextIntegerMultiple(count, 4);
             }
         }
         
         return count;
     }
-    
+
+    /**
+     * @return page count
+     */
+    public int getPageCount() {
+        int count = PrintPreviewView.this.getFaceCount();
+        if (isTwoPageDisplayed()) {
+            count = (int) Math.ceil(count / 2.0f);
+        }
+        return count;
+    }
+
+    /**
+     * @return page string
+     */
     public String getPageString() {
+        int currentFace = getCurrentPage();
+        if (isTwoPageDisplayed()) {
+            currentFace *= 2;
+        }
+        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || currentFace == 0)  {
+            currentFace++;
+        }
+        
+        int faceCount = getFaceCount();
+
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
+
+        return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
+        /*
         final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
 
         int currentPage = getCurrentPage();
@@ -313,8 +464,14 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         } else {
             return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
         }
+        */
     }
     
+    /**
+     * Checks if zoom is base zoom
+     * 
+     * @return true if zoom level is equal to BASE_ZOOM_LEVEL
+     */
     public boolean isBaseZoom() {
         return mZoomLevel == BASE_ZOOM_LEVEL;
     }
@@ -323,25 +480,15 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // Protected methods
     // ================================================================================
     
-    protected int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
-        float ratioSrc = srcWidth / srcHeight;
-        float ratioDest = (float) destWidth / destHeight;
-        
-        int newWidth = 0;
-        int newHeight = 0;
-        
-        if (ratioDest > ratioSrc) {
-            newHeight = destHeight;
-            newWidth = (int) (destHeight * ratioSrc);
-            
-        } else {
-            newWidth = destWidth;
-            newHeight = (int) (destWidth / ratioSrc);
-        }
-        
-        return new int[] { newWidth, newHeight };
-    }
-    
+    /**
+     * Get curl view dimensions
+     * 
+     * @param screenWidth
+     *            Screen width
+     * @param screenHeight
+     *            Screen height
+     * @return curl view width and height
+     */
     protected int[] getCurlViewDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
         float paperDisplaySize[] = getPaperDisplaySize();
@@ -357,16 +504,30 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
-        return getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
+        return AppUtils.getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
     
+    /**
+     * Get paper dimensions
+     * 
+     * @param screenWidth
+     *            Screen width
+     * @param screenHeight
+     *            Screen height
+     * @return paper width and height
+     */
     protected int[] getPaperDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
         float paperDisplaySize[] = getPaperDisplaySize();
         
-        return getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
+        return AppUtils.getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
     
+    /**
+     * @param index
+     * @param side
+     * @return cache key
+     */
     protected String getCacheKey(int index, int side) {
         StringBuffer buffer = new StringBuffer();
         buffer.append(mPdfManager.getPath());
@@ -393,6 +554,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return buffer.toString();
     }
     
+    /**
+     * @param index
+     * @param width
+     * @param height
+     * @return bitmaps from cache
+     */
     protected Bitmap[] getBitmapsFromCacheForPage(int index, int width, int height) {
         Bitmap front = null;
         Bitmap back = null;
@@ -413,6 +580,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return new Bitmap[] { front, back };
     }
     
+    /**
+     * @param dimension
+     * @param bmpWidth
+     * @return converted dimension
+     */
     protected int convertDimension(float dimension, int bmpWidth) {
         return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
     }
@@ -421,6 +593,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // Preview Related functions
     // ================================================================================
     
+    /**
+     * Check if should display landscape
+     * 
+     * @return true if should display landscape
+     */
     private boolean shouldDisplayLandscape() {
         boolean flipToLandscape = (mPrintSettings.getOrientation() == Orientation.LANDSCAPE);
         
@@ -433,6 +610,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return flipToLandscape;
     }
     
+    /**
+     * @return paper display width and height
+     */
     private float[] getPaperDisplaySize() {
         float width = mPrintSettings.getPaperSize().getWidth();
         float height = mPrintSettings.getPaperSize().getHeight();
@@ -449,6 +629,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return (new float[] {width, height});
     }
     
+    /**
+     * @return pages per sheet
+     */
     public int getPagesPerSheet() {
         if (mPrintSettings.isBooklet()) {
             return 1;
@@ -457,6 +640,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return mPrintSettings.getImposition().getPerPage();
     }
     
+    /**
+     * @return columns per sheet
+     */
     public int getColsPerSheet() {
         if (mPrintSettings.isBooklet()) {
             return 1;
@@ -469,6 +655,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return mPrintSettings.getImposition().getCols();
     }
     
+    /**
+     * @return rows per sheet
+     */
     public int getRowsPerSheet() {
         if (mPrintSettings.isBooklet()) {
             return 1;
@@ -481,14 +670,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return mPrintSettings.getImposition().getRows();
     }
     
+    /**
+     * Setup curl page view
+     */
     private void setupCurlPageView() {
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
         
-        if (getPageCount() > 1 && isTwoPageDisplayed()) {
+        if (getFaceCount() > 1 && isTwoPageDisplayed()) {
             twoPage = true;
-            
-            if (getCurrentPage() % 2 == 0) {
+            if (getFaceCount() % 2 == 0) {
                 allowLastPageCurl = true;
             }
         }
@@ -504,6 +695,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setAllowLastPageCurl(allowLastPageCurl);
     }
     
+    /**
+     * Check if two page display is enabled
+     * 
+     * @return true if two page display is enabled
+     */
     private boolean isTwoPageDisplayed() {
         if (mPrintSettings.isBooklet()) {
             return true;
@@ -512,6 +708,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return (mPrintSettings.getDuplex() != Duplex.OFF);
     }
     
+    /**
+     * Setup curl bind
+     */
     private void setupCurlBind() {
         int bindPosition = CurlView.BIND_LEFT;
         
@@ -540,10 +739,20 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setBindPosition(bindPosition);
     }
     
+    /**
+     * Check if colored display is enabled
+     * 
+     * @return true if colored display is enabled
+     */
     private boolean shouldDisplayColor() {
         return (mPrintSettings.getColorMode() != ColorMode.MONOCHROME);
     }
     
+    /**
+     * Check if display vertical flip is enabled
+     * 
+     * @return true if display vertical flip is enabled
+     */
     private boolean isVerticalFlip() {
         boolean verticalFlip = true;
         
@@ -562,6 +771,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // View-related methods
     // ================================================================================
     
+    /**
+     * Initialize curl view
+     */
     private void initializeCurlView() {
         mCurlView = new CurlView(getContext());
         mCurlView.setMargins(0, 0, 0, 0);
@@ -581,6 +793,18 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         addView(mCurlView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
     
+    /**
+     * Layout curl view to fit screen
+     * 
+     * @param l
+     *            left
+     * @param t
+     *            top
+     * @param r
+     *            right
+     * @param b
+     *            bottom
+     */
     private void fitCurlView(int l, int t, int r, int b) {
         int w = r - l;
         int h = b - t;
@@ -603,13 +827,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
     
-    // ================================================================================
-    // INTERFACE - OnScaleGestureListener
-    // ================================================================================
-    
-    @Override
-    public boolean onScale(ScaleGestureDetector detector) {
-        mZoomLevel  = mZoomLevel * detector.getScaleFactor();
+    private void setZoomLevel(float zoomLevel) {
+        mZoomLevel  = zoomLevel;
         if (mZoomLevel <= BASE_ZOOM_LEVEL) {
             mZoomLevel = BASE_ZOOM_LEVEL;
         }
@@ -623,16 +842,89 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         mCurlView.setZoomLevel(mZoomLevel);
         mCurlView.requestRender();
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnDoubleTapListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        setZoomLevel(BASE_ZOOM_LEVEL);
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnGestureListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onLongPress(MotionEvent e) {
         
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnScaleGestureListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        setZoomLevel(mZoomLevel * detector.getScaleFactor());
         return true;
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
         // Return true to begin scale
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
     }
@@ -643,11 +935,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     private class PDFPageProvider implements CurlView.PageProvider {
         
+        /** {@inheritDoc} */
         @Override
         public int getPageCount() {
             return PrintPreviewView.this.getPageCount();
         }
         
+        /** {@inheritDoc} */
         @Override
         public void updatePage(CurlPage page, int width, int height, int index) {
             page.setColor(getResources().getColor(R.color.bg_paper), CurlPage.SIDE_FRONT);
@@ -678,6 +972,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        /** {@inheritDoc} */
         @Override
         public void indexChanged(int index) {
             if (mListener != null) {
@@ -694,6 +989,20 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         private int mIndex;
         private Bitmap mRenderBmps[];
         
+        /**
+         * Constructor
+         * 
+         * @param page
+         *            curl page
+         * @param width
+         *            width
+         * @param height
+         *            height
+         * @param index
+         *            index
+         * @param handler
+         *            handler
+         */
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
             mCurlPageRef = new WeakReference<CurlPage>(page);
             mHandlerRef = new WeakReference<Object>(handler);
@@ -702,6 +1011,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             mIndex = index;
         }
         
+        /** {@inheritDoc} */
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -718,6 +1028,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             return null;
         }
         
+        /** {@inheritDoc} */
         @Override
         protected void onPostExecute(Void param) {
             if (mHandlerRef.get() != null && mCurlPageRef.get() != null) {
@@ -730,6 +1041,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        /**
+         * Draw crease to the canvas
+         * 
+         * @param canvas
+         */
         private void drawCrease(Canvas canvas) {
             Paint paint = new Paint();
             paint.setStrokeWidth(CREASE_SIZE);
@@ -760,7 +1076,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             paint.setPathEffect(new DashPathEffect(new float[] {CREASE_DARK_LENGTH, CREASE_WHITE_LENGTH}, 0));
             canvas.drawLine(fromX, fromY, toX, toY, paint);
         }
-        
+
+        /**
+         * Draw staple images to the canvas
+         * 
+         * @param canvas
+         */
         private void drawStapleImages(Canvas canvas) {
             int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
             float scale = stapleLength / (float) mStapleBmp.getWidth();
@@ -825,6 +1146,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        /**
+         * Draw punch images to the canvas
+         * 
+         * @param canvas
+         */
         private void drawPunchImages(Canvas canvas) {
             int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
             float scale = punchDiameter / (float) mPunchBmp.getWidth();
@@ -849,6 +1175,15 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        /**
+         * Get begin positions
+         * 
+         * @param paperWidth
+         * @param paperHeight
+         * @param pageWidth
+         * @param pageHeight
+         * @return x-axis and y-axis beginning position
+         */
         private int[] getBeginPositions(int paperWidth, int paperHeight, int pageWidth, int pageHeight) {
             int beginX = 0;
             int beginY = 0;
@@ -865,6 +1200,15 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             return (new int[] {beginX, beginY});
         }
         
+        /**
+         * Draw PDF pages on bitmap
+         * 
+         * @param bmp
+         * @param beginIndex
+         * @param drawCrease
+         * @param flipX
+         * @param flipY
+         */
         private void drawPDFPagesOnBitmap(Bitmap bmp, int beginIndex, boolean drawCrease, boolean flipX, boolean flipY) {
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
@@ -942,7 +1286,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 } else {
                     curY += addY;
                     if (i % getRowsPerSheet() == getRowsPerSheet() - 1) {
-                        curY = beginPos[0];
+                        curY = beginPos[1];
                         curX += addX;
                     }
                 }
@@ -952,7 +1296,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int dim[] = getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
+                    int dim[] = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
                     if (mPrintSettings.isScaleToFit()) {
                         dim[0] = right - left;
                         dim[1] = bottom - top;
@@ -976,6 +1320,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
         }
         
+        /**
+         * @return Bitmaps
+         */
         private Bitmap[] getRenderBitmaps() {
             int dim[] = getPaperDimensions(mWidth, mHeight);
             

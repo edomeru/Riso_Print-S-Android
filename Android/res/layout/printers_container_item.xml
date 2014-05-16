@@ -6,7 +6,7 @@
     android:background="@color/theme_light_2"
     android:orientation="vertical" >
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
         android:background="@drawable/selector_printers_container"
@@ -25,10 +25,10 @@
             android:duplicateParentState="true" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/printers_separator_padding"
             android:layout_marginRight="@dimen/printers_row_right_icon_size"
             android:duplicateParentState="true"
             android:orientation="vertical" >
@@ -36,34 +36,28 @@
             <TextView
                 android:id="@+id/txt_printerName"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:duplicateParentState="true"
+                android:ellipsize="middle"
                 android:maxLines="1"
                 android:paddingTop="@dimen/printers_row_top_padding"
+                android:singleLine="true"
                 android:textColor="@color/selector_printers_text"
                 android:textSize="@dimen/printers_name_font_size" />
 
             <TextView
                 android:id="@+id/txt_ipAddress"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:duplicateParentState="true"
+                android:ellipsize="middle"
                 android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/selector_printers_text"
                 android:textSize="@dimen/printers_ipaddress_font_size" />
+
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/img_disclosure"
-            android:layout_width="@dimen/printers_row_right_icon_size"
-            android:layout_height="match_parent"
-            android:layout_gravity="right|center_vertical"
-            android:contentDescription="@string/default_content_description"
-            android:paddingRight="@dimen/printers_row_right_padding"
-            android:src="@drawable/selector_printers_submenu" />
-
+        
         <Button
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
@@ -80,8 +74,18 @@
             android:text="@string/ids_lbl_delete"
             android:textAllCaps="true"
             android:textColor="@drawable/selector_jobs_deletetextcolor"
-            android:visibility="invisible" />
-    </FrameLayout>
+            android:visibility="gone" />
+        
+        <ImageView
+            android:id="@+id/img_disclosure"
+            android:layout_width="@dimen/printers_row_right_icon_size"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:contentDescription="@string/default_content_description"
+            android:duplicateParentState="true"
+            android:paddingRight="@dimen/printers_row_right_padding"
+            android:src="@drawable/img_btn_submenu" />
+    </LinearLayout>
 
     <View
         android:id="@+id/printers_separator"

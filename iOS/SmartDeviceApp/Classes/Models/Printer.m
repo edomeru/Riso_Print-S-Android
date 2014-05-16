@@ -2,8 +2,8 @@
 //  Printer.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/5/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "Printer.h"
@@ -13,13 +13,16 @@
 
 @implementation Printer
 
-@dynamic enabled_bind;
-@dynamic enabled_booklet_binding;
-@dynamic enabled_duplex;
+@dynamic enabled_booklet;
+@dynamic enabled_finisher_2_3_holes;
+@dynamic enabled_finisher_2_4_holes;
 @dynamic enabled_lpr;
-@dynamic enabled_pagination;
 @dynamic enabled_raw;
 @dynamic enabled_staple;
+@dynamic enabled_tray_auto_stacking;
+@dynamic enabled_tray_face_down;
+@dynamic enabled_tray_stacking;
+@dynamic enabled_tray_top;
 @dynamic ip_address;
 @dynamic name;
 @dynamic port;
@@ -27,5 +30,4 @@
 @dynamic defaultprinter;
 @dynamic printjob;
 @dynamic printsetting;
-
 @end

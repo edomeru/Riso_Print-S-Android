@@ -8,6 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
@@ -19,19 +21,21 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearch
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnKeyListener, Callback {
+public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnKeyListener, Callback, ConfirmDialogListener {
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -42,16 +46,23 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     
     private ViewHolder mAddPrinterView = null;
     private PrinterManager mPrinterManager = null;
+    private Printer mSearchedPrinter = null;
     private boolean mAdded = false;
     private Handler mHandler = null;
+    private boolean mIsPaused = false;
+    private int mErrState = 0;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_addprinter;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        setRetainInstance(true);
+
         mAdded = false;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mPrinterManager.setPrinterSearchCallback(this);
@@ -59,6 +70,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mHandler = new Handler(this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
@@ -72,6 +84,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -91,36 +104,126 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
     }
     
+    /** {@inheritDoc} */
+    @Override
+    public void onPause() {
+        super.onPause();
+        mIsPaused = true;        
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onResume() {
+        super.onResume();        
+        mIsPaused = false;
+        
+        if(mAdded){
+            if(mErrState != 0) {
+                dialogErrCb(mErrState);
+            }
+            else {
+                if (mSearchedPrinter != null) {
+                    dialogCb(mSearchedPrinter);
+                }
+            }
+        }
+    }
+    
     // ================================================================================
     // Private Methods
     // ================================================================================
     
+    /**
+     * Search for printer device
+     * 
+     * @param ipAddress
+     *            Printer IP Address
+     */
     private void findPrinter(String ipAddress) {
         mPrinterManager.searchPrinter(ipAddress);
     }
     
+    /**
+     * Dialog which is displayed during successful printer search
+     * 
+     * @param printer
+     *            Searched printer
+     */
     private void dialogCb(Printer printer) {
-        String title = getResources().getString(R.string.ids_lbl_printer_info);
-        String msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
-        InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
-        DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+        if (isTablet() && getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                return;
+            }
+        } else if (isTablet()) {
+            return;
+        }
+        String title = getResources().getString(R.string.ids_lbl_add_printer);
+        String msg = null;
+        
+        if (printer.getName().isEmpty()) {
+            msg = getResources().getString(R.string.ids_lbl_no_name) + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
+        } else {
+            msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
+        }     
+        ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
+        info.setTargetFragment(this, 0);
+        
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            if (mIsPaused) {
+                mSearchedPrinter = printer;
+                return;
+            }
+            DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+        }
     }
     
+    /**
+     * Dialog which is displayed during failed printer search
+     * 
+     * @param err
+     *            Error code
+     */
     private void dialogErrCb(int err) {
-        String title = getResources().getString(R.string.ids_lbl_printer_info);
+        if (isTablet()) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    return;
+                }
+            } else if (getActivity() == null) {
+                return;
+            }
+        }
+        String title = getResources().getString(R.string.ids_lbl_add_printer);
         String errMsg = null;
         if (err == ERR_INVALID_IP_ADDRESS) {
             errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
         } else if (err == ERR_CAN_NOT_ADD_PRINTER) {
             errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else if (err == ERR_PRINTER_ADDED_WARNING) {
-            errMsg = getResources().getString(R.string.ids_err_msg_warning_cannot_find_printer);
-            errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+            errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
+            errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
         }
-        InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
+        DialogFragment info = null;
+        
+        if(err == ERR_PRINTER_ADDED_WARNING) {
+            info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), null);
+            info.setTargetFragment(this, 0);
+        } else {
+            info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));    
+        }        
+        if (mIsPaused) {
+            mErrState = err;
+            return;
+        }
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+        
     }
     
+    /**
+     * Close Add Printer screen
+     */
     private void closeScreen() {
         
         if (isTablet()) {
@@ -145,6 +248,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         AppUtils.hideSoftKeyboard(getActivity());
     }
     
+    /**
+     * Set the Add Printer Screen to disabled mode to prevent changes from user input
+     * 
+     * @param viewHolder
+     *            Add Printer Screen view holder
+     */
     private void setViewToDisable(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -158,6 +267,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
     }
     
+    /**
+     * Set the Add Printer Screen to normal
+     * 
+     * @param viewHolder
+     *            Add Printer Screen view holder
+     */
     private void setViewToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -174,6 +289,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -188,6 +304,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -197,7 +314,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 break;
             case ID_MENU_SAVE_BUTTON:
                 String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
-                
+                mSearchedPrinter = null;
+                mErrState = 0;
+
                 if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
                     dialogErrCb(ERR_INVALID_IP_ADDRESS);
                     return;
@@ -223,19 +342,26 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - OnPrinterSearch
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(Printer printer) {
+        if (mPrinterManager.isCancelled()) {
+            return;
+        }
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
         } else if (mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
-            closeScreen();
             dialogCb(printer);
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
+        if(mPrinterManager.isCancelled()) {
+            return;
+        }
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
         final MainActivity activity = (MainActivity) getActivity();
@@ -248,18 +374,13 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         if (!mAdded) {
             // Create Printer object
-            Printer printer = new Printer(ipAddress, ipAddress);
-            
-            if(mPrinterManager.isCancelled()) {
-                return;
-            }
+            Printer printer = new Printer("", ipAddress);
             
             if (mPrinterManager.savePrinterToDB(printer)) {                                
                 Message newWarningMsg = new Message();
                 
                 newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;                
                 mHandler.sendMessage(newWarningMsg);
-                closeScreen();
                 mAdded = true;
             }
         }
@@ -269,6 +390,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - OnKeyListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -279,9 +401,32 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     // ================================================================================
+    // INTERFACE - ConfirmDialogListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onConfirm() {
+        mSearchedPrinter = null;
+        mErrState = 0;
+        closeScreen();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onCancel() {
+        mSearchedPrinter = null;
+        mErrState = 0;
+        closeScreen();
+    }
+    
+    // ================================================================================
     // INTENAL Classes
     // ================================================================================
     
+    /**
+     * Add Printer Screen view holder
+     */
     public class ViewHolder {
         private TextView mIpAddressLabel;
         private EditText mIpAddress;

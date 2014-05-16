@@ -23,7 +23,7 @@ namespace SNMP
             //SNMPVariable *snmpVar;
     
             //snmpVar = [[SNMPVariable alloc] initWithType:type withData:[NSData dataWithBytes:&value length:1]];
-            byte[] _data = new byte[1];
+            _data = new byte[1]; //updated for debugging
             _data[0] = (byte)value;
         }
 

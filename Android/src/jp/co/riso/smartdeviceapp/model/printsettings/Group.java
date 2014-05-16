@@ -19,6 +19,11 @@ public class Group extends XmlNode {
 
     private List<Setting> mSettings;
     
+    /**
+     * Constructor
+     * 
+     * @param groupNode
+     */
     public Group(Node groupNode) {
         super(groupNode);
         
@@ -30,6 +35,9 @@ public class Group extends XmlNode {
         }
     }
     
+    /**
+     * @return settings
+     */
     public List<Setting> getSettings() {
         return mSettings;
     }

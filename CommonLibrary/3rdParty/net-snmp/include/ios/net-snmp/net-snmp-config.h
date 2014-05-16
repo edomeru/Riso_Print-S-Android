@@ -1306,13 +1306,6 @@
 /* sysctl works to get boottime, etc... */
 /* #undef NETSNMP_CAN_USE_SYSCTL */
 
-/* configure options specified */
-#define NETSNMP_CONFIGURE_OPTIONS " 'CC=/Users/seph/XCode5.0.1/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch armv7s ' 'CFLAGS=-isysroot /Users/seph/XCode5.0.1/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk -arch armv7s -arch armv7s -mios-version-min=6.0 -no-cpp-precomp -pipe' 'LDFLAGS=-Bstatic' '--prefix=/Users/seph/Repos/temp-/net-snmp/armv7s' '--with-sys-contact=@@.no.where' '--with-sys-location=Unknown' '--with-logfile=/var/log/snmpd.log' '--with-persitent-directory=/var/net-snmp' '--enable-mini-agent' '--disable-perl' '--without-perl-modules' '--disable-scripts' '--disable-embedded-perl' '--disable-perl-cc-checks' '--disable-agent' '--disable-applications' '--disable-shared' '--with-out-mib-modules=mibII/vacm_conf,mibII/vacm_vars' '--with-openssl=internal' '--host=armv-apple-darwin' '--enable-shared=no' '--enable-ipv6' 'host_alias=armv-apple-darwin'"
-
-/* default location to look for mibs to load using the above tokens and/or
-   those in the MIBS envrionment variable */
-#define NETSNMP_DEFAULT_MIBDIRS "$HOME/.snmp/mibs:/Users/seph/Repos/temp-/net-snmp/armv7s/share/snmp/mibs"
-
 /* default mib files to load, specified by path. */
 /* #undef NETSNMP_DEFAULT_MIBFILES */
 
@@ -1329,7 +1322,7 @@
 /* #undef NETSNMP_DISABLE_MD5 */
 
 /* Define if mib loading and parsing code should not be included */
-/* #undef NETSNMP_DISABLE_MIB_LOADING */
+#define NETSNMP_DISABLE_MIB_LOADING 1
 
 /* Define if SNMP SET support should be disabled */
 /* #undef NETSNMP_DISABLE_SET_SUPPORT */
@@ -1391,7 +1384,7 @@
 /* #undef NETSNMP_NO_ROOT_ACCESS */
 
 /* Define if you want to remove all SET/write access from the code */
-/* #undef NETSNMP_NO_WRITE_SUPPORT */
+#define NETSNMP_NO_WRITE_SUPPORT 1
 
 /* umask permissions to set up persistent files with */
 #define NETSNMP_PERSISTENT_MASK 077
@@ -1750,15 +1743,9 @@
 /* #undef NETSNMP_DEFAULT_CLIENT_SEND_BUF */
 /* #undef NETSNMP_DEFAULT_CLIENT_RECV_BUF */
 
-/* net-snmp's major path names */
-#define SNMPLIBPATH "/Users/seph/Repos/temp-/net-snmp/armv7s/lib/snmp"
-#define SNMPSHAREPATH "/Users/seph/Repos/temp-/net-snmp/armv7s/share/snmp"
-#define SNMPCONFPATH "/Users/seph/Repos/temp-/net-snmp/armv7s/etc/snmp"
-#define SNMPDLMODPATH "/Users/seph/Repos/temp-/net-snmp/armv7s/lib/snmp/dlmod"
-
 /* NETSNMP_LOGFILE:  If defined it closes stdout/err/in and opens this in 
    out/err's place.  (stdin is closed so that sh scripts won't wait for it) */
-#define NETSNMP_LOGFILE "/var/log/snmpd.log"
+/* #undef NETSNMP_LOGFILE */
 
 /* default system contact */
 #define NETSNMP_SYS_CONTACT "@@.no.where"

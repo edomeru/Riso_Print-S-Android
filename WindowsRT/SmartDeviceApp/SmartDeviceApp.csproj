@@ -16,6 +16,8 @@
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>SmartDeviceApp_TemporaryKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>AF37E8FC259B97D5557A3E086E2C0C812B0F6CBE</PackageCertificateThumbprint>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -106,6 +108,112 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
+    <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\PrintJobResult.cs" />
+    <Compile Include="Common\Enum\VisibleRightPane.cs" />
+    <Compile Include="Common\Enum\ScreenMode.cs" />
+    <Compile Include="Common\Enum\LoadDocumentResult.cs" />
+    <Compile Include="Common\Enum\PageViewMode.cs" />
+    <Compile Include="Common\Enum\ViewMode.cs" />
+    <Compile Include="Common\Enum\PrinterSearchRefreshState.cs" />
+    <Compile Include="Common\Enum\PrintersViewMode.cs" />
+    <Compile Include="Common\Enum\ListValueType.cs" />
+    <Compile Include="Common\Enum\PrintSettingsOptions.cs" />
+    <Compile Include="Common\Enum\PrintSettingType.cs" />
+    <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
+    <Compile Include="Common\Enum\PrintersRightPaneMode.cs" />
+    <Compile Include="Common\ObservableDictionary.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Common\Utilities\DefaultsUtility.cs" />
+    <Compile Include="Common\Constants\ImageConstant.cs" />
+    <Compile Include="Common\Utilities\LogUtility.cs" />
+    <Compile Include="Common\Utilities\GlobalizationUtility.cs" />
+    <Compile Include="Common\Utilities\StorageFileUtility.cs" />
+    <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
+    <Compile Include="Common\Utilities\VisualStateUtility.cs" />
+    <Compile Include="Controllers\DirectPrintController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PrintersGestureController.cs" />
+    <Compile Include="Controllers\PrintSettingsController.cs" />
+    <Compile Include="Controllers\SettingController.cs" />
+    <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
+    <Compile Include="Common\Utilities\MessageAlert.cs" />
+    <Compile Include="Controllers\NetworkController.cs" />
+    <Compile Include="Controls\MessageProgressBarControl.xaml.cs">
+      <DependentUpon>MessageProgressBarControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PortItemControl.xaml.cs">
+      <DependentUpon>PortItemControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyImageControl.xaml.cs">
+      <DependentUpon>KeyImageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyPasswordBoxControl.xaml.cs">
+      <DependentUpon>KeyPasswordBoxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyRadioButtonControl.xaml.cs">
+      <DependentUpon>KeyRadioButtonControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyTextBoxControl.xaml.cs">
+      <DependentUpon>KeyTextBoxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyToggleSwitchControl.xaml.cs">
+      <DependentUpon>KeyToggleSwitchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\KeyValueControl.xaml.cs">
+      <DependentUpon>KeyValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupListControl.xaml.cs">
+      <DependentUpon>GroupListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PrinterNameControl.xaml.cs">
+      <DependentUpon>PrinterNameControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\BooleanToImageSourceConverter.cs" />
+    <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
+      <DependentUpon>MainMenuKeyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SidePaneTitleControl.xaml.cs">
+      <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\DateTimeToStringConverter.cs" />
+    <Compile Include="Converters\IntToBooleanConverter.cs" />
+    <Compile Include="Converters\MainMenuItemToIndexConverter.cs" />
+    <Compile Include="Converters\PrinterSearchItemToSeparatorVisibility.cs" />
+    <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
+    <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
+    <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\MainItemIndexToIsCheckedConverter.cs" />
+    <Compile Include="Converters\SelectedPrinterIdToTextConverter.cs" />
+    <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
+    <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\PrintJobToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\PrintSettingToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\IntToStringConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\PageIndexToSliderValueConverter.cs" />
+    <Compile Include="Converters\PrintSettingOptionToBooleanConverter.cs" />
+    <Compile Include="Converters\PrintSettingToValueConverter.cs" />
+    <Compile Include="Converters\SelectPrinterToSeparatorVisibilityConverter.cs" />
+    <Compile Include="Converters\SeparatorLineGeometryConverter.cs" />
+    <Compile Include="Converters\PrinterNameToTextConverter.cs" />
+    <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
+    <Compile Include="Converters\WidthHeightConverter.cs" />
+    <Compile Include="Models\MainMenuItem.cs" />
+    <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
+    <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
+    <Compile Include="Converters\ResourceStringToTextConverter.cs" />
+    <Compile Include="Converters\ItemClickedConverter.cs" />
+    <Compile Include="Converters\ItemSelectedConverter.cs" />
+    <Compile Include="Models\PageNumberInfo.cs" />
+    <Compile Include="Controllers\JobController.cs" />
+    <Compile Include="Controllers\JobGestureController.cs" />
+    <Compile Include="Controls\JobListItemControl.xaml.cs">
+      <DependentUpon>JobListItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\Utilities\DialogService.cs" />
     <Compile Include="Common\Utilities\DisplayOrientationsHelper.cs" />
     <Compile Include="Common\Utilities\IDialogService.cs" />
@@ -116,35 +224,245 @@
     <Compile Include="Common\Utilities\OrientationStateMessage.cs" />
     <Compile Include="Common\Base\PageBase.cs" />
     <Compile Include="Common\Utilities\PageOrientations.cs" />
+    <Compile Include="Common\Utilities\SQLite.cs" />
+    <Compile Include="Common\Utilities\SQLiteAsync.cs" />
     <Compile Include="Common\Utilities\SuspensionManager.cs" />
     <Compile Include="Common\Base\UserControlBase.cs" />
+    <Compile Include="Controllers\PrinterController.cs" />
+    <Compile Include="Controllers\SNMPController.cs" />
+    <Compile Include="Controllers\DatabaseController.cs" />
+    <Compile Include="Controllers\DocumentController.cs" />
+    <Compile Include="Controllers\PreviewGestureController.cs" />
+    <Compile Include="Controls\PageControl.xaml.cs">
+      <DependentUpon>PageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TwoPageControl.xaml.cs">
+      <DependentUpon>TwoPageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ViewControl.xaml.cs">
+      <DependentUpon>ViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\PageNumberFormatConverter.cs" />
+    <Compile Include="Controllers\PrintPreviewController.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
+    <Compile Include="DummyControllers\DummyProvider.cs" />
     <Compile Include="Models\DataItem.cs" />
     <Compile Include="Models\DataService.cs" />
+    <Compile Include="Models\DefaultPrinter.cs" />
+    <Compile Include="Models\Document.cs" />
     <Compile Include="Models\IDataService.cs" />
+    <Compile Include="Models\LogicalPage.cs" />
+    <Compile Include="Models\PreviewPage.cs" />
+    <Compile Include="Models\Printer.cs" />
+    <Compile Include="Models\PrinterSearchItem.cs" />
+    <Compile Include="Models\PrintJob.cs" />
+    <Compile Include="Models\PrintSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AddPrinterViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\SearchPrinterViewModel.cs" />
+    <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
+    <Compile Include="ViewModels\ViewControlViewModel.cs" />
+    <Compile Include="ViewModels\JobsViewModel.cs" />
+    <Compile Include="ViewModels\HelpViewModel.cs" />
+    <Compile Include="ViewModels\LegalViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\PrintPreviewViewModel.cs" />
+    <Compile Include="ViewModels\PrintersViewModel.cs" />
+    <Compile Include="ViewModels\PrintSettingOptionsViewModel.cs" />
+    <Compile Include="ViewModels\PrintSettingsPaneViewModel.cs" />
+    <Compile Include="ViewModels\PrintSettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\AddPrinterPane.xaml.cs">
+      <DependentUpon>AddPrinterPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HelpPage.xaml.cs">
+      <DependentUpon>HelpPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JobsPage.xaml.cs">
+      <DependentUpon>JobsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LegalPage.xaml.cs">
+      <DependentUpon>LegalPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MainMenuPane.xaml.cs">
+      <DependentUpon>MainMenuPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrintersPage.xaml.cs">
+      <DependentUpon>PrintersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrintPreviewPage.xaml.cs">
+      <DependentUpon>PrintPreviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AdaptableGridView.cs" />
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PullToRefreshListView.cs" />
+    <!--<Compile Include="Views\RightPane.xaml.cs">
+    <Compile Include="Views\PrintSettingsPane.xaml.cs">
+      <DependentUpon>PrintSettingsPane.xaml</DependentUpon>
+      <DependentUpon>RightPane.xaml</DependentUpon>
+    </Compile>-->
+    <Compile Include="Views\PrintSettingsPane.xaml.cs">
+      <DependentUpon>PrintSettingsPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrintSettingOptionsBox.xaml.cs">
+      <DependentUpon>PrintSettingOptionsBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrintSettingsBox.xaml.cs">
+      <DependentUpon>PrintSettingsBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchPrinterPane.xaml.cs">
+      <DependentUpon>SearchPrinterPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectPrinterBox.xaml.cs">
+      <DependentUpon>SelectPrinterBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Assets\en-US\help.html" />
+    <Content Include="Assets\en-US\legal.html" />
+    <Content Include="Assets\ja-JP\help.html" />
+    <Content Include="Assets\ja-JP\legal.html" />
+    <Content Include="Assets\SmartDeviceAppDB.sql" />
+    <Content Include="Common\ReadMe.txt" />
+    <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
+    <Content Include="Resources\Dummy\RZ1070.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
-    <PRIResource Include="Resources\Strings\en-US\Resources.resw" />
+    <PRIResource Include="Resources\Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\en-US\Help.html" />
-    <Content Include="Assets\ja-JP\Help.html" />
+    <Content Include="Assets\printsettings.xml" />
+    <Content Include="Resources\Dummy\RZ1070-page1.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page10.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page11.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page12.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page2.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page3.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page4.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page5.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page6.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
+    <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
+    <Content Include="Resources\Dummy\SampleData.sql" />
+    <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_ok_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_search_ok.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_search_ok.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_add_printer_search_ok.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_back_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_back_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_back_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_back_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_back_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_back_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_collapse.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_collapse.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_collapse.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_default_print_settings.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_default_print_settings.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_default_print_settings.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_default_print_settings_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_default_print_settings_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_default_print_settings_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_delete_printer_tablet_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_dummy_print_setting.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_dummy_print_setting.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_dummy_print_setting.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_expand.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_expand.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_expand.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_job_status_cancelled.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_job_status_cancelled.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_job_status_cancelled.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_job_status_ng.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_job_status_ng.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_job_status_ng.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_job_status_ok.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_job_status_ok.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_job_status_ok.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_main_menu_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_printer_status_offline.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_printer_status_offline.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_printer_status_offline.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_printer_status_online.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_printer_status_online.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_printer_status_online.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_settings_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_settings_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_settings_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_settings_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_settings_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_settings_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_radio_disabled.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_radio_disabled.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_radio_disabled.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_radio_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_radio_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_radio_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_radio_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_radio_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_radio_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_submenu.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_submenu.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_submenu.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_submenu_back.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_submenu_back.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_submenu_back.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_submenu_back_disabled.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_submenu_back_disabled.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_submenu_back_disabled.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_submenu_disabled.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_submenu_disabled.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_submenu_disabled.scale-180.png" />
+    <Content Include="Resources\Images\img_punch.png" />
+    <Content Include="Resources\Images\img_splash.scale-100.png" />
+    <Content Include="Resources\Images\img_splash.scale-140.png" />
+    <Content Include="Resources\Images\img_splash.scale-180.png" />
+    <Content Include="Resources\Images\img_staple.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
-    <Content Include="Resources\Images\SplashScreen.scale-100.png" />
     <Content Include="Resources\Images\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +470,143 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\MessageProgressBarControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PortItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyImageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\JobListItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyPasswordBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyRadioButtonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyTextBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyToggleSwitchControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MainMenuKeyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GroupListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PrinterNameControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SidePaneTitleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TwoPageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\AppTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\Styles\ControlStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\Styles\IpAddressStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\Styles\TextStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\AddPrinterPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HelpPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\JobsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LegalPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MainMenuPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintPreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintSettingsPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintSettingOptionsBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintSettingsBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchPrinterPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectPrinterBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,28 +621,90 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\netcore45\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="WriteableBitmapEx.WinRT">
+      <HintPath>..\packages\WriteableBitmapEx.1.0.12.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
     </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.1">
+      <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
+    </SDKReference>
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Common\Constants\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Converters\" />
-    <Folder Include="Resources\Styles\" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\DirectPrint\DirectPrint.csproj">
+      <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
+      <Name>DirectPrint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SNMP\SNMP.csproj">
       <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
       <Name>SNMP</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Remote-Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Remote-Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Remote-Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Remote-Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

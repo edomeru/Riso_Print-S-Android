@@ -11,6 +11,7 @@
         android:layout_height="@dimen/printsettings_option_with_sub_height"
         android:background="@drawable/selector_printsettings_item"
         android:orientation="horizontal"
+        android:duplicateParentState="true"
         android:paddingLeft="@dimen/printsettings_icon_setting_padding" >
 
         <ImageView
@@ -34,7 +35,10 @@
                 android:id="@+id/menuTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="middle"
                 android:maxLines="1"
+                android:singleLine="true"
+                android:duplicateParentState="true"
                 android:text="@string/default_textview"
                 android:textColor="@color/selector_printsettings_item_text"
                 android:textSize="@dimen/home_text_size" />
@@ -43,7 +47,10 @@
                 android:id="@+id/subTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="middle"
                 android:maxLines="1"
+                android:singleLine="true"
+                android:duplicateParentState="true"
                 android:text="@string/default_textview"
                 android:textColor="@color/selector_printsettings_item_text"
                 android:textSize="@dimen/printsettings_option_with_sub_text_size" />

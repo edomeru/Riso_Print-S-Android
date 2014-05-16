@@ -2,9 +2,12 @@
 //  printsettings.c
 //  SmartDeviceApp
 //
-//  Created by Seph on 4/14/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,8 +91,8 @@ const char *printsetting_names[kPrintSettingsCount] =
 const char *color_mode[] =
 {
     "AUTO",
-    "FULL",
-    "GRAYSCALE"
+    "COLOR",
+    "MONOCHROME"
 };
 
 const char *orientation[] =
@@ -397,7 +400,7 @@ void add_pjl(char *pjl, setting_value values[], int command)
         case kPjlCommandDuplexBinding:
         {
             setting_value value = values[kPrintSettingsDuplex];
-            if (value.set == 0 && value.int_value == 0)
+            if (value.set == 0 || value.int_value == 0)
             {
                 return;
             }

@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
@@ -83,6 +84,12 @@ public class PrintSettings {
         }
     }
     
+    /**
+     * Constructor
+     * 
+     * @param printSettings
+     *            Print settings
+     */
     public PrintSettings(PrintSettings printSettings) {
         mSettingValues = new HashMap<String, Integer>();
         
@@ -91,21 +98,37 @@ public class PrintSettings {
         }
     }
     
+    /**
+     * Constructor
+     * <p>
+     * This method creates PrintSettings from the database using printer ID.
+     * If not existing in the database, default values are used.
+     * 
+     * @param printerId
+     *            Printer ID
+     */
     public PrintSettings(int printerId) {
         this();
-        PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
-        // will overwrite the value if values are retrieved
         
-        PrintSettings printSettings = manager.getPrintSetting(printerId);
-        if (printSettings != null){
+        // overwrite values if valid printer id
+        if (printerId != PrinterManager.EMPTY_ID) {
+            PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
+            
+            PrintSettings printSettings = manager.getPrintSetting(printerId);
+            
             for (String key : printSettings.getSettingValues().keySet()) {
                 mSettingValues.put(key, printSettings.getSettingValues().get(key));
             }
         }
     }
     
-    private static void initializeStaticObjects() {
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
+    /**
+     * Initialize static objects
+     */
+    protected static void initializeStaticObjects(String xmlString) {
+        if (xmlString == null) {
+            return;
+        }
         
         Document printSettingsContent = null;
         
@@ -127,6 +150,11 @@ public class PrintSettings {
         parsePrintSettings(printSettingsContent);
     }
     
+    /**
+     * Parse print settings
+     * 
+     * @param printSettingsContent
+     */
     private static void parsePrintSettings(Document printSettingsContent) {
         if (printSettingsContent == null) {
             return;
@@ -149,6 +177,9 @@ public class PrintSettings {
     // Getter for PJL
     // ================================================================================
     
+    /**
+     * @return PJL formatted string
+     */
     public String formattedString() {
         StringBuffer strBuf = new StringBuffer();
         String KEY_VAL_FORMAT = "%s=%d\n";
@@ -159,7 +190,6 @@ public class PrintSettings {
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }
         
-        Log.wtf(TAG, strBuf.toString());
         return strBuf.toString();
     }
     
@@ -167,14 +197,33 @@ public class PrintSettings {
     // Getter for int values
     // ================================================================================
     
+    /**
+     * @return setting values
+     */
     public HashMap<String, Integer> getSettingValues() {
         return mSettingValues;
     }
     
+    /**
+     * Get print settings value from key
+     * 
+     * @param key
+     *            Print settings key
+     * @return value
+     */
     public int getValue(String key) {
         return mSettingValues.get(key);
     }
     
+    /**
+     * Set print settings value to key
+     * 
+     * @param key
+     *            Print settings key
+     * @param value
+     *            Value
+     * @return success
+     */
     public boolean setValue(String key, int value) {
         mSettingValues.put(key, value);
         return true;
@@ -305,6 +354,7 @@ public class PrintSettings {
         sGroupList = new ArrayList<Group>();
         sSettingMap = new HashMap<String, Setting>();
         
-        initializeStaticObjects();
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), AppConstants.XML_FILENAME);
+        initializeStaticObjects(xmlString);
     }
 }

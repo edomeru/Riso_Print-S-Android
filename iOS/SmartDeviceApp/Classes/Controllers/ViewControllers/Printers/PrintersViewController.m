@@ -2,14 +2,15 @@
 //  PrintersViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/6/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrintersViewController.h"
 #import "AddPrinterViewController.h"
 #import "PrinterSearchViewController.h"
 #import "PrinterInfoViewController.h"
+#import "PrintSettingsViewController.h"
 #import "PrinterManager.h"
 
 @interface PrintersViewController ()
@@ -97,6 +98,18 @@
         PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
             [self reloadData];
+    }
+    else if([sender.sourceViewController isKindOfClass:[PrintSettingsViewController class]])
+    {
+        UIViewController* controller =  [[self childViewControllers] lastObject];
+        if([controller isKindOfClass:[PrinterInfoViewController class]])
+        {
+            [((PrinterInfoViewController *)controller).printSettingsButton setSelected:NO];
+        }
+        else
+        {
+            [self reloadData];
+        }
     }
 }
 

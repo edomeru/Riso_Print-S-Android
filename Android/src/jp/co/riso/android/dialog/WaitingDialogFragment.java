@@ -45,6 +45,13 @@ public class WaitingDialogFragment extends DialogFragment {
         };
     }
     
+    /**
+     * @param title
+     * @param message
+     * @param cancelable
+     * @param buttonTitle
+     * @return WaitingDialogFragment instance
+     */
     public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable, String buttonTitle) {
         WaitingDialogFragment dialog = new WaitingDialogFragment();
         
@@ -59,6 +66,7 @@ public class WaitingDialogFragment extends DialogFragment {
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +74,7 @@ public class WaitingDialogFragment extends DialogFragment {
         setRetainInstance(true);
     }
     
+    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
@@ -84,8 +93,10 @@ public class WaitingDialogFragment extends DialogFragment {
             dialog.setMessage(message);
         }
         
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setIndeterminate(true);
-        dialog.setCancelable(cancelable);
+        // http://developer.android.com/reference/android/app/DialogFragment.html#setCancelable(boolean)
+        setCancelable(cancelable);
         
         if (!cancelable) {
             // Disable the back button
@@ -95,6 +106,7 @@ public class WaitingDialogFragment extends DialogFragment {
                 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
                 }
             });
             
@@ -103,6 +115,7 @@ public class WaitingDialogFragment extends DialogFragment {
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onDestroyView() {
         Dialog dialog = getDialog();
@@ -116,6 +129,7 @@ public class WaitingDialogFragment extends DialogFragment {
         super.onDestroyView();
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
@@ -125,11 +139,37 @@ public class WaitingDialogFragment extends DialogFragment {
         }
     }
     
+    /**
+     * Sets the message displayed in the Progress dialog.
+     * 
+     * @param msg
+     *            String to be displayed
+     */
+    public void setMessage(final String msg) {
+        if (getActivity() != null) {
+            
+            getActivity().runOnUiThread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    if (getDialog() != null) {
+                        ProgressDialog dialog = (ProgressDialog) getDialog();
+                        dialog.setMessage(msg);
+                    }
+                }
+            });
+        }
+        
+    }
+    
     // ================================================================================
     // Internal Classes
     // ================================================================================
     
     public interface WaitingDialogListener {
+        /**
+         * Cancel listener
+         */
         public void onCancel();
     }
 }

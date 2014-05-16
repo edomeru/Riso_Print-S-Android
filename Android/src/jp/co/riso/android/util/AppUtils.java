@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -29,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
@@ -58,30 +56,6 @@ public final class AppUtils {
         Intent intent = new Intent();
         intent.setClass(context, cls);
         return intent;
-    }
-    
-    /**
-     * Starts an Activity
-     * 
-     * @param context
-     *            Application Context
-     * @param cls
-     *            Activity class
-     */
-    public static void startActivityIntent(Context context, Class<?> cls) throws ActivityNotFoundException, NullPointerException, AndroidRuntimeException {
-        Intent intent = createActivityIntent(context, cls);
-        
-        if (intent == null) {
-            throw new NullPointerException("Cannot create intent");
-        } else {
-            try {
-                context.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                throw e;
-            } catch (AndroidRuntimeException e) {
-                throw e;
-            }
-        }
     }
     
     /**
@@ -290,9 +264,17 @@ public final class AppUtils {
         return null;
     }
     
+    /**
+     * Change children font
+     * 
+     * @param v
+     *            ViewGroup to be changed
+     * @param font
+     *            font to be set
+     */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
     public static void changeChildrenFont(ViewGroup v, Typeface font) {
-        if (font == null) {
+        if (font == null || v == null) {
             return;
         }
         
@@ -327,9 +309,20 @@ public final class AppUtils {
         }
     }
     
+    /**
+     * Dynamically retrieve resource Id
+     * 
+     * @param variableName
+     *            variable name
+     * @param c
+     *            Class
+     * @param defaultId
+     *            default resource ID
+     * 
+     */
     // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
-        if (variableName == null) {
+        if (variableName == null || c == null) {
             return defaultId;
         }
         
@@ -348,12 +341,72 @@ public final class AppUtils {
         return id;
     }
     
+    /**
+     * @param activity
+     * @return cache size
+     */
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
+        if (activity == null) {
+            return 0;
+        }
+        
         ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
         
         // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.
         final int memClass = manager.getMemoryClass();
         
         return 1024 * 1024 * memClass;
+    }
+    
+    /**
+     * Get fit to aspect ratio size
+     * 
+     * @param srcWidth
+     *            Source width
+     * @param srcHeight
+     *            Source height
+     * @param destWidth
+     *            Destination width
+     * @param destHeight
+     *            Destination height
+     * @return New width and height
+     */
+    public static int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
+        float ratioSrc = srcWidth / srcHeight;
+        float ratioDest = (float) destWidth / destHeight;
+        
+        int newWidth = 0;
+        int newHeight = 0;
+        
+        if (ratioDest > ratioSrc) {
+            newHeight = destHeight;
+            newWidth = (int) (destHeight * ratioSrc);
+            
+        } else {
+            newWidth = destWidth;
+            newHeight = (int) (destWidth / ratioSrc);
+        }
+        
+        return new int[] { newWidth, newHeight };
+    }
+    
+    /**
+     * Gets the next integer multiple
+     * 
+     * @param n
+     * @param m
+     * @return next multiple of m of n 
+     */
+    public static int getNextIntegerMultiple(int n, int m) {
+        if (m == 0) {
+            Log.w(TAG, "Cannot divide by 0");
+            return n;
+        }
+        
+        if (n % m != 0) {
+            return n + (m - n % m);
+        }
+        
+        return n;
     }
 }

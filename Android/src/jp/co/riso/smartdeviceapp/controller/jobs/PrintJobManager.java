@@ -43,10 +43,21 @@ public class PrintJobManager {
     private DatabaseManager mManager;
     private boolean mRefreshFlag;
     
+    /**
+     * Constructor
+     * 
+     * @param context
+     */
     private PrintJobManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
+    /**
+     * Get instance of the PrintJob Manager
+     * 
+     * @param context
+     * @return instance of PrintJobManager
+     */
     public static PrintJobManager getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new PrintJobManager(context);
@@ -54,10 +65,19 @@ public class PrintJobManager {
         return sInstance;
     }
     
+    /**
+     * set Refresh flag
+     * 
+     * @param refreshFlag
+     *            refresh flag
+     */
     public void setRefreshFlag(boolean refreshFlag) {
         this.mRefreshFlag = refreshFlag;
     }
     
+    /**
+     * @return mRefreshFlag
+     */
     public boolean isRefreshFlag() {
         return mRefreshFlag;
     }
@@ -191,6 +211,10 @@ public class PrintJobManager {
      * @return converted string
      */
     private String convertDateToString(Date date) {
+        if (date == null) {
+            date = new Date(0);
+        }
+        
         SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
         return sdf.format(date);

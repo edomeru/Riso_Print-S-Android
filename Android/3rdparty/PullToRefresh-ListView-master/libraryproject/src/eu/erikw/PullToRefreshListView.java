@@ -235,10 +235,10 @@ public class PullToRefreshListView extends ListView{
         image = (ImageView) header.findViewById(R.id.ptr_id_image);
         spinner = (ProgressBar) header.findViewById(R.id.ptr_id_spinner);
 
-        pullToRefreshText = getContext().getString(R.string.ids_lbl_pull_to_refresh);
-        releaseToRefreshText = getContext().getString(R.string.ids_lbl_release_to_refresh);
-        refreshingText = getContext().getString(R.string.ids_lbl_refreshing);
-        lastUpdatedText = getContext().getString(R.string.ids_lbl_last_updated);
+        pullToRefreshText = "";// getContext().getString(R.string.ids_lbl_pull_to_refresh);
+        releaseToRefreshText = "";// getContext().getString(R.string.ids_lbl_release_to_refresh);
+        refreshingText = "";// getContext().getString(R.string.ids_lbl_refreshing);
+        lastUpdatedText = "";// getContext().getString(R.string.ids_lbl_last_updated);
 
         flipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         flipAnimation.setInterpolator(new LinearInterpolator());
@@ -325,12 +325,15 @@ public class PullToRefreshListView extends ListView{
 
                             image.clearAnimation();
                             image.startAnimation(flipAnimation);
+                            break;
                         }else if(state == State.RELEASE_TO_REFRESH && headerPadding < 0){
                             setState(State.PULL_TO_REFRESH);
 
                             image.clearAnimation();
                             image.startAnimation(reverseFlipAnimation);
+                            break;
                         }
+                        resetHeader();
                     }
                 }
 

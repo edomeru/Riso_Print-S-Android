@@ -9,10 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -38,31 +35,32 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
-    private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
+    public static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private Printer mPrinter = null;
     
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
-    private TextView mStatus = null;
     private Switch mDefaultPrinter = null;
     private Spinner mPort = null;
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
-    Timer mUpdateStatusTimer = null;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printerinfo;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mDefaultPrinter = (Switch) view.findViewById(R.id.default_printer_switch);
@@ -70,7 +68,6 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         
         mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
-        mStatus = (TextView) view.findViewById(R.id.inputStatus);
         mPort = (Spinner) view.findViewById(R.id.inputPort);
         mPort.setOnItemSelectedListener(this);
         
@@ -81,6 +78,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mPort.setAdapter(portAdapter);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -90,6 +88,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -104,71 +103,48 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                 }
             }
         }
-        mPrinterName.setText(mPrinter.getName());
+        String printerName = mPrinter.getName();
+        if(printerName == null || printerName.isEmpty()) {
+            printerName = getActivity().getResources().getString(R.string.ids_lbl_no_name);
+        }
+        mPrinterName.setText(printerName);
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
-        }        
+        }
         mPort.setSelection(mPrinter.getPortSetting());
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
-    
+
+    /** {@inheritDoc} */
     @Override
-    public void onPause() {
-        super.onPause();
-        mUpdateStatusTimer.cancel();
-        mUpdateStatusTimer = null;
+    public void clearIconStates() {
+        super.clearIconStates();
+        setIconState(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, false);
     }
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateOnlineStatus();
-    }
-    
+  
     // ================================================================================
     // Public Methods
     // ================================================================================
     
+    /**
+     * Sets the printer object to be displayed by the Printer Info Screen
+     */
     public void setPrinter(Printer printer) {
         mPrinter = printer;
     }
-    
-    // ================================================================================
-    // Private Methods
-    // ================================================================================
-    
-    public void updateOnlineStatus() {
-        
-        if (mUpdateStatusTimer != null) {
-            return;
-        }
-        
-        mUpdateStatusTimer = new Timer();
-        mUpdateStatusTimer.schedule(new TimerTask() {
-            
-            @Override
-            public void run() {
-                try {
-                    if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
-                        mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
-                    }
-                } catch (Exception e) {
-                    mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
-                }
-            }
-        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
-    }
-    
+ 
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -178,7 +154,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
-                        
+                        setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
                         if (mPrintSettingsFragment == null) {
@@ -215,6 +191,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
@@ -228,11 +205,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         mPrinter.setPortSetting(position);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing

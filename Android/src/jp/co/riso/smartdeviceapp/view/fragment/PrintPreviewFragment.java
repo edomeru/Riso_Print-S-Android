@@ -67,11 +67,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     private Handler mHandler;
     
+    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printpreview;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -81,24 +83,21 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
             Uri data = null;
-            
-            if (getActivity().getIntent().getData() != null) {
-                data = getActivity().getIntent().getData();
-            }
-            
-            /*
-            android.content.SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity());
-            android.content.SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
-            edit.commit();
-            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
-            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
-             */
+
+            data = getActivity().getIntent().getData();
             
             mPdfManager = new PDFFileManager(this);
             
-            if (data != null) {
-                mPdfManager.setPDF(data.getPath());
+            String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
+            if (pdfInSandbox == null) {
+                if (data != null) {
+                    mPdfManager.setPDF(data.getPath());
+                    
+                    // Automatically open asynchronously
+                    mPdfManager.initializeAsync();
+                }
+            } else {
+                mPdfManager.setSandboxPDF();
                 
                 // Automatically open asynchronously
                 mPdfManager.initializeAsync();
@@ -136,6 +135,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
@@ -145,9 +145,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPrintPreviewView.setBmpCache(mBmpCache);
         mPrintPreviewView.setListener(this);
         mPrintPreviewView.setVisibility(View.GONE);
-
+        
         mPageControls = view.findViewById(R.id.previewControls);
-
+        
         mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
         mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
@@ -174,6 +174,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mHandler.sendMessage(newMessage);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -185,6 +186,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         setDefaultTitle(view);
@@ -193,6 +195,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         addPrintButton(view);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -203,34 +206,40 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
     }
     
+    /** {@inheritDoc} */
     @Override
-    public void onResume() {
-        super.onResume();
-        
-        // The activity must call the GL surface view's onResume() on activity onResume().
-        mPrintPreviewView.onResume();
-    }
-    
-    @Override
-    public void onPause() {
-        super.onPause();
-        
-        // The activity must call the GL surface view's onPause() on activity onPause().
-        mPrintPreviewView.onPause();
+    public void clearIconStates() {
+        super.clearIconStates();
+        setIconState(ID_PRINT_BUTTON, false);
     }
     
     // ================================================================================
     // Public functions
     // ================================================================================
     
+    /**
+     * Add print button
+     * 
+     * @param v
+     */
     public void addPrintButton(View v) {
         addMenuButton(v, R.id.rightActionLayout, ID_PRINT_BUTTON, R.drawable.selector_actionbar_printsettings, this);
     }
     
+    /**
+     * Set printer id
+     * 
+     * @param printerId
+     */
     public void setPrintId(int printerId) {
         mPrinterId = printerId;
     }
     
+    /**
+     * Set print settings
+     * 
+     * @param printSettings
+     */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
         if (mPrintPreviewView != null) {
@@ -241,6 +250,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
     }
     
+    /**
+     * Set PrintPreviewView Displayed
+     * 
+     * @param v
+     *            View
+     * @param show
+     *            Show PrintPreviewView
+     */
     public void setPrintPreviewViewDisplayed(View v, boolean show) {
         mProgressBar.setVisibility(View.GONE);
         setDefaultTitle(v);
@@ -268,15 +285,34 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
     }
     
+    /**
+     * Set default title
+     */
     public void setDefaultTitle(View v) {
-        setTitle(v, getResources().getString(R.string.ids_app_name));
+        setTitle(v, getResources().getString(R.string.ids_lbl_home));
     }
     
+    /**
+     * Set title
+     * 
+     * @param v
+     *            parent view
+     * @param title
+     *            title
+     */
     public void setTitle(View v, String title) {
         TextView textView = (TextView) v.findViewById(R.id.actionBarTitle);
         textView.setText(title);
     }
     
+    /**
+     * Show Print Settings button
+     * 
+     * @param v
+     *            parent view
+     * @param show
+     *            show print settings button
+     */
     public void showPrintSettingsButton(View v, boolean show) {
         if (v.findViewById(ID_PRINT_BUTTON) != null) {
             if (show) {
@@ -291,6 +327,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     // Private functions
     // ================================================================================
     
+    /**
+     * @param status
+     * @return PDF error message corresponding to status
+     */
     private String getPdfErrorMessage(int status) {
         switch (status) {
             case PDFFileManager.PDF_ENCRYPTED:
@@ -308,6 +348,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     // Page Control functions
     // ================================================================================
     
+    /**
+     * Updates the seek bar
+     */
     private void updateSeekBar() {
         int currentPage = mPrintPreviewView.getCurrentPage();
         int pageCount = mPrintPreviewView.getPageCount();
@@ -321,10 +364,18 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         updateSeekBarProgress(currentPage);
     }
     
+    /**
+     * Updates the seek bar progress to index
+     * 
+     * @param index
+     */
     private void updateSeekBarProgress(int index) {
         mSeekBar.setProgress(index);
     }
     
+    /**
+     * Updates the page label
+     */
     private void updatePageLabel() {
         mPageLabel.setText(mPrintPreviewView.getPageString());
     }
@@ -346,6 +397,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
                         
+                        setIconState(v.getId(), true);
+                        
                         // Always make new
                         PrintSettingsFragment fragment = null;// (PrintSettingsFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
                         if (fragment == null) {
@@ -356,7 +409,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         }
                         
                         fragment.setPrinterId(mPrinterId);
-                        fragment.setPdfPath(mPdfManager.getSandboxPath());
+                        fragment.setPdfPath(mPdfManager.getPath());
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
@@ -374,36 +427,43 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     // INTERFACE - PDFFileManagerInterface
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onFileInitialized(int status) {
-        setPrintPreviewViewDisplayed(getView(), false);
-        
-        switch (status) {
-            case PDFFileManager.PDF_OK:
-                setPrintPreviewViewDisplayed(getView(), true);
-                break;
-            default:
-                String message = getPdfErrorMessage(status);
-                String button = getResources().getString(R.string.ids_lbl_ok);
-                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
-                break;
+        if (!isDetached()) {
+            setPrintPreviewViewDisplayed(getView(), false);
+            
+            switch (status) {
+                case PDFFileManager.PDF_OK:
+                    setPrintPreviewViewDisplayed(getView(), true);
+                    break;
+                default:
+                    String message = getPdfErrorMessage(status);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    break;
+            }
         }
-        
     }
     
     // ================================================================================
     // INTERFACE - PreviewControlsListener
     // ================================================================================
     
+    /** {@inheritDoc} */
+    @Override
     public void onIndexChanged(int index) {
         updateSeekBarProgress(index);
         getActivity().runOnUiThread(new Runnable() {
+            @Override
             public void run() {
                 updatePageLabel();
             }
         });
     }
     
+    /** {@inheritDoc} */
+    @Override
     public int getControlsHeight() {
         if (mPageControls != null) {
             MarginLayoutParams params = (MarginLayoutParams) mPageControls.getLayoutParams();
@@ -412,18 +472,22 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         return 0;
     }
     
+    /** {@inheritDoc} */
+    @Override
     public void zoomLevelChanged(float zoomLevel) {
         float percentage = (zoomLevel - 1.0f) * 4.0f;
         
-        int height = mPageControls.getHeight();
-        mPageControls.setTranslationY(height * percentage);
-        
         mPageControls.setAlpha(1.0f - percentage);
         
-        mPageControls.setScaleX(zoomLevel);
-        mPageControls.setScaleY(zoomLevel);
+        //int height = mPageControls.getHeight();
+        //mPageControls.setTranslationY(height * percentage);
+        
+        //mPageControls.setScaleX(zoomLevel);
+        //mPageControls.setScaleY(zoomLevel);
     }
     
+    /** {@inheritDoc} */
+    @Override
     public void setControlsEnabled(boolean enable) {
         mSeekBar.setEnabled(enable);
     }
@@ -432,29 +496,33 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     // INTERFACE - OnSeekBarChangeListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            mPrintPreviewView.setCurrentPage(progress);
-            updatePageLabel();
-        }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+        mPrintPreviewView.setCurrentPage(progress);
+        updatePageLabel();
     }
     
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         mPrintPreviewView.setVisibility(msg.arg1);
         return true;
     }
+    
 }

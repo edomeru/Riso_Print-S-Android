@@ -1,0 +1,70 @@
+﻿<Grid x:Name="selectPrinterBox"
+    x:Class="SmartDeviceApp.Views.SelectPrinterBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Views"
+    xmlns:controls="using:SmartDeviceApp.Controls"
+    xmlns:conv="using:SmartDeviceApp.Converters"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Width="{StaticResource SIZE_SidePaneWidth}"
+    DataContext="{Binding SelectPrinterViewModel, Source={StaticResource Locator}}">
+
+    <Grid.Resources>
+        <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
+            <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
+                <StackPanel Style="{StaticResource STYLE_StackLeft}">
+                    <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
+                    <!-- TO BE REMOVED, I think.
+                    <Image x:Name="icon"
+                           Source="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                           Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
+                           Visibility="Collapsed"/>
+                    -->
+                    <TextBlock x:Name="key" 
+                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}}" 
+                            Style="{StaticResource STYLE_TextListHeader}" />
+                </StackPanel>
+            </Grid>
+        </ControlTemplate>
+    </Grid.Resources>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Button x:Name="header" Grid.Row="0" 
+            Content="{Binding Source=IDS_LBL_PRINTERS}"
+            Command="{Binding BackToPrintSettings}" 
+            Template="{StaticResource TEMPLATE_HeaderButton}"
+            Width="{Binding Width, ElementName=selectPrinterBox}"/>
+    <ListView x:Name="printersListView" Grid.Row="1"  
+              ItemsSource="{Binding PrinterList}" 
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
+              IsItemClickEnabled="False" 
+              SelectionMode="Single">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <!-- Needs binding for IconImage and SeparatorVisibility -->
+                <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
+                                                Command="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
+                                                CommandParameter="{Binding}"
+                                                GroupName="printersList"
+                                                Index="{Binding Id}"
+                                                Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
+                                                IconImage="ms-appx:///Resources/Images/img_btn_printer_status_online.png"
+                                                IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}}"
+                                                IsEnabled="True"
+                                                SeparatorVisibility="{Binding Id, Converter={StaticResource SelectPrinterToSeparatorVisibilityConverter}}"
+                                                SubText="{Binding IpAddress}"
+                                                SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
+                                                Width="{Binding Width, ElementName=selectPrinterBox}"
+                                                PressedColor="{StaticResource BRUSH_Purple1}">
+                </controls:KeyRadioButtonControl>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</Grid>
+

@@ -30,6 +30,7 @@ public class Preview {
         A6(105.0f, 148.0f),
         B4(257.0f, 364.0f),
         B5(182.0f, 257.0f),
+        B6(128.0f, 182.0f),
         FOOLSCAP(216.0f, 340.0f),
         TABLOID(280.0f, 432.0f),
         LEGAL(216.0f, 356.0f),
@@ -44,14 +45,23 @@ public class Preview {
             mHeight = height;
         }
         
+        /**
+         * @return tag
+         */
         public static String getTag() {
             return "paperSize";
         }
         
+        /**
+         * @return width
+         */
         public float getWidth() {
             return mWidth;
         }
         
+        /**
+         * @return height
+         */
         public float getHeight() {
             return mHeight;
         }
@@ -74,18 +84,30 @@ public class Preview {
             mFlipLandscape = flipLandscape;
         }
         
+        /**
+         * @return perPage
+         */
         public int getPerPage() {
             return mPerPage;
         }
         
+        /**
+         * @return rows
+         */
         public int getRows() {
             return mRows;
         }
         
+        /**
+         * @return columns
+         */
         public int getCols() {
             return mCols;
         }
         
+        /**
+         * @return flip landscape
+         */
         public boolean isFlipLandscape() {
             return mFlipLandscape;
         }
@@ -109,14 +131,23 @@ public class Preview {
             mHorizontalFlow = horizontalFlow;
         }
         
+        /**
+         * @return imposition order is left to right
+         */
         public boolean isLeftToRight() {
             return mLeftToRight;
         }
-        
+
+        /**
+         * @return imposition order is top to bottom
+         */
         public boolean isTopToBottom() {
             return mTopToBottom;
         }
         
+        /**
+         * @return is horizontal flow
+         */
         public boolean isHorizontalFlow() {
             return mHorizontalFlow;
         }
@@ -127,7 +158,7 @@ public class Preview {
     }
     
     public enum BookletFinish {
-        PAPER_FOLDING, FOLD_AND_STAPLE;
+        OFF, PAPER_FOLDING, FOLD_AND_STAPLE;
     }
     
     public enum BookletLayout {
@@ -151,6 +182,9 @@ public class Preview {
             mCount = count;
         }
         
+        /**
+         * @return staple count
+         */
         public int getCount() {
             return mCount;
         }
@@ -167,12 +201,15 @@ public class Preview {
             mCount = count;
         }
         
+        /**
+         * @return punch count
+         */
         public int getCount() {
             return mCount;
         }
     }
     
     public enum OutputTray {
-        AUTO, FACEDOWN, FACEUP, TOP, STACKING;
+        AUTO, FACEDOWN, TOP, STACKING;
     }
 }

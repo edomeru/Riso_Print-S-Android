@@ -2,8 +2,8 @@
 //  common.h
 //  SmartDeviceApp
 //
-//  Created by Seph on 4/9/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #ifndef SmartDeviceApp_common_h
@@ -34,14 +34,13 @@ enum kJobStatus
     kJobStatusSent
 };
 
-directprint_job *directprint_job_new(const char *job_name, const char *filename, const char *print_settings, const char *ip_address, directprint_callback callback);
+directprint_job *directprint_job_new(const char *user_name, const char *job_name, const char *filename, const char *print_settings, const char *ip_address, directprint_callback callback);
 void directprint_job_free(directprint_job *print_job);
 void *directprint_job_get_caller_data(directprint_job *print_job);
 void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
 void directprint_job_cancel(directprint_job *print_job);
 int directprint_job_lpr_print(directprint_job *print_job);
 int directprint_job_raw_print(directprint_job *print_job);
-
 
 /**
  SNMP
@@ -89,6 +88,8 @@ void snmp_cancel(snmp_context *context);
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
 
+snmp_device *snmp_device_new(const char *ip_address);
+void snmp_device_free(snmp_device *device);
 const char *snmp_device_get_ip_address(snmp_device *device);
 const char *snmp_device_get_name(snmp_device *device);
 int snmp_device_get_capability_status(snmp_device *device, int capability);

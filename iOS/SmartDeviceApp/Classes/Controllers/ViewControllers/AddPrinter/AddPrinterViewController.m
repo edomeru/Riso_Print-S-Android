@@ -2,16 +2,16 @@
 //  AddPrinterScreenController.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "AddPrinterViewController.h"
 #import "PrinterDetails.h"
 #import "PrinterManager.h"
 #import "NetworkManager.h"
-#import "AlertUtils.h"
-#import "InputUtils.h"
+#import "AlertHelper.h"
+#import "InputHelper.h"
 
 #define TAG_TEXT_IP         0
 #define TAG_TEXT_USERNAME   1
@@ -27,24 +27,12 @@
 /** Flag that will be set to YES when at least one successful printer was added. */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
-/**
- Flag that indicates that a printer search was initiated, but
- either the printer was not found or the search timed-out.
- */
-@property (assign, nonatomic) BOOL willEndWithoutAdd;
-
 #pragma mark - UI Properties
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* progressIndicator;
 
 /** Input TextField for the IP Address. */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
-
-/** Input TextField for the Username. */
-@property (weak, nonatomic) IBOutlet UITextField *textUsername;
-
-/** Input TextField for the Password. */
-@property (weak, nonatomic) IBOutlet UITextField *textPassword;
 
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
@@ -61,6 +49,13 @@
  Tells the currently active TextField to close the keypad/numpad.
  */
 - (void)dismissKeypad;
+
+- (void)savePrinter;
+
+/**
+ Adds a full-capability printer (for failed manual snmp search)
+ */
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress;
 
 /**
  Unwinds back to the Printers screen.
@@ -104,7 +99,6 @@
 
 - (void)initialize
 {
-    self.isFixedSize = YES;
     self.slideDirection = SlideRight;
 }
 
@@ -129,8 +123,10 @@
     self.printerManager.searchDelegate = self;
     self.hasAddedPrinters = NO;
     
-    // setup the header buttons
+    [self.progressIndicator setHidden:YES];
+    [self.saveButton setHidden:NO];
     [self.saveButton setEnabled:NO];
+    [self.textIP setEnabled:YES];
 }
 
 #pragma mark - Segue
@@ -157,83 +153,109 @@
 
 - (IBAction)onSave:(UIButton *)sender
 {
+    [self savePrinter];
+}
+
+- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+{
+    PrinterDetails *pd = [[PrinterDetails alloc] init];
+    pd.ip = ipAddress;
+    pd.port = [NSNumber numberWithInt:0];
+    pd.enBooklet = YES;
+    pd.enStaple = YES;
+    pd.enFinisher23Holes = NO;
+    pd.enFinisher24Holes = YES;
+    pd.enTrayAutoStacking = YES;
+    pd.enTrayFaceDown = YES;
+    pd.enTrayStacking = YES;
+    pd.enTrayTop = YES;
+    pd.enLpr = YES;
+    pd.enRaw = YES;
+    
+    [self.printerManager registerPrinter:pd];
+    self.hasAddedPrinters = YES;
+}
+
+- (void)savePrinter
+{
     [self dismissKeypad];
     
     // is it still possible to add a printer
     if ([self.printerManager isAtMaximumPrinters])
     {
-        [AlertUtils displayResult:ERR_MAX_PRINTERS
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // properly format/trim the input IP
-    NSString* trimmedIP = [InputUtils trimIP:self.textIP.text];
+    NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
 #endif
     self.textIP.text = trimmedIP;
     
     // is the IP a valid IP address?
-    if (![InputUtils isIPValid:trimmedIP])
+    if (![InputHelper isIPValid:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_INVALID_IP
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrInvalidIP
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // was this printer already added before?
     if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
     {
-        [AlertUtils displayResult:ERR_ALREADY_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterDuplicate
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
         return;
     }
     
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [AlertUtils displayResult:ERR_NO_NETWORK
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
+
+        [self addFullCapabilityPrinter:trimmedIP];
+        
         return;
     }
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
 #endif
-    self.willEndWithoutAdd = YES; //catch for SNMP timeout, will become NO if a printer is found
     [self.printerManager searchForPrinter:trimmedIP];
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
     
-    // show the searching indicator
     [self.progressIndicator startAnimating];
-    
-    // disable the save button
-    [self.saveButton setEnabled:NO];
+    [self.saveButton setHidden:YES];
+    [self.textIP setEnabled:NO];
 }
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEnded
+- (void)searchEndedwithResult:(BOOL)printerFound
 {
-    if (self.willEndWithoutAdd)
+    if (!printerFound)
     {
-        [AlertUtils displayResult:ERR_PRINTER_NOT_FOUND
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
+        
+        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        [self addFullCapabilityPrinter:trimmedIP];
     }
 
-    // hide the searching indicator
     [self.progressIndicator stopAnimating];
-    
-    // re-enable the save button
-    [self.saveButton setEnabled:YES];
+    [self.saveButton setHidden:NO];
+    [self.textIP setEnabled:YES];
     
     // if this is an iPad, reload the center panel
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -248,27 +270,21 @@
     NSLog(@"[INFO][AddPrinter] received NEW printer with IP=%@", printerDetails.ip);
     NSLog(@"[INFO][AddPrinter] updating UI");
 #endif
-    self.willEndWithoutAdd = NO; //search did not timeout
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertUtils displayResult:INFO_PRINTER_ADDED
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
+        
         self.hasAddedPrinters = YES;
     }
     else
     {
-        [AlertUtils displayResult:ERR_CANNOT_ADD
-                        withTitle:ALERT_TITLE_PRINTERS_ADD
-                      withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
     }
-}
-
-- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
-{
-    // will not be called since search will only be initiated
-    // if the IP is not yet registered
 }
 
 #pragma mark - TextFields
@@ -277,15 +293,18 @@
 {
     if (self.textIP.isEditing)
         [self.textIP resignFirstResponder];
-    else if (self.textUsername.isEditing)
-        [self.textUsername resignFirstResponder];
-    else if (self.textPassword.isEditing)
-        [self.textPassword resignFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    [textField resignFirstResponder];
     [self dismissKeypad];
+    
+    if (textField.text.length > 0)
+    {
+        [self savePrinter];
+    }
+
     return YES;
 }
 

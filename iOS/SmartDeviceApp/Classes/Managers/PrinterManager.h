@@ -2,14 +2,47 @@
 //  PrinterManager.h
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "PrinterSearchDelegate.h"
 
 @class Printer;
+@class PrinterDetails;
+
+@protocol PrinterSearchDelegate <NSObject>
+
+@required
+
+/**
+ Notifies the delegate that the search has ended.
+ @param found
+        YES if a printer was found, NO otherwise.
+ */
+- (void)searchEndedwithResult:(BOOL)printerFound;
+
+/**
+ Notifies the delegate that a new printer has been found.
+ Provides the printer info and capabilities as found by the search.
+ @param printerDetails
+        info and capabilities of the printer
+ */
+- (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails;
+
+@optional
+
+/**
+ Notifies the delegate that an already saved printer was found.
+ Provides some details about the printer.
+ @param printerIP
+        IP address of the printer
+ @param printerName
+        name of the printer
+ */
+- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName;
+
+@end
 
 @interface PrinterManager : NSObject
 
@@ -99,6 +132,20 @@
  */
 - (BOOL)isDefaultPrinter:(Printer*)printer;
 
+/**
+ Returns the printer object of the default printer
+ 
+ @return Printer object
+ */
+-(Printer*) getDefaultPrinter;
+
+/**
+ Call to save the changes done to printer objects to database.
+ 
+ @return YES if successful; NO otherwise
+ */
+-(BOOL) savePrinterChanges;
+
 #pragma mark - Printers in Network (SNMP)
 
 /**
@@ -147,5 +194,4 @@
  @return YES if the specified printer IP is a duplicate, NO otherwise.
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
-
 @end

@@ -31,10 +31,30 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
     
+    /**
+     * @param message
+     *           the text displayed as the message in the dialog
+     * @param buttonPosTitle
+     *           the text displayed in the positive button of the dialog
+     * @param buttonNegTitle
+     *           the text displayed in the negative button of the dialog
+     * @return ConfirmDialogFragment instance
+     */
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
         return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
     }
     
+    /**
+     * @param title
+     *           the text displayed as the title in the dialog
+     * @param message
+     *           the text displayed as the message in the dialog
+     * @param buttonPosTitle
+     *           the text displayed in the positive button of the dialog
+     * @param buttonNegTitle
+     *           the text displayed in the negative button of the dialog
+     * @return ConfirmDialogFragment instance
+     */
     public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {
         ConfirmDialogFragment dialog = new ConfirmDialogFragment();
         
@@ -46,16 +66,17 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         args.putString(KEY_NEG_BUTTON, buttonNegTitle);
         
         dialog.setArguments(args);
-        dialog.setCancelable(false);
         
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
     
+    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
@@ -87,6 +108,7 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         return dialog;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (getTargetFragment() instanceof ConfirmDialogListener) {
@@ -106,9 +128,24 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     // Internal Classes
     // ================================================================================
     
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (getTargetFragment() instanceof ConfirmDialogListener) {
+            ConfirmDialogListener listener = (ConfirmDialogListener) getTargetFragment();
+            listener.onCancel();
+        }
+    }
+    
     public interface ConfirmDialogListener {
+        /**
+         * Confirm listener
+         */
         public void onConfirm();
         
+        /**
+         * Cancel listener
+         */
         public void onCancel();
     }
 }

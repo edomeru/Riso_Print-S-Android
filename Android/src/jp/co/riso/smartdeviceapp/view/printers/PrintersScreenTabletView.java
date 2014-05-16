@@ -15,6 +15,7 @@ import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
@@ -46,11 +47,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class PrintersScreenTabletView extends ViewGroup implements OnLongClickListener, View.OnClickListener, OnCheckedChangeListener, Callback,
-        OnItemSelectedListener {
+OnItemSelectedListener {
     private static final int MSG_ADD_PRINTER = 0x01;
     private static final int MSG_SET_UPDATE_VIEWS = 0x02;
     private static final int MIN_COLUMN = 2;
     private static final int MIN_ROW = 1;
+    private static final int ID_TAG_DEFAULTSETTINGS = 0x11000001;
     
     private PrinterManager mPrinterManager = null;
     private Printer mSelectedPrinter = null;
@@ -61,32 +63,61 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     private int mDeleteItem = -1;
     private int mWidth = 0;
     private int mHeight = 0;
+    private ViewHolder mSettingViewHolder;
+    private int mSettingItem = PrinterManager.EMPTY_ID;
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate Printers Screen tablet view
+     * 
+     * @param context
+     */
     public PrintersScreenTabletView(Context context) {
         super(context);
         init(context);
     }
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate Printers Screen tablet view
+     * 
+     * @param context
+     * @param attrs
+     */
     public PrintersScreenTabletView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
     
+    /**
+     * Constructor
+     * <p>
+     * Instantiate Printers Screen tablet view
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
+     */
     public PrintersScreenTabletView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
     
+    /** {@inheritDoc} */
     @Override
     protected LayoutParams generateLayoutParams(LayoutParams layoutParams) {
         return new MarginLayoutParams(layoutParams);
     }
     
+    /** {@inheritDoc} */
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -120,6 +151,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         setMeasuredDimension(screenWidth, childHeight * numberOfRow);
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final int childCount = getChildCount();
@@ -132,8 +164,9 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
             for (int x = 0; x < numberOfColumn; x++) {
                 View child = getChildAt(i);
                 
-                if (child == null)
+                if (child == null) {
                     return;
+                }
                 MarginLayoutParams lps = (MarginLayoutParams) child.getLayoutParams();
                 
                 int fLeft = left + (mWidth * x) + lps.leftMargin;
@@ -146,6 +179,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int coords[] = new int[2];
@@ -175,24 +209,46 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // Public Methods
     // ================================================================================
     
-    public void onAddedNewPrinter(Printer printer) {
-        mPrinterList.add(printer);
+    /**
+     * Add Printer.
+     * <p>
+     * Add printer to the Printers Screen
+     * 
+     * @param printer
+     *            Printer object
+     */
+    public void onAddedNewPrinter(Printer printer, boolean isOnline) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_PRINTER);
         newMessage.obj = printer;
+        if (isOnline) {
+            newMessage.arg1 = 1;
+        } else {
+            newMessage.arg1 = 0;
+        }
         mHandler.sendMessage(newMessage);
     }
     
-    public void restoreState(List<Printer> printer, int deleteItem) {
+    /**
+     * Restore the Printers Screen previous state
+     * 
+     * @param printer
+     * @param deleteItem
+     */
+    public void restoreState(List<Printer> printer, int deleteItem, int settingItem) {
         mPrinterList = printer;
         mDeleteItem = deleteItem;
+        mSettingItem = settingItem;
         for (int i = 0; i < printer.size(); i++) {
-            addToTabletPrinterScreen(printer.get(i));
+            addToTabletPrinterScreen(printer.get(i), false);
         }
         Message newMessage = Message.obtain(mHandler, MSG_SET_UPDATE_VIEWS);
         mHandler.sendMessage(newMessage);
         
     }
     
+    /**
+     * @return delete view index
+     */
     public int getDeleteItemPosition() {
         if (mDeleteViewHolder != null) {
             mDeleteItem = indexOfChild((View) mDeleteViewHolder.mOnlineIndcator.getTag());
@@ -200,15 +256,55 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         return mDeleteItem;
     }
     
+    
+    /**
+     * @return default setting selected index
+     */
+    public int getDefaultSettingSelected() {
+        if (mSettingViewHolder != null) {
+            mSettingItem = indexOfChild((View) mSettingViewHolder.mOnlineIndcator.getTag());
+        }
+        return mSettingItem;
+    }
+    
+    /**
+     * Sets the selected state of a Printer's default setting
+     * 
+     * @param boolean
+     *            is in selected state
+     */
+    public void setDefaultSettingSelected (boolean state) {
+        if (mSettingViewHolder != null) {
+            mSettingViewHolder.mPrintSettings.setSelected(state);
+        } else if (mSettingItem != PrinterManager.EMPTY_ID) {
+            getChildAt(mSettingItem).findViewById(R.id.default_print_settings).setSelected(state);
+        }
+        if (!state) {
+            mSettingItem = PrinterManager.EMPTY_ID;
+            mSettingViewHolder = null;
+        }
+    }
+    
     // ================================================================================
     // Private methods
     // ================================================================================
     
+    /**
+     * Initialize PrinterScreenTabletView
+     * 
+     * @param context
+     */
     private void init(Context context) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mHandler = new Handler(this);
     }
     
+    /**
+     * Set view holder to normal
+     * 
+     * @param viewHolder
+     *            view holder to set as normal
+     */
     private void setPrinterViewToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -227,6 +323,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         }
     }
     
+    /**
+     * Set view holder to default
+     * 
+     * @param viewHolder
+     *            view holder to set as default
+     */
     private void setPrinterViewToDefault(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -255,6 +357,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         mDefaultViewHolder = viewHolder;
     }
     
+    /**
+     * Set view holder to delete
+     * 
+     * @param viewHolder
+     *            view holder to set as delete
+     */
     private void setPrinterViewToDelete(ViewHolder viewHolder) {
         if (viewHolder == null) {
             return;
@@ -269,6 +377,12 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         mDeleteViewHolder = viewHolder;
     }
     
+    /**
+     * Reset view holder
+     * 
+     * @param viewHolder
+     *            view holder to reset
+     */
     private void setPrinterView(ViewHolder viewHolder) {
         Printer printer = (Printer) viewHolder.mIpAddress.getTag();
         
@@ -279,7 +393,13 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         }
     }
     
-    private void addToTabletPrinterScreen(Printer printer) {
+    /**
+     * Adds printer object to the Printers Screen
+     * 
+     * @param printer
+     *            printer object
+     */
+    private void addToTabletPrinterScreen(Printer printer, boolean isOnline) {
         if (printer == null) {
             return;
         }
@@ -288,6 +408,11 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         
         View pView = inflater.inflate(R.layout.printers_container_item, this, false);
         AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
+        
+        String printerName = printer.getName();
+        if(printerName == null || printerName.isEmpty()) {
+            printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
+        }
         
         addView(pView);
         
@@ -306,7 +431,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         viewHolder.mPort.setAdapter(portAdapter);
         
-        viewHolder.mPrinterName.setText(printer.getName());
+        viewHolder.mPrinterName.setText(printerName);
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         viewHolder.mPort.setSelection(printer.getPortSetting());
         
@@ -323,9 +448,13 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
         viewHolder.mDeleteButton.setTag(viewHolder);
         viewHolder.mIpAddress.setTag(printer);
         viewHolder.mPrintSettings.setTag(printer);
+        viewHolder.mPrintSettings.setTag(ID_TAG_DEFAULTSETTINGS, viewHolder);
         viewHolder.mOnlineIndcator.setTag(pView);
         viewHolder.mPort.setTag(printer);
         
+        if (isOnline) {
+            viewHolder.mOnlineIndcator.setImageResource(R.drawable.img_btn_printer_status_online);
+        }
         setPrinterView(viewHolder);
     }
     
@@ -333,6 +462,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onLongClick
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean onLongClick(View v) {
         mDeleteViewHolder = (ViewHolder) v.findViewById(R.id.txt_printerName).getTag();
@@ -344,6 +474,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onClick
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         ViewHolder viewHolder = null;
@@ -374,6 +505,8 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
                 break;
             case R.id.default_print_settings:
                 mSelectedPrinter = (Printer) v.getTag();
+                mSettingViewHolder = (ViewHolder) v.getTag(ID_TAG_DEFAULTSETTINGS);
+                setDefaultSettingSelected(true);
                 if (getContext() != null && getContext() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getContext();
                     
@@ -390,7 +523,10 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
                             ft.commit();
                         }
                         
-                        fragment.setPrintSettings(mSelectedPrinter.getPrintSettings());
+                        fragment.setPrinterId(mSelectedPrinter.getId());
+                        // use new print settings retrieved from the database
+                        fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
+                        
                         activity.openDrawer(Gravity.RIGHT, false);
                     } else {
                         activity.closeDrawers();
@@ -404,6 +540,7 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
@@ -421,21 +558,27 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case MSG_SET_UPDATE_VIEWS:
                 setPrinterViewToDefault(mDefaultViewHolder);
                 if (mDeleteItem != -1) {
-                    View view = (View) getChildAt(mDeleteItem);
+                    View view = getChildAt(mDeleteItem);
                     if (view != null) {
                         ViewHolder viewHolder = (ViewHolder) view.findViewById(R.id.txt_printerName).getTag();
                         setPrinterViewToDelete(viewHolder);
                     }
                 }
+                
+                if (mSettingItem != PrinterManager.EMPTY_ID) {
+                    setDefaultSettingSelected(true);
+                }
+                
                 return true;
             case MSG_ADD_PRINTER:
-                addToTabletPrinterScreen((Printer) msg.obj);
+                addToTabletPrinterScreen((Printer) msg.obj, msg.arg1 > 0);
                 return true;
         }
         return false;
@@ -445,12 +588,14 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         Printer printer = (Printer) parentView.getTag();
         printer.setPortSetting(position);
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing
@@ -460,6 +605,9 @@ public class PrintersScreenTabletView extends ViewGroup implements OnLongClickLi
     // Internal Classes
     // ================================================================================
     
+    /**
+     * Printers Screen view holder for tablet
+     */
     public class ViewHolder {
         private ImageView mOnlineIndcator;
         private TextView mPrinterName;
