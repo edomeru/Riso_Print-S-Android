@@ -23,7 +23,7 @@ public class AppConstants {
 
     public static final int CONST_LOGIN_ID_LIMIT = 31;
     public static final int CONST_PIN_CODE_LIMIT = 8;
-    public static final int CONST_COPIES_LIMIT = 8;
+    public static final int CONST_COPIES_LIMIT = 4;
     
     public static final String PREF_KEY_DB_VERSION = "pref_db_version";
     
