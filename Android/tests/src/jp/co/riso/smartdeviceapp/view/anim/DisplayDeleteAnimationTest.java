@@ -41,8 +41,8 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         deleteButton.setText("button");
         deleteButton.setId(1);
         ll.addView(deleteButton);
-        deleteButton.setVisibility(View.INVISIBLE);
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        deleteButton.setVisibility(View.GONE);
+        assertEquals(View.GONE, deleteButton.getVisibility());
         mDeleteAnimation.beginDeleteModeOnView(ll, true, 1);
         waitInMilliseconds(1000);
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
@@ -55,8 +55,8 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         deleteButton.setText("button");
         deleteButton.setId(1);
         ll.addView(deleteButton);
-        deleteButton.setVisibility(View.INVISIBLE);
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        deleteButton.setVisibility(View.GONE);
+        assertEquals(View.GONE, deleteButton.getVisibility());
         mDeleteAnimation.beginDeleteModeOnView(ll, false, 1);
         waitInMilliseconds(100);
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
@@ -80,11 +80,11 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         tv.setId(3);
         ll.addView(tv);
 
-        deleteButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.GONE);
         otherButton.setVisibility(View.VISIBLE);
         tv.setVisibility(View.VISIBLE);
 
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
 
         assertEquals(View.VISIBLE, tv.getVisibility());
@@ -92,8 +92,8 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         mDeleteAnimation.beginDeleteModeOnView(ll, false, 1, 2, 3);
         waitInMilliseconds(100);
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        assertEquals(View.INVISIBLE, otherButton.getVisibility());
-        assertEquals(View.INVISIBLE, tv.getVisibility());
+        assertEquals(View.GONE, otherButton.getVisibility());
+        assertEquals(View.GONE, tv.getVisibility());
 
     }
 
@@ -116,11 +116,11 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         tv.setId(3);
         ll.addView(tv);
 
-        deleteButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.GONE);
         otherButton.setVisibility(View.VISIBLE);
         tv.setVisibility(View.VISIBLE);
 
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
         mActivity.runOnUiThread(new Runnable() {
@@ -135,11 +135,11 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         });
         waitInMilliseconds(1000);
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        assertEquals(View.INVISIBLE, otherButton.getVisibility());
-        assertEquals(View.INVISIBLE, tv.getVisibility());
+        assertEquals(View.GONE, otherButton.getVisibility());
+        assertEquals(View.GONE, tv.getVisibility());
     }
 
-    
+
     public void testBeginDeleteModeOnView_WithAnimationHideOtherViewsTwice() {
         // DisplayDeleteAnimation mDeleteAnimation = new
         // DisplayDeleteAnimation();
@@ -159,11 +159,11 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         tv.setId(3);
         ll.addView(tv);
 
-        deleteButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.GONE);
         otherButton.setVisibility(View.VISIBLE);
         tv.setVisibility(View.VISIBLE);
 
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
         mActivity.runOnUiThread(new Runnable() {
@@ -181,8 +181,8 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         waitInMilliseconds(1000);
 
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        assertEquals(View.INVISIBLE, otherButton.getVisibility());
-        assertEquals(View.INVISIBLE, tv.getVisibility());
+        assertEquals(View.GONE, otherButton.getVisibility());
+        assertEquals(View.GONE, tv.getVisibility());
     }
 
     public void testEndDeleteModeOnView_WithAnimation() {
@@ -210,7 +210,7 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         });
 
         waitInMilliseconds(1000);
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        assertEquals(View.GONE, deleteButton.getVisibility());
     }
 
     public void testEndDeleteModeOnView_WithOutAnimation() {
@@ -225,9 +225,9 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         mDeleteAnimation.endDeleteMode(ll, false, 1);
 
         waitInMilliseconds(100);
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        assertEquals(View.GONE, deleteButton.getVisibility());
     }
-    
+
     public void testEndDeleteModeOnView_WithOutAnimationShowOtherViews() {
         final LinearLayout ll = new LinearLayout(mActivity);
         final Button deleteButton = new Button(mActivity);
@@ -247,22 +247,22 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         ll.addView(tv);
 
         deleteButton.setVisibility(View.VISIBLE);
-        otherButton.setVisibility(View.INVISIBLE);
-        tv.setVisibility(View.INVISIBLE);
+        otherButton.setVisibility(View.GONE);
+        tv.setVisibility(View.GONE);
 
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        assertEquals(View.INVISIBLE, otherButton.getVisibility());
+        assertEquals(View.GONE, otherButton.getVisibility());
 
-        assertEquals(View.INVISIBLE, tv.getVisibility());
+        assertEquals(View.GONE, tv.getVisibility());
         DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
         mDeleteAnimation.endDeleteMode(ll, false, 1, 2, 3);
 
         waitInMilliseconds(100);
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+        assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
     }
-    
+
     public void testEndDeleteModeOnView_WithAnimationShowOtherViews() {
         final LinearLayout ll = new LinearLayout(mActivity);
         final Button deleteButton = new Button(mActivity);
@@ -282,13 +282,13 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         ll.addView(tv);
 
         deleteButton.setVisibility(View.VISIBLE);
-        otherButton.setVisibility(View.INVISIBLE);
-        tv.setVisibility(View.INVISIBLE);
+        otherButton.setVisibility(View.GONE);
+        tv.setVisibility(View.GONE);
 
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        assertEquals(View.INVISIBLE, otherButton.getVisibility());
+        assertEquals(View.GONE, otherButton.getVisibility());
 
-        assertEquals(View.INVISIBLE, tv.getVisibility());
+        assertEquals(View.GONE, tv.getVisibility());
 
 
         mActivity.runOnUiThread(new Runnable() {
@@ -304,12 +304,12 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         });
 
         waitInMilliseconds(1000);
-        
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+
+        assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
     }
-    
+
     public void testEndDeleteModeOnView_WithAnimationShowOtherViewsTwice() {
         final LinearLayout ll = new LinearLayout(mActivity);
         final Button deleteButton = new Button(mActivity);
@@ -329,13 +329,13 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         ll.addView(tv);
 
         deleteButton.setVisibility(View.VISIBLE);
-        otherButton.setVisibility(View.INVISIBLE);
-        tv.setVisibility(View.INVISIBLE);
+        otherButton.setVisibility(View.GONE);
+        tv.setVisibility(View.GONE);
 
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        assertEquals(View.INVISIBLE, otherButton.getVisibility());
+        assertEquals(View.GONE, otherButton.getVisibility());
 
-        assertEquals(View.INVISIBLE, tv.getVisibility());
+        assertEquals(View.GONE, tv.getVisibility());
 
 
         mActivity.runOnUiThread(new Runnable() {
@@ -352,14 +352,14 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         });
 
         waitInMilliseconds(1000);
-        
-        assertEquals(View.INVISIBLE, deleteButton.getVisibility());
+
+        assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
     }
-    
-    
-    
+
+
+
     //================================================================================
     // Private methods
     //================================================================================
@@ -372,16 +372,16 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
             e.printStackTrace();
         }
     }
-    
+
     private void wakeUpScreen() {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mActivity.getWindow().addFlags(
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
             }
         });
 
