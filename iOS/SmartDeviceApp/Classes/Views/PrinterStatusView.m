@@ -37,14 +37,14 @@
     if(isOnline)
     {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
-        NSLog(@"Set to online");
+        NSLog(@"[INFO][PSView] set to online");
 #endif
         [self setHighlighted:YES];
     }
     else
     {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
-        NSLog(@"Set to offline");
+        NSLog(@"[INFO][PSView] set to offline");
 #endif
         [self setHighlighted:NO];
     }
@@ -54,7 +54,7 @@
 {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
     NSString* onlineStatus = isOnline ? @"YES" : @"NO";
-    NSLog(@"%@ online status = %@", self.statusHelper.ipAddress, onlineStatus);
+    NSLog(@"[INFO][PSView] %@ online = %@", self.statusHelper.ipAddress, onlineStatus);
 #endif
     [self setStatus:isOnline];
 }

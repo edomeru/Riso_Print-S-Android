@@ -360,6 +360,7 @@
         //set the view of the cell to stop polling for printer status
         PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
         [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+        cell.printerStatus.statusHelper = nil;
         
         //set view to non default printer cell style
         [cell setCellStyleForNormalCell];
