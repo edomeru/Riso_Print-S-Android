@@ -30,7 +30,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
-@property (nonatomic, strong) NSIndexPath *indexPaths;
 
 #pragma mark - Instance Methods
 
@@ -67,16 +66,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-}
-
--(void) dealloc
-{
-    for(PrinterStatusHelper * statusHelper in self.statusHelpers)
-    {
-        [statusHelper stopPrinterStatusPolling];
-    }
-    [self.statusHelpers removeAllObjects];
-    
 }
 
 #pragma mark - TableView
