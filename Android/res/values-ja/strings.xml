@@ -6,7 +6,8 @@
     <string name="default_content_description">Content Description</string>
 
     <!-- WordingList_Alpha1 -->
-    <string name="ids_app_name">SmartDeviceApp</string>
+    <string name="ids_app_name">RISO Smart Print</string>
+    <string name="ids_app_launcher_name">Smart Print</string>
     <string name="ids_lbl_save">保存</string>
     <string name="ids_lbl_ok">OK</string>
     <string name="ids_lbl_cancel">キャンセル</string>
