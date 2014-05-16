@@ -43,9 +43,11 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:duplicateParentState="true"
+                    android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     android:paddingLeft="@dimen/printers_row_left_padding"
+                    android:singleLine="true"
                     android:textColor="@color/selector_printers_text"
                     android:textSize="@dimen/printers_name_font_size" />
 
