@@ -60,6 +60,7 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTableViewAction:)];
     [self.tableView addGestureRecognizer:tap];
+    self.statusHelpers = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
