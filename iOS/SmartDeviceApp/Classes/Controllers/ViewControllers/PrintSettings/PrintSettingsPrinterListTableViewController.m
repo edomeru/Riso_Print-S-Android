@@ -22,6 +22,7 @@
 @property (weak, nonatomic) PrinterManager *printerManager;
 @property (weak, nonatomic) PrintDocument *printDocument;
 @property (nonatomic) NSUInteger selectedIndex;
+@property (nonatomic, strong) NSMutableArray *statusHelpers;
 @end
 
 @implementation PrintSettingsPrinterListTableViewController
@@ -41,6 +42,7 @@
 
     self.printerManager = [PrinterManager sharedPrinterManager];
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
+    self.statusHelpers = [[NSMutableArray alloc] init];
     
     NSUInteger printerCount = self.printerManager.countSavedPrinters;
     for (NSUInteger i = 0; i < printerCount; i++)
@@ -52,6 +54,16 @@
             break;
         }
     }
+}
+
+-(void) dealloc
+{
+    for(PrinterStatusHelper * statusHelper in self.statusHelpers)
+    {
+        [statusHelper stopPrinterStatusPolling];
+    }
+    [self.statusHelpers removeAllObjects];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -87,18 +99,15 @@
         itemCell.optionLabel.text = printer.name;
     }
     
-    if (itemCell.statusView.statusHelper != nil)
+    if([self.statusHelpers count] <= indexPath.row)
     {
-        [itemCell.statusView.statusHelper stopPrinterStatusPolling];
-        itemCell.statusView.statusHelper.delegate = nil;
-        itemCell.statusView.statusHelper = nil;
+        PrinterStatusHelper *printerStatusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+        printerStatusHelper.delegate = self;
+        [printerStatusHelper startPrinterStatusPolling];
+        [self.statusHelpers addObject:printerStatusHelper];
     }
     
     itemCell.subLabel.text = printer.ip_address;
-    itemCell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
-    itemCell.statusView.statusHelper.delegate = itemCell.statusView;
-    [itemCell.statusView.statusHelper startPrinterStatusPolling];
-    
     itemCell.separator.hidden = NO;
     if (indexPath.row == [self.printerManager countSavedPrinters] - 1)
     {
@@ -122,6 +131,20 @@
         self.selectedIndex = index;
         Printer *printer = [self.printerManager getPrinterAtIndex:index];
         self.printDocument.printer = printer;
+    }
+}
+
+#pragma mark - PrinterStatusDelegate
+-(void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange :(BOOL)isOnline
+{
+    NSUInteger index = [self.statusHelpers indexOfObject:statusHelper];
+    Printer *printer = [self.printerManager getPrinterAtIndex:index];
+    
+    printer.onlineStatus = [NSNumber numberWithBool:isOnline];
+    PrintSettingsOptionsItemCell *cell = (PrintSettingsOptionsItemCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    if(cell != nil) //cell returned will be nil if cell for row is not visible
+    {
+        [cell.statusView setStatus:isOnline];
     }
 }
 

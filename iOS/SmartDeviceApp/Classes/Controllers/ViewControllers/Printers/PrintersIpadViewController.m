@@ -120,7 +120,6 @@
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
     [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
     
-    //cell.defaultSettingsButton.tag = indexPath.row;
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
     cell.deleteButton.delegate = nil;
@@ -131,31 +130,16 @@
     [cell.defaultSettingsRow addGestureRecognizer:press];
     [cell setDefaultSettingsRowToSelected:NO];
     
-    // fix for the unconnected helper still polling when the
-    // cell and the PrinterStatusViews are reused on reload
-    // (the status view is not dealloc'd and it still sets
-    // the status on its previous cell)
-    /*if ([cell.statusView.statusHelper isPolling])
-    {
-        [cell.statusView.statusHelper stopPrinterStatusPolling];
-        cell.statusView.statusHelper.delegate = nil;
-    }*/
-    
-    if([self.statusHelpers count] <= indexPath.row || [self.statusHelpers objectAtIndex:indexPath.row] == nil)
+
+    if([self.statusHelpers count] <= indexPath.row)
     {
         PrinterStatusHelper *printerStatusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
         printerStatusHelper.delegate = self;
         [printerStatusHelper startPrinterStatusPolling];
         [self.statusHelpers addObject:printerStatusHelper];
     }
-    
-    // since cells may be reused, create a new helper for this cell
-    //cell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
-    //cell.statusView.statusHelper.delegate = cell.statusView;
 
     [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
-    //[cell.statusView setStatus:NO];
-    //[cell.statusView.statusHelper startPrinterStatusPolling];
     
     cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
     cell.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
@@ -168,6 +152,8 @@
     return NO;
 }
 
+
+#pragma mark - PrinterStatusHelper delegate
 -(void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange :(BOOL)isOnline
 {
     NSUInteger index = [self.statusHelpers indexOfObject:statusHelper];
