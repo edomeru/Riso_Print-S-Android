@@ -28,7 +28,7 @@ public class DirectPrintManager {
     public static final int PRINT_STATUS_SENDING = 3;
     public static final int PRINT_STATUS_SENT = 4;
     
-    private native void initializeDirectPrint(String jobName, String fileName, String printSetting, String ipAddress);
+    private native void initializeDirectPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress);
     private native void finalizeDirectPrint();
     private native void lprPrint();
     private native void cancel();
@@ -49,13 +49,18 @@ public class DirectPrintManager {
     /**
      * Executes an LPR Print
      * 
+     * @param userName
      * @param jobName
      * @param fileName
      * @param printSetting
      * @param ipAddress
      */
-    public void executeLPRPrint(String jobName, String fileName, String printSetting, String ipAddress) {
-        initializeDirectPrint(jobName, fileName, printSetting, ipAddress);
+    public void executeLPRPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
+        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || userName.isEmpty() || jobName.isEmpty()
+                || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
+            return;
+        }
+        initializeDirectPrint(userName, jobName, fileName, printSetting, ipAddress);
         lprPrint();
     }
     

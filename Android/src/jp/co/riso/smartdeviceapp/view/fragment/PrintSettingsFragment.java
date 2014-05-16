@@ -230,7 +230,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
-        mDirectPrintManager.executeLPRPrint(jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        
+        String userName = getActivity().getString(R.string.ids_app_name);
+        mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
     }
     
     // ================================================================================

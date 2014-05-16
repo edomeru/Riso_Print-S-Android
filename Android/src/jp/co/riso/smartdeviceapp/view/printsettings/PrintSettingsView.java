@@ -656,7 +656,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (targetPrinter == null) {
             nameTextView.setText(R.string.ids_lbl_choose_printer);
         } else {
-            nameTextView.setText(targetPrinter.getName());
+            String printerName = targetPrinter.getName();
+            if (printerName == null || printerName.isEmpty()) {
+                printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
+            }
+            nameTextView.setText(printerName);
             ipAddressTextView.setVisibility(View.VISIBLE);
             ipAddressTextView.setText(targetPrinter.getIpAddress());
             height = getResources().getDimensionPixelSize(R.dimen.printsettings_option_with_sub_height);
@@ -1379,7 +1383,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     Printer printer = mPrintersList.get(i);
                     
                     boolean showSeparator = (i != mPrintersList.size() - 1);
-                    addSubviewOptionsList(printer.getName(), printer.getIpAddress(), mPrinterId, printer.getId(), showSeparator, ID_SUBVIEW_PRINTER_ITEM,
+                    String printerName = printer.getName();
+                    if (printerName == null || printerName.isEmpty()) {
+                        printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
+                    }
+                    addSubviewOptionsList(printerName, printer.getIpAddress(), mPrinterId, printer.getId(), showSeparator, ID_SUBVIEW_PRINTER_ITEM,
                             R.drawable.img_btn_printer_status_offline);
                 }
             }
