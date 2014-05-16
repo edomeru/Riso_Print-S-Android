@@ -256,10 +256,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      */
     private void updateOnlineStatus() {
         int childCount = 0;
-        if(isTablet()) {
-           childCount = mPrinterTabletView.getChildCount(); 
+        if (isTablet()) {
+            childCount = mPrinterTabletView.getChildCount();
         } else {
-            childCount = mListView.getChildCount(); 
+            childCount = mListView.getChildCount();
         }
         
         for (int i = 0; i < childCount; i++) {
