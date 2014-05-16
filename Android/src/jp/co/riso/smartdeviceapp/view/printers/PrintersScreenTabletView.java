@@ -409,6 +409,11 @@ OnItemSelectedListener {
         View pView = inflater.inflate(R.layout.printers_container_item, this, false);
         AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
         
+        String printerName = printer.getName();
+        if(printerName == null || printerName.isEmpty()) {
+            printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
+        }
+        
         addView(pView);
         
         ViewHolder viewHolder = new ViewHolder();
@@ -426,7 +431,7 @@ OnItemSelectedListener {
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         viewHolder.mPort.setAdapter(portAdapter);
         
-        viewHolder.mPrinterName.setText(printer.getName());
+        viewHolder.mPrinterName.setText(printerName);
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         viewHolder.mPort.setSelection(printer.getPortSetting());
         

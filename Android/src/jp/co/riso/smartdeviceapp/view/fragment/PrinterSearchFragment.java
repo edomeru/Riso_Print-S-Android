@@ -10,9 +10,10 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.ArrayList;
 
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -22,8 +23,12 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -34,7 +39,7 @@ import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback {
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback, ConfirmDialogListener {
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
@@ -128,10 +133,55 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     /**
      * Updates the status of the refresh bar
      */
-    public void updateRefreshBar() {
+    private void updateRefreshBar() {
         Message newMessage = Message.obtain(mHandler, MSG_UPDATE_REFRESH_BAR);
         
         mHandler.sendMessage(newMessage);
+    }
+    
+    
+    /**
+     * Determines network connectivity
+     * 
+     * @return true if connected to network
+     */
+    private boolean isConnectedToNetwork() {
+        Context context = getActivity();
+        if (context == null) {
+            return false;
+        }        
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+    }
+    
+    /**
+     * Dialog which is displayed during error
+     */
+    private void dialogErrCb() {
+        String title = getResources().getString(R.string.ids_lbl_search_printers);
+        String errMsg = null;
+        errMsg = getResources().getString(R.string.ids_err_msg_network_error);
+        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
+
+        DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+    }
+    
+    /**
+     * Closes the PrinterSearch Screen
+     */
+    private void closeScreen() {
+        if (isTablet()) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.closeDrawers();
+        } else {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+                ft.commit();
+            }
+        }
     }
     
     // ================================================================================
@@ -141,6 +191,11 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     /** {@inheritDoc} */
     @Override
     public void onRefresh() {
+        if (!isConnectedToNetwork()) {
+            dialogErrCb();
+            updateRefreshBar();
+            return;
+        }
         mPrinter.clear();
         mPrinterManager.startPrinterSearch();
     }
@@ -155,17 +210,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         // Back Button
         if (v.getId() == ID_MENU_BACK_BUTTON) {
             mPrinterManager.cancelPrinterSearch();
-            if (isTablet()) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.closeDrawers();
-            } else {
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                if (fm.getBackStackEntryCount() > 0) {
-                    fm.popBackStack();
-                    ft.commit();
-                }
-            }
+            closeScreen();
         }
     }
     
@@ -222,7 +267,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
         }
         
-        InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
+        ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
+        info.setTargetFragment(this, 0);
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
         return ret;
     }
@@ -240,19 +286,21 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 return true;
         }
         return false;
+    }    
+
+    // ================================================================================
+    // INTERFACE - ConfirmDialogListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onConfirm() {
+        closeScreen();
     }
     
     /** {@inheritDoc} */
     @Override
-    public boolean isMaxPrinterCountReached() {
-        if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
-            String title = getResources().getString(R.string.ids_lbl_printer_info);
-            String errMsg = null;
-            errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
-            InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
-            DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
-            return true;
-        }
-        return false;
+    public void onCancel() {
+        closeScreen();
     }
 }

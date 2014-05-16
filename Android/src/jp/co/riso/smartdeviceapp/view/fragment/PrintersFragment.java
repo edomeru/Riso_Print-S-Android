@@ -107,6 +107,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
         mHandler.sendMessage(newMessage);
         mHandler.post(mUpdateOnlineStatus);
+        
+        if (isTablet()) {
+            mSettingItem = PrinterManager.EMPTY_ID;
+        } else {
+            mScrollState = null;
+        }
+        mDeleteItem = PrinterManager.EMPTY_ID;
     }
     
     /** {@inheritDoc} */
@@ -131,6 +138,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             if (mListView != null) {
                 mScrollState = mListView.onSaveInstanceState();
                 mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
+            } else {
+                mDeleteItem = PrinterManager.EMPTY_ID;
             }
         }
     }
@@ -153,15 +162,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onPause() {
         super.onPause();
-        
-        if (isTablet()) {
-            mDeleteItem = mPrinterTabletView.getDeleteItemPosition();
-            mSettingItem = PrinterManager.EMPTY_ID;
-        } else {
-            if (mListView != null) {
-                mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
-            }
-        }
         
         if (mUpdateOnlineStatus != null && mHandler != null) {
             mHandler.removeCallbacks(mUpdateOnlineStatus);

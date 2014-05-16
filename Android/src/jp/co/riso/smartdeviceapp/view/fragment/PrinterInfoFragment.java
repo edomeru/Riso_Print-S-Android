@@ -103,7 +103,11 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                 }
             }
         }
-        mPrinterName.setText(mPrinter.getName());
+        String printerName = mPrinter.getName();
+        if(printerName == null || printerName.isEmpty()) {
+            printerName = getActivity().getResources().getString(R.string.ids_lbl_no_name);
+        }
+        mPrinterName.setText(printerName);
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
             mDefaultPrinter.setChecked(true);
