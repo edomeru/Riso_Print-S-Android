@@ -59,9 +59,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private PrinterManager mPrinterManager = null;
     private int mDeleteItem = PrinterManager.EMPTY_ID;
     private Parcelable mScrollState = null;
-    private int mSettingItem = PrinterManager.EMPTY_ID;;
-    
-    
+    private int mSettingItem = PrinterManager.EMPTY_ID;
+
     /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
@@ -124,6 +123,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             if (mListView != null) {
                 mScrollState = mListView.onSaveInstanceState();
                 mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
+            } else {
+                mDeleteItem = PrinterManager.EMPTY_ID;
             }
         }
         
