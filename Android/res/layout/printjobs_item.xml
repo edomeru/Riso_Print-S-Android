@@ -52,7 +52,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="left|center_vertical"
                 android:layout_toLeftOf="@+id/dateAndButtonContainer"
-                android:ellipsize="end"
+                android:ellipsize="middle"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:textColor="@drawable/selector_jobs_textcolor" />
