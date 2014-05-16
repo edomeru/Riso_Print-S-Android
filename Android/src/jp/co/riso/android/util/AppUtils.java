@@ -389,4 +389,24 @@ public final class AppUtils {
         
         return new int[] { newWidth, newHeight };
     }
+    
+    /**
+     * Gets the next integer multiple
+     * 
+     * @param n
+     * @param m
+     * @return next multiple of m of n 
+     */
+    public static int getNextIntegerMultiple(int n, int m) {
+        if (m == 0) {
+            Log.w(TAG, "Cannot divide by 0");
+            return n;
+        }
+        
+        if (n % m != 0) {
+            return n + (m - n % m);
+        }
+        
+        return n;
+    }
 }

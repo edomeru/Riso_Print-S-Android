@@ -38,14 +38,17 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.widget.FrameLayout;
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 
-public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener {
+public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener, OnGestureListener, OnDoubleTapListener {
     public static final String TAG = "PrintPreviewView";
     
     private static final float DEFAULT_MARGIN_IN_MM = 0;
@@ -90,6 +93,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     // Zoom/pan related variables
     
     private ScaleGestureDetector mScaleDetector;
+    private GestureDetector mDoubleTapDetector;
     private float mZoomLevel = BASE_ZOOM_LEVEL;
     
     private int mPtrIdx = INVALID_IDX;
@@ -152,6 +156,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         if (!isInEditMode()) {
             mPrintSettings = new PrintSettings(); // Should not be null
             mScaleDetector = new ScaleGestureDetector(getContext(), this);
+            mDoubleTapDetector = new GestureDetector(getContext(), this);
+            mDoubleTapDetector.setOnDoubleTapListener(this);
             
             initializeCurlView();
             loadResources();
@@ -183,14 +189,17 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      *
      * @param ev
      */
-    public void processTouchEvent(MotionEvent ev) {
+    public boolean processTouchEvent(MotionEvent ev) {
         if (ev.getPointerCount() == 1) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (mPtrIdx == INVALID_IDX) {
-                        mPtrIdx = ev.getActionIndex();
-                        mPtrDownPos.set(ev.getX(), ev.getY());
-                        mPtrLastPos.set(ev.getX(), ev.getY());
+                        if (mCurlView.isViewHit(ev.getX(), ev.getY())) {
+                            mPtrIdx = ev.getActionIndex();
+                            mPtrDownPos.set(ev.getX(), ev.getY());
+                            mPtrLastPos.set(ev.getX(), ev.getY());
+                            return true;
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -199,14 +208,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         mCurlView.requestRender();
                         
                         mPtrLastPos.set(ev.getX(), ev.getY());
+                        return true;
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     mPtrIdx = -1;
-                    break;
+                    return true;
             }
         }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -216,26 +227,24 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         if (!mScaleDetector.isInProgress() && ev.getPointerCount() == 1) {
             if (mZoomLevel == BASE_ZOOM_LEVEL) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    getChildAt(i).dispatchTouchEvent(ev);
-                }                
+                return mCurlView.dispatchTouchEvent(ev);
             } else {
-                processTouchEvent(ev);
+                if (mDoubleTapDetector.onTouchEvent(ev)) {
+                    return true;
+                }
+                return processTouchEvent(ev);
             }
-        } else {
-            MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
-                    SystemClock.uptimeMillis(), 
-                    MotionEvent.ACTION_CANCEL, 
-                    ev.getX(), ev.getY(), 0);
-            
-            processTouchEvent(e);
-            
-            for (int i = 0; i < getChildCount(); i++) {
-                getChildAt(i).dispatchTouchEvent(e);
-            }
-            
-            e.recycle();
         }
+        
+        MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
+                SystemClock.uptimeMillis(), 
+                MotionEvent.ACTION_CANCEL, 
+                ev.getX(), ev.getY(), 0);
+        
+        processTouchEvent(e);
+        mCurlView.dispatchTouchEvent(e);
+        
+        e.recycle();
         
         return true;
     }
@@ -392,37 +401,57 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     /**
-     * @return page count
+     * @return faces count
      */
-    public int getPageCount() {
+    public int getFaceCount() {
         if (mPdfManager == null) {
             return 0;
         }
         
         // will depend on PDF and pagination, always false for now
         int count = mPdfManager.getPageCount();
-        
-        if (isTwoPageDisplayed()) {
-            count = (int) Math.ceil(count / 2.0f);
-        }
-        
         count = (int) Math.ceil(count / (double) getPagesPerSheet());
-        
-        if (mPrintSettings.isBooklet()) {
-            int modulo = count % 2;
-            if (count > 0) {
-                count = count + 2 - modulo;
+
+        if (isTwoPageDisplayed()) {
+            count = AppUtils.getNextIntegerMultiple(count, 2);
+            
+            if (mPrintSettings.isBooklet()) {
+                count = AppUtils.getNextIntegerMultiple(count, 4);
             }
         }
         
         return count;
     }
-    
+
+    /**
+     * @return page count
+     */
+    public int getPageCount() {
+        int count = PrintPreviewView.this.getFaceCount();
+        if (isTwoPageDisplayed()) {
+            count = (int) Math.ceil(count / 2.0f);
+        }
+        return count;
+    }
+
     /**
      * @return page string
      */
     public String getPageString() {
+        int currentFace = getCurrentPage();
+        if (isTwoPageDisplayed()) {
+            currentFace *= 2;
+        }
+        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || currentFace == 0)  {
+            currentFace++;
+        }
+        
+        int faceCount = getFaceCount();
+
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
+
+        return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
+        /*
         final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
 
         int currentPage = getCurrentPage();
@@ -435,6 +464,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         } else {
             return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
         }
+        */
     }
     
     /**
@@ -647,10 +677,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
         
-        if (getPageCount() > 1 && isTwoPageDisplayed()) {
+        if (getFaceCount() > 1 && isTwoPageDisplayed()) {
             twoPage = true;
-            
-            if (getCurrentPage() % 2 == 0) {
+            if (getFaceCount() % 2 == 0) {
                 allowLastPageCurl = true;
             }
         }
@@ -798,14 +827,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
     
-    // ================================================================================
-    // INTERFACE - OnScaleGestureListener
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public boolean onScale(ScaleGestureDetector detector) {
-        mZoomLevel  = mZoomLevel * detector.getScaleFactor();
+    private void setZoomLevel(float zoomLevel) {
+        mZoomLevel  = zoomLevel;
         if (mZoomLevel <= BASE_ZOOM_LEVEL) {
             mZoomLevel = BASE_ZOOM_LEVEL;
         }
@@ -819,7 +842,78 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         mCurlView.setZoomLevel(mZoomLevel);
         mCurlView.requestRender();
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnDoubleTapListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        setZoomLevel(BASE_ZOOM_LEVEL);
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnGestureListener
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onLongPress(MotionEvent e) {
         
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE - OnScaleGestureListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        setZoomLevel(mZoomLevel * detector.getScaleFactor());
         return true;
     }
     
@@ -1192,7 +1286,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 } else {
                     curY += addY;
                     if (i % getRowsPerSheet() == getRowsPerSheet() - 1) {
-                        curY = beginPos[0];
+                        curY = beginPos[1];
                         curX += addX;
                     }
                 }

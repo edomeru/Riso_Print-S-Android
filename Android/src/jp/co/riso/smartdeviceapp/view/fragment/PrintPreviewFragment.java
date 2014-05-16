@@ -86,15 +86,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
             data = getActivity().getIntent().getData();
             
-            /*
-            android.content.SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity());
-            android.content.SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
-            edit.commit();
-            //data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-270MB_134pages.pdf");
-            data = Uri.parse(getActivity().getExternalFilesDir("pdfs")+"/PDF-squarish.pdf");
-             */
-            
             mPdfManager = new PDFFileManager(this);
             
             String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
@@ -217,24 +208,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     /** {@inheritDoc} */
     @Override
-    public void onResume() {
-        super.onResume();
-        
-        // The activity must call the GL surface view's onResume() on activity onResume().
-        mPrintPreviewView.onResume();
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void onPause() {
-        super.onPause();
-        
-        // The activity must call the GL surface view's onPause() on activity onPause().
-        mPrintPreviewView.onPause();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void clearIconStates() {
         super.clearIconStates();
         setIconState(ID_PRINT_BUTTON, false);
@@ -316,7 +289,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * Set default title
      */
     public void setDefaultTitle(View v) {
-        setTitle(v, getResources().getString(R.string.ids_app_name));
+        setTitle(v, getResources().getString(R.string.ids_lbl_home));
     }
     
     /**
@@ -504,13 +477,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void zoomLevelChanged(float zoomLevel) {
         float percentage = (zoomLevel - 1.0f) * 4.0f;
         
-        int height = mPageControls.getHeight();
-        mPageControls.setTranslationY(height * percentage);
-        
         mPageControls.setAlpha(1.0f - percentage);
         
-        mPageControls.setScaleX(zoomLevel);
-        mPageControls.setScaleY(zoomLevel);
+        //int height = mPageControls.getHeight();
+        //mPageControls.setTranslationY(height * percentage);
+        
+        //mPageControls.setScaleX(zoomLevel);
+        //mPageControls.setScaleY(zoomLevel);
     }
     
     /** {@inheritDoc} */
@@ -526,10 +499,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            mPrintPreviewView.setCurrentPage(progress);
-            updatePageLabel();
-        }
     }
     
     /** {@inheritDoc} */
@@ -540,6 +509,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+        mPrintPreviewView.setCurrentPage(progress);
+        updatePageLabel();
     }
     
     // ================================================================================

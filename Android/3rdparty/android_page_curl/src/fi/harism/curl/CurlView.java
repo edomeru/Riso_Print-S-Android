@@ -21,6 +21,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -92,6 +93,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	public static final int BIND_TOP = 2;
 
 	private int mBindPosition = BIND_LEFT;
+
+	private float mZoomLevel = 1.0f;
 
 	/**
 	 * Default constructor.
@@ -231,15 +234,23 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageCurl.resetTexture();
 	}
 	
-	public RectF getDropShadowRect(){
-		RectF lRect =  mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
-		RectF rect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
-
+	public boolean onePageDrawnNotCurling() {
 		// Check if left page is drawn
 		boolean leftPageIsDrawn = (mCurrentIndex > 1) || (mCurrentIndex == 1 && mCurlState != CURL_LEFT);
 		boolean rightPageIsDrawn = (mCurrentIndex < mPageProvider.getPageCount()-1)
 										|| (mCurrentIndex ==  mPageProvider.getPageCount()-1 && mCurlState != CURL_RIGHT);
 
+		return leftPageIsDrawn || rightPageIsDrawn;
+	}
+	
+	public RectF getBorderRect(){
+		RectF lRect =  mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+		RectF rect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
+
+		boolean leftPageIsDrawn = (mCurrentIndex > 1) || (mCurrentIndex == 1 && mCurlState != CURL_LEFT);
+		boolean rightPageIsDrawn = (mCurrentIndex < mPageProvider.getPageCount()-1)
+										|| (mCurrentIndex ==  mPageProvider.getPageCount()-1 && mCurlState != CURL_RIGHT);
+		
 		if (mRenderLeftPage && leftPageIsDrawn) {
 			switch (mBindPosition) {
 				case BIND_LEFT:
@@ -266,6 +277,31 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	}
 	
 	/**
+	 * Checks if the curl view is hit on the coordinates
+	 * 
+	 * @param x
+	 * @param y
+	 * @return Is hit
+	 */
+	public boolean isViewHit(float x, float y) {
+		PointF pos = new PointF(x, y);
+		mRenderer.translate(pos);
+		
+		pos.x /= mZoomLevel;
+		pos.y /= mZoomLevel;
+
+		RectF rect = getBorderRect();
+		if ((pos.y > rect.top) || (pos.y < rect.bottom)) {
+			return false;
+		}
+		if ((pos.x > rect.right) || (pos.x < rect.left)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Prevent touch out of margin
 	 * 
 	 * @param rightRect
@@ -273,7 +309,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	 * @return Will prevent touch
 	 */
 	private boolean preventTouch() {
-		RectF rect = getDropShadowRect();
+		RectF rect = getBorderRect();
 
 		//Prevent touch out of margin
 		if ((mDragStartPos.y > rect.top)
@@ -297,12 +333,26 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		}
 
 		// We need page rects quite extensively so get them for later use.
-		RectF rightRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
-		RectF leftRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+		RectF rightRect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
+		RectF leftRect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_LEFT));
 
 		// Store pointer position.
 		mPointerPos.mPos.set(me.getX(), me.getY());
 		mRenderer.translate(mPointerPos.mPos);
+
+		rightRect.left *= mZoomLevel;
+		rightRect.right *= mZoomLevel;
+		rightRect.top *= mZoomLevel;
+		rightRect.bottom *= mZoomLevel;
+		
+		leftRect.left *= mZoomLevel;
+		leftRect.right *= mZoomLevel;
+		leftRect.top *= mZoomLevel;
+		leftRect.bottom *= mZoomLevel;
+
+		mPointerPos.mPos.x /= mZoomLevel;
+		mPointerPos.mPos.y /= mZoomLevel;
+
 		if (mEnableTouchPressure) {
 			mPointerPos.mPressure = me.getPressure();
 		} else {
@@ -828,6 +878,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	}
 
 	public void setZoomLevel(float zoomLevel) {
+		mZoomLevel = zoomLevel;
 		mRenderer.setZoomLevel(zoomLevel);
 	}
 
