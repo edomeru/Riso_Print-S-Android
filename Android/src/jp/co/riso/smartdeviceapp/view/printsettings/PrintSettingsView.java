@@ -1154,6 +1154,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         title.setTag(KEY_TAG_AUTHENTICATION);
         title.setOnClickListener(this);
         expandControl(title, false); // initially expand
+
+        params = (LinearLayout.LayoutParams) title.getLayoutParams();
+        int marginTop = getResources().getDimensionPixelSize(R.dimen.separator_size);
+        params.setMargins(0, marginTop, 0, 0);
+        title.setLayoutParams(params);
         
         mPrintSettingsTitles.add(title); // Add to controls list
         mPrintSettingsLayout.addView(title);
