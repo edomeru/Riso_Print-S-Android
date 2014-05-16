@@ -26,6 +26,8 @@ namespace SmartDeviceAppTests.ViewModels
         [TestMethod]
         public void Test_PrinterList()
         {
+            PrinterController.Instance.Initialize();
+            PrinterController.Instance.PrinterList.Add(new Printer() { IpAddress = "192.168.0.1" });
             var printerList = new ObservableCollection<Printer>();
             Printer printer = PrinterController.Instance.PrinterList.LastOrDefault();
             printerList.Add(printer);

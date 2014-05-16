@@ -167,7 +167,6 @@
     <Compile Include="DirectPrint\TCPSocketTest.cs" />
     <Compile Include="DirectPrint\DirectPrintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SNMPTest\SNMPConstantsTest.cs" />
     <Compile Include="SNMPTest\SNMPDeviceTest.cs" />
     <Compile Include="SNMPTest\SNMPVariableTest.cs" />
     <Compile Include="SNMPTest\UDPHelperTest.cs" />
