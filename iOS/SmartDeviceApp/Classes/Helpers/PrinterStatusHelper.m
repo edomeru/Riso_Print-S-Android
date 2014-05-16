@@ -53,7 +53,7 @@
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
     NSLog(@"[INFO][PSHelper] %@ is %@", self.ipAddress, (self.respondedToPing ? @"ONLINE" : @"OFFLINE"));
 #endif
-    [self.delegate statusDidChange:self.respondedToPing];
+    [self.delegate printerStatusHelper:self statusDidChange:self.respondedToPing];
     
     [self.pinger sendPingWithData:nil];
     self.respondedToPing = NO;

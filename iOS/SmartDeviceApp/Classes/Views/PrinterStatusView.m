@@ -20,11 +20,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [self.statusHelper stopPrinterStatusPolling];
-}
-
 - (void) setStatus: (BOOL) isOnline
 {
     if(self.onlineStatus == isOnline)
@@ -48,15 +43,6 @@
 #endif
         [self setHighlighted:NO];
     }
-}
-
-- (void) statusDidChange: (BOOL) isOnline
-{
-#if DEBUG_LOG_PRINTER_STATUS_VIEW
-    NSString* onlineStatus = isOnline ? @"YES" : @"NO";
-    NSLog(@"[INFO][PSView] %@ online = %@", self.statusHelper.ipAddress, onlineStatus);
-#endif
-    [self setStatus:isOnline];
 }
 
 /*
