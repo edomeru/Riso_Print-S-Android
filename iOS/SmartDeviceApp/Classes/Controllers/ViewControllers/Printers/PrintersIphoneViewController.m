@@ -68,6 +68,16 @@
     [super didReceiveMemoryWarning];
 }
 
+-(void) dealloc
+{
+    for(PrinterStatusHelper * statusHelper in self.statusHelpers)
+    {
+        [statusHelper stopPrinterStatusPolling];
+    }
+    [self.statusHelpers removeAllObjects];
+    
+}
+
 #pragma mark - TableView
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
