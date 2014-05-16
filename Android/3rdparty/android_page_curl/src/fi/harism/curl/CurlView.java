@@ -21,6 +21,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -233,15 +234,23 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageCurl.resetTexture();
 	}
 	
-	public RectF getDropShadowRect(){
-		RectF lRect =  mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
-		RectF rect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
-
+	public boolean onePageDrawnNotCurling() {
 		// Check if left page is drawn
 		boolean leftPageIsDrawn = (mCurrentIndex > 1) || (mCurrentIndex == 1 && mCurlState != CURL_LEFT);
 		boolean rightPageIsDrawn = (mCurrentIndex < mPageProvider.getPageCount()-1)
 										|| (mCurrentIndex ==  mPageProvider.getPageCount()-1 && mCurlState != CURL_RIGHT);
 
+		return leftPageIsDrawn || rightPageIsDrawn;
+	}
+	
+	public RectF getBorderRect(){
+		RectF lRect =  mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+		RectF rect = new RectF(mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT));
+
+		boolean leftPageIsDrawn = (mCurrentIndex > 1) || (mCurrentIndex == 1 && mCurlState != CURL_LEFT);
+		boolean rightPageIsDrawn = (mCurrentIndex < mPageProvider.getPageCount()-1)
+										|| (mCurrentIndex ==  mPageProvider.getPageCount()-1 && mCurlState != CURL_RIGHT);
+		
 		if (mRenderLeftPage && leftPageIsDrawn) {
 			switch (mBindPosition) {
 				case BIND_LEFT:
@@ -281,7 +290,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		pos.x /= mZoomLevel;
 		pos.y /= mZoomLevel;
 
-		RectF rect = getDropShadowRect();
+		RectF rect = getBorderRect();
 		if ((pos.y > rect.top) || (pos.y < rect.bottom)) {
 			return false;
 		}
@@ -300,7 +309,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	 * @return Will prevent touch
 	 */
 	private boolean preventTouch() {
-		RectF rect = getDropShadowRect();
+		RectF rect = getBorderRect();
 
 		//Prevent touch out of margin
 		if ((mDragStartPos.y > rect.top)

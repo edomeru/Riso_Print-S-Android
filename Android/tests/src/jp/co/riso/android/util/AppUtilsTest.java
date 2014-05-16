@@ -536,6 +536,36 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     //================================================================================
+    // Test getNextIntegerMultiple
+    //================================================================================
+    
+    public void testGetNextIntegerMultiple_Valid() {
+        int val = 0;
+
+        val = AppUtils.getNextIntegerMultiple(12, 2);
+        assertEquals(12, val);
+        
+        val = AppUtils.getNextIntegerMultiple(10, 4);
+        assertEquals(12, val);
+        
+        val = AppUtils.getNextIntegerMultiple(124, 3);
+        assertEquals(126, val);
+        
+        val = AppUtils.getNextIntegerMultiple(-3, 2);
+        assertEquals(0, val);
+        
+        val = AppUtils.getNextIntegerMultiple(-3, -6);
+        assertEquals(-6, val);
+    }
+    
+    public void testGetNextIntegerMultiple_Invalid() {
+        int val = 0;
+        
+        val = AppUtils.getNextIntegerMultiple(-3, 0);
+        assertEquals(-3, val);
+    }
+    
+    //================================================================================
     // Mock Classes
     //================================================================================
     

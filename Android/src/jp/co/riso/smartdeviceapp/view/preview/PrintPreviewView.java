@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp.view.preview;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
@@ -400,37 +401,57 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     /**
-     * @return page count
+     * @return faces count
      */
-    public int getPageCount() {
+    public int getFaceCount() {
         if (mPdfManager == null) {
             return 0;
         }
         
         // will depend on PDF and pagination, always false for now
         int count = mPdfManager.getPageCount();
-        
-        if (isTwoPageDisplayed()) {
-            count = (int) Math.ceil(count / 2.0f);
-        }
-        
         count = (int) Math.ceil(count / (double) getPagesPerSheet());
-        
-        if (mPrintSettings.isBooklet()) {
-            int modulo = count % 2;
-            if (count > 0) {
-                count = count + 2 - modulo;
+
+        if (isTwoPageDisplayed()) {
+            count = AppUtils.getNextIntegerMultiple(count, 2);
+            
+            if (mPrintSettings.isBooklet()) {
+                count = AppUtils.getNextIntegerMultiple(count, 4);
             }
         }
         
         return count;
     }
-    
+
+    /**
+     * @return page count
+     */
+    public int getPageCount() {
+        int count = PrintPreviewView.this.getFaceCount();
+        if (isTwoPageDisplayed()) {
+            count = (int) Math.ceil(count / 2.0f);
+        }
+        return count;
+    }
+
     /**
      * @return page string
      */
     public String getPageString() {
+        int currentFace = getCurrentPage();
+        if (isTwoPageDisplayed()) {
+            currentFace *= 2;
+        }
+        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || currentFace == 0)  {
+            currentFace++;
+        }
+        
+        int faceCount = getFaceCount();
+
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
+
+        return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
+        /*
         final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
 
         int currentPage = getCurrentPage();
@@ -443,6 +464,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         } else {
             return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
         }
+        */
     }
     
     /**
@@ -687,10 +709,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         boolean twoPage = false;
         boolean allowLastPageCurl = false;
         
-        if (getPageCount() > 1 && isTwoPageDisplayed()) {
+        if (getFaceCount() > 1 && isTwoPageDisplayed()) {
             twoPage = true;
-            
-            if (getCurrentPage() % 2 == 0) {
+            if (getFaceCount() % 2 == 0) {
                 allowLastPageCurl = true;
             }
         }

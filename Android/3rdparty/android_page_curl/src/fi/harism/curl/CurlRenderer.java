@@ -164,7 +164,11 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	}
 
 	protected void drawBackgroundShadow(GL10 gl) {
-		RectF rect = mObserver.getDropShadowRect();//new RectF(mPageRectRight);
+		if (!mObserver.onePageDrawnNotCurling()) {
+			return;
+		}
+
+		RectF rect = mObserver.getBorderRect();//new RectF(mPageRectRight);
 
 		if (rect != null) {
 			gl.glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
@@ -326,7 +330,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		minMargin = Math.min(minMargin, mMargins.top);
 		minMargin = Math.min(minMargin, mMargins.bottom);
 
-		RectF rect = mObserver.getDropShadowRect();
+		RectF rect = mObserver.getBorderRect();
 
 		rect.left -= minMargin;
 		rect.right += minMargin;
@@ -456,7 +460,15 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		 * what needs to be done when this happens.
 		 */
 		public void onSurfaceCreated();
-		
-		public RectF getDropShadowRect();
+
+		/**
+		 * Gets the curlview border rectangle
+		 */
+		public RectF getBorderRect();
+
+		/**
+		 * Check whether there is a single page and it is currently animation
+		 */
+		public boolean onePageDrawnNotCurling();
 	}
 }
