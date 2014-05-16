@@ -18,9 +18,9 @@ public class DatabaseManagerTest extends AndroidTestCase {
     private static final String KEY_SQL_PRINTER_LPR = "prn_enabled_lpr";
     private static final String KEY_SQL_PRINTER_RAW = "prn_enabled_raw";
     private static final String KEY_SQL_PRINTER_STAPLER = "prn_enabled_stapler";
+    private static final String KEY_SQL_PRINTER_PUNCH3 = "prn_enabled_punch3";
     private static final String KEY_SQL_PRINTER_PUNCH4 = "prn_enabled_punch4";
     private static final String KEY_SQL_PRINTER_TRAYFACEDOWN = "prn_enabled_tray_facedown";
-    private static final String KEY_SQL_PRINTER_TRAYAUTOSTACK = "prn_enabled_tray_autostack";
     private static final String KEY_SQL_PRINTER_TRAYTOP = "prn_enabled_tray_top";
     private static final String KEY_SQL_PRINTER_TRAYSTACK = "prn_enabled_tray_stack";
     private static final String KEY_SQL_PRINTER_TABLE = "Printer";
@@ -307,8 +307,8 @@ public class DatabaseManagerTest extends AndroidTestCase {
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_LPR)));
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_RAW)));
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_STAPLER)));
+        assertEquals(0, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_PUNCH3)));
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_PUNCH4)));
-        assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYAUTOSTACK)));
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYFACEDOWN)));
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYSTACK)));
         assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYTOP)));

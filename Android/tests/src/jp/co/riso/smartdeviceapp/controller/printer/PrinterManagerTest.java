@@ -665,9 +665,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setRawAvailable(true);
             printer.getConfig().setBookletAvailable(true);
             printer.getConfig().setStaplerAvailable(true);
+            printer.getConfig().setPunch3Available(true);
             printer.getConfig().setPunch4Available(true);
             printer.getConfig().setTrayFaceDownAvailable(true);
-            printer.getConfig().setTrayAutoStackAvailable(true);
             printer.getConfig().setTrayTopAvailable(true);
             printer.getConfig().setTrayStackAvailable(true);
             
@@ -679,9 +679,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setRawAvailable(false);
             printer.getConfig().setBookletAvailable(false);
             printer.getConfig().setStaplerAvailable(false);
+            printer.getConfig().setPunch3Available(true);
             printer.getConfig().setPunch4Available(false);
             printer.getConfig().setTrayFaceDownAvailable(false);
-            printer.getConfig().setTrayAutoStackAvailable(false);
             printer.getConfig().setTrayTopAvailable(false);
             printer.getConfig().setTrayStackAvailable(false);
             
