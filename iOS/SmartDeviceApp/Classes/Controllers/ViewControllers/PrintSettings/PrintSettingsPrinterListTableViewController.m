@@ -86,9 +86,18 @@
     {
         itemCell.optionLabel.text = printer.name;
     }
+    
+    if (itemCell.statusView.statusHelper != nil)
+    {
+        [itemCell.statusView.statusHelper stopPrinterStatusPolling];
+        itemCell.statusView.statusHelper.delegate = nil;
+        itemCell.statusView.statusHelper = nil;
+    }
+    
     itemCell.subLabel.text = printer.ip_address;
     itemCell.statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
     itemCell.statusView.statusHelper.delegate = itemCell.statusView;
+    [itemCell.statusView.statusHelper startPrinterStatusPolling];
     
     itemCell.separator.hidden = NO;
     if (indexPath.row == [self.printerManager countSavedPrinters] - 1)
