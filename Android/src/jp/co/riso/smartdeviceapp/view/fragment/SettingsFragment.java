@@ -28,9 +28,6 @@ import android.widget.TextView;
 
 public class SettingsFragment extends BaseFragment {
     
-    public static final int LOGIN_ID_LIMIT = 128;
-    public static final int PIN_CODE_LIMIT = 8;
-    
     /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
@@ -51,11 +48,12 @@ public class SettingsFragment extends BaseFragment {
         
         EditText editText = (EditText) view.findViewById(R.id.loginIdEditText);
         
+        editText.setActivated(true);
         editText.setText(prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID));
         editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_LOGIN_ID));
 
         filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(LOGIN_ID_LIMIT),
+                new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT),
                 new AlphaNumericFilter()
         };
         editText.setFilters(filterArray);
