@@ -2031,6 +2031,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 mMainView.setVisibility(View.GONE);
                 return true;
             case MSG_SLIDE_OUT:
+                PrinterManager.getInstance(SmartDeviceApp.getAppContext()).cancelUpdateStatusThread();
                 removeView(mSubView);
                 return true;
             case MSG_SET_SUB_SCROLL:
