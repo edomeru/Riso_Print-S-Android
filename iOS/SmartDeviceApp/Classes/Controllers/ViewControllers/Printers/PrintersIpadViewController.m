@@ -34,7 +34,7 @@
 @property (nonatomic) UIEdgeInsets insetPortrait;
 @property (nonatomic) UIEdgeInsets insetLandscape;
 @property (nonatomic, strong) NSNumber *selectedPrinterIndex;
-@property (nonatomic, strong) NSMutableOrderedSet *statusHelpers;
+@property (nonatomic, strong) NSMutableArray *statusHelpers;
 
 
 #pragma mark - Instance Methods
@@ -60,7 +60,7 @@
    
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
-    self.statusHelpers = [[NSMutableOrderedSet alloc] init];
+    self.statusHelpers = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -69,6 +69,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void) dealloc
+{
+    for(PrinterStatusHelper * statusHelper in self.statusHelpers)
+    {
+        [statusHelper stopPrinterStatusPolling];
+    }
+    [self.statusHelpers removeAllObjects];
+    
+}
 #pragma mark - CollectionViewDataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -137,7 +146,7 @@
         PrinterStatusHelper *printerStatusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
         printerStatusHelper.delegate = self;
         [printerStatusHelper startPrinterStatusPolling];
-        [self.statusHelpers setObject:printerStatusHelper atIndex:indexPath.row];
+        [self.statusHelpers addObject:printerStatusHelper];
     }
     
     // since cells may be reused, create a new helper for this cell

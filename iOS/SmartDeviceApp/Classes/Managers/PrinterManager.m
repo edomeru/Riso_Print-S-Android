@@ -375,7 +375,6 @@ static PrinterManager* sharedPrinterManager = nil;
     {
         // this is a new printer
         // update the UI (UI thread)
-        printerInfoCapabilities.isPrinterFound =YES;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.searchDelegate printerSearchDidFoundNewPrinter:printerInfoCapabilities];
         });
