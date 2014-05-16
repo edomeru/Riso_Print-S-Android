@@ -199,7 +199,8 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Create default print settings for the printer
+        /// Create default print settings for the printer.
+        /// Requires that the printer is valid.
         /// </summary>
         /// <param name="printer">printer</param>
         /// <returns>task; print setting ID</returns>
