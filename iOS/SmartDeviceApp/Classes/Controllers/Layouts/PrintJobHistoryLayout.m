@@ -169,11 +169,10 @@
 #endif
     
     // for each group in the section
-    NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
     for (NSInteger group = 0; group < groupCount; group++)
     {
         // create UICollectionViewLayoutAttributes for the group
-        groupIndexPath = [NSIndexPath indexPathForItem:group inSection:section];
+        NSIndexPath*  groupIndexPath = [NSIndexPath indexPathForItem:group inSection:section];
         UICollectionViewLayoutAttributes* groupAttributes =
             [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:groupIndexPath];
         

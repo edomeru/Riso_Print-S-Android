@@ -57,12 +57,11 @@
                 
                 // retrieve from DB again
                 listPrintJobs = [DatabaseManager getObjects:E_PRINTJOB];
-                countPrintJobs = [listPrintJobs count];
             }
         }
         
 #if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-        NSLog(@"[INFO][PrintJobHelper] listPrintJobs=%lu", (unsigned long)countPrintJobs);
+        NSLog(@"[INFO][PrintJobHelper] listPrintJobs=%lu", (unsigned long)[listPrintJobs count]);
 #endif
      
         // group the print jobs according to printer

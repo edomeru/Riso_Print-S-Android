@@ -121,7 +121,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     // Prepare expansion
     self.expandedSections = [[NSMutableArray alloc] init];
     NSArray *sections = [self.printSettingsTree objectForKey:@"group"];
-    for (id section in sections)
+    for (int i = 0; i < sections.count; i++)
     {
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
     }

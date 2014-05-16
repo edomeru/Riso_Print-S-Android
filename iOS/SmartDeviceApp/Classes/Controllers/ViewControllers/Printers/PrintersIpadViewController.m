@@ -297,7 +297,7 @@
             [indexPathsToReload addObject:indexPath];
         }
         
-        [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
+        [self refreshControlTagsOfCellsAtIndexPaths:indexPathsToReload];
         self.toDeleteIndexPath = nil;
     }
     else
@@ -305,6 +305,22 @@
         [AlertHelper displayResult:kAlertResultErrDelete
                         withTitle:kAlertTitlePrinters
                       withDetails:nil];
+    }
+}
+
+-(void) refreshControlTagsOfCellsAtIndexPaths:(NSArray *)indexPaths
+{
+    if(indexPaths == nil)
+    {
+        return;
+    }
+    
+    for(NSIndexPath *indexPath in indexPaths)
+    {
+        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        cell.deleteButton.tag = indexPath.row;
+        cell.defaultSwitch.tag = indexPath.row;
+        cell.portSelection.tag = indexPath.row;
     }
 }
 
@@ -336,8 +352,8 @@
     [super reloadData];
     if(self.selectedPrinterIndex != nil)
     {
-        NSIndexPath *indexPathToReload = [NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0];
-        [self.collectionView reloadItemsAtIndexPaths:@[indexPathToReload]];
+        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0]];
+        [selectedCell setDefaultSettingsRowToSelected:NO];
         self.selectedPrinterIndex = nil;
     }
     else

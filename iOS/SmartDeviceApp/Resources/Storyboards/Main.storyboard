@@ -2941,6 +2941,7 @@
                                                     <outlet property="printerName" destination="BVA-iB-fru" id="pM9-o5-Io9"/>
                                                     <outlet property="printerStatus" destination="rJB-WH-qpf" id="YhY-j0-8dY"/>
                                                     <outlet property="separator" destination="fGJ-hZ-slT" id="G9k-Xa-iLb"/>
+                                                    <outlet property="spaceToDisclosureButton" destination="ihS-v1-lux" id="EFj-HB-vDc"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>

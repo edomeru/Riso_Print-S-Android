@@ -12,10 +12,16 @@
 #define DELETE_BUTTON_TAG   99
 
 @interface PrinterCell()
-@property BOOL isDefaultPrinterCell;
+
+@property (assign, nonatomic) BOOL isDefaultPrinterCell;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton; //hidden placeholder
 @property (weak, nonatomic) IBOutlet UIImageView *disclosureImage;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *spaceToDisclosureButton;
+
+- (void)putDeleteButton;
+
 @end
+
 @implementation PrinterCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -26,8 +32,6 @@
     }
     return self;
 }
-
-
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
@@ -54,7 +58,7 @@
     
 }
 
--(void) setCellToBeDeletedState:(BOOL) isCellForDelete
+- (void)setCellToBeDeletedState:(BOOL)isCellForDelete
 {
     if(isCellForDelete == YES)
     {
@@ -73,7 +77,7 @@
     }
 }
 
-- (void) setCellStyleForToDeleteCell
+- (void)setCellStyleForToDeleteCell
 {
     UIColor *bgColor = [UIColor purple2ThemeColor];
     [self.contentView setBackgroundColor:bgColor];
@@ -81,7 +85,41 @@
     [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.disclosureImage setHidden: YES];
     [self.separator setBackgroundColor:[UIColor purple2ThemeColor]];
-    
+    [self putDeleteButton];
+}
+
+- (void)setCellStyleForDefaultCell
+{
+    self.isDefaultPrinterCell = YES;
+    [self.contentView setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self.printerName setTextColor:[UIColor whiteThemeColor]];
+    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
+    [self.disclosureImage setHidden: NO];
+    [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self cancelDeleteButton];
+}
+
+- (void)setCellStyleForNormalCell
+{
+    self.isDefaultPrinterCell = NO;
+    UIColor *bgColor = [UIColor gray1ThemeColor];
+    [self.contentView setBackgroundColor:bgColor];
+    [self.printerName setTextColor:[UIColor blackThemeColor]];
+    [self.ipAddress setTextColor:[UIColor blackThemeColor]];
+    [self.disclosureImage setHidden: NO];
+    [self.separator setBackgroundColor:[UIColor whiteThemeColor]];
+    [self cancelDeleteButton];
+}
+
+- (void)tappedDeletePrinter:(DeleteButton*)button
+{
+    [self.delegate didTapDeleteButton:button];
+}
+
+#pragma mark - Delete Button
+
+- (void)putDeleteButton
+{
     // initial position offscreen
     CGRect startPos = CGRectMake(self.frame.size.width,
                                  5.0f,
@@ -100,34 +138,8 @@
            forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:deleteButton];
     [deleteButton animateOnscreen:nil];
-}
-
-- (void) setCellStyleForDefaultCell
-{
-    self.isDefaultPrinterCell = YES;
-    [self.contentView setBackgroundColor:[UIColor gray4ThemeColor]];
-    [self.printerName setTextColor:[UIColor whiteThemeColor]];
-    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
-    [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
-    [self cancelDeleteButton];
-}
-
--(void) setCellStyleForNormalCell
-{
-    self.isDefaultPrinterCell = NO;
-    UIColor *bgColor = [UIColor gray1ThemeColor];
-    [self.contentView setBackgroundColor:bgColor];
-    [self.printerName setTextColor:[UIColor blackThemeColor]];
-    [self.ipAddress setTextColor:[UIColor blackThemeColor]];
-    [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor whiteThemeColor]];
-    [self cancelDeleteButton];
-}
-
-- (void)tappedDeletePrinter:(DeleteButton*)button
-{
-    [self.delegate didTapDeleteButton:button];
+    
+    self.spaceToDisclosureButton.constant += deleteButton.frame.size.width;
 }
 
 - (void)cancelDeleteButton
@@ -140,6 +152,8 @@
              [deleteButton removeFromSuperview];
          }];
     }
+    
+    self.spaceToDisclosureButton.constant -= deleteButton.frame.size.width;
 }
 
 @end
