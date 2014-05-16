@@ -92,11 +92,7 @@
     GHTestLog(@"# CHECK: AlertHelper can display confirmation.");
     
     GHTestLog(@"-- setting different confirmations");
-    NSMutableArray* details = [NSMutableArray array];
-    [details addObject:[NSNumber numberWithInt:5]];
-    [details addObject:@"CHECK"];
-    
-    [self displayAlertWithConfirmation:kAlertConfirmationDeleteAllJobs withDetails:details];
+    [self displayAlertWithConfirmation:kAlertConfirmationDeleteAllJobs];
 }
 
 #pragma mark - Utilities
@@ -115,17 +111,23 @@
     [self checkAndDismissResultAlert];
 }
 
-- (void)displayAlertWithConfirmation:(kAlertConfirmation)confirmation withDetails:(NSArray*)details
+- (void)displayAlertWithConfirmation:(kAlertConfirmation)confirmation
 {
     GHTestLog(@"-- confirmation type=%d", confirmation);
-    [AlertHelper displayConfirmation:confirmation forScreen:self withDetails:details];
-    [self checkAndDismissConfirmationAlert:0]; //NO
-    [AlertHelper displayConfirmation:confirmation forScreen:self withDetails:details];
-    [self checkAndDismissConfirmationAlert:1]; //YES
+    
+    void (^dismiss)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
+    {
+        [alertView dismiss];
+    };
+    
+    [AlertHelper displayConfirmation:confirmation withCancelHandler:dismiss withConfirmHandler:dismiss];
+    [self checkAndDismissConfirmationAlert];
 }
 
 - (void)checkAndDismissResultAlert
 {
+    [self waitForCompletion:1.5];
+    
     for (UIWindow* window in [[UIApplication sharedApplication] windows])
     {
         NSArray* subViews = window.subviews;
@@ -155,28 +157,27 @@
     GHFail(@"alert was not displayed");
 }
 
-- (void)checkAndDismissConfirmationAlert:(NSUInteger)buttonIndex
+- (void)checkAndDismissConfirmationAlert
 {
     [self waitForCompletion:1.5];
     
     for (UIWindow* window in [[UIApplication sharedApplication] windows])
     {
         NSArray* subViews = window.subviews;
-        if ([subViews count] > 1)
+        if ([subViews count] > 0)
         {
-            UIView* view = [subViews objectAtIndex:1];
-            if ([view isKindOfClass:[UIAlertView class]])
+            UIView* view = [subViews objectAtIndex:0];
+            if ([view isKindOfClass:[CXAlertView class]])
             {
-                UIAlertView* alert = (UIAlertView*)view;
+                CXAlertView* alert = (CXAlertView*)view;
                 
                 GHAssertNotNil(alert, @"");
                 GHAssertNotNil(alert.title, @"");
-                GHAssertNotNil(alert.message, @"");
-                GHAssertTrue(alert.tag != 0, @"");
                 GHAssertTrue(![alert.title isEqualToString:@""], @"");
-                GHAssertTrue(![alert.message isEqualToString:@""], @"");
                 
-                [alert dismissWithClickedButtonIndex:buttonIndex animated:YES];
+                [alert cleanAllPenddingAlert];
+                [alert dismiss];
+                [self waitForCompletion:1.5];
                 alert = nil;
                 
                 return;
