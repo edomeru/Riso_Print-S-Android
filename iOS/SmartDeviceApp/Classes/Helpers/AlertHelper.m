@@ -16,6 +16,11 @@
 
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details
 {
+    [self displayResult:result withTitle:title withDetails:details withDismissHandler:nil];
+}
+
++ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(CXAlertViewHandler)handler;
+{
     // get the title
     NSString* alertTitle;
     switch (title)
@@ -83,6 +88,14 @@
             alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
             break;
             
+        case kAlertResultPrintSuccessful:
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @"");
+            break;
+        
+        case kAlertResultPrintFailed:
+            alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @"");
+            break;
+            
         case kAlertResultErrDefault:
         default:
             alertMsg = @"The operation could not be compeleted.";
@@ -93,6 +106,8 @@
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle
                                                         message:alertMsg
                                               cancelButtonTitle:NSLocalizedString(IDS_LBL_OK, @"")];
+    alertView.didDismissHandler = handler;
+    
     [alertView show];
 }
 

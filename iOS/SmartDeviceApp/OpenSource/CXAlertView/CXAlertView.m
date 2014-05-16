@@ -238,8 +238,11 @@ static CXAlertView *__cx_alert_current_view;
     if(self.alertWindow == self.oldKeyWindow)
     {
         NSArray *windows = [[UIApplication sharedApplication] windows];
-        UIWindow* mainWindow = [windows objectAtIndex:0];
-        self.oldKeyWindow = mainWindow;
+        if (windows.count > 0)
+        {
+            UIWindow* mainWindow = [windows objectAtIndex:0];
+            self.oldKeyWindow = mainWindow;
+        }
     }
     
     if (![[CXAlertView sharedQueue] containsObject:self]) {
