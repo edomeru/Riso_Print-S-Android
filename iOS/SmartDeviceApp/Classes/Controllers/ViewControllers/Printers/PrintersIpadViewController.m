@@ -146,7 +146,7 @@
 
     [cell.statusView setStatus:[printer.onlineStatus boolValue]]; //initial status
     //[cell.statusView setStatus:NO];
-    [cell.statusView.statusHelper startPrinterStatusPolling];
+    //[cell.statusView.statusHelper startPrinterStatusPolling];
     
     cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
     cell.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
