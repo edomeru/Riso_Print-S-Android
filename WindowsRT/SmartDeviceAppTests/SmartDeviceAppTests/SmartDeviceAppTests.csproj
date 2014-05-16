@@ -181,7 +181,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\SelectPrinterViewModelTest.cs" />
-    <Compile Include="ViewModels\PrintSettingsPaneViewModel.cs" />
+    <Compile Include="ViewModels\PrintSettingsPaneViewModelTest.cs" />
     <Compile Include="ViewModels\JobsViewModelTest.cs" />
     <Compile Include="ViewModels\PrintPreviewViewModelTest.cs" />
     <Compile Include="ViewModels\ViewModelLocatorTest.cs" />
