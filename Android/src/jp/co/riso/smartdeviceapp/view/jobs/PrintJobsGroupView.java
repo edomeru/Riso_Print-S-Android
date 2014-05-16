@@ -273,8 +273,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         TextView printJobGroupText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupText);
         TextView printJobGroupSubText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupSubText);
         Button printJobGroupDelete = (Button) mPrintGroupView.findViewById(R.id.printJobGroupDelete);
-        
-        printJobGroupText.setText(mPrinter.getName());
+        String printerName = mPrinter.getName();
+        if (printerName == null || printerName.isEmpty()) {
+            printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
+        }
+        printJobGroupText.setText(printerName);
         printJobGroupSubText.setText(mPrinter.getIpAddress());
         
         printJobGroupDelete.setTag(mPrinter);

@@ -30,7 +30,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_ValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -44,10 +44,44 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
         assertTrue(callback.mCalled);
     }
     
+    public void testDirectPrint_NullParameterValidCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeLPRPrint(null, null, null, null, null);
+        
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    public void testDirectPrint_EmptyParametersValidCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeLPRPrint("", "", "", "", "");
+        
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
     public void testDirectPrint_NullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         //wait for response
         while (mgr.isPrinting()) {
@@ -62,10 +96,46 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
         assertFalse(callback.mCalled);
     }
     
+    public void testDirectPrint_NullParameterNullCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(null);
+        mgr.executeLPRPrint(null, null, null, null, null);
+
+        // wait for response
+        while (mgr.isPrinting()) {
+            // wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    public void testDirectPrint_EmptyParametersNullCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(null);
+        mgr.executeLPRPrint("", "", "", "", "");
+
+        // wait for response
+        while (mgr.isPrinting()) {
+            // wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
     public void testSendCancelCommand() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         assertFalse(callback.mCalled);
         mgr.sendCancelCommand();
@@ -86,7 +156,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testSendCancelCommand_NullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeLPRPrint("jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         assertFalse(callback.mCalled);
         mgr.sendCancelCommand();

@@ -122,10 +122,6 @@ public class PrinterManager implements SNMPManagerCallback {
             return false;
         }
         
-        if (mPrinterList.size() == 0) {
-            setDefaultPrinter(printer);
-        }
-        
         if (mPrintersCallback != null && mPrintersCallback.get() != null) {
             mPrintersCallback.get().onAddedNewPrinter(printer);
         }
