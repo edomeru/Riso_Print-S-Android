@@ -8,6 +8,16 @@
 
 #import "PrintJobItemCell.h"
 #import "UIColor+Theme.h"
+#import "DeleteButton.h"
+
+@interface PrintJobItemCell ()
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint* spaceDeleteButtonToSuperView;
+
+- (void)putDeleteButton;
+- (void)cancelDeleteButton;
+
+@end
 
 @implementation PrintJobItemCell
 
@@ -38,6 +48,15 @@
     self.selectedBackgroundView = highlightedBackground;
 }
 
+- (void)setDeleteButtonLayout
+{
+    [self.deleteButton setTitle:[NSLocalizedString(IDS_LBL_DELETE, @"Delete") uppercaseString]
+                       forState:UIControlStateNormal];
+    
+    self.deleteButton.highlightedColor = [UIColor purple1ThemeColor];
+    self.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
+}
+
 - (void)markForDeletion:(BOOL)marked
 {
     if (marked)
@@ -45,6 +64,7 @@
         self.timestamp.hidden = YES;
         [self.name setTextColor:[UIColor whiteThemeColor]];
         [self.backgroundView setBackgroundColor:[UIColor purple2ThemeColor]];
+        [self putDeleteButton];
     }
     else
     {
@@ -54,6 +74,36 @@
             [self.backgroundView setBackgroundColor:[UIColor gray2ThemeColor]];
         else
             [self.backgroundView setBackgroundColor:[UIColor gray1ThemeColor]];
+        [self cancelDeleteButton];
+    }
+}
+
+#pragma mark - Delete Button 
+
+- (void)putDeleteButton
+{
+    self.spaceDeleteButtonToSuperView.constant = 8.0f;
+    [self.deleteButton setNeedsUpdateConstraints];
+    
+    [UIView animateWithDuration:0.2f animations:^{
+        [self layoutIfNeeded];
+    }];
+}
+
+- (void)cancelDeleteButton
+{
+    if (self.spaceDeleteButtonToSuperView.constant < 0) //already hidden
+    {
+        return;
+    }
+    else
+    {
+        self.spaceDeleteButtonToSuperView.constant = -self.deleteButton.frame.size.width;
+        [self.deleteButton setNeedsUpdateConstraints];
+        
+        [UIView animateWithDuration:0.2f animations:^{
+            [self layoutIfNeeded];
+        }];
     }
 }
 

@@ -9,16 +9,16 @@
 #import "PrinterCell.h"
 #import "UIColor+Theme.h"
 
-#define DELETE_BUTTON_TAG   99
-
 @interface PrinterCell()
 
 @property (assign, nonatomic) BOOL isDefaultPrinterCell;
-@property (weak, nonatomic) IBOutlet UIButton *deleteButton; //hidden placeholder
+@property (weak, nonatomic) IBOutlet DeleteButton *deleteButton;
 @property (weak, nonatomic) IBOutlet UIImageView *disclosureImage;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *spaceToDisclosureButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *spacePrinterNameToDisclosureButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *spaceDeleteButtonToSuperview;
 
 - (void)putDeleteButton;
+- (void)cancelDeleteButton;
 
 @end
 
@@ -111,49 +111,49 @@
     [self cancelDeleteButton];
 }
 
-- (void)tappedDeletePrinter:(DeleteButton*)button
-{
-    [self.delegate didTapDeleteButton:button];
-}
-
 #pragma mark - Delete Button
+
+- (void)setDeleteButtonLayout
+{
+    [self.deleteButton setTitle:[NSLocalizedString(IDS_LBL_DELETE, @"Delete") uppercaseString]
+                       forState:UIControlStateNormal];
+    
+    self.deleteButton.highlightedColor = [UIColor purple1ThemeColor];
+    self.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
+}
 
 - (void)putDeleteButton
 {
-    // initial position offscreen
-    CGRect startPos = CGRectMake(self.frame.size.width,
-                                 5.0f,
-                                 self.deleteButton.frame.size.width,
-                                 self.deleteButton.frame.size.height);
-    // final position onscreen
-    CGRect endPos = CGRectMake(self.deleteButton.frame.origin.x,
-                               5.0f,
-                               self.deleteButton.frame.size.width,
-                               self.deleteButton.frame.size.height);
-    DeleteButton* deleteButton = [DeleteButton createAtOffscreenPosition:startPos
-                                                    withOnscreenPosition:endPos];
-    deleteButton.tag = DELETE_BUTTON_TAG;
-    [deleteButton addTarget:self
-                     action:@selector(tappedDeletePrinter:)
-           forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:deleteButton];
-    [deleteButton animateOnscreen:nil];
+    self.spacePrinterNameToDisclosureButton.constant += self.deleteButton.frame.size.width;
+    self.spaceDeleteButtonToSuperview.constant = 16.0f;
     
-    self.spaceToDisclosureButton.constant += deleteButton.frame.size.width;
+    [self.printerName setNeedsUpdateConstraints];
+    [self.deleteButton setNeedsUpdateConstraints];
+    
+    [UIView animateWithDuration:0.2f animations:^{
+        [self layoutIfNeeded];
+    }];
 }
 
 - (void)cancelDeleteButton
 {
-    DeleteButton* deleteButton = (DeleteButton*)[self.contentView viewWithTag:DELETE_BUTTON_TAG];
-    if (deleteButton != nil)
+    if (self.spaceDeleteButtonToSuperview.constant < 0) //already hidden
     {
-        [deleteButton animateOffscreen:^(BOOL finished)
-         {
-             [deleteButton removeFromSuperview];
-         }];
+        return;
     }
-    
-    self.spaceToDisclosureButton.constant -= deleteButton.frame.size.width;
+    else
+    {
+        self.spacePrinterNameToDisclosureButton.constant = 16.0f; //from storyboard
+        self.spaceDeleteButtonToSuperview.constant = -self.deleteButton.frame.size.width;
+        
+        [self.printerName setNeedsUpdateConstraints];
+        [self.deleteButton setNeedsUpdateConstraints];
+        
+        [UIView animateWithDuration:0.2f animations:^{
+            [self layoutIfNeeded];
+            
+        }];
+    }
 }
 
 @end
