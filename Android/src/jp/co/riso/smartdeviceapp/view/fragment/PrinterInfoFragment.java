@@ -117,6 +117,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearIconStates() {
+        super.clearIconStates();
+        setIconState(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, false);
+    }
   
     // ================================================================================
     // Public Methods

@@ -61,7 +61,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private Parcelable mScrollState = null;
     private int mSettingItem = PrinterManager.EMPTY_ID;;
     
-    
     /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
@@ -126,7 +125,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 mDeleteItem = ((PrintersListView) mListView).getDeleteItemPosition();
             }
         }
-        
     }
     
     /** {@inheritDoc} */
@@ -165,6 +163,15 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (mPrinterTabletView != null) {
             mPrinterTabletView.setDefaultSettingSelected(state);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearIconStates() {
+        super.clearIconStates();
+        setDefaultSettingSelected(false);
+        setIconState(PrintersFragment.ID_MENU_ACTION_SEARCH_BUTTON, false);
+        setIconState(PrintersFragment.ID_MENU_ACTION_ADD_BUTTON, false);
     }
     
     // ================================================================================
