@@ -12,12 +12,14 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -371,10 +373,18 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * checks if a view is swiped
      *
      * @param ev
+     *          MotionEvent with action = ACTION_MOVE
+     * @return true if valid swipe
      */
     private boolean checkSwipe(MotionEvent ev) {
+        // if swipe to right end delete mode
+        if ((mDownPoint.x - ev.getRawX()) < 0) {
+            endDelete(true);
+            return false;
+        }
+        
         int coords[] = new int[2];
-        boolean dragged = Math.abs(mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
+        boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
         boolean contains1 = false;
         boolean contains2 = false;
         // check self, if valid swipe don't redisplay nor remove delete button
@@ -417,6 +427,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * process swipe
      *
      * @param ev
+     *          MotionEvent
+     * @return true if valid swipe
      */
     private boolean processSwipe(MotionEvent ev) {
         boolean ret = false;
@@ -441,7 +453,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         super.onLayout(changed, l, t, r, b);
         
         if (mInitialFlag) {
-            createColumns(r - l);
+            Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
+            createColumns(screenSize.x);
             mInitialFlag = false;
         }
         if (mGroupViewCtr < mPrintGroupViews.size()) {
@@ -522,7 +535,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     /** {@inheritDoc} */
     @Override
-    public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean isCollapsed) {
+    public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean up) {
         int idx = mPrintGroupViews.indexOf(printJobsGroupView);
         int column = 0;
         
@@ -538,7 +551,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         TranslateAnimation animation = null;
         for (int i = idx + 1; i < mColumns.get(column).getChildCount(); i++) {
-            if (isCollapsed) {
+            if (up) {
                 animation = new TranslateAnimation(0, 0, -totalHeight, 0);
                 animation.setStartOffset((int) (getResources().getDimensionPixelSize(R.dimen.printjob_row_height) * durationMultiplier));
             } else {

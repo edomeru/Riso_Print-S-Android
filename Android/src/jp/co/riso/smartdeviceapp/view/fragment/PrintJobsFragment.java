@@ -56,6 +56,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ScrollView mScrollView;
     private int mScrollPosition;
     private Handler mHandler;
+    private boolean mIsRotated;
     
     /**
      * Instantiate PrintJobsFragment
@@ -80,6 +81,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
+        if (!mIsRotated) {
+            mCollapsedPrinters.clear();
+            mPrintJobToDelete = null;
+            mPrinterToDelete = null;
+        }
+        mIsRotated = false;
         
         // mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
         mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
@@ -106,6 +113,14 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void onDestroyView() {
         super.onDestroyView();
         mScrollPosition = mScrollView.getScrollY();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        mIsRotated = true;
     }
     
     // ================================================================================

@@ -22,6 +22,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -53,6 +54,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private String mPdfPath;
     private PauseableHandler mPauseableHandler;
     private WaitingDialogFragment mWaitingDialog;
+    private String mPrintMsg = "";
     
     /** {@inheritDoc} */
     @Override
@@ -71,6 +73,8 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         if (mPauseableHandler == null) {
             mPauseableHandler = new PauseableHandler(this);
         }
+        
+        mPrintMsg = getResources().getString(R.string.ids_info_msg_printing);
     }
     
     /** {@inheritDoc} */
@@ -217,13 +221,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        String strMsg = getResources().getString(R.string.ids_info_msg_printing);
         String btnMsg = getResources().getString(R.string.ids_lbl_cancel);
-        mWaitingDialog = WaitingDialogFragment.newInstance(null, strMsg, true, btnMsg);
+        mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
         mWaitingDialog.setTargetFragment(this, 0);
         DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         
-        String jobname = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
+        String jobname = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
@@ -248,13 +251,13 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
-                String filename = mPdfPath.substring(mPdfPath.lastIndexOf("/") + 1);
+                String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
                 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
                     
                     ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
-
+                    
                     // Show dialog
                     String strMsg = getString(R.string.ids_info_msg_print_job_successful);
                     String btnMsg = getString(R.string.ids_lbl_ok);
@@ -293,8 +296,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 break;
             case DirectPrintManager.PRINT_STATUS_SENDING:
                 if (mWaitingDialog != null) {
-                    String strMsg = getResources().getString(R.string.ids_info_msg_printing);
-                    String msg = String.format(Locale.getDefault(), "%s %.2f%%", strMsg, progress);
+                    String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, progress);
                     mWaitingDialog.setMessage(msg);
                 }
                 break;
