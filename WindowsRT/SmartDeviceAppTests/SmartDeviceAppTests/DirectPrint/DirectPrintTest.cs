@@ -33,7 +33,7 @@ namespace SmartDeviceAppTests.DirectPrintTest
             job.file = null;
                 // await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
             job.print_settings = "PRINT_SETTINGS";
-            job.ip_address = "192.168.1.1";
+            job.ip_address = "192.168.0.198";
             job.callback = new directprint_callback(Test_callback);
             job.progress_callback = new progress_callback(Test_progress_callback);
             job.progress = 1.0F;
@@ -60,7 +60,7 @@ namespace SmartDeviceAppTests.DirectPrintTest
             job.job_name = "TEST";
             job.file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
             job.print_settings = "";
-            job.ip_address = "192.168.1.206";
+            job.ip_address = "192.168.0.199";
             job.callback = new directprint_callback(Test_callback);
             job.progress_callback = new progress_callback(Test_progress_callback);
             job.progress = 1.0F;
@@ -80,7 +80,7 @@ namespace SmartDeviceAppTests.DirectPrintTest
             job.job_name = "TEST";
             job.file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
             job.print_settings = "PRINT_SETTINGS";
-            job.ip_address = "192.168.1.206";
+            job.ip_address = "192.168.0.198";
             job.callback = new directprint_callback(Test_callback);
             job.progress_callback = new progress_callback(Test_progress_callback);
             job.progress = 1.0F;
