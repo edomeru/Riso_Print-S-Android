@@ -188,6 +188,40 @@ public class MainActivity extends BaseActivity implements Callback {
     }
     
     // ================================================================================
+    // INTERFACE - Callback 
+    // ================================================================================
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what){
+            case MSG_OPEN_DRAWER:
+                closeDrawers();
+                openDrawer(msg.arg1, false);
+                if (msg.arg1 == Gravity.LEFT) {
+                    ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
+                }
+                return true;
+            case MSG_OPEN_DRAWER_INTERCEPT:
+                if (msg.arg1 == Gravity.RIGHT) {
+                    mResizeView = (msg.arg2 == 1);
+                }
+                mDrawerLayout.setPreventInterceptTouches((msg.arg2 == 1));
+                mDrawerLayout.openDrawer(msg.arg1);
+                return true;
+            case MSG_CLOSE_DRAWER:
+                mDrawerLayout.setPreventInterceptTouches(false);
+                mDrawerLayout.closeDrawers();
+                return true;
+            case MSG_CLEAR_ICON_STATES:
+                BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+                fragment.clearIconStates();
+                return true;
+        }
+        return false;
+    }
+    
+    // ================================================================================
     // Internal Classes
     // ================================================================================
     
@@ -295,34 +329,5 @@ public class MainActivity extends BaseActivity implements Callback {
                 getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
             }
         }
-    }
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what){
-            case MSG_OPEN_DRAWER:
-                closeDrawers();
-                openDrawer(msg.arg1, false);
-                if (msg.arg1 == Gravity.LEFT) {
-                    ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
-                }
-                return true;
-            case MSG_OPEN_DRAWER_INTERCEPT:
-                if (msg.arg1 == Gravity.RIGHT) {
-                    mResizeView = (msg.arg2 == 1);
-                }
-                mDrawerLayout.setPreventInterceptTouches((msg.arg2 == 1));
-                mDrawerLayout.openDrawer(msg.arg1);
-                return true;
-            case MSG_CLOSE_DRAWER:
-                mDrawerLayout.setPreventInterceptTouches(false);
-                mDrawerLayout.closeDrawers();
-                return true;
-            case MSG_CLEAR_ICON_STATES:
-                BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
-                fragment.clearIconStates();
-                return true;
-        }
-        return false;
     }
 }
