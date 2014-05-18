@@ -20,7 +20,7 @@
             android:layout_gravity="center_vertical"
             android:text="@string/ids_lbl_printer_name"
             android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textSize="@dimen/font_size_normal" />
 
         <TextView
             android:id="@+id/inputPrinterName"
@@ -54,7 +54,7 @@
             android:layout_gravity="center_vertical"
             android:text="@string/ids_lbl_ip_address"
             android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textSize="@dimen/font_size_normal" />
 
         <TextView
             android:id="@+id/inputIpAddress"
@@ -63,7 +63,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="right"
             android:textColor="@color/theme_light_1"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textSize="@dimen/font_size_normal" />
     </LinearLayout>
 
     <View
@@ -86,7 +86,7 @@
             android:layout_weight="1"
             android:text="@string/ids_lbl_port"
             android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textSize="@dimen/font_size_normal" />
 
         <Spinner
             android:id="@+id/inputPort"
@@ -96,7 +96,7 @@
             android:layout_weight="0"
             android:background="@drawable/widgettheme_spinner_background_holo_dark_1"
             android:gravity="right|center_vertical"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textSize="@dimen/font_size_normal" />
     </LinearLayout>
 
     <View
@@ -120,7 +120,7 @@
             android:layout_weight="1"
             android:text="@string/ids_lbl_set_default_printer"
             android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textSize="@dimen/font_size_normal" />
 
         <Switch
             android:id="@+id/default_printer_switch"

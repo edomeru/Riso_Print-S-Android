@@ -49,7 +49,7 @@
                     android:maxLines="2"
                     android:text="@string/ids_lbl_login_id"
                     android:textColor="@color/theme_dark_1"
-                    android:textSize="@dimen/home_text_size" />
+                    android:textSize="@dimen/font_size_normal" />
 
                 <EditText
                     style="@style/BorderedEditText"

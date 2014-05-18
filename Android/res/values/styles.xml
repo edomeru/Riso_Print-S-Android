@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="android:Theme.Holo.NoActionBar">
         <item name="android:actionBarStyle">@style/SDAActionBar</item>
         <item name="android:windowBackground">@color/theme_light_2</item>
+        <item name="android:textSize">@dimen/font_size_normal</item>
     </style>
     
     <style name="SplashTheme" parent="android:Theme.NoTitleBar">
@@ -28,9 +29,9 @@
 　　　　    <item name="android:layout_height">match_parent</item>
 　　　　    <item name="android:gravity">left|center_vertical</item>
 　　　　    <item name="android:textColor">@color/selector_home_text</item>
-　　　　    <item name="android:textSize">@dimen/home_text_size</item>
 　　　　    <item name="android:duplicateParentState">true</item>
 　　　　    <item name="android:textAllCaps">true</item>
+　　　　    <item name="android:textSize">@dimen/font_size_normal</item>
 　　　</style>
 
 	<style name="BorderedEditText" parent="@android:style/Widget.EditText">
@@ -42,8 +43,8 @@
 　　　         <item name="android:paddingTop">@dimen/printsettings_input_padding_tb</item>
 　　　         <item name="android:textColor">@color/theme_dark_1</item>
 　　　         <item name="android:textCursorDrawable">@null</item>
-　　　         <item name="android:textSize">@dimen/printsettings_input_text_size</item>
 　　　         <item name="android:imeOptions">flagNoExtractUi</item>
+　　　　     <item name="android:textSize">@dimen/font_size_normal</item>
     </style>
 
 </resources>

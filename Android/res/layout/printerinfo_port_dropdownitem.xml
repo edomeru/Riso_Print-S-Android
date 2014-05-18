@@ -8,4 +8,4 @@
     android:paddingLeft="@dimen/printers_row_left_icon_margin"
     android:singleLine="true"
     android:textColor="@color/selector_printers_text"
-    android:textSize="@dimen/printers_name_font_size" />
+    android:textSize="@dimen/font_size_normal" />
