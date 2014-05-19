@@ -42,4 +42,16 @@
     }
 }
 
+- (void)setPrinterName:(NSString*)name;
+{
+    if (name == nil || [name isEqualToString:@""])
+    {
+        self.printerNameLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"");
+    }
+    else
+    {
+        self.printerNameLabel.text = name;
+    }
+}
+
 @end

@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 
-@interface PrintSettingsViewController : SlidingViewController
+@interface PrintSettingsViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate>
+
 @property (nonatomic, strong) NSNumber *printerIndex;
+
+- (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender;
+
 @end
