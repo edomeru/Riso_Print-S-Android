@@ -388,19 +388,17 @@ namespace SmartDeviceApp.Controllers
         private void UpdatePreviewInfo()
         {
             // Send UI related items
-            if (_currPrintSettings.Booklet || _currPrintSettings.Duplex != (int)Duplex.Off)
+
+            _isBooklet = _currPrintSettings.Booklet;
+            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
+            if (_isBooklet || _isDuplex)
             {
-                _isBooklet = true;
                 _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView;
             }
             else
             {
-                _isBooklet = false;
                 _printPreviewViewModel.PageViewMode = PageViewMode.SinglePageView;
             }
-
-            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off) ||
-                (_isBooklet && _currPrintSettings.BookletFinishing == (int)BookletFinishing.Off);
 
             _isReversePages = _isBooklet &&
                 _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
@@ -769,15 +767,15 @@ namespace SmartDeviceApp.Controllers
                 int holeCount = GetPunchHoleCount(_currPrintSettings.Punch);
                 int staple = _currPrintSettings.Staple;
 
-                if (_isDuplex) // Also hit when booklet is on and booklet finishing is off
-                {
-                    await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
-                        finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
-                }
-                else if (_isBooklet)
+                if (_isBooklet)
                 {
                     await ApplyBooklet(finalBitmap, _currPrintSettings.BookletFinishing,
                         isFinalPortrait, isBackSide, isRightSide);
+                }
+                else if (_isDuplex)
+                {
+                    await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
+                        finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
                 }
                 else // Not duplex and not booket
                 {
@@ -1344,49 +1342,34 @@ namespace SmartDeviceApp.Controllers
 
             if (isBooklet)
             {
-                // Crop staple; only half of the staple is visible to each page
-                Rect region;
-                double halfStapleWidth = (double)scaledStapleBitmap.PixelWidth / 2;
-                double halfStapleHeight = (double)scaledStapleBitmap.PixelHeight / 2;
-                if (isRightSide)
-                {
-                    region = new Rect(halfStapleWidth, halfStapleHeight, halfStapleWidth, halfStapleHeight);
-                }
-                else
-                {
-                    region = new Rect(0, 0, halfStapleWidth, halfStapleHeight);
-                }
-                WriteableBitmap halfStapleBitmap =
-                    WriteableBitmapExtensions.Crop(scaledStapleBitmap, region);
-
                 // Determine finishing side
                 if (finishingSide == (int)FinishingSide.Top)
                 {
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
-                        canvasBitmap.PixelWidth, true, 0.25, false);
+                        canvasBitmap.PixelWidth, true, 0.25, 0, true);
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
-                        canvasBitmap.PixelWidth, true, 0.75, false);
+                        canvasBitmap.PixelWidth, true, 0.75, 0, true);
                 }
                 else if (finishingSide == (int)FinishingSide.Left)
                 {
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
-                        canvasBitmap.PixelHeight, false, 0.25, false);
+                        canvasBitmap.PixelHeight, false, 0.25, 0, true);
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
-                        canvasBitmap.PixelHeight, false, 0.75, false);
+                        canvasBitmap.PixelHeight, false, 0.75, 0, true);
                 }
                 else if (finishingSide == (int)FinishingSide.Right)
                 {
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
-                            canvasBitmap.PixelHeight, false, 0.25, false);
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, true,
-                        canvasBitmap.PixelHeight, false, 0.75, false);
+                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, true, false,
+                            canvasBitmap.PixelHeight, false, 0.25, 0, true);
+                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, true, true,
+                        canvasBitmap.PixelHeight, false, 0.75, 0, true);
                 }
                 else
                 {
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, true,
-                        canvasBitmap.PixelWidth, true, 0.25, false);
+                        canvasBitmap.PixelWidth, true, 0.25, 0, true);
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, true,
-                        canvasBitmap.PixelWidth, true, 0.75, false);
+                        canvasBitmap.PixelWidth, true, 0.75, 0, true);
                 }
             }
             else
@@ -1438,12 +1421,12 @@ namespace SmartDeviceApp.Controllers
                             canvasBitmap.PixelHeight, false, 0.75);
                     }
                 }
-            }
-
+            } // if (isBooklet)
         }
 
         /// <summary>
         /// Adds a staple image. Requires that the staple image is already scaled.
+        /// For single staple and non-booklet only.
         /// </summary>
         /// <param name="canvasBitmap">destination image</param>
         /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
@@ -1453,11 +1436,13 @@ namespace SmartDeviceApp.Controllers
         private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd)
         {
-            ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0, true);
+            ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0,
+                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false);
         }
 
         /// <summary>
         /// Adds a staple image. Requires that the staple image is already scaled.
+        /// For double staple and non-booklet only.
         /// </summary>
         /// <param name="canvasBitmap">destination image</param>
         /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
@@ -1473,7 +1458,7 @@ namespace SmartDeviceApp.Controllers
         {
             // Right side only when booklet is ON
             ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, edgeLength, isAlongXAxis,
-                positionPercentage, true);
+                positionPercentage, PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false);
         }
 
         /// <summary>
@@ -1487,10 +1472,11 @@ namespace SmartDeviceApp.Controllers
         /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
         /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
         /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
-        /// <param name="hasStapleMargin">true when staple is put slightly off the edge (with margin), false otherwise</param>
+        /// <param name="marginStaple">margin from edge</param>
+        /// <param name="isBooklet">true when applied with booklet, false otherwise</param>
         private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
-            double positionPercentage, bool hasStapleMargin)
+            double positionPercentage, double marginStaple, bool isBooklet)
         {
             // Rotate
             WriteableBitmap rotatedStapleBitmap = stapleBitmap;
@@ -1499,26 +1485,48 @@ namespace SmartDeviceApp.Controllers
                 rotatedStapleBitmap = WriteableBitmapExtensions.RotateFree(stapleBitmap, angle, false);
             }
 
-            // Put into position
-            double marginStaple = (hasStapleMargin) ?
-                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI : 0;
-            double destXOrigin = marginStaple;
+            double destXOrigin;
             if (positionPercentage > 0 && isAlongXAxis)
             {
                 destXOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelWidth / 2);
             }
-            else if (isXEnd)
+            else if (isXEnd && isBooklet)
+            {
+                destXOrigin = canvasBitmap.PixelWidth - (rotatedStapleBitmap.PixelWidth / 2) - marginStaple;
+            }
+            else if (isXEnd && !isBooklet)
             {
                 destXOrigin = canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple;
             }
-            double destYOrigin = marginStaple;
+            else if (!isXEnd && isBooklet)
+            {
+                destXOrigin = 0 - (rotatedStapleBitmap.PixelWidth / 2);
+            }
+            else
+            {
+                destXOrigin = marginStaple;
+            }
+
+            double destYOrigin;
             if (positionPercentage > 0 && !isAlongXAxis)
             {
                 destYOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelHeight / 2);
             }
-            else if (isYEnd)
+            else if (isYEnd && isBooklet)
+            {
+                destYOrigin = canvasBitmap.PixelHeight - (rotatedStapleBitmap.PixelHeight / 2) - marginStaple;
+            }
+            else if (isYEnd && !isBooklet)
             {
                 destYOrigin = canvasBitmap.PixelHeight - rotatedStapleBitmap.PixelHeight - marginStaple;
+            }
+            else if (!isYEnd && isBooklet)
+            {
+                destYOrigin = 0 - (rotatedStapleBitmap.PixelHeight / 2);
+            }
+            else
+            {
+                destYOrigin = marginStaple;
             }
 
             Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth,
