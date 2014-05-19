@@ -944,17 +944,31 @@ namespace SmartDeviceApp.Controllers
 
                     isUpdated = true;
                 }
-                /* Constraints for Output Tray
                 if (outputTrayPrintSetting != null)
                 {
-                    outputTrayPrintSetting.IsEnabled = false;
-                    outputTrayPrintSetting.IsValueDisplayed = false;
+                    PrintSettingOption faceDownTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                    if (faceDownTray != null)
+                    {
+                        faceDownTray.IsEnabled = false;
+                    }
+                    PrintSettingOption stackingTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
+                    if (stackingTray != null)
+                    {
+                        stackingTray.IsEnabled = false;
+                    }
+                    PrintSettingOption topTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
+                    if (topTray != null)
+                    {
+                        topTray.IsEnabled = false;
+                    }
                     outputTrayPrintSetting.Value = (int)OutputTray.Auto;
-                    PrintSettings.OutputTray = (int)OutputTray.Auto;
+                    printSettings.OutputTray = (int)OutputTray.Auto;
 
                     isUpdated = true;
                 }
-                 */
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = true;
@@ -1015,15 +1029,29 @@ namespace SmartDeviceApp.Controllers
 
                     isUpdated = true;
                 }
-                /* Constraints for Output Tray
                 if (outputTrayPrintSetting != null)
                 {
-                    outputTrayPrintSetting.IsEnabled = true;
-                    outputTrayPrintSetting.IsValueDisplayed = true;
+                    PrintSettingOption faceDownTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                    if (faceDownTray != null)
+                    {
+                        faceDownTray.IsEnabled = true;
+                    }
+                    PrintSettingOption stackingTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
+                    if (stackingTray != null)
+                    {
+                        stackingTray.IsEnabled = true;
+                    }
+                    PrintSettingOption topTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
+                    if (topTray != null)
+                    {
+                        topTray.IsEnabled = true;
+                    }
 
                     isUpdated = true;
                 }
-                 */
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = false;
