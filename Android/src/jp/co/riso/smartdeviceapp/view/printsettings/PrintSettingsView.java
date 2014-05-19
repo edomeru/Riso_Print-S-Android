@@ -929,7 +929,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mPrintControls.setOrientation(LinearLayout.VERTICAL);
         
         // Create Header
-        LinearLayout header = createTitle(getResources().getString(R.string.ids_lbl_print), false, -1, false, true);
+        LayoutInflater li = LayoutInflater.from(getContext());
+        LinearLayout header = (LinearLayout) li.inflate(R.layout.printsettings_print, null);
+        
+        int height = getResources().getDimensionPixelSize(R.dimen.home_menu_height);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
+        params.gravity = Gravity.CENTER;
+        header.setLayoutParams(params);
+        
         header.setId(ID_PRINT_HEADER);
         header.setOnClickListener(this);
         mPrintControls.addView(header);
@@ -939,7 +946,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         view.setActivated(true);
         
         int viewWidth = getResources().getDimensionPixelSize(R.dimen.printsettings_list_value_width);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(viewWidth, LayoutParams.MATCH_PARENT, 0.0f);
+        params = new LinearLayout.LayoutParams(viewWidth, LayoutParams.MATCH_PARENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         view.setLayoutParams(params);
         
@@ -957,7 +964,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
 
         view = new View(getContext());
         view.setBackgroundResource(R.color.theme_light_1);
-        int height = getResources().getDimensionPixelSize(R.dimen.separator_size);
+        height = getResources().getDimensionPixelSize(R.dimen.separator_size);
         params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
         view.setLayoutParams(params);
         mMainView.addView(view, 1);
