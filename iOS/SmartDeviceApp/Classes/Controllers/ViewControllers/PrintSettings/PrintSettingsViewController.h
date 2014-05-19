@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 
-@interface PrintSettingsViewController : SlidingViewController <UITableViewDataSource, UITableViewDelegate>
+@interface PrintSettingsViewController : SlidingViewController
 
 @property (nonatomic, strong) NSNumber *printerIndex;
 

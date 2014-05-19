@@ -1500,191 +1500,16 @@
                                     <constraint firstAttribute="trailing" secondItem="7VB-SO-uD9" secondAttribute="trailing" constant="10" id="wry-Gg-gUQ"/>
                                 </constraints>
                             </view>
-                            <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Xy6-C1-Xvs">
-                                <rect key="frame" x="0.0" y="48" width="270" height="174"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="174" id="hYU-S1-gMn"/>
-                                </constraints>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="PrinterHeaderCell" id="flK-DA-fPY" customClass="PrintSettingsPrinterHeaderCell">
-                                        <rect key="frame" x="0.0" y="22" width="270" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="flK-DA-fPY" id="dfq-et-LgU">
-                                            <rect key="frame" x="0.0" y="0.0" width="270" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kOr-Uo-Wt9">
-                                                    <rect key="frame" x="12" y="13" width="224" height="17"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_PRINT"/>
-                                                    </userDefinedRuntimeAttributes>
-                                                </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="OZo-q5-WCf">
-                                                    <rect key="frame" x="246" y="14" width="16" height="16"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="16" id="KqZ-rS-dcs"/>
-                                                        <constraint firstAttribute="width" constant="16" id="drC-En-axw"/>
-                                                    </constraints>
-                                                </imageView>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="OZo-q5-WCf" secondAttribute="trailing" constant="8" id="AYa-Fa-tzv"/>
-                                                <constraint firstAttribute="centerY" secondItem="OZo-q5-WCf" secondAttribute="centerY" id="EMF-3b-F6I"/>
-                                                <constraint firstAttribute="centerY" secondItem="kOr-Uo-Wt9" secondAttribute="centerY" id="JI5-8m-b9T"/>
-                                                <constraint firstItem="OZo-q5-WCf" firstAttribute="leading" secondItem="kOr-Uo-Wt9" secondAttribute="trailing" constant="10" id="a15-6M-mTe"/>
-                                                <constraint firstItem="kOr-Uo-Wt9" firstAttribute="leading" secondItem="dfq-et-LgU" secondAttribute="leading" constant="12" id="qb2-kd-AJN"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItemCell" rowHeight="55" id="93H-bU-8fr" customClass="PrintSettingsPrinterItemCell">
-                                        <rect key="frame" x="0.0" y="66" width="270" height="55"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="93H-bU-8fr" id="FsU-4R-dNr">
-                                            <rect key="frame" x="0.0" y="0.0" width="270" height="55"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GmL-tH-6FH">
-                                                    <rect key="frame" x="12" y="19" width="60" height="17"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="60" id="Ylx-Yf-QU0"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <nil key="highlightedColor"/>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER"/>
-                                                    </userDefinedRuntimeAttributes>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" textAlignment="right" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qDL-UJ-bby">
-                                                    <rect key="frame" x="82" y="10" width="160" height="17"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="btC-NV-Swo">
-                                                    <rect key="frame" x="82" y="30" width="160" height="15"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Printer" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3XU-5K-1Q6">
-                                                    <rect key="frame" x="82" y="19" width="160" height="17"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="tM9-KP-2rT">
-                                                    <rect key="frame" x="246" y="20" width="16" height="16"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="16" id="WWF-57-iAa"/>
-                                                        <constraint firstAttribute="height" constant="16" id="X6E-il-Kuo"/>
-                                                    </constraints>
-                                                </imageView>
-                                            </subviews>
-                                            <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="tM9-KP-2rT" secondAttribute="trailing" constant="8" id="1f2-Fy-sTE"/>
-                                                <constraint firstItem="GmL-tH-6FH" firstAttribute="leading" secondItem="FsU-4R-dNr" secondAttribute="leading" constant="12" id="3Pf-Yn-KxV"/>
-                                                <constraint firstItem="tM9-KP-2rT" firstAttribute="leading" secondItem="3XU-5K-1Q6" secondAttribute="trailing" constant="4" id="6PN-ku-BVK"/>
-                                                <constraint firstItem="btC-NV-Swo" firstAttribute="trailing" secondItem="qDL-UJ-bby" secondAttribute="trailing" id="BgH-3c-xrn"/>
-                                                <constraint firstItem="qDL-UJ-bby" firstAttribute="top" secondItem="FsU-4R-dNr" secondAttribute="top" constant="10" id="Cmj-Bw-5Xr"/>
-                                                <constraint firstItem="3XU-5K-1Q6" firstAttribute="leading" secondItem="GmL-tH-6FH" secondAttribute="trailing" constant="10" id="J6O-fZ-an3"/>
-                                                <constraint firstAttribute="centerY" secondItem="3XU-5K-1Q6" secondAttribute="centerY" id="cBu-Ia-9UZ"/>
-                                                <constraint firstItem="qDL-UJ-bby" firstAttribute="leading" secondItem="GmL-tH-6FH" secondAttribute="trailing" constant="10" id="enR-cd-a00"/>
-                                                <constraint firstAttribute="bottom" secondItem="btC-NV-Swo" secondAttribute="bottom" constant="10" id="kN8-6V-diw"/>
-                                                <constraint firstItem="btC-NV-Swo" firstAttribute="leading" secondItem="GmL-tH-6FH" secondAttribute="trailing" constant="10" id="lnA-ZL-pEq"/>
-                                                <constraint firstItem="tM9-KP-2rT" firstAttribute="leading" secondItem="btC-NV-Swo" secondAttribute="trailing" constant="4" id="r9S-lV-7De"/>
-                                                <constraint firstItem="tM9-KP-2rT" firstAttribute="leading" secondItem="qDL-UJ-bby" secondAttribute="trailing" constant="4" id="rm3-vO-ScY"/>
-                                                <constraint firstAttribute="centerY" secondItem="GmL-tH-6FH" secondAttribute="centerY" id="t5P-mY-bzt"/>
-                                                <constraint firstAttribute="centerY" secondItem="tM9-KP-2rT" secondAttribute="centerY" id="wPc-6A-Hf2"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="printerIPLabel" destination="btC-NV-Swo" id="TEI-FS-oL8"/>
-                                            <outlet property="printerNameLabel" destination="qDL-UJ-bby" id="kHr-Pa-N6K"/>
-                                            <outlet property="selectPrinterLabel" destination="3XU-5K-1Q6" id="dcR-bB-c9L"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItemDefaultCell" rowHeight="55" id="eSh-6a-h8E" customClass="PrintSettingsPrinterItemCell">
-                                        <rect key="frame" x="0.0" y="121" width="270" height="55"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eSh-6a-h8E" id="gsD-Vk-68I">
-                                            <rect key="frame" x="0.0" y="0.0" width="270" height="55"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printer Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IkV-J6-MTA">
-                                                    <rect key="frame" x="12" y="19" width="90" height="17"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="90" id="VFH-sF-MPR"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <nil key="highlightedColor"/>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER_NAME"/>
-                                                    </userDefinedRuntimeAttributes>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" textAlignment="right" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vgd-S3-4DG">
-                                                    <rect key="frame" x="112" y="10" width="150" height="17"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o9H-ha-IdD">
-                                                    <rect key="frame" x="112" y="30" width="150" height="15"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
-                                            <constraints>
-                                                <constraint firstItem="o9H-ha-IdD" firstAttribute="leading" secondItem="IkV-J6-MTA" secondAttribute="trailing" constant="10" id="2qI-Mj-YrE"/>
-                                                <constraint firstAttribute="trailing" secondItem="o9H-ha-IdD" secondAttribute="trailing" constant="8" id="5zt-s4-QWZ"/>
-                                                <constraint firstAttribute="bottom" secondItem="o9H-ha-IdD" secondAttribute="bottom" constant="10" id="Epk-Yr-7ui"/>
-                                                <constraint firstAttribute="centerY" secondItem="IkV-J6-MTA" secondAttribute="centerY" id="LaA-ZY-ezK"/>
-                                                <constraint firstItem="IkV-J6-MTA" firstAttribute="leading" secondItem="gsD-Vk-68I" secondAttribute="leading" constant="12" id="S9Y-ET-CZN"/>
-                                                <constraint firstAttribute="trailing" secondItem="Vgd-S3-4DG" secondAttribute="trailing" constant="8" id="ea2-8d-y8Y"/>
-                                                <constraint firstItem="Vgd-S3-4DG" firstAttribute="top" secondItem="gsD-Vk-68I" secondAttribute="top" constant="10" id="ufP-oY-mKG"/>
-                                                <constraint firstItem="Vgd-S3-4DG" firstAttribute="leading" secondItem="IkV-J6-MTA" secondAttribute="trailing" constant="10" id="yCi-Zh-lFb"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="printerIPLabel" destination="o9H-ha-IdD" id="cUe-Jp-k0L"/>
-                                            <outlet property="printerNameLabel" destination="Vgd-S3-4DG" id="NB2-lV-Bk1"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
-                                <sections/>
-                                <connections>
-                                    <outlet property="dataSource" destination="g6Y-y1-ImV" id="D5c-G2-KXQ"/>
-                                    <outlet property="delegate" destination="g6Y-y1-ImV" id="bTk-lF-W0e"/>
-                                </connections>
-                            </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GCl-Qd-LDB" userLabel="Settings">
-                                <rect key="frame" x="0.0" y="223" width="270" height="325"/>
+                                <rect key="frame" x="0.0" y="48" width="270" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Se-wF-8RZ">
-                                        <rect key="frame" x="0.0" y="0.0" width="270" height="325"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="270" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
-                                            <segue destination="vBf-Ei-f2i" kind="embed" identifier="PrintSettings-PrintSettingsTable" id="92K-vz-KiC"/>
+                                            <segue destination="vBf-Ei-f2i" kind="embed" identifier="PrintSettings-PrintSettingsPrinter" id="92K-vz-KiC"/>
                                         </connections>
                                     </containerView>
                                 </subviews>
@@ -1701,11 +1526,8 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="GCl-Qd-LDB" secondAttribute="bottom" id="BI4-Uu-zhx"/>
                             <constraint firstAttribute="trailing" secondItem="Jmf-S1-jPe" secondAttribute="trailing" id="DJg-7t-YUn"/>
-                            <constraint firstItem="Xy6-C1-Xvs" firstAttribute="top" secondItem="Jmf-S1-jPe" secondAttribute="bottom" id="EAD-KL-8wB"/>
-                            <constraint firstAttribute="trailing" secondItem="Xy6-C1-Xvs" secondAttribute="trailing" id="SGT-XH-pFe"/>
-                            <constraint firstItem="GCl-Qd-LDB" firstAttribute="top" secondItem="Xy6-C1-Xvs" secondAttribute="bottom" constant="1" id="Xma-lJ-V7J"/>
+                            <constraint firstItem="GCl-Qd-LDB" firstAttribute="top" secondItem="Jmf-S1-jPe" secondAttribute="bottom" id="H1q-Yp-lxc"/>
                             <constraint firstItem="Jmf-S1-jPe" firstAttribute="top" secondItem="Azx-6s-mva" secondAttribute="top" id="alC-Ke-PdY"/>
-                            <constraint firstItem="Xy6-C1-Xvs" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" id="gTP-Pm-YNg"/>
                             <constraint firstItem="GCl-Qd-LDB" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" id="nJb-CX-t31"/>
                             <constraint firstAttribute="trailing" secondItem="GCl-Qd-LDB" secondAttribute="trailing" id="s1o-Oo-0zN"/>
                             <constraint firstItem="Jmf-S1-jPe" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" id="vqU-Z3-JPG"/>
@@ -1717,8 +1539,6 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="printSettingsScreenTitle" destination="7VB-SO-uD9" id="tgH-Ss-VSM"/>
-                        <outlet property="spaceTableViewToContainer" destination="Xma-lJ-V7J" id="4N0-nC-fe9"/>
-                        <outlet property="tableViewHeight" destination="hYU-S1-gMn" id="dod-Yf-38r"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintPreview" unwindAction="unwindToPrintPreview:" id="W5A-uc-DU4"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="iQ2-0T-cMH"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="y6B-GG-Ywz"/>
@@ -2332,7 +2152,6 @@
                     <navigationItem key="navigationItem" title="Root View Controller" id="cDb-W3-FfX"/>
                     <connections>
                         <segue destination="hZX-Ok-b3V" kind="push" identifier="PrintSettings-PrintOptions" id="FPj-fn-eAX"/>
-                        <segue destination="Wn7-PG-C0p" kind="push" identifier="PrintSettings-PrinterList" id="ITV-mu-qgi"/>
                         <segue destination="FqZ-P9-QXX" kind="custom" identifier="PrintSettingsTable-PrintJobHistory" customClass="ReplaceSegue" id="dDZ-0e-JG0"/>
                     </connections>
                 </tableViewController>
@@ -2474,7 +2293,6 @@
         <!--Navigation Controller-->
         <scene sceneID="Fjp-Cf-TX7">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="7yJ-F5-XC4" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="vBf-Ei-f2i" sceneMemberID="viewController">
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
@@ -2484,9 +2302,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="pPd-nr-YZr" kind="relationship" relationship="rootViewController" id="gX3-8F-i1A"/>
+                        <segue destination="dCC-mf-sHe" kind="relationship" relationship="rootViewController" id="Xuf-lM-6jz"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7yJ-F5-XC4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1215" y="811"/>
         </scene>
@@ -3967,6 +3786,246 @@
             </objects>
             <point key="canvasLocation" x="1223" y="3201"/>
         </scene>
+        <!--Print Settings Printer View Controller-->
+        <scene sceneID="cqC-w1-ND2">
+            <objects>
+                <viewController storyboardIdentifier="PrintSettingsPrinterViewController" id="dCC-mf-sHe" customClass="PrintSettingsPrinterViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="cPe-vn-ZQb"/>
+                        <viewControllerLayoutGuide type="bottom" id="8WX-wB-smp"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="9WG-E7-r1v" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="270" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="hdY-tn-chQ">
+                                <rect key="frame" x="0.0" y="0.0" width="270" height="174"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="174" id="L2n-BW-hqn"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="PrinterHeaderCell" id="k9L-OJ-rbJ" customClass="PrintSettingsPrinterHeaderCell">
+                                        <rect key="frame" x="0.0" y="22" width="270" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="k9L-OJ-rbJ" id="UTY-it-x58">
+                                            <rect key="frame" x="0.0" y="0.0" width="270" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ThC-gI-jDV">
+                                                    <rect key="frame" x="12" y="13" width="224" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_PRINT"/>
+                                                    </userDefinedRuntimeAttributes>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="DFu-Ms-rgO">
+                                                    <rect key="frame" x="246" y="14" width="16" height="16"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="16" id="8nO-SF-5ld"/>
+                                                        <constraint firstAttribute="height" constant="16" id="uVe-pb-m5Y"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="ThC-gI-jDV" firstAttribute="leading" secondItem="UTY-it-x58" secondAttribute="leading" constant="12" id="0UO-So-ets"/>
+                                                <constraint firstAttribute="centerY" secondItem="ThC-gI-jDV" secondAttribute="centerY" id="VHL-7E-34G"/>
+                                                <constraint firstAttribute="centerY" secondItem="DFu-Ms-rgO" secondAttribute="centerY" id="g9G-1Z-ODX"/>
+                                                <constraint firstItem="DFu-Ms-rgO" firstAttribute="leading" secondItem="ThC-gI-jDV" secondAttribute="trailing" constant="10" id="qiY-nC-R8a"/>
+                                                <constraint firstAttribute="trailing" secondItem="DFu-Ms-rgO" secondAttribute="trailing" constant="8" id="y5p-Lx-yBQ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItemCell" rowHeight="55" id="3NB-tN-yKl" customClass="PrintSettingsPrinterItemCell">
+                                        <rect key="frame" x="0.0" y="66" width="270" height="55"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3NB-tN-yKl" id="et5-L8-QYO">
+                                            <rect key="frame" x="0.0" y="0.0" width="270" height="55"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="glj-us-e4Z">
+                                                    <rect key="frame" x="12" y="19" width="60" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="60" id="5zY-Qt-b9L"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <nil key="highlightedColor"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER"/>
+                                                    </userDefinedRuntimeAttributes>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" textAlignment="right" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yyG-Tg-4qZ">
+                                                    <rect key="frame" x="82" y="10" width="160" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rPB-yd-LBZ">
+                                                    <rect key="frame" x="82" y="30" width="160" height="15"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Printer" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bc-VG-3eb">
+                                                    <rect key="frame" x="82" y="19" width="160" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="yf3-6R-sje">
+                                                    <rect key="frame" x="246" y="20" width="16" height="16"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="16" id="0jI-JD-mVv"/>
+                                                        <constraint firstAttribute="width" constant="16" id="bA5-w8-Ig6"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="7bc-VG-3eb" firstAttribute="leading" secondItem="glj-us-e4Z" secondAttribute="trailing" constant="10" id="0hu-Ck-8sM"/>
+                                                <constraint firstItem="glj-us-e4Z" firstAttribute="leading" secondItem="et5-L8-QYO" secondAttribute="leading" constant="12" id="8oK-Jv-N3i"/>
+                                                <constraint firstItem="yyG-Tg-4qZ" firstAttribute="leading" secondItem="glj-us-e4Z" secondAttribute="trailing" constant="10" id="Blw-P0-QXe"/>
+                                                <constraint firstItem="yyG-Tg-4qZ" firstAttribute="top" secondItem="et5-L8-QYO" secondAttribute="top" constant="10" id="DqE-gf-poY"/>
+                                                <constraint firstAttribute="centerY" secondItem="7bc-VG-3eb" secondAttribute="centerY" id="E1J-mO-jEh"/>
+                                                <constraint firstItem="yf3-6R-sje" firstAttribute="leading" secondItem="yyG-Tg-4qZ" secondAttribute="trailing" constant="4" id="FVE-Ar-c4z"/>
+                                                <constraint firstAttribute="bottom" secondItem="rPB-yd-LBZ" secondAttribute="bottom" constant="10" id="G7u-Mm-H9C"/>
+                                                <constraint firstAttribute="centerY" secondItem="glj-us-e4Z" secondAttribute="centerY" id="I96-gI-Fvf"/>
+                                                <constraint firstItem="rPB-yd-LBZ" firstAttribute="leading" secondItem="glj-us-e4Z" secondAttribute="trailing" constant="10" id="Sac-ll-jDf"/>
+                                                <constraint firstItem="yf3-6R-sje" firstAttribute="leading" secondItem="rPB-yd-LBZ" secondAttribute="trailing" constant="4" id="UdW-MM-EB9"/>
+                                                <constraint firstAttribute="centerY" secondItem="yf3-6R-sje" secondAttribute="centerY" id="ezy-av-cMk"/>
+                                                <constraint firstItem="rPB-yd-LBZ" firstAttribute="trailing" secondItem="yyG-Tg-4qZ" secondAttribute="trailing" id="mDq-kA-3rn"/>
+                                                <constraint firstItem="yf3-6R-sje" firstAttribute="leading" secondItem="7bc-VG-3eb" secondAttribute="trailing" constant="4" id="rov-qQ-H7q"/>
+                                                <constraint firstAttribute="trailing" secondItem="yf3-6R-sje" secondAttribute="trailing" constant="8" id="x8u-tk-06N"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="printerIPLabel" destination="rPB-yd-LBZ" id="utc-fs-l7V"/>
+                                            <outlet property="printerNameLabel" destination="yyG-Tg-4qZ" id="aBI-bD-EkA"/>
+                                            <outlet property="selectPrinterLabel" destination="7bc-VG-3eb" id="Nmv-rQ-1bv"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItemDefaultCell" rowHeight="55" id="7zG-WM-qem" customClass="PrintSettingsPrinterItemCell">
+                                        <rect key="frame" x="0.0" y="121" width="270" height="55"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7zG-WM-qem" id="tJj-jK-0wu">
+                                            <rect key="frame" x="0.0" y="0.0" width="270" height="55"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printer Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8uZ-FX-3y4">
+                                                    <rect key="frame" x="12" y="19" width="90" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="90" id="dii-gD-zis"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <nil key="highlightedColor"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER_NAME"/>
+                                                    </userDefinedRuntimeAttributes>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" textAlignment="right" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z9z-RV-MSc">
+                                                    <rect key="frame" x="112" y="10" width="150" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ybT-mX-9pl">
+                                                    <rect key="frame" x="112" y="30" width="150" height="15"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="ybT-mX-9pl" firstAttribute="leading" secondItem="8uZ-FX-3y4" secondAttribute="trailing" constant="10" id="1GE-5u-2Ng"/>
+                                                <constraint firstItem="8uZ-FX-3y4" firstAttribute="leading" secondItem="tJj-jK-0wu" secondAttribute="leading" constant="12" id="3tA-Tc-LSW"/>
+                                                <constraint firstAttribute="bottom" secondItem="ybT-mX-9pl" secondAttribute="bottom" constant="10" id="44k-r3-Pb1"/>
+                                                <constraint firstItem="Z9z-RV-MSc" firstAttribute="leading" secondItem="8uZ-FX-3y4" secondAttribute="trailing" constant="10" id="5Jd-NC-Eza"/>
+                                                <constraint firstItem="Z9z-RV-MSc" firstAttribute="top" secondItem="tJj-jK-0wu" secondAttribute="top" constant="10" id="GZ0-7h-Dc1"/>
+                                                <constraint firstAttribute="trailing" secondItem="ybT-mX-9pl" secondAttribute="trailing" constant="8" id="JFR-OW-CNI"/>
+                                                <constraint firstAttribute="centerY" secondItem="8uZ-FX-3y4" secondAttribute="centerY" id="UeJ-cr-gV2"/>
+                                                <constraint firstAttribute="trailing" secondItem="Z9z-RV-MSc" secondAttribute="trailing" constant="8" id="umj-rL-oRF"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="printerIPLabel" destination="ybT-mX-9pl" id="rQU-5c-fFA"/>
+                                            <outlet property="printerNameLabel" destination="Z9z-RV-MSc" id="IvA-dy-bXG"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <sections/>
+                                <connections>
+                                    <outlet property="dataSource" destination="dCC-mf-sHe" id="Ozz-jN-aqJ"/>
+                                    <outlet property="delegate" destination="dCC-mf-sHe" id="n6W-5Y-uiP"/>
+                                </connections>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9nu-6r-xUQ" userLabel="Settings">
+                                <rect key="frame" x="0.0" y="174" width="270" height="374"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0h-EL-X7C">
+                                        <rect key="frame" x="0.0" y="0.0" width="270" height="374"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <segue destination="pPd-nr-YZr" kind="embed" identifier="PrintSettingsPrinter-PrintSettingsTable" id="Jim-ZF-8ny"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="x0h-EL-X7C" firstAttribute="leading" secondItem="9nu-6r-xUQ" secondAttribute="leading" id="DEf-jr-efd"/>
+                                    <constraint firstAttribute="bottom" secondItem="x0h-EL-X7C" secondAttribute="bottom" id="K7z-Vr-jwv"/>
+                                    <constraint firstItem="x0h-EL-X7C" firstAttribute="top" secondItem="9nu-6r-xUQ" secondAttribute="top" id="XbW-P3-bT6"/>
+                                    <constraint firstAttribute="trailing" secondItem="x0h-EL-X7C" secondAttribute="trailing" id="kVT-gG-yFd"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="hdY-tn-chQ" firstAttribute="leading" secondItem="9WG-E7-r1v" secondAttribute="leading" id="MQj-GP-1Qf"/>
+                            <constraint firstItem="hdY-tn-chQ" firstAttribute="top" secondItem="cPe-vn-ZQb" secondAttribute="bottom" id="NCs-Lh-zBE"/>
+                            <constraint firstAttribute="trailing" secondItem="9nu-6r-xUQ" secondAttribute="trailing" id="RrB-mA-h2Y"/>
+                            <constraint firstAttribute="bottom" secondItem="9nu-6r-xUQ" secondAttribute="bottom" id="c0W-hW-7nD"/>
+                            <constraint firstItem="9nu-6r-xUQ" firstAttribute="leading" secondItem="9WG-E7-r1v" secondAttribute="leading" id="ekJ-al-dcH"/>
+                            <constraint firstItem="9nu-6r-xUQ" firstAttribute="top" secondItem="hdY-tn-chQ" secondAttribute="bottom" id="q4u-SD-Ud5"/>
+                            <constraint firstAttribute="trailing" secondItem="hdY-tn-chQ" secondAttribute="trailing" id="sgM-W7-VkM"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="GrE-0j-a4j"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="548"/>
+                    <connections>
+                        <outlet property="printerTableView" destination="hdY-tn-chQ" id="AS1-AA-gyh"/>
+                        <outlet property="tableViewHeight" destination="L2n-BW-hqn" id="kXO-iI-lsP"/>
+                        <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintPreview" unwindAction="unwindToPrintPreview:" id="mBM-8i-lhG"/>
+                        <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Aiq-ml-NWv"/>
+                        <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="cW1-ea-7P6"/>
+                        <segue destination="Wn7-PG-C0p" kind="push" identifier="PrintSettings-PrinterList" id="qiz-8l-D6m"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="27R-Ke-rdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="CaE-Ob-2MQ" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="1097" y="78"/>
+        </scene>
     </scenes>
     <resources>
         <image name="img_btn_add_printer_normal" width="64" height="64"/>
@@ -3999,9 +4058,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ysc-8g-iB4"/>
-        <segue reference="CWW-vD-UgO"/>
-        <segue reference="dDZ-0e-JG0"/>
+        <segue reference="5pT-ga-236"/>
         <segue reference="ax2-Mn-NH0"/>
+        <segue reference="Ysc-8g-iB4"/>
+        <segue reference="dDZ-0e-JG0"/>
     </inferredMetricsTieBreakers>
 </document>

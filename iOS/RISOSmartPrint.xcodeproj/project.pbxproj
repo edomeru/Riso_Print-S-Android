@@ -163,6 +163,7 @@
 		312B0DEC1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DEB1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m */; };
 		312B0DF219120E8D0033FB55 /* PDFPageContentViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DF119120E8D0033FB55 /* PDFPageContentViewControllerTest.m */; };
 		312B0DF8191216200033FB55 /* PreviewViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DF7191216200033FB55 /* PreviewViewTest.m */; };
+		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		319167D0191A0F5A00D38222 /* PDFRenderOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */; };
 		3195C0691911126100197397 /* TestPDF_3Pages_NoPass.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */; };
 		3195C06A1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */; };
@@ -544,6 +545,8 @@
 		312B0DEB1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsOptionTableViewControllerTest.m; sourceTree = "<group>"; };
 		312B0DF119120E8D0033FB55 /* PDFPageContentViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageContentViewControllerTest.m; sourceTree = "<group>"; };
 		312B0DF7191216200033FB55 /* PreviewViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewViewTest.m; sourceTree = "<group>"; };
+		31908CCB192A11FA00272563 /* PrintSettingsPrinterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterViewController.h; sourceTree = "<group>"; };
+		31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterViewController.m; sourceTree = "<group>"; };
 		319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFRenderOperationTest.m; sourceTree = "<group>"; };
 		3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = TestPDF_3Pages_NoPass.pdf; sourceTree = "<group>"; };
 		3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf"; sourceTree = "<group>"; };
@@ -1326,6 +1329,8 @@
 				2DA1AF1518E2EF9600085F27 /* PrintSettingsViewController.m */,
 				31F32CD718F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.h */,
 				31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */,
+				31908CCB192A11FA00272563 /* PrintSettingsPrinterViewController.h */,
+				31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */,
 			);
 			path = PrintSettings;
 			sourceTree = "<group>";
@@ -1675,6 +1680,7 @@
 				2DA1AF3518E2EF9C00085F27 /* PDFFileManager.m in Sources */,
 				28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */,
 				2DA1AF2218E2EF9600085F27 /* PrintersIphoneViewController.m in Sources */,
+				31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */,
 				2D0DE96318E3E9C8002DB0B4 /* PrintDocument.m in Sources */,
 				28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */,
 				2DA1AF3418E2EF9C00085F27 /* NetworkManager.m in Sources */,
