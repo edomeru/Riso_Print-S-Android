@@ -64,6 +64,10 @@ namespace SmartDeviceApp.Controllers
         private static async Task InitializeDataStorage()
         {
             await DatabaseController.Instance.Initialize();
+
+#if INITIAL_DATA_ON
+            await InitialDataController.InsertSampleData();
+#endif //INITIAL_DATA_ON
         }
 
         /// <summary>
@@ -77,20 +81,6 @@ namespace SmartDeviceApp.Controllers
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
         }
-
-        #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
-
-        public async static Task InitializeSamplePdf()
-        {
-            await DocumentController.Instance.Unload();
-            await PrintPreviewController.Instance.Cleanup();
-
-            StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
-            await DocumentController.Instance.Load(samplePdf);
-            await PrintPreviewController.Instance.Initialize();
-        }
-
-        #endregion TEST - Sample PDF Page - FOR DELETION -----------------------------------------------------------------------------
 
     }
 }
