@@ -12,10 +12,7 @@
 @class Printer;
 
 @interface PrintSettingsTableViewController : UITableViewController<UITextFieldDelegate>
+
 @property (nonatomic, strong) NSNumber *printerIndex;
 
-/**
- Action when the printer list view controller unwinds to the print settings table
- */
-- (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender;
 @end
