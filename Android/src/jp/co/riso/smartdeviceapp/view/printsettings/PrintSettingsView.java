@@ -36,7 +36,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -195,18 +194,26 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        boolean editTextHit = false;
+        
         View view = mMainView.findViewWithTag(PrintSettings.TAG_COPIES);
         if (view != null && view instanceof EditText) {
-            Rect r = new Rect();
-            int[] coords = new int[2];
-            view.getHitRect(r);
-            view.getLocationOnScreen(coords);
-            r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
-            if (!r.contains((int) ev.getRawX(), (int) ev.getRawY())) {
-                checkEditTextValue((EditText)view);      
-                AppUtils.hideSoftKeyboard((Activity) getContext());    
+            if (AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
+                editTextHit = true;
+                checkEditTextValue((EditText)view);
             }
         }
+        view = mMainView.findViewById(ID_PIN_CODE_EDIT_TEXT);
+        if (view != null && view instanceof EditText) {
+            if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
+                editTextHit = true;
+            }
+        }
+        
+        if (!editTextHit) {
+            AppUtils.hideSoftKeyboard((Activity) getContext());
+        }
+        
         return super.onInterceptTouchEvent(ev);
     }
     
@@ -1154,7 +1161,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         editText.setId(ID_PIN_CODE_EDIT_TEXT);
         editText.setLayoutParams(params);
         
-        editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
         });

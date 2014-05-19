@@ -27,9 +27,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
@@ -408,5 +410,33 @@ public final class AppUtils {
         }
         
         return n;
+    }
+    
+    /**
+     * Checks if x and y is inside the view coordinates
+     * 
+     * @param view
+     *            View to check
+     * @param x
+     *            MotionEvent.getRawX();
+     * @param y
+     *            MotionEvent.getRawX();
+     * @return Whether x and y is inside the View.
+     */
+    public static boolean checkViewHitTest(View view, int x, int y) {
+        if (view == null) {
+            return false;
+        }
+        
+        Rect r = new Rect();
+        int[] coords = new int[2];
+        view.getHitRect(r);
+        view.getLocationOnScreen(coords);
+        r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
+        if (!r.contains(x, y)) {
+            return true;
+        }
+        
+        return false;
     }
 }
