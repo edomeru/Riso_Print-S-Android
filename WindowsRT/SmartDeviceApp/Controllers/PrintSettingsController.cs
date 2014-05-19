@@ -1067,7 +1067,6 @@ namespace SmartDeviceApp.Controllers
 
             PrintSetting staplePrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
-
             if (staplePrintSetting == null)
             {
                 return isUpdated;
@@ -1076,36 +1075,42 @@ namespace SmartDeviceApp.Controllers
             int currFinishingSide = printSettings.FinishingSide;
             int currStaple = printSettings.Staple;
 
+            if (currStaple == (int)Staple.Two)
+            {
+                isUpdated = true;
+            }
+
             if (value == (int)FinishingSide.Left || value == (int)FinishingSide.Right)
             {
+                if ((value == (int)FinishingSide.Left && currFinishingSide == (int)FinishingSide.Right && currStaple == (int)Staple.One) ||
+                    (value == (int)FinishingSide.Left && currFinishingSide == (int)FinishingSide.Top && currStaple == (int)Staple.OneUpperRight) ||
+                    (value == (int)FinishingSide.Right && currFinishingSide == (int)FinishingSide.Left && currStaple == (int)Staple.One) ||
+                    (value == (int)FinishingSide.Right && currFinishingSide == (int)FinishingSide.Top && currStaple == (int)Staple.OneUpperLeft))
+                {
+                    isUpdated = true;
+                }
+
+                // Change selected value
                 if (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperRight)
                 {
                     staplePrintSetting.Value = (int)Staple.One;
                     printSettings.Staple = (int)Staple.One;
-
-                    isUpdated = true;
                 }
 
                 PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
                 if (oneUL != null)
                 {
                     oneUL.IsEnabled = false;
-
-                    isUpdated = true;
                 }
                 PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
                 if (oneUR != null)
                 {
                     oneUR.IsEnabled = false;
-
-                    isUpdated = true;
                 }
                 PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
                 if (one != null)
                 {
                     one.IsEnabled = true;
-
-                    isUpdated = true;
                 }
             }
             else if (value == (int)FinishingSide.Top)
@@ -1126,22 +1131,16 @@ namespace SmartDeviceApp.Controllers
                 if (oneUL != null)
                 {
                     oneUL.IsEnabled = true;
-
-                    isUpdated = true;
                 }
                 PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
                 if (oneUR != null)
                 {
                     oneUR.IsEnabled = true;
-
-                    isUpdated = true;
                 }
                 PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
                 if (one != null)
                 {
                     one.IsEnabled = false;
-
-                    isUpdated = true;
                 }
 
             }
@@ -1167,48 +1166,58 @@ namespace SmartDeviceApp.Controllers
                 return isUpdated;
             }
 
-            PrintSetting outputTrayPrintSetting =
-                GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+            //PrintSetting outputTrayPrintSetting =
+            //    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+            //if (outputTrayPrintSetting == null)
+            //{
+            //    return isUpdated;
+            //}
 
-            if (outputTrayPrintSetting == null)
+            int currFinishingSide = printSettings.FinishingSide;
+            int currStaple = printSettings.Staple;
+            //int currOutputTray = printSettings.OutputTray;
+
+            if ((value == (int)Staple.Off) ||
+                (value == (int)Staple.OneUpperLeft && currStaple != (int)Staple.One) ||
+                (value == (int)Staple.OneUpperRight && currStaple != (int)Staple.One) ||
+                (value == (int)Staple.One && (currStaple != (int)Staple.OneUpperLeft && currStaple != (int)Staple.OneUpperRight)) ||
+                (value == (int)Staple.Two))
             {
-                return isUpdated;
+                isUpdated = true;
             }
 
-            int currOutputTray = printSettings.OutputTray;
+            //if (value == (int)Staple.OneUpperLeft || value == (int)Staple.OneUpperRight ||
+            //    value == (int)Staple.One || value == (int)Staple.Two)
+            //{
+            //    /* Constraints for Output Tray
+            //    if (currOutputTray == (int)OutputTray.FaceUp)
+            //    {
+            //        int newOutputTray = (int)outputTrayPrintSetting.Default;
+            //        outputTrayPrintSetting.Value = newOutputTray;
+            //        PrintSettings.OutputTray = newOutputTray;
 
-            if (value == (int)Staple.OneUpperLeft || value == (int)Staple.OneUpperRight ||
-                value == (int)Staple.One || value == (int)Staple.Two)
-            {
-                /* Constraints for Output Tray
-                if (currOutputTray == (int)OutputTray.FaceUp)
-                {
-                    int newOutputTray = (int)outputTrayPrintSetting.Default;
-                    outputTrayPrintSetting.Value = newOutputTray;
-                    PrintSettings.OutputTray = newOutputTray;
+            //        PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
+            //        if (faceUp != null)
+            //        {
+            //            faceUp.IsEnabled = false;
+            //        }
 
-                    PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                    if (faceUp != null)
-                    {
-                        faceUp.IsEnabled = false;
-                    }
+            //        isUpdated = true;
+            //    }
+            //     */
+            //}
+            //else if (value == (int)Staple.Off)
+            //{
+            //    /* Constraints for Output Tray
+            //    PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
+            //    if (faceUp != null)
+            //    {
+            //        faceUp.IsEnabled = true;
 
-                    isUpdated = true;
-                }
-                 */
-            }
-            else if (value == (int)Staple.Off)
-            {
-                /* Constraints for Output Tray
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = true;
-
-                    isUpdated = true;
-                }
-                 */
-            }
+            //        isUpdated = true;
+            //    }
+            //     */
+            //}
 
             _printSettingsMap[_activeScreen] = printSettings;
 
@@ -1491,12 +1500,6 @@ namespace SmartDeviceApp.Controllers
                 {
                     isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value);
                     printSettings.FinishingSide = value;
-                    // Matters only when staple or punch is ON
-                    if (printSettings.Staple != (int)Staple.Off ||
-                        printSettings.Punch != (int)Punch.Off)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
@@ -1505,7 +1508,6 @@ namespace SmartDeviceApp.Controllers
                 {
                     isPreviewAffected = UpdateConstraintsBasedOnStaple(value);
                     printSettings.Staple = value;
-                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
