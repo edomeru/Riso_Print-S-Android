@@ -11,8 +11,6 @@
 
 @interface PrinterStatusView : UIImageView
 
-@property (assign, nonatomic) BOOL onlineStatus;
-
 - (void)setStatus:(BOOL)isOnline;
 
 @end

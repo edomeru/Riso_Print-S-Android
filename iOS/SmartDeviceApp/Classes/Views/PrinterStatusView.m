@@ -13,21 +13,14 @@
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        
+    if (self)
+    {
     }
     return self;
 }
 
 - (void)setStatus:(BOOL)isOnline;
 {
-    if(self.onlineStatus == isOnline)
-    {
-        return; //do nothing if status is the same
-    }
-    
-    self.onlineStatus = isOnline;
     if(isOnline)
     {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
