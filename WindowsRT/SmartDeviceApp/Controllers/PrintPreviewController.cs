@@ -388,7 +388,7 @@ namespace SmartDeviceApp.Controllers
         private void UpdatePreviewInfo()
         {
             // Send UI related items
-            if (_currPrintSettings.Booklet)
+            if (_currPrintSettings.Booklet || _currPrintSettings.Duplex != (int)Duplex.Off)
             {
                 _isBooklet = true;
                 _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView;
@@ -510,7 +510,7 @@ namespace SmartDeviceApp.Controllers
         {
             // When booklet is on and booklet finishing is off, act like as duplex (short edge)
             // so no need for left side
-            if (_isBooklet) // && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
+            if (_isBooklet || _isDuplex) // && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
             {
                 // Compute left side page index
                 int leftSidePreviewPageIndex = rightPageIndex - 1;
