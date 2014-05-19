@@ -421,10 +421,8 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
                 }
             }
-            if (!printer.EnabledPunchFour) // Meaning punch3
+            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch 3
             {
-                // TODO: Verify assumption
-                // Assumption that punch4 is the default in print settings xml
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
                 if (punchPrintSetting != null)
@@ -437,6 +435,16 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
+            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch3 or punch4
+            {
+                PrintSetting punchPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+                if (punchPrintSetting != null)
+                {
+                    RemovePrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
+                }
+            }
+            // else if (!printer.EnabledPunchThree && printer.EnabledPunchFour) // This is the default case
             if (!printer.EnabledTrayFacedown)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -444,15 +452,6 @@ namespace SmartDeviceApp.Controllers
                 if (outputTrayPrintSetting != null)
                 {
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
-                }
-            }
-            if (!printer.EnabledTrayAutostack)
-            {
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
-                {
-                    RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Auto);
                 }
             }
             if (!printer.EnabledTrayTop)
@@ -473,18 +472,18 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
                 }
             }
-            // TODO: Need to create a generic function to remove print settings (type list) with empty options
-            if (!(printer.EnabledTrayFacedown || printer.EnabledTrayAutostack ||
-                  printer.EnabledTrayTop || printer.EnabledTrayStack))
-            {
-                // Remove output tray print setting since all options are off
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
-                {
-                    RemovePrintSetting(outputTrayPrintSetting);
-                }
-            }
+            //// TODO: Need to create a generic function to remove print settings (type list) with empty options
+            //if (!(printer.EnabledTrayFacedown
+            //      printer.EnabledTrayTop || printer.EnabledTrayStack))
+            //{
+            //    // Remove output tray print setting since all options are off
+            //    PrintSetting outputTrayPrintSetting =
+            //        GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+            //    if (outputTrayPrintSetting != null)
+            //    {
+            //        RemovePrintSetting(outputTrayPrintSetting);
+            //    }
+            //}
 
             _printSettingsMap[_activeScreen] = printSettings;
         }

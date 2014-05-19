@@ -1705,7 +1705,14 @@ namespace SmartDeviceApp.Controllers
                     break;
                 case (int)Punch.FourHoles:
                     //numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
-                    numberOfHoles = (_selectedPrinter.EnabledPunchFour) ? 4 : 3;
+                    if (_selectedPrinter.EnabledPunchThree)
+                    {
+                        numberOfHoles = 3;
+                    }
+                    else if (_selectedPrinter.EnabledPunchFour)
+                    {
+                        numberOfHoles = 4;
+                    }
                     break;
                 case (int)Punch.Off:
                 default:

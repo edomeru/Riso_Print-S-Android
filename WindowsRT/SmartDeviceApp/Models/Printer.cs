@@ -114,6 +114,12 @@ namespace SmartDeviceApp.Models
         public bool EnabledStapler { get; set; }
 
         /// <summary>
+        /// Printer support for three-hole punch, used by Printer table
+        /// </summary>
+        [SQLite.Column("prn_enabled_punch3"), SQLite.NotNull]
+        public bool EnabledPunchThree { get; set; }
+
+        /// <summary>
         /// Printer support for four-hole punch, used by Printer table
         /// </summary>
         [SQLite.Column("prn_enabled_punch4"), SQLite.NotNull]
@@ -124,12 +130,6 @@ namespace SmartDeviceApp.Models
         /// </summary>
         [SQLite.Column("prn_enabled_tray_facedown"), SQLite.NotNull]
         public bool EnabledTrayFacedown { get; set; }
-
-        /// <summary>
-        /// Printer support for autostack tray, used by Printer table
-        /// </summary>
-        [SQLite.Column("prn_enabled_tray_autostack"), SQLite.NotNull]
-        public bool EnabledTrayAutostack { get; set; }
 
         /// <summary>
         /// Printer support for top tray, used by Printer table
@@ -209,9 +209,9 @@ namespace SmartDeviceApp.Models
             EnabledRaw = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_RAW, ListValueType.Boolean);
             EnabledBooklet = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_BOOKLET, ListValueType.Boolean);
             EnabledStapler = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_STAPLER, ListValueType.Boolean);
+            EnabledPunchThree = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PUNCH3, ListValueType.Boolean);
             EnabledPunchFour = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PUNCH4, ListValueType.Boolean);
             EnabledTrayFacedown = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_FACEDOWN, ListValueType.Boolean);
-            EnabledTrayAutostack = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_AUTOSTACK, ListValueType.Boolean);
             EnabledTrayTop = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_TOP, ListValueType.Boolean);
             EnabledTrayStack = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_TRAY_STACK, ListValueType.Boolean);
             IsDefault = false;
