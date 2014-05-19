@@ -114,6 +114,8 @@
         itemCell.separator.hidden = YES;
     }
     
+    [itemCell.statusView setStatus:[printer.onlineStatus boolValue]];
+    
     if ([self.printDocument.printer isEqual:printer])
     {
         self.selectedIndex = indexPath.row;
