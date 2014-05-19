@@ -1292,18 +1292,27 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 }
                 
                 float scale = 1.0f / getPagesPerSheet();
-                
-                Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
+                int curIndex = i + beginIndex;
+                Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int dim[] = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
-                    if (mPrintSettings.isScaleToFit()) {
-                        dim[0] = right - left;
-                        dim[1] = bottom - top;
-                    }
+                    int x = 0;
+                    int y = 0;
+                    int dim[] = new int[] {
+                            convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth()),
+                            convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth())
+                    };
                     
-                    int x = left + ((right - left) - dim[0]) / 2;
-                    int y = top + ((bottom - top) - dim[1]) / 2;
+                    if (mPrintSettings.isScaleToFit()) {
+                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), right - left, bottom - top);
+                        
+                        // For Fit-XY
+                        //dim[0] = right - left;
+                        //dim[1] = bottom - top;
+                        
+                        x = left + ((right - left) - dim[0]) / 2;
+                        y = top + ((bottom - top) - dim[1]) / 2;
+                    }
                     
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                     ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
