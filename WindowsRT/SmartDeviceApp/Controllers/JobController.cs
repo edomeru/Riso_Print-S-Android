@@ -93,7 +93,7 @@ namespace SmartDeviceApp.Controllers
             List<PrintJob> printJobList = await DatabaseController.Instance.GetPrintJobs();
             PrintJobList tempList = new PrintJobList();
             var orderedList = printJobList.OrderBy(pj => pj.PrinterId)
-                                          .ThenBy(pj => pj.Date)
+                                          .ThenByDescending(pj => pj.Date)
                                           .GroupBy(pj => pj.PrinterId).ToList();
             foreach (var group in orderedList)
             {
@@ -134,7 +134,7 @@ namespace SmartDeviceApp.Controllers
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
                 if (printJobGroup != null) // Group already exists
                 {
-                    printJobGroup.Jobs.Add(printJob);
+                    printJobGroup.Jobs.Insert(0, printJob); // Insert at top of the list
                 }
                 else // Create new group
                 {
