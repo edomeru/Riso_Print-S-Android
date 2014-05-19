@@ -34,8 +34,7 @@
             android:ellipsize="middle"
             android:duplicateParentState="true"
             android:text="@string/default_textview"
-	        android:textColor="@color/selector_printsettings_item_text"
-            android:textSize="@dimen/home_text_size" />
+            android:textColor="@color/selector_printsettings_item_text" />
         
     </LinearLayout>
 

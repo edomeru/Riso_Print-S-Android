@@ -15,7 +15,7 @@
         android:paddingLeft="@dimen/home_title_padding"
         android:text="@string/ids_app_name"
         android:textColor="@color/theme_light_1"
-        android:textSize="@dimen/actionbar_title_text_size" />
+        android:textSize="@dimen/font_size_large" />
 
     <ScrollView
         android:layout_width="match_parent"

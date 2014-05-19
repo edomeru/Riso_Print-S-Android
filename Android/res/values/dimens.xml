@@ -6,14 +6,17 @@
     
     <dimen name="separator_size">1dp</dimen>
     
+    <!-- Font sizes -->
+    <dimen name="font_size_large">16dp</dimen>
+    <dimen name="font_size_normal">14dp</dimen>
+    <dimen name="font_size_small">12dp</dimen>
+    
     <dimen name="actionbar_icon_padding">6dp</dimen>
-    <dimen name="actionbar_title_text_size">16dp</dimen>
     
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">480dp</dimen>
     
     <dimen name="home_title_padding">24dp</dimen>
-    <dimen name="home_text_size">16dp</dimen>
     <dimen name="home_menu_height">48dp</dimen>
     
     <integer name="match_parent_value">-1</integer>  
@@ -23,8 +26,6 @@
     <dimen name="settings_pin_code_input_width">120dp</dimen>
     
     <dimen name="settings_separator_padding">24dp</dimen>
-    
-    <dimen name="printsettings_option_with_sub_text_size">14dp</dimen>
     <dimen name="printsettings_option_with_sub_height">56dp</dimen>
     
     <dimen name="printsettings_menu_padding">10dp</dimen>
@@ -36,9 +37,7 @@
     <dimen name="printsettings_input_pincode_width">120dp</dimen>
     <dimen name="printsettings_input_padding_lr">8dp</dimen>
     <dimen name="printsettings_input_padding_tb">6dp</dimen>
-    <dimen name="printsettings_input_text_size">16dp</dimen>
     
-    <dimen name="printsettings_listvalue_text_size">16dp</dimen>
     <dimen name="printsettings_disclosure_size">20dp</dimen>
     <dimen name="printsettings_radiobutton_size">32dp</dimen>
     
@@ -51,7 +50,6 @@
     
     <item name="preview_view_drop_shadow_percentage" type="dimen">2%</item>
     <dimen name="preview_view_margin">4dp</dimen>
-    <dimen name="preview_controls_text_size">16dp</dimen>
     <dimen name="preview_controls_text_width">120dp</dimen>
     <dimen name="preview_controls_margin_side">32dp</dimen>
     <dimen name="preview_controls_margin_bottom">8dp</dimen>
@@ -95,8 +93,6 @@
     <dimen name="printers_row_top_padding">8dp</dimen>
 
     <dimen name="printers_row_default_printer_margin">2dp</dimen>
-    <dimen name="printers_name_font_size">16dp</dimen>
-    <dimen name="printers_ipaddress_font_size">12dp</dimen>
     <dimen name="printers_view_tablet_padding">5dp</dimen>    
     <dimen name="printers_delbtn_padding_side">20dp</dimen>
     <dimen name="printers_delbtn_margin">5dp</dimen>
