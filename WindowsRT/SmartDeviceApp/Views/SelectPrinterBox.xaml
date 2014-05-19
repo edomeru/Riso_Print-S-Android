@@ -54,7 +54,7 @@
                                                 GroupName="printersList"
                                                 Index="{Binding Id}"
                                                 Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
-                                                IconImage="ms-appx:///Resources/Images/img_btn_printer_status_online.png"
+                                                IconImage="{Binding IsOnline, Converter={StaticResource PrinterStatusToImageSourceConverter}}"
                                                 IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}, Mode=TwoWay}"
                                                 IsEnabled="True"
                                                 SeparatorVisibility="{Binding Id, Converter={StaticResource SelectPrinterToSeparatorVisibilityConverter}}"

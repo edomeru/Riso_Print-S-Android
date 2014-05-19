@@ -62,6 +62,7 @@ namespace SmartDeviceApp.Controllers
         private SearchPrinterViewModel _searchPrinterViewModel;
         private AddPrinterViewModel _addPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private SelectPrinterViewModel _selectPrinterViewModel;
         private string _screenName;
 
         private bool isPolling = false;
@@ -92,6 +93,7 @@ namespace SmartDeviceApp.Controllers
             _searchPrinterViewModel = new ViewModelLocator().SearchPrinterViewModel;
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+            _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
 
             _screenName = SmartDeviceApp.Common.Enum.ScreenMode.Printers.ToString();
 
@@ -120,6 +122,8 @@ namespace SmartDeviceApp.Controllers
 
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
+
+            _selectPrinterViewModel.PollingHandler += _pollingHandler;
             SNMPController.Instance.Initialize();
 
         }

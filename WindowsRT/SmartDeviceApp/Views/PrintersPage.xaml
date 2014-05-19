@@ -19,8 +19,6 @@
     DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
 
     <base:PageBase.Resources>
-        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
-
         <DataTemplate x:Key="TEMPLATE_AddPrinterPane">
             <local:AddPrinterPane/>
         </DataTemplate>

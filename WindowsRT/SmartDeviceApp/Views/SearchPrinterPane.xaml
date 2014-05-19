@@ -70,8 +70,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
 
     </UserControl.Resources>
 
