@@ -68,7 +68,7 @@
     [super didReceiveMemoryWarning];
 }
 
--(void) dealloc
+- (void)dealloc
 {
     for(PrinterStatusHelper * statusHelper in self.statusHelpers)
     {
@@ -146,7 +146,8 @@
 }
 
 #pragma mark - PrinterStatusDelegate
--(void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange :(BOOL)isOnline
+
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline
 {
     NSUInteger index = [self.statusHelpers indexOfObject:statusHelper];
     Printer *printer = [self.printerManager getPrinterAtIndex:index];
@@ -158,7 +159,6 @@
         [cell.printerStatus setStatus:isOnline];
     }
 }
-
 
 #pragma mark - UIScrollViewDelegate
 
@@ -323,7 +323,7 @@
     }
 }
 
--(void) segueToPrintSettings
+- (void)segueToPrintSettings
 {
     //The PrintersiPhoneViewController is the main controller in the root view controller so it is the one that should call a slide segue to the PrintSettingsViewController
     [self performSegueTo:[PrintSettingsViewController class]];
@@ -349,7 +349,7 @@
 
 #pragma mark - private helper methods
 
--(void) setPrinterCell:(NSIndexPath *) indexPath asDefault: (BOOL) isDefault
+- (void)setPrinterCell:(NSIndexPath *)indexPath asDefault:(BOOL)isDefault
 {
     if(self.defaultPrinterIndexPath != nil)
     {
@@ -377,7 +377,7 @@
     [selectedDefaultCell setCellStyleForDefaultCell];
 }
 
-- (void) deletePrinter
+- (void)deletePrinter
 {
     if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
     {
@@ -414,11 +414,11 @@
     }
 }
 
--(void) removeDeleteState
+- (void)removeDeleteState
 {
     if(self.toDeleteIndexPath != nil)
     {
-        PrinterCell *cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
         [cell setCellToBeDeletedState:NO];
         self.toDeleteIndexPath = nil;
     }

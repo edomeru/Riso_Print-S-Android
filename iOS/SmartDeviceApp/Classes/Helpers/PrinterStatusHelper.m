@@ -19,13 +19,13 @@
 @property (assign, nonatomic) BOOL respondedToPing;
 @property (assign, nonatomic) BOOL cancelledToBackground;
 
--(void) getPrinterStatus;
+- (void)getPrinterStatus;
 
 @end
 
 @implementation PrinterStatusHelper
 
-- (id)initWithPrinterIP:(NSString *) ipAddress
+- (id)initWithPrinterIP:(NSString *)ipAddress
 {
     self = [super init];
     

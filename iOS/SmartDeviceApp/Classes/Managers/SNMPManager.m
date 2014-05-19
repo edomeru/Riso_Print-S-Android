@@ -245,6 +245,7 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.enTrayFaceDown = YES;
     pd.enTrayStacking = YES;
     pd.enTrayTop = YES;
+    pd.isPrinterFound = YES;
 #if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMPM] name=%@", pd.name);
     NSLog(@"[INFO][SNMPM] ip=%@", pd.ip);

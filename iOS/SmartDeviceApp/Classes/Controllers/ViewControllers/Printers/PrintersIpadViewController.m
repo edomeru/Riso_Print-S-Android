@@ -36,10 +36,9 @@
 @property (nonatomic, strong) NSNumber *selectedPrinterIndex;
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
 
-
 #pragma mark - Instance Methods
 
-- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath;
+- (BOOL)setDefaultPrinter:(NSIndexPath *)indexPath;
 
 @end
 
@@ -69,16 +68,17 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void) dealloc
+- (void)dealloc
 {
-    for(PrinterStatusHelper * statusHelper in self.statusHelpers)
+    for(PrinterStatusHelper *statusHelper in self.statusHelpers)
     {
         [statusHelper stopPrinterStatusPolling];
     }
     [self.statusHelpers removeAllObjects];
-    
 }
+
 #pragma mark - CollectionViewDataSource
+
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
@@ -130,7 +130,6 @@
     [cell.defaultSettingsRow addGestureRecognizer:press];
     [cell setDefaultSettingsRowToSelected:NO];
     
-
     if([self.statusHelpers count] <= indexPath.row)
     {
         PrinterStatusHelper *printerStatusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
@@ -152,9 +151,9 @@
     return NO;
 }
 
-
 #pragma mark - PrinterStatusHelper delegate
--(void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange :(BOOL)isOnline
+
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline
 {
     NSUInteger index = [self.statusHelpers indexOfObject:statusHelper];
     Printer *printer = [self.printerManager getPrinterAtIndex:index];
@@ -166,7 +165,6 @@
         [cell.statusView setStatus:isOnline];
     }
 }
-
 
 #pragma mark - IBActions
 
@@ -279,7 +277,7 @@
 
 #pragma mark - private helper methods
 
-- (BOOL) setDefaultPrinter: (NSIndexPath *) indexPath
+- (BOOL)setDefaultPrinter:(NSIndexPath *)indexPath
 {
     //get selected printer from list
     Printer* selectedPrinter = [self.printerManager getPrinterAtIndex:indexPath.row];
@@ -288,7 +286,7 @@
     return [self.printerManager registerDefaultPrinter:selectedPrinter];
 }
 
-- (void) deletePrinterAtIndex:(NSUInteger)index
+- (void)deletePrinterAtIndex:(NSUInteger)index
 {
     if ([self.printerManager deletePrinterAtIndex:index])
     {
@@ -301,7 +299,7 @@
         //[cell.statusView.statusHelper stopPrinterStatusPolling];
         //cell.statusView.statusHelper.delegate = nil;
         
-	PrinterStatusHelper *printerStatus = [self.statusHelpers objectAtIndex:index];
+        PrinterStatusHelper *printerStatus = [self.statusHelpers objectAtIndex:index];
         [printerStatus stopPrinterStatusPolling];
         [self.statusHelpers removeObjectAtIndex:index];
         
@@ -331,7 +329,7 @@
     }
 }
 
--(void) refreshControlTagsOfCellsAtIndexPaths:(NSArray *)indexPaths
+- (void)refreshControlTagsOfCellsAtIndexPaths:(NSArray *)indexPaths
 {
     if(indexPaths == nil)
     {
@@ -375,7 +373,9 @@
     [super reloadData];
     if(self.selectedPrinterIndex != nil)
     {
-        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0]];
+        NSIndexPath* selectedIndexPath = [NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue]
+                                                            inSection:0];
+        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectedIndexPath];
         [selectedCell setDefaultSettingsRowToSelected:NO];
         self.selectedPrinterIndex = nil;
     }
