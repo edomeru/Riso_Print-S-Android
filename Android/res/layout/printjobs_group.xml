@@ -47,8 +47,7 @@
                 android:ellipsize="middle"
                 android:gravity="bottom"
                 android:singleLine="true"
-                android:textColor="@color/theme_light_1"
-                android:textSize="@dimen/font_size_normal" />
+                android:textColor="@color/theme_light_1" />
 
             <TextView
                 android:id="@+id/printJobGroupSubText"

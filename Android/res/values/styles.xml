@@ -31,7 +31,6 @@
 　　　　    <item name="android:textColor">@color/selector_home_text</item>
 　　　　    <item name="android:duplicateParentState">true</item>
 　　　　    <item name="android:textAllCaps">true</item>
-　　　　    <item name="android:textSize">@dimen/font_size_normal</item>
 　　　</style>
 
 	<style name="BorderedEditText" parent="@android:style/Widget.EditText">
@@ -44,7 +43,6 @@
 　　　         <item name="android:textColor">@color/theme_dark_1</item>
 　　　         <item name="android:textCursorDrawable">@null</item>
 　　　         <item name="android:imeOptions">flagNoExtractUi</item>
-　　　　     <item name="android:textSize">@dimen/font_size_normal</item>
     </style>
 
 </resources>

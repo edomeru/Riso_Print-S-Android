@@ -48,8 +48,7 @@
                     android:maxLines="1"
                     android:paddingLeft="@dimen/printers_row_left_padding"
                     android:singleLine="true"
-                    android:textColor="@color/selector_printers_text"
-                    android:textSize="@dimen/font_size_normal" />
+                    android:textColor="@color/selector_printers_text" />
 
                 <ImageView
                     android:id="@+id/btn_delete"
@@ -81,8 +80,7 @@
                     android:gravity="center_vertical"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_ip_address"
-                    android:textColor="@color/theme_dark_1"
-                    android:textSize="@dimen/font_size_normal" />
+                    android:textColor="@color/theme_dark_1" />
 
                 <TextView
                     android:id="@+id/inputIpAddress"
@@ -92,8 +90,7 @@
                     android:layout_weight="1"
                     android:gravity="right|center_vertical"
                     android:padding="@dimen/printers_row_right_padding"
-                    android:textColor="@color/theme_light_1"
-                    android:textSize="@dimen/font_size_normal" />
+                    android:textColor="@color/theme_light_1" />
             </LinearLayout>
 
             <View
@@ -114,8 +111,7 @@
                     android:layout_weight="1"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_port"
-                    android:textColor="@color/theme_dark_1"
-                    android:textSize="@dimen/font_size_normal" />
+                    android:textColor="@color/theme_dark_1" />
 
                 <Spinner
                     android:id="@+id/input_port"
@@ -124,16 +120,14 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
                     android:background="@drawable/widgettheme_spinner_background_holo_dark_2"
-                    android:gravity="right|center_vertical"
-                    android:textSize="@dimen/font_size_normal" />
+                    android:gravity="right|center_vertical" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_size"
                 android:layout_marginLeft="@dimen/printers_row_left_padding"
-                android:background="@color/theme_light_2"
-                android:visibility="visible" />
+                android:background="@color/theme_light_2" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,8 +148,7 @@
                         android:gravity="center_vertical"
                         android:padding="@dimen/printers_row_left_padding"
                         android:text="@string/ids_lbl_set_default_printer"
-                        android:textColor="@color/theme_dark_1"
-                        android:textSize="@dimen/font_size_normal" />
+                        android:textColor="@color/theme_dark_1" />
 
                     <Switch
                         android:id="@+id/default_printer_switch"
@@ -189,8 +182,7 @@
                     android:gravity="center_vertical"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_default_print_settings"
-                    android:textColor="@color/selector_printers_defaultprint_text"
-                    android:textSize="@dimen/font_size_normal" />
+                    android:textColor="@color/selector_printers_defaultprint_text" />
 
                 <ImageView
                     android:id="@+id/print_settings"
