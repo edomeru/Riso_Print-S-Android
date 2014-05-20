@@ -171,7 +171,7 @@
     pd.enTrayTop = YES;
     pd.enLpr = YES;
     pd.enRaw = YES;
-    
+    pd.isPrinterFound = NO;
     [self.printerManager registerPrinter:pd];
     self.hasAddedPrinters = YES;
 }

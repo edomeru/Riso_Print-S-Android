@@ -177,6 +177,7 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.enTrayFaceDown = (snmp_device_get_capability_status(device, kSnmpCapabilityTrayFaceDown) > 0 ? YES : NO);
     pd.enTrayStacking = (snmp_device_get_capability_status(device, kSnmpCapabilityTrayStack) > 0 ? YES : NO);
     pd.enTrayTop = (snmp_device_get_capability_status(device, kSnmpCapabilityTrayTop) > 0 ? YES : NO);
+    pd.isPrinterFound = YES;
 #if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMPM] name=%@", pd.name);
     NSLog(@"[INFO][SNMPM] ip=%@", pd.ip);
@@ -224,6 +225,7 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.enTrayFaceDown = YES;
     pd.enTrayStacking = YES;
     pd.enTrayTop = YES;
+    pd.isPrinterFound = YES;
 #if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMPM] name=%@", pd.name);
     NSLog(@"[INFO][SNMPM] ip=%@", pd.ip);

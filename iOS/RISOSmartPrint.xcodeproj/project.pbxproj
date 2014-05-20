@@ -19,6 +19,7 @@
 		28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */; };
 		280C096A192048DD00347991 /* PrintJobItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C0969192048DD00347991 /* PrintJobItemCell.m */; };
 		280C097019206DF000347991 /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C096F19206DF000347991 /* DeleteButton.m */; };
+		281D733819261F6A005F5044 /* PrintJobItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C0969192048DD00347991 /* PrintJobItemCell.m */; };
 		2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
 		28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
@@ -33,7 +34,9 @@
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
 		28B774691918C94400E97C60 /* NSDateFormatTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B774681918C94400E97C60 /* NSDateFormatTest.m */; };
 		28C9182219124B1F00CB582C /* DirectPrintManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C9182119124B1F00CB582C /* DirectPrintManagerTest.m */; };
+		28D3349E19299C4000F99B23 /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D3349D19299C4000F99B23 /* PaddedLabel.m */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
+		28ED46DE19261DFD00B8D4A0 /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C096F19206DF000347991 /* DeleteButton.m */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
@@ -336,6 +339,8 @@
 		28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryHelperTest.m; sourceTree = "<group>"; };
 		28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryGroupTest.m; sourceTree = "<group>"; };
 		28CFC56A18F6666000DBD2BD /* PrintJobHistoryViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewControllerTest.m; sourceTree = "<group>"; };
+		28D3349C19299C4000F99B23 /* PaddedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
+		28D3349D19299C4000F99B23 /* PaddedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaddedLabel.m; sourceTree = "<group>"; };
 		28D7B31418EE48D300FE15BA /* NSDate+Format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Format.h"; sourceTree = "<group>"; };
 		28D7B31518EE48D300FE15BA /* NSDate+Format.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Format.m"; sourceTree = "<group>"; };
 		28FDEDDF18E53D5400423CFC /* PrintJobHistoryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroup.h; sourceTree = "<group>"; };
@@ -1327,6 +1332,8 @@
 				2DA1AED218E2EF8500085F27 /* MenuButton.m */,
 				2DA1AED318E2EF8500085F27 /* MenuScrollView.h */,
 				2DA1AED418E2EF8500085F27 /* MenuScrollView.m */,
+				28D3349C19299C4000F99B23 /* PaddedLabel.h */,
+				28D3349D19299C4000F99B23 /* PaddedLabel.m */,
 				2D157BFF18ED765F0034F953 /* PreviewView.h */,
 				2D157C0018ED765F0034F953 /* PreviewView.m */,
 				2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */,
@@ -1865,6 +1872,7 @@
 				28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */,
 				2DA1AF3418E2EF9C00085F27 /* NetworkManager.m in Sources */,
 				2D1F23AD1900FF5800301D1E /* CXAlertView.m in Sources */,
+				28D3349E19299C4000F99B23 /* PaddedLabel.m in Sources */,
 				2D1F23BC1901049400301D1E /* HelpViewController.m in Sources */,
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
 				2D157BFB18ED5B580034F953 /* XMLParser.m in Sources */,
@@ -1895,6 +1903,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				281D733819261F6A005F5044 /* PrintJobItemCell.m in Sources */,
+				28ED46DE19261DFD00B8D4A0 /* DeleteButton.m in Sources */,
 				2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2D6C70161925EEBA00E33789 /* MagicalRecord+iCloud.m in Sources */,
 				2D6C70171925EEBA00E33789 /* MagicalRecord+Options.m in Sources */,

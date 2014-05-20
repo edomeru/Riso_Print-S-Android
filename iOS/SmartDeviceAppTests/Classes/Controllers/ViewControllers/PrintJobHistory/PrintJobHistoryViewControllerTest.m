@@ -16,6 +16,8 @@
 #import "PrintJob.h"
 #import "PrintJobHistoryGroupCell.h"
 #import "NSDate+Format.h"
+#import "DeleteButton.h"
+#import "PrintJobItemCell.h"
 
 @interface PrintJobHistoryViewController (UnitTest)
 
@@ -34,10 +36,10 @@
 @interface PrintJobHistoryGroupCell (UnitTest)
 
 // expose private properties
-- (UIButton*)groupName;
-- (UIButton*)groupIP;
-- (UIButton*)groupIndicator;
-- (UIButton*)deleteAllButton;
+- (UILabel*)groupName;
+- (UILabel*)groupIP;
+- (UILabel*)groupIndicator;
+- (DeleteButton*)deleteAllButton;
 - (UITableView*)printJobsView;
 - (NSIndexPath*)jobWithDelete;
 - (NSMutableArray*)listPrintJobs;
@@ -327,20 +329,20 @@
     GHAssertNotNil([groupCell listPrintJobs], @"");
     
     [groupCell putGroupName:printerName];
-    GHAssertEqualStrings([groupCell groupName].titleLabel.text, printerName, @"");
+    GHAssertEqualStrings([groupCell groupName].text, printerName, @"");
     [groupCell putGroupName:nil];
-    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
+    GHAssertEqualStrings([groupCell groupName].text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
     [groupCell putGroupName:@""];
-    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
+    GHAssertEqualStrings([groupCell groupName].text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
     
     [groupCell putGroupIP:printerIP];
-    GHAssertEqualStrings([groupCell groupIP].titleLabel.text, printerIP, @"");
+    GHAssertEqualStrings([groupCell groupIP].text, printerIP, @"");
     
     [groupCell putIndicator:YES];
-    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"+", @"");
+    GHAssertEqualStrings([groupCell groupIndicator].text, @"+", @"");
     
     [groupCell putIndicator:NO];
-    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"-", @"");
+    GHAssertEqualStrings([groupCell groupIndicator].text, @"-", @"");
     
     [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
     [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
@@ -380,20 +382,20 @@
     GHAssertNotNil([groupCell listPrintJobs], @"");
     
     [groupCell putGroupName:printerName];
-    GHAssertEqualStrings([groupCell groupName].titleLabel.text, printerName, @"");
+    GHAssertEqualStrings([groupCell groupName].text, printerName, @"");
     [groupCell putGroupName:nil];
-    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
+    GHAssertEqualStrings([groupCell groupName].text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
     [groupCell putGroupName:@""];
-    GHAssertEqualStrings([groupCell groupName].titleLabel.text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
+    GHAssertEqualStrings([groupCell groupName].text, NSLocalizedString(@"IDS_LBL_NO_NAME", ""),  @"");
     
     [groupCell putGroupIP:printerIP];
-    GHAssertEqualStrings([groupCell groupIP].titleLabel.text, printerIP, @"");
+    GHAssertEqualStrings([groupCell groupIP].text, printerIP, @"");
     
     [groupCell putIndicator:YES];
-    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"+", @"");
+    GHAssertEqualStrings([groupCell groupIndicator].text, @"+", @"");
     
     [groupCell putIndicator:NO];
-    GHAssertEqualStrings([groupCell groupIndicator].titleLabel.text, @"-", @"");
+    GHAssertEqualStrings([groupCell groupIndicator].text, @"-", @"");
     
     [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
     [groupCell putPrintJob:printJobName withResult:printJobResult withTimestamp:printJobDate];
@@ -440,11 +442,48 @@
     }
     GHAssertNotNil(jobsView, @"");
     
-    UITableViewCell* jobCell = [jobsView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    PrintJobItemCell* jobCell = (PrintJobItemCell*)[jobsView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     GHAssertNotNil(jobCell, @"");
-    GHAssertEqualStrings(jobCell.textLabel.text, printJobName, @"");
-    GHAssertEqualStrings(jobCell.detailTextLabel.text, [printJobDate formattedString], @"");
-    GHAssertNotNil(jobCell.imageView, @"");
+    GHAssertEqualStrings(jobCell.name.text, printJobName, @"");
+    GHAssertEqualStrings(jobCell.timestamp.text, [printJobDate formattedString], @"");
+    GHAssertNotNil(jobCell.result, @"");
+}
+
+#pragma mark - PrintJobHistoryGroupCellDelegate Methods
+
+- (BOOL)shouldHighlightGroupHeader
+{
+    return YES;
+}
+
+- (void)didTapGroupHeader:(NSUInteger)groupTag
+{
+    
+}
+
+- (BOOL)shouldHighlightDeleteGroupButton
+{
+    return YES;
+}
+
+- (void)didTapDeleteGroupButton:(DeleteButton *)button ofGroup:(NSUInteger)groupTag
+{
+    
+}
+
+- (BOOL)shouldPutDeleteJobButton:(NSUInteger)groupTag
+{
+    return YES;
+}
+
+- (void)didTapDeleteJobButton:(DeleteButton *)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag
+{
+    
+}
+
+- (BOOL)shouldHighlightJob
+{
+    return YES;
 }
 
 @end

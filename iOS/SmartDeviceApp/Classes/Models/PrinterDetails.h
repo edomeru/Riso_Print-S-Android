@@ -37,5 +37,5 @@
 @property (assign, nonatomic) BOOL enTrayFaceDown;
 @property (assign, nonatomic) BOOL enTrayStacking;
 @property (assign, nonatomic) BOOL enTrayTop;
-
+@property (assign, nonatomic) BOOL isPrinterFound;
 @end
