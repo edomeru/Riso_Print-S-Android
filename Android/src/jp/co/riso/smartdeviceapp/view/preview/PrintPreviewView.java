@@ -438,7 +438,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @return page string
      */
     public String getPageString() {
-        int currentFace = getCurrentPage();
+        return getPageString(getCurrentPage());
+    }
+    
+    /**
+     * @param currentFace
+     *            Current index
+     * 
+     * @return page string
+     */
+    public String getPageString(int currentFace) {
         if (isTwoPageDisplayed()) {
             currentFace *= 2;
         }
@@ -451,20 +460,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
 
         return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
-        /*
-        final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
-
-        int currentPage = getCurrentPage();
-        int pageCount = mPdfPageProvider.getPageCount();
-        
-        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || getCurrentPage() == 0) {
-            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage + 1, pageCount);
-        } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
-            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount);
-        } else {
-            return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
-        }
-        */
     }
     
     /**
