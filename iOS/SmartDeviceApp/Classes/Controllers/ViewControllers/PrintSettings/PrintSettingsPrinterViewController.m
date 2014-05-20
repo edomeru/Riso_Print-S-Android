@@ -95,14 +95,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc
-{
-    if (!self.isDefaultSettingsMode && self.printer != nil)
-    {       
-        self.printer = nil;
-    }
-}
-
 /*
 #pragma mark - Navigation
 

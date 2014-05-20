@@ -3973,11 +3973,11 @@
                                 </connections>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9nu-6r-xUQ" userLabel="Settings">
-                                <rect key="frame" x="0.0" y="176" width="270" height="372"/>
+                                <rect key="frame" x="0.0" y="175" width="270" height="373"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0h-EL-X7C">
-                                        <rect key="frame" x="0.0" y="0.0" width="270" height="372"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="270" height="373"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
@@ -4001,7 +4001,7 @@
                             <constraint firstAttribute="trailing" secondItem="9nu-6r-xUQ" secondAttribute="trailing" id="RrB-mA-h2Y"/>
                             <constraint firstAttribute="bottom" secondItem="9nu-6r-xUQ" secondAttribute="bottom" id="c0W-hW-7nD"/>
                             <constraint firstItem="9nu-6r-xUQ" firstAttribute="leading" secondItem="9WG-E7-r1v" secondAttribute="leading" id="ekJ-al-dcH"/>
-                            <constraint firstItem="9nu-6r-xUQ" firstAttribute="top" secondItem="hdY-tn-chQ" secondAttribute="bottom" constant="2" id="q4u-SD-Ud5"/>
+                            <constraint firstItem="9nu-6r-xUQ" firstAttribute="top" secondItem="hdY-tn-chQ" secondAttribute="bottom" constant="1" id="q4u-SD-Ud5"/>
                             <constraint firstAttribute="trailing" secondItem="hdY-tn-chQ" secondAttribute="trailing" id="sgM-W7-VkM"/>
                         </constraints>
                     </view>

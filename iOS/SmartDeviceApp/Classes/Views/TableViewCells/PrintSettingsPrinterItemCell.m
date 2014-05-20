@@ -46,7 +46,7 @@
 {
     if (name == nil || [name isEqualToString:@""])
     {
-        self.printerNameLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"");
+        self.printerNameLabel.text = NSLocalizedString(IDS_LBL_NO_NAME, @"");
     }
     else
     {
