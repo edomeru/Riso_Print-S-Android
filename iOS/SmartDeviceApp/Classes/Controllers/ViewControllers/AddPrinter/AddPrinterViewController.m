@@ -37,13 +37,20 @@
 /** Save Button in the Header. */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
+@property (assign, nonatomic) BOOL isIpad;
+
 #pragma mark - Internal Methods
 
 /**
  Called when screen loads.
  Sets-up this controller's properties and views.
  */
-- (void)setup;
+- (void)setupScreen;
+
+/**
+ Called to close the Add Printer screen.
+ */
+- (void)dismissScreen;
 
 /**
  Tells the currently active TextField to close the keypad/numpad.
@@ -106,7 +113,7 @@
 {
     [super viewDidLoad];
     
-    [self setup];
+    [self setupScreen];
 }
 
 - (void)didReceiveMemoryWarning
@@ -114,9 +121,9 @@
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Setup
+#pragma mark - Screen Actions
 
-- (void)setup
+- (void)setupScreen
 {
     // setup properties
     self.printerManager = [PrinterManager sharedPrinterManager];
@@ -127,16 +134,28 @@
     [self.saveButton setHidden:NO];
     [self.saveButton setEnabled:NO];
     [self.textIP setEnabled:YES];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        self.isIpad = YES;
+    else
+        self.isIpad = NO;
+}
+
+- (void)dismissScreen
+{
+    if (self.isIpad)
+        [self close];
+    else
+        [self unwindFromOverTo:[self.parentViewController class]];
 }
 
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // if the SNMP is still searching, the search is canceled
-    // the printer, if found, will not be added to the list of saved printers
     if ([self.progressIndicator isAnimating])
     {
+        [self.progressIndicator stopAnimating];
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
         NSLog(@"[INFO][AddPrinter] canceling search");
 #endif
@@ -148,7 +167,7 @@
 
 - (IBAction)onBack:(UIButton *)sender
 {
-    [self unwindFromOverTo:[self.parentViewController class]];
+    [self dismissScreen];
 }
 
 - (IBAction)onSave:(UIButton *)sender
@@ -173,7 +192,6 @@
     pd.enRaw = YES;
     pd.isPrinterFound = NO;
     [self.printerManager registerPrinter:pd];
-    self.hasAddedPrinters = YES;
 }
 
 - (void)savePrinter
@@ -217,11 +235,17 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
+        [self addFullCapabilityPrinter:trimmedIP];
+        self.hasAddedPrinters = YES;
+        if (self.isIpad)
+            [self.printersViewController reloadData];
+        
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil];
-
-        [self addFullCapabilityPrinter:trimmedIP];
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    [self dismissScreen];
+                }];
         
         return;
     }
@@ -243,24 +267,24 @@
 
 - (void)printerSearchEndedwithResult:(BOOL)printerFound
 {
-    if (!printerFound)
-    {
-        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil];
-        
-        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
-        [self addFullCapabilityPrinter:trimmedIP];
-    }
-
     [self.progressIndicator stopAnimating];
     [self.saveButton setHidden:NO];
     [self.textIP setEnabled:YES];
-    
-    // if this is an iPad, reload the center panel
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+
+    if (!printerFound)
     {
-        [self.printersViewController reloadData];
+        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        [self addFullCapabilityPrinter:trimmedIP];
+        self.hasAddedPrinters = YES;
+        if (self.isIpad)
+            [self.printersViewController reloadData];
+        
+        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil
+         withDismissHandler:^(CXAlertView *alertView) {
+             [self dismissScreen];
+         }];
     }
 }
 
@@ -273,11 +297,16 @@
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
+        self.hasAddedPrinters = YES;
+        if (self.isIpad)
+            [self.printersViewController reloadData];
+        
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
                          withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil];
-        
-        self.hasAddedPrinters = YES;
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    [self dismissScreen];
+                }];
     }
     else
     {
