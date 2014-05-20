@@ -3813,33 +3813,36 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ThC-gI-jDV">
-                                                    <rect key="frame" x="12" y="13" width="224" height="17"/>
+                                                    <rect key="frame" x="139" y="13" width="121" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_PRINT"/>
                                                     </userDefinedRuntimeAttributes>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_submenu" translatesAutoresizingMaskIntoConstraints="NO" id="DFu-Ms-rgO">
-                                                    <rect key="frame" x="246" y="14" width="16" height="16"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_print_normal" highlightedImage="img_btn_print_pressed" translatesAutoresizingMaskIntoConstraints="NO" id="pIr-NN-o2W" userLabel="Print Icon">
+                                                    <rect key="frame" x="90" y="0.0" width="44" height="44"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="16" id="8nO-SF-5ld"/>
-                                                        <constraint firstAttribute="height" constant="16" id="uVe-pb-m5Y"/>
+                                                        <constraint firstAttribute="width" constant="44" id="8jP-Oi-BC0"/>
+                                                        <constraint firstAttribute="height" constant="44" id="Pft-6c-2K9"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
-                                                <constraint firstItem="ThC-gI-jDV" firstAttribute="leading" secondItem="UTY-it-x58" secondAttribute="leading" constant="12" id="0UO-So-ets"/>
-                                                <constraint firstAttribute="centerY" secondItem="ThC-gI-jDV" secondAttribute="centerY" id="VHL-7E-34G"/>
-                                                <constraint firstAttribute="centerY" secondItem="DFu-Ms-rgO" secondAttribute="centerY" id="g9G-1Z-ODX"/>
-                                                <constraint firstItem="DFu-Ms-rgO" firstAttribute="leading" secondItem="ThC-gI-jDV" secondAttribute="trailing" constant="10" id="qiY-nC-R8a"/>
-                                                <constraint firstAttribute="trailing" secondItem="DFu-Ms-rgO" secondAttribute="trailing" constant="8" id="y5p-Lx-yBQ"/>
+                                                <constraint firstItem="pIr-NN-o2W" firstAttribute="leading" secondItem="UTY-it-x58" secondAttribute="leading" constant="90" id="JjA-Iq-Vss"/>
+                                                <constraint firstAttribute="centerY" secondItem="pIr-NN-o2W" secondAttribute="centerY" id="Rjw-yt-Cu2"/>
+                                                <constraint firstAttribute="trailing" secondItem="ThC-gI-jDV" secondAttribute="trailing" constant="10" id="U65-DT-hEG"/>
+                                                <constraint firstAttribute="centerY" secondItem="ThC-gI-jDV" secondAttribute="centerY" id="mLJ-To-Z8c"/>
+                                                <constraint firstItem="ThC-gI-jDV" firstAttribute="leading" secondItem="pIr-NN-o2W" secondAttribute="trailing" constant="5" id="pCI-3e-hTA"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="printIcon" destination="pIr-NN-o2W" id="upC-Ii-htB"/>
+                                            <outlet property="printText" destination="ThC-gI-jDV" id="Rhw-7N-J9V"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PrinterItemCell" rowHeight="55" id="3NB-tN-yKl" customClass="PrintSettingsPrinterItemCell">
                                         <rect key="frame" x="0.0" y="66" width="270" height="55"/>
@@ -4038,6 +4041,8 @@
         <image name="img_btn_job_status_ok" width="64" height="64"/>
         <image name="img_btn_main_menu_normal" width="64" height="64"/>
         <image name="img_btn_main_menu_pressed" width="64" height="64"/>
+        <image name="img_btn_print_normal" width="64" height="64"/>
+        <image name="img_btn_print_pressed" width="64" height="64"/>
         <image name="img_btn_print_settings_normal" width="64" height="64"/>
         <image name="img_btn_print_settings_pressed" width="64" height="64"/>
         <image name="img_btn_printer_status_offline" width="64" height="64"/>
