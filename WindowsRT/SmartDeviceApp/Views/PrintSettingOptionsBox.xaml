@@ -23,7 +23,7 @@
                            Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
                            Visibility="Collapsed"/>
                     <TextBlock x:Name="key" 
-                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}}" 
+                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" 
                             Style="{StaticResource STYLE_TextListHeader}" />
                 </StackPanel>
             </Grid>
