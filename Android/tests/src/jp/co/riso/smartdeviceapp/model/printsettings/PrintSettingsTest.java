@@ -9,14 +9,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -264,8 +267,41 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testFormattedString() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false);
+        editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test");
+        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "1234");
+
+        editor.apply();
+
         assertNotNull(mPrintSettings.formattedString());
         assertFalse(mPrintSettings.formattedString().isEmpty());
+        assertFalse(mPrintSettings.formattedString().contains("loginId=test\n"));
+        assertFalse(mPrintSettings.formattedString().contains("pinCode=1234\n"));
+
+        String formattedString = mPrintSettings.formattedString(); // for comparison
+
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
+
+        editor.apply();
+
+        assertNotNull(mPrintSettings.formattedString());
+        assertFalse(mPrintSettings.formattedString().isEmpty());
+        assertFalse(mPrintSettings.formattedString().equals(formattedString));
+        assertTrue(mPrintSettings.formattedString().contains(formattedString));
+        assertTrue(mPrintSettings.formattedString().contains("test"));
+        assertTrue(mPrintSettings.formattedString().contains("1234"));
+
+        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "abcd"); // pincode is not numeric
+
+        editor.apply();
+
+        assertNotNull(mPrintSettings.formattedString());
+        assertFalse(mPrintSettings.formattedString().isEmpty());
+        assertFalse(mPrintSettings.formattedString().contains("loginId=test\n"));
+        assertFalse(mPrintSettings.formattedString().contains("pinCode=1234\n"));
     }
 
     public void testGetSettingValues() {

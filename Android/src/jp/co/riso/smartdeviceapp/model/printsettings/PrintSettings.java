@@ -42,6 +42,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class PrintSettings {
@@ -68,6 +70,9 @@ public class PrintSettings {
     
     public static final List<Group> sGroupList;
     public static final HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
+    
+    private static final String KEY_LOGINID = "loginId";
+    private static final String KEY_PINCODE = "pinCode";
     
     private HashMap<String, Integer> mSettingValues;
     
@@ -183,6 +188,7 @@ public class PrintSettings {
     public String formattedString() {
         StringBuffer strBuf = new StringBuffer();
         String KEY_VAL_FORMAT = "%s=%d\n";
+        String LOGINID_FORMAT = "%s=%s\n";
         
         for (String key : getSettingValues().keySet()) {
             int value = getSettingValues().get(key);
@@ -190,6 +196,25 @@ public class PrintSettings {
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }
         
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        
+        if (isSecurePrint) {
+            String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+            String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+            
+            if (!pinCode.isEmpty() && !loginId.isEmpty()) {
+                try {
+                    int pin = Integer.parseInt(pinCode);
+                    strBuf.append(String.format(Locale.getDefault(), LOGINID_FORMAT, KEY_LOGINID, loginId));
+                    strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, KEY_PINCODE, pin));
+                } catch (NumberFormatException e) {
+                    Log.d(TAG, "PIN code is not numeric: " + pinCode);
+                }
+            }
+        }
+        
+        Log.d(TAG, strBuf.toString());
         return strBuf.toString();
     }
     
