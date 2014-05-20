@@ -1296,12 +1296,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int x = 0;
-                    int y = 0;
+                    int x = left;
+                    int y = top;
                     int dim[] = new int[] {
                             convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth()),
                             convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth())
                     };
+                    
+                    int divide = Math.max(getColsPerSheet(), getRowsPerSheet());
+                    dim[0] /= divide;
+                    dim[1] /= divide;
                     
                     if (mPrintSettings.isScaleToFit()) {
                         dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), right - left, bottom - top);
@@ -1314,8 +1318,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         y = top + ((bottom - top) - dim[1]) / 2;
                     }
                     
+                    canvas.save(Canvas.CLIP_SAVE_FLAG);
+                    canvas.clipRect(left, top, right + 1, bottom + 1);
+                    
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                     ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
+                    
+                    canvas.restore();
                     
                     page.recycle();
                 }
