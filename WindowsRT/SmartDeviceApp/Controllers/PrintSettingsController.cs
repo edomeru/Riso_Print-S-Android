@@ -989,8 +989,8 @@ namespace SmartDeviceApp.Controllers
                 if (duplexPrintSetting != null)
                 {
                     duplexPrintSetting.IsEnabled = true;
-                    duplexPrintSetting.Value = (int)Duplex.Off; // TODO: Verify if needs to set to Off since this is not indicated in specifications
-                    printSettings.Duplex = (int)Duplex.Off;
+                    //duplexPrintSetting.Value = (int)Duplex.Off; // TODO: Verify if needs to set to Off since this is not indicated in specifications
+                    //printSettings.Duplex = (int)Duplex.Off;
 
                     isUpdated = true;
                 }
