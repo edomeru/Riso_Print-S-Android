@@ -44,6 +44,7 @@ typedef enum
     kAlertResultFileCannotBeOpened,
     
     // printing
+    kAlertResultErrNoPrinterSelected,
     kAlertResultPrintFailed,
     kAlertResultPrintSuccessful,
     

@@ -13,6 +13,4 @@
 
 @property (nonatomic, strong) NSNumber *printerIndex;
 
-- (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender;
-
 @end

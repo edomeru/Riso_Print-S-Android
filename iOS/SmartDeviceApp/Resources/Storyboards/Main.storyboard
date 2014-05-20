@@ -2152,7 +2152,6 @@
                     <navigationItem key="navigationItem" title="Root View Controller" id="cDb-W3-FfX"/>
                     <connections>
                         <segue destination="hZX-Ok-b3V" kind="push" identifier="PrintSettings-PrintOptions" id="FPj-fn-eAX"/>
-                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="PrintSettingsTable-PrintJobHistory" customClass="ReplaceSegue" id="dDZ-0e-JG0"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXq-ID-FWW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3974,11 +3973,11 @@
                                 </connections>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9nu-6r-xUQ" userLabel="Settings">
-                                <rect key="frame" x="0.0" y="174" width="270" height="374"/>
+                                <rect key="frame" x="0.0" y="176" width="270" height="372"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0h-EL-X7C">
-                                        <rect key="frame" x="0.0" y="0.0" width="270" height="374"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="270" height="372"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
@@ -4002,7 +4001,7 @@
                             <constraint firstAttribute="trailing" secondItem="9nu-6r-xUQ" secondAttribute="trailing" id="RrB-mA-h2Y"/>
                             <constraint firstAttribute="bottom" secondItem="9nu-6r-xUQ" secondAttribute="bottom" id="c0W-hW-7nD"/>
                             <constraint firstItem="9nu-6r-xUQ" firstAttribute="leading" secondItem="9WG-E7-r1v" secondAttribute="leading" id="ekJ-al-dcH"/>
-                            <constraint firstItem="9nu-6r-xUQ" firstAttribute="top" secondItem="hdY-tn-chQ" secondAttribute="bottom" id="q4u-SD-Ud5"/>
+                            <constraint firstItem="9nu-6r-xUQ" firstAttribute="top" secondItem="hdY-tn-chQ" secondAttribute="bottom" constant="2" id="q4u-SD-Ud5"/>
                             <constraint firstAttribute="trailing" secondItem="hdY-tn-chQ" secondAttribute="trailing" id="sgM-W7-VkM"/>
                         </constraints>
                     </view>
@@ -4011,7 +4010,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="printerTableView" destination="hdY-tn-chQ" id="AS1-AA-gyh"/>
                         <outlet property="tableViewHeight" destination="L2n-BW-hqn" id="kXO-iI-lsP"/>
@@ -4019,6 +4017,7 @@
                         <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Aiq-ml-NWv"/>
                         <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="cW1-ea-7P6"/>
                         <segue destination="Wn7-PG-C0p" kind="push" identifier="PrintSettings-PrinterList" id="qiz-8l-D6m"/>
+                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="PrintSettingsPrinter-PrintJobHistory" customClass="ReplaceSegue" id="SPc-R3-6UV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="27R-Ke-rdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -4058,9 +4057,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="5pT-ga-236"/>
-        <segue reference="ax2-Mn-NH0"/>
         <segue reference="Ysc-8g-iB4"/>
-        <segue reference="dDZ-0e-JG0"/>
+        <segue reference="ax2-Mn-NH0"/>
+        <segue reference="5pT-ga-236"/>
+        <segue reference="SPc-R3-6UV"/>
     </inferredMetricsTieBreakers>
 </document>

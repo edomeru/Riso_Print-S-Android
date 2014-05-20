@@ -15,9 +15,10 @@
 #import "PDFFileManager.h"
 #import "PrinterManager.h"
 #import "PrintDocument.h"
+#import "AlertHelper.h"
+#import "NetworkManager.h"
 #import "Printer.h"
-#import "PreviewSetting.h"
-
+#import "PrintJobHistoryViewController.h"
 
 #define SEGUE_TO_PRINTSETTINGS_TABLE @"PrintSettingsPrinter-PrintSettingsTable"
 #define ROW_HEIGHT_SINGLE 44
@@ -56,38 +57,50 @@
     {
         // launched from Printers
         self.isDefaultSettingsMode = YES;
+        self.tableViewHeight.constant = ROW_HEIGHT_DOUBLE;
         
         PrinterManager* pm = [PrinterManager sharedPrinterManager];
         self.printer = [pm getPrinterAtIndex:[self.printerIndex unsignedIntegerValue]];
-        self.tableViewHeight.constant = ROW_HEIGHT_DOUBLE;
     }
     else
     {
         // launched from Print Preview
-        
         self.isDefaultSettingsMode = NO;
+        self.tableViewHeight.constant = ROW_HEIGHT_SINGLE + ROW_HEIGHT_DOUBLE;
         
+        self.printer = nil;
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (!self.isDefaultSettingsMode)
+    {
         PDFFileManager* pdfm = [PDFFileManager sharedManager];
         PrintDocument* doc = pdfm.printDocument;
-        if (doc.printer.managedObjectContext != nil)
+        if (self.printer != doc.printer)
         {
             self.printer = doc.printer;
-            doc.printer = nil;
+            [self.printerTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]]
+                                         withRowAnimation:UITableViewRowAnimationNone];
         }
-        else
-        {
-            self.printer = nil;
-        }
-        
-        self.tableViewHeight.constant = ROW_HEIGHT_SINGLE + ROW_HEIGHT_DOUBLE;
     }
-    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc
+{
+    if (!self.isDefaultSettingsMode && self.printer != nil)
+    {       
+        self.printer = nil;
+    }
 }
 
 /*
@@ -100,24 +113,6 @@
     // Pass the selected object to the new view controller.
 }
 */
-
--(void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    PDFFileManager* pdfm = [PDFFileManager sharedManager];
-    PrintDocument* doc = pdfm.printDocument;
-    if(self.printer != doc.printer && doc.printer != nil && self.isDefaultSettingsMode == NO)
-    {
-        self.printer = doc.printer;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
-        PrintSettingsPrinterItemCell* cell = (PrintSettingsPrinterItemCell *)[self.printerTableView cellForRowAtIndexPath:indexPath];
-        [cell setPrinterName:self.printer.name];
-        cell.printerIPLabel.text = self.printer.ip_address;
-        cell.printerNameLabel.hidden = NO;
-        cell.printerIPLabel.hidden = NO;
-        cell.selectPrinterLabel.hidden = YES;
-    }
-}
 
 #pragma mark - TableView
 
@@ -241,44 +236,47 @@
 
 - (void)executePrint
 {
-        // Check if printer is selected
-    //    if (self.printer == nil)
-    //    {
-    //        [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
-    //        return;
-    //    }
-    //
-    //    if (![NetworkManager isConnectedToLocalWifi])
-    //    {
-    //        [AlertHelper displayResult:kAlertResultErrNoNetwork withTitle:kAlertTitleDefault withDetails:nil];
-    //        return;
-    //    }
-    //
-    //    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
-    //    if ([self.printer.port integerValue] == 0)
-    //    {
-    //        [manager printDocumentViaLPR];
-    //    }
-    //    else
-    //    {
-    //        [manager printDocumentViaRaw];
-    //    }
-    //    manager.delegate = self;
+    // check if printer is selected
+    if (self.printer == nil)
+    {
+        [AlertHelper displayResult:kAlertResultErrNoPrinterSelected
+                         withTitle:kAlertTitleDefault
+                       withDetails:nil];
+        return;
+    }
+    
+    if (![NetworkManager isConnectedToLocalWifi])
+    {
+        [AlertHelper displayResult:kAlertResultErrNoNetwork withTitle:kAlertTitleDefault withDetails:nil];
+        return;
+    }
+    
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    
+    if ([self.printer.port integerValue] == 0)
+    {
+        [manager printDocumentViaLPR];
+    }
+    else
+    {
+        [manager printDocumentViaRaw];
+    }
 }
 
 - (void)documentDidFinishPrinting:(BOOL)successful
 {
-    //    if (successful)
-    //    {
-    //        [self performSegueTo:[PrintJobHistoryViewController class]];
-    //    }
+    if (successful)
+    {
+        [self performSegueTo:[PrintJobHistoryViewController class]];
+    }
 }
 
 #pragma mark - Printer Selection
 
 - (void)loadPrinterList
 {
-        [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
+    [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
 }
 
 

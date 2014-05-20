@@ -13,15 +13,14 @@
 #import "PrintSettingsHelper.h"
 #import "UIView+Localization.h"
 
-
 #define SEGUE_TO_PRINTSETTINGS_PRINTER_TABLE @"PrintSettings-PrintSettingsPrinter"
 
 @interface PrintSettingsViewController () 
 
 @property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
-
 - (void)initialize;
+
 @end
 
 @implementation PrintSettingsViewController
@@ -72,22 +71,9 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    /*if (self.isDefaultSettingsMode)
-    {
-        self.tableViewHeight.constant = ROW_HEIGHT_DOUBLE;
-    }
-    else
-    {
-        self.tableViewHeight.constant = ROW_HEIGHT_SINGLE + ROW_HEIGHT_DOUBLE;
-    }*/
-}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -97,11 +83,6 @@
         PrintSettingsPrinterViewController *viewController = (PrintSettingsPrinterViewController *)[segue.destinationViewController topViewController];
         viewController.printerIndex = self.printerIndex;
     }
-}
-
-- (IBAction)unwindToPrintSettings:(UIStoryboardSegue*)sender
-{
-    
 }
 
 @end

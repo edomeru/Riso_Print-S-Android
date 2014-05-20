@@ -88,6 +88,10 @@
             alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
             break;
             
+        case kAlertResultErrNoPrinterSelected:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_NO_SELECTED_PRINTER, @"");
+            break;
+            
         case kAlertResultPrintSuccessful:
             alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @"");
             break;
