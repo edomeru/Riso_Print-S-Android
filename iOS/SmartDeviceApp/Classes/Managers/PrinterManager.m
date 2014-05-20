@@ -393,7 +393,7 @@ static PrinterManager* sharedPrinterManager = nil;
     
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.searchDelegate searchEndedwithResult:result];
+        [weakSelf.searchDelegate printerSearchEndedwithResult:result];
     });
 }
 

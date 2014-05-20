@@ -20,7 +20,7 @@
  @param found
         YES if a printer was found, NO otherwise.
  */
-- (void)searchEndedwithResult:(BOOL)printerFound;
+- (void)printerSearchEndedwithResult:(BOOL)printerFound;
 
 /**
  Notifies the delegate that a new printer has been found.

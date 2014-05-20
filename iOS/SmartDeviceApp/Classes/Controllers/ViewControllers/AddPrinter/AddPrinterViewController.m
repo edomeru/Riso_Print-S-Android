@@ -241,7 +241,7 @@
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEndedwithResult:(BOOL)printerFound
+- (void)printerSearchEndedwithResult:(BOOL)printerFound
 {
     if (!printerFound)
     {
