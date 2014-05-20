@@ -29,6 +29,7 @@
     
     <dimen name="printsettings_menu_padding">10dp</dimen>
     <dimen name="printsettings_icon_width">20dp</dimen>
+    <dimen name="printsettings_print_width">32dp</dimen>
     
     <dimen name="printsettings_list_value_width">180dp</dimen>
     <dimen name="printsettings_separator_padding">40dp</dimen>
