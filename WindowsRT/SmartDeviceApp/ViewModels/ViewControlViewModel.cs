@@ -37,7 +37,7 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
             ViewMode = ViewMode.FullScreen;
-            ScreenMode = ScreenMode.PrintPreview;
+            ScreenMode = ScreenMode.Home;
             InitializeMainMenu();
         }
 
@@ -280,7 +280,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToHomePage = new RelayCommand(
                         () => GoToHomePageExecute(),
-                        () => true
+                        () => true // Note: checking is done in GoToHomePageExecute
                     );
                 }
                 return _goToHomePage;
@@ -295,7 +295,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToPrintersPage = new RelayCommand(
                         () => GoToPrintersPageExecute(),
-                        () => true
+                        () => CanGoToPrintersPage()
                     );
                 }
                 return _goToPrintersPage;
@@ -310,7 +310,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToJobsPage = new RelayCommand(
                         () => GoToJobsPageExecute(),
-                        () => true
+                        () => CanGoToJobsPage()
                     );
                 }
                 return _goToJobsPage;
@@ -325,7 +325,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToSettingsPage = new RelayCommand(
                         () => GoToSettingsPageExecute(),
-                        () => true
+                        () => CanGoToSettingsPage()
                     );
                 }
                 return _goToSettingsPage;
@@ -340,7 +340,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToHelpPage = new RelayCommand(
                         () => GoToHelpPageExecute(),
-                        () => true
+                        () => CanGoToHelpPage()
                     );
                 }
                 return _goToHelpPage;
@@ -355,7 +355,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToLegalPage = new RelayCommand(
                         () => GoToLegalPageExecute(),
-                        () => true
+                        () => CanGoToLegalPage()
                     );
                 }
                 return _goToLegalPage;
@@ -372,20 +372,74 @@ namespace SmartDeviceApp.ViewModels
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_HELP", GoToHelpPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_LEGAL", GoToLegalPage, false));
         }
+        
+        private bool CanGoToPrintersPage()
+        {
+            if (ScreenMode == ScreenMode.Printers)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CanGoToJobsPage()
+        {
+            if (ScreenMode == ScreenMode.Jobs)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CanGoToSettingsPage()
+        {
+            if (ScreenMode == ScreenMode.Settings)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CanGoToHelpPage()
+        {
+            if (ScreenMode == ScreenMode.Help)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CanGoToLegalPage()
+        {
+            if (ScreenMode == ScreenMode.Legal)
+            {
+                return false;
+            }
+            return true;
+        }
 
         private void GoToHomePageExecute()
         {
+            var previousScreenMode = ScreenMode;
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
-                _navigationService.Navigate(typeof(PrintPreviewPage));
-                ScreenMode = ScreenMode.PrintPreview;
+                if (previousScreenMode != ScreenMode.PrintPreview)
+                {
+                    _navigationService.Navigate(typeof(PrintPreviewPage));
+                    ScreenMode = ScreenMode.PrintPreview;
+                    ViewMode = ViewMode.FullScreen;
+                }
+                MainMenuItems[0].IsChecked = false; // Need to reset to cancel toggled state
+                MainMenuItems[0].IsChecked = true;
+                return;
             }
-            else
+            if (previousScreenMode != ScreenMode.Home)
             {
                 _navigationService.Navigate(typeof(HomePage));
                 ScreenMode = ScreenMode.Home;
+                ViewMode = ViewMode.FullScreen;
             }
-            ViewMode = ViewMode.FullScreen;
+            MainMenuItems[0].IsChecked = false; // Need to reset to cancel toggled state
             MainMenuItems[0].IsChecked = true;
         }
 

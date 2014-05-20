@@ -108,9 +108,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\AlphaNumericTextBoxBehavior.cs" />
+    <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
+    <Compile Include="Common\Enum\TextBoxBehavior.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
     <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />

@@ -27,7 +27,7 @@
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding Path=Value, Converter={StaticResource IntToStringConverter}, Mode=TwoWay}"
                                         utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
-                                        IsNumeric="True"
+                                        TextBoxBehavior="Numeric"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
@@ -130,7 +130,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <controls:GroupListControl Text="{Binding Source=IDS_LBL_AUTHENTICATION, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+        <controls:GroupListControl Text="{Binding Source=IDS_LBL_SECURE_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                                    Width="{Binding Width, ElementName=printSettingsBox}"
                                    DeleteButtonVisibility="Collapsed"
                                    Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -140,7 +140,8 @@
                                                 ValueText="{Binding AuthenticationLoginPinCode, Mode=TwoWay}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                                 PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
-                                                PasswordMaxLength="{StaticResource MAXLENGTH_AuthenticationPinCode}"
+                                                PasswordMaxLength="{StaticResource MAXLENGTH_SecurePrintPinCode}"
+                                                PasswordBoxBehavior="Numeric"
                                                 Width="{Binding Width, ElementName=printSettingsBox}"
                                                 IsEnabled="True"
                                                 PressedColor="{StaticResource BRUSH_Purple1}"/>
