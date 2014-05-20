@@ -1502,24 +1502,18 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.BookletFinishing != value)
                 {
+                    isPreviewAffected = (printSettings.Booklet == true) &&
+                        ((printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple && value != (int)BookletFinishing.FoldAndStaple) ||
+                        (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
                     printSettings.BookletFinishing = value;
-                    // Matters only when booklet is ON
-                    if (printSettings.Booklet == true)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
                 if (printSettings.BookletLayout != value)
                 {
+                    isPreviewAffected = (printSettings.Booklet == true);
                     printSettings.BookletLayout = value;
-                    // Matters only when booklet is ON
-                    if (printSettings.Booklet == true)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
