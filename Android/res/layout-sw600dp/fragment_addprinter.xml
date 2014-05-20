@@ -23,8 +23,7 @@
             android:layout_weight="1"
             android:gravity="left"
             android:text="@string/ids_lbl_ip_address"
-            android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" />
+            android:textColor="@color/theme_dark_1" />
 
         <EditText
             android:id="@+id/inputIpAddress"
@@ -37,8 +36,7 @@
             android:gravity="center"
             android:hint="@string/ids_lbl_ip_address"
             android:singleLine="true"
-            android:textColor="@color/theme_dark_1"
-            android:textSize="@dimen/printers_name_font_size" >
+            android:textColor="@color/theme_dark_1" >
         </EditText>
     </LinearLayout>
 

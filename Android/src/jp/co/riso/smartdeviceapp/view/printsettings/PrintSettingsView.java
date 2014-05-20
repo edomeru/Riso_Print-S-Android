@@ -1166,6 +1166,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
         });
         
+        editText.addTextChangedListener(new PinTextWatcher());
+        
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
         
@@ -2181,6 +2183,30 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
                 
                 mEditing = false;
+            }
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
+    
+    private class PinTextWatcher implements TextWatcher {
+        /** {@inheritDoc} */
+        @Override
+        public synchronized void afterTextChanged(Editable s) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences.Editor editor = prefs.edit();
+            boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+            if (isSecurePrint) {
+                editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, s.toString());
+                editor.apply();
             }
         }
         

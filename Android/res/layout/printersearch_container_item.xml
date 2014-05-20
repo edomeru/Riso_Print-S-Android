@@ -29,8 +29,7 @@
                 android:paddingTop="@dimen/printers_row_top_padding"
                 android:singleLine="true"
                 android:text="@string/default_textview"
-                android:textColor="@color/selector_printers_text"
-                android:textSize="@dimen/printers_name_font_size" />
+                android:textColor="@color/selector_printers_text" />
 
             <TextView
                 android:id="@+id/ipAddressText"
@@ -43,7 +42,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="@color/selector_printers_text"
-                android:textSize="@dimen/printers_ipaddress_font_size" />
+                android:textSize="@dimen/font_size_small" />
 
         </LinearLayout>
 

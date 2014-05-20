@@ -47,8 +47,7 @@
                 android:ellipsize="middle"
                 android:gravity="bottom"
                 android:singleLine="true"
-                android:textColor="@color/theme_light_1"
-                android:textSize="@dimen/printers_name_font_size" />
+                android:textColor="@color/theme_light_1" />
 
             <TextView
                 android:id="@+id/printJobGroupSubText"
@@ -60,7 +59,7 @@
                 android:gravity="top"
                 android:singleLine="true"
                 android:textColor="@color/theme_light_1"
-                android:textSize="@dimen/printers_ipaddress_font_size" />
+                android:textSize="@dimen/font_size_small" />
         </LinearLayout>
 
         <View

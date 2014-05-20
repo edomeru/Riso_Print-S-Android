@@ -40,8 +40,7 @@
                 android:singleLine="true"
                 android:duplicateParentState="true"
                 android:text="@string/default_textview"
-                android:textColor="@color/selector_printsettings_item_text"
-                android:textSize="@dimen/home_text_size" />
+                android:textColor="@color/selector_printsettings_item_text" />
 
             <TextView
                 android:id="@+id/subTextView"
@@ -53,7 +52,7 @@
                 android:duplicateParentState="true"
                 android:text="@string/default_textview"
                 android:textColor="@color/selector_printsettings_item_text"
-                android:textSize="@dimen/printsettings_option_with_sub_text_size" />
+                android:textSize="@dimen/font_size_small" />
         </LinearLayout>
     </LinearLayout>
 
