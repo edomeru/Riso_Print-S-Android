@@ -367,7 +367,7 @@ namespace SmartDeviceApp.ViewModels
             MainMenuItems = new MainMenuItemList();
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_HOME", GoToHomePage, true));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_PRINTERS", GoToPrintersPage, false));
-            MainMenuItems.Add(new MainMenuItem("IDS_LBL_JOBS", GoToJobsPage, false));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_PRINT_JOB_HISTORY", GoToJobsPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_SETTINGS", GoToSettingsPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_HELP", GoToHelpPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_LEGAL", GoToLegalPage, false));

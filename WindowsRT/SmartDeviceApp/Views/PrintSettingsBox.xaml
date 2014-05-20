@@ -136,7 +136,7 @@
                                    Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    PressedHeaderColor="{StaticResource BRUSH_Purple1}">
             <controls:GroupListControl.Content>
-                <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_AUTHENTICATION_PINCODE, Converter={StaticResource ResourceStringToTextConverter}}"
+                <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_PIN_CODE, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 ValueText="{Binding AuthenticationLoginPinCode, Mode=TwoWay}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                                 PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
