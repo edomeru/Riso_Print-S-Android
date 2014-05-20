@@ -52,6 +52,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
     private Handler mHandler = null;
+    private boolean mOnPause = false;
     
     /** {@inheritDoc} */
     @Override
@@ -67,6 +68,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         } else {
             mPrinter = new ArrayList<Printer>();
         }
+        mOnPause = false;
         mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
@@ -124,6 +126,23 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
         super.onSaveInstanceState(savedInstanceState);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onPause() {
+        super.onPause();
+        mOnPause = true;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onResume() {
+        super.onResume();
+        mOnPause = false;
+        if (mHandler != null) {
+            updateRefreshBar();
+        }
     }
     
     // ================================================================================
@@ -191,12 +210,12 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     /** {@inheritDoc} */
     @Override
     public void onRefresh() {
+        mPrinter.clear();
         if (!isConnectedToNetwork()) {
             dialogErrCb();
             updateRefreshBar();
             return;
         }
-        mPrinter.clear();
         mPrinterManager.startPrinterSearch();
     }
     
@@ -242,7 +261,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
-        updateRefreshBar();
+        if (!mOnPause) {
+            updateRefreshBar();
+        }
     }
     
     // ================================================================================
