@@ -35,7 +35,6 @@
             android:layout_weight="0"
             android:background="@color/theme_light_1"
             android:gravity="center"
-            android:hint="@string/ids_lbl_ip_address"
             android:singleLine="true"
             android:textColor="@color/theme_dark_1"
             android:textSize="@dimen/printers_name_font_size" >

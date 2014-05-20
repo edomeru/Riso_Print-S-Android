@@ -365,6 +365,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1, msg.arg2);
                 } else {
                     mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
+                    ((PrinterArrayAdapter)mPrinterAdapter).setPrintersViewCallback(this);
                     mListView.setAdapter(mPrinterAdapter);
                     if (msg.obj != null) {
                         ((PrintersListView) mListView).onRestoreInstanceState((Parcelable) msg.obj, msg.arg1);
@@ -395,7 +396,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
         DialogFragment info = null;
         
-        info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), null);
+        info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
@@ -406,11 +407,21 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onConfirm() {
-        mPrinterTabletView.confirmDeletePrinterView();
+        if (isTablet()) {
+            mPrinterTabletView.confirmDeletePrinterView();
+        } else {
+            ((PrinterArrayAdapter) mPrinterAdapter).confirmDeletePrinterView();
+            ((PrintersListView) mListView).resetDeleteView();
+        }
     }
     
     @Override
     public void onCancel() {
-        mPrinterTabletView.resetDeletePrinterView();
+        if (isTablet()) {
+            mPrinterTabletView.resetDeletePrinterView();
+        } else {
+            ((PrinterArrayAdapter) mPrinterAdapter).resetDeletePrinterView();
+            ((PrintersListView) mListView).resetDeleteView();
+        }
     }
 }
