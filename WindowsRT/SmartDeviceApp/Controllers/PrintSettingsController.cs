@@ -959,6 +959,8 @@ namespace SmartDeviceApp.Controllers
             PrintSetting outputTrayPrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
 
+            int currOrientation = printSettings.Orientation;
+
             if (value)
             {
                 if (duplexPrintSetting != null)
@@ -1055,6 +1057,25 @@ namespace SmartDeviceApp.Controllers
                 {
                     bookletLayoutPrintSetting.IsEnabled = true;
                     bookletLayoutPrintSetting.IsValueDisplayed = true;
+
+                    PrintSettingOption leftToRight = GetPrintSettingOption(bookletLayoutPrintSetting,
+                        (int)BookletLayout.LeftToRight);
+                    if (leftToRight != null)
+                    {
+                        leftToRight.IsEnabled = (currOrientation == (int)Orientation.Portrait);
+                    }
+                    PrintSettingOption rightToLeft = GetPrintSettingOption(bookletLayoutPrintSetting,
+                        (int)BookletLayout.RightToLeft);
+                    if (rightToLeft != null)
+                    {
+                        rightToLeft.IsEnabled = (currOrientation == (int)Orientation.Portrait);
+                    }
+                    PrintSettingOption topToBottom = GetPrintSettingOption(bookletLayoutPrintSetting,
+                        (int)BookletLayout.TopToBottom);
+                    if (topToBottom != null)
+                    {
+                        topToBottom.IsEnabled = (currOrientation == (int)Orientation.Landscape);
+                    }
                 }
                 isValueUpdated = true;
             }
