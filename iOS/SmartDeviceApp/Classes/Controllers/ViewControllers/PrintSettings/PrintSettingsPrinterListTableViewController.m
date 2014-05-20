@@ -92,7 +92,7 @@
     Printer *printer = [self.printerManager getPrinterAtIndex:indexPath.row];
     if(printer.name == nil || [printer.name isEqualToString:@""])
     {
-        itemCell.optionLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+        itemCell.optionLabel.text = NSLocalizedString(IDS_LBL_NO_NAME, @"No name");
     }
     else
     {

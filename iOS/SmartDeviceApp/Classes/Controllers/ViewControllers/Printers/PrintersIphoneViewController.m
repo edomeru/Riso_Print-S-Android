@@ -108,7 +108,7 @@
     }
     if(printer.name == nil || [printer.name isEqualToString:@""] == YES)
     {
-        cell.printerName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+        cell.printerName.text = NSLocalizedString(IDS_LBL_NO_NAME, @"No name");
     }
     else
     {
