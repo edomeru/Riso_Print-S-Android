@@ -31,11 +31,12 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnKeyListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
-public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnKeyListener, Callback, ConfirmDialogListener {
+public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnEditorActionListener, Callback, ConfirmDialogListener {
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -77,7 +78,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mAddPrinterView.mIpAddressLabel = (TextView) view.findViewById(R.id.ipAddressLabel);
         
         mAddPrinterView.mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
-        mAddPrinterView.mIpAddress.setOnKeyListener(this);
+        mAddPrinterView.mIpAddress.setOnEditorActionListener(this);
         
         if (mPrinterManager.isSearching()) {
             setViewToDisable(mAddPrinterView);
@@ -285,6 +286,34 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         viewHolder.mIpAddress.setFocusableInTouchMode(true);
     }
     
+    /**
+     * Start manual printer search
+     * 
+     */
+    private void startManualSearch() {       
+        String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
+        mSearchedPrinter = null;
+        mErrState = 0;
+        
+        if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
+            dialogErrCb(ERR_INVALID_IP_ADDRESS);
+            return;
+        }
+        if (!NetUtils.isIPv4Address(ipAddress) && !NetUtils.isIPv6Address(ipAddress)) {
+            dialogErrCb(ERR_INVALID_IP_ADDRESS);
+            return;
+        }
+        if (mPrinterManager.isExists(ipAddress)) {
+            dialogErrCb(ERR_CAN_NOT_ADD_PRINTER);
+            return;
+        }
+        if (!mPrinterManager.isSearching()) {
+            setViewToDisable(mAddPrinterView);
+            findPrinter(mAddPrinterView.mIpAddress.getText().toString());
+        }
+        AppUtils.hideSoftKeyboard(getActivity());
+    }
+    
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
@@ -313,27 +342,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 closeScreen();
                 break;
             case ID_MENU_SAVE_BUTTON:
-                String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
-                mSearchedPrinter = null;
-                mErrState = 0;
-
-                if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
-                    dialogErrCb(ERR_INVALID_IP_ADDRESS);
-                    return;
-                }
-                if (!NetUtils.isIPv4Address(ipAddress) && !NetUtils.isIPv6Address(ipAddress)) {
-                    dialogErrCb(ERR_INVALID_IP_ADDRESS);
-                    return;
-                }
-                if (mPrinterManager.isExists(ipAddress)) {
-                    dialogErrCb(ERR_CAN_NOT_ADD_PRINTER);
-                    return;
-                }
-                if (!mPrinterManager.isSearching()) {
-                    setViewToDisable(mAddPrinterView);
-                    findPrinter(mAddPrinterView.mIpAddress.getText().toString());
-                }
-                AppUtils.hideSoftKeyboard(getActivity());
+                startManualSearch();
                 break;
         }
     }
@@ -387,14 +396,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     // ================================================================================
-    // INTERFACE - OnKeyListener
+    // INTERFACE - OnEditorActionListener
     // ================================================================================
     
     /** {@inheritDoc} */
     @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-            AppUtils.hideSoftKeyboard(getActivity());
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if ((actionId & EditorInfo.IME_MASK_ACTION) == EditorInfo.IME_ACTION_DONE) {
+            startManualSearch();
             return true;
         }
         return false;
