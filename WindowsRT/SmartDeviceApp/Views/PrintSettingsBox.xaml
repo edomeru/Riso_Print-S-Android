@@ -143,8 +143,7 @@
                               Width="{Binding Width, ElementName=printSettingsBox}"
                               PressedColor="{StaticResource BRUSH_Purple1}"/>
     <ListView Grid.Row="2"
-              ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-              Style="{StaticResource STYLE_PrintSettingsListView}">            
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <ListView ItemsSource="{Binding Path=PrintSettingsList}"
                   ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
             <ListView.ItemTemplate>
