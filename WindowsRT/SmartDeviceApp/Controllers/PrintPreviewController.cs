@@ -1804,9 +1804,8 @@ namespace SmartDeviceApp.Controllers
                 // Get latest print settings since non-preview related print settings may be updated
                 _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-
                 // Display progress dialog
-                _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
+                _printingProgress = new MessageProgressBarControl("IDS_INFO_MSG_PRINTING");
                 _printingProgress.CancelCommand = CancelPrintingCommand;
                 _printingPopup = new Popup();
                 _printingPopup.Child = _printingProgress;
@@ -1893,12 +1892,12 @@ namespace SmartDeviceApp.Controllers
                 _printingPopup.IsOpen = false;
                 if (result == (int)PrintJobResult.Success)
                 {
-                    DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
+                    DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
                     new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
                 }
                 else if (result == (int)PrintJobResult.Error)
                 {
-                    DialogService.Instance.ShowError("IDS_LBL_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
+                    DialogService.Instance.ShowError("IDS_INFO_MSG_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
                 }
 
                 if (_directPrintController != null)
