@@ -273,8 +273,8 @@ namespace SmartDeviceApp.Controllers
         {
             if (string.Equals(_activeScreen, screenName))
             {
-                _activeScreen = null;
                 PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+                _activeScreen = null;
             }
         }
 
@@ -472,18 +472,6 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
                 }
             }
-            //// TODO: Need to create a generic function to remove print settings (type list) with empty options
-            //if (!(printer.EnabledTrayFacedown
-            //      printer.EnabledTrayTop || printer.EnabledTrayStack))
-            //{
-            //    // Remove output tray print setting since all options are off
-            //    PrintSetting outputTrayPrintSetting =
-            //        GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-            //    if (outputTrayPrintSetting != null)
-            //    {
-            //        RemovePrintSetting(outputTrayPrintSetting);
-            //    }
-            //}
 
             _printSettingsMap[_activeScreen] = printSettings;
         }
@@ -1433,13 +1421,12 @@ namespace SmartDeviceApp.Controllers
         /// <param name="value">updated value</param>
         public async void PrintSettingValueChanged(PrintSetting printSetting, object value)
         {
-            if (printSetting == null || value == null)
+            if (printSetting == null || value == null || string.IsNullOrEmpty(_activeScreen))
             {
                 return;
             }
 
             bool isPreviewAffected = false;
-
             switch (printSetting.Type)
             {
                 case PrintSettingType.boolean:

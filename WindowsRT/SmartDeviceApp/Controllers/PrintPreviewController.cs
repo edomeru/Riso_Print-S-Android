@@ -90,7 +90,6 @@ namespace SmartDeviceApp.Controllers
         private int _pagesPerSheet = 1;
         private bool _isDuplex = false;
         private bool _isBooklet = false;
-        private bool _isReversePages = false;
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private static int _currPreviewPageIndex;
@@ -199,7 +198,6 @@ namespace SmartDeviceApp.Controllers
             _pagesPerSheet = 1;
             _isDuplex = false;
             _isBooklet = false;
-            _isReversePages = false;
 
             _printPreviewViewModel.Cleanup();
         }
@@ -373,7 +371,6 @@ namespace SmartDeviceApp.Controllers
 
             if (printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX) ||
                 printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT) ||
                 printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
@@ -400,9 +397,6 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.PageViewMode = PageViewMode.SinglePageView;
             }
 
-            _isReversePages = _isBooklet &&
-                _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
-
             _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);
 
             _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
@@ -410,11 +404,11 @@ namespace SmartDeviceApp.Controllers
             uint sliderMaxValue = _previewPageTotal;
             if (_isDuplex)
             {
-                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2);
+                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 1;
             }
             else if (_isBooklet)
             {
-                sliderMaxValue = (_previewPageTotal / 2) + 1;
+                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 2;
             }
             if (_printPreviewViewModel.PageTotal != sliderMaxValue)
             {
@@ -495,7 +489,7 @@ namespace SmartDeviceApp.Controllers
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = false;
 
-            GenerateNearPreviewPages(rightPageIndex);
+            // GenerateNearPreviewPages(rightPageIndex);
         }
 
         /// <summary>
@@ -506,16 +500,21 @@ namespace SmartDeviceApp.Controllers
         /// <returns></returns>
         private async Task GenerateSingleSpread(int rightPageIndex, bool enableSend)
         {
-            // When booklet is on and booklet finishing is off, act like as duplex (short edge)
-            // so no need for left side
-            if (_isBooklet || _isDuplex) // && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
+
+            int leftPageIndex = rightPageIndex - 1;
+            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+            {
+                leftPageIndex = rightPageIndex;
+                rightPageIndex = rightPageIndex - 1;
+            }
+
+            if (_isBooklet || _isDuplex)
             {
                 // Compute left side page index
-                int leftSidePreviewPageIndex = rightPageIndex - 1;
-                if (leftSidePreviewPageIndex > 0)
+                if (leftPageIndex > -1)
                 {
                     // Generate left side
-                    await GenerateSingleLeaf(leftSidePreviewPageIndex, false, enableSend);
+                    await GenerateSingleLeaf(leftPageIndex, false, enableSend);
                 }
             }
 
@@ -537,10 +536,6 @@ namespace SmartDeviceApp.Controllers
         {
             // Compute for logical page index based on imposition
             int logicalPageIndex = pageIndex * _pagesPerSheet;
-            if (_isReversePages)
-            {
-                logicalPageIndex = (int)DocumentController.Instance.PageCount - 1 - logicalPageIndex;
-            }
 
             if (enableSend)
             {
@@ -815,9 +810,10 @@ namespace SmartDeviceApp.Controllers
 
                     // Check if needs to send the page image
                     // Don't bother to send the old requests
-                    if (enableSend &&
-                        ((isRightSide && _currPreviewPageIndex == previewPageIndex) ||
-                         (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex)))
+                    if (enableSend)
+                        //&&
+                        //((isRightSide && _currPreviewPageIndex == previewPageIndex) ||
+                        // (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex)))
                     {
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
