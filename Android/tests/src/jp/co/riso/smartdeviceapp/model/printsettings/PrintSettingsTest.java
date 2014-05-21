@@ -291,17 +291,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertFalse(mPrintSettings.formattedString().isEmpty());
         assertFalse(mPrintSettings.formattedString().equals(formattedString));
         assertTrue(mPrintSettings.formattedString().contains(formattedString));
-        assertTrue(mPrintSettings.formattedString().contains("test"));
-        assertTrue(mPrintSettings.formattedString().contains("1234"));
-
-        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "abcd"); // pincode is not numeric
-
-        editor.apply();
-
-        assertNotNull(mPrintSettings.formattedString());
-        assertFalse(mPrintSettings.formattedString().isEmpty());
-        assertFalse(mPrintSettings.formattedString().contains("loginId=test\n"));
-        assertFalse(mPrintSettings.formattedString().contains("pinCode=1234\n"));
+        assertTrue(mPrintSettings.formattedString().contains("loginId=test\n"));
+        assertTrue(mPrintSettings.formattedString().contains("pinCode=1234\n"));
     }
 
     public void testGetSettingValues() {
