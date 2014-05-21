@@ -260,6 +260,7 @@
         self.tableView.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
     [self.refreshControl beginRefreshing];
     [self.refreshControl setHidden:NO];
+    [self.tableView setBounces:NO];
 }
 
 - (void)dismissScreen
@@ -284,7 +285,7 @@
                     // cancel the cell highlight
                     [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]]
                                           withRowAnimation:UITableViewRowAnimationNone];
-         }];
+                }];
     }
     else
     {
@@ -350,6 +351,7 @@
     // hide the searching indicator
     [self.refreshControl endRefreshing];
     [self.refreshControl setHidden:YES];
+    [self.tableView setBounces:YES];
 }
 
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails
