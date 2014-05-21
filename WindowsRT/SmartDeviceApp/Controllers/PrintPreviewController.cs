@@ -340,7 +340,7 @@ namespace SmartDeviceApp.Controllers
             {
                 Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
                 bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
-                    _currPrintSettings.BookletLayout);
+                    _currPrintSettings.BookletLayout, _currPrintSettings.Imposition);
 
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
                 _printPreviewViewModel.RightPageActualSize = sampleSize;
@@ -435,14 +435,17 @@ namespace SmartDeviceApp.Controllers
         /// <param name="orientation">orientation</param>
         /// <param name="bookletLayout">booklet layout</param>
         /// <returns>true when portrait, false otherwise</returns>
-        private bool IsPortrait(int orientation, int bookletLayout)
+        private bool IsPortrait(int orientation, int bookletLayout, int? imposition = null)
         {
             bool isPortrait = (orientation == (int)Orientation.Portrait);
             if (_isBooklet)
             {
                 isPortrait = (bookletLayout != (int)BookletLayout.TopToBottom);
             }
-
+            else if (imposition != null && imposition == (int)Imposition.TwoUp)
+            {
+                isPortrait = !isPortrait;
+            }
             return isPortrait;
         }
 
