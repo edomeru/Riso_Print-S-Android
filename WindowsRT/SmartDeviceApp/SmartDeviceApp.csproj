@@ -409,6 +409,12 @@
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-100.png" />
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-140.png" />
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-140.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-180.png" />
