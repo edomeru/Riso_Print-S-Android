@@ -138,9 +138,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      *            collapsed state
      * @param printerToDelete
      *            print jobs group to be deleted
+     * @param jobToDelete
+     *            print job to be deleted
      */
-    public void restoreState(boolean isCollapsed, Printer printerToDelete) {
+    public void restoreState(boolean isCollapsed, Printer printerToDelete, PrintJob jobToDelete) {
         boolean isDeleteAllClicked = printerToDelete != null && printerToDelete.equals(mPrinter);
+        boolean isDeleteClicked = jobToDelete != null && mPrintJobs.contains(jobToDelete);
         
         if (isCollapsed) {
             animateCollapse(false);
@@ -150,6 +153,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         if (isDeleteAllClicked) {
             mGroupListener.setPrinterToDelete(this, mPrinter);
             mPrintGroupView.findViewWithTag(printerToDelete).setSelected(true);
+        }
+        
+        if (isDeleteClicked) {
+            mGroupListener.setDeletePrintJob(this, jobToDelete);
         }
     }
     
@@ -171,6 +178,27 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
+     * delete a print job when clicked
+     * 
+     * @param job
+     *          Print Job to be deleted
+     */
+    public void onDeletePrintJob(PrintJob job) {
+        PrintJobManager pm = PrintJobManager.getInstance(getContext());
+        boolean isSuccess = pm.deleteWithJobId(job.getId());
+        if (isSuccess) {
+            mGroupListener.deleteJobFromList(job);
+            animateDeleteJob(mPrintGroupView.findViewWithTag(job));
+        } else {
+            // show dialog
+            InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
+            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
+        }
+        // clears delete state
+        mLayoutListener.onDeleteJob();
+    }
+    
+    /**
      * Cancels delete Job Group
      */
     public void onCancelDeleteGroup() {
@@ -185,7 +213,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void setDeleteButton(View v) {
         mViewToDelete = v;
         mViewToDelete.setSelected(true);
-        mGroupListener.setDeletePrintJob((PrintJob) mViewToDelete.getTag());
+        mGroupListener.setDeletePrintJob(this, (PrintJob) mViewToDelete.getTag());
     }
     
     /**
@@ -195,7 +223,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         if (mViewToDelete != null) {
             mViewToDelete.setSelected(false);
             mViewToDelete = null;
-            mGroupListener.setDeletePrintJob(null);
+            mGroupListener.setDeletePrintJob(null, null);
         }
     }
     
@@ -628,26 +656,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
-     * delete a print job when clicked
-     * 
-     * @param v
-     */
-    private void deletePrintJob(View v) {
-        PrintJob job = ((PrintJob) v.getTag());
-        PrintJobManager pm = PrintJobManager.getInstance(getContext());
-        boolean isSuccess = pm.deleteWithJobId(job.getId());
-        if (isSuccess) {
-            mGroupListener.deleteJobFromList((PrintJob) v.getTag());
-            animateDeleteJob(mPrintGroupView.findViewWithTag(job));
-        } else {
-            // show dialog
-            InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
-        }
-        mLayoutListener.onDeleteJob();
-    }
-    
-    /**
      * delete a print job view
      * 
      * @param i
@@ -673,7 +681,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 deleteJobGroup(v);
                 break;
             case R.id.printJobDeleteBtn:
-                deletePrintJob(v);
+                mGroupListener.showDeleteDialog();
                 break;
             case R.id.printJobsGroupLayout:
                 toggleGroupView(v);
@@ -761,11 +769,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
         /**
          * Set print job to be deleted
-         * 
+         * @param printJobsGroupView
+         *            PrintJobsGroupView containing the PrintJob to be deleted
          * @param job
-         *            print job to be deleted
+         *            PrintJob to be deleted
          */
-        public void setDeletePrintJob(PrintJob job);
+        public void setDeletePrintJob(PrintJobsGroupView printJobsGroupView, PrintJob job);
         
         /**
          * Set print job group to be deleted
