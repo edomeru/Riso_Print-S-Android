@@ -1046,23 +1046,30 @@ namespace SmartDeviceApp.Controllers
                     bookletLayoutPrintSetting.IsEnabled = true;
                     bookletLayoutPrintSetting.IsValueDisplayed = true;
 
+                    bool isPortrait = (currOrientation == (int)Orientation.Portrait);
                     PrintSettingOption leftToRight = GetPrintSettingOption(bookletLayoutPrintSetting,
                         (int)BookletLayout.LeftToRight);
                     if (leftToRight != null)
                     {
-                        leftToRight.IsEnabled = (currOrientation == (int)Orientation.Portrait);
+                        leftToRight.IsEnabled = isPortrait;
                     }
                     PrintSettingOption rightToLeft = GetPrintSettingOption(bookletLayoutPrintSetting,
                         (int)BookletLayout.RightToLeft);
                     if (rightToLeft != null)
                     {
-                        rightToLeft.IsEnabled = (currOrientation == (int)Orientation.Portrait);
+                        rightToLeft.IsEnabled = isPortrait;
                     }
                     PrintSettingOption topToBottom = GetPrintSettingOption(bookletLayoutPrintSetting,
                         (int)BookletLayout.TopToBottom);
                     if (topToBottom != null)
                     {
-                        topToBottom.IsEnabled = (currOrientation == (int)Orientation.Landscape);
+                        topToBottom.IsEnabled = !isPortrait;
+                    }
+                    if (updateValues)
+                    {
+                        int newBookletLayout = (isPortrait) ? (int)bookletFinishPrintSetting.Default : (int)BookletLayout.TopToBottom;
+                        bookletLayoutPrintSetting.Value = newBookletLayout;
+                        printSettings.BookletLayout = newBookletLayout;
                     }
                 }
                 isValueUpdated = true;
