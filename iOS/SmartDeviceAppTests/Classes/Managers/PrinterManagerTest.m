@@ -544,7 +544,7 @@ const float PM_SEARCH_TIMEOUT = 10;
 
 #pragma mark - PrinterSearchDelegate Methods
 
-- (void)searchEndedwithResult:(BOOL)printerFound
+- (void)printerSearchEndedwithResult:(BOOL)printerFound
 {
     callbackSearchEndCalled = YES;
     callbackPrinterFound = printerFound;

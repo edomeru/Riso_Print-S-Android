@@ -23,7 +23,7 @@
 - (UIRefreshControl*)refreshControl;
 
 // expose private methods
-- (void)refresh;
+- (void)refreshScreen;
 
 @end
 
@@ -206,7 +206,7 @@
     
     GHTestLog(@"-- refreshing");
     [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForAllPrinters) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForAllPrintersSuccessful)];
-    [controllerIphone refresh];
+    [controllerIphone refreshScreen];
     [swizzler deswizzle];
     [self waitForCompletion:5 withMessage:nil]; //wait for the refresh to end
     listPrinters = [controllerIphone tableView];
