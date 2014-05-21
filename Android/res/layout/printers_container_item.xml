@@ -59,6 +59,16 @@
 
         </LinearLayout>
         
+        <ImageView
+            android:id="@+id/img_disclosure"
+            android:layout_width="@dimen/printers_row_right_icon_size"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:contentDescription="@string/default_content_description"
+            android:duplicateParentState="true"
+            android:paddingRight="@dimen/printers_row_right_padding"
+            android:src="@drawable/img_btn_submenu" />
+                        
         <Button
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
@@ -76,16 +86,6 @@
             android:textAllCaps="true"
             android:textColor="@drawable/selector_jobs_deletetextcolor"
             android:visibility="gone" />
-        
-        <ImageView
-            android:id="@+id/img_disclosure"
-            android:layout_width="@dimen/printers_row_right_icon_size"
-            android:layout_height="match_parent"
-            android:layout_gravity="right|center_vertical"
-            android:contentDescription="@string/default_content_description"
-            android:duplicateParentState="true"
-            android:paddingRight="@dimen/printers_row_right_padding"
-            android:src="@drawable/img_btn_submenu" />
     </LinearLayout>
 
     <View

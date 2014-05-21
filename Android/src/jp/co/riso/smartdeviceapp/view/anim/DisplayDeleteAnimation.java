@@ -87,7 +87,9 @@ public class DisplayDeleteAnimation {
                 translate.setDuration(ANIM_DURATION);
                 
                 HideOnFadeAnimationListener listener = new HideOnFadeAnimationListener();
+                listener.setRowView(view);
                 listener.setView(deleteButton);
+                listener.setIds(ids);
                 
                 translate.setAnimationListener(listener);
                 
@@ -102,24 +104,6 @@ public class DisplayDeleteAnimation {
                 deleteButton.setVisibility(View.GONE);
             }
         }
-        
-        for (int i = 0; i < ids.length; i++) {
-            View viewToHide = view.findViewById(ids[i]);
-            if (viewToHide != null) {
-                viewToHide.setVisibility(View.VISIBLE);
-                if (animate) {
-                    AlphaAnimation alpha = new AlphaAnimation(0.0f, 1.0f);
-                    alpha.setDuration(ANIM_DURATION * 3);
-                    
-                    if (viewToHide.getAnimation() != null) {
-                        viewToHide.getAnimation().setAnimationListener(null);
-                        viewToHide.getAnimation().cancel();
-                    }
-                    viewToHide.clearAnimation();
-                    viewToHide.startAnimation(alpha);
-                }
-            }
-        }
     }
     
     // ================================================================================
@@ -127,17 +111,40 @@ public class DisplayDeleteAnimation {
     // ================================================================================
     
     public class HideOnFadeAnimationListener implements Animation.AnimationListener {
+        private WeakReference<View> mRowViewReference = null;
         private WeakReference<View> mViewReference = null;
+        private int[] mIdsReference = null;
         
         /**
          * Set delete view
          * 
          * @param view
+         *            Delete button
          */
         public void setView(View view) {
             mViewReference = new WeakReference<View>(view);
         }
         
+        /**
+         * Set Row view
+         * 
+         * @param view
+         *            Row view or parent view of the delete button
+         */
+        public void setRowView(View view) {
+            mRowViewReference = new WeakReference<View>(view);
+        }
+
+        /**
+         * Set other resource ID that needs to be redisplayed
+         * 
+         * @param ids
+         *            Array of resource IDs that needs to be redisplayed
+         */
+        public void setIds(int[] ids) {
+            mIdsReference = ids;            
+        }
+
         /** {@inheritDoc} */
         @Override
         public void onAnimationEnd(Animation animation) {
@@ -145,6 +152,21 @@ public class DisplayDeleteAnimation {
                 final View view = mViewReference.get();
                 if (view != null) {
                     view.setVisibility(View.GONE);
+                }
+            }
+            for (int i = 0; i < mIdsReference.length; i++) {
+                View viewToHide = mRowViewReference.get().findViewById(mIdsReference[i]);
+                if (viewToHide != null) {
+                    viewToHide.setVisibility(View.VISIBLE);
+                    AlphaAnimation alpha = new AlphaAnimation(0.0f, 1.0f);
+                    alpha.setDuration(ANIM_DURATION);
+                    
+                    if (viewToHide.getAnimation() != null) {
+                        viewToHide.getAnimation().setAnimationListener(null);
+                        viewToHide.getAnimation().cancel();
+                    }
+                    viewToHide.clearAnimation();
+                    viewToHide.startAnimation(alpha);
                 }
             }
         }
