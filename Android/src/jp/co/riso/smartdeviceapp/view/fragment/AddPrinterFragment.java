@@ -350,7 +350,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
         if (mPrinterManager.isExists(printer)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
-        } else if (mPrinterManager.savePrinterToDB(printer)) {
+        } else if (mPrinterManager.savePrinterToDB(printer, true)) {
             mAdded = true;
             dialogCb(printer);
         }
@@ -376,7 +376,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             // Create Printer object
             Printer printer = new Printer("", ipAddress);
             
-            if (mPrinterManager.savePrinterToDB(printer)) {                                
+            if (mPrinterManager.savePrinterToDB(printer, false)) {                                
                 Message newWarningMsg = new Message();
                 
                 newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;                
