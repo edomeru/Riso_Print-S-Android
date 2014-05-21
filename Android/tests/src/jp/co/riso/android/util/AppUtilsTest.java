@@ -665,6 +665,16 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true);
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test");
         editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "abcd"); // pincode is not numeric
+
+        editor.apply();
+        
+        assertNotNull(AppUtils.getAuthenticationString());
+        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        
+        // missing keys
+        editor.remove(AppConstants.PREF_KEY_AUTH_SECURE_PRINT);
+        editor.remove(AppConstants.PREF_KEY_LOGIN_ID);
+        editor.remove(AppConstants.PREF_KEY_AUTH_PIN_CODE);
         
         editor.apply();
         

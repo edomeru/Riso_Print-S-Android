@@ -444,6 +444,12 @@ public final class AppUtils {
         return false;
     }
     
+    /**
+     * Gets Secure Print, Login ID and PIN Code from preferences
+     * and returns formatted string if Secure Print is ON
+     * 
+     * @return authentication String
+     */
     public static String getAuthenticationString() {
         StringBuffer strBuf = new StringBuffer();
         final String pinCodeFormat = "%s=%d\n";
