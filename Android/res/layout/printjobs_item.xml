@@ -86,7 +86,7 @@
                     android:paddingRight="@dimen/printjob_delbtn_padding_side"
                     android:text="@string/ids_lbl_delete"
                     android:textAllCaps="true"
-                    android:textColor="@drawable/selector_jobs_deletetextcolor"
+                    android:textColor="@color/selector_jobs_deletebutton_text"
                     android:visibility="gone" />
             </FrameLayout>
         </RelativeLayout>
