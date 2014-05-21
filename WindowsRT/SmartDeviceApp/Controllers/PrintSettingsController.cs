@@ -1217,27 +1217,30 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
-                if (updateValues && (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperRight))
+                if (staplePrintSetting != null)
                 {
-                    staplePrintSetting.Value = (int)Staple.One;
-                    printSettings.Staple = (int)Staple.One;
-                    isUpdated = true;
-                }
+                    if (updateValues && (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperRight))
+                    {
+                        staplePrintSetting.Value = (int)Staple.One;
+                        printSettings.Staple = (int)Staple.One;
+                        isUpdated = true;
+                    }
 
-                PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
-                if (oneUL != null)
-                {
-                    oneUL.IsEnabled = false;
-                }
-                PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
-                if (oneUR != null)
-                {
-                    oneUR.IsEnabled = false;
-                }
-                PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
-                if (one != null)
-                {
-                    one.IsEnabled = true;
+                    PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
+                    if (oneUL != null)
+                    {
+                        oneUL.IsEnabled = false;
+                    }
+                    PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
+                    if (oneUR != null)
+                    {
+                        oneUR.IsEnabled = false;
+                    }
+                    PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
+                    if (one != null)
+                    {
+                        one.IsEnabled = true;
+                    }
                 }
             }
             else if (value == (int)FinishingSide.Top)
@@ -1256,36 +1259,39 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
-                if (updateValues)
+                if (staplePrintSetting != null)
                 {
-                    if (currFinishingSide == (int)FinishingSide.Left && currStaple == (int)Staple.One)
+                    if (updateValues)
                     {
-                        staplePrintSetting.Value = (int)Staple.OneUpperLeft;
-                        printSettings.Staple = (int)Staple.OneUpperLeft;
-                        isUpdated = true;
+                        if (currFinishingSide == (int)FinishingSide.Left && currStaple == (int)Staple.One)
+                        {
+                            staplePrintSetting.Value = (int)Staple.OneUpperLeft;
+                            printSettings.Staple = (int)Staple.OneUpperLeft;
+                            isUpdated = true;
+                        }
+                        else if (currFinishingSide == (int)FinishingSide.Right && currStaple == (int)Staple.One)
+                        {
+                            staplePrintSetting.Value = (int)Staple.OneUpperRight;
+                            printSettings.Staple = (int)Staple.OneUpperRight;
+                            isUpdated = true;
+                        }
                     }
-                    else if (currFinishingSide == (int)FinishingSide.Right && currStaple == (int)Staple.One)
-                    {
-                        staplePrintSetting.Value = (int)Staple.OneUpperRight;
-                        printSettings.Staple = (int)Staple.OneUpperRight;
-                        isUpdated = true;
-                    }
-                }
 
-                PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
-                if (oneUL != null)
-                {
-                    oneUL.IsEnabled = true;
-                }
-                PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
-                if (oneUR != null)
-                {
-                    oneUR.IsEnabled = true;
-                }
-                PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
-                if (one != null)
-                {
-                    one.IsEnabled = false;
+                    PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
+                    if (oneUL != null)
+                    {
+                        oneUL.IsEnabled = true;
+                    }
+                    PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
+                    if (oneUR != null)
+                    {
+                        oneUR.IsEnabled = true;
+                    }
+                    PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
+                    if (one != null)
+                    {
+                        one.IsEnabled = false;
+                    }
                 }
             }
 
