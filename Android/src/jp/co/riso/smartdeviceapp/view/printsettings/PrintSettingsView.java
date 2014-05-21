@@ -194,27 +194,24 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        boolean editTextHit = false;
-        
         View view = mMainView.findViewWithTag(PrintSettings.TAG_COPIES);
         if (view != null && view instanceof EditText) {
-            if (AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
-                editTextHit = true;
+            if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
                 checkEditTextValue((EditText)view);
+            } else {
+                return super.onInterceptTouchEvent(ev);
             }
         }
         view = mMainView.findViewById(ID_PIN_CODE_EDIT_TEXT);
         if (view != null && view instanceof EditText) {
-            if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
-                editTextHit = true;
+            if (AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
+                return super.onInterceptTouchEvent(ev);
             }
         }
         
-        if (!editTextHit) {
-            AppUtils.hideSoftKeyboard((Activity) getContext());
-        }
-        
+        AppUtils.hideSoftKeyboard((Activity) getContext());
         return super.onInterceptTouchEvent(ev);
+        
     }
     
     /**

@@ -433,7 +433,7 @@ public final class AppUtils {
         view.getHitRect(r);
         view.getLocationOnScreen(coords);
         r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
-        if (!r.contains(x, y)) {
+        if (r.contains(x, y)) {
             return true;
         }
         
