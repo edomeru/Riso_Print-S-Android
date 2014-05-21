@@ -14,6 +14,8 @@ import jp.co.riso.android.dialog.ConfirmDialogFragment;
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -30,8 +32,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Handler.Callback;
 import android.os.Message;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -39,7 +39,8 @@ import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback, ConfirmDialogListener {
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface,
+        ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
@@ -51,8 +52,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private ArrayList<Printer> mPrinter = null;
     private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
-    private Handler mHandler = null;
-    private boolean mOnPause = false;
+    private PauseableHandler mPauseableHandler = null;
     
     /** {@inheritDoc} */
     @Override
@@ -68,12 +68,13 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         } else {
             mPrinter = new ArrayList<Printer>();
         }
-        mOnPause = false;
+        if (mPauseableHandler == null) {
+            mPauseableHandler = new PauseableHandler(this);
+        }
         mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mPrinterManager.setPrinterSearchCallback(this);
-        mHandler = new Handler(this);
     }
     
     /** {@inheritDoc} */
@@ -132,17 +133,14 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onPause() {
         super.onPause();
-        mOnPause = true;
+        mPauseableHandler.pause();
     }
     
     /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
-        mOnPause = false;
-        if (mHandler != null) {
-            updateRefreshBar();
-        }
+        mPauseableHandler.resume();
     }
     
     // ================================================================================
@@ -153,9 +151,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
      * Updates the status of the refresh bar
      */
     private void updateRefreshBar() {
-        Message newMessage = Message.obtain(mHandler, MSG_UPDATE_REFRESH_BAR);
+        Message newMessage = Message.obtain(mPauseableHandler, MSG_UPDATE_REFRESH_BAR);
         
-        mHandler.sendMessage(newMessage);
+        mPauseableHandler.sendMessage(newMessage);
     }
     
     
@@ -261,9 +259,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
-        if (!mOnPause) {
-            updateRefreshBar();
-        }
+        updateRefreshBar();
     }
     
     // ================================================================================
@@ -293,21 +289,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
         return ret;
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case MSG_UPDATE_REFRESH_BAR:
-                if (mPrinterManager.isSearching()) {
-                    mListView.setRefreshing();
-                } else {
-                    mListView.onRefreshComplete();
-                }
-                return true;
-        }
-        return false;
-    }    
 
     // ================================================================================
     // INTERFACE - ConfirmDialogListener
@@ -323,5 +304,28 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onCancel() {
         closeScreen();
+    }
+
+    // ================================================================================
+    // INTERFACE - PauseableHandlerCallback
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean storeMessage(Message message) {
+        return message.what == MSG_UPDATE_REFRESH_BAR;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void processMessage(Message msg) {
+        switch (msg.what) {
+            case MSG_UPDATE_REFRESH_BAR:
+                if (mPrinterManager.isSearching()) {
+                    mListView.setRefreshing();
+                } else {
+                    mListView.onRefreshComplete();
+                }
+        }
     }
 }

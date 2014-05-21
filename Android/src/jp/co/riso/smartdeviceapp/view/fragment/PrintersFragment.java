@@ -405,6 +405,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onConfirm() {
         if (isTablet()) {
@@ -415,6 +416,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         if (isTablet()) {
