@@ -14,6 +14,7 @@
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
 #import "PrinterStatusView.h"
+#import "DeleteButton.h"
 
 @interface PrintersIpadViewController (UnitTest)
 
@@ -25,6 +26,7 @@
 
 // expose private methods
 - (BOOL)setDefaultPrinter:(NSIndexPath*)indexPath;
+- (IBAction)defaultPrinterSwitchAction:(id)sender;
 
 @end
 
@@ -33,9 +35,6 @@
 // expose private properties
 - (UIButton*) deleteButton;
 - (BOOL)isDefaultPrinterCell;
-
-// expose private methods
-- (IBAction)defaultSwitchAction:(id)sender;
 
 @end
 
@@ -194,39 +193,13 @@
                                                                                        forIndexPath:index];
     
     NSArray* ibActions;
-    
-    GHTestLog(@"-- check cell");
-    ibActions = [printerCell gestureRecognizers];
-    GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([[ibActions objectAtIndex:0] isKindOfClass:[UITapGestureRecognizer class]], @"");
-    
-    GHTestLog(@"-- check cell header");
-    ibActions = [printerCell.cellHeader gestureRecognizers];
-    GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([[ibActions objectAtIndex:0] isKindOfClass:[UILongPressGestureRecognizer class]], @"");
-    
-    GHTestLog(@"-- check delete button");
-    ibActions = [[printerCell deleteButton] actionsForTarget:controller
-                                             forControlEvent:UIControlEventTouchUpInside];
-    GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"printerDeleteButtonAction:"], @"");
-    
-    GHTestLog(@"-- check default settings button");
-    ibActions = [printerCell.defaultSettingsButton actionsForTarget:controller
-                                                    forControlEvent:UIControlEventTouchUpInside];
-    GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"defaultSettingsButtonAction:"], @"");
-    
+        
     GHTestLog(@"-- check default printer switch");
-    ibActions = [printerCell.defaultSwitch actionsForTarget:printerCell
+    ibActions = [printerCell.defaultSwitch actionsForTarget:controller
                                             forControlEvent:UIControlEventValueChanged];
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"defaultSwitchAction:"], @"");
+    GHAssertTrue([ibActions containsObject:@"defaultPrinterSwitchAction:"], @"");
     
     GHTestLog(@"-- check port selection switch");
     ibActions = [printerCell.portSelection actionsForTarget:controller
@@ -329,24 +302,21 @@
     GHTestLog(@"# CHECK: Default Switch Action.");
     
     GHTestLog(@"-- get PrinterCollectionViewCell");
-    UICollectionView* collectionView = [controller collectionView];
     NSIndexPath* index = [NSIndexPath indexPathForItem:0 inSection:0];
-    PrinterCollectionViewCell* printerCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell"
-                                                                                       forIndexPath:index];
     
     UISwitch* defaultSwitch = [[UISwitch alloc] init];
     
     defaultSwitch.on = YES;
-    [printerCell defaultSwitchAction:defaultSwitch];
-    GHAssertTrue([printerCell isDefaultPrinterCell], @"");
+    [controller defaultPrinterSwitchAction:defaultSwitch];
+    GHAssertTrue(controller.defaultPrinterIndexPath.row == index.row, @"");
     
     defaultSwitch.on = NO;
-    [printerCell defaultSwitchAction:defaultSwitch];
-    GHAssertFalse([printerCell isDefaultPrinterCell], @"");
+    [controller defaultPrinterSwitchAction:defaultSwitch];
+    GHAssertNil(controller.defaultPrinterIndexPath, @"");
     
     defaultSwitch.on = YES;
-    [printerCell defaultSwitchAction:defaultSwitch];
-    GHAssertTrue([printerCell isDefaultPrinterCell], @"");
+    [controller defaultPrinterSwitchAction:defaultSwitch];
+    GHAssertTrue(controller.defaultPrinterIndexPath.row == index.row, @"");
 }
 
 #pragma mark - Utilities

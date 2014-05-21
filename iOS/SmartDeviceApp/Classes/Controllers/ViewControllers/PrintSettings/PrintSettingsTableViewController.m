@@ -29,25 +29,17 @@
 #import "PrintJobHistoryViewController.h"
 #import "NetworkManager.h"
 
-#define PRINTER_HEADER_CELL @"PrinterHeaderCell"
-#define PRINTER_ITEM_CELL @"PrinterItemCell"
-#define PRINTER_ITEM_DEFAULT_CELL @"PrinterItemDefaultCell"
 #define SETTING_HEADER_CELL @"SettingHeaderCell"
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
 #define SETTING_ITEM_INPUT_CELL @"SettingItemInputCell"
 #define SETTING_ITEM_SWITCH_CELL @"SettingItemSwitchCell"
 #define PINCODE_INPUT_CELL @"PincodeInputCell"
 
-#define PRINTER_SECTION  0
-#define PRINTER_SECTION_HEADER_ROW 0
-#define PRINTER_SECTION_ITEM_ROW 1
-
 #define ROW_HEIGHT_SINGLE 44
-#define ROW_HEIGHT_DOUBLE 55
 
 static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
-@interface PrintSettingsTableViewController ()<DirectPrintManagerDelegate>
+@interface PrintSettingsTableViewController ()
 
 @property (nonatomic) BOOL isDefaultSettingsMode;
 
@@ -65,9 +57,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 @property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
 @property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
 @property (nonatomic) BOOL isRedrawFullSettingsTable;
-
-- (void)executePrint;
-
 @end
 
 @implementation PrintSettingsTableViewController
@@ -114,14 +103,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         self.isDefaultSettingsMode = YES;
     }
 
-    
     // Get print settings tree
     self.printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     
     // Prepare expansion
     self.expandedSections = [[NSMutableArray alloc] init];
     NSArray *sections = [self.printSettingsTree objectForKey:@"group"];
-    for (id section in sections)
+    for (int i = 0; i < sections.count; i++)
     {
         [self.expandedSections addObject:[NSNumber numberWithBool:YES]];
     }
@@ -164,7 +152,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     PreviewSetting *previewSetting = self.previewSetting;
     if (self.printerIndex == nil && self.printDocument != nil)
     {
-        //PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
         [self.printDocument removeObserver:self forKeyPath:@"printer"];
     }
     [PrintSettingsHelper removeObserver:self fromPreviewSetting:&previewSetting];
@@ -184,7 +171,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self reloadRowsForIndexPathsToUpdate];
     }
-
 }
 
 - (void)didReceiveMemoryWarning
@@ -203,41 +189,27 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         sections += 1; // + pincode section
     }
-    return sections + 1;//print settings sections + the printer section
+    return sections;//print settings sections
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
     NSInteger logicalSection = section;
-    NSInteger totalSections = [[self.printSettingsTree objectForKey:@"group"] count] + 1;
-    if (logicalSection == 0)
+    NSInteger totalSections = [[self.printSettingsTree objectForKey:@"group"] count];
+    
+    if ([[self.expandedSections objectAtIndex:logicalSection] boolValue] == NO)
     {
-        if(self.isDefaultSettingsMode == YES)
-        {
-            return 1; //show only printer name not printer button header
-        }
-        else
-        {
-            return 2;
-        }
+        return 1;
     }
-    else if(logicalSection == totalSections && self.isDefaultSettingsMode == NO) //pincode section
+    
+    if(logicalSection == totalSections && self.isDefaultSettingsMode == NO) //pincode section
     {
-        if ([[self.expandedSections objectAtIndex:logicalSection - 1] boolValue] == NO)
-        {
-            return 1;
-        }
         return 2;
     }
-    else if (logicalSection >= 1)
+    else
     {
-        if ([[self.expandedSections objectAtIndex:logicalSection - 1] boolValue] == NO)
-        {
-            return 1;
-        }
-        
-        NSArray *settings =[self.supportedSettings objectAtIndex:logicalSection - 1];
+        NSArray *settings =[self.supportedSettings objectAtIndex:logicalSection];
         NSInteger rowCount = [settings count];
         if(rowCount > 0)
         {
@@ -245,7 +217,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
         return rowCount;
     }
-    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -254,53 +225,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
     
-    if (section == 0)
-    {
-        if (row == 0 && self.isDefaultSettingsMode == NO)
-        {
-            cell = [tableView dequeueReusableCellWithIdentifier:PRINTER_HEADER_CELL forIndexPath:indexPath];
-        }
-        else
-        {
-            NSString *cellIdentifier = PRINTER_ITEM_CELL;
-            if (self.isDefaultSettingsMode == YES)
-            {
-                cellIdentifier = PRINTER_ITEM_DEFAULT_CELL;
-            }
-            PrintSettingsPrinterItemCell *printerItemCell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-            
-            if(self.printer != nil)
-            {
-                printerItemCell.printerNameLabel.hidden = NO;
-                printerItemCell.printerIPLabel.hidden = NO;
-                printerItemCell.selectPrinterLabel.hidden = YES;
-                if(self.printer.name == nil || [self.printer.name isEqualToString:@""] == YES)
-                {
-                     printerItemCell.printerNameLabel.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
-                }
-                else
-                {
-                    printerItemCell.printerNameLabel.text = self.printer.name;
-                }
-                printerItemCell.printerIPLabel.text = self.printer.ip_address;
-            }
-            else
-            {
-                printerItemCell.printerNameLabel.hidden = YES;
-                printerItemCell.printerIPLabel.hidden = YES;
-                printerItemCell.selectPrinterLabel.hidden = NO;
-            }
-            
-            cell = printerItemCell;
-        }
-    }
-    else if(section == [self.supportedSettings count] + 1 && self.isDefaultSettingsMode == NO)
+    if(section == [self.supportedSettings count] && self.isDefaultSettingsMode == NO)//pincode section
     {
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
             headerCell.groupLabel.uppercaseLocalizationId = IDS_LBL_AUTHENTICATION;
-            headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
+            headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
             cell = headerCell;
         }
         else
@@ -318,24 +249,24 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
     else
     {
-        NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:section - 1];
+        NSDictionary *group = [[self.printSettingsTree objectForKey:@"group"] objectAtIndex:section];
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
             headerCell.groupLabel.uppercaseLocalizationId = [group objectForKey:@"text"];
-            headerCell.expanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
+            headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
             cell = headerCell;
         }
         else
         {
-            NSArray *settings = [self.supportedSettings objectAtIndex:section - 1]; 
+            NSArray *settings = [self.supportedSettings objectAtIndex:section];
 
             NSDictionary *setting = [settings objectAtIndex:row - 1];
             
             NSString *type = [setting objectForKey:@"type"];
             NSString *key = [setting objectForKey:@"name"];
             
-	    //keep track of index of each setting for easy access
+            //keep track of index of each setting for easy access
             [self.indexPathsForSettings setObject:indexPath forKey:key];
             if ([type isEqualToString:@"list"])
             {
@@ -407,13 +338,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
 
-    if(section == [self.supportedSettings count] + 1 && self.isDefaultSettingsMode == NO)
+    if(section == [self.supportedSettings count] && self.isDefaultSettingsMode == NO)
     {
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
-            headerCell.expanded = ![[self.expandedSections objectAtIndex:section - 1] boolValue];
-            [self.expandedSections replaceObjectAtIndex:section - 1 withObject:[NSNumber numberWithBool:headerCell.expanded]];
+            headerCell.expanded = ![[self.expandedSections objectAtIndex:section] boolValue];
+            [self.expandedSections replaceObjectAtIndex:section withObject:[NSNumber numberWithBool:headerCell.expanded]];
             NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
             if(headerCell.expanded)
             {
@@ -425,13 +356,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             }
         }
     }
-    else if (section > 0)
+    else
     {
-        NSArray *settings = [self.supportedSettings objectAtIndex:section - 1];
+        NSArray *settings = [self.supportedSettings objectAtIndex:section];
         if (row == 0)
         {
-            BOOL isExpanded = [[self.expandedSections objectAtIndex:section - 1] boolValue];
-            [self.expandedSections replaceObjectAtIndex:section - 1 withObject:[NSNumber numberWithBool:!isExpanded]];
+            BOOL isExpanded = [[self.expandedSections objectAtIndex:section] boolValue];
+            [self.expandedSections replaceObjectAtIndex:section withObject:[NSNumber numberWithBool:!isExpanded]];
             
             NSUInteger settingsCount = [settings count];
             NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
@@ -463,31 +394,10 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             }
         }
     }
-    else
-    {
-        if (self.isDefaultSettingsMode == NO)
-        {
-            if (row == 0)
-            {
-                [self executePrint];
-            }
-            else
-            {
-                [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
-            }
-        }
-    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0)
-    {
-        if (self.isDefaultSettingsMode == YES || indexPath.row == 1)
-        {
-            return ROW_HEIGHT_DOUBLE;
-        }
-    }
     return ROW_HEIGHT_SINGLE;
 }
 
@@ -587,15 +497,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         optionsController.setting = self.currentSetting;
         optionsController.previewSetting = self.previewSetting;
     }
-    /*if ([segue.identifier isEqualToString:@"PrintSettings-PrinterList"])
-    {
-        PrintSettingsPrinterListTableViewController *printerListController = segue.destinationViewController;
-        printerListController.selectedPrinter = self.printer;
-    }*/
-}
-
-- (IBAction)unwindToPrintSettings:(UIStoryboardSegue *)sender
-{
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -988,7 +889,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (void)addToIndexToUpdate:(NSIndexPath *)indexPath
 {
-    if([self.indexPathsToUpdate containsObject:indexPath] == NO && [[self.expandedSections objectAtIndex:indexPath.section - 1] boolValue] == YES)
+    if([self.indexPathsToUpdate containsObject:indexPath] == NO && [[self.expandedSections objectAtIndex:indexPath.section] boolValue] == YES)
     {
         [self.indexPathsToUpdate addObject:indexPath];
     }
@@ -1047,7 +948,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     if(self.printer == nil)
     {
+        if([option isEqualToString:@"ids_lbl_punch_3holes"] || [option isEqualToString:@"ids_lbl_punch_4holes"])
+        {
+            return NO;
+        }
+        
         return YES;
+        
     }
     
     if([option isEqualToString:@"ids_lbl_punch_2holes"])
@@ -1082,40 +989,4 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     
     return YES;
 }
-
-- (void)executePrint
-{
-    // Check if printer is selected
-    if (self.printer == nil)
-    {
-        [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
-        return;
-    }
-    
-    if (![NetworkManager isConnectedToLocalWifi])
-    {
-        [AlertHelper displayResult:kAlertResultErrNoNetwork withTitle:kAlertTitleDefault withDetails:nil];
-        return;
-    }
-    
-    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
-    if ([self.printer.port integerValue] == 0)
-    {
-        [manager printDocumentViaLPR];
-    }
-    else
-    {
-        [manager printDocumentViaRaw];
-    }
-    manager.delegate = self;
-}
-
-- (void)documentDidFinishPrinting:(BOOL)successful
-{
-    if (successful)
-    {
-        [self performSegueTo:[PrintJobHistoryViewController class]];
-    }
-}
-
 @end

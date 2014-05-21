@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PrinterStatusHelper.h"
 @class Printer;
 
-@interface PrintSettingsPrinterListTableViewController : UITableViewController
+@interface PrintSettingsPrinterListTableViewController : UITableViewController <PrinterStatusHelperDelegate>
 
 @end

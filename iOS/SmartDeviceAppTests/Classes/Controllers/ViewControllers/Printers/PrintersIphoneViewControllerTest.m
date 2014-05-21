@@ -31,6 +31,7 @@
 - (UIButton*)deleteButton;
 - (UIImageView*)disclosureImage;
 - (BOOL)isDefaultPrinterCell;
+- (NSLayoutConstraint*)spaceDeleteButtonToSuperview;
 
 @end
 
@@ -183,36 +184,10 @@
     NSArray* ibActions;
     
     GHTestLog(@"-- check cell");
-    ibActions = [printerCell gestureRecognizers];
+    ibActions = [printerCell.contentView gestureRecognizers];
     GHAssertNotNil(ibActions, @"");
-    GHAssertTrue([ibActions count] == 3	, @"");
-    BOOL hasTap = NO;
-    BOOL hasSwipeRight = NO;
-    BOOL hasSwipeLeft = NO;
-    for (NSUInteger i = 0; i < 3; i++)
-    {
-        id action = [ibActions objectAtIndex:i];
-        if ([action isKindOfClass:[UITapGestureRecognizer class]])
-        {
-            hasTap = YES;
-            continue;
-        }
-        if ([action isKindOfClass:[UISwipeGestureRecognizer class]])
-        {
-            UISwipeGestureRecognizer* swipe = (UISwipeGestureRecognizer*)action;
-            if (swipe.direction == UISwipeGestureRecognizerDirectionLeft)
-            {
-                hasSwipeLeft = YES;
-                continue;
-            }
-            else if (swipe.direction == UISwipeGestureRecognizerDirectionRight)
-            {
-                hasSwipeRight = YES;
-                continue;
-            }
-        }
-    }
-    GHAssertTrue(hasTap && hasSwipeLeft && hasSwipeRight, @"");
+    GHAssertTrue([ibActions count] == 1	, @"");
+    GHAssertTrue([[ibActions objectAtIndex:0] isKindOfClass:[UILongPressGestureRecognizer class]], @"");
 }
 
 - (void)test006_PrinterCellSetNormal
@@ -224,7 +199,7 @@
     PrinterCell* printerCell = [tableView dequeueReusableCellWithIdentifier:@"PrinterCell"];
     
     [printerCell setCellStyleForNormalCell];
-    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] < 0, @"");
     GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
     GHAssertFalse([printerCell isDefaultPrinterCell], @"");
 }
@@ -238,7 +213,7 @@
     PrinterCell* printerCell = [tableView dequeueReusableCellWithIdentifier:@"PrinterCell"];
     
     [printerCell setCellStyleForDefaultCell];
-    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] < 0, @"");
     GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
     GHAssertTrue([printerCell isDefaultPrinterCell], @"");
 }
@@ -254,11 +229,11 @@
     [printerCell setCellStyleForNormalCell];
     
     [printerCell setCellToBeDeletedState:YES];
-    GHAssertFalse([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] > 0, @"");
     GHAssertTrue([[printerCell disclosureImage] isHidden], @"");
     
     [printerCell setCellToBeDeletedState:NO];
-    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] < 0, @"");
     GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
 }
 
@@ -273,11 +248,11 @@
     [printerCell setCellStyleForDefaultCell];
     
     [printerCell setCellToBeDeletedState:YES];
-    GHAssertFalse([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] > 0, @"");
     GHAssertTrue([[printerCell disclosureImage] isHidden], @"");
     
     [printerCell setCellToBeDeletedState:NO];
-    GHAssertTrue([[printerCell deleteButton] isHidden], @"");
+    GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] < 0, @"");
     GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
 }
 

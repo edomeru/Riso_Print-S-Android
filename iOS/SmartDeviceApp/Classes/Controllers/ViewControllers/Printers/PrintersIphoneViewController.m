@@ -12,6 +12,7 @@
 #import "AlertHelper.h"
 #import "PrintSettingsViewController.h"
 #import "CXAlertView.h"
+#import "PrinterCell.h"
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define SEGUE_TO_PRINTSETTINGS  @"PrintersIphone-PrintSettings"
@@ -27,6 +28,8 @@
 #pragma mark - UI Properties
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+@property (nonatomic, strong) NSMutableArray *statusHelpers;
 
 #pragma mark - Instance Methods
 
@@ -57,11 +60,22 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTableViewAction:)];
     [self.tableView addGestureRecognizer:tap];
+    self.statusHelpers = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+}
+
+- (void)dealloc
+{
+    for(PrinterStatusHelper * statusHelper in self.statusHelpers)
+    {
+        [statusHelper stopPrinterStatusPolling];
+    }
+    [self.statusHelpers removeAllObjects];
+    
 }
 
 #pragma mark - TableView
@@ -81,13 +95,16 @@
     static NSString* cellIdentifier = PRINTERCELL;
     PrinterCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier
                                                         forIndexPath:indexPath];
-    cell.delegate = self;
     
     Printer* printer = [self.printerManager getPrinterAtIndex:indexPath.row];
     if ([self.printerManager isDefaultPrinter:printer])
     {
         self.defaultPrinterIndexPath = indexPath;
         [cell setCellStyleForDefaultCell];
+    }
+    else
+    {
+        [cell setCellStyleForNormalCell];
     }
     if(printer.name == nil || [printer.name isEqualToString:@""] == YES)
     {
@@ -99,18 +116,20 @@
     }
     
     cell.ipAddress.text = printer.ip_address;
+    [cell.printerStatus setStatus:[printer.onlineStatus boolValue]];
     
-    cell.printerStatus.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
-    cell.printerStatus.statusHelper.delegate = cell.printerStatus;
+    if([self.statusHelpers count] <= indexPath.row)
+    {
+        PrinterStatusHelper *printerStatusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printer.ip_address];
+        printerStatusHelper.delegate = self;
+        [printerStatusHelper startPrinterStatusPolling];
+        [self.statusHelpers addObject:printerStatusHelper];
+    }
     
     UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressTableViewAction:)];
     press.minimumPressDuration = 0.1f;
     press.delegate = self;
     [cell.contentView addGestureRecognizer:press];
-    
-    //[cell.printerStatus setStatus:[printer.onlineStatus boolValue]]; //initial status
-    [cell.printerStatus setStatus:NO];
-    [cell.printerStatus.statusHelper startPrinterStatusPolling];
     
     if (indexPath.row == self.printerManager.countSavedPrinters-1)
     {
@@ -121,7 +140,24 @@
         [cell.separator setHidden:NO];
     }
     
+    [cell setDeleteButtonLayout];
+    
     return cell;
+}
+
+#pragma mark - PrinterStatusDelegate
+
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline
+{
+    NSUInteger index = [self.statusHelpers indexOfObject:statusHelper];
+    Printer *printer = [self.printerManager getPrinterAtIndex:index];
+    
+    printer.onlineStatus = [NSNumber numberWithBool:isOnline];
+    PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    if(cell != nil) //cell returned will be nil if cell for row is not visible
+    {
+        [cell.printerStatus setStatus:isOnline];
+    }
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -131,7 +167,6 @@
     if (self.toDeleteIndexPath != nil)
         [self removeDeleteState];
 }
-
 
 #pragma mark - UIGestureRecognizerDelegate
 
@@ -159,9 +194,9 @@
     return YES;
 }
 
-#pragma mark - PrinterCellDelegate
+#pragma mark - IBActions
 
-- (void)didTapDeleteButton:(DeleteButton*)button
+- (IBAction)tapDeleteButtonAction:(DeleteButton*)button
 {
     DeleteButton *deleteButton = (DeleteButton*)button;
     [deleteButton keepHighlighted:YES];
@@ -189,8 +224,6 @@
                    withCancelHandler:cancelled
                   withConfirmHandler:confirmed];
 }
-
-#pragma mark - IBActions
 
 - (IBAction)tapTableViewAction:(id)sender
 {
@@ -282,9 +315,7 @@
         {
             destController.isDefaultPrinter = YES;
         }
-        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
         destController.delegate = self;
-        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
     }
     else if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])
     {
@@ -292,7 +323,7 @@
     }
 }
 
--(void) segueToPrintSettings
+- (void)segueToPrintSettings
 {
     //The PrintersiPhoneViewController is the main controller in the root view controller so it is the one that should call a slide segue to the PrintSettingsViewController
     [self performSegueTo:[PrintSettingsViewController class]];
@@ -303,8 +334,6 @@
     if ([unwindSegue.sourceViewController isKindOfClass:[PrinterInfoViewController class]])
     {
         PrinterInfoViewController* printerInfoScreen = (PrinterInfoViewController*)unwindSegue.sourceViewController;
-        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.selectedPrinterIndexPath];
-        [cell.printerStatus.statusHelper startPrinterStatusPolling];
         [self setPrinterCell:printerInfoScreen.indexPath asDefault: printerInfoScreen.isDefaultPrinter];
         self.selectedPrinterIndexPath = nil;
     }
@@ -320,7 +349,7 @@
 
 #pragma mark - private helper methods
 
--(void) setPrinterCell:(NSIndexPath *) indexPath asDefault: (BOOL) isDefault
+- (void)setPrinterCell:(NSIndexPath *)indexPath asDefault:(BOOL)isDefault
 {
     if(self.defaultPrinterIndexPath != nil)
     {
@@ -348,7 +377,7 @@
     [selectedDefaultCell setCellStyleForDefaultCell];
 }
 
-- (void) deletePrinter
+- (void)deletePrinter
 {
     if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
     {
@@ -357,10 +386,12 @@
             self.defaultPrinterIndexPath = nil;
         
         //set the view of the cell to stop polling for printer status
-        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
-        [cell.printerStatus.statusHelper stopPrinterStatusPolling];
+        PrinterStatusHelper *statusHelper = [self.statusHelpers objectAtIndex:self.toDeleteIndexPath.row];
+        [statusHelper stopPrinterStatusPolling];
+        [self.statusHelpers removeObjectAtIndex:self.toDeleteIndexPath.row];
         
         //set view to non default printer cell style
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
         [cell setCellStyleForNormalCell];
         
         //remove cell from view
@@ -383,22 +414,14 @@
     }
 }
 
--(void) removeDeleteState
+- (void)removeDeleteState
 {
     if(self.toDeleteIndexPath != nil)
     {
-        PrinterCell *cell   = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
+        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
         [cell setCellToBeDeletedState:NO];
         self.toDeleteIndexPath = nil;
     }
-}
-
-#pragma mark - Rotation
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    if (self.toDeleteIndexPath != nil)
-        [self removeDeleteState];
 }
 
 @end

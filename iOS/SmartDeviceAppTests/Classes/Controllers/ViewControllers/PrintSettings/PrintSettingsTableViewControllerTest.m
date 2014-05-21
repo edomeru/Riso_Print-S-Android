@@ -237,7 +237,8 @@
         
         PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
         
-        GHAssertEqualStrings(headerCell.groupLabel.text, NSLocalizedString([[group objectForKey:@"text"] uppercaseString], @""), @"");
+        NSString* compareString = NSLocalizedString([[group objectForKey:@"text"] uppercaseString], @"");
+        GHAssertEqualStrings(headerCell.groupLabel.text, [compareString uppercaseString], @"");
         
         for(NSUInteger rowNumber = 1; rowNumber< rowCount && (rowNumber - 1) < [settings count]; rowNumber++)
         {
@@ -308,7 +309,8 @@
         
         PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[viewController.tableView cellForRowAtIndexPath:indexPath];
 
-        GHAssertEqualStrings(headerCell.groupLabel.text, NSLocalizedString([[group objectForKey:@"text"] uppercaseString], @""), @"");
+        NSString* compareString = NSLocalizedString([[group objectForKey:@"text"] uppercaseString], @"");
+        GHAssertEqualStrings(headerCell.groupLabel.text, [compareString uppercaseString], @"");
         
         for(NSUInteger rowNumber = 1; rowNumber< rowCount && (rowNumber - 1) < [settings count]; rowNumber++)
         {

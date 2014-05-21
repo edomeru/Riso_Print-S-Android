@@ -9,6 +9,13 @@
 #import "PrintSettingsPrinterHeaderCell.h"
 #import "UIColor+Theme.h"
 
+@interface PrintSettingsPrinterHeaderCell ()
+
+@property (weak, nonatomic) IBOutlet UIImageView *printIcon;
+@property (weak, nonatomic) IBOutlet UILabel *printText;
+
+@end
+
 @implementation PrintSettingsPrinterHeaderCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -24,13 +31,16 @@
 {
     [super setHighlighted:highlighted animated:animated];
     
+    [self.printIcon setHighlighted:highlighted];
     if (self.highlighted)
     {
         self.contentView.backgroundColor = [UIColor purple1ThemeColor];
+        self.printText.textColor = [UIColor whiteThemeColor];
     }
     else
     {
-        self.contentView.backgroundColor = [UIColor blackThemeColor];
+        self.contentView.backgroundColor = [UIColor whiteThemeColor];
+        self.printText.textColor = [UIColor blackThemeColor];
     }
 }
 

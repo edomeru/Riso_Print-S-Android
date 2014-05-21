@@ -267,6 +267,18 @@
 
 - (void)refresh
 {
+    // clear the lists
+#if SORT_SEARCH_RESULTS
+    [self.listOldPrinterNames removeAllObjects];
+    [self.listNewPrinterNames removeAllObjects];
+    [self.listNewPrinterIP removeAllObjects];
+    [self.listNewPrinterDetails removeAllObjects];
+#else
+    [self.listPrinterIP removeAllObjects];
+    [self.listPrinterDetails removeAllObjects];
+#endif
+    [self.tableView reloadData];
+    
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
     {
@@ -280,17 +292,6 @@
         
         return;
     }
-
-    // clear the lists
-#if SORT_SEARCH_RESULTS
-    [self.listOldPrinterNames removeAllObjects];
-    [self.listNewPrinterNames removeAllObjects];
-    [self.listNewPrinterIP removeAllObjects];
-    [self.listNewPrinterDetails removeAllObjects];
-#else
-    [self.listPrinterIP removeAllObjects];
-    [self.listPrinterDetails removeAllObjects];
-#endif
 
     // start the search
 #if DEBUG_LOG_PRINTER_SEARCH_SCREEN

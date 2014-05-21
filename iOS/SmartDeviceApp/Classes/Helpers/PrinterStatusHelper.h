@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 #import "SimplePing.h"
 
+@class PrinterStatusHelper;
+
 @protocol PrinterStatusHelperDelegate
-
--(void)statusDidChange:(BOOL)isOnline;
-
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline;
 @end
 
 @interface PrinterStatusHelper : NSObject <SimplePingDelegate>
@@ -20,9 +20,9 @@
 @property (weak, nonatomic) id <PrinterStatusHelperDelegate> delegate;
 @property (strong, nonatomic) NSString *ipAddress;
 
--(id) initWithPrinterIP:(NSString *) ipAddress;
--(void) stopPrinterStatusPolling;
--(void) startPrinterStatusPolling;
+- (id)initWithPrinterIP:(NSString *)ipAddress;
+- (void)stopPrinterStatusPolling;
+- (void)startPrinterStatusPolling;
 - (BOOL)isPolling;
 
 @end

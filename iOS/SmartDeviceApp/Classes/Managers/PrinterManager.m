@@ -121,8 +121,7 @@ static PrinterManager* sharedPrinterManager = nil;
     newPrinter.printsetting = defaultPrintSettings;
     
     // set the online status
-    // since the printer will only be added if online, initial setting is YES
-    newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
+    newPrinter.onlineStatus = [NSNumber numberWithBool:printerDetails.isPrinterFound];
     
     // save the Printer and PrintSetting objects to DB
     if ([DatabaseManager saveChanges])
@@ -230,8 +229,6 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
     if ([DatabaseManager deleteObject:printerToDelete])
     {
-        Printer *printer = [self.listSavedPrinters objectAtIndex:index];
-        printer = nil;
         [self.listSavedPrinters removeObjectAtIndex:index];
         self.countSavedPrinters--;
         return YES;

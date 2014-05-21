@@ -503,10 +503,6 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    if (self.groupWithDelete != nil)
-        [self removeDeleteButton]; //TODO: temporary fix for the misplaced delete button
-                                   //TODO: should redraw the delete button after rotate
-    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:toInterfaceOrientation

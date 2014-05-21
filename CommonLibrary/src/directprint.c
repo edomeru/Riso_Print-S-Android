@@ -287,6 +287,11 @@ int connect_to_port(const char *ip_address, const char *port)
 
 void notify_callback(directprint_job *print_job, int status)
 {
+    if (is_cancelled(print_job) == 1)
+    {
+        return;
+    }
+    
     if (print_job->callback != 0)
     {
         print_job->callback(print_job, status, print_job->progress);

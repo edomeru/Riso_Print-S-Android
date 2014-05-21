@@ -18,7 +18,7 @@
 @property (strong, nonatomic) PrinterManager* printerManager;
 
 /** NSIndexPath of the default printer in the Printers list **/
-@property (strong, nonatomic) NSIndexPath* defaultPrinterIndexPath;
+@property (strong, nonatomic) NSIndexPath *defaultPrinterIndexPath;
 @property (strong, nonatomic) NSIndexPath *toDeleteIndexPath;
 
 - (IBAction)mainMenuAction:(id)sender;
