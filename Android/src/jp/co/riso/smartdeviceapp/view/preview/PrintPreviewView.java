@@ -438,7 +438,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @return page string
      */
     public String getPageString() {
-        int currentFace = getCurrentPage();
+        return getPageString(getCurrentPage());
+    }
+    
+    /**
+     * @param currentFace
+     *            Current index
+     * 
+     * @return page string
+     */
+    public String getPageString(int currentFace) {
         if (isTwoPageDisplayed()) {
             currentFace *= 2;
         }
@@ -451,20 +460,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
 
         return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
-        /*
-        final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
-
-        int currentPage = getCurrentPage();
-        int pageCount = mPdfPageProvider.getPageCount();
-        
-        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || getCurrentPage() == 0) {
-            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage + 1, pageCount);
-        } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
-            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount);
-        } else {
-            return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
-        }
-        */
     }
     
     /**
@@ -1292,21 +1287,39 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 }
                 
                 float scale = 1.0f / getPagesPerSheet();
-                
-                Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
+                int curIndex = i + beginIndex;
+                Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int dim[] = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
+                    int x = left;
+                    int y = top;
+                    int dim[] = new int[] {
+                            convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth()),
+                            convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth())
+                    };
+                    
+                    int divide = Math.max(getColsPerSheet(), getRowsPerSheet());
+                    dim[0] /= divide;
+                    dim[1] /= divide;
+                    
                     if (mPrintSettings.isScaleToFit()) {
-                        dim[0] = right - left;
-                        dim[1] = bottom - top;
+                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), right - left, bottom - top);
+                        
+                        // For Fit-XY
+                        //dim[0] = right - left;
+                        //dim[1] = bottom - top;
+                        
+                        x = left + ((right - left) - dim[0]) / 2;
+                        y = top + ((bottom - top) - dim[1]) / 2;
                     }
                     
-                    int x = left + ((right - left) - dim[0]) / 2;
-                    int y = top + ((bottom - top) - dim[1]) / 2;
+                    canvas.save(Canvas.CLIP_SAVE_FLAG);
+                    canvas.clipRect(left, top, right + 1, bottom + 1);
                     
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                     ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
+                    
+                    canvas.restore();
                     
                     page.recycle();
                 }

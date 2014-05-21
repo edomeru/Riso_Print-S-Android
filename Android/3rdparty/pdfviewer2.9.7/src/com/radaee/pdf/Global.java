@@ -621,7 +621,8 @@ public class Global {
 	/**
 	 * reset to default configure.
 	 */
-	public static void default_config() {
+	public static void default_config()
+	{
 		selColor = 0x400000C0;// selection color
 		fling_dis = 1.0f;// 0.5-2
 		fling_speed = 0.1f;// 0.05 - 0.2

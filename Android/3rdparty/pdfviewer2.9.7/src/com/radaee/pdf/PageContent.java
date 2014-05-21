@@ -78,7 +78,8 @@ public class PageContent
 	 */
 	public void GSSet( ResGState gs )
 	{
-		gsSet(hand, gs.hand);
+		if( gs != null )
+			gsSet(hand, gs.hand);
 	}
 	/**
 	 * PDF operator: show image.

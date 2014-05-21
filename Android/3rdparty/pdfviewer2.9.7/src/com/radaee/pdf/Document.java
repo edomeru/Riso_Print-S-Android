@@ -488,6 +488,8 @@ public class Document
 	}
 	/**
 	 * get permission of PDF, this value defined in PDF reference 1.7<br/>
+	 * mostly, it means the permission from encryption.<br/>
+	 * this method need a professional or premium license.
 	 * bit 1-2 reserved<br/>
 	 * bit 3(0x4) print<br/>
 	 * bit 4(0x8) modify<br/>
@@ -500,7 +502,9 @@ public class Document
 		return getPermission( hand_val );
 	}
 	/**
-	 * get permission of PDF, this value defined in "Perm" entry in Catalog object
+	 * get permission of PDF, this value defined in "Perm" entry in Catalog object.<br/>
+	 * mostly, it means the permission from signature.<br/>
+	 * this method need a professional or premium license.
 	 * @return 0 means not defined<br/>
 	 * 1 means can't modify<br/>
 	 * 2 means can modify some form fields<br/>

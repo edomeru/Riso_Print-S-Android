@@ -257,8 +257,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
         
-        float width = mPdfManager.getPageWidth();
-        float height = mPdfManager.getPageHeight();
+        float width = mPdfManager.getPageWidth(0);
+        float height = mPdfManager.getPageHeight(0);
 
         assertTrue(width != 0);
         assertTrue(height != 0);
@@ -269,8 +269,32 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
         
-        float width = mPdfManager.getPageWidth();
-        float height = mPdfManager.getPageHeight();
+        float width = mPdfManager.getPageWidth(0);
+        float height = mPdfManager.getPageHeight(0);
+        
+        assertTrue(width == 0);
+        assertTrue(height == 0);
+    }
+
+    public void testGetPageDimensions_NegativePage() {
+        mPdfManager.setPDF(mPdfPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        
+        float width = mPdfManager.getPageWidth(-1);
+        float height = mPdfManager.getPageHeight(-1);
+        
+        assertTrue(width == 0);
+        assertTrue(height == 0);
+    }
+
+    public void testGetPageDimensions_GreaterThanPageCount() {
+        mPdfManager.setPDF(mPdfPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        
+        float width = mPdfManager.getPageWidth(mPdfManager.getPageCount());
+        float height = mPdfManager.getPageHeight(mPdfManager.getPageCount());
         
         assertTrue(width == 0);
         assertTrue(height == 0);

@@ -14,10 +14,10 @@ android_page_curl (2014-02-07)
 		/src/fi/harism/curl/CurlView.java (modified)
 
 
-PDFViewer SDK v2.9.7 (2014-02-08)
+PDFViewer SDK v2.9.9.1c (12 May 2014)
 	http://www.androidpdf.mobi/index.php
 	http://www.androidpdf.mobi/shop
-	http://www.androidpdf.mobi/download/download-android/file/68-pdfviewer-sdk-297
+	http://www.androidpdf.mobi/download/download-android/file/84-pdfviewer-sdk-2991c
 
 	Files included:
 		/src/com/radaee/pdf/BMDatabase.java
