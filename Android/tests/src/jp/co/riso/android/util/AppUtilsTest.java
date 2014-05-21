@@ -2,15 +2,18 @@ package jp.co.riso.android.util;
 
 import java.util.Locale;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.test.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.Display;
 import android.view.View;
@@ -627,6 +630,56 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         
         val = AppUtils.getNextIntegerMultiple(-3, 0);
         assertEquals(-3, val);
+    }
+    
+    //================================================================================
+    // Test getAuthenticationString
+    //================================================================================
+
+    public void testGetAuthenticationString_Valid() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false);
+        editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test");
+        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "1234");
+        
+        editor.apply();
+        
+        assertNotNull(AppUtils.getAuthenticationString());
+        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
+        
+        editor.apply();
+        
+        assertNotNull(AppUtils.getAuthenticationString());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
+        assertTrue(AppUtils.getAuthenticationString().equals("loginId=test\npinCode=1234\n"));
+    }
+    
+    public void testGetAuthenticationString_Invalid() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true);
+        editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test");
+        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "abcd"); // pincode is not numeric
+
+        editor.apply();
+        
+        assertNotNull(AppUtils.getAuthenticationString());
+        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        
+        // missing keys
+        editor.remove(AppConstants.PREF_KEY_AUTH_SECURE_PRINT);
+        editor.remove(AppConstants.PREF_KEY_LOGIN_ID);
+        editor.remove(AppConstants.PREF_KEY_AUTH_PIN_CODE);
+        
+        editor.apply();
+        
+        assertNotNull(AppUtils.getAuthenticationString());
+        assertTrue(AppUtils.getAuthenticationString().isEmpty());
     }
     
     //================================================================================
