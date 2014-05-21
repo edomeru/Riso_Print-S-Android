@@ -10,6 +10,8 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.ArrayList;
 
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.smartdeviceapp.AppConstants;
@@ -23,6 +25,9 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersListView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView;
+import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback;
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -36,13 +41,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback {
+public class PrintersFragment extends BaseFragment implements PrintersCallback, Callback, PrintersViewCallback, ConfirmDialogListener {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     public static final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
     public static final int ID_MENU_ACTION_ADD_BUTTON = 0x11000003;
     
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
+    private static final String KEY_PRINTERS_DIALOG = "printers_dialog";
     private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     private static final int MSG_ADD_NEW_PRINTER = 0x1;
     
@@ -100,6 +106,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
         if (isTablet()) {
             mPrinterTabletView = (PrintersScreenTabletView) view.findViewById(R.id.printerParentView);
+            mPrinterTabletView.setPrintersViewCallback(this);
         } else {
             mListView = (ListView) view.findViewById(R.id.printer_list);
         }
@@ -269,9 +276,11 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      */
     private void updateOnlineStatus() {
         int childCount = 0;
+        int position = 0;
         if (isTablet()) {
             childCount = mPrinterTabletView.getChildCount();
         } else {
+            position = mListView.getFirstVisiblePosition();
             childCount = mListView.getChildCount();
         }
         
@@ -287,7 +296,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 }
             }
             if (targetView != null) {
-                mPrinterManager.updateOnlineStatus(mPrinter.get(i).getIpAddress(), targetView);
+                mPrinterManager.updateOnlineStatus(mPrinter.get(i + position).getIpAddress(), targetView);
             }
         }
     }
@@ -356,6 +365,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1, msg.arg2);
                 } else {
                     mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
+                    ((PrinterArrayAdapter)mPrinterAdapter).setPrintersViewCallback(this);
                     mListView.setAdapter(mPrinterAdapter);
                     if (msg.obj != null) {
                         ((PrintersListView) mListView).onRestoreInstanceState((Parcelable) msg.obj, msg.arg1);
@@ -372,5 +382,48 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 return true;
         }
         return false;
+    }
+    
+    // ================================================================================
+    // INTERFACE -     PrintersViewCallback
+    // ================================================================================    
+    
+    /** {@inheritDoc} */
+    @Override
+    public void dialogConfirmDelete() {
+        String title = getResources().getString(R.string.ids_lbl_printer);
+        String errMsg = getResources().getString(R.string.ids_info_msg_delete_jobs);
+        
+        DialogFragment info = null;
+        
+        info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), getResources().getString(R.string.ids_lbl_cancel));
+        info.setTargetFragment(this, 0);
+        DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
+    }
+    
+    // ================================================================================
+    // INTERFACE - ConfirmDialogListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onConfirm() {
+        if (isTablet()) {
+            mPrinterTabletView.confirmDeletePrinterView();
+        } else {
+            ((PrinterArrayAdapter) mPrinterAdapter).confirmDeletePrinterView();
+            ((PrintersListView) mListView).resetDeleteView();
+        }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onCancel() {
+        if (isTablet()) {
+            mPrinterTabletView.resetDeletePrinterView();
+        } else {
+            ((PrinterArrayAdapter) mPrinterAdapter).resetDeletePrinterView();
+            ((PrintersListView) mListView).resetDeleteView();
+        }
     }
 }

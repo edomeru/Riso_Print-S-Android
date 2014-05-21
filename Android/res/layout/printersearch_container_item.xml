@@ -12,35 +12,34 @@
         android:background="@drawable/selector_printersearch_container">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+            android:layout_marginRight="@dimen/printers_row_right_icon_size"
+            android:duplicateParentState="true"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/printerText"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:duplicateParentState="true"
                 android:ellipsize="middle"
                 android:maxLines="1"
-                android:paddingTop="@dimen/printers_row_top_padding"
                 android:singleLine="true"
                 android:text="@string/default_textview"
                 android:textColor="@color/selector_printers_text" />
 
             <TextView
                 android:id="@+id/ipAddressText"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:duplicateParentState="true"
                 android:ellipsize="middle"
-                android:gravity="center_vertical"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:text="@string/default_textview"
                 android:textColor="@color/selector_printers_text"
                 android:textSize="@dimen/font_size_small" />
 

@@ -50,15 +50,19 @@
                     android:singleLine="true"
                     android:textColor="@color/selector_printers_text" />
 
-                <ImageView
+                <Button
                     android:id="@+id/btn_delete"
-                    android:layout_width="@dimen/printers_edit_box_width"
-                    android:layout_height="@dimen/printers_edit_box_height"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_weight="0"
-                    android:contentDescription="@string/default_content_description"
-                    android:src="@drawable/img_btn_delete_printer_tablet"
-                    android:visibility="gone" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical|right"
+                    android:background="@drawable/selector_printers_deletebutton"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/printjob_delbtn_padding_side"
+                    android:paddingRight="@dimen/printjob_delbtn_padding_side"
+                    android:text="@string/ids_lbl_delete"
+                    android:textAllCaps="true"
+                    android:textColor="@color/selector_printers_deletebutton_text" />
+
             </jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView>
         </LinearLayout>
 
@@ -76,7 +80,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/printers_view_row_height"
-                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:padding="@dimen/printers_row_left_padding"
                     android:text="@string/ids_lbl_ip_address"
@@ -84,12 +87,15 @@
 
                 <TextView
                     android:id="@+id/inputIpAddress"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/printers_row_left_padding"
+                    android:ellipsize="middle"
                     android:gravity="right|center_vertical"
+                    android:maxLines="1"
                     android:padding="@dimen/printers_row_right_padding"
+                    android:singleLine="true"
                     android:textColor="@color/theme_light_1" />
             </LinearLayout>
 

@@ -29,7 +29,6 @@ public class PrintersListView extends ListView implements Callback {
     private View mDeleteView = null;
     private Point mDownPoint = null;
     private DisplayDeleteAnimation mDeleteAnimation = null;
-    private int mDeleteItem = -1;
     private Handler mHandler = null;
     private static final int MSG_START_DELETE_MODE = 0x1;
     
@@ -90,7 +89,7 @@ public class PrintersListView extends ListView implements Callback {
                 // intercept if touched item is not the delete button
                 if (rect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
                     if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
-                        endDeleteMode(mDeleteView);
+                        endDeleteMode();
                         return super.onInterceptTouchEvent(ev);
                     }
                 }
@@ -152,7 +151,6 @@ public class PrintersListView extends ListView implements Callback {
     public void onRestoreInstanceState(Parcelable state, int index) {
         super.onRestoreInstanceState(state);
         if (index != PrinterManager.EMPTY_ID) {
-            mDeleteItem = index;
             Message newMessage = Message.obtain(mHandler, MSG_START_DELETE_MODE);
             newMessage.arg1 = index;
             mHandler.sendMessage(newMessage);
@@ -163,7 +161,24 @@ public class PrintersListView extends ListView implements Callback {
      * @return delete view index
      */
     public int getDeleteItemPosition() {
-        return mDeleteItem;
+        if (mDeleteView != null) {
+            return indexOfChild(mDeleteView);
+        } else {
+            return PrinterManager.EMPTY_ID;
+        }
+    }
+    
+    /**
+     * Reset delete view
+     * 
+     * @param view
+     */
+    public void resetDeleteView() {
+        if (mDeleteView != null) {
+            ((PrinterArrayAdapter) getAdapter()).setPrinterRow(mDeleteView);
+            mDeleteAnimation.endDeleteMode(mDeleteView, true, R.id.btn_delete, R.id.img_disclosure);
+            mDeleteView = null;
+        }
     }
     
     // ================================================================================
@@ -213,7 +228,6 @@ public class PrintersListView extends ListView implements Callback {
                 if (contains1 && contains2 && dragged) {
                     if (view != null) {
                         startDeleteMode(view);
-                        mDeleteItem = i;
                         return true;
                     }
                 }
@@ -268,11 +282,16 @@ public class PrintersListView extends ListView implements Callback {
             ((PrinterArrayAdapter) getAdapter()).setPrinterRow(view);
             mDeleteAnimation.endDeleteMode(view, true, R.id.btn_delete, R.id.img_disclosure);
             mDeleteMode = false;
-            mDeleteItem = PrinterManager.EMPTY_ID;
         }
-        
     }
     
+    /**
+     * End delete mode
+     */
+    private void endDeleteMode() {
+        mDeleteMode = false;
+    }
+
     // ================================================================================
     // Interface - Callback
     // ================================================================================

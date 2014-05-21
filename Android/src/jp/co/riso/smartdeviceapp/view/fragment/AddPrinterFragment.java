@@ -12,6 +12,8 @@ import jp.co.riso.android.dialog.ConfirmDialogFragment;
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.R;
@@ -25,8 +27,6 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Handler.Callback;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -36,7 +36,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnEditorActionListener, Callback, ConfirmDialogListener {
+public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnEditorActionListener, ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -44,14 +44,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
     private static final int ERR_PRINTER_ADDED_WARNING = -3;
     private static final int MSG_ERR_DB = 0;
+    private static final int MSG_ADD_SUCCESS = 1;
     
     private ViewHolder mAddPrinterView = null;
     private PrinterManager mPrinterManager = null;
-    private Printer mSearchedPrinter = null;
     private boolean mAdded = false;
-    private Handler mHandler = null;
-    private boolean mIsPaused = false;
-    private int mErrState = 0;
+    private PauseableHandler mPauseableHandler = null;
     
     /** {@inheritDoc} */
     @Override
@@ -63,12 +61,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
-
+        
         mAdded = false;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mPrinterManager.setPrinterSearchCallback(this);
         mAddPrinterView = new ViewHolder();
-        mHandler = new Handler(this);
+        if (mPauseableHandler == null) {
+            mPauseableHandler = new PauseableHandler(this);
+        }
     }
     
     /** {@inheritDoc} */
@@ -109,25 +109,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     @Override
     public void onPause() {
         super.onPause();
-        mIsPaused = true;        
+        mPauseableHandler.pause();
     }
     
     /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();        
-        mIsPaused = false;
-        
-        if(mAdded){
-            if(mErrState != 0) {
-                dialogErrCb(mErrState);
-            }
-            else {
-                if (mSearchedPrinter != null) {
-                    dialogCb(mSearchedPrinter);
-                }
-            }
-        }
+        mPauseableHandler.resume();
     }
     
     // ================================================================================
@@ -171,10 +160,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         info.setTargetFragment(this, 0);
         
         if (getActivity() != null && getActivity() instanceof MainActivity) {
-            if (mIsPaused) {
-                mSearchedPrinter = printer;
-                return;
-            }
             DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
         }
     }
@@ -213,13 +198,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             info.setTargetFragment(this, 0);
         } else {
             info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));    
-        }        
-        if (mIsPaused) {
-            mErrState = err;
-            return;
         }
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
-        
     }
     
     /**
@@ -292,8 +272,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      */
     private void startManualSearch() {       
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
-        mSearchedPrinter = null;
-        mErrState = 0;
         
         if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
@@ -312,21 +290,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             findPrinter(mAddPrinterView.mIpAddress.getText().toString());
         }
         AppUtils.hideSoftKeyboard(getActivity());
-    }
-    
-    // ================================================================================
-    // INTERFACE - Callback
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case MSG_ERR_DB:
-                dialogErrCb(msg.arg1);
-                return true;
-        }
-        return false;
     }
     
     // ================================================================================
@@ -361,7 +324,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
         } else if (mPrinterManager.savePrinterToDB(printer)) {
             mAdded = true;
-            dialogCb(printer);
+            Message newMessage = Message.obtain(mPauseableHandler, MSG_ADD_SUCCESS);
+            newMessage.obj = printer;
+            mPauseableHandler.sendMessage(newMessage);
         }
     }
     
@@ -388,8 +353,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             if (mPrinterManager.savePrinterToDB(printer)) {                                
                 Message newWarningMsg = new Message();
                 
-                newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;                
-                mHandler.sendMessage(newWarningMsg);
+                newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;
+                mPauseableHandler.sendMessage(newWarningMsg);
                 mAdded = true;
             }
         }
@@ -416,16 +381,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     /** {@inheritDoc} */
     @Override
     public void onConfirm() {
-        mSearchedPrinter = null;
-        mErrState = 0;
         closeScreen();
     }
     
     /** {@inheritDoc} */
     @Override
     public void onCancel() {
-        mSearchedPrinter = null;
-        mErrState = 0;
         closeScreen();
     }
     
@@ -441,5 +402,28 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         private EditText mIpAddress;
         private View mProgressBar;
         private View mSaveButton;
+    }
+
+    // ================================================================================
+    // INTERFACE - PauseableHandlerCallback
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean storeMessage(Message message) {
+        return message.what == MSG_ERR_DB || message.what == MSG_ADD_SUCCESS;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void processMessage(Message msg) {
+        switch (msg.what) {
+            case MSG_ERR_DB:
+                dialogErrCb(msg.arg1);
+                break;
+            case MSG_ADD_SUCCESS:
+                dialogCb((Printer) msg.obj);
+                break;
+        }
     }
 }
