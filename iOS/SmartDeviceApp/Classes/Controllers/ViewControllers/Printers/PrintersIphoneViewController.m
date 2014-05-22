@@ -69,6 +69,14 @@
     swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
     [self.tableView addGestureRecognizer:swipeLeft];
     
+    UIPanGestureRecognizer* pan = [[UIPanGestureRecognizer alloc]
+                                   initWithTarget:self action:@selector(swipeNotLeftTableViewAction:)];
+    pan.minimumNumberOfTouches = 1;
+    pan.delegate = self;
+    [pan requireGestureRecognizerToFail:tap];
+    [pan requireGestureRecognizerToFail:swipeLeft];
+    [self.tableView addGestureRecognizer:pan];
+    
     self.statusHelpers = [[NSMutableArray alloc] init];
 }
 
@@ -202,8 +210,18 @@
         {
             return NO;
         }
-        
     }
+    else if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        // block the panning gesture when there is no delete button
+        // return YES otherwise to let the view scroll instead
+        
+        if (self.toDeleteIndexPath == nil)
+            return NO;
+        else
+            return YES;
+    }
+    
     return YES;
 }
 
@@ -314,6 +332,14 @@
         [cell setCellToBeDeletedState:YES];
         self.toDeleteIndexPath = selectedIndexPath;
     }
+}
+
+- (void)swipeNotLeftTableViewAction:(id)sender
+{
+    // method will only be called when gestureRecognizerShouldBegin returns YES,
+    // which will only happen when there is a delete button to be cancelled
+    
+    [self removeDeleteState];
 }
 
 #pragma mark - Segue
