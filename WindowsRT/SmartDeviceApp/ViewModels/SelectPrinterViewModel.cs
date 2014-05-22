@@ -80,7 +80,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _selectPrinter = new RelayCommand<Printer>(
                         (prn) => SelectPrinterExecute(prn.Id),
-                        (prn) => true
+                        (prn) => prn.Id != _selectedPrinterId
                     );
                 }
                 return _selectPrinter;
@@ -104,6 +104,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SelectPrinterExecute(int id)
         {
+            _selectedPrinterId = id;
             if (SelectPrinterEvent != null)
             {
                 SelectPrinterEvent(id);
