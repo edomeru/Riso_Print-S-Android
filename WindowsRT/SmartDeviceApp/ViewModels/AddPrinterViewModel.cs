@@ -146,14 +146,14 @@ namespace SmartDeviceApp.ViewModels
 
             if (isSuccessful)
             {
-                content = loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                content = loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
             }
             else
             {
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    content = loader.GetString("IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
-                        loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
+                        loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
                 }
                 else
                 {
