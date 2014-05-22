@@ -100,12 +100,12 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        assertEquals(1, (int) settingValues.get(KEY_COLOR));
+        assertEquals(0, (int) settingValues.get(KEY_COLOR));
         assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
         assertEquals(1, (int) settingValues.get(KEY_COPIES));
         assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
         assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(1, (int) settingValues.get(KEY_SCALE_TO_FIT));
+        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT));
         assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
@@ -124,7 +124,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
         mPrintSettings.setValue(KEY_COLOR, 2);
         mPrintSettings.setValue(KEY_COPIES, 10);
-        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 0);
+        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 1);
 
         PrintSettings settings = new PrintSettings(mPrintSettings);
         assertNotNull(settings);
@@ -132,13 +132,12 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        assertEquals(2, (int) settingValues.get(KEY_COLOR)); // from 1 to 2
+        assertEquals(2, (int) settingValues.get(KEY_COLOR)); // from 0 to 2
         assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
         assertEquals(10, (int) settingValues.get(KEY_COPIES)); // from 1 to 10
         assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
         assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT)); // from 1 to
-        // 0
+        assertEquals(1, (int) settingValues.get(KEY_SCALE_TO_FIT)); // from 0 to 1
         assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
@@ -160,12 +159,12 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        assertEquals(1, (int) settingValues.get(KEY_COLOR));
+        assertEquals(0, (int) settingValues.get(KEY_COLOR));
         assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
         assertEquals(1, (int) settingValues.get(KEY_COPIES));
         assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
         assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(1, (int) settingValues.get(KEY_SCALE_TO_FIT));
+        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT));
         assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
         assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
@@ -244,12 +243,12 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
             HashMap<String, Integer> settingValues = settings.getSettingValues();
             assertNotNull(settingValues);
 
-            assertEquals(1, (int) settingValues.get(KEY_COLOR));
+            assertEquals(0, (int) settingValues.get(KEY_COLOR));
             assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
             assertEquals(1, (int) settingValues.get(KEY_COPIES));
             assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
             assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-            assertEquals(1, (int) settingValues.get(KEY_SCALE_TO_FIT));
+            assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT));
             assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
             assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
             assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
@@ -301,7 +300,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testGetValue() {
-        assertEquals(1, mPrintSettings.getValue("colorMode"));
+        assertEquals(0, mPrintSettings.getValue("colorMode"));
     }
 
     public void testSetValue() {
@@ -310,7 +309,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testGetColorMode() {
-        assertEquals(Preview.ColorMode.FULL_COLOR, mPrintSettings.getColorMode());
+        assertEquals(Preview.ColorMode.AUTO, mPrintSettings.getColorMode());
     }
 
     public void testGetOrientation() {
@@ -326,9 +325,9 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testIsScaleToFit() {
-        assertEquals(true, mPrintSettings.isScaleToFit());
-        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 0);
         assertEquals(false, mPrintSettings.isScaleToFit());
+        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 1);
+        assertEquals(true, mPrintSettings.isScaleToFit());
     }
 
     public void testGetImposition() {
