@@ -12,6 +12,6 @@
 #import "PrintJobHistoryGroupCell.h"
 #import "PrintJobHistoryLayout.h"
 
-@interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, PrintJobHistoryGroupCellDelegate, PrintJobHistoryLayoutDelegate, UIScrollViewDelegate>
+@interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, PrintJobHistoryGroupCellDelegate, PrintJobHistoryLayoutDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @end

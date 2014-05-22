@@ -213,16 +213,34 @@
     }
     else if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
     {
-        // block the panning gesture when there is no delete button
-        // return YES otherwise to let the view scroll instead
-        
         if (self.toDeleteIndexPath == nil)
+        {
+            // block the panning gesture when there is no delete button
+            // let the view scroll instead
             return NO;
+        }
         else
+        {
+            // cancel the delete button for the first swipe gesture
             return YES;
+        }
     }
     
     return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        // allow both the UIScrollView's PanGesture and our PanGesture to react at the same time
+        // (allows simultaneous hiding of the delete button and scrolling)
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 #pragma mark - IBActions
