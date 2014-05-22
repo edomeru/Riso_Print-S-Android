@@ -202,10 +202,12 @@ public class Preview {
         }
         
         /**
-         * @return punch count
+         * @param use3Holes
+         *            Whether the Punch should use 3 holes instead of 4 holes
+         * @return hole count
          */
-        public int getCount(boolean mShow3Punch) {
-            if (mShow3Punch && Punch.this == HOLES_4) {
+        public int getCount(boolean use3Holes) {
+            if (use3Holes && Punch.this == HOLES_4) {
                 return 3;
             }
             return mCount;
