@@ -362,16 +362,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         if (tag.equals(PrintSettings.TAG_OUTPUT_TRAY)) {
-            boolean isBooklet = mPrintSettings.isBooklet();
             boolean isPunch = mPrintSettings.getPunch() != Punch.OFF;
             switch (OutputTray.values()[value]) {
                 case AUTO:
-                    return true;
-                case FACEDOWN:
-                    return !isPunch && !isBooklet;
                 case TOP:
                 case STACKING:
-                    return !isBooklet;
+                    return true;
+                case FACEDOWN:
+                    return !isPunch;
             }
         }
         
@@ -550,19 +548,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             } else {
                 if (stapleValue == Staple.ONE_UL.ordinal() || stapleValue == Staple.ONE_UR.ordinal()) {
                     updateValueWithConstraints(PrintSettings.TAG_STAPLE, Staple.ONE.ordinal());
-                }
-            }
-        }
-        
-        // Constraint #3 Finishing Side or Orientation 
-        if (tag.equals(PrintSettings.TAG_ORIENTATION) || tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
-            int finishValue = mPrintSettings.getFinishingSide().ordinal();
-            int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
-            if (mPrintSettings.getValue(PrintSettings.TAG_PUNCH) == Punch.HOLES_4.ordinal()) {
-                if (finishValue != finishDefault) {
-                    if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
-                        updateValueWithConstraints(PrintSettings.TAG_PUNCH, Punch.OFF.ordinal());
-                    }
                 }
             }
         }
