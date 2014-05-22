@@ -57,7 +57,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private static final float CREASE_DARK_LENGTH = 8.0f;
     private static final float CREASE_WHITE_LENGTH = 4.0f;
     
-    private static final float PUNCH_DIAMETER_IN_MM = 12;
+    private static final float PUNCH_DIAMETER_IN_MM = 8;
     private static final float PUNCH_POS_SIDE_IN_MM = 8;
     
     private static final float STAPLE_LENGTH_IN_MM = 12;
@@ -578,10 +578,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @param dimension
      * @param bmpWidth
+     * @param bmpHeight
      * @return converted dimension
      */
-    protected int convertDimension(float dimension, int bmpWidth) {
-        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
+    protected int convertDimension(float dimension, int bmpWidth, int bmpHeight) {
+        float smallerDimension = Math.min(bmpWidth, bmpHeight);
+        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * smallerDimension);
     }
     
     // ================================================================================
@@ -1078,7 +1080,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param canvas
          */
         private void drawStapleImages(Canvas canvas) {
-            int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
+            int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth(), canvas.getHeight());
             float scale = stapleLength / (float) mStapleBmp.getWidth();
             
             int count = mPrintSettings.getStaple().getCount();
@@ -1091,7 +1093,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             // CORNER
             if (count == 1) {
-                int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth());
+                int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth(), canvas.getHeight());
                 
                 int x = staplePos;
                 int y = staplePos;
@@ -1105,11 +1107,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 
                 ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);                
             } else {
-                int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth());
+                int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth(), canvas.getHeight());
 
                 if (mPrintSettings.isBooklet()) {
                     if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
-                        staplePos = convertDimension(0, canvas.getWidth());
+                        staplePos = convertDimension(0, canvas.getWidth(), canvas.getHeight());
                     }
                 }
                 
@@ -1147,11 +1149,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param canvas
          */
         private void drawPunchImages(Canvas canvas) {
-            int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
+            int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth(), canvas.getHeight());
             float scale = punchDiameter / (float) mPunchBmp.getWidth();
 
             int count = mPrintSettings.getPunch().getCount();
-            int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth());
+            int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth(), canvas.getHeight());
             
             for (int i = 0; i < count; i++) {
                 int x = punchPos;
@@ -1212,11 +1214,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             int paperHeight = bmp.getHeight();
             
             // adjust paperWidth and paperHeight based on margins
-            paperWidth -= convertDimension(mMarginLeft, bmp.getWidth());
-            paperWidth -= convertDimension(mMarginRight, bmp.getWidth());
+            paperWidth -= convertDimension(mMarginLeft, bmp.getWidth(), bmp.getHeight());
+            paperWidth -= convertDimension(mMarginRight, bmp.getWidth(), bmp.getHeight());
             
-            paperHeight -= convertDimension(mMarginTop, bmp.getWidth());
-            paperHeight -= convertDimension(mMarginBottom, bmp.getWidth());
+            paperHeight -= convertDimension(mMarginTop, bmp.getWidth(), bmp.getHeight());
+            paperHeight -= convertDimension(mMarginBottom, bmp.getWidth(), bmp.getHeight());
             
             int pdfPageWidth = paperWidth / getColsPerSheet();
             int pdfPageHeight = paperHeight / getRowsPerSheet();
@@ -1224,8 +1226,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             int beginPos[] = getBeginPositions(paperWidth, paperHeight, pdfPageWidth, pdfPageHeight);
             
             // adjust beginX and beginY based on margins
-            beginPos[0] += convertDimension(mMarginLeft, bmp.getWidth());
-            beginPos[1] += convertDimension(mMarginTop, bmp.getWidth());
+            beginPos[0] += convertDimension(mMarginLeft, bmp.getWidth(), bmp.getHeight());
+            beginPos[1] += convertDimension(mMarginTop, bmp.getWidth(), bmp.getHeight());
             
             boolean leftToRight = true;
             boolean topToBottom = true;
@@ -1294,8 +1296,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     int x = left;
                     int y = top;
                     int dim[] = new int[] {
-                            convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth()),
-                            convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth())
+                            convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth(), canvas.getHeight()),
+                            convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth(), canvas.getHeight())
                     };
                     
                     int divide = Math.max(getColsPerSheet(), getRowsPerSheet());
