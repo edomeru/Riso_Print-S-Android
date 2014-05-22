@@ -9,6 +9,7 @@ namespace SmartDeviceApp.Common.Enum
     public enum PageViewMode
     {
         SinglePageView,
-        TwoPageView
+        TwoPageViewHorizontal,
+        TwoPageViewVertical
     }
 }

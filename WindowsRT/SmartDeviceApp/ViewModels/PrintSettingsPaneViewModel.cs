@@ -58,12 +58,11 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetPrintSettingsPaneMode(ViewMode viewMode)
         {
-            if (new ViewModelLocator().ViewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
+            if (new ViewModelLocator().ViewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
+                new ViewModelLocator().ViewControlViewModel.ScreenMode != ScreenMode.Printers) return;
+            if (viewMode == ViewMode.FullScreen && PrintSettingsPaneMode != PrintSettingsPaneMode.PrintSettings)
             {
-                if (viewMode == ViewMode.FullScreen && PrintSettingsPaneMode != PrintSettingsPaneMode.PrintSettings)
-                {
-                    PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
-                }
+                PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
             }
         }
     }

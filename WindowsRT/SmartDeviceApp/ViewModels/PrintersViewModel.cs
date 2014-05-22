@@ -224,9 +224,9 @@ namespace SmartDeviceApp.ViewModels
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
             _viewControlViewModel.TapHandled = true;
             RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
+            _viewControlViewModel.IsPane1Visible = true; // Note: Need to set this so that pane will be closed when pane buttons are toggled
             _gestureController.DisableGestures();
             OpenDefaultPrintSettingsHandler(printer);
-            
         }
 
         private PrintersGestureController _gestureController;
