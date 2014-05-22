@@ -16,8 +16,6 @@
 
 #define SEGUE_TO_PRINTER_INFO   @"PrintersIphone-PrinterInfo"
 #define SEGUE_TO_PRINTSETTINGS  @"PrintersIphone-PrintSettings"
-#define SEGUE_TO_ADD_PRINTER    @"PrintersIphone-AddPrinter"
-#define SEGUE_TO_PRINTER_SEARCH @"PrintersIphone-PrinterSearch"
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersIphoneViewController ()
@@ -40,12 +38,6 @@
  */
 - (IBAction)tapTableViewAction:(id)sender;
 
-/**
- If a row is marked for deletion (has a DELETE button), then it
- is reverted back to its normal state.
- */
-- (void)removeDeleteState;
-
 @end
 
 @implementation PrintersIphoneViewController
@@ -66,21 +58,8 @@
 {
     [super viewDidLoad];
     
-    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc]
-                                   initWithTarget:self action:@selector(tapTableViewAction:)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTableViewAction:)];
     [self.tableView addGestureRecognizer:tap];
-    
-    UISwipeGestureRecognizer* swipeLeft = [[UISwipeGestureRecognizer alloc]
-                                           initWithTarget:self action:@selector(swipeLeftTableViewAction:)];
-    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-    [self.tableView addGestureRecognizer:swipeLeft];
-    
-    UIPanGestureRecognizer* pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeNotLeftTableViewAction:)];
-    pan.minimumNumberOfTouches = 1;
-    [pan requireGestureRecognizerToFail:tap];
-    [pan requireGestureRecognizerToFail:swipeLeft];
-    [self.tableView addGestureRecognizer:pan];
-    
     self.statusHelpers = [[NSMutableArray alloc] init];
 }
 
@@ -147,8 +126,7 @@
         [self.statusHelpers addObject:printerStatusHelper];
     }
     
-    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc]
-                                           initWithTarget:self action:@selector(pressTableViewAction:)];
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressTableViewAction:)];
     press.minimumPressDuration = 0.1f;
     press.delegate = self;
     [cell.contentView addGestureRecognizer:press];
@@ -186,7 +164,8 @@
 
 - (void)scrollViewDidScroll:(UIScrollView*)scrollView
 {
-    [self removeDeleteState];
+    if (self.toDeleteIndexPath != nil)
+        [self removeDeleteState];
 }
 
 #pragma mark - UIGestureRecognizerDelegate
@@ -248,10 +227,15 @@
 
 - (IBAction)tapTableViewAction:(id)sender
 {
-    [self removeDeleteState];
+    //if a cell is in delete state, remove delete state
+    if(self.toDeleteIndexPath != nil)
+    {
+        [self removeDeleteState];
+        return;
+    }
 }
 
-- (void)pressTableViewAction:(id)sender
+- (IBAction)pressTableViewAction:(id)sender
 {
     UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
     //else segue to printer info screen
@@ -295,7 +279,7 @@
     }
 }
 
-- (void)swipeLeftTableViewAction:(id)sender
+- (IBAction)swipePrinterCellAction:(id)sender
 {
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForRowAtPoint:[sender locationInView:self.tableView]];
     if(self.toDeleteIndexPath != nil)
@@ -312,17 +296,10 @@
             [self removeDeleteState];
         }
     }
-    else
-    {
-        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
-        [cell setCellToBeDeletedState:YES];
-        self.toDeleteIndexPath = selectedIndexPath;
-    }
-}
 
-- (void)swipeNotLeftTableViewAction:(id)sender
-{
-    [self removeDeleteState];
+    PrinterCell  *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
+    [cell setCellToBeDeletedState:YES];
+    self.toDeleteIndexPath = selectedIndexPath;
 }
 
 #pragma mark - Segue
@@ -343,14 +320,6 @@
     else if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS])
     {
         ((PrintSettingsViewController *)segue.destinationViewController).printerIndex = [NSNumber numberWithInteger:self.selectedPrinterIndexPath.row];
-    }
-    else if([segue.identifier isEqualToString:SEGUE_TO_ADD_PRINTER])
-    {
-        [self removeDeleteState];
-    }
-    else if([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
-    {
-        [self removeDeleteState];
     }
 }
 
@@ -378,7 +347,7 @@
     [self.tableView reloadData];
 }
 
-#pragma mark - Utilities
+#pragma mark - private helper methods
 
 - (void)setPrinterCell:(NSIndexPath *)indexPath asDefault:(BOOL)isDefault
 {
