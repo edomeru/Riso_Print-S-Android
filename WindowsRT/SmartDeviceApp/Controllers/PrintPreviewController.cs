@@ -101,6 +101,8 @@ namespace SmartDeviceApp.Controllers
         private Popup _printingPopup;
         private MessageProgressBarControl _printingProgress;
 
+        private PageViewMode _pageViewMode;
+
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
         // http://csharpindepth.com/Articles/General/Singleton.aspx
@@ -353,6 +355,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _printPreviewViewModel.LeftPageActualSize = new Size();
                 }
+                _printPreviewViewModel.PageViewMode = _pageViewMode;
                 _printPreviewViewModel.InitializeGestures();
             }
         }
@@ -384,24 +387,24 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
                 {
-                    _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewVertical;
+                    _pageViewMode = PageViewMode.TwoPageViewVertical;
                 }
                 else
                 {
-                    _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewHorizontal;
+                    _pageViewMode = PageViewMode.TwoPageViewHorizontal;
                 }
             }
             else if (_isDuplex)
             {
-                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewHorizontal;
+                _pageViewMode = PageViewMode.TwoPageViewHorizontal;
             }
             else if (!_isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Top)
             {
-                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewVertical;
+                _pageViewMode = PageViewMode.TwoPageViewVertical;
             }
             else
             {
-                _printPreviewViewModel.PageViewMode = PageViewMode.SinglePageView;
+                _pageViewMode = PageViewMode.SinglePageView;
             }
 
             _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);

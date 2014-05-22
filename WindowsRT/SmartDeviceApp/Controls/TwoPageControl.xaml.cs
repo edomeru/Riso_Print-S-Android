@@ -76,30 +76,34 @@ namespace SmartDeviceApp.Controls
                 {
                     ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
                     ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
+					((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
                     ((TwoPageControl)obj).topPage.Visibility = Visibility.Collapsed;
                     ((TwoPageControl)obj).topPageArea.Height = new GridLength(0);
-                    ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
-                    ((TwoPageControl)obj).rightPage.Margin = new Thickness(0,0,0,0);
+                    ((TwoPageControl)obj).bottomPageArea.Height = new GridLength(1, GridUnitType.Star);
                     break;
                 }
                 case PageViewMode.TwoPageViewHorizontal:
                 {
                     ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
-                    var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Width);
-                    ((TwoPageControl)obj).leftPageArea.Width = gridLength;
-                    ((TwoPageControl)obj).rightPageArea.Width = gridLength;
+                    var gridWidth = new GridLength(((TwoPageControl)obj).PageAreaSize.Width);
+                    var gridHeight = new GridLength(((TwoPageControl)obj).PageAreaSize.Height);
+                    ((TwoPageControl)obj).leftPageArea.Width = gridWidth;
+                    ((TwoPageControl)obj).rightPageArea.Width = gridWidth;
                     ((TwoPageControl)obj).topPage.Visibility = Visibility.Collapsed;
                     ((TwoPageControl)obj).topPageArea.Height = new GridLength(0);
+                    ((TwoPageControl)obj).bottomPageArea.Height = gridHeight;
                     break;
                 }
                 case PageViewMode.TwoPageViewVertical:
                 {
                     ((TwoPageControl)obj).topPage.Visibility = Visibility.Visible;
-                    var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Height);
-                    ((TwoPageControl)obj).topPageArea.Height = gridLength;
-                    ((TwoPageControl)obj).bottomPageArea.Height = gridLength;
+                    var gridWidth = new GridLength(((TwoPageControl)obj).PageAreaSize.Width);
+                    var gridHeight = new GridLength(((TwoPageControl)obj).PageAreaSize.Height);
+                    ((TwoPageControl)obj).topPageArea.Height = gridHeight;
+                    ((TwoPageControl)obj).bottomPageArea.Height = gridHeight;
                     ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
                     ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
+                    ((TwoPageControl)obj).rightPageArea.Width = gridWidth;
                     break;
                 }
             }
