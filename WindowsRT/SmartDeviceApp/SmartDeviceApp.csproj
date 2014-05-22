@@ -171,6 +171,7 @@
     <Compile Include="Controls\PrinterNameControl.xaml.cs">
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToColor.cs" />
     <Compile Include="Converters\BooleanToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
       <DependentUpon>MainMenuKeyControl.xaml</DependentUpon>

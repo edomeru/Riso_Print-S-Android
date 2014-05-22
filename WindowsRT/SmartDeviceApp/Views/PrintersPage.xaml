@@ -135,9 +135,10 @@
                                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                                               IsItemClickEnabled="True" SelectionMode="None"
                                                DataContext="{Binding}">
+                            <!--RightButtonVisibility="Collapsed"-->
                             <controls:PrinterNameControl x:Name="printerName"  
                                                                      Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
-                                                                     RightButtonVisibility="Collapsed" 
+                                                                     
                                                                      IsDefault="{Binding IsDefault}"
                                                                      IsOnline="{Binding IsOnline}"
                                                                      IconVisibility="Visible"
@@ -182,9 +183,7 @@
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
                                                       />-->
 
-                            <!--<controls:KeyValueControl x:Name="port" 
-                                                          Text="Port"
-                                                          LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>-->
+                            
                             <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
                                                                  Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                                              IconVisibility="Collapsed"

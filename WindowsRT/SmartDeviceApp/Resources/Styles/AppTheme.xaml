@@ -88,6 +88,7 @@
     <conv:WidthConverter x:Key="WidthConverter"/>
     <conv:IntToBooleanConverter x:Key="IntToBooleanConverter"/>
     <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
+    <conv:BooleanToColor x:Key="BooleanToColor"/>
     <!-- APP CONVERTERS END -->
 
 </ResourceDictionary>

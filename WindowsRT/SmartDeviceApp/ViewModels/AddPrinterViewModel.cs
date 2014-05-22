@@ -91,6 +91,8 @@ namespace SmartDeviceApp.ViewModels
 
         private async Task AddPrinterExecute()
         {
+            //Messenger.Default.Send<string>("HideKeyboard");
+
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
             PrinterSearchList.Clear();
@@ -176,7 +178,12 @@ namespace SmartDeviceApp.ViewModels
 
         public void DisplayMessage(string caption, string content, string buttonText)
         {
-            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, null);
+            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(CloseAddPane));
+        }
+
+        private void CloseAddPane()
+        {
+            _viewControlViewModel.ViewMode = ViewMode.FullScreen;
         }
 
         private void SetViewMode(VisibleRightPane viewMode)
