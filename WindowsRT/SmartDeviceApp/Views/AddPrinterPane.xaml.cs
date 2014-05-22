@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace SmartDeviceApp.Views
 {
@@ -21,6 +22,16 @@ namespace SmartDeviceApp.Views
         public AddPrinterPane()
         {
             this.InitializeComponent();
+
+            //Messenger.Default.Register<string>(this, (tapped) => HideKeyboard(tapped));
         }
+
+        //private void HideKeyboard(string tapped)
+        //{
+        //    if (tapped == "HideKeyboard")
+        //    { 
+        //        this.IPTextBlock.Focus(FocusState.Programmatic);
+        //    }
+        //}
     }
 }

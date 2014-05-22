@@ -67,6 +67,8 @@ namespace SmartDeviceApp.Controllers
 
         private bool isPolling = false;
 
+        private string _manualAddIP = "";
+
         //SNMPController snmpController = new SNMPController();
 
 
@@ -328,7 +330,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<bool> addPrinter(string ip)
         {
-            
+            _manualAddIP = ip;
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             //check if valid ip address
             if (!isValidIpAddress(ip))
@@ -415,9 +417,28 @@ namespace SmartDeviceApp.Controllers
 
         private async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
         {
-
+            if (_manualAddIP != "")
+            {
+                _manualAddIP = "";
             
             
+            if (PrinterList.Count > 0)
+            {
+                try
+                { 
+                    Printer inList = PrinterList.First(x => x.IpAddress == ip);
+                    if (inList != null)
+                    {
+                        return;
+                    }
+                }
+                catch(Exception e)
+                {
+                   
+                }
+                
+                 
+            }
                 //add to printerList
                 Printer printer = new Printer() { IpAddress = ip, Name = name };
                 
@@ -489,6 +510,8 @@ namespace SmartDeviceApp.Controllers
                 }
                 
             });
+                
+                }
         }
 
         private async void handleAddTimeout(string ip, string name, List<string> capabilities)
