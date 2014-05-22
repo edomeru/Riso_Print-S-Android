@@ -417,7 +417,10 @@
             <controls:TwoPageControl Grid.Row="0"
                                      RightPageImage="{Binding RightPageImage}" 
                                      LeftPageImage="{Binding LeftPageImage}" 
-                                     PageViewMode="{Binding PageViewMode}" Loaded="OnPageAreaLoaded"/>
+                                     PageViewMode="{Binding PageViewMode}" 
+                                     PageAreaSize="{Binding RightPageActualSize}"
+                                     Loaded="OnPageAreaLoaded"
+                                     HorizontalAlignment="Center"/>
             <Slider x:Name="pageNumberSlider" Grid.Row="1" 
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 

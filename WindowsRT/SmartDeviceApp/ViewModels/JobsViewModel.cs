@@ -169,12 +169,24 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void DeleteAllJobsExecute(int printerId)
+        private async void DeleteAllJobsExecute(int printerId)
         {
-            if (RemoveGroupedJobsEventHandler != null)
-            {
-                RemoveGroupedJobsEventHandler(printerId);
-            }
+            await DialogService.Instance.ShowMessage(
+                "IDS_INFO_MSG_DELETE_JOBS", 
+                "IDS_INFO_MSG_DELETE_JOBS_TITLE", 
+                "IDS_LBL_OK", "IDS_LBL_CANCEL",
+                new Action<bool>(isDelete =>
+                    {
+                        if (isDelete && RemoveGroupedJobsEventHandler != null)
+                        {
+                            RemoveGroupedJobsEventHandler(printerId);
+                        }
+                    }));
+        }
+
+        private void DeleteAllJobsCallback(bool isDelete, int printerId)
+        {
+            
         }
 
         private void DeleteJobExecute(PrintJob printJob)

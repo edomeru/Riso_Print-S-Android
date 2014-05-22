@@ -90,7 +90,6 @@ namespace SmartDeviceApp.Controllers
         private int _pagesPerSheet = 1;
         private bool _isDuplex = false;
         private bool _isBooklet = false;
-        private bool _isReversePages = false;
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
         private static int _currPreviewPageIndex;
@@ -199,7 +198,6 @@ namespace SmartDeviceApp.Controllers
             _pagesPerSheet = 1;
             _isDuplex = false;
             _isBooklet = false;
-            _isReversePages = false;
 
             _printPreviewViewModel.Cleanup();
         }
@@ -340,7 +338,7 @@ namespace SmartDeviceApp.Controllers
             {
                 Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
                 bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
-                    _currPrintSettings.BookletLayout);
+                    _currPrintSettings.BookletLayout, _currPrintSettings.Imposition);
 
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
                 _printPreviewViewModel.RightPageActualSize = sampleSize;
@@ -373,7 +371,6 @@ namespace SmartDeviceApp.Controllers
 
             if (printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX) ||
                 printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT) ||
                 printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
@@ -388,22 +385,32 @@ namespace SmartDeviceApp.Controllers
         private void UpdatePreviewInfo()
         {
             // Send UI related items
-            if (_currPrintSettings.Booklet)
+
+            _isBooklet = _currPrintSettings.Booklet;
+            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
+            if (_isBooklet)
             {
-                _isBooklet = true;
-                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView;
+                if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
+                {
+                    _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewVertical;
+                }
+                else
+                {
+                    _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewHorizontal;
+                }
+            }
+            else if (_isDuplex)
+            {
+                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewHorizontal;
+            }
+            else if (!_isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Top)
+            {
+                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewVertical;
             }
             else
             {
-                _isBooklet = false;
                 _printPreviewViewModel.PageViewMode = PageViewMode.SinglePageView;
             }
-
-            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off) ||
-                (_isBooklet && _currPrintSettings.BookletFinishing == (int)BookletFinishing.Off);
-
-            _isReversePages = _isBooklet &&
-                _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
 
             _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);
 
@@ -412,11 +419,11 @@ namespace SmartDeviceApp.Controllers
             uint sliderMaxValue = _previewPageTotal;
             if (_isDuplex)
             {
-                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2);
+                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 1;
             }
             else if (_isBooklet)
             {
-                sliderMaxValue = (_previewPageTotal / 2) + 1;
+                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 2;
             }
             if (_printPreviewViewModel.PageTotal != sliderMaxValue)
             {
@@ -437,14 +444,17 @@ namespace SmartDeviceApp.Controllers
         /// <param name="orientation">orientation</param>
         /// <param name="bookletLayout">booklet layout</param>
         /// <returns>true when portrait, false otherwise</returns>
-        private bool IsPortrait(int orientation, int bookletLayout)
+        private bool IsPortrait(int orientation, int bookletLayout, int? imposition = null)
         {
             bool isPortrait = (orientation == (int)Orientation.Portrait);
             if (_isBooklet)
             {
                 isPortrait = (bookletLayout != (int)BookletLayout.TopToBottom);
             }
-
+            else if (imposition != null && imposition == (int)Imposition.TwoUp)
+            {
+                isPortrait = !isPortrait;
+            }
             return isPortrait;
         }
 
@@ -497,7 +507,7 @@ namespace SmartDeviceApp.Controllers
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = false;
 
-            GenerateNearPreviewPages(rightPageIndex);
+            // GenerateNearPreviewPages(rightPageIndex);
         }
 
         /// <summary>
@@ -508,16 +518,21 @@ namespace SmartDeviceApp.Controllers
         /// <returns></returns>
         private async Task GenerateSingleSpread(int rightPageIndex, bool enableSend)
         {
-            // When booklet is on and booklet finishing is off, act like as duplex (short edge)
-            // so no need for left side
-            if (_isBooklet) // && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
+
+            int leftPageIndex = rightPageIndex - 1;
+            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+            {
+                leftPageIndex = rightPageIndex;
+                rightPageIndex = rightPageIndex - 1;
+            }
+
+            if (_isBooklet || _isDuplex)
             {
                 // Compute left side page index
-                int leftSidePreviewPageIndex = rightPageIndex - 1;
-                if (leftSidePreviewPageIndex > 0)
+                if (leftPageIndex > -1)
                 {
                     // Generate left side
-                    await GenerateSingleLeaf(leftSidePreviewPageIndex, false, enableSend);
+                    await GenerateSingleLeaf(leftPageIndex, false, enableSend);
                 }
             }
 
@@ -539,10 +554,6 @@ namespace SmartDeviceApp.Controllers
         {
             // Compute for logical page index based on imposition
             int logicalPageIndex = pageIndex * _pagesPerSheet;
-            if (_isReversePages)
-            {
-                logicalPageIndex = (int)DocumentController.Instance.PageCount - 1 - logicalPageIndex;
-            }
 
             if (enableSend)
             {
@@ -769,15 +780,15 @@ namespace SmartDeviceApp.Controllers
                 int holeCount = GetPunchHoleCount(_currPrintSettings.Punch);
                 int staple = _currPrintSettings.Staple;
 
-                if (_isDuplex) // Also hit when booklet is on and booklet finishing is off
-                {
-                    await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
-                        finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
-                }
-                else if (_isBooklet)
+                if (_isBooklet)
                 {
                     await ApplyBooklet(finalBitmap, _currPrintSettings.BookletFinishing,
                         isFinalPortrait, isBackSide, isRightSide);
+                }
+                else if (_isDuplex)
+                {
+                    await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
+                        finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
                 }
                 else // Not duplex and not booket
                 {
@@ -817,9 +828,10 @@ namespace SmartDeviceApp.Controllers
 
                     // Check if needs to send the page image
                     // Don't bother to send the old requests
-                    if (enableSend &&
-                        ((isRightSide && _currPreviewPageIndex == previewPageIndex) ||
-                         (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex)))
+                    if (enableSend)
+                        //&&
+                        //((isRightSide && _currPreviewPageIndex == previewPageIndex) ||
+                        // (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex)))
                     {
                         // Open the bitmap
                         BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
@@ -1344,49 +1356,34 @@ namespace SmartDeviceApp.Controllers
 
             if (isBooklet)
             {
-                // Crop staple; only half of the staple is visible to each page
-                Rect region;
-                double halfStapleWidth = (double)scaledStapleBitmap.PixelWidth / 2;
-                double halfStapleHeight = (double)scaledStapleBitmap.PixelHeight / 2;
-                if (isRightSide)
-                {
-                    region = new Rect(halfStapleWidth, halfStapleHeight, halfStapleWidth, halfStapleHeight);
-                }
-                else
-                {
-                    region = new Rect(0, 0, halfStapleWidth, halfStapleHeight);
-                }
-                WriteableBitmap halfStapleBitmap =
-                    WriteableBitmapExtensions.Crop(scaledStapleBitmap, region);
-
                 // Determine finishing side
                 if (finishingSide == (int)FinishingSide.Top)
                 {
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
-                        canvasBitmap.PixelWidth, true, 0.25, false);
+                        canvasBitmap.PixelWidth, true, 0.25, 0, true);
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
-                        canvasBitmap.PixelWidth, true, 0.75, false);
+                        canvasBitmap.PixelWidth, true, 0.75, 0, true);
                 }
                 else if (finishingSide == (int)FinishingSide.Left)
                 {
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
-                        canvasBitmap.PixelHeight, false, 0.25, false);
+                        canvasBitmap.PixelHeight, false, 0.25, 0, true);
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
-                        canvasBitmap.PixelHeight, false, 0.75, false);
+                        canvasBitmap.PixelHeight, false, 0.75, 0, true);
                 }
                 else if (finishingSide == (int)FinishingSide.Right)
                 {
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
-                            canvasBitmap.PixelHeight, false, 0.25, false);
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, true,
-                        canvasBitmap.PixelHeight, false, 0.75, false);
+                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, true, false,
+                            canvasBitmap.PixelHeight, false, 0.25, 0, true);
+                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, true, true,
+                        canvasBitmap.PixelHeight, false, 0.75, 0, true);
                 }
                 else
                 {
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, true,
-                        canvasBitmap.PixelWidth, true, 0.25, false);
+                        canvasBitmap.PixelWidth, true, 0.25, 0, true);
                     ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, true,
-                        canvasBitmap.PixelWidth, true, 0.75, false);
+                        canvasBitmap.PixelWidth, true, 0.75, 0, true);
                 }
             }
             else
@@ -1438,12 +1435,12 @@ namespace SmartDeviceApp.Controllers
                             canvasBitmap.PixelHeight, false, 0.75);
                     }
                 }
-            }
-
+            } // if (isBooklet)
         }
 
         /// <summary>
         /// Adds a staple image. Requires that the staple image is already scaled.
+        /// For single staple and non-booklet only.
         /// </summary>
         /// <param name="canvasBitmap">destination image</param>
         /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
@@ -1453,11 +1450,13 @@ namespace SmartDeviceApp.Controllers
         private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd)
         {
-            ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0, true);
+            ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0,
+                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false);
         }
 
         /// <summary>
         /// Adds a staple image. Requires that the staple image is already scaled.
+        /// For double staple and non-booklet only.
         /// </summary>
         /// <param name="canvasBitmap">destination image</param>
         /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
@@ -1473,7 +1472,7 @@ namespace SmartDeviceApp.Controllers
         {
             // Right side only when booklet is ON
             ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, edgeLength, isAlongXAxis,
-                positionPercentage, true);
+                positionPercentage, PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false);
         }
 
         /// <summary>
@@ -1487,10 +1486,11 @@ namespace SmartDeviceApp.Controllers
         /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
         /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
         /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
-        /// <param name="hasStapleMargin">true when staple is put slightly off the edge (with margin), false otherwise</param>
+        /// <param name="marginStaple">margin from edge</param>
+        /// <param name="isBooklet">true when applied with booklet, false otherwise</param>
         private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
-            double positionPercentage, bool hasStapleMargin)
+            double positionPercentage, double marginStaple, bool isBooklet)
         {
             // Rotate
             WriteableBitmap rotatedStapleBitmap = stapleBitmap;
@@ -1499,26 +1499,48 @@ namespace SmartDeviceApp.Controllers
                 rotatedStapleBitmap = WriteableBitmapExtensions.RotateFree(stapleBitmap, angle, false);
             }
 
-            // Put into position
-            double marginStaple = (hasStapleMargin) ?
-                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI : 0;
-            double destXOrigin = marginStaple;
+            double destXOrigin;
             if (positionPercentage > 0 && isAlongXAxis)
             {
                 destXOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelWidth / 2);
             }
-            else if (isXEnd)
+            else if (isXEnd && isBooklet)
+            {
+                destXOrigin = canvasBitmap.PixelWidth - (rotatedStapleBitmap.PixelWidth / 2) - marginStaple;
+            }
+            else if (isXEnd && !isBooklet)
             {
                 destXOrigin = canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple;
             }
-            double destYOrigin = marginStaple;
+            else if (!isXEnd && isBooklet)
+            {
+                destXOrigin = 0 - (rotatedStapleBitmap.PixelWidth / 2);
+            }
+            else
+            {
+                destXOrigin = marginStaple;
+            }
+
+            double destYOrigin;
             if (positionPercentage > 0 && !isAlongXAxis)
             {
                 destYOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelHeight / 2);
             }
-            else if (isYEnd)
+            else if (isYEnd && isBooklet)
+            {
+                destYOrigin = canvasBitmap.PixelHeight - (rotatedStapleBitmap.PixelHeight / 2) - marginStaple;
+            }
+            else if (isYEnd && !isBooklet)
             {
                 destYOrigin = canvasBitmap.PixelHeight - rotatedStapleBitmap.PixelHeight - marginStaple;
+            }
+            else if (!isYEnd && isBooklet)
+            {
+                destYOrigin = 0 - (rotatedStapleBitmap.PixelHeight / 2);
+            }
+            else
+            {
+                destYOrigin = marginStaple;
             }
 
             Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth,
@@ -1704,8 +1726,14 @@ namespace SmartDeviceApp.Controllers
                     numberOfHoles = 2;
                     break;
                 case (int)Punch.FourHoles:
-                    //numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
-                    numberOfHoles = (_selectedPrinter.EnabledPunchFour) ? 4 : 3;
+                    if (_selectedPrinter.EnabledPunchFour)
+                    {
+                        numberOfHoles = 4;
+                    }
+                    else if (_selectedPrinter.EnabledPunchThree)
+                    {
+                        numberOfHoles = 3;
+                    }
                     break;
                 case (int)Punch.Off:
                 default:
@@ -1730,7 +1758,6 @@ namespace SmartDeviceApp.Controllers
                     distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
                     break;
                 case (int)Punch.FourHoles:
-                    //distance = (GlobalizationUtility.IsJapaneseLocale()) ?
                     distance = (_selectedPrinter.EnabledPunchFour) ?
                         PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE :
                         PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;

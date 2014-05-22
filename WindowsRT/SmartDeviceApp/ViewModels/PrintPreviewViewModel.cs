@@ -111,19 +111,28 @@ namespace SmartDeviceApp.ViewModels
         {
             if (_isPageAreaGridLoaded)
             {
-                // Save page height to be used in resizing page images                
-                var scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
-                if (_gestureController != null) _gestureController.Dispose();
+                // Save page height to be used in resizing page images
+                double scalingFactor = 1;
                 Size targetSize;
-                if (PageViewMode == PageViewMode.SinglePageView)
+                switch (PageViewMode)
                 {
-                    targetSize = RightPageActualSize;
+                    case PageViewMode.SinglePageView:
+                        scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
+                        targetSize = RightPageActualSize;
+                        break;
+
+                    case PageViewMode.TwoPageViewHorizontal:
+                        scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
+                        targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);  
+                        break;
+
+                    case PageViewMode.TwoPageViewVertical:
+                        scalingFactor = _pageAreaGridOriginalHeight / (RightPageActualSize.Height + LeftPageActualSize.Height);
+                        targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);  
+                        break;
                 }
-                else if (PageViewMode == PageViewMode.TwoPageView)
-                {
-                    var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
-                    targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width + defaultMargin, RightPageActualSize.Height);                   
-                }
+
+                if (_gestureController != null) _gestureController.Dispose();
                 _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
                        targetSize, scalingFactor,
                        new PreviewGestureController.SwipeRightDelegate(SwipeRight),

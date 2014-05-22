@@ -27,7 +27,7 @@
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding Path=Value, Converter={StaticResource IntToStringConverter}, Mode=TwoWay}"
                                         utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
-                                        IsNumeric="True"
+                                        TextBoxBehavior="Numeric"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
@@ -58,8 +58,10 @@
                                                ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"
                                                ListViewItemTextBoxTemplate="{StaticResource TEMPLATE_ListViewItemTextBox}"
                                                ListViewItemListTemplate="{StaticResource TEMPLATE_ListViewItemList}"/>
-        <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
-            <Grid x:Name="buttonGrid" Style="{StaticResource STYLE_ListHeaderGrid}">
+        <ControlTemplate x:Key="TEMPLATE_PrintButton" TargetType="Button">
+            <Grid x:Name="buttonGrid" 
+                  Background="{StaticResource BRUSH_White}"
+                  Height="{StaticResource SIZE_ListItemHeight}">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="CommonStates">
                         <VisualState x:Name="Normal"/>
@@ -68,47 +70,80 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="buttonGrid">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Purple1}"/>
                                 </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="printButtonNormalImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="printButtonPressedImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Visible</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_White}"/>
+                                </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
                         </VisualState>
                         <VisualState x:Name="Disabled"/>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Style="{StaticResource STYLE_StackLeft}" Grid.Column="0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image x:Name="printButtonNormalImage" 
+                           Stretch="None" 
+                           Source="ms-appx:///Resources/Images/img_btn_print_normal.png">
+                        <Image.Margin>
+                            <Thickness Right="{StaticResource MARGIN_Medium}"></Thickness>
+                        </Image.Margin>
+                    </Image>
+                    <Image x:Name="printButtonPressedImage"
+                           Stretch="None" 
+                           Source="ms-appx:///Resources/Images/img_btn_print_pressed.png"
+                           Visibility="Collapsed">
+                        <Image.Margin>
+                            <Thickness Right="{StaticResource MARGIN_Medium}"></Thickness>
+                        </Image.Margin>
+                    </Image>
                     <TextBlock x:Name="key" 
-                            Text="{Binding Path=Content, ElementName=printButton}" 
-                            Style="{StaticResource STYLE_TextListHeader}" />
-                </StackPanel>
-                <StackPanel Style="{StaticResource STYLE_StackRight}" Grid.Column="1">
-                    <Image x:Name="rightButton" Source="ms-appx:///Resources/Images/img_btn_submenu.png"
-                        Stretch="None"/>
-                </StackPanel>
+                               Text="{Binding Path=Content, ElementName=printButton}" 
+                               Style="{StaticResource STYLE_TextKey}"/>
+                </StackPanel>                
             </Grid>
         </ControlTemplate>
     </Grid.Resources>
 
-    <ListView ItemContainerStyle="{StaticResource STYLE_ListViewItem}">        
-        <Button x:Name="printButton"
-                Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
-                Command="{Binding PrintCommand}" 
-                Template="{StaticResource TEMPLATE_HeaderButton}"
-                Width="{Binding Width, ElementName=printSettingsBox}"
-                Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        <controls:KeyValueControl x:Name="printerButton"
-                                  Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
-                                  Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
-                                  ValueText="{Binding PrinterId, Converter={StaticResource SelectedPrinterIdToTextConverter}}"
-                                  ValueSubText="{Binding PrinterIpAddress}"
-                                  ValueSubTextVisibility="{Binding PrinterIpAddress, Converter={StaticResource StringToVisibilityConverter}}"
-                                  IconVisibility="Collapsed"
-                                  RightButtonVisibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                  RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
-                                  SeparatorVisibility="Collapsed"
-                                  Width="{Binding Width, ElementName=printSettingsBox}"
-                                  PressedColor="{StaticResource BRUSH_Purple1}"/>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition/>
+    </Grid.RowDefinitions>
+    
+    <Button x:Name="printButton"
+            Grid.Row="0"
+            Content="{Binding Source=IDS_LBL_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+            Command="{Binding PrintCommand}" 
+            Template="{StaticResource TEMPLATE_PrintButton}"
+            Width="{Binding Width, ElementName=printSettingsBox}"
+            Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+    <controls:KeyValueControl x:Name="printerButton"
+                              Grid.Row="1"
+                              Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
+                              Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
+                              ValueText="{Binding PrinterId, Converter={StaticResource SelectedPrinterIdToTextConverter}}"
+                              ValueSubText="{Binding PrinterIpAddress}"
+                              ValueSubTextVisibility="{Binding PrinterIpAddress, Converter={StaticResource StringToVisibilityConverter}}"
+                              IconVisibility="Collapsed"
+                              RightButtonVisibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
+                              SeparatorVisibility="Visible"
+                              Width="{Binding Width, ElementName=printSettingsBox}"
+                              PressedColor="{StaticResource BRUSH_Purple1}"/>
+    <ListView Grid.Row="2"
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <ListView ItemsSource="{Binding Path=PrintSettingsList}"
                   ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
             <ListView.ItemTemplate>
@@ -130,17 +165,18 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <controls:GroupListControl Text="{Binding Source=IDS_LBL_AUTHENTICATION, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+        <controls:GroupListControl Text="{Binding Source=IDS_LBL_SECURE_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                                    Width="{Binding Width, ElementName=printSettingsBox}"
                                    DeleteButtonVisibility="Collapsed"
                                    Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    PressedHeaderColor="{StaticResource BRUSH_Purple1}">
             <controls:GroupListControl.Content>
-                <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_AUTHENTICATION_PINCODE, Converter={StaticResource ResourceStringToTextConverter}}"
+                <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_PIN_CODE, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 ValueText="{Binding AuthenticationLoginPinCode, Mode=TwoWay}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                                 PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
-                                                PasswordMaxLength="{StaticResource MAXLENGTH_AuthenticationPinCode}"
+                                                PasswordMaxLength="{StaticResource MAXLENGTH_SecurePrintPinCode}"
+                                                PasswordBoxBehavior="Numeric"
                                                 Width="{Binding Width, ElementName=printSettingsBox}"
                                                 IsEnabled="True"
                                                 PressedColor="{StaticResource BRUSH_Purple1}"/>

@@ -18,7 +18,7 @@
     <!-- PRINT SETTING CONSTANTS START -->
     <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>
     <x:Int32 x:Key="MAXLENGTH_AuthenticationLoginId">31</x:Int32>
-    <x:Int32 x:Key="MAXLENGTH_AuthenticationPinCode">8</x:Int32>
+    <x:Int32 x:Key="MAXLENGTH_SecurePrintPinCode">8</x:Int32>
     <!-- PRINT SETTING CONSTANTS END -->
 
     <!-- APP THEME CONSTANTS START -->
@@ -75,6 +75,7 @@
     <conv:PrintSettingOptionToBooleanConverter x:Key="PrintSettingOptionToBooleanConverter"/>
     <conv:PrintSettingOptionToSeparatorVisibilityConverter x:Key="PrintSettingOptionToSeparatorVisibilityConverter"/>
     <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>
+    <conv:PrinterStatusToImageSourceConverter x:Key="PrinterStatusToImageSourceConverter"/>
     <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <conv:SelectedPrinterIdToTextConverter x:Key="SelectedPrinterIdToTextConverter"/>

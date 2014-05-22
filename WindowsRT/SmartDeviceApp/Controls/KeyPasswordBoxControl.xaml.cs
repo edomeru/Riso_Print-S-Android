@@ -1,4 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using Microsoft.Xaml.Interactivity;
+using SmartDeviceApp.Behaviors;
+using SmartDeviceApp.Common.Enum;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +43,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty PasswordBoxWidthProperty =
             DependencyProperty.Register("PasswordBoxWidth", typeof(double), typeof(KeyPasswordBoxControl), null);
 
+        public static readonly DependencyProperty PasswordBoxBehaviorProperty =
+            DependencyProperty.Register("PasswordBoxBehavior", typeof(TextBoxBehavior), typeof(KeyTextBoxControl), new PropertyMetadata(TextBoxBehavior.Alphanumeric, SetPasswordBoxBehavior));
+
         public new string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
@@ -56,6 +62,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (double)GetValue(PasswordBoxWidthProperty); }
             set { SetValue(PasswordBoxWidthProperty, value); }
+        }
+
+        public TextBoxBehavior PasswordBoxBehavior
+        {
+            get { return (TextBoxBehavior)GetValue(PasswordBoxBehaviorProperty); }
+            set { SetValue(PasswordBoxBehaviorProperty, value); }
         }
 
         // Sets the focus to the textbox when any part of the button is tapped
@@ -84,6 +96,8 @@ namespace SmartDeviceApp.Controls
                 passwordBox.LostFocus += OnLostFocus;
                 passwordBox.Width = PasswordBoxWidth;
                 passwordBox.MaxLength = PasswordMaxLength;
+                var behavior = new NumericPasswordBehavior();
+                behavior.Attach(passwordBox);
                 _isPasswordBoxLoaded = true;
             }
         }
@@ -109,6 +123,22 @@ namespace SmartDeviceApp.Controls
             if (e.Key == VirtualKey.Enter)
             {
                 OnLostFocus(sender, null);
+            }
+        }
+
+        private static void SetPasswordBoxBehavior(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue == null || !(e.NewValue is TextBoxBehavior)) return;
+            IBehavior behavior = null;
+            switch ((TextBoxBehavior)e.NewValue)
+            {
+                case TextBoxBehavior.Numeric:
+                    behavior = new NumericPasswordBehavior();
+                    behavior.Attach(((KeyPasswordBoxControl)obj).passwordBox);
+                    break;
+                case TextBoxBehavior.Alphanumeric:
+                    // TODO: Not yet needed
+                    break;
             }
         }
     }

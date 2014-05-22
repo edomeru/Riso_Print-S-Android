@@ -62,6 +62,7 @@ namespace SmartDeviceApp.Controllers
         private SearchPrinterViewModel _searchPrinterViewModel;
         private AddPrinterViewModel _addPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
+        private SelectPrinterViewModel _selectPrinterViewModel;
         private string _screenName;
 
         private bool isPolling = false;
@@ -94,6 +95,7 @@ namespace SmartDeviceApp.Controllers
             _searchPrinterViewModel = new ViewModelLocator().SearchPrinterViewModel;
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+            _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
 
             _screenName = SmartDeviceApp.Common.Enum.ScreenMode.Printers.ToString();
 
@@ -122,6 +124,8 @@ namespace SmartDeviceApp.Controllers
 
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
+
+            _selectPrinterViewModel.PollingHandler += _pollingHandler;
             SNMPController.Instance.Initialize();
 
         }
@@ -443,9 +447,10 @@ namespace SmartDeviceApp.Controllers
                 {
                     printer.EnabledBooklet = (capabilitesList.ElementAt(0) == "true")? true : false;
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true")? true : false;
+                    printer.EnabledPunchThree = true; // TODO: Update value here
                     printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true")? true : false;
                     printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true")? true : false;
-                    printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
+                    //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
                     printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true")? true : false;
                     printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
                 }
@@ -453,21 +458,22 @@ namespace SmartDeviceApp.Controllers
                 {
                     printer.EnabledBooklet = true;
                     printer.EnabledStapler = true;
+                    printer.EnabledPunchThree = true;
                     printer.EnabledPunchFour = true;
                     printer.EnabledTrayFacedown = true;
-                    printer.EnabledTrayAutostack = true;
                     printer.EnabledTrayTop = true;
                     printer.EnabledTrayStack = true;
                 }
 
                 try
                 {
-                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
                     int i = await DatabaseController.Instance.InsertPrinter(printer);
                     if (i == 0)
                     {
                         await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     }
+                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                    await DatabaseController.Instance.UpdatePrinter(printer);
                     printer.IsOnline = true;
                 }
                 catch (Exception e)
@@ -516,19 +522,20 @@ namespace SmartDeviceApp.Controllers
 
             printer.EnabledBooklet = true;
             printer.EnabledStapler = true;
+            printer.EnabledPunchThree = true;
             printer.EnabledPunchFour = true;
             printer.EnabledTrayFacedown = true;
-            printer.EnabledTrayAutostack = true;
             printer.EnabledTrayTop = true;
             printer.EnabledTrayStack = true;
 
             //insert to database
-            printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
             int i = await DatabaseController.Instance.InsertPrinter(printer);
             if (i == 0)
             {
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
             }
+            printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+            await DatabaseController.Instance.UpdatePrinter(printer);
 
             printer.IsOnline = false;
             //printer.IsDefault = true; //for testing
@@ -691,10 +698,11 @@ namespace SmartDeviceApp.Controllers
             { 
                 try
                 {
-                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer); // TODO: (Verify) Create print settings here or update printer after
                     int i = await DatabaseController.Instance.InsertPrinter(printer);
                     if (i == 0)
                         return false;
+                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                    await DatabaseController.Instance.UpdatePrinter(printer);
 
                     printer.IsOnline = true;
                 }

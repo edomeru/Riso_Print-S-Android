@@ -108,9 +108,10 @@ namespace SmartDeviceApp.Controllers
                     List<string> capabilitesList = device.getCapabilities();
                     printer.EnabledBooklet = (capabilitesList.ElementAt(0) == "true") ? true : false;
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") ? true : false;
+                    printer.EnabledPunchThree = true; // TODO: Update value here
                     printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true") ? true : false;
                     printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true") ? true : false;
-                    printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true") ? true : false;
+                    // printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true") ? true : false; // TODO: Remove
                     printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true") ? true : false;
                     printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
                 }
@@ -118,9 +119,10 @@ namespace SmartDeviceApp.Controllers
                 {
                     printer.EnabledBooklet = true;
                     printer.EnabledStapler = true;
+                    printer.EnabledPunchThree = true;
                     printer.EnabledPunchFour = true;
                     printer.EnabledTrayFacedown = true;
-                    printer.EnabledTrayAutostack = true;
+                    // printer.EnabledTrayAutostack = true; // TODO: Remove
                     printer.EnabledTrayTop = true;
                     printer.EnabledTrayStack = true;
                 }

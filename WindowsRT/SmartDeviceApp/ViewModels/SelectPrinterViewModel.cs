@@ -12,6 +12,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
@@ -29,6 +30,7 @@ namespace SmartDeviceApp.ViewModels
     public class SelectPrinterViewModel : ViewModelBase
     {
         public event SmartDeviceApp.Controllers.PrintPreviewController.SelectedPrinterChangedEventHandler SelectPrinterEvent;
+        public event SmartDeviceApp.Controllers.PrinterController.PollingHandler PollingHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -43,6 +45,8 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
+
+            Messenger.Default.Register<PrintSettingsPaneMode>(this, (printSettingsPaneMode) => StartPolling(printSettingsPaneMode));
         }
 
         public ObservableCollection<Printer> PrinterList
@@ -106,8 +110,21 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        private void StartPolling(PrintSettingsPaneMode printSettingsPaneMode)
+        {
+            if (printSettingsPaneMode == PrintSettingsPaneMode.SelectPrinter
+                && PollingHandler != null)
+            {
+                PollingHandler(true);
+            }
+        }
+
         private void BackToPrintSettingsExecute()
         {
+            if (PollingHandler != null)
+            {
+                PollingHandler(false);
+            }
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
         }
 

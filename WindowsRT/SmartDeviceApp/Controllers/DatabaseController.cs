@@ -53,13 +53,11 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initialize database
         /// </summary>
-        /// <returns></returns>
+        /// <returns>task</returns>
         public async Task Initialize()
         {
             await CreateDatabase();
-
-            // TODO: Remove after testing (or create an initial data manager)
-            await InsertSampleData();
+            await DefaultsUtility.LoadDefaultsFromSqlScript(FILE_PATH_DATABASE_SCRIPT);
         }
 
         /// <summary>
@@ -76,63 +74,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task CreateDatabase()
         {
-#if true // CREATE_TABLES_USING_SCRIPT
-            #region Create Tables Using Script File
-
             await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
-            await DefaultsUtility.LoadDefaultsFromSqlScript(FILE_PATH_DATABASE_SCRIPT);
-
-            #endregion Create Create Tables Using Script File
-#else // CREATE_TABLES_USING_SCRIPT
-            #region Create Tables Using Model Classes
-
-            try
-            {
-                // TODO: Handling when database file does not exist
-
-                _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-                using (var db = new SQLite.SQLiteConnection(_databasePath))
-                {
-                    /*
-                    // DeleteAll is for testing purposes only PrintersModule
-                    db.DeleteAll<Printer>();
-                    db.Commit();
-
-                    db.DeleteAll<DefaultPrinter>();
-                    db.Commit();
-                     * */
-
-                    // Create the tables if they don't exist
-
-                    // Printer table
-                    db.CreateTable<Printer>();
-                    db.Commit();
-
-                    // DefaultPrinter Table
-                    db.CreateTable<DefaultPrinter>();
-                    db.Commit();
-
-                    // PrintSettings Table
-                    db.CreateTable<PrintSettings>();
-                    db.Commit();
-
-                    // PrintJob Table
-                    db.CreateTable<PrintJob>();
-                    db.Commit();
-
-                    db.Dispose();
-                    db.Close();
-
-                    // insertPrinters(); //for testing PrintersModule
-                }
-            }
-            catch
-            {
-                // Error in creating tables
-            }
-
-            #endregion Create Tables Using Model Classes
-#endif // CREATE_TABLES_USING_SCRIPT
 
             // TODO: Enable this pragma then debug
             // Note: When pragma foreign_keys is enabled, SQLiteException ("Constraints")
@@ -145,7 +87,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="filePath">file path of the script; assumed to be a resource file</param>
         /// <returns>task</returns>
-        private async Task ExecuteScript(string filePath)
+        public async Task ExecuteScript(string filePath)
         {
             string scriptText = null;
 
@@ -190,43 +132,6 @@ namespace SmartDeviceApp.Controllers
 
         #region Printer Table Operations
 
-        /*
-        private void insertPrinters()
-        {
-            Printer printer = new Printer(1, 1, "192.168.0.22", "RISO_Printer1", 1, true, true,
-                true, true, true, true, true);
-            Printer printer2 = new Printer(2, 2, "192.168.0.2", "RISO_Printer2", 1, true, true,
-                true, true, true, true, true);
-            Printer printer3 = new Printer(3, 3, "192.168.0.3", "RISO_Printer3", 1, true, true,
-                true, true, true, true, true);
-
-            DefaultPrinter dp = new DefaultPrinter(printer.Id);
-
-            var dbpath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
-                DATABASE_FILE_NAME);
-            using (var db = new SQLite.SQLiteConnection(dbpath))
-            {
-                // Create the tables if they don't exist
-                db.Insert(printer);
-                db.Commit();
-
-                db.Insert(printer2);
-                db.Commit();
-
-                db.Insert(printer3);
-                db.Commit();
-
-                db.Insert(dp);
-                db.Commit();
-
-                db.Dispose();
-                db.Close();
-            }
-
-
-        }
-        */
-
         /// <summary>
         /// Insert an item into Printer table
         /// </summary>
@@ -266,41 +171,6 @@ namespace SmartDeviceApp.Controllers
 
             return printerList;
         }
-
-        //// TODO: Check usage. Use public async Task<int> UpdateDefaultPrinter(int printerId) below instead
-        //public async Task<int> SetDefaultPrinter(int printerId)
-        //{
-        //    try
-        //    {
-        //        if (printerId < 0)
-        //        {
-        //            //delete value in table
-        //        }
-        //        else
-        //        {
-        //            var existingDefault = await (_dbConnection.Table<DefaultPrinter>().FirstOrDefaultAsync());
-
-        //            if (existingDefault != null)
-        //            {
-        //                // update default printer id
-        //                existingDefault.PrinterId = (uint)printerId;
-        //            }
-        //            else
-        //            {
-        //                // no default printer, insert new
-        //                DefaultPrinter dp = new DefaultPrinter();
-        //                dp.PrinterId = (uint)printerId;
-
-        //                int success = await _dbConnection.InsertAsync(dp);
-        //            }
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return 0;
-        //    }
-        //    return 1;
-        //}
 
         /// <summary>
         /// Updates a printer in the database
@@ -352,7 +222,6 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
 
-
                 return await _dbConnection.DeleteAsync(printer);
             }
             catch
@@ -380,46 +249,6 @@ namespace SmartDeviceApp.Controllers
             }
             return null;
         }
-
-        ///// <summary>
-        ///// Retrieves the printer name
-        ///// </summary>
-        ///// <param name="id">printer ID</param>
-        ///// <returns>task; printer name if found, empty string otherwise</returns>
-        //public async Task<string> GetPrinterName(int id)
-        //{
-        //    try
-        //    {
-        //        Printer printer = await _dbConnection.GetAsync<Printer>(id);
-        //        if (printer != null)
-        //        {
-        //            return printer.Name;
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        // Error handling here
-        //    }
-        //    return string.Empty;
-        //}
-
-        //public async Task UpdatePortNumber(Printer printer)
-        //{
-        //    var db = new SQLite.SQLiteAsyncConnection(_databasePath);
-
-        //    try
-        //    {
-        //        var printerFromDB = await db.GetAsync<Printer>(printer.Id);
-        //        printerFromDB.PortSetting = printer.PortSetting;
-
-        //        int i = await db.UpdateAsync(printerFromDB);
-        //    }
-        //    catch
-        //    {
-        //        // Error handling here
-        //    }
-        //    return;
-        //}
 
         #endregion Printer Table Operations
 
@@ -685,36 +514,6 @@ namespace SmartDeviceApp.Controllers
         }
 
         #endregion PrintJob Table Operations
-
-        #region Dummy - Initial Data
-
-        /// <summary>
-        /// Inserts sample data on first run of app after installation
-        /// </summary>
-        /// <returns>task</returns>
-        private async Task InsertSampleData()
-        {
-            bool isPreviouslyLoaded = false;
-            string key = "IsSampleDataAlreadyLoaded";
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values.ContainsKey(key))
-            {
-                isPreviouslyLoaded = (bool)localSettings.Values[key];
-            }
-            else
-            {
-                localSettings.Values[key] = true;
-            }
-
-            if (!isPreviouslyLoaded)
-            {
-                //await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS, OFF)); // Disable foreign keys
-                await ExecuteScript("Resources/Dummy/SampleData.sql");
-                //await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS, ON)); // Re-enable foreign keys
-            }
-        }
-
-        #endregion Dummy - Initial Data
 
     }
 }

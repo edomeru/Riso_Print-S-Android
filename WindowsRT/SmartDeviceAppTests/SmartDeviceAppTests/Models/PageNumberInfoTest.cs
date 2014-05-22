@@ -21,7 +21,9 @@ namespace SmartDeviceAppTests.Models
             pageNumberInfo.PageTotal = 6;
             pageNumberInfo.PageViewMode = PageViewMode.TwoPageView;
 
-            // Note: nothing to sssert
+            Assert.AreEqual((uint)1, pageNumberInfo.PageIndex);
+            Assert.AreEqual((uint)6, pageNumberInfo.PageTotal);
+            Assert.AreEqual(PageViewMode.TwoPageView, pageNumberInfo.PageViewMode);
         }
 
     }

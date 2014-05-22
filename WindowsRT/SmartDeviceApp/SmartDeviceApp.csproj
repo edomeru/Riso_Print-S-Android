@@ -108,9 +108,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\AlphaNumericTextBoxBehavior.cs" />
+    <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
+    <Compile Include="Common\Enum\TextBoxBehavior.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
     <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />
@@ -134,6 +137,7 @@
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\DirectPrintController.cs" />
+    <Compile Include="Controllers\InitialDataController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
@@ -172,6 +176,7 @@
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColor.cs" />
+    <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
     <Compile Include="Converters\BooleanToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
       <DependentUpon>MainMenuKeyControl.xaml</DependentUpon>
@@ -243,7 +248,6 @@
     <Compile Include="Controllers\PrintPreviewController.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
-    <Compile Include="DummyControllers\DummyProvider.cs" />
     <Compile Include="Models\DataItem.cs" />
     <Compile Include="Models\DataService.cs" />
     <Compile Include="Models\DefaultPrinter.cs" />
@@ -407,6 +411,12 @@
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-100.png" />
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-140.png" />
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-140.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-180.png" />
@@ -636,10 +646,10 @@
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -648,10 +658,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|ARM'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|ARM'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\ARM\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -661,10 +671,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\x64\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -674,10 +684,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\x86\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>

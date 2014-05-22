@@ -120,8 +120,8 @@
   <data name="IDS_APP_NAME" xml:space="preserve">
     <value>RISO Smart Print</value>
   </data>
-  <data name="IDS_LBL_BACK" xml:space="preserve">
-    <value>Back</value>
+  <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
+    <value>Smart Print</value>
   </data>
   <data name="IDS_LBL_SAVE" xml:space="preserve">
     <value>Save</value>
@@ -131,6 +131,12 @@
   </data>
   <data name="IDS_LBL_CANCEL" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="IDS_LBL_NO_NAME" xml:space="preserve">
+    <value>No Name</value>
+  </data>
+  <data name="IDS_LBL_DELETE" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="IDS_LBL_OPEN_IN_IOS" xml:space="preserve">
     <value>Open-in Document Here</value>
@@ -162,41 +168,11 @@
   <data name="IDS_LBL_SEARCH_PRINTERS" xml:space="preserve">
     <value>Printer Search</value>
   </data>
-  <data name="IDS_LBL_SAVED_PRINTERS" xml:space="preserve">
-    <value>Saved Printers</value>
-  </data>
-  <data name="IDS_LBL_DEFAULT_PRINTER" xml:space="preserve">
-    <value>Default Printer</value>
-  </data>
-  <data name="IDS_LBL_DELETE" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="IDS_LBL_PULL_TO_REFRESH" xml:space="preserve">
-    <value>Pull to refresh</value>
-  </data>
-  <data name="IDS_LBL_RELEASE_TO_REFRESH" xml:space="preserve">
-    <value>Release to refresh</value>
-  </data>
-  <data name="IDS_LBL_REFRESHING" xml:space="preserve">
-    <value>Refreshing…</value>
-  </data>
-  <data name="IDS_LBL_LAST_UPDATED" xml:space="preserve">
-    <value>Updated: %@</value>
-  </data>
   <data name="IDS_LBL_SET_DEFAULT_PRINTER" xml:space="preserve">
     <value>Set as Default Printer</value>
   </data>
-  <data name="IDS_LBL_ADD_SUCCESSFUL" xml:space="preserve">
-    <value>Added Successfully</value>
-  </data>
   <data name="IDS_LBL_DELETE_ALL" xml:space="preserve">
     <value>Delete All</value>
-  </data>
-  <data name="IDS_LBL_DELETE_JOBS_TITLE" xml:space="preserve">
-    <value>Delete Print Job History</value>
-  </data>
-  <data name="IDS_LBL_DELETE_JOBS_MSG" xml:space="preserve">
-    <value>Are you sure you want to delete?</value>
   </data>
   <data name="IDS_LBL_PRINTER_INFO" xml:space="preserve">
     <value>Printer Info</value>
@@ -216,29 +192,14 @@
   <data name="IDS_LBL_PORT_LPR" xml:space="preserve">
     <value>LPR</value>
   </data>
-  <data name="IDS_LBL_PRINTER_STATUS" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="IDS_LBL_PRINTER_STATUS_ONLINE" xml:space="preserve">
-    <value>Online</value>
-  </data>
-  <data name="IDS_LBL_PRINTER_STATUS_OFFLINE" xml:space="preserve">
-    <value>Offline</value>
-  </data>
   <data name="IDS_LBL_DEFAULT_PRINT_SETTINGS" xml:space="preserve">
     <value>Default Print Settings</value>
   </data>
-  <data name="IDS_LBL_CARD_READER_GROUP" xml:space="preserve">
-    <value>CARD READER</value>
+  <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
+    <value>Authentication</value>
   </data>
-  <data name="IDS_LBL_CARD_ID" xml:space="preserve">
-    <value>ID</value>
-  </data>
-  <data name="IDS_LBL_PRINTER_SEARCH_GROUP" xml:space="preserve">
-    <value>PRINTER SEARCH</value>
-  </data>
-  <data name="IDS_LBL_PRINTING" xml:space="preserve">
-    <value>Printing…</value>
+  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
+    <value>Log-in ID</value>
   </data>
   <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
     <value>Print Settings</value>
@@ -492,26 +453,23 @@
   <data name="IDS_LBL_OUTPUTTRAY_FACEDOWN" xml:space="preserve">
     <value>Face down tray</value>
   </data>
-  <data name="IDS_LBL_OUTPUTTRAY_FACEUP" xml:space="preserve">
-    <value>Face up tray</value>
-  </data>
   <data name="IDS_LBL_OUTPUTTRAY_TOP" xml:space="preserve">
     <value>Top</value>
   </data>
   <data name="IDS_LBL_OUTPUTTRAY_STACKING" xml:space="preserve">
     <value>Stacking</value>
   </data>
-  <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
-    <value>Authentication</value>
+  <data name="IDS_LBL_SECURE_PRINT" xml:space="preserve">
+    <value>Secure Print</value>
   </data>
-  <data name="IDS_LBL_AUTHENTICATION_LOGINID" xml:space="preserve">
-    <value>Login ID</value>
-  </data>
-  <data name="IDS_LBL_AUTHENTICATION_PINCODE" xml:space="preserve">
+  <data name="IDS_LBL_PIN_CODE" xml:space="preserve">
     <value>PIN Code</value>
   </data>
   <data name="IDS_LBL_OFF" xml:space="preserve">
     <value>Off</value>
+  </data>
+  <data name="IDS_LBL_ON" xml:space="preserve">
+    <value>On</value>
   </data>
   <data name="IDS_LBL_HELP" xml:space="preserve">
     <value>Help</value>
@@ -519,10 +477,25 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>Legal</value>
   </data>
-  <data name="IDS_LBL_PRINT_JOB_SUCCESSFUL" xml:space="preserve">
+  <data name="IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" xml:space="preserve">
+    <value>Added Successfully</value>
+  </data>
+  <data name="IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
+    <value>Warning, Cannot find Printer.</value>
+  </data>
+  <data name="IDS_INFO_MSG_PRINTING" xml:space="preserve">
+    <value>Printing…</value>
+  </data>
+  <data name="IDS_INFO_MSG_DELETE_JOBS_TITLE" xml:space="preserve">
+    <value>Delete Print Job History</value>
+  </data>
+  <data name="IDS_INFO_MSG_DELETE_JOBS" xml:space="preserve">
+    <value>Are you sure you want to delete?</value>
+  </data>
+  <data name="IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL" xml:space="preserve">
     <value>Successful</value>
   </data>
-  <data name="IDS_LBL_PRINT_JOB_FAILED" xml:space="preserve">
+  <data name="IDS_INFO_MSG_PRINT_JOB_FAILED" xml:space="preserve">
     <value>Failed</value>
   </data>
   <data name="IDS_ERR_MSG_CANNOT_ADD_PRINTER" xml:space="preserve">
@@ -534,17 +507,20 @@
   <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
     <value>Saved Printer reached maximum count.</value>
   </data>
-  <data name="IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
-    <value>Warning, Cannot find Printer.</value>
-  </data>
-  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
-    <value>Please check the password you entered</value>
+  <data name="IDS_ERR_MSG_DELETE_FAILED" xml:space="preserve">
+    <value>Unable to delete.</value>
   </data>
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>Please register a printer</value>
   </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value>Please check the password you entered</value>
+  </data>
   <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
     <value>Please select a valid file.</value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
+    <value>PDF Encryption is not supported</value>
   </data>
   <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
     <value>File size is too large</value>
@@ -552,25 +528,11 @@
   <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
     <value>Not enough free space on device</value>
   </data>
-  <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
-    <value>PDF Encryption is not supported</value>
-  </data>
-  <data name="IDS_ERR_MSG_DELETE_FAILED" xml:space="preserve">
-    <value>Unable to delete.</value>
-  </data>
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
   </data>
+  <!-- Not in wording list -->
   <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
     <value>Page {0} / {1}</value>
-  </data>
-  <data name="IDS_LBL_JOBS" xml:space="preserve">
-    <value>Jobs</value>
-  </data>
-  <data name="IDS_LBL_READ_COMMUNITY_NAME" xml:space="preserve">
-    <value>Read Community Name</value>
-  </data>
-  <data name="IDS_LBL_NO_NAME" xml:space="preserve">
-    <value>No name</value>
   </data>
 </root>

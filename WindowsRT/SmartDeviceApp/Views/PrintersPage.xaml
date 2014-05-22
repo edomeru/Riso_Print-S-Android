@@ -19,8 +19,6 @@
     DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
 
     <base:PageBase.Resources>
-        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
-
         <DataTemplate x:Key="TEMPLATE_AddPrinterPane">
             <local:AddPrinterPane/>
         </DataTemplate>
@@ -153,10 +151,10 @@
 
                             <controls:KeyValueControl x:Name="ipAddress" 
                                                       IconVisibility="Collapsed"
-                                                          Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                                      Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                                       ValueText="{Binding IpAddress}"
-                                                          RightButtonVisibility="Collapsed"
-                                                          ValueVisibility="Visible"
+                                                      RightButtonVisibility="Collapsed"
+                                                      ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                       Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
@@ -202,8 +200,8 @@
                                                       CommandParameter="{Binding}"
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                     SeparatorVisibility="Collapsed"
-                                                      />
+                                                      SeparatorVisibility="Collapsed"
+                                                      ValueVisibility="Collapsed"/>
 
                         </ListView>
                     </DataTemplate>

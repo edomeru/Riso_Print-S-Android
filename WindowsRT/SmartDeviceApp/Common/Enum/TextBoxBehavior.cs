@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
-    public enum PageViewMode
+    public enum TextBoxBehavior
     {
-        SinglePageView,
-        TwoPageViewHorizontal,
-        TwoPageViewVertical
+        Numeric,
+        Alphanumeric
     }
 }
