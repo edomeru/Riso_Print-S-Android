@@ -11,17 +11,15 @@ package jp.co.riso.smartdeviceapp.view.printers;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrinterInfoFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback;
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -35,7 +33,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, Callback {
-    public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
     private static final int MSG_REMOVE_PRINTER = 0x01;
     
     private WeakReference<PrintersViewCallback> mCallbackRef = null;
@@ -44,6 +41,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     private ViewHolder mDefaultViewHolder = null;
     private int mLayoutId = 0;
     private Handler mHandler = null;
+    private PauseableHandler mPauseableHandler = null;
     
     /**
      * Constructor
@@ -170,6 +168,15 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         }
     }
     
+    /**
+     * Set the pausable handler object
+     * 
+     * @param handler
+     */
+    public void setPausableHandler(PauseableHandler handler) {
+        mPauseableHandler = handler;
+    }
+    
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -292,24 +299,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         }
     }
     
-    /**
-     * Switch to a fragment
-     * 
-     * @param fragment
-     *            Fragment object
-     * @param tag
-     *            Fragment tag
-     */
-    private void switchToFragment(BaseFragment fragment, String tag) {
-        FragmentManager fm = ((Activity) getContext()).getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        
-        ft.setCustomAnimations(R.animator.left_slide_in, R.animator.left_slide_out, R.animator.right_slide_in, R.animator.right_slide_out);
-        ft.addToBackStack(null);
-        ft.replace(R.id.mainLayout, fragment, tag);
-        ft.commit();
-    }
-    
     // ================================================================================
     // INTERFACE - View.OnClick
     // ================================================================================
@@ -322,7 +311,11 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 Printer printer = (Printer) v.findViewById(R.id.img_disclosure).getTag();
                 PrinterInfoFragment fragment = new PrinterInfoFragment();
                 fragment.setPrinter(printer);
-                switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
+                if (mPauseableHandler != null) {
+                    Message msg = Message.obtain(mPauseableHandler, PrintersFragment.MSG_SUBMENU_BUTTON);
+                    msg.obj = fragment;
+                    mPauseableHandler.sendMessage(msg);
+                }
                 break;
             case R.id.btn_delete:
                 if (mCallbackRef != null && mCallbackRef.get() != null) {
@@ -335,9 +328,10 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     }
     
     // ================================================================================
-    // Interface Callback
+    // INTERFACE - Callback
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -351,7 +345,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         }
         return false;
     }
-    
+
     // ================================================================================
     // Internal Classes
     // ================================================================================
