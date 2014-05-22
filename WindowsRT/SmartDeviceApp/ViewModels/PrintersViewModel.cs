@@ -117,12 +117,14 @@ namespace SmartDeviceApp.ViewModels
                         _gestureController.EnableGestures();
 
                         //start polling
-                        PollingHandler(true);
+                        if (PollingHandler != null)
+                            PollingHandler(true);
                     }
                     else
                     {
                         //end polling
-                        PollingHandler(false);
+                        if (PollingHandler != null)
+                            PollingHandler(false);
                         _gestureController.DisableGestures();
                     }
                 }
@@ -132,16 +134,16 @@ namespace SmartDeviceApp.ViewModels
 
         private void GridTapped(string tapped)
         {
-            if (tapped == "ClearDelete")
-            {
-                int i = 0;
-                while (i < PrinterList.Count)
-                {
-                    Printer printer = PrinterList.ElementAt(i);
-                    printer.WillBeDeleted = false;
-                    i++;
-                } 
-            }
+            //if (tapped == "ClearDelete")
+            //{
+            //    int i = 0;
+            //    while (i < PrinterList.Count)
+            //    {
+            //        Printer printer = PrinterList.ElementAt(i);
+            //        printer.WillBeDeleted = false;
+            //        i++;
+            //    } 
+            //}
         }
 
 
@@ -190,10 +192,30 @@ namespace SmartDeviceApp.ViewModels
                 return _deletePrinter;
             }
         }
-
-        private void DeletePrinterExecute(string ipAddress)
+        private string _printerToBeDeleted;
+        private async Task DeletePrinterExecute(string ipAddress)
         {
-            DeletePrinterHandler(ipAddress);
+            _printerToBeDeleted = ipAddress;
+            await DialogService.Instance.ShowMessage("IDS_LBL_DELETE_JOBS_MSG", "IDS_LABEL_PRINTER",  "IDS_LBL_OK", "IDS_LBL_CANCEL", new Action<bool>(DeletePrinterFromDB));
+        }
+
+        private void DeletePrinterFromDB(bool isOk)
+        {
+
+            if (isOk)
+            {
+                if (_printerToBeDeleted != "")
+                {
+                    DeletePrinterHandler(_printerToBeDeleted);
+                    _printerToBeDeleted = "";
+                }
+            }
+            else
+            {
+                Printer printer = PrinterList.First(x => x.IpAddress == _printerToBeDeleted);
+                printer.WillBeDeleted = false;
+            }
+            
         }
 
         public ICommand OpenDefaultPrinterSettings

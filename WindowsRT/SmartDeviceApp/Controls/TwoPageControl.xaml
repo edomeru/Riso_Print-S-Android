@@ -39,18 +39,12 @@
                 <ColumnDefinition x:Name="leftPageArea"/>
                 <ColumnDefinition x:Name="rightPageArea"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Row="0" Grid.Column="2" Background="Red">
-                <local:PageControl x:Name="topPage"
-                                   Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
-            </Grid>
-            <Grid Grid.Row="1" Grid.Column="0" >
-                <local:PageControl x:Name="leftPage"                                   
-                                   Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
-            </Grid>
-            <Grid Grid.Row="1" Grid.Column="1">
-                <local:PageControl x:Name="rightPage"
-                                   Image="{Binding RightPageImage, ElementName=twoPageControl}"/>
-            </Grid>
+            <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
+                                Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
+            <local:PageControl x:Name="leftPage"  Grid.Row="1" Grid.Column="0"                           
+                                Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
+            <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
+                                Image="{Binding RightPageImage, ElementName=twoPageControl}"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

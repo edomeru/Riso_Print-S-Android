@@ -91,6 +91,8 @@ namespace SmartDeviceApp.ViewModels
 
         private async Task AddPrinterExecute()
         {
+            //Messenger.Default.Send<string>("HideKeyboard");
+
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
             PrinterSearchList.Clear();
@@ -144,14 +146,14 @@ namespace SmartDeviceApp.ViewModels
 
             if (isSuccessful)
             {
-                content = loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                content = loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
             }
             else
             {
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    content = loader.GetString("IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
-                        loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
+                        loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
                 }
                 else
                 {
@@ -176,7 +178,12 @@ namespace SmartDeviceApp.ViewModels
 
         public void DisplayMessage(string caption, string content, string buttonText)
         {
-            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, null);
+            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(CloseAddPane));
+        }
+
+        private void CloseAddPane()
+        {
+            _viewControlViewModel.ViewMode = ViewMode.FullScreen;
         }
 
         private void SetViewMode(VisibleRightPane viewMode)

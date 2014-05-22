@@ -94,7 +94,7 @@ namespace SmartDeviceApp.Controls
                 }
                 case PageViewMode.TwoPageViewVertical:
                 {
-                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
+                    ((TwoPageControl)obj).topPage.Visibility = Visibility.Visible;
                     var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Height);
                     ((TwoPageControl)obj).topPageArea.Height = gridLength;
                     ((TwoPageControl)obj).bottomPageArea.Height = gridLength;

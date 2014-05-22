@@ -44,11 +44,5 @@ namespace SmartDeviceApp.Views
             // Calculate the proper max rows or columns based on new size 
             this.MaxRowsOrColumns = this.ItemWidth > 0 ? Convert.ToInt32(Math.Floor(e.NewSize.Width / this.ItemWidth)) : maxRowsOrColumns;
         }
-
-        protected override void OnTapped(Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        {
-            base.OnTapped(e);
-            Messenger.Default.Send<string>("ClearDelete");
-        }
     }
 }
