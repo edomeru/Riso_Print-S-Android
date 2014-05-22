@@ -18,6 +18,8 @@ public interface PreviewControlsListener {
     public void onIndexChanged(int index);
     
     /**
+     * Used to add bottom margin to glview to allow overlapping of views
+     * 
      * @return controls height
      */
     public int getControlsHeight();
