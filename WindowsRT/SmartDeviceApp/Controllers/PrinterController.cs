@@ -618,6 +618,13 @@ namespace SmartDeviceApp.Controllers
                     }
                  }
             }
+            //if (e.PropertyName == "VisualState")
+            //{
+            //    if (printer.VisualState == "Pressed")
+            //    {
+            //        handleOpenDefaultPrintSettings(printer);
+            //    }
+            //}
             //For future use
             //if (e.PropertyName == "PortSetting")
             //{

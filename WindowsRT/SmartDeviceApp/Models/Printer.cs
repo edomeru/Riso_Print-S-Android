@@ -33,7 +33,7 @@ namespace SmartDeviceApp.Models
         private bool _isDefault;
         private bool _willBeDeleted;
         private bool _willPerformDelete;
-
+        private string _visualState;
         /// <summary>
         /// Printer ID, used by Printer table as primary key
         /// </summary>
@@ -181,6 +181,17 @@ namespace SmartDeviceApp.Models
             {
                 _willBeDeleted = value;
                 OnPropertyChanged("WillBeDeleted");
+            }
+        }
+
+        [SQLite.Ignore]
+        public string VisualState
+        {
+            get { return this._visualState; }
+            set
+            {
+                _visualState = value;
+                OnPropertyChanged("VisualState");
             }
         }
 

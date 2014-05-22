@@ -145,6 +145,9 @@
     <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
+    <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
+      <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MessageProgressBarControl.xaml.cs">
       <DependentUpon>MessageProgressBarControl.xaml</DependentUpon>
     </Compile>
@@ -463,6 +466,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\DefaultPrintSettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\MessageProgressBarControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
