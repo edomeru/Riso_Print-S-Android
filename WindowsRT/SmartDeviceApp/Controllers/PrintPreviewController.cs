@@ -785,7 +785,7 @@ namespace SmartDeviceApp.Controllers
                 if (_isBooklet)
                 {
                     await ApplyBooklet(finalBitmap, _currPrintSettings.BookletFinishing,
-                        isFinalPortrait, isBackSide, isRightSide);
+                        isFinalPortrait, isRightSide, isBackSide);
                 }
                 else if (_isDuplex)
                 {
@@ -1298,18 +1298,28 @@ namespace SmartDeviceApp.Controllers
             bool isPortrait, bool isRightSide, bool isBackSide)
         {
             // Determine finishing side
-            int bindingSide = -1; // Out of range number to denote bottom
-            if (isPortrait && !isBackSide)
+            int bindingSide;
+            if (isPortrait)
             {
-                bindingSide = (int)FinishingSide.Left;
+                if ((isRightSide && isBackSide) || (!isRightSide && !isBackSide))
+                {
+                    bindingSide = (int)FinishingSide.Right;
+                }
+                else
+                {
+                    bindingSide = (int)FinishingSide.Left;
+                }
             }
-            else if (isPortrait && isBackSide)
+            else
             {
-                bindingSide = (int)FinishingSide.Right;
-            }
-            else if (!isPortrait && !isBackSide)
-            {
-                bindingSide = (int)FinishingSide.Top;
+                if ((isRightSide && isBackSide) || (!isRightSide && !isBackSide))
+                {
+                    bindingSide = -1; // Out of range number to denote bottom
+                }
+                else
+                {
+                    bindingSide = (int)FinishingSide.Top;
+                }
             }
 
             // Determine booklet type
