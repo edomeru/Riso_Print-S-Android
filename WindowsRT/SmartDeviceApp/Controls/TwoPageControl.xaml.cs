@@ -27,16 +27,17 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("PageAreaGrid", typeof(Grid), typeof(TwoPageControl), null);
         
         public static readonly DependencyProperty RightPageImageProperty =
-            DependencyProperty.Register("RightPageImage", typeof(ImageSource), typeof(TwoPageControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetRightPageImage)));
-        
+            DependencyProperty.Register("RightPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
         public static readonly DependencyProperty LeftPageImageProperty =
-            DependencyProperty.Register("LeftPageImage", typeof(ImageSource), typeof(TwoPageControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetLeftPageImage)));
+            DependencyProperty.Register("LeftPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
 
         public static readonly DependencyProperty PageViewModeProperty =
            DependencyProperty.Register("PageViewMode", typeof(PageViewMode), typeof(TwoPageControl),
            new PropertyMetadata(PageViewMode.SinglePageView, new PropertyChangedCallback(SetPageViewMode)));
+
+        public static readonly DependencyProperty PageAreaSizeProperty =
+           DependencyProperty.Register("PageAreaSize", typeof(Size), typeof(TwoPageControl), null);
 
         public Grid PageAreaGrid
         {
@@ -54,43 +55,53 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(LeftPageImageProperty); }
             set { SetValue(LeftPageImageProperty, value); }
         }
-
+		
         public PageViewMode PageViewMode
         {
             get { return (PageViewMode)GetValue(PageViewModeProperty); }
             set { SetValue(PageViewModeProperty, value); }
         }
 
-        private static void SetRightPageImage(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        public Size PageAreaSize
         {
-            if ((ImageSource)e.NewValue != null)
-            {
-                ((TwoPageControl)obj).rightPage.Image = (ImageSource)e.NewValue;
-            }
-        }
-
-        private static void SetLeftPageImage(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((ImageSource)e.NewValue != null)
-            {
-                ((TwoPageControl)obj).leftPage.Image = (ImageSource)e.NewValue;
-            }
+            get { return (Size)GetValue(PageAreaSizeProperty); }
+            set { SetValue(PageAreaSizeProperty, value); }
         }
 
         private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            if ((PageViewMode)e.NewValue == PageViewMode.SinglePageView)
+            switch((PageViewMode)e.NewValue)
             {
-                ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
-                ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
-                ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
-                ((TwoPageControl)obj).rightPage.Margin = new Thickness(0,0,0,0);
-            }
-            else if ((PageViewMode)e.NewValue == PageViewMode.TwoPageView)
-            {
-                ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
-                ((TwoPageControl)obj).leftPageArea.Width = new GridLength(1, GridUnitType.Star);
-                ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
+                case PageViewMode.SinglePageView:
+                {
+                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
+                    ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
+                    ((TwoPageControl)obj).topPage.Visibility = Visibility.Collapsed;
+                    ((TwoPageControl)obj).topPageArea.Height = new GridLength(0);
+                    ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
+                    ((TwoPageControl)obj).rightPage.Margin = new Thickness(0,0,0,0);
+                    break;
+                }
+                case PageViewMode.TwoPageViewHorizontal:
+                {
+                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
+                    var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Width);
+                    ((TwoPageControl)obj).leftPageArea.Width = gridLength;
+                    ((TwoPageControl)obj).rightPageArea.Width = gridLength;
+                    ((TwoPageControl)obj).topPage.Visibility = Visibility.Collapsed;
+                    ((TwoPageControl)obj).topPageArea.Height = new GridLength(0);
+                    break;
+                }
+                case PageViewMode.TwoPageViewVertical:
+                {
+                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
+                    var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Height);
+                    ((TwoPageControl)obj).topPageArea.Height = gridLength;
+                    ((TwoPageControl)obj).bottomPageArea.Height = gridLength;
+                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
+                    ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
+                    break;
+                }
             }
         }
     }

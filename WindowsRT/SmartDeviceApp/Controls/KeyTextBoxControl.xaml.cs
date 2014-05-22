@@ -129,7 +129,16 @@ namespace SmartDeviceApp.Controls
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
-            ValueText = ((TextBox)sender).Text;
+            if ((TextBoxBehavior)GetValue(TextBoxBehaviorProperty) == TextBoxBehavior.Numeric)
+            {
+                var value = ((TextBox)sender).Text;
+                int intValue;
+                if (int.TryParse(value, out intValue))
+                {
+                    if (intValue == 0) ValueText = "1"; // Set value to 1 instead of 0
+                    else ValueText = ((TextBox)sender).Text;
+                }
+            }
             FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
         }
 

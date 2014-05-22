@@ -388,9 +388,24 @@ namespace SmartDeviceApp.Controllers
 
             _isBooklet = _currPrintSettings.Booklet;
             _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
-            if (_isBooklet || _isDuplex)
+            if (_isBooklet)
             {
-                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView;
+                if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
+                {
+                    _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewVertical;
+                }
+                else
+                {
+                    _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewHorizontal;
+                }
+            }
+            else if (_isDuplex)
+            {
+                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewHorizontal;
+            }
+            else if (!_isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Top)
+            {
+                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageViewVertical;
             }
             else
             {
