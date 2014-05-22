@@ -226,7 +226,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             else if (mPrintJobToDelete != null) {
                 mPrintGroupToDelete.onDeletePrintJob(mPrintJobToDelete);
             }
-            
             mPrintGroupToDelete = null;
             mPrintGroupToDelete = null;
             mPrinterToDelete = null;
@@ -244,7 +243,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             else if (mPrintJobToDelete != null) {
                 mPrintJobsView.endDelete(true);
             }
-            
             mPrintGroupToDelete = null;
             mPrinterToDelete = null;
             mConfirmDialog = null;
