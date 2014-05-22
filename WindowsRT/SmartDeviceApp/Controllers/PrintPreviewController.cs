@@ -347,7 +347,7 @@ namespace SmartDeviceApp.Controllers
 
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
                 _printPreviewViewModel.RightPageActualSize = sampleSize;
-                if (_isBooklet)
+                if (_isBooklet || _isDuplex)
                 {
                     _printPreviewViewModel.LeftPageActualSize = sampleSize;
                 }
