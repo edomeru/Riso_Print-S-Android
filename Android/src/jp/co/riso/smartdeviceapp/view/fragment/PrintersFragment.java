@@ -339,11 +339,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void onAddedNewPrinter(Printer printer, boolean isOnline) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_NEW_PRINTER);
         newMessage.obj = printer;
-        if (isOnline) {
-            newMessage.arg1 = 1;
-        } else {
-            newMessage.arg1 = 0;
-        }
+        newMessage.arg1 = isOnline ? 1 : 0;
         mHandler.sendMessage(newMessage);
     }
     
