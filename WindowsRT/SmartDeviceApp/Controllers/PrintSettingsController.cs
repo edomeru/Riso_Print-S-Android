@@ -1617,7 +1617,10 @@ namespace SmartDeviceApp.Controllers
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
 
             return isPreviewAffected;
         }
@@ -1665,7 +1668,10 @@ namespace SmartDeviceApp.Controllers
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
 
             return isPreviewAffected;
         }
