@@ -789,8 +789,8 @@ namespace SmartDeviceApp.Controllers
                 }
                 else if (_isDuplex)
                 {
-                    await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
-                        finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
+                    finalBitmap = await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
+                        finishingSide, holeCount, staple, isFinalPortrait, isRightSide, isBackSide);
                 }
                 else // Not duplex and not booket
                 {
@@ -1243,17 +1243,22 @@ namespace SmartDeviceApp.Controllers
         /// <param name="holeCount">hole punch count; 0 if punch is off</param>
         /// <param name="staple">staple type</param>
         /// <param name="isPortrait">true when portrait, false, otherwise</param>
+        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
         /// <param name="isBackSide">true if for backside (duplex), false otherwise</param>
         /// <returns>task</returns>
-        private async Task ApplyDuplex(WriteableBitmap canvasBitmap, int duplexType,
-            int finishingSide, int holeCount, int staple, bool isPortrait, bool isBackSide)
+        private async Task<WriteableBitmap> ApplyDuplex(WriteableBitmap canvasBitmap,
+            int duplexType, int finishingSide, int holeCount, int staple, bool isPortrait,
+            bool isRightSide, bool isBackSide)
         {
-            bool needsRotate = (duplexType == (int)Duplex.LongEdge && !isPortrait) ||
-                                    (duplexType == (int)Duplex.ShortEdge && isPortrait);
-
-            // Determine actual finishing side based on duplex
-            if (isBackSide && !needsRotate)
+            // Rotate image if needed
+            if (!isRightSide || isBackSide)
             {
+                if ((duplexType == (int)Duplex.LongEdge && !isPortrait) ||
+                    (duplexType == (int)Duplex.ShortEdge && isPortrait))
+                {
+                    canvasBitmap = WriteableBitmapExtensions.Rotate(canvasBitmap, 180);
+                }
+
                 // Change the side of the staple if letf or right
                 if (finishingSide == (int)FinishingSide.Left)
                 {
@@ -1277,11 +1282,7 @@ namespace SmartDeviceApp.Controllers
                 await ApplyStaple(canvasBitmap, staple, finishingSide);
             }
 
-            // Apply duplex as the back page image
-            if (isBackSide && needsRotate)
-            {
-                canvasBitmap = WriteableBitmapExtensions.Rotate(canvasBitmap, 180);
-            }
+            return canvasBitmap;
         }
 
         /// <summary>
@@ -1290,11 +1291,11 @@ namespace SmartDeviceApp.Controllers
         /// <param name="canvasBitmap">destination image</param>
         /// <param name="bookletFinishing">booklet finishing</param>
         /// <param name="isPortrait">true when portrait, false otherwise</param>
-        /// <param name="isBackSide">true if for backside (booklet), false otherwise</param>
         /// <param name="isRightSide">true when page is on right side, false otherwise</param>
+        /// <param name="isBackSide">true if for backside (booklet), false otherwise</param>
         /// <returns>task</returns>
         private async Task ApplyBooklet(WriteableBitmap canvasBitmap, int bookletFinishing,
-            bool isPortrait, bool isBackSide, bool isRightSide)
+            bool isPortrait, bool isRightSide, bool isBackSide)
         {
             // Determine finishing side
             int bindingSide = -1; // Out of range number to denote bottom
