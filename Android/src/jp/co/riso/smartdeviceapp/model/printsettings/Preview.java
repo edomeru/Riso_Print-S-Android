@@ -204,7 +204,10 @@ public class Preview {
         /**
          * @return punch count
          */
-        public int getCount() {
+        public int getCount(boolean mShow3Punch) {
+            if (mShow3Punch && Punch.this == HOLES_4) {
+                return 3;
+            }
             return mCount;
         }
     }
