@@ -104,7 +104,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SelectPrinterExecute(int id)
         {
-            _selectedPrinterId = id;
+            SelectedPrinterId = id;
             if (SelectPrinterEvent != null)
             {
                 SelectPrinterEvent(id);

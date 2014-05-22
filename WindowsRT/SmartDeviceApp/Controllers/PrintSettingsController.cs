@@ -92,6 +92,10 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
+            _printSettingsViewModel.PrinterName = printer.Name;
+            _printSettingsViewModel.PrinterId = printer.Id;
+            _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+
             currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
 
             RegisterPrintSettingValueChanged(screenName);

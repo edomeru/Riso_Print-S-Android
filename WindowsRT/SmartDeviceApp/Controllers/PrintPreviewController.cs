@@ -316,17 +316,11 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter = new Printer();
             }
 
-            _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
-            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
-            _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
-
             PrintSettingsController.Instance.Uninitialize(_screenName);
             await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
             _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             await ReloadCurrentPage();
-
-            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
         }
 
         #endregion Printer and Print Settings Initialization

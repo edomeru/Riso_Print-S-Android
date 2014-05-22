@@ -37,17 +37,16 @@
     </Grid.RowDefinitions>
     <Button x:Name="header" Grid.Row="0" 
             Content="{Binding Source=IDS_LBL_PRINTERS}"
-            Command="{Binding BackToPrintSettings}" 
+            Command="{Binding BackToPrintSettings}"
             Template="{StaticResource TEMPLATE_HeaderButton}"
             Width="{Binding Width, ElementName=selectPrinterBox}"/>
-    <ListView x:Name="printersListView" Grid.Row="1"  
-              ItemsSource="{Binding PrinterList}" 
-              ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
+    <ListView x:Name="printersListView" Grid.Row="1"
+              ItemsSource="{Binding PrinterList}"
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
               IsItemClickEnabled="False" 
               SelectionMode="Single">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <!-- Needs binding for IconImage and SeparatorVisibility -->
                 <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
                                                 Command="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
                                                 CommandParameter="{Binding}"
