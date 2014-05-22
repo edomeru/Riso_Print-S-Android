@@ -92,7 +92,9 @@ namespace SmartDeviceApp.Controllers
         private bool _isBooklet = false;
         private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
-        private static int _currPreviewPageIndex;
+        private static int _currSliderIndex;
+        private static int _currLeftPageIndex;
+        private static int _currRightPageIndex;
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
 
         private ICommand _cancelPrintingCommand;
@@ -152,7 +154,7 @@ namespace SmartDeviceApp.Controllers
                 await GetDefaultPrinter();
 
                 _resetPrintSettings = false;
-                _currPreviewPageIndex = 0;
+                _currSliderIndex = 0;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
@@ -317,7 +319,8 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            _currPrintSettings = await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
+            await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
+            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             await ReloadCurrentPage();
 
@@ -367,15 +370,6 @@ namespace SmartDeviceApp.Controllers
 
             _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-            string name = printSetting.Name;
-
-            if (printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
-            {
-                _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
-            }
-
             await ReloadCurrentPage();
         }
 
@@ -384,8 +378,6 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void UpdatePreviewInfo()
         {
-            // Send UI related items
-
             _isBooklet = _currPrintSettings.Booklet;
             _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
             if (_isBooklet)
@@ -416,24 +408,25 @@ namespace SmartDeviceApp.Controllers
 
             _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
                                                     _pagesPerSheet);
-            uint sliderMaxValue = _previewPageTotal;
-            if (_isDuplex)
+
+            if (_isBooklet)
             {
-                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 1;
+                _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 2;
             }
-            else if (_isBooklet)
+            else if (_isDuplex)
             {
-                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 2;
+                _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 1;
             }
-            if (_printPreviewViewModel.PageTotal != sliderMaxValue)
+            if (_printPreviewViewModel.PageTotal != _previewPageTotal)
             {
                 _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-                if (_currPreviewPageIndex > _previewPageTotal)
-                {
-                    _currPreviewPageIndex = (int)_previewPageTotal - 1;
-                }
-                _printPreviewViewModel.PageTotal = sliderMaxValue;
+                _printPreviewViewModel.PageTotal = _previewPageTotal;
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
+                if (_currSliderIndex >= _previewPageTotal)
+                {
+                    _currSliderIndex = (int)_previewPageTotal - 1;
+                }
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex);
             }
         }
 
@@ -443,6 +436,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="orientation">orientation</param>
         /// <param name="bookletLayout">booklet layout</param>
+        /// <param name="imposition">imposition</param>
         /// <returns>true when portrait, false otherwise</returns>
         private bool IsPortrait(int orientation, int bookletLayout, int? imposition = null)
         {
@@ -465,12 +459,11 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for page slider is changed
         /// </summary>
-        /// <param name="rightPageIndex">requested right page index based on slider value</param>
-        public async void GoToPage(int rightPageIndex)
+        /// <param name="sliderIndex">requested right page index based on slider value</param>
+        public async void GoToPage(int sliderIndex)
         {
-            _currPreviewPageIndex = (_isDuplex || _isBooklet) ? rightPageIndex * 2 :
-                                                      rightPageIndex;
-            await LoadPage(_currPreviewPageIndex);
+            _currSliderIndex = (_isDuplex || _isBooklet) ? sliderIndex * 2 : sliderIndex;
+            await LoadPage(_currSliderIndex);
         }
 
         /// <summary>
@@ -479,21 +472,19 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task ReloadCurrentPage()
         {
-            // Generate PreviewPages again
-            await ClearPreviewPageListAndImages();
+            await ClearPreviewPageListAndImages(); // Generate PreviewPages again
             UpdatePreviewInfo();
-            _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
             InitializeGestures();
-            await LoadPage(_currPreviewPageIndex);
+            await LoadPage(_currSliderIndex);
         }
 
         /// <summary>
         /// Requests for LogicalPages and then applies print setting for the target page only.
         /// Assumes that requested page index is for right side page index
         /// </summary>
-        /// <param name="rightPageIndex">requested right page index based on slider value</param>
+        /// <param name="sliderIndex">requested right page index based on slider value</param>
         /// <returns>task</returns>
-        private async Task LoadPage(int rightPageIndex)
+        private async Task LoadPage(int sliderIndex)
         {
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = true;
@@ -501,42 +492,56 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel.RightPageImage = new BitmapImage();
             _printPreviewViewModel.LeftPageImage = new BitmapImage();
 
+            _currLeftPageIndex = sliderIndex - 1;
+            _currRightPageIndex = sliderIndex;
+            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+            {
+                _currLeftPageIndex = sliderIndex;
+                _currRightPageIndex = sliderIndex - 1;
+            }
+
             // Generate pages to send
-            await GenerateSingleSpread(rightPageIndex, true);
+            await GenerateSingleSpread(sliderIndex, true);
 
             // TODO: Add current page logic
             _printPreviewViewModel.IsLoadPageActive = false;
 
-            // GenerateNearPreviewPages(rightPageIndex);
+            GenerateNearPreviewPages(sliderIndex);
         }
 
         /// <summary>
         /// Generates PreviewPage images on a single spread
         /// </summary>
-        /// <param name="rightPageIndex">right page index based on slider value</param>
+        /// <param name="sliderIndex">right page index based on slider value</param>
         /// <param name="enableSend"></param>
         /// <returns></returns>
-        private async Task GenerateSingleSpread(int rightPageIndex, bool enableSend)
+        private async Task GenerateSingleSpread(int sliderIndex, bool enableSend)
         {
+            int maxPreviewPages = (int)_previewPageTotal;
+            if (_isBooklet || _isDuplex)
+            {
+                maxPreviewPages = ((int)_previewPageTotal * 2) - 2;
+            }
 
-            int leftPageIndex = rightPageIndex - 1;
+            int leftPageIndex = sliderIndex - 1;
+            int rightPageIndex = sliderIndex;
             if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
             {
-                leftPageIndex = rightPageIndex;
-                rightPageIndex = rightPageIndex - 1;
+                leftPageIndex = sliderIndex;
+                rightPageIndex = sliderIndex - 1;
             }
 
             if (_isBooklet || _isDuplex)
             {
                 // Compute left side page index
-                if (leftPageIndex > -1)
+                if (leftPageIndex > -1 && leftPageIndex < maxPreviewPages)
                 {
                     // Generate left side
                     await GenerateSingleLeaf(leftPageIndex, false, enableSend);
                 }
             }
 
-            if (rightPageIndex < _previewPageTotal)
+            if (rightPageIndex > -1 && rightPageIndex < maxPreviewPages)
             {
                 // Generate right side
                 await GenerateSingleLeaf(rightPageIndex, true, enableSend);
@@ -562,13 +567,12 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
-                await GenerateNearPreviewPage(pageIndex, logicalPageIndex, isRightSide, false);
+                await GeneratePreviewPage(pageIndex, logicalPageIndex, isRightSide, false, false);
             }
 
             if (_isDuplex || _isBooklet)
             {
                 int backPreviewPageIndex;
-
                 if (isRightSide) // Back page is next page
                 {
                     backPreviewPageIndex = pageIndex + 1;
@@ -590,7 +594,7 @@ namespace SmartDeviceApp.Controllers
                     }
                     else
                     {
-                        await GenerateNearPreviewPage(backPreviewPageIndex, nextLogicalPageIndex, isRightSide, false);
+                        await GeneratePreviewPage(backPreviewPageIndex, nextLogicalPageIndex, isRightSide, false, false);
                     }
                 }
             }
@@ -610,11 +614,7 @@ namespace SmartDeviceApp.Controllers
             bool sent = await SendExistingPreviewImage(previewPageIndex, isRightSide, isBackSide);
             if (!sent)
             {
-                // Generate pages, apply print settings then send
-                await DocumentController.Instance.GenerateLogicalPages(logicalPageIndex, _pagesPerSheet);
-                List<LogicalPage> logicalPages = await DocumentController.Instance
-                    .GetLogicalPages(logicalPageIndex, _pagesPerSheet);
-                await ApplyPrintSettings(logicalPages, previewPageIndex, isRightSide, isBackSide, true);
+                await GeneratePreviewPage(previewPageIndex, logicalPageIndex, isRightSide, isBackSide, true);
             }
         }
 
@@ -639,13 +639,13 @@ namespace SmartDeviceApp.Controllers
                     // Open the bitmap
                     BitmapImage bitmapImage = new BitmapImage(new Uri(jpegFile.Path));
 
-                    if (isRightSide && !isBackSide)
+                    if (isRightSide && !isBackSide && _currRightPageIndex == targetPreviewPageIndex)
                     {
                         _printPreviewViewModel.RightPageImage = bitmapImage;
                         _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
                         return true;
                     }
-                    if (!isRightSide && !isBackSide)
+                    if (!isRightSide && !isBackSide && _currLeftPageIndex == targetPreviewPageIndex)
                     {
                         _printPreviewViewModel.LeftPageImage = bitmapImage;
                         _printPreviewViewModel.LeftPageActualSize = previewPage.ActualSize;
@@ -683,16 +683,17 @@ namespace SmartDeviceApp.Controllers
         /// <param name="logicalPageIndex">LogicalPage index</param>
         /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true if the requested page is to be displayed at the back, false otherwise</param>
+        /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
         /// <returns>task</returns>
-        private async Task GenerateNearPreviewPage(int previewPageIndex, int logicalPageIndex,
-            bool isRightSide, bool isBackSide)
+        private async Task GeneratePreviewPage(int previewPageIndex, int logicalPageIndex,
+            bool isRightSide, bool isBackSide, bool enableSend)
         {
             if (!_previewPages.ContainsKey(previewPageIndex))
             {
                 await DocumentController.Instance.GenerateLogicalPages(logicalPageIndex, _pagesPerSheet);
                 List<LogicalPage> logicalPages = await DocumentController.Instance
                     .GetLogicalPages(logicalPageIndex, _pagesPerSheet);
-                await ApplyPrintSettings(logicalPages, previewPageIndex, isRightSide, isBackSide, false);
+                await ApplyPrintSettings(logicalPages, previewPageIndex, isRightSide, isBackSide, enableSend);
             }
         }
 
@@ -712,17 +713,18 @@ namespace SmartDeviceApp.Controllers
         private async Task ApplyPrintSettings(List<LogicalPage> logicalPages, int previewPageIndex,
             bool isRightSide, bool isBackSide, bool enableSend)
         {
+            WriteableBitmap finalBitmap = new WriteableBitmap(1, 1); // Size does not matter yet
+
+            Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
+
+            bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
+                _currPrintSettings.BookletLayout);
+
             if (logicalPages != null && logicalPages.Count > 0)
             {
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
 
-                WriteableBitmap finalBitmap = new WriteableBitmap(1, 1); // Size does not matter yet
                 List<WriteableBitmap> pageImages = new List<WriteableBitmap>(); // Ordered list
-
-                Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
-
-                bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
-                    _currPrintSettings.BookletLayout);
 
                 // Loop to each LogicalPage(s) to selected paper size and orientation
                 foreach (LogicalPage logicalPage in logicalPages)
@@ -804,77 +806,86 @@ namespace SmartDeviceApp.Controllers
                         await ApplyStaple(finalBitmap, staple, finishingSide);
                     }
                 }
+            }
+            else
+            {
+                // Create white page
+                finalBitmap = ApplyPaperSizeAndOrientation(paperSize, isPortrait);
+            }
 
-                try
+            await SendImageAndAddToList(finalBitmap, previewPageIndex, isRightSide, isBackSide,
+                enableSend);
+        }
+
+        private async Task SendImageAndAddToList(WriteableBitmap finalBitmap, int previewPageIndex,
+            bool isRightSide, bool isBackSide, bool enableSend)
+        {
+            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+
+            try
+            {
+                // Save PreviewPage into AppData temporary store
+                StorageFile tempPageImage = await tempFolder.CreateFileAsync(
+                    String.Format(FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE, previewPageIndex, DateTime.UtcNow),
+                    CreationCollisionOption.GenerateUniqueName);
+                using (var destinationStream =
+                    await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    // Save PreviewPage into AppData temporary store
-                    StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                        String.Format(FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE, previewPageIndex, DateTime.UtcNow),
-                        CreationCollisionOption.GenerateUniqueName);
-                    using (var destinationStream =
-                        await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
+                    BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
+                        BitmapEncoder.JpegEncoderId, destinationStream);
+                    byte[] pixels = WriteableBitmapExtensions.ToByteArray(finalBitmap);
+                    newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
+                        (uint)finalBitmap.PixelWidth, (uint)finalBitmap.PixelHeight,
+                        ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
+                    await newEncoder.FlushAsync();
+                }
+
+                PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
+                    tempPageImage.Name, new Size(finalBitmap.PixelWidth, finalBitmap.PixelHeight));
+
+                if (enableSend)
+                {
+                    // Open the bitmap
+                    BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+
+                    if (isRightSide && !isBackSide && _currRightPageIndex == previewPageIndex)
                     {
-                        BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
-                            BitmapEncoder.JpegEncoderId, destinationStream);
-                        byte[] pixels = WriteableBitmapExtensions.ToByteArray(finalBitmap);
-                        newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                            (uint)finalBitmap.PixelWidth, (uint)finalBitmap.PixelHeight,
-                            ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
-                        await newEncoder.FlushAsync();
+                        _printPreviewViewModel.RightPageImage = bitmapImage;
+                        _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
                     }
-
-                    PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
-                        tempPageImage.Name, new Size(finalBitmap.PixelWidth, finalBitmap.PixelHeight));
-
-                    // Check if needs to send the page image
-                    // Don't bother to send the old requests
-                    if (enableSend)
-                        //&&
-                        //((isRightSide && _currPreviewPageIndex == previewPageIndex) ||
-                        // (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex)))
+                    else if (!isRightSide && !isBackSide && _currLeftPageIndex == previewPageIndex)
                     {
-                        // Open the bitmap
-                        BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
-
-                        if (isRightSide && !isBackSide)
-                        {
-                            _printPreviewViewModel.RightPageImage = bitmapImage;
-                            _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
-                        }
-                        else if (!isRightSide && !isBackSide)
-                        {
-                            _printPreviewViewModel.LeftPageImage = bitmapImage;
-                            _printPreviewViewModel.LeftPageActualSize = previewPage.ActualSize;
-                        }
-                        else if (isRightSide && isBackSide)
-                        {
-                            // TODO: Send to appropriate side
-                        }
-                        else if (!isRightSide && isBackSide)
-                        {
-                            // TODO: Send to appropriate side
-                        }
+                        _printPreviewViewModel.LeftPageImage = bitmapImage;
+                        _printPreviewViewModel.LeftPageActualSize = previewPage.ActualSize;
                     }
-
-                    // Update PreviewPage list
-                    if (_previewPages.ContainsKey(previewPageIndex))
+                    else if (isRightSide && isBackSide)
                     {
-                        // Delete old images
-                        await StorageFileUtility.DeleteFilesExcept(
-                            string.Format(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE_WITH_INDEX, previewPageIndex),
-                            previewPage.Name, tempFolder);
-                        // Overwrite the new entry from the list
-                        _previewPages[previewPageIndex] = previewPage;
+                        // TODO: Send to appropriate side
                     }
-                    else
+                    else if (!isRightSide && isBackSide)
                     {
-                        _previewPages.Add(previewPageIndex, previewPage);
+                        // TODO: Send to appropriate side
                     }
                 }
-                catch (Exception)
+
+                // Update PreviewPage list
+                if (_previewPages.ContainsKey(previewPageIndex))
                 {
-                    // Error handling
+                    // Delete old images
+                    await StorageFileUtility.DeleteFilesExcept(
+                        string.Format(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE_WITH_INDEX, previewPageIndex),
+                        previewPage.Name, tempFolder);
+                    // Overwrite the new entry from the list
+                    _previewPages[previewPageIndex] = previewPage;
                 }
+                else
+                {
+                    _previewPages.Add(previewPageIndex, previewPage);
+                }
+            }
+            catch (Exception)
+            {
+                // Error handling
             }
         }
 
