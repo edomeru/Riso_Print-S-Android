@@ -98,7 +98,7 @@
             
         case kAlertResultErrDefault:
         default:
-            alertMsg = @"The operation could not be compeleted.";
+            alertMsg = @"The operation could not be completed.";
             break;
             //TODO: replace with localized string or remove if will not be used
     }

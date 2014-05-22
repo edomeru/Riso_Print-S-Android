@@ -51,7 +51,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
         _job = nil;
         _isPrinting = NO;
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
     }
     
     return self;
@@ -59,7 +59,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
 - (void)printDocumentViaLPR
@@ -179,11 +179,10 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 #pragma mark - Notifications
 
-- (void)willResignActive
+- (void)didEnterBackground
 {
     if (self.isPrinting)
     {
-        [self.alertView dismiss];
         [self cancelJob];
     }
 }

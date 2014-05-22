@@ -16,8 +16,6 @@ typedef enum
 
 typedef enum
 {
-    kPlistBoolValUseSNMP,
-    kPlistBoolValUseSNMPTimeout,
     kPlistBoolValUsePrintJobTestData,
     
 } kPlistBoolVal;

@@ -13,6 +13,236 @@
 #if RENDERCACHE_TEST
 
 @interface RenderCache(Test)
+
+@property (nonatomic, strong) NSMutableIndexSet *indexSet;
+@property (nonatomic, strong) NSMutableDictionary *itemsDictionary;
+
+@end
+
+@interface RenderCacheTest : GHTestCase<RenderCacheDelegate>
+
+@property (nonatomic, assign) NSUInteger currentIndex;
+
+@end
+
+@implementation RenderCacheTest
+
+- (void)setUp
+{
+    self.currentIndex = 0;
+}
+
+- (void)testInit
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] init];
+    
+    // Verification
+    GHAssertEquals([renderCache maxItemCount], (NSInteger)-1, @"maxItemCount must be -1.");
+}
+
+- (void)testInitWithMaxItemCount
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    
+    // Verification
+    GHAssertEquals([renderCache maxItemCount], (NSInteger)10, @"maxItemCount must be 10.");
+}
+
+- (void)testAdd
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:0];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)1, @"Render items must be 1.");
+}
+
+- (void)testAdd_Multiple
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:0];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:1];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)2, @"Render items must be 2.");
+}
+
+- (void)testAdd_Duplicate
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:0];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:0];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)1, @"Render items must be 1.");
+}
+
+- (void)testAdd_MaxBeforeFirst
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    renderCache.delegate = self;
+    NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
+    for (int i = 0; i < 10; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i + 10];
+        [indexSet addIndex:i + 10];
+    }
+    self.currentIndex = 5;
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:5];
+    [indexSet addIndex:5];
+    [indexSet removeIndex:19];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)10, @"Render items must be 10.");
+    [indexSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop){
+        RenderCacheItem *item = [renderCache itemWithIndex:index];
+        GHAssertNotNil(item, @"Item with index %d must exist.", index);
+    }];
+}
+
+- (void)testAdd_MaxAfterLast
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    renderCache.delegate = self;
+    NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
+    for (int i = 0; i < 10; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i + 10];
+        [indexSet addIndex:i + 10];
+    }
+    self.currentIndex = 25;
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:25];
+    [indexSet addIndex:25];
+    [indexSet removeIndex:10];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)10, @"Render items must be 10.");
+    [indexSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop){
+        RenderCacheItem *item = [renderCache itemWithIndex:index];
+        GHAssertNotNil(item, @"Item with index %d must exist.", index);
+    }];
+}
+
+- (void)testAdd_MaxNearFirst
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    renderCache.delegate = self;
+    NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
+    for (int i = 0; i < 10; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
+        [indexSet addIndex:i];
+    }
+    self.currentIndex = 2;
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:15];
+    [indexSet addIndex:15];
+    [indexSet removeIndex:9];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)10, @"Render items must be 10.");
+    [indexSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop){
+        RenderCacheItem *item = [renderCache itemWithIndex:index];
+        GHAssertNotNil(item, @"Item with index %d must exist.", index);
+    }];
+}
+
+- (void)testAdd_MaxNearLast
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    renderCache.delegate = self;
+    NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
+    for (int i = 0; i < 10; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
+        [indexSet addIndex:i];
+    }
+    self.currentIndex = 7;
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:15];
+    [indexSet addIndex:15];
+    [indexSet removeIndex:0];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)10, @"Render items must be 10.");
+    [indexSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop){
+        RenderCacheItem *item = [renderCache itemWithIndex:index];
+        GHAssertNotNil(item, @"Item with index %d must exist.", index);
+    }];
+}
+
+- (void)testAdd_NoMax
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] init];
+    renderCache.delegate = self;
+    for (int i = 0; i < 11; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
+    }
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)11, @"Render items must be 11");
+}
+
+- (void)testMemoryWarning
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:0];
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:1];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)1, @"Render items count must be 1.");
+}
+
+- (void)testItemWithIndex
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    NSMutableArray *items = [[NSMutableArray alloc] init];
+    for (int i = 0; i < 5; i++)
+    {
+        RenderCacheItem *item = [[RenderCacheItem alloc] init];
+        item.viewController = nil;
+        item.image = nil;
+        [items addObject:item];
+        [renderCache addItem:item withIndex:i];
+    }
+    
+    // Verification
+    for (int i = 0; i < 5; i++)
+    {
+        RenderCacheItem *item = [renderCache itemWithIndex:i];
+        GHAssertEqualObjects(item, [items objectAtIndex:i], @"Items must match.");
+    }
+}
+
+- (void)testRemoveAllItems
+{
+    // SUT
+    RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
+    for (int i = 0; i < 11; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
+    }
+    [renderCache removeAllItems];
+    
+    // Verification
+    GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)0, @"Render items count must be 0.");
+}
+
+@end
+
+/*
+@interface RenderCache(Test)
 @property (nonatomic) NSInteger maxItemCount;
 @property (nonatomic, strong) NSMutableIndexSet *indexSet;
 @property (nonatomic, strong) NSMutableDictionary *itemsDictionary;
@@ -189,5 +419,5 @@
 {
     return index;
 }
-@end
+@end*/
 #endif
