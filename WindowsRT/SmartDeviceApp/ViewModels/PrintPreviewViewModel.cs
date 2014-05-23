@@ -60,6 +60,9 @@ namespace SmartDeviceApp.ViewModels
         private uint _currentPageIndex;
         private uint _pageIndex;
         private PageNumberInfo _pageNumber;
+        private bool _isReverseSwipe;
+        private bool _isReverseSwipePrevious;
+        private bool _isHorizontalSwipeEnabled;
         private double _scalingFactor = 1;
 
         private string _documentTitleText;
@@ -68,7 +71,7 @@ namespace SmartDeviceApp.ViewModels
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
-        private PageViewMode _previousPageViewMode;
+        private PageViewMode _previousPageViewMode;        
 
         private ViewControlViewModel _viewControlViewModel;
 
@@ -138,18 +141,50 @@ namespace SmartDeviceApp.ViewModels
                         targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);  
                         break;
                 }
+                
+                PreviewGestureController.SwipeRightDelegate swipeRight = null;
+                PreviewGestureController.SwipeLeftDelegate swipeLeft = null;
+                PreviewGestureController.SwipeTopDelegate swipeTop = null;
+                PreviewGestureController.SwipeBottomDelegate swipeBottom = null;
+                if (IsHorizontalSwipeEnabled)
+                {                
+                    if (!IsReverseSwipe)
+                    {
+                        swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRight);
+                        swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeft);
+                    }
+                    else
+                    {
+                        swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRightReverse);
+                        swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeftReverse);
+                    }
+                }
+                else
+                {
+                    swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
+                    swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                }
                 // Note: If view and page areas are not resized or PageViewMode is not changed, 
-				// no need to reset gestureController
+                // no need to reset gestureController
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
                 {
                     _scalingFactor = scalingFactor;
                     if (_gestureController != null) _gestureController.Dispose();
                     _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
-                           targetSize, scalingFactor,
-                           new PreviewGestureController.SwipeRightDelegate(SwipeRight),
-                           new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
+                           targetSize, scalingFactor, swipeRight, swipeLeft);
+                    _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
+                        swipeTop, swipeBottom);
+                }
+                else
+                {
+                    if (IsReverseSwipe != _isReverseSwipePrevious)
+                    {
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
+                            swipeTop, swipeBottom);
+                    }
                 }
                 _previousPageViewMode = PageViewMode;
+                _isReverseSwipePrevious = IsReverseSwipe;
             }
         }
 
@@ -162,14 +197,46 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public bool IsReverseSwipe
+        {
+            get { return _isReverseSwipe; }
+            set { _isReverseSwipe = value; }
+        }
+
+        public bool IsHorizontalSwipeEnabled
+        {
+            get { return _isHorizontalSwipeEnabled; }
+            set { _isHorizontalSwipeEnabled = value; }
+        }
+
         private void SwipeRight()
         {
             GoToPreviousPage.Execute(null);
         }
 
+        private void SwipeRightReverse()
+        {
+            GoToNextPage.Execute(null);
+        }
+
         private void SwipeLeft()
         {
             GoToNextPage.Execute(null);
+        }
+
+        private void SwipeLeftReverse()
+        {
+            GoToPreviousPage.Execute(null);
+        }
+
+        private void SwipeTop()
+        {
+            GoToNextPage.Execute(null);
+        }
+
+        private void SwipeBottom()
+        {
+            GoToPreviousPage.Execute(null);
         }
 
         #region PANE VISIBILITY

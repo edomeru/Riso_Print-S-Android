@@ -284,13 +284,11 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task GetDefaultPrinter()
         {
-            // TODo: Check if this function should use PrinterController (avoid conflicting roles)
             // Get default printer
-            DefaultPrinter defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
-
+            Printer defaultPrinter = PrinterController.Instance.GetDefaultPrinter();
             if (defaultPrinter != null)
             {
-                await SetSelectedPrinterAndPrintSettings((int)defaultPrinter.PrinterId);
+                await SetSelectedPrinterAndPrintSettings(defaultPrinter.Id);
             }
             else
             {
@@ -308,7 +306,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (printerId > -1)
             {
-                _selectedPrinter = await DatabaseController.Instance.GetPrinter(printerId);
+                _selectedPrinter = PrinterController.Instance.GetPrinter(printerId);
             }
             if (_selectedPrinter == null)
             {
@@ -338,6 +336,24 @@ namespace SmartDeviceApp.Controllers
                 Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
                 bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
                     _currPrintSettings.BookletLayout, _currPrintSettings.Imposition);
+
+                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+                {
+                    _printPreviewViewModel.IsReverseSwipe = true;
+                }
+                else
+                {
+                    _printPreviewViewModel.IsReverseSwipe = false;
+                }
+
+                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.TopToBottom)
+                {
+                    _printPreviewViewModel.IsHorizontalSwipeEnabled = false;
+                }
+                else
+                {
+                    _printPreviewViewModel.IsHorizontalSwipeEnabled = true;
+                }
 
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
                 _printPreviewViewModel.RightPageActualSize = sampleSize;
