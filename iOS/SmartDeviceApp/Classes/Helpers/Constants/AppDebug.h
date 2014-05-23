@@ -35,6 +35,7 @@
 #define DEBUG_LOG_DATABASE_MANAGER          0
 #define DEBUG_LOG_PRINTER_MANAGER           0
 #define DEBUG_LOG_SNMP_MANAGER              0
+#define DEBUG_LOG_DIRECTPRINT_MANAGER       0
 
 #pragma mark Helpers
 #define DEBUG_LOG_PLIST_HELPER              0

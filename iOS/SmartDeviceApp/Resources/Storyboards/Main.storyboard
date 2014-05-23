@@ -1492,11 +1492,11 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jmf-S1-jPe" userLabel="Header">
-                                <rect key="frame" x="0.0" y="0.0" width="270" height="48"/>
+                                <rect key="frame" x="1" y="0.0" width="269" height="48"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print Settings" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7VB-SO-uD9">
-                                        <rect key="frame" x="15" y="-1" width="245" height="50"/>
+                                        <rect key="frame" x="15" y="-1" width="244" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="bAX-DK-Fpu"/>
@@ -1518,11 +1518,11 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GCl-Qd-LDB" userLabel="Settings">
-                                <rect key="frame" x="0.0" y="48" width="270" height="500"/>
+                                <rect key="frame" x="1" y="48" width="269" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Se-wF-8RZ">
-                                        <rect key="frame" x="0.0" y="0.0" width="270" height="500"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="269" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
@@ -1545,9 +1545,9 @@
                             <constraint firstAttribute="trailing" secondItem="Jmf-S1-jPe" secondAttribute="trailing" id="DJg-7t-YUn"/>
                             <constraint firstItem="GCl-Qd-LDB" firstAttribute="top" secondItem="Jmf-S1-jPe" secondAttribute="bottom" id="H1q-Yp-lxc"/>
                             <constraint firstItem="Jmf-S1-jPe" firstAttribute="top" secondItem="Azx-6s-mva" secondAttribute="top" id="alC-Ke-PdY"/>
-                            <constraint firstItem="GCl-Qd-LDB" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" id="nJb-CX-t31"/>
+                            <constraint firstItem="GCl-Qd-LDB" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" constant="1" id="nJb-CX-t31"/>
                             <constraint firstAttribute="trailing" secondItem="GCl-Qd-LDB" secondAttribute="trailing" id="s1o-Oo-0zN"/>
-                            <constraint firstItem="Jmf-S1-jPe" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" id="vqU-Z3-JPG"/>
+                            <constraint firstItem="Jmf-S1-jPe" firstAttribute="leading" secondItem="Azx-6s-mva" secondAttribute="leading" constant="1" id="vqU-Z3-JPG"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>

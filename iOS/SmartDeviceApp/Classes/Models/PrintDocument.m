@@ -21,9 +21,6 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 
 @interface PrintDocument()
 
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSURL *url;
-
 /**
  Add self as observer of Preview Settings object
  */

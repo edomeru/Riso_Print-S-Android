@@ -549,6 +549,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
         [self applyFinishingWithOrientationConstraint];
+        [self applyBookletLayoutWithOrientationConstraint];
         //[self applyOrientationConstraint];
     }
     if([key isEqualToString:KEY_PUNCH] == YES)
@@ -569,6 +570,14 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
         [self setOptionSettingWithKey:KEY_IMPOSITION toValue:(NSInteger)kImpositionOff];
+        if (self.previewSetting.orientation == kOrientationPortrait)
+        {
+            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutLeftToRight];
+        }
+        else
+        {
+            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutTopToBottom];
+        }
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
         [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
@@ -577,14 +586,32 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self setState:YES forSettingKey:KEY_IMPOSITION];
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingOff];
+        [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
     }
     
     [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
     [self setOptionSettingToDefaultValue:KEY_STAPLE];
     [self setOptionSettingToDefaultValue:KEY_PUNCH];
     [self setOptionSettingToDefaultValue:KEY_BOOKLET_FINISH];
-    [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
     [self reloadRowsForIndexPathsToUpdate];
+}
+
+- (void)applyBookletLayoutWithOrientationConstraint
+{
+    if (self.previewSetting.orientation == kOrientationPortrait)
+    {
+        if (self.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
+        {
+            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutLeftToRight];
+        }
+    }
+    else
+    {
+        if (self.previewSetting.bookletLayout != kBookletLayoutTopToBottom)
+        {
+            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutTopToBottom];
+        }
+    }
 }
 
 - (void)applyFinishingConstraintsWithPreviousValue:(NSInteger)previousFinishingSide
@@ -948,7 +975,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     if(self.printer == nil)
     {
-        if([option isEqualToString:@"ids_lbl_punch_3holes"] || [option isEqualToString:@"ids_lbl_punch_4holes"])
+        if([option isEqualToString:@"ids_lbl_punch_3holes"])
         {
             return NO;
         }

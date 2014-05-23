@@ -34,6 +34,16 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    NSArray *objectTypes = @[E_DEFAULTPRINTER, E_PRINTER, E_PRINTJOB, E_PRINTSETTING];
+    for (NSString *objectType in objectTypes)
+    {
+        NSArray *objects = [DatabaseManager getObjects:objectType];
+        for (id object in objects)
+        {
+            [DatabaseManager deleteObject:object];
+        }
+    }
+    [DatabaseManager saveChanges];
 }
 
 // Run at end of all tests in the class

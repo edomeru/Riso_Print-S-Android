@@ -7,6 +7,7 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "XMLParser.h"
 
 @interface XMLParser(Test)
@@ -19,7 +20,7 @@
 
 @implementation XMLParserTest
 
-- (void)test001_dictionaryFromXMLFile
+- (void)testDictionaryFromXMLFile
 {
     NSURL *testXMLURL = [[NSBundle mainBundle] URLForResource:@"printsettings" withExtension:@"xml"];
 
@@ -50,4 +51,19 @@
         }
     }
 }
+
+- (void)testDictionaryFromXMLFile_InvalidFile
+{
+    // Mock
+    id mockUrl = [OCMockObject mockForClass:[NSURL class]];
+    [[mockUrl expect] fileURLWithPath:OCMOCK_ANY];
+    id mockData = [OCMockObject mockForClass:[NSData class]];
+    [[[mockData expect] andReturn:[@"Invalid Data" dataUsingEncoding:NSUTF8StringEncoding]] dataWithContentsOfURL:OCMOCK_ANY];
+    
+    // SUT
+    NSDictionary *dictionary = [XMLParser dictionaryFromXMLFile:@"Test"];
+    
+    GHAssertNil(dictionary, @"Dictionary must be nil");
+}
+
 @end

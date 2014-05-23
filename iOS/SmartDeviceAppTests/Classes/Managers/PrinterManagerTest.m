@@ -16,28 +16,8 @@
 #import "NotificationNames.h"
 #import "PrinterDetails.h"
 #import "SNMPManager.h"
-#import "SNMPManagerMock.h"
-
-const NSUInteger NUM_VALID_PRINTERS     = 4;
-const NSUInteger NUM_INVALID_PRINTERS   = 2;
-const NSUInteger NUM_TOTAL_PRINTERS = NUM_VALID_PRINTERS + NUM_INVALID_PRINTERS;
-const NSUInteger MAX_PRINTERS = 10; //get from SmartDeviceApp-Settings.plist
-
-const NSUInteger DEFAULT_1 = 2; //valid printer
-const NSUInteger DEFAULT_2 = 4; //invalid printer
-
-const NSString*  PRINTER_NAME       = @"UT-Printer";
-const NSString*  VALID_PRINTER_IP   = @"192.168.0.19";
-const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
 
 @interface PrinterManagerTest : GHAsyncTestCase<PrinterSearchDelegate>
-{
-    PrinterManager* printerManager;
-    BOOL callbackSearchEndCalled;
-    BOOL callbackFoundNewCalled;
-    BOOL callbackFoundOldCalled;
-    BOOL callbackPrinterFound;
-}
 
 @property (nonatomic, strong) PrinterDetails *testPrinterDetails;
 @property (nonatomic, strong) PrintSetting *testPrintSetting;
