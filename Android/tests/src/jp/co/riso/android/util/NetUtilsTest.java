@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -271,6 +272,34 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         }
+    }
+    
+    // ================================================================================
+    // Tests - isNetworkAvailable
+    // ================================================================================
+
+    public void testIsNetworkAvailable_NullContext() {
+        assertEquals(false, NetUtils.isNetworkAvailable(null));
+    }
+
+    
+/*    public void testIsNetworkAvailable_WithoutConnection() {
+        // permission CHANGE_WIFI_STATE in app's manifest file must be present
+        turnWifi(false);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // ignored
+        }  
+        // wifi is OFF
+        assertEquals(false, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
+    }
+*/    
+    public void testIsNetworkAvailable_WithConnection() {
+        // permission CHANGE_WIFI_STATE in app's manifest file must be present
+        turnWifiOn();
+        // wifi is ON
+        assertEquals(true, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
 
     // ================================================================================
