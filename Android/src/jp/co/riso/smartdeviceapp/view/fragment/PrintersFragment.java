@@ -33,6 +33,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Parcelable;
@@ -173,6 +174,16 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mPauseableHandler.resume();
         }
         
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (isTablet() && mPrinterTabletView != null) {
+            mPrinterTabletView.requestLayout();
+        }
     }
     
     /** {@inheritDoc} */
