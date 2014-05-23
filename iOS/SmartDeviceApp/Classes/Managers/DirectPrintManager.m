@@ -64,15 +64,15 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)printDocumentViaLPR
 {
-    [self preparePrintJob];
     self.isPrinting = YES;
+    [self preparePrintJob];
     directprint_job_lpr_print(self.job);
 }
 
 - (void)printDocumentViaRaw
 {
-    [self preparePrintJob];
     self.isPrinting = YES;
+    [self preparePrintJob];
     directprint_job_raw_print(self.job);
 }
 
@@ -88,11 +88,10 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     self.job = directprint_job_new([NSLocalizedString(IDS_APP_NAME, @"") UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
-    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:NSLocalizedString(IDS_LBL_CANCEL, @"")];
-    alertView.didDismissHandler = ^(CXAlertView *alertView)
-    {
+    CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];
+    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"") type:CXAlertViewButtonTypeCancel handler:^(CXAlertView * alertView, CXAlertButtonItem *button){
         [self cancelJob];
-    };
+    }];
     self.alertView = alertView;
     [alertView show];
 }
@@ -160,26 +159,21 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     dispatch_async(dispatch_get_main_queue(), ^{
         [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
         [AlertHelper displayResult:kAlertResultPrintFailed withTitle:kAlertTitleDefault withDetails:nil];
-        [self.delegate documentDidFinishPrinting:NO];
         [self.alertView dismiss];
+        [self.delegate documentDidFinishPrinting:NO];
     });
 }
 
 - (void)cancelJob
 {
-    self.isPrinting = NO;
-    CFBridgingRelease(directprint_job_get_caller_data(self.job));
-    directprint_job_cancel(self.job);
-    directprint_job_free(self.job);
-    if ([NSThread isMainThread])
+    if (self.isPrinting)
     {
+        self.isPrinting = NO;
         [self.alertView dismiss];
-    }
-    else
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.alertView dismiss];
-        });
+        self.alertView = nil;
+        CFBridgingRelease(directprint_job_get_caller_data(self.job));
+        directprint_job_cancel(self.job);
+        directprint_job_free(self.job);
     }
 }
 
@@ -189,6 +183,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 {
     if (self.isPrinting)
     {
+        [self.alertView dismiss];
         [self cancelJob];
     }
 }

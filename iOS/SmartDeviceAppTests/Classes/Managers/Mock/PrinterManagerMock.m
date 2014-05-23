@@ -36,18 +36,18 @@
     pd.enTrayFaceDown = YES;
     pd.enTrayStacking = YES;
     pd.enTrayTop = YES;
-    NSNotification* notif = [NSNotification notificationWithName:NOTIF_SNMP_ADD object:pd];
+    NSNotification* notif = [NSNotification notificationWithName:NOTIF_SNMP_ADD object:self userInfo:@{@"printerDetails": pd}];
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     [pm notifyPrinterFound:notif];
     [pm notifySearchEnded:[NSNotification notificationWithName:NOTIF_SNMP_END
-                                                        object:[NSNumber numberWithBool:YES]]];
+                                                        object:self userInfo:@{@"result": [NSNumber numberWithBool:YES]}]];
 }
 
 - (void)searchForPrinterFail:(NSString*)printerIP
 {
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     [pm notifySearchEnded:[NSNotification notificationWithName:NOTIF_SNMP_END
-                                                        object:[NSNumber numberWithBool:NO]]];
+                                                        object:self userInfo:@{@"result": [NSNumber numberWithBool:NO]}]];
 }
 
 - (void)searchForAllPrintersSuccessful
@@ -71,11 +71,11 @@
         pd.enTrayStacking = YES;
         pd.enTrayTop = YES;
         
-        [pm notifyPrinterFound:[NSNotification notificationWithName:NOTIF_SNMP_ADD object:pd]];
+        [pm notifyPrinterFound:[NSNotification notificationWithName:NOTIF_SNMP_ADD object:nil userInfo:@{@"printerDetails": pd}]];
     }
     
     [pm notifySearchEnded:[NSNotification notificationWithName:NOTIF_SNMP_END
-                                                        object:[NSNumber numberWithBool:NO]]];
+                                                        object:self userInfo:@{@"result": [NSNumber numberWithBool:YES]}]];
 }
 
 @end

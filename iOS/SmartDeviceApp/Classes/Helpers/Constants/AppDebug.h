@@ -43,5 +43,9 @@
 #pragma mark OpenSource
 #define DEBUG_LOG_REACHABILITY              0
 
+#pragma mark - Debug Behavior Switches
+#define DEBUG_SNMP_USE_FAKE_PRINTERS        0
+#define DEBUG_SNMP_USE_TIMEOUT              0
+
 
 #endif

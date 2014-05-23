@@ -354,7 +354,8 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
     
     // get the printer details
-    PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[notif object];
+    NSDictionary *userInfo = [notif userInfo];
+    PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[userInfo objectForKey:@"printerDetails"];
     
     // check if this is a new printer
     __weak PrinterManager* weakSelf = self;
@@ -389,7 +390,8 @@ static PrinterManager* sharedPrinterManager = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     //get the search result
-    BOOL result = [(NSNumber*)[notif object] boolValue];
+    NSDictionary *userInfo = [notif userInfo];
+    BOOL result = [(NSNumber*)[userInfo objectForKey:@"result"] boolValue];
     
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{

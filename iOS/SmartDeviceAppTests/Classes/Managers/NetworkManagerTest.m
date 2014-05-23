@@ -7,7 +7,9 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "NetworkManager.h"
+#import "Reachability.h"
 
 @interface NetworkManagerTest : GHTestCase
 {
@@ -49,12 +51,38 @@
 /* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
 /* use a naming scheme for defining the execution order of your test cases */
 
-- (void)test001_ConnectionToLocalWifi
+/*- (void)test001_ConnectionToLocalWifi
 {
     GHTestLog(@"# CHECK: NM can check local wifi status. #");
     
     GHTestLog(@"-- assumption: device is connected to the local wifi");
     GHAssertTrue([NetworkManager isConnectedToLocalWifi], @"");
+}*/
+
+- (void)testConnectionToLocalWifi_OK
+{
+    id mockReachability = [OCMockObject mockForClass:[Reachability class]];
+    [[[mockReachability stub] andReturn:mockReachability] reachabilityForLocalWiFi];
+    [[[mockReachability stub] andReturnValue:OCMOCK_VALUE(ReachableViaWiFi)] currentReachabilityStatus];
+    
+    BOOL isConnected = [NetworkManager isConnectedToLocalWifi];
+    
+    GHAssertEquals(isConnected, YES, @"Network should be connected to local wifi");
+    [mockReachability stopMocking];
 }
+
+- (void)testConnectionToLocalWifi_NG
+{
+    id mockReachability = [OCMockObject mockForClass:[Reachability class]];
+    [[[mockReachability stub] andReturn:mockReachability] reachabilityForLocalWiFi];
+    [[[mockReachability stub] andReturnValue:OCMOCK_VALUE(NotReachable)] currentReachabilityStatus];
+    
+    BOOL isConnected = [NetworkManager isConnectedToLocalWifi];
+    
+    GHAssertEquals(isConnected, NO, @"Network should not be connected to local wifi");
+    [mockReachability stopMocking];
+}
+
+
 
 @end
