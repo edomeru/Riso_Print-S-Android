@@ -257,7 +257,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             }
         }
         
-        pj.restoreState(isCollapsed, mPrinterToDelete);
+        pj.restoreState(isCollapsed, mPrinterToDelete, mPrintJobToDelete);
     }
     
     /**
@@ -378,7 +378,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      */
     private boolean checkSwipe(MotionEvent ev) {
         // if swipe to right end delete mode
-        if ((mDownPoint.x - ev.getRawX()) < 0) {
+        if ((ev.getRawX() - mDownPoint.x) > SWIPE_THRESHOLD) {
             endDelete(true);
             return false;
         }

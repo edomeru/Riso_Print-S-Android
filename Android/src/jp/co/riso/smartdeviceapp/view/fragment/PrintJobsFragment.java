@@ -189,7 +189,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     
     /** {@inheritDoc} */
     @Override
-    public void setDeletePrintJob(PrintJob job) {
+    public void setDeletePrintJob(PrintJobsGroupView printJobsGroupView, PrintJob job) {
+        mPrintGroupToDelete = printJobsGroupView;
         mPrintJobToDelete = job;
     }
     
@@ -219,7 +220,13 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void onConfirm() {
         if (mPrintGroupToDelete != null) {
-            mPrintGroupToDelete.onDeleteJobGroup();
+            if (mPrinterToDelete != null) {
+                mPrintGroupToDelete.onDeleteJobGroup();
+            }
+            else if (mPrintJobToDelete != null) {
+                mPrintGroupToDelete.onDeletePrintJob(mPrintJobToDelete);
+            }
+            mPrintGroupToDelete = null;
             mPrintGroupToDelete = null;
             mPrinterToDelete = null;
             mConfirmDialog = null;
@@ -230,7 +237,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void onCancel() {
         if (mPrintGroupToDelete != null) {
-            mPrintGroupToDelete.onCancelDeleteGroup();
+            if (mPrinterToDelete != null) {
+                mPrintGroupToDelete.onCancelDeleteGroup();
+            }
+            else if (mPrintJobToDelete != null) {
+                mPrintJobsView.endDelete(true);
+            }
             mPrintGroupToDelete = null;
             mPrinterToDelete = null;
             mConfirmDialog = null;
