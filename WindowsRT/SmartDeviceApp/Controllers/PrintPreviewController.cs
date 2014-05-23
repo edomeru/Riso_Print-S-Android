@@ -308,7 +308,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (printerId > -1)
             {
-                _selectedPrinter = await DatabaseController.Instance.GetPrinter(printerId);
+                _selectedPrinter = PrinterController.Instance.GetDefaultPrinter();
             }
             if (_selectedPrinter == null)
             {
