@@ -7,66 +7,236 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
-#import <QuartzCore/QuartzCore.h>
+#import "OCMock.h"
 #import "PrintDocument.h"
 #import "PreviewSetting.h"
 #import "Printer.h"
 #import "DatabaseManager.h"
 #import "PrintSetting.h"
+#import "PrintSettingsHelper.h"
+#import "CGPDFMock.h"
+
+static NSString *context = @"PrintDocumentTestContext";
 
 @interface PrintDocument(Test)
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSURL *url;
 @end
 
-@interface PrintDocumentTest : GHTestCase <PrintDocumentDelegate>
+@interface PrintDocumentTest : GHTestCase<PrintDocumentDelegate>
 
 @property (strong, nonatomic) PrintDocument *printDocument;
 @property (strong, nonatomic) NSURL *testFileURL;
 @property (strong, nonatomic) NSMutableSet *keyChangedSet;
+@property (strong, nonatomic) NSArray *expectedKeys;
+@property (strong, nonatomic) NSArray *properties;
 
 @end
 
 @implementation PrintDocumentTest
 {
-    NSArray *expectedKeys;
 }
 
--(void)tearDown
+- (void)setUp
+{
+    [MagicalRecord setDefaultModelFromClass:[self class]];
+    [MagicalRecord setupCoreDataStackWithInMemoryStore];
+    
+    RESET_FAKE(CGPDFDocumentGetNumberOfPages);
+    FFF_RESET_HISTORY();
+}
+
+- (void)tearDown
 {
     [self.keyChangedSet removeAllObjects];
+    [MagicalRecord cleanUp];
 }
 
 - (void)setUpClass
 {
-    self.testFileURL = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
-    self.printDocument = [[PrintDocument alloc] initWithURL:self.testFileURL name:[self.testFileURL.path lastPathComponent]];
-    self.printDocument.delegate = self;
     self.keyChangedSet = [[NSMutableSet alloc] init];
-    
-    expectedKeys = [NSArray arrayWithObjects:
-                    @"colorMode",
-                    @"orientation",
-                    @"copies",
-                    @"duplex",
-                    @"paperSize",
-                    @"scaleToFit",
-                    @"paperType",
-                    @"inputTray",
-                    @"imposition",
-                    @"impositionOrder",
-                    @"sort",
-                    @"booklet",
-                    @"bookletFinish",
-                    @"bookletLayout",
-                    @"finishingSide",
-                    @"staple",
-                    @"punch",
-                    @"outputTray"
-                    , nil];
+    self.expectedKeys = @[
+                          @"colorMode",
+                          @"orientation",
+                          @"copies",
+                          @"duplex",
+                          @"paperSize",
+                          @"scaleToFit",
+                          @"paperType",
+                          @"inputTray",
+                          @"imposition",
+                          @"impositionOrder",
+                          @"sort",
+                          @"booklet",
+                          @"bookletFinish",
+                          @"bookletLayout",
+                          @"finishingSide",
+                          @"staple",
+                          @"punch",
+                          @"outputTray"
+                          ];
+    self.properties = @[
+                        @"name",
+                        @"url",
+                        @"previewSetting",
+                        @"printer",
+                        @"delegate",
+                        @"pageCount",
+                        @"currentPage"
+                        ];
 }
 
-- (void)test001_initPrintDocument
+- (void)tearDownClass
+{
+}
+
+- (BOOL)previewSettingDidChange:(NSString *)keyChanged
+{
+    [self.keyChangedSet addObject:keyChanged];
+    return YES;
+}
+
+- (void)testProperties
+{
+    // SUT + Verification
+    PrintDocument *printDocument = [[PrintDocument alloc] init];
+    for (NSString *property in self.properties)
+    {
+        BOOL responds = [printDocument respondsToSelector:NSSelectorFromString(property)];
+        GHAssertEquals(responds, YES, @"Print document must respond to: %@", property);
+    }
+    GHAssertNil(printDocument.name, @"name must initially be nil.");
+    GHAssertNil(printDocument.url, @"url must initially be nil.");
+    GHAssertNil(printDocument.previewSetting, @"previewSetting must initially be nil.");
+    GHAssertNil(printDocument.printer, @"printer must initially be nil.");
+    GHAssertNil(printDocument.delegate, @"delegate must initially be nil.");
+    GHAssertEquals(printDocument.pageCount, (NSInteger)0, @"pageCount must be 0.");
+    GHAssertEquals(printDocument.currentPage, (NSInteger)0, @"currentPage must be 0.");
+}
+
+- (void)testInitWithUrl
+{
+    // SUT
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    
+    // Verification
+    GHAssertEqualObjects(printDocument.url, url, @"URL should match");
+    GHAssertEqualStrings(printDocument.name, name, @"Name should match");
+}
+
+- (void)testPreviewSetting
+{
+    // SUT
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    printDocument.delegate = self;
+    [printDocument setPreviewSetting:previewSetting];
+    for (NSString *key in self.expectedKeys)
+    {
+        NSInteger value = [[self.printDocument.previewSetting valueForKey:key] integerValue];
+        [previewSetting setValue:[NSNumber numberWithInteger:++value] forKey:key];
+    }
+    
+    // Verification
+    GHAssertEqualObjects(printDocument.previewSetting, previewSetting, @"Preview setting should match.");
+    for (NSString *key in self.expectedKeys)
+    {
+        BOOL changed = [self.keyChangedSet containsObject:key];
+        GHAssertTrue(changed, @"%@ should be observed", key);
+    }
+}
+
+- (void)testPrinter
+{
+    // Mock
+    id mockPrintSettingsHelper = [OCMockObject mockForClass:[PrintSettingsHelper class]];
+    [[mockPrintSettingsHelper expect] copyPrintSettings:OCMOCK_ANY toPreviewSetting:[OCMArg anyObjectRef]];
+    
+    // SUT
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    Printer *printer = [Printer MR_createEntity];
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    [printDocument setPreviewSetting:previewSetting];
+    [printDocument setPrinter:printer];
+    
+    // Verification
+    GHAssertNoThrow([mockPrintSettingsHelper verify], @"");
+}
+
+- (void)testPrinter_Nil
+{
+    // Mock
+    id mockPrintSettingsHelper = [OCMockObject mockForClass:[PrintSettingsHelper class]];
+    [[mockPrintSettingsHelper expect] copyPrintSettings:OCMOCK_ANY toPreviewSetting:[OCMArg anyObjectRef]];
+    
+    // SUT
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    [printDocument setPreviewSetting:previewSetting];
+    [printDocument setPrinter:nil];
+    
+    // Verification
+    GHAssertThrows([mockPrintSettingsHelper verify], @"");
+}
+
+- (void)testPrinter_PreviewSetting_Nil
+{
+    // Mock
+    id mockPrintSettingsHelper = [OCMockObject mockForClass:[PrintSettingsHelper class]];
+    [[mockPrintSettingsHelper expect] copyPrintSettings:OCMOCK_ANY toPreviewSetting:[OCMArg anyObjectRef]];
+    
+    // SUT
+    Printer *printer = [Printer MR_createEntity];
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    [printDocument setPreviewSetting:nil];
+    [printDocument setPrinter:printer];
+    
+    // Verification
+    GHAssertThrows([mockPrintSettingsHelper verify], @"");
+}
+
+- (void)testPageCount
+{
+    // Mock
+    CGPDFDocumentGetNumberOfPages_fake.return_val = 10;
+    
+    // SUT
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    NSInteger pageCount = [printDocument pageCount];
+    
+    // Verification
+    GHAssertEquals((int)CGPDFDocumentGetNumberOfPages_fake.call_count, 1, @"CGPDFDocumentGetNumberOfPages must be called 1 time.");
+    GHAssertEquals(pageCount, (NSInteger)CGPDFDocumentGetNumberOfPages_fake.return_val, @"Page count should match");
+}
+
+- (void)testKVO_NoChange
+{
+    // SUT
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    NSURL *url = [NSURL URLWithString:@"http://192.168.1.1"];
+    NSString *name = @"Document";
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:url name:name];
+    [printDocument setPreviewSetting:previewSetting];
+    previewSetting.copies = previewSetting.copies;
+    
+    // Verification
+    BOOL changed = [self.keyChangedSet containsObject:@"copies"];
+    GHAssertFalse(changed, @"");
+}
+
+/*- (void)test001_initPrintDocument
 {
     GHAssertNotNil(self.printDocument, @"");
     GHAssertNotNil(self.printDocument.url, @"");
@@ -174,5 +344,6 @@
 {
     [self.keyChangedSet addObject:keyChanged];
     return YES;
-}
+}*/
+ 
 @end

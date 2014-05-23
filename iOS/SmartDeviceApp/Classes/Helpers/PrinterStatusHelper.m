@@ -32,9 +32,8 @@
     if(self != nil)
     {
         self.ipAddress = [NSString stringWithString:ipAddress];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     }
     
     return self;
@@ -42,9 +41,8 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     
     [self stopPrinterStatusPolling];
 }
@@ -153,7 +151,7 @@
 
 #pragma mark - Notifications
 
-- (void)willResignActive
+- (void)didEnterBackground
 {
     if (self.isPolling)
     {
@@ -166,20 +164,6 @@
  Called when app is resumed from background.
  */
 - (void)willEnterForeground
-{
-    if (self.cancelledToBackground == YES)
-    {
-        self.cancelledToBackground = NO;
-        [self startPrinterStatusPolling];
-    }
-}
-
-/** 
- Called when app gains focus after a window overlay is closed.
-  - Status Bar swipe-down
-  - Control Center swipe-up (iOS7)
- */
-- (void)didBecomeActive
 {
     if (self.cancelledToBackground == YES)
     {

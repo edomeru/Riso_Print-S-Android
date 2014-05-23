@@ -71,12 +71,6 @@ static NSDictionary* sharedSettingsDict = nil;
     
     switch (type)
     {
-        case kPlistBoolValUseSNMP:
-            return [[sharedSettingsDict objectForKey:@"Use_SNMPCommonLib"] boolValue];
-            
-        case kPlistBoolValUseSNMPTimeout:
-            return [[sharedSettingsDict objectForKey:@"Use_SNMPUnicastTimeout"] boolValue];
-            
         case kPlistBoolValUsePrintJobTestData:
             return [[sharedSettingsDict objectForKey:@"Use_PrintJobHistoryTestData"] boolValue];
             

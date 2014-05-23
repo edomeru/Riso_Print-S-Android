@@ -14,6 +14,8 @@
 
 @property (nonatomic, weak) id<DirectPrintManagerDelegate> delegate;
 
++ (BOOL)idle;
++ (void)cancelAll;
 - (void)printDocumentViaLPR;
 - (void)printDocumentViaRaw;
 

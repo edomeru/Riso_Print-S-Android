@@ -22,14 +22,12 @@
 		281D733819261F6A005F5044 /* PrintJobItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C0969192048DD00347991 /* PrintJobItemCell.m */; };
 		2821CAAC190E3A6500CE3D51 /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
-		28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
 		282830FF18C7012B008B127C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		2828313518C70699008B127C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		286CE3F618F2264E00642A10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
 		28738EB618EBCE19004ABDAD /* PrintJobHistoryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EB518EBCE19004ABDAD /* PrintJobHistoryHelper.m */; };
 		28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */; };
-		28A000EF191B24A500EB4DB6 /* PrinterManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A000EE191B24A500EB4DB6 /* PrinterManagerMock.m */; };
 		28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */; };
 		28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9173818E3D55900BA5232 /* PrintJobHistoryGroupCell.m */; };
 		28B774691918C94400E97C60 /* NSDateFormatTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B774681918C94400E97C60 /* NSDateFormatTest.m */; };
@@ -49,7 +47,15 @@
 		2D0AEC88185FE50000810455 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC83185FE50000810455 /* GHUnitIOS.framework */; };
 		2D0AEC89185FE50000810455 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC86185FE50000810455 /* InfoPlist.strings */; };
 		2D0AEC8B185FE64A00810455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
+		2D0C6D3B192D8A2E00806AEB /* PrintDocumentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C06D1911127400197397 /* PrintDocumentTest.m */; };
+		2D0C6D40192DA3FD00806AEB /* CGPDFMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0C6D3F192DA3FD00806AEB /* CGPDFMock.m */; };
+		2D0C6D43192DBDC800806AEB /* PreviewSettingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0C6D42192DBDC800806AEB /* PreviewSettingTest.m */; };
+		2D0C6D44192DE62100806AEB /* RenderCacheTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C07D1911137600197397 /* RenderCacheTest.m */; };
+		2D0C6D45192DE66500806AEB /* PrinterStatusHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28280A121910D8D2003630E2 /* PrinterStatusHelperTest.m */; };
+		2D0C6D46192E0B7800806AEB /* PDFRenderOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */; };
 		2D0D74C218F2887B002B5E40 /* RenderCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0D74C118F2887B002B5E40 /* RenderCache.m */; };
+		2D0DBF0C192CABFA00E35E71 /* AlertHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B774661918A61500E97C60 /* AlertHelperTest.m */; };
+		2D0DBF0F192CD00300E35E71 /* UIColorTest_Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DBF0E192CD00300E35E71 /* UIColorTest_Theme.m */; };
 		2D0DE96318E3E9C8002DB0B4 /* PrintDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DE96218E3E9C8002DB0B4 /* PrintDocument.m */; };
 		2D13C5C9191CF38D001DC4FA /* PrinterLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D13C5C8191CF38D001DC4FA /* PrinterLayout.m */; };
 		2D13C5CA191CF38D001DC4FA /* PrinterLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D13C5C8191CF38D001DC4FA /* PrinterLayout.m */; };
@@ -93,7 +99,6 @@
 		2D232D9618E57DB0008D06C8 /* PrintSettingsItemInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9518E57DB0008D06C8 /* PrintSettingsItemInputCell.m */; };
 		2D232D9918E580D1008D06C8 /* PrintSettingsItemSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D232D9818E580D1008D06C8 /* PrintSettingsItemSwitchCell.m */; };
 		2D30FBBA191A32CC00B9DAC8 /* Swizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBB9191A32CC00B9DAC8 /* Swizzler.m */; };
-		2D30FBCC191A530700B9DAC8 /* DirectPrintManagerMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */; };
 		2D58A9071913D4DE003FBC0B /* TestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */; };
 		2D5AF0BB191E18DE0079510D /* CustomSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */; };
 		2D5AF0BC191E18DE0079510D /* CustomSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AF0BA191E18DE0079510D /* CustomSegmentedControl.m */; };
@@ -269,7 +274,6 @@
 		3195C1E21911182E00197397 /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F231C1900D3C700301D1E /* SimplePing.m */; };
 		3195C1E819111A9700197397 /* PrintPreviewHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C07B1911137600197397 /* PrintPreviewHelperTest.m */; };
 		3195C1E919111A9700197397 /* PrintSettingsHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C07C1911137600197397 /* PrintSettingsHelperTest.m */; };
-		3195C1EA19111A9700197397 /* RenderCacheTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C07D1911137600197397 /* RenderCacheTest.m */; };
 		3195C1EB19111A9700197397 /* SettingsValidationHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C07E1911137600197397 /* SettingsValidationHelperTest.m */; };
 		3195C1EC19111A9700197397 /* XMLParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C07F1911137600197397 /* XMLParserTest.m */; };
 		3195C1EE19111AA800197397 /* PDFFileManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3195C0791911133D00197397 /* PDFFileManagerTest.m */; };
@@ -318,8 +322,6 @@
 		28738EBB18EC01C4004ABDAD /* PrintJob+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PrintJob+Log.m"; sourceTree = "<group>"; };
 		2895A6E5191A3F9900865112 /* MenuButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuButtonTest.m; sourceTree = "<group>"; };
 		2895A6E7191A421100865112 /* PrinterStatusViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusViewTest.m; sourceTree = "<group>"; };
-		28A000ED191B24A500EB4DB6 /* PrinterManagerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterManagerMock.h; sourceTree = "<group>"; };
-		28A000EE191B24A500EB4DB6 /* PrinterManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterManagerMock.m; sourceTree = "<group>"; };
 		28A9172E18E3BE4200BA5232 /* PrintJobHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryViewController.h; sourceTree = "<group>"; };
 		28A9172F18E3BE4200BA5232 /* PrintJobHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryViewController.m; sourceTree = "<group>"; };
 		28A9173718E3D55900BA5232 /* PrintJobHistoryGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryGroupCell.h; sourceTree = "<group>"; };
@@ -366,8 +368,12 @@
 		2D0AEC83185FE50000810455 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		2D0AEC87185FE50000810455 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D0AEC8A185FE64A00810455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2D0C6D3E192DA3FD00806AEB /* CGPDFMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGPDFMock.h; sourceTree = "<group>"; };
+		2D0C6D3F192DA3FD00806AEB /* CGPDFMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGPDFMock.m; sourceTree = "<group>"; };
+		2D0C6D42192DBDC800806AEB /* PreviewSettingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewSettingTest.m; sourceTree = "<group>"; };
 		2D0D74C018F2887B002B5E40 /* RenderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderCache.h; sourceTree = "<group>"; };
 		2D0D74C118F2887B002B5E40 /* RenderCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenderCache.m; sourceTree = "<group>"; };
+		2D0DBF0E192CD00300E35E71 /* UIColorTest_Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorTest_Theme.m; sourceTree = "<group>"; };
 		2D0DE96118E3E9C8002DB0B4 /* PrintDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintDocument.h; sourceTree = "<group>"; };
 		2D0DE96218E3E9C8002DB0B4 /* PrintDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintDocument.m; sourceTree = "<group>"; };
 		2D13C5C7191CF38D001DC4FA /* PrinterLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrinterLayout.h; sourceTree = "<group>"; };
@@ -439,10 +445,6 @@
 		2D232D9818E580D1008D06C8 /* PrintSettingsItemSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsItemSwitchCell.m; sourceTree = "<group>"; };
 		2D30FBB8191A32CC00B9DAC8 /* Swizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Swizzler.h; sourceTree = "<group>"; };
 		2D30FBB9191A32CC00B9DAC8 /* Swizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Swizzler.m; sourceTree = "<group>"; };
-		2D30FBC4191A470200B9DAC8 /* SNMPManagerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNMPManagerMock.h; sourceTree = "<group>"; };
-		2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNMPManagerMock.m; sourceTree = "<group>"; };
-		2D30FBCA191A530700B9DAC8 /* DirectPrintManagerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectPrintManagerMock.h; sourceTree = "<group>"; };
-		2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManagerMock.m; sourceTree = "<group>"; };
 		2D58A9051913D4DE003FBC0B /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		2D58A9061913D4DE003FBC0B /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
 		2D5AF0B9191E18DE0079510D /* CustomSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomSegmentedControl.h; sourceTree = "<group>"; };
@@ -754,6 +756,7 @@
 				28CFC56618F6350200DBD2BD /* Models */,
 				28CFC54218F61C1700DBD2BD /* Controllers */,
 				28CFC55018F61C1700DBD2BD /* Managers */,
+				2D0C6D3C192D983E00806AEB /* Mocks */,
 				28CFC54D18F61C1700DBD2BD /* Helpers */,
 				312B0DF5191215AE0033FB55 /* Views */,
 			);
@@ -833,6 +836,7 @@
 				3195C07C1911137600197397 /* PrintSettingsHelperTest.m */,
 				3195C07D1911137600197397 /* RenderCacheTest.m */,
 				3195C07E1911137600197397 /* SettingsValidationHelperTest.m */,
+				2D0DBF0E192CD00300E35E71 /* UIColorTest_Theme.m */,
 				3195C07F1911137600197397 /* XMLParserTest.m */,
 			);
 			path = Helpers;
@@ -841,7 +845,6 @@
 		28CFC55018F61C1700DBD2BD /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				2D30FBC0191A464900B9DAC8 /* Mock */,
 				28CFC55118F61C1700DBD2BD /* DatabaseManagerTest.m */,
 				28C9182119124B1F00CB582C /* DirectPrintManagerTest.m */,
 				28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */,
@@ -857,6 +860,7 @@
 			children = (
 				3195C06D1911127400197397 /* PrintDocumentTest.m */,
 				28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */,
+				2D0C6D42192DBDC800806AEB /* PreviewSettingTest.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1018,6 +1022,15 @@
 			path = Locales;
 			sourceTree = "<group>";
 		};
+		2D0C6D3C192D983E00806AEB /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				2D0C6D3E192DA3FD00806AEB /* CGPDFMock.h */,
+				2D0C6D3F192DA3FD00806AEB /* CGPDFMock.m */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		2D1F231A1900D3C700301D1E /* SimplePing */ = {
 			isa = PBXGroup;
 			children = (
@@ -1100,19 +1113,6 @@
 				2D1F23C6190104D900301D1E /* legal.html */,
 			);
 			path = HTML;
-			sourceTree = "<group>";
-		};
-		2D30FBC0191A464900B9DAC8 /* Mock */ = {
-			isa = PBXGroup;
-			children = (
-				2D30FBCA191A530700B9DAC8 /* DirectPrintManagerMock.h */,
-				2D30FBCB191A530700B9DAC8 /* DirectPrintManagerMock.m */,
-				28A000ED191B24A500EB4DB6 /* PrinterManagerMock.h */,
-				28A000EE191B24A500EB4DB6 /* PrinterManagerMock.m */,
-				2D30FBC4191A470200B9DAC8 /* SNMPManagerMock.h */,
-				2D30FBC5191A470200B9DAC8 /* SNMPManagerMock.m */,
-			);
-			path = Mock;
 			sourceTree = "<group>";
 		};
 		2D6C6FB91925E89800E33789 /* OCMock */ = {
@@ -1937,11 +1937,9 @@
 				28052CE91911C651007982DF /* InputHelperTest.m in Sources */,
 				28B774691918C94400E97C60 /* NSDateFormatTest.m in Sources */,
 				28052CEA1911C651007982DF /* PListHelperTest.m in Sources */,
-				28280A131910D8D2003630E2 /* PrinterStatusHelperTest.m in Sources */,
 				28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */,
 				3195C1E819111A9700197397 /* PrintPreviewHelperTest.m in Sources */,
 				3195C1E919111A9700197397 /* PrintSettingsHelperTest.m in Sources */,
-				3195C1EA19111A9700197397 /* RenderCacheTest.m in Sources */,
 				3195C1EB19111A9700197397 /* SettingsValidationHelperTest.m in Sources */,
 				3195C1EC19111A9700197397 /* XMLParserTest.m in Sources */,
 				3195C1D11911182E00197397 /* CXAlertBackgroundWindow.m in Sources */,
@@ -1949,6 +1947,7 @@
 				3195C1D51911182E00197397 /* CXAlertButtonItem.m in Sources */,
 				3195C1D71911182E00197397 /* CXAlertView.m in Sources */,
 				3195C1D91911182E00197397 /* CXAlertViewController.m in Sources */,
+				2D0C6D45192DE66500806AEB /* PrinterStatusHelperTest.m in Sources */,
 				3195C1DB1911182E00197397 /* LFDisplayBridge.m in Sources */,
 				3195C1DD1911182E00197397 /* LFGlassView.m in Sources */,
 				3195C1E01911182E00197397 /* Reachability.m in Sources */,
@@ -1971,6 +1970,7 @@
 				2D6C70101925EEBA00E33789 /* NSManagedObjectContext+MagicalThreading.m in Sources */,
 				3195C152191117F700197397 /* PrintJobHistoryGroupCell.m in Sources */,
 				2D6C70051925EEBA00E33789 /* NSObject+MagicalDataImport.m in Sources */,
+				2D0C6D46192E0B7800806AEB /* PDFRenderOperationTest.m in Sources */,
 				3195C154191117F700197397 /* UIView+Localization.m in Sources */,
 				2D6C70021925EEBA00E33789 /* NSAttributeDescription+MagicalDataImport.m in Sources */,
 				3195C156191117F700197397 /* PrinterCell.m in Sources */,
@@ -1987,19 +1987,21 @@
 				3195C16C191117F700197397 /* MenuButton.m in Sources */,
 				3195C16E191117F700197397 /* MenuScrollView.m in Sources */,
 				3195C170191117F700197397 /* PreviewView.m in Sources */,
+				2D0C6D40192DA3FD00806AEB /* CGPDFMock.m in Sources */,
 				3195C172191117F700197397 /* PrinterStatusView.m in Sources */,
 				3195C174191117F700197397 /* AppDelegate.m in Sources */,
-				2D30FBCC191A530700B9DAC8 /* DirectPrintManagerMock.m in Sources */,
+				2D0DBF0C192CABFA00E35E71 /* AlertHelperTest.m in Sources */,
 				2D6C701A1925EEBA00E33789 /* MagicalRecord.m in Sources */,
 				3195C177191117F700197397 /* PrintJobHistoryLayout.m in Sources */,
 				3195C179191117F700197397 /* ReplaceSegue.m in Sources */,
 				3195C17B191117F700197397 /* SlideOverSegue.m in Sources */,
 				3195C17D191117F700197397 /* SlideSegue.m in Sources */,
+				2D0C6D44192DE62100806AEB /* RenderCacheTest.m in Sources */,
 				3195C17F191117F700197397 /* AddPrinterViewController.m in Sources */,
 				3195C181191117F700197397 /* RootViewController.m in Sources */,
 				3195C183191117F700197397 /* SlidingViewController.m in Sources */,
+				2D0C6D43192DBDC800806AEB /* PreviewSettingTest.m in Sources */,
 				3195C185191117F700197397 /* UIViewController+Segue.m in Sources */,
-				28A000EF191B24A500EB4DB6 /* PrinterManagerMock.m in Sources */,
 				2D30FBBA191A32CC00B9DAC8 /* Swizzler.m in Sources */,
 				2D6C70071925EEBA00E33789 /* NSString+MagicalDataImport.m in Sources */,
 				3195C187191117F700197397 /* HelpViewController.m in Sources */,
@@ -2017,6 +2019,7 @@
 				3195C199191117F700197397 /* PDFPageContentViewController.m in Sources */,
 				3195C19B191117F700197397 /* PrintPreviewViewController.m in Sources */,
 				2D6C70131925EEBA00E33789 /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
+				2D0DBF0F192CD00300E35E71 /* UIColorTest_Theme.m in Sources */,
 				2D6C70111925EEBA00E33789 /* NSManagedObjectModel+MagicalRecord.m in Sources */,
 				2D6C70041925EEBA00E33789 /* NSNumber+MagicalDataImport.m in Sources */,
 				3195C19D191117F700197397 /* PrintSettingsOptionTableViewController.m in Sources */,
@@ -2025,6 +2028,7 @@
 				2D6C70081925EEBA00E33789 /* NSManagedObject+MagicalAggregation.m in Sources */,
 				3195C1A1191117F700197397 /* PrintSettingsViewController.m in Sources */,
 				3195C1A3191117F700197397 /* PrintSettingsPrinterListTableViewController.m in Sources */,
+				2D0C6D3B192D8A2E00806AEB /* PrintDocumentTest.m in Sources */,
 				3195C1A5191117F700197397 /* SettingsViewController.m in Sources */,
 				3195C1A7191117F700197397 /* DatabaseManager.m in Sources */,
 				3195C1A9191117F700197397 /* DirectPrintManager.m in Sources */,

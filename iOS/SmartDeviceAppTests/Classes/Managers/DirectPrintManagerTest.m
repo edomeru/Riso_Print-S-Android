@@ -67,6 +67,11 @@ void *get_caller_data()
 
 @implementation DirectPrintManagerTest
 
+- (BOOL)shouldRunOnMainThread
+{
+    return YES;
+}
+
 - (void)setUp
 {
     [MagicalRecord setDefaultModelFromClass:[self class]];

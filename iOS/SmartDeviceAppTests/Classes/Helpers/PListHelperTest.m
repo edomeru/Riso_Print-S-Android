@@ -72,12 +72,6 @@
     NSUInteger defaultValue = [PListHelper readBool:99];
     GHAssertFalse(defaultValue, @"");
     
-    GHTestLog(@"-- reading [Use SNMP Common Lib]");
-    GHAssertTrue([PListHelper readBool:kPlistBoolValUseSNMP], @"");
-    
-    GHTestLog(@"-- reading [Use SNMP Timeout]");
-    GHAssertFalse([PListHelper readBool:kPlistBoolValUseSNMPTimeout], @"");
-    
     GHTestLog(@"-- reading [Use Print Job History Test Data]");
     GHAssertTrue([PListHelper readBool:kPlistBoolValUsePrintJobTestData], @"");
 }
