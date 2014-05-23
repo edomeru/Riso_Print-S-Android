@@ -297,7 +297,7 @@ public class Printer implements Parcelable {
          * @return the mPunch3Available
          */
         public boolean isPunch3Available() {
-            return mPunch4Available;
+            return mPunch3Available;
         }
         
         /**

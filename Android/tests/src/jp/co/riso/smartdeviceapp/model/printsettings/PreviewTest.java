@@ -206,9 +206,15 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testPunchGetCount() {
-        assertEquals(0, Punch.OFF.getCount());
-        assertEquals(2, Punch.HOLES_2.getCount());
-        assertEquals(4, Punch.HOLES_4.getCount());
+        assertEquals(0, Punch.OFF.getCount(false));
+        assertEquals(2, Punch.HOLES_2.getCount(false));
+        assertEquals(4, Punch.HOLES_4.getCount(false));
+    }
+
+    public void testPunchGetCount_JapanesePrinter() {
+        assertEquals(0, Punch.OFF.getCount(true));
+        assertEquals(2, Punch.HOLES_2.getCount(true));
+        assertEquals(3, Punch.HOLES_4.getCount(true));
     }
 
     public void testOutputTray() {

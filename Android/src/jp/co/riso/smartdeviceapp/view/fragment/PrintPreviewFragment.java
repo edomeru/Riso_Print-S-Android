@@ -8,6 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.util.List;
+
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
@@ -17,6 +19,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -140,6 +143,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
+        mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
         mPrintPreviewView.setListener(this);
@@ -232,6 +236,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      */
     public void setPrintId(int printerId) {
         mPrinterId = printerId;
+        if (mPrintPreviewView != null) {
+            mPrintPreviewView.setShow3Punch(isPrinterJapanese());
+            mPrintPreviewView.refreshView();
+        }
     }
     
     /**
@@ -247,6 +255,27 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             updateSeekBar();
             updatePageLabel();
         }
+    }
+    
+    /**
+     * Checks if the printer set is Japanese.
+     * 
+     * @return
+     */
+    public boolean isPrinterJapanese() {
+        if (mPrinterId == PrinterManager.EMPTY_ID) {
+            return false;
+        }
+        
+        List<Printer> mList = PrinterManager.getInstance(getActivity()).getSavedPrintersList();
+        
+        for (Printer printer : mList) {
+            if (printer.getId() == mPrinterId) {
+                return printer.getConfig().isPunch3Available();
+            }
+        }
+        
+        return false;
     }
     
     /**

@@ -89,6 +89,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private float mMarginTop = 0;
     private float mMarginBottom = 0;
     
+    private boolean mShow3Punch = false;
+    
     private PreviewControlsListener mListener = null;
     
     // Zoom/pan related variables
@@ -364,6 +366,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     public void setMarginBottomInMm(float marginBottom) {
         mMarginBottom = marginBottom;
     }
+
+    /**
+     * Set the print preview to show 3 punch instead of 4 punch
+     * 
+     * @param show3Punch
+     *            Should show 3 holes
+     */
+    public void setShow3Punch(boolean show3Punch) {
+        mShow3Punch = show3Punch;
+    }
     
     /**
      * Set the Preview Controls Listener
@@ -526,6 +538,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      */
     protected String getCacheKey(int index, int side) {
         StringBuffer buffer = new StringBuffer();
+        
         buffer.append(mPdfManager.getPath());
         buffer.append(index);
         buffer.append(side);
@@ -541,7 +554,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         buffer.append(mPrintSettings.getFinishingSide().ordinal());
         buffer.append(mPrintSettings.getStaple().ordinal());
-        buffer.append(mPrintSettings.getPunch().ordinal());
+        buffer.append(mPrintSettings.getPunch().getCount(mShow3Punch));
         
         buffer.append(mPrintSettings.isBooklet());
         buffer.append(mPrintSettings.getBookletFinish().ordinal());
@@ -1193,7 +1206,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
             float scale = punchDiameter / (float) mPunchBmp.getWidth();
 
-            int count = mPrintSettings.getPunch().getCount();
+            int count = mPrintSettings.getPunch().getCount(mShow3Punch);
             int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth());
             
             for (int i = 0; i < count; i++) {
