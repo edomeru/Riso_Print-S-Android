@@ -226,7 +226,6 @@ namespace SmartDeviceApp.ViewModels
 
         private void ListPrintersCommandExecute()
         {
-            new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
 
             Messenger.Default.Send<PrintSettingsPaneMode>(PrintSettingsPaneMode.SelectPrinter);
