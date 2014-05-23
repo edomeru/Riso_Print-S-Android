@@ -130,7 +130,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         super.onConfigurationChanged(newConfig);
         
         if (mPrintJobsView != null) {
-            mPrintJobsView.reset();
             mPrintJobsView.requestLayout();            
         }
     }

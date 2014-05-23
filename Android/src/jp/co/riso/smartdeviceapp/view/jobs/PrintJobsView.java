@@ -368,6 +368,37 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             addView(mColumns.get(i), columnParams);
         }
     }
+
+    /**
+     * updates the widths of the layout containers of PrintJobsGroupView
+     * 
+     * @param width
+     *          size of width available for Print Jobs View
+     */
+    private void updateColumns(int width) {
+        int colNum = 1;
+        int columnWidth = getContext().getResources().getDimensionPixelSize(R.dimen.printers_view_width);
+        
+        if (getResources().getBoolean(R.bool.is_tablet)) {
+            // if tablet get number of columns based on whole width
+            colNum = Math.max(width / columnWidth, MIN_COLUMNS);
+            
+            if (colNum == MIN_COLUMNS) {
+                // adjust column width depending on whole width
+                columnWidth = Math.min(width / MIN_COLUMNS, columnWidth);
+            }
+        }
+        
+        mColumnsHeight = new int[colNum];
+        
+        for (int i = 0; i < mColumns.size(); i++) {
+            LayoutParams columnParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            if (colNum > 1) {
+                columnParams.width = columnWidth;
+            }
+            mColumns.get(i).setLayoutParams(columnParams);
+        }
+    }
     
     /**
      * checks if a view is swiped
@@ -451,12 +482,15 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        
+
+        Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
         if (mInitialFlag) {
-            Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
             createColumns(screenSize.x);
             mInitialFlag = false;
+        }  else {
+            updateColumns(screenSize.x);
         }
+        
         if (mGroupViewCtr < mPrintGroupViews.size()) {
             addViewsToColumns();
         } else if (mColumns.size() > 1 && mGroupViewCtr > mPrintGroupViews.size()) {
