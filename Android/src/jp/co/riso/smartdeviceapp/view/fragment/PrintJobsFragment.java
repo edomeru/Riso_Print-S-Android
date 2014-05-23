@@ -123,7 +123,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         
         mIsRotated = true;
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
