@@ -213,6 +213,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      */
     private void displayPrinterSearchFragment() {
         if (isMaxPrinterCountReached()) {
+            mPauseableHandler.resume();
             return;
         }
         if (isTablet()) {
@@ -227,6 +228,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      */
     private void displayAddPrinterFragment() {
         if (isMaxPrinterCountReached()) {
+            mPauseableHandler.resume();
             return;
         }
         if (isTablet()) {
