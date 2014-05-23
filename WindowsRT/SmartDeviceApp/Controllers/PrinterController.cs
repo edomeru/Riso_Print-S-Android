@@ -226,6 +226,11 @@ namespace SmartDeviceApp.Controllers
             return PrinterList.FirstOrDefault(prn => prn.IsDefault);
         }
 
+        public Printer GetPrinter(int printerId)
+        {
+            return PrinterList.FirstOrDefault(prn => prn.Id == printerId);
+        }
+
         //private void sortPrinterList(int index)
         //{
         //    Printer defaultPrinter = _printerList.ElementAt(index);
