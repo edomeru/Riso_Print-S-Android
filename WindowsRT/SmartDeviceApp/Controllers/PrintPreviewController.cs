@@ -348,6 +348,15 @@ namespace SmartDeviceApp.Controllers
                     _printPreviewViewModel.IsReverseSwipe = false;
                 }
 
+                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.TopToBottom)
+                {
+                    _printPreviewViewModel.IsHorizontalSwipeEnabled = false;
+                }
+                else
+                {
+                    _printPreviewViewModel.IsHorizontalSwipeEnabled = true;
+                }
+
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
                 _printPreviewViewModel.RightPageActualSize = sampleSize;
                 if (_isBooklet || _isDuplex)

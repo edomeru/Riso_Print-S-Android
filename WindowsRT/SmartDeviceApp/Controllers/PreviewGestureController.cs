@@ -28,6 +28,9 @@ namespace SmartDeviceApp.Controllers
 
         private SwipeRightDelegate _swipeRightHandler;
         private SwipeLeftDelegate _swipeLeftHandler;
+        private SwipeTopDelegate _swipeTopHandler;
+        private SwipeBottomDelegate _swipeBottomHandler;
+        private bool _isHorizontalSwipeEnabled;
 
         private Size _targetSize;
         private Size _controlSize;
@@ -56,18 +59,23 @@ namespace SmartDeviceApp.Controllers
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
 
-        public SwipeRightDelegate SwipeRightHandler
+        public void InitializeSwipe(bool isHorizontalSwipeEnabled,
+            SwipeLeftDelegate swipeLeftHandler,
+            SwipeRightDelegate swipeRightHandler,
+            SwipeTopDelegate swipeTopHandler,
+            SwipeBottomDelegate swipeBottomHandler)
         {
-            set { _swipeRightHandler = value; }
-        }
-
-        public SwipeLeftDelegate SwipeLeftHandler
-        {
-            set { _swipeLeftHandler = value; }
+            _isHorizontalSwipeEnabled = isHorizontalSwipeEnabled;
+            _swipeLeftHandler = swipeLeftHandler;
+            _swipeRightHandler = swipeRightHandler;
+            _swipeTopHandler = swipeTopHandler;
+            _swipeBottomHandler = swipeBottomHandler;
         }
         
         public delegate void SwipeRightDelegate();
         public delegate void SwipeLeftDelegate();
+        public delegate void SwipeTopDelegate();
+        public delegate void SwipeBottomDelegate();
 
         private void Initialize()
         {
@@ -232,21 +240,43 @@ namespace SmartDeviceApp.Controllers
         {
             var isSwipe = false;
             if (!_isScaled && _gestureRecognizer.IsInertial)
-            {
-                // Swipe right;
+            {                
                 Point currentPosition = e.Position;
-                if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
+                // Horizontal Swipe
+                if (_isHorizontalSwipeEnabled) 
                 {
-                    _gestureRecognizer.CompleteGesture();
-                    _swipeRightHandler();
-                    isSwipe = true;
+                    // Swipe right;
+                    if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeRightHandler();
+                        isSwipe = true;
+                    }
+                    // Swipe left
+                    else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeLeftHandler();
+                        isSwipe = true;
+                    }
                 }
-                // Swipe left
-                else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
+                // Vertical swipe
+                else 
                 {
-                    _gestureRecognizer.CompleteGesture();
-                    _swipeLeftHandler();
-                    isSwipe = true;
+                    // Swipe bottom
+                    if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeBottomHandler();
+                        isSwipe = true;
+                    }
+                    // Swipe top
+                    else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeTopHandler();
+                        isSwipe = true;
+                    }
                 }
             }
             return isSwipe;
