@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.base;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;

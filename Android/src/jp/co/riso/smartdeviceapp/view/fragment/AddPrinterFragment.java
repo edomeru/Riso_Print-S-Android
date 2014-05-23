@@ -16,7 +16,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;

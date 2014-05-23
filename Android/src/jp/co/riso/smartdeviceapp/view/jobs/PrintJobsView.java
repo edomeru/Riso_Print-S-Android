@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;

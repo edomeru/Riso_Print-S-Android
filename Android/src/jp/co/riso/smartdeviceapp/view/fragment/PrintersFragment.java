@@ -17,7 +17,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
@@ -439,7 +439,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 mPrinterAdapter.remove(mDeletePrinter);
                 mPrinterAdapter.notifyDataSetChanged();
             }
-            ((PrintersListView) mListView).resetDeleteView();
+            ((PrintersListView) mListView).resetDeleteView(false);
         }
     }
     
@@ -451,7 +451,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         } else {
             mDeletePrinter = null;
             ((PrinterArrayAdapter) mPrinterAdapter).resetDeletePrinterView();
-            ((PrintersListView) mListView).resetDeleteView();
+            ((PrintersListView) mListView).resetDeleteView(true);
         }
     }
 

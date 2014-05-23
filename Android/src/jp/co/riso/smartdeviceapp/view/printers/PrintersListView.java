@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.printers;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import android.content.Context;
@@ -178,12 +178,13 @@ public class PrintersListView extends ListView implements Callback {
     /**
      * Reset delete view
      * 
-     * @param view
+     * @param animate
+     *            Animate delete button
      */
-    public void resetDeleteView() {
+    public void resetDeleteView(boolean animate) {
         if (mDeleteView != null) {
             ((PrinterArrayAdapter) getAdapter()).setPrinterRow(mDeleteView);
-            mDeleteAnimation.endDeleteMode(mDeleteView, true, R.id.btn_delete, R.id.img_disclosure);
+            mDeleteAnimation.endDeleteMode(mDeleteView, animate, R.id.btn_delete, R.id.img_disclosure);
             mDeleteMode = false;
             mDeleteView = null;
         }

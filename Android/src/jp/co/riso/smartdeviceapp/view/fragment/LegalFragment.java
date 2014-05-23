@@ -21,7 +21,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 
 public class LegalFragment extends BaseWebFragment {
