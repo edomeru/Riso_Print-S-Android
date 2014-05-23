@@ -162,7 +162,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /**
      * Reset the PrintJobsView
      */
-    private void reset() {
+    public void reset() {
         mGroupViewCtr = 0;
         mInitialFlag = true;
         removeAllViews();
@@ -451,12 +451,13 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        
+
         if (mInitialFlag) {
             Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
             createColumns(screenSize.x);
             mInitialFlag = false;
         }
+        
         if (mGroupViewCtr < mPrintGroupViews.size()) {
             addViewsToColumns();
         } else if (mColumns.size() > 1 && mGroupViewCtr > mPrintGroupViews.size()) {

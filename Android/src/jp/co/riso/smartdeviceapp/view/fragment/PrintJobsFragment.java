@@ -24,6 +24,7 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupList
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -122,11 +123,22 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         
         mIsRotated = true;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        if (mPrintJobsView != null) {
+            mPrintJobsView.reset();  
+            mPrintJobsView.requestLayout();            
+        }
+    }
     
     // ================================================================================
     // INTERFACE - View.onTouchListener
     // ================================================================================
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean onTouch(View v, MotionEvent e) {
