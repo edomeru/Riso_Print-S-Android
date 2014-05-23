@@ -178,11 +178,7 @@
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
-		312B0DEC1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DEB1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m */; };
-		312B0DF219120E8D0033FB55 /* PDFPageContentViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DF119120E8D0033FB55 /* PDFPageContentViewControllerTest.m */; };
-		312B0DF8191216200033FB55 /* PreviewViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B0DF7191216200033FB55 /* PreviewViewTest.m */; };
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
-		319167D0191A0F5A00D38222 /* PDFRenderOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 319167CF191A0F5A00D38222 /* PDFRenderOperationTest.m */; };
 		3195C0691911126100197397 /* TestPDF_3Pages_NoPass.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */; };
 		3195C06A1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */; };
 		3195C06B1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0671911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf */; };
