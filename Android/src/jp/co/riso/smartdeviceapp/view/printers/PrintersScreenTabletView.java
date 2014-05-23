@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp.view.printers;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -18,11 +19,9 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -64,9 +63,9 @@ OnItemSelectedListener {
     private int mDeleteItem = -1;
     private int mWidth = 0;
     private int mHeight = 0;
-    private ViewHolder mSettingViewHolder;
     private int mSettingItem = PrinterManager.EMPTY_ID;
     private WeakReference<PrintersViewCallback> mCallbackRef = null;
+    private PauseableHandler mPauseableHandler = null;
 
     /**
      * Constructor
@@ -260,12 +259,9 @@ OnItemSelectedListener {
     
     
     /**
-     * @return default setting selected index
+     * @return Index of the selected default print settings
      */
     public int getDefaultSettingSelected() {
-        if (mSettingViewHolder != null) {
-            mSettingItem = indexOfChild((View) mSettingViewHolder.mOnlineIndcator.getTag());
-        }
         return mSettingItem;
     }
     
@@ -275,15 +271,20 @@ OnItemSelectedListener {
      * @param boolean
      *            is in selected state
      */
-    public void setDefaultSettingSelected (boolean state) {
-        if (mSettingViewHolder != null) {
-            mSettingViewHolder.mPrintSettings.setSelected(state);
-        } else if (mSettingItem != PrinterManager.EMPTY_ID) {
-            getChildAt(mSettingItem).findViewById(R.id.default_print_settings).setSelected(state);
+    public void setDefaultSettingSelected (int printerId, boolean state) {
+        if (printerId != PrinterManager.EMPTY_ID) {
+            for (int index = 0; index < mPrinterList.size(); index++) {
+                if (mPrinterList.get(index).getId() == printerId) {
+                    mSettingItem = index;
+                }
+            }
+        }
+        if (mSettingItem != PrinterManager.EMPTY_ID) {
+            mDefaultViewHolder = (ViewHolder) getChildAt(mSettingItem).getTag();
+            mDefaultViewHolder.mPrintSettings.setSelected(state);
         }
         if (!state) {
             mSettingItem = PrinterManager.EMPTY_ID;
-            mSettingViewHolder = null;
         }
     }
 
@@ -322,6 +323,16 @@ OnItemSelectedListener {
             mDeleteItem = PrinterManager.EMPTY_ID;
         }
     }
+    
+    /**
+     * Set the pausable handler object
+     * 
+     * @param handler
+     */
+    public void setPausableHandler(PauseableHandler handler) {
+        mPauseableHandler = handler;
+    }
+    
     // ================================================================================
     // Private methods
     // ================================================================================
@@ -478,7 +489,7 @@ OnItemSelectedListener {
         switch (v.getId()) {
             case R.id.btn_delete:
                 if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    mCallbackRef.get().dialogConfirmDelete();
+                    mCallbackRef.get().onPrinterDeleteClicked();
                 }
                 mDeleteViewHolder = (ViewHolder) v.getTag();
                 break;
@@ -496,29 +507,27 @@ OnItemSelectedListener {
                 break;
             case R.id.default_print_settings:
                 mSelectedPrinter = (Printer) v.getTag();
-                mSettingViewHolder = (ViewHolder) v.getTag(ID_TAG_DEFAULTSETTINGS);
-                setDefaultSettingSelected(true);
                 if (getContext() != null && getContext() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getContext();
                     
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = activity.getFragmentManager();
-                        
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {                        
                         // Always make new
                         PrintSettingsFragment fragment = null;
                         
                         if (fragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
+                            
                             fragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
+                            fragment.setPrinterId(mSelectedPrinter.getId());
+                            // use new print settings retrieved from the database
+                            fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
+                            
+                            if (mPauseableHandler != null) {
+                                Message msg = Message.obtain(mPauseableHandler, PrintersFragment.MSG_PRINTSETTINGS_BUTTON);
+                                msg.obj = fragment;
+                                msg.arg1 = mSelectedPrinter.getId();
+                                mPauseableHandler.sendMessage(msg);
+                            }
                         }
-                        
-                        fragment.setPrinterId(mSelectedPrinter.getId());
-                        // use new print settings retrieved from the database
-                        fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
-                        
-                        activity.openDrawer(Gravity.RIGHT, false);
                     } else {
                         activity.closeDrawers();
                     }
@@ -562,7 +571,7 @@ OnItemSelectedListener {
                     }
                 }
                 if (mSettingItem != PrinterManager.EMPTY_ID) {
-                    setDefaultSettingSelected(true);
+                    setDefaultSettingSelected(PrinterManager.EMPTY_ID, true);
                 }
                 
                 return true;
@@ -602,7 +611,7 @@ OnItemSelectedListener {
         /**
          * Dialog which is displayed to confirm printer delete
          */
-        public void dialogConfirmDelete();
+        public void onPrinterDeleteClicked();
     }
     
     // ================================================================================
