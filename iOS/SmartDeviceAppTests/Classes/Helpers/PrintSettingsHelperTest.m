@@ -80,12 +80,12 @@
     
     defaultValues =[NSDictionary dictionaryWithObjects:
                     [NSArray arrayWithObjects:
-                        [NSNumber numberWithInt:1], //colormode
+                        [NSNumber numberWithInt:0], //colormode
                         [NSNumber numberWithInt:0], //orientation
                         [NSNumber numberWithInt:1], //copies
                         [NSNumber numberWithInt:0], //duplex
                         [NSNumber numberWithInt:2], //paper size
-                        [NSNumber numberWithInt:1], //scale to fit
+                        [NSNumber numberWithInt:0], //scale to fit
                         [NSNumber numberWithInt:0], //paper type
                         [NSNumber numberWithInt:0], //input tray
                         [NSNumber numberWithInt:0], //imposition
