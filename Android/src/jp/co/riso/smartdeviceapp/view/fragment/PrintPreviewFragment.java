@@ -33,7 +33,6 @@ import android.os.Message;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -465,31 +464,17 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public int getControlsHeight() {
-        if (mPageControls != null) {
-            MarginLayoutParams params = (MarginLayoutParams) mPageControls.getLayoutParams();
-            return mPageControls.getHeight() + params.bottomMargin;
-        }
         return 0;
     }
     
     /** {@inheritDoc} */
     @Override
     public void zoomLevelChanged(float zoomLevel) {
-        float percentage = (zoomLevel - 1.0f) * 4.0f;
-        
-        mPageControls.setAlpha(1.0f - percentage);
-        
-        //int height = mPageControls.getHeight();
-        //mPageControls.setTranslationY(height * percentage);
-        
-        //mPageControls.setScaleX(zoomLevel);
-        //mPageControls.setScaleY(zoomLevel);
     }
     
     /** {@inheritDoc} */
     @Override
     public void setControlsEnabled(boolean enable) {
-        mSeekBar.setEnabled(enable);
     }
     
     // ================================================================================

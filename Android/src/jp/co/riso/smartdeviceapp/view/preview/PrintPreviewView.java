@@ -22,6 +22,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -822,6 +823,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
     
+    /**
+     * @param zoomLevel
+     */
     private void setZoomLevel(float zoomLevel) {
         mZoomLevel  = zoomLevel;
         if (mZoomLevel <= BASE_ZOOM_LEVEL) {
@@ -839,6 +843,45 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.requestRender();
     }
     
+    /**
+     * @param zoomLevel
+     * @param animate
+     */
+    private void animateZoomTo(float zoomLevel) {
+        final float duration = 250;
+        final long currentTime = System.currentTimeMillis();
+        final float initialZoom = mZoomLevel;
+        final float targetZoom = zoomLevel;
+        final Activity targetActivity = (Activity) getContext();
+
+        Thread thread = new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                while (System.currentTimeMillis() - currentTime < duration) {
+                    float percentage = (System.currentTimeMillis() - currentTime) / duration;
+                    
+                    mCurlView.setZoomLevel(initialZoom + ((targetZoom - initialZoom) * percentage));
+                    mCurlView.requestRender();
+                    
+                    Thread.yield();
+                }
+                
+                if (targetActivity != null) {
+                    targetActivity.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            setZoomLevel(targetZoom);
+                        }
+                    });
+                };
+                //setZoomLevel(targetZoom);
+            }
+        });
+        thread.start();
+    }
+    
     // ================================================================================
     // INTERFACE - OnDoubleTapListener
     // ================================================================================
@@ -846,7 +889,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /** {@inheritDoc} */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        setZoomLevel(BASE_ZOOM_LEVEL);
+        animateZoomTo(BASE_ZOOM_LEVEL);
         return true;
     }
 

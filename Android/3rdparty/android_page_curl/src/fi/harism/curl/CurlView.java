@@ -877,7 +877,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mRenderer.tryAdjustPan(x / (float) getWidth(), y / (float) getHeight());
 	}
 
-	public void setZoomLevel(float zoomLevel) {
+	public synchronized void setZoomLevel(float zoomLevel) {
 		mZoomLevel = zoomLevel;
 		mRenderer.setZoomLevel(zoomLevel);
 	}
