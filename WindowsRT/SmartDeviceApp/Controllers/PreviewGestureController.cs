@@ -55,6 +55,16 @@ namespace SmartDeviceApp.Controllers
 
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
+
+        public SwipeRightDelegate SwipeRightHandler
+        {
+            set { _swipeRightHandler = value; }
+        }
+
+        public SwipeLeftDelegate SwipeLeftHandler
+        {
+            set { _swipeLeftHandler = value; }
+        }
         
         public delegate void SwipeRightDelegate();
         public delegate void SwipeLeftDelegate();

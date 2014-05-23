@@ -339,6 +339,15 @@ namespace SmartDeviceApp.Controllers
                 bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
                     _currPrintSettings.BookletLayout, _currPrintSettings.Imposition);
 
+                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+                {
+                    _printPreviewViewModel.IsReverseSwipe = true;
+                }
+                else
+                {
+                    _printPreviewViewModel.IsReverseSwipe = false;
+                }
+
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
                 _printPreviewViewModel.RightPageActualSize = sampleSize;
                 if (_isBooklet || _isDuplex)
