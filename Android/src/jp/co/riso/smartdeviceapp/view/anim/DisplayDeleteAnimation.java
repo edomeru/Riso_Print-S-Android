@@ -107,15 +107,6 @@ public class DisplayDeleteAnimation {
                     View viewToHide = view.findViewById(ids[i]);
                     if (viewToHide != null) {
                         viewToHide.setVisibility(View.VISIBLE);
-                        AlphaAnimation alpha = new AlphaAnimation(0.0f, 1.0f);
-                        alpha.setDuration(ANIM_DURATION);
-                        
-                        if (viewToHide.getAnimation() != null) {
-                            viewToHide.getAnimation().setAnimationListener(null);
-                            viewToHide.getAnimation().cancel();
-                        }
-                        viewToHide.clearAnimation();
-                        viewToHide.startAnimation(alpha);
                     }
                 }
             }

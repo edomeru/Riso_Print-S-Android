@@ -439,7 +439,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 mPrinterAdapter.remove(mDeletePrinter);
                 mPrinterAdapter.notifyDataSetChanged();
             }
-            ((PrintersListView) mListView).resetDeleteView();
+            ((PrintersListView) mListView).resetDeleteView(false);
         }
     }
     
@@ -451,7 +451,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         } else {
             mDeletePrinter = null;
             ((PrinterArrayAdapter) mPrinterAdapter).resetDeletePrinterView();
-            ((PrintersListView) mListView).resetDeleteView();
+            ((PrintersListView) mListView).resetDeleteView(true);
         }
     }
 
