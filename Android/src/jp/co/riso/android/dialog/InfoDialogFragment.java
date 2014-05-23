@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 
 public class InfoDialogFragment extends DialogFragment {
     
@@ -61,8 +62,9 @@ public class InfoDialogFragment extends DialogFragment {
         String title = getArguments().getString(KEY_TITLE);
         String message = getArguments().getString(KEY_MESSAGE);
         String buttonTitle = getArguments().getString(KEY_BUTTON);
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         
         if (title != null) {
             builder.setTitle(title);

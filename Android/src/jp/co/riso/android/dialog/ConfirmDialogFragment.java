@@ -14,6 +14,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 
 /**
  * Generic confirmation dialog. To use do the ff:
@@ -84,7 +85,8 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         String buttonPosTitle = getArguments().getString(KEY_POS_BUTTON);
         String buttonNegTitle = getArguments().getString(KEY_NEG_BUTTON);
         
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         
         if (title != null) {
             builder.setTitle(title);

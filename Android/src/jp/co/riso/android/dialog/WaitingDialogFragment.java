@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 
 /**
@@ -82,8 +83,9 @@ public class WaitingDialogFragment extends DialogFragment {
         String negButton = getArguments().getString(KEY_NEG_BUTTON);
         
         boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
-        
-        final ProgressDialog dialog = new ProgressDialog(getActivity());
+
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
+        final ProgressDialog dialog = new ProgressDialog(newContext);
         
         if (title != null) {
             dialog.setTitle(title);
