@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.test.R;
+import jp.co.riso.smartprint.test.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
 import android.content.Context;

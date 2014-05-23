@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 import android.os.Bundle;
 import android.view.View;

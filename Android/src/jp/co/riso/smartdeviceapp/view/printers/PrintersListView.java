@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.printers;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import android.content.Context;

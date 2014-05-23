@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.printers;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;

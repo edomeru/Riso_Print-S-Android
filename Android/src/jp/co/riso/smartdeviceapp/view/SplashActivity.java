@@ -12,7 +12,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;

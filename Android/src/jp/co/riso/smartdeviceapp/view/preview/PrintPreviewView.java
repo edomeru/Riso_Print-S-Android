@@ -13,7 +13,7 @@ import java.util.Locale;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;

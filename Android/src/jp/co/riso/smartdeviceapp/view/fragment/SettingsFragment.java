@@ -11,7 +11,7 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import jp.co.riso.android.text.AlphaNumericFilter;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
