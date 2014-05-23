@@ -289,6 +289,8 @@ public class PrintersListView extends ListView implements Callback {
     private void endDeleteMode(View view) {
         if (mDeleteMode) {
             ((PrinterArrayAdapter) getAdapter()).setPrinterRow(view);
+            PrintersContainerView printerItem = (PrintersContainerView) view.findViewById(R.id.btn_delete).getTag();
+            printerItem.setDelete(false);
             mDeleteAnimation.endDeleteMode(view, true, R.id.btn_delete, R.id.img_disclosure);
             mDeleteMode = false;
         }
