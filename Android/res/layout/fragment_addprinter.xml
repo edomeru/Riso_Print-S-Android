@@ -33,7 +33,7 @@
             android:layout_gravity="center_vertical|right"
             android:layout_weight="0"
             android:background="@color/theme_light_1"
-            android:gravity="center"
+            android:gravity="left"
             android:singleLine="true"
             android:textColor="@color/theme_dark_1" >
         </EditText>

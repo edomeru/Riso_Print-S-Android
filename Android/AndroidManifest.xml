@@ -42,7 +42,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="jp.co.riso.smartdeviceapp.view.MainActivity" >
+            android:name="jp.co.riso.smartdeviceapp.view.MainActivity" 
+            android:windowSoftInputMode="stateUnchanged">
         </activity>
     </application>
 
