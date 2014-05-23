@@ -2029,7 +2029,7 @@
                                                 <constraint firstAttribute="width" constant="48" id="X8w-4N-adV"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <textInputTraits key="textInputTraits" keyboardType="numberPad" keyboardAppearance="alert"/>
+                                            <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                         </textField>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EyX-iq-w6w" userLabel="Separator">
                                             <rect key="frame" x="36" y="43" width="284" height="1"/>
@@ -2120,7 +2120,7 @@
                                                 <constraint firstAttribute="width" constant="96" id="a0d-zc-tq5"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <textInputTraits key="textInputTraits" keyboardType="numberPad" keyboardAppearance="alert"/>
+                                            <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                         </textField>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gHA-aB-4Kr" userLabel="Separator">
                                             <rect key="frame" x="36" y="43" width="284" height="1"/>

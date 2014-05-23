@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
+#import "MagicalRecord.h"
 
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
+        [MagicalRecord setLoggingMask:MagicalRecordLogMaskOff];
         return UIApplicationMain(argc, argv, nil, @"TestAppDelegate");
     }
 }

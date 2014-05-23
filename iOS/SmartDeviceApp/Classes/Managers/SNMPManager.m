@@ -22,19 +22,6 @@ static SNMPManager* sharedSNMPManager = nil;
 
 @interface SNMPManager ()
 
-/** 
- If YES, use Net-SNMP common library.
- If NO, use fake SNMP implementation. 
- */
-@property (assign, nonatomic) BOOL useSNMPCommonLib;
-
-/** 
- This property is used only for the fake SNMP implementation.
- If YES, the manual search will timeout without "receiving" the 
- Printer Added callback.
- */
-@property (assign, nonatomic) BOOL useSNMPUnicastTimeout;
-
 /**
  Handler for the Add Printer Callback of the Net-SNMP.
  Parses the printer name, IP, and capabilities from the device
@@ -44,15 +31,17 @@ static SNMPManager* sharedSNMPManager = nil;
  */
 - (void)addRealPrinter:(snmp_device*)device;
 
+#if DEBUG_SNMP_USE_FAKE_PRINTERS
 /**
  Handler for the Add Printer Callback of the Fake SNMP.
  Generates a fake printer name, IP, and capabilities then
  posts a notification that a printer was found.
  FOR DEBUGGING PURPOSES ONLY.
  @param ip
-        IP address for the fake printer
+         IP address for the fake printer
  */
 - (void)addFakePrinter:(NSString*)fakeIP;
+#endif
 
 /**
  Handler for the Search End Callback of the Net-SNMP.
@@ -73,8 +62,6 @@ static SNMPManager* sharedSNMPManager = nil;
     self = [super init];
     if (self)
     {
-        self.useSNMPCommonLib = [PListHelper readBool:kPlistBoolValUseSNMP];
-        self.useSNMPUnicastTimeout = [PListHelper readBool:kPlistBoolValUseSNMPTimeout];
     }
     return self;
 }
@@ -93,72 +80,62 @@ static SNMPManager* sharedSNMPManager = nil;
 
 - (void)searchForPrinter:(NSString*)printerIP;
 {
-    if (self.useSNMPCommonLib)
-    {
-        // Net-SNMP
-        // initiate SNMP Manual Search
-        snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
-        snmp_manual_discovery(snmpContext, [printerIP UTF8String]);
-    }
-    else
-    {
-        // "Fake" SNMP
-        // 1. receive the Printer Added callback after 2 seconds
-        // 2. receive the Discovery Ended callback after 10 seconds
-        // 3. if timeout is enabled, the Printer Added callback will never be received
-        
-        if (self.useSNMPUnicastTimeout)
-        {
+#if !DEBUG_SNMP_USE_FAKE_PRINTERS
+    snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
+    snmp_manual_discovery(snmpContext, [printerIP UTF8String]);
+#else
+    // "Fake" SNMP
+    // 1. receive the Printer Added callback after 2 seconds
+    // 2. receive the Discovery Ended callback after 10 seconds
+    // 3. if timeout is enabled, the Printer Added callback will never be received
+    
+#if DEBUG_SNMP_USE_TIMEOUT
+    
 #if DEBUG_LOG_SNMP_MANAGER
-            NSLog(@"[INFO][SNMPM] search timeout");
+    NSLog(@"[INFO][SNMPM] search timeout");
 #endif
-        }
-        else
-        {
-            [NSThread sleepForTimeInterval:2];
-            [self addFakePrinter:printerIP];
-        }
-        
-        [NSThread sleepForTimeInterval:8];
-        [self endSearchWithResult:!self.useSNMPUnicastTimeout];
-    }
+    
+    [NSThread sleepForTimeInterval:8];
+    [self endSearchWithResult:NO];
+    
+#else
+    
+    [NSThread sleepForTimeInterval:2];
+    [self addFakePrinter:printerIP];
+    [NSThread sleepForTimeInterval:8];
+    [self endSearchWithResult:YES];
+    
+#endif // DEBUG_SNMP_USE_TIMEOUT
+    
+#endif // DEBUG_SNMP_USE_FAKE_PRINTERS
 }
 
 #pragma mark - Printer Search (Device Discovery)
 
 - (void)searchForAvailablePrinters
 {
-    if (self.useSNMPCommonLib)
-    {
-        // Net-SNMP
-        // initiate Device Discovery
-        snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
-        snmp_device_discovery(snmpContext);
-    }
-    else
-    {
-        // "Fake" SNMP
-        //  1. receive the Printer Added callback every x seconds
-        //  2. receive the Discovery Ended callback after 10 seconds
-        
-        [NSThread sleepForTimeInterval:1];
-        [self addFakePrinter:@"192.168.1.1"];
-        
-        [NSThread sleepForTimeInterval:2];
-        [self addFakePrinter:@"192.168.2.2"];
-        
-        [NSThread sleepForTimeInterval:2];
-        [self addFakePrinter:@"192.168.3.3"];
-        
-        [NSThread sleepForTimeInterval:1];
-        [self addFakePrinter:@"192.168.4.4"];
-        
-        [NSThread sleepForTimeInterval:1];
-        [self addFakePrinter:@"192.168.5.5"];
-        
-        [NSThread sleepForTimeInterval:3];
-        [self endSearchWithResult:YES];
-    }
+#if !DEBUG_SNMP_USE_FAKE_PRINTERS
+    snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
+    snmp_device_discovery(snmpContext);
+#else
+    [NSThread sleepForTimeInterval:1];
+    [self addFakePrinter:@"192.168.1.1"];
+    
+    [NSThread sleepForTimeInterval:2];
+    [self addFakePrinter:@"192.168.2.2"];
+    
+    [NSThread sleepForTimeInterval:2];
+    [self addFakePrinter:@"192.168.3.3"];
+    
+    [NSThread sleepForTimeInterval:1];
+    [self addFakePrinter:@"192.168.4.4"];
+    
+    [NSThread sleepForTimeInterval:1];
+    [self addFakePrinter:@"192.168.5.5"];
+    
+    [NSThread sleepForTimeInterval:3];
+    [self endSearchWithResult:YES];
+#endif
 }
 
 #pragma mark - Cancel Search
@@ -218,12 +195,15 @@ static SNMPManager* sharedSNMPManager = nil;
 #endif
     
     // notify observer that a printer was found (background thread)
+    NSDictionary *userInfo = @{@"printerDetails":pd};
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD
-                                                            object:pd];
+                                                            object:self
+                                                          userInfo:userInfo];
     });
 }
 
+#if DEBUG_SNMP_USE_FAKE_PRINTERS
 - (void)addFakePrinter:(NSString*)fakeIP
 {
 #if DEBUG_LOG_SNMP_MANAGER
@@ -253,11 +233,14 @@ static SNMPManager* sharedSNMPManager = nil;
 #endif
     
     // notify observer that a "printer" was found (background thread)
+    NSDictionary *userInfo = @{@"printerDetails":pd};
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD
-                                                            object:pd];
+                                                            object:self
+                                                          userInfo:userInfo];
     });
 }
+#endif
 
 - (void)endSearchWithResult:(BOOL)success
 {
@@ -266,9 +249,11 @@ static SNMPManager* sharedSNMPManager = nil;
 #endif
     
     // notify observer that the search has ended (background thread)
+    NSDictionary *userInfo = @{@"result":[NSNumber numberWithBool:success]};
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END
-                                                            object:[NSNumber numberWithBool:success]];
+                                                            object:self
+                                                          userInfo:userInfo];
     });
 }
 

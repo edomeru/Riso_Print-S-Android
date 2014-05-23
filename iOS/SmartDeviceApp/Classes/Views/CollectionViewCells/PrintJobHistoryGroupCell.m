@@ -187,7 +187,7 @@
 - (void)putGroupName:(NSString*)name
 {
     if (name == nil || [name isEqualToString:@""])
-        self.groupName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+        self.groupName.text = NSLocalizedString(IDS_LBL_NO_NAME, @"No name");
     else
         self.groupName.text = name;
 }

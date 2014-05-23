@@ -7,16 +7,24 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "PDFFileManager.h"
 #import "PrintDocument.h"
 
-#define PDFFILE_MANAGER_TEST 1
-#if PDFFILE_MANAGER_TEST
+#include "fff.h"
+DEFINE_FFF_GLOBALS;
 
-@interface PDFFileManager(Test)
+FAKE_VALUE_FUNC(CGPDFDocumentRef, CGPDFDocumentCreateWithURL);
+FAKE_VOID_FUNC(CGPDFDocumentRelease);
+FAKE_VALUE_FUNC(bool, CGPDFDocumentIsUnlocked);
+FAKE_VALUE_FUNC(bool, CGPDFDocumentIsEncrypted);
+FAKE_VALUE_FUNC(bool, CGPDFDocumentAllowsPrinting);
+
+/*@interface PDFFileManager(Test)
+@property (nonatomic) BOOL fileAvailableForPreview;
 - (kPDFError)verifyDocument:(NSURL *)documentURL;
 - (BOOL)moveFileToDocuments:(NSURL **)documentURL;
-@end
+@end*/
 
 @interface PDFFileManagerTest : GHTestCase
 @property (nonatomic, strong) PDFFileManager *manager;
@@ -29,6 +37,7 @@
     NSURL *testPDFWithPassURL;
     NSURL *testPDFEncryptedPrintAllowedURL;
     NSURL *testPDFEncryptedPrintNotAllowedURL;
+    NSURL *pdfURL;
 }
 - (BOOL)shouldRunOnMainThread
 {
@@ -40,6 +49,7 @@
 {
     self.manager = [PDFFileManager sharedManager];
     
+    pdfURL = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
     testPDFNoPassURL = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
     testPDFWithPassURL = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_Pass(test123-None)" withExtension:@"pdf"];
     testPDFEncryptedPrintAllowedURL = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_Pass(None-123)-PrintingAllowed" withExtension:@"pdf"];
@@ -49,6 +59,15 @@
     NSString *documentsDir = [documentPaths objectAtIndex:0];
     
     applicationPDFURL = [NSURL URLWithString:[[documentsDir stringByAppendingString:@"/SDAPreview.pdf"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    RESET_FAKE(CGPDFDocumentCreateWithURL);
+    
+    FFF_RESET_HISTORY();
+    
+    CGPDFDocumentCreateWithURL_fake.return_val = (CGPDFDocumentRef)1;
+    CGPDFDocumentIsUnlocked_fake.return_val = true;
+    CGPDFDocumentIsEncrypted_fake.return_val = false;
+    CGPDFDocumentAllowsPrinting_fake.return_val = true;
 }
 
 // Run at end of all tests in the class
@@ -59,25 +78,162 @@
 // Run before each test method
 - (void)setUp
 {
-  
 }
 
 // Run after each test method
 - (void)tearDown
 {
-    [self.manager setFileURL:nil];
+    self.manager.fileURL = nil;
+    self.manager.fileAvailableForLoad = NO;
     NSError *error;
     [[NSFileManager defaultManager] removeItemAtPath:applicationPDFURL.path error:&error];
 }
 
-- (void)test001_sharedManager
+- (void)testSharedManager
 {
-    GHAssertNotNil(self.manager, @"");
-    //Test singleton
-    GHAssertEqualObjects(self.manager, [PDFFileManager sharedManager], @"");
+    // SUT
+    PDFFileManager *manager = [PDFFileManager sharedManager];
+    
+    // Verification
+    GHAssertNotNil(manager, @"");
+    GHAssertEqualObjects(manager, [PDFFileManager sharedManager], @"");
 }
 
-- (void)test002_verifyDocument
+- (void)testSetupDocument_moveFileToDocuments_NG
+{
+    // Mock
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id mockFileManager = [OCMockObject partialMockForObject:fileManager];
+    [[[[mockFileManager stub] andForwardToRealObject] ignoringNonObjectArgs] stringWithFileSystemRepresentation:"~/Documents" length:strlen("~/Documents")];
+    [[mockFileManager stub] removeItemAtPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(NO)] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    
+    // SUT
+    self.manager.fileAvailableForLoad = YES;
+    self.manager.fileURL = pdfURL;
+    kPDFError result = [self.manager setupDocument];
+    
+    // Verfication
+    GHAssertEquals(result, kPDFErrorProcessingFailed, @"Result must be kPDFErrorProcessingFailed.");
+    GHAssertEquals(self.manager.fileAvailableForPreview, NO, @"File should not be available for preview.");
+    [mockFileManager stopMocking];
+}
+
+- (void)testSetupDocument_PDFCannotBeLoaded
+{
+    // Mock
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id mockFileManager = [OCMockObject partialMockForObject:fileManager];
+    [[[[mockFileManager stub] andForwardToRealObject] ignoringNonObjectArgs] stringWithFileSystemRepresentation:"~/Documents" length:strlen("~/Documents")];
+    [[mockFileManager stub] removeItemAtPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(YES)] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    
+    CGPDFDocumentCreateWithURL_fake.return_val = 0;
+    
+    // SUT
+    self.manager.fileAvailableForLoad = YES;
+    self.manager.fileURL = pdfURL;
+    kPDFError result = [self.manager setupDocument];
+    
+    // Verfication
+    GHAssertEquals(result, kPDFErrorOpen, @"Result must be kPDFErrorOpen.");
+    [mockFileManager stopMocking];
+}
+
+- (void)testSetupDocument_PDFIsLocked
+{
+    // Mock
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id mockFileManager = [OCMockObject partialMockForObject:fileManager];
+    [[[[mockFileManager stub] andForwardToRealObject] ignoringNonObjectArgs] stringWithFileSystemRepresentation:"~/Documents" length:strlen("~/Documents")];
+    [[mockFileManager stub] removeItemAtPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(YES)] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    
+    CGPDFDocumentCreateWithURL_fake.return_val = (CGPDFDocumentRef)1;
+    CGPDFDocumentIsUnlocked_fake.return_val = false;
+    
+    // SUT
+    self.manager.fileAvailableForLoad = YES;
+    self.manager.fileURL = pdfURL;
+    kPDFError result = [self.manager setupDocument];
+    
+    // Verfication
+    GHAssertEquals(result, kPDFErrorLocked, @"Result must be kPDFErrorIsLocked.");
+    [mockFileManager stopMocking];
+}
+
+- (void)testSetupDocument_PDFDoesNotAllowPrinting
+{
+    // Mock
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id mockFileManager = [OCMockObject partialMockForObject:fileManager];
+    [[[[mockFileManager stub] andForwardToRealObject] ignoringNonObjectArgs] stringWithFileSystemRepresentation:"~/Documents" length:strlen("~/Documents")];
+    [[mockFileManager stub] removeItemAtPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(YES)] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    
+    CGPDFDocumentCreateWithURL_fake.return_val = (CGPDFDocumentRef)1;
+    CGPDFDocumentIsUnlocked_fake.return_val = true;
+    CGPDFDocumentIsEncrypted_fake.return_val = true;
+    CGPDFDocumentAllowsPrinting_fake.return_val = false;
+    
+    // SUT
+    self.manager.fileAvailableForLoad = YES;
+    self.manager.fileURL = pdfURL;
+    kPDFError result = [self.manager setupDocument];
+    
+    // Verfication
+    GHAssertEquals(result, kPDFErrorPrintingNotAllowed, @"Result must be kPDFErrorPrintingNotAllowed.");
+    [mockFileManager stopMocking];
+}
+
+- (void)testSetupDocument_PDFAllowsPrinting
+{
+    // Mock
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id mockFileManager = [OCMockObject partialMockForObject:fileManager];
+    [[[[mockFileManager stub] andForwardToRealObject] ignoringNonObjectArgs] stringWithFileSystemRepresentation:"~/Documents" length:strlen("~/Documents")];
+    [[mockFileManager stub] removeItemAtPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(YES)] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    
+    CGPDFDocumentCreateWithURL_fake.return_val = (CGPDFDocumentRef)1;
+    CGPDFDocumentIsUnlocked_fake.return_val = true;
+    CGPDFDocumentIsEncrypted_fake.return_val = true;
+    CGPDFDocumentAllowsPrinting_fake.return_val = true;
+    
+    // SUT
+    self.manager.fileAvailableForLoad = YES;
+    self.manager.fileURL = pdfURL;
+    kPDFError result = [self.manager setupDocument];
+    
+    // Verfication
+    GHAssertEquals(result, kPDFErrorNone, @"Result must be kPDFErrorNone.");
+    [mockFileManager stopMocking];
+}
+
+- (void)testSetupDocument_PDFIsNotEncrypted
+{
+    // Mock
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id mockFileManager = [OCMockObject partialMockForObject:fileManager];
+    [[[[mockFileManager stub] andForwardToRealObject] ignoringNonObjectArgs] stringWithFileSystemRepresentation:"~/Documents" length:strlen("~/Documents")];
+    [[mockFileManager stub] removeItemAtPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(YES)] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:(NSError * __autoreleasing *)[OCMArg anyObjectRef]];
+    
+    CGPDFDocumentCreateWithURL_fake.return_val = (CGPDFDocumentRef)1;
+    CGPDFDocumentIsUnlocked_fake.return_val = true;
+    CGPDFDocumentIsEncrypted_fake.return_val = false;
+    
+    // SUT
+    self.manager.fileAvailableForLoad = YES;
+    self.manager.fileURL = pdfURL;
+    kPDFError result = [self.manager setupDocument];
+    
+    // Verfication
+    GHAssertEquals(result, kPDFErrorNone, @"Result must be kPDFErrorNone.");
+    [mockFileManager stopMocking];
+}
+
+/*- (void)test002_verifyDocument
 {
     kPDFError status = [self.manager verifyDocument:testPDFNoPassURL];
     GHAssertEquals(status, kPDFErrorNone, @"");
@@ -164,6 +320,5 @@
     GHAssertNotNil(self.manager.printDocument, @"");
     GHAssertNotNil(self.manager.printDocument.previewSetting, @"");
 
-}
+}*/
 @end
-#endif
