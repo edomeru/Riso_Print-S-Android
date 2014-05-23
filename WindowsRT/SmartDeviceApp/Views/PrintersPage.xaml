@@ -157,7 +157,6 @@
                                                       ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
                             <controls:KeyValueControl x:Name="port" 
@@ -168,7 +167,7 @@
                                                           ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
+                                                      
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
                             <!--<controls:PortItemControl x:Name="port"
@@ -190,8 +189,8 @@
                                                              SeparatorVisibility="Visible"
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                              PressedColor="{StaticResource BRUSH_Purple2}"/>
-                            <controls:KeyValueControl x:Name="settings" 
-                                                      IconVisibility="Collapsed"
+                            <controls:DefaultPrintSettingsControl x:Name="settings" 
+                                                                  IconVisibility="Collapsed"
                                                           Text="{Binding Source=IDS_LBL_DEFAULT_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
                                                       
@@ -200,8 +199,7 @@
                                                       CommandParameter="{Binding}"
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                      SeparatorVisibility="Collapsed"
-                                                      ValueVisibility="Collapsed"/>
+                                                      VisualState="{Binding VisualState, Mode=TwoWay}"/>
 
                         </ListView>
                     </DataTemplate>

@@ -115,6 +115,11 @@ namespace SmartDeviceApp.ViewModels
                     if (viewMode == Common.Enum.ViewMode.FullScreen)
                     {
                         _gestureController.EnableGestures();
+                        foreach(Printer p in PrinterList)
+                        {
+                            p.VisualState = "Normal";
+                        }
+                        
 
                         //start polling
                         if (PollingHandler != null)
@@ -196,7 +201,7 @@ namespace SmartDeviceApp.ViewModels
         private async Task DeletePrinterExecute(string ipAddress)
         {
             _printerToBeDeleted = ipAddress;
-            await DialogService.Instance.ShowMessage("IDS_LBL_DELETE_JOBS_MSG", "IDS_LABEL_PRINTER",  "IDS_LBL_OK", "IDS_LBL_CANCEL", new Action<bool>(DeletePrinterFromDB));
+            await DialogService.Instance.ShowMessage("IDS_INFO_MSG_DELETE_JOBS", "IDS_LBL_PRINTERS", "IDS_LBL_OK", "IDS_LBL_CANCEL", new Action<bool>(DeletePrinterFromDB));
         }
 
         private void DeletePrinterFromDB(bool isOk)
@@ -242,13 +247,16 @@ namespace SmartDeviceApp.ViewModels
             System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
 
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-
+            
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
+            
             _viewControlViewModel.TapHandled = true;
             RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
             _viewControlViewModel.IsPane1Visible = true; // Note: Need to set this so that pane will be closed when pane buttons are toggled
             _gestureController.DisableGestures();
+            
             OpenDefaultPrintSettingsHandler(printer);
+            
         }
 
         private PrintersGestureController _gestureController;
