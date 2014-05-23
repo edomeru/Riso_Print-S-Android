@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.Fragment;

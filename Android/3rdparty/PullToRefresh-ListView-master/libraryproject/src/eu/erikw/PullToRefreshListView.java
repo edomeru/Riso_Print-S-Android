@@ -12,7 +12,7 @@ import android.widget.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 
 /**
  * A generic, customizable Android ListView implementation that has 'Pull to Refresh' functionality.
