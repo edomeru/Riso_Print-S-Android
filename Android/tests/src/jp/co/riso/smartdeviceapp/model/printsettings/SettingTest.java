@@ -96,9 +96,9 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
     }
 
     public void testGetDefaultValue() {
-        assertEquals(1, (int) mSettingList.get(0).getDefaultValue()); //colormode
+        assertEquals(0, (int) mSettingList.get(0).getDefaultValue()); //colormode
         assertEquals(1, (int) mSettingList.get(2).getDefaultValue()); //copies
-        assertEquals(1, (int) mSettingList.get(5).getDefaultValue()); //scaletofit
+        assertEquals(0, (int) mSettingList.get(5).getDefaultValue()); //scaletofit
     }
 
     public void testGetDefaultValue_Invalid() {
