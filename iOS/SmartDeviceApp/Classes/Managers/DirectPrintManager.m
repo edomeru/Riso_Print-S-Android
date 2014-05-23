@@ -231,7 +231,11 @@ void printProgressCallback(directprint_job *job, int status, float progress)
 {
     void *callerData = directprint_job_get_caller_data(job);
     DirectPrintManager *manager = (__bridge DirectPrintManager *)callerData;
-    NSLog(@"Progress: %f", progress);
+    
+#if DEBUG_LOG_DIRECTPRINT_MANAGER
+    NSLog(@"[INFO][DirectPrintManager] Progress: %f", progress);
+#endif
+    
     [manager updateProgress:progress];
     if (status < 0)
     {
