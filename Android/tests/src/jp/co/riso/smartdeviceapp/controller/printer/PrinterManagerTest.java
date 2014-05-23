@@ -121,7 +121,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             }
             if(printer == null) {
                 printer = new Printer("testSetDefaultPrinter_NoDefaultPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
-                mPrinterManager.savePrinterToDB(printer);
+                mPrinterManager.savePrinterToDB(printer, true);
             }
             
             testClearDefaultPrinter();
@@ -559,7 +559,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             boolean ret = false;
 
             if (!mPrinterManager.isExists(printer)) {
-                mPrinterManager.savePrinterToDB(printer);
+                mPrinterManager.savePrinterToDB(printer, true);
             } else {
                 for (Printer printerItem : mPrintersList) {
                     if (printerItem.getIpAddress().contentEquals(IPV4_OFFLINE_PRINTER_ADDRESS)) {
@@ -612,7 +612,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             boolean ret = false;
 
             if (!mPrinterManager.isExists(printer)) {
-                mPrinterManager.savePrinterToDB(printer);
+                mPrinterManager.savePrinterToDB(printer, true);
             }
 
             printer.setName(IPV4_OFFLINE_PRINTER_ADDRESS);
@@ -630,7 +630,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
 
             if (!mPrinterManager.isExists(printer)) {
-                mPrinterManager.savePrinterToDB(printer);
+                mPrinterManager.savePrinterToDB(printer, true);
             }
 
             mPrinterManager.removePrinter(printer);
@@ -671,7 +671,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setTrayTopAvailable(true);
             printer.getConfig().setTrayStackAvailable(true);
             
-            ret = mPrinterManager.savePrinterToDB(printer);
+            ret = mPrinterManager.savePrinterToDB(printer, true);
             assertEquals(true, ret);
             
             //Disabled Capabilities
@@ -686,7 +686,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setTrayStackAvailable(false);
             
             mPrinterManager.removePrinter(printer);
-            ret = mPrinterManager.savePrinterToDB(printer);            
+            ret = mPrinterManager.savePrinterToDB(printer, false);            
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -700,10 +700,10 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             boolean ret = false;
 
             if (!mPrinterManager.isExists(printer)) {
-                mPrinterManager.savePrinterToDB(printer);
+                mPrinterManager.savePrinterToDB(printer, true);
             }
             
-            ret = mPrinterManager.savePrinterToDB(printer);
+            ret = mPrinterManager.savePrinterToDB(printer, true);
             assertEquals(false, ret);
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -713,7 +713,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testSavePrinterToDB_NullPrinter() {
         try {
 
-            mPrinterManager.savePrinterToDB(null);
+            mPrinterManager.savePrinterToDB(null, true);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         } catch (Exception e) {
@@ -732,7 +732,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
                 }
             }
             mPrinterManager.setPrintersCallback(this);
-            mPrinterManager.savePrinterToDB(printer);
+            mPrinterManager.savePrinterToDB(printer, true);
             mPrinterManager.setPrintersCallback(null);
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -748,9 +748,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             
             mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), dbManager);
 
-            mPrinterManager.savePrinterToDB(printer);
+            mPrinterManager.savePrinterToDB(printer, true);
             dbManager.setSavePrinterInfoRet(true);
-            mPrinterManager.savePrinterToDB(printer);
+            mPrinterManager.savePrinterToDB(printer, true);
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         }
@@ -765,8 +765,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             if (mPrintersList.isEmpty()) {
-                mPrinterManager.savePrinterToDB(new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS));
-                mPrinterManager.savePrinterToDB(new Printer("", IPV4_ONLINE_PRINTER_ADDRESS));
+                mPrinterManager.savePrinterToDB(new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS), false);
+                mPrinterManager.savePrinterToDB(new Printer("", IPV4_ONLINE_PRINTER_ADDRESS), true);
             }
             mPrinterManager.getSavedPrintersList();
         } catch (Exception e) {
@@ -808,7 +808,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             boolean ret = false;
 
             if(!mPrinterManager.isExists(printer)) {
-                mPrinterManager.savePrinterToDB(printer);
+                mPrinterManager.savePrinterToDB(printer, true);
             }
             
             ret = mPrinterManager.isExists(printer);
@@ -836,8 +836,8 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
                 }
             }
             if(mPrintersList.isEmpty()) {
-                mPrinterManager.savePrinterToDB(new Printer("", IPV4_ONLINE_PRINTER_ADDRESS));
-                mPrinterManager.savePrinterToDB(new Printer("", IPV6_ONLINE_PRINTER_ADDRESS));
+                mPrinterManager.savePrinterToDB(new Printer("", IPV4_ONLINE_PRINTER_ADDRESS), true);
+                mPrinterManager.savePrinterToDB(new Printer("", IPV6_ONLINE_PRINTER_ADDRESS), true);
             }
             mPrinterManager.removePrinter(printer);
 
@@ -1083,7 +1083,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
 
     @Override
-    public void onAddedNewPrinter(Printer printer) {
+    public void onAddedNewPrinter(Printer printer, boolean isOnline) {
     }
 
     @Override

@@ -224,11 +224,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      *            icon is in selected state
      */
     public void setIconState(int id, boolean state) {
-        if (getView().findViewById(id) != null) {
+        if (getView() != null && getView().findViewById(id) != null) {
             getView().findViewById(id).setSelected(state);
             mIconState = state;
             mIconId = id;
-            
         }
     }
     
