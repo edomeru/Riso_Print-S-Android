@@ -136,15 +136,20 @@
     RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
     renderCache.delegate = self;
     NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 5; i++)
     {
         [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
         [indexSet addIndex:i];
     }
-    self.currentIndex = 2;
-    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:15];
-    [indexSet addIndex:15];
-    [indexSet removeIndex:9];
+    for (int i = 15; i < 20; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
+        [indexSet addIndex:i];
+    }
+    self.currentIndex = 6;
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:6];
+    [indexSet addIndex:6];
+    [indexSet removeIndex:19];
     
     // Verification
     GHAssertEquals([renderCache.itemsDictionary count], (NSUInteger)10, @"Render items must be 10.");
@@ -160,14 +165,19 @@
     RenderCache *renderCache = [[RenderCache alloc] initWithMaxItemCount:10];
     renderCache.delegate = self;
     NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 5; i++)
     {
         [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
         [indexSet addIndex:i];
     }
-    self.currentIndex = 7;
-    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:15];
-    [indexSet addIndex:15];
+    for (int i = 15; i < 20; i++)
+    {
+        [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:i];
+        [indexSet addIndex:i];
+    }
+    self.currentIndex = 14;
+    [renderCache addItem:[[RenderCacheItem alloc] init] withIndex:14];
+    [indexSet addIndex:14];
     [indexSet removeIndex:0];
     
     // Verification

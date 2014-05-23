@@ -77,7 +77,7 @@
     }
 }
 
-- (void)testFormattedString_PrinteSettingsNil
+- (void)testFormattedString_PrinterSettingsNil
 {
     // Mock
     id mockPrintSettingsHelper = [OCMockObject mockForClass:[PrintSettingsHelper class]];

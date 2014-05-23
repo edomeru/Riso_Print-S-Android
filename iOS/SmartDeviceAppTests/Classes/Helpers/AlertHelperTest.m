@@ -42,7 +42,6 @@
     
     self.resultDictionary = @{[NSNumber numberWithInt:kAlertResultErrDefault]: @"The operation could not be completed.",
                               [NSNumber numberWithInt:kAlertResultInfoPrinterAdded]: NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @""),
-                              [NSNumber numberWithInt:kAlertResultInfoPrinterAdded]: NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultErrNoNetwork]: NSLocalizedString(IDS_ERR_MSG_NETWORK_ERROR, @""),
                               [NSNumber numberWithInt:kAlertResultErrInvalidIP]: NSLocalizedString(IDS_ERR_MSG_INVALID_IP_ADDRESS, @""),
                               [NSNumber numberWithInt:kAlertResultErrMaxPrinters]: NSLocalizedString(IDS_ERR_MSG_MAX_PRINTER_COUNT, @""),

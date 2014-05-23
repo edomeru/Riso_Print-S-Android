@@ -21,6 +21,9 @@
 #define PROGRESS_HEIGHT 70.0f
 #define PROGRESS_FORMAT @"%.2f%%"
 
+static NSLock *lock = nil;
+static NSMutableArray *taskList = nil;
+
 void printProgressCallback(directprint_job *job, int status, float progress);
 
 @interface DirectPrintManager()
@@ -43,6 +46,47 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 @implementation DirectPrintManager
 
++ (void)initialize
+{
+    lock = [[NSLock alloc] init];
+    taskList = [[NSMutableArray alloc] init];
+}
+
++ (BOOL)idle
+{
+    BOOL result = YES;
+    [lock lock];
+    result = [taskList count] == 0;
+    [lock unlock];
+    
+    return result;
+}
+
++ (void)cancelAll
+{
+    while (![DirectPrintManager idle])
+    {
+        [lock lock];
+        DirectPrintManager *manager = [taskList firstObject];
+        [lock unlock];
+        [manager cancelJob];
+    }
+}
+
++ (void)addTask:(DirectPrintManager *)manager
+{
+    [lock lock];
+    [taskList addObject:manager];
+    [lock unlock];
+}
+
++ (void)removeTask:(DirectPrintManager *)manager
+{
+    [lock lock];
+    [taskList removeObject:manager];
+    [lock unlock];
+}
+
 - (id)init
 {
     self = [super init];
@@ -50,8 +94,6 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     {
         _job = nil;
         _isPrinting = NO;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
     }
     
     return self;
@@ -59,13 +101,17 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    if (self.isPrinting)
+    {
+        [self cancelJob];
+    }
 }
 
 - (void)printDocumentViaLPR
 {
     self.isPrinting = YES;
     [self preparePrintJob];
+    [DirectPrintManager addTask:self];
     directprint_job_lpr_print(self.job);
 }
 
@@ -73,6 +119,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 {
     self.isPrinting = YES;
     [self preparePrintJob];
+    [DirectPrintManager addTask:self];
     directprint_job_raw_print(self.job);
 }
 
@@ -172,18 +219,9 @@ void printProgressCallback(directprint_job *job, int status, float progress);
         [self.alertView dismiss];
         self.alertView = nil;
         CFBridgingRelease(directprint_job_get_caller_data(self.job));
+        [DirectPrintManager removeTask:self];
         directprint_job_cancel(self.job);
         directprint_job_free(self.job);
-    }
-}
-
-#pragma mark - Notifications
-
-- (void)didEnterBackground
-{
-    if (self.isPrinting)
-    {
-        [self cancelJob];
     }
 }
 
@@ -193,12 +231,14 @@ void printProgressCallback(directprint_job *job, int status, float progress)
 {
     void *callerData = directprint_job_get_caller_data(job);
     DirectPrintManager *manager = (__bridge DirectPrintManager *)callerData;
+    NSLog(@"Progress: %f", progress);
     [manager updateProgress:progress];
     if (status < 0)
     {
         // Error
         [manager updateError];
         CFBridgingRelease(callerData);
+        [DirectPrintManager removeTask:manager];
         directprint_job_free(job);
     }
     else if (status == kJobStatusSent)
@@ -206,6 +246,7 @@ void printProgressCallback(directprint_job *job, int status, float progress)
         // Success
         [manager updateSuccess];
         CFBridgingRelease(callerData);
+        [DirectPrintManager removeTask:manager];
         directprint_job_free(job);
     }
 }
