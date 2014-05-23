@@ -110,11 +110,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private static final int ID_SECURE_PRINT_SWITCH = 0x11000010;
     private static final int ID_PIN_CODE_EDIT_TEXT = 0x1100001A;
+    private static final int ID_NUMERIC_EDIT_TEXT = 0x1100001B;
     
     private PrintSettings mPrintSettings = null;
     private int mPrinterId = PrinterManager.EMPTY_ID;
     private List<Printer> mPrintersList = null;
-
+    
     private LinearLayout mMainView = null;
     private ScrollView mPrintSettingsScrollView = null;
     private LinearLayout mPrintSettingsLayout = null;
@@ -1716,6 +1717,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             params.width = width;
             
             EditText editText = (EditText) li.inflate(R.layout.printsettings_input_edittext, null);
+            editText.setId(ID_NUMERIC_EDIT_TEXT);
+            editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
             editText.setActivated(true);
             editText.setLayoutParams(params);
             editText.setTag(tag);
@@ -1974,6 +1977,26 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
+    /**
+     * Checks the value of a TextView and sets it to 1 if text is empty or less than or equal to 0
+     * 
+     * @param v
+     *            TextView to be edited
+     */
+    private void checkEditTextValue(TextView v) {
+        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
+            String value = v.getText().toString();
+            if (value.isEmpty()) {
+                v.setText(Integer.toString(1));
+            } else {
+                int val = Integer.parseInt(value);
+                if (val <= 0) {
+                    v.setText(Integer.toString(1));
+                }
+            }
+        }
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -2094,24 +2117,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
-    public void checkEditTextValue(TextView v) {
-        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
-            String value = v.getText().toString();
-            if (value.isEmpty()) {
-                v.setText(Integer.toString(1));
-            } else {
-                int val = Integer.parseInt(value);
-                if (val <= 0) {
-                    v.setText(Integer.toString(1));
-                }
-            }
-        }
-    }
-    
     // ================================================================================
     // INTERFACE - OnEditorActionListener
     // ================================================================================
-
+    
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -2155,6 +2164,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 int value = mMinValue;
                 try {
                     value = Integer.parseInt(s.toString());
+                    value = Math.max(mMinValue, value);
                 } catch (NumberFormatException nfe) {
                 }
                 
