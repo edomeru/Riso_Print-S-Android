@@ -162,7 +162,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /**
      * Reset the PrintJobsView
      */
-    private void reset() {
+    public void reset() {
         mGroupViewCtr = 0;
         mInitialFlag = true;
         removeAllViews();
