@@ -82,15 +82,19 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="screenName">name of active screen</param>
         /// <param name="printer">target printer</param>
-        /// <returns>task; print settings</returns>
-        public async Task<PrintSettings> Initialize(string screenName, Printer printer)
+        /// <returns>task</returns>
+        public async Task Initialize(string screenName, Printer printer)
         {
             PrintSettings currPrintSettings = new PrintSettings();
 
             if (string.IsNullOrEmpty(screenName) || printer == null)
             {
-                return currPrintSettings;
+                return;
             }
+
+            _printSettingsViewModel.PrinterName = printer.Name;
+            _printSettingsViewModel.PrinterId = printer.Id;
+            _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
 
             currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
 
@@ -127,9 +131,6 @@ namespace SmartDeviceApp.Controllers
             {
                 _printSettingListMap[screenName] = _printSettingsViewModel.PrintSettingsList;
             }
-
-            _printSettingsMap.TryGetValue(screenName, out currPrintSettings);
-            return currPrintSettings;
         }
 
         /// <summary>
@@ -1620,7 +1621,10 @@ namespace SmartDeviceApp.Controllers
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
 
             return isPreviewAffected;
         }
@@ -1668,7 +1672,10 @@ namespace SmartDeviceApp.Controllers
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
 
             return isPreviewAffected;
         }

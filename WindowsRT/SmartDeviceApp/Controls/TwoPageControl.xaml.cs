@@ -1,5 +1,4 @@
-﻿using SmartDeviceApp.Common.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
@@ -70,36 +70,42 @@ namespace SmartDeviceApp.Controls
 
         private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
+            var control = (TwoPageControl)obj;
+            var gridLengthCollapsed = new GridLength(0);
+            var gridLengthFull = new GridLength(1, GridUnitType.Star);
+            var gridWidth = new GridLength(control.PageAreaSize.Width);
+            var gridHeight = new GridLength(control.PageAreaSize.Height);
+
             switch((PageViewMode)e.NewValue)
             {
                 case PageViewMode.SinglePageView:
                 {
-                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
-                    ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
-                    ((TwoPageControl)obj).topPage.Visibility = Visibility.Collapsed;
-                    ((TwoPageControl)obj).topPageArea.Height = new GridLength(0);
-                    ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
-                    ((TwoPageControl)obj).rightPage.Margin = new Thickness(0,0,0,0);
+                    control.leftPage.Visibility = Visibility.Collapsed;
+                    control.leftPageArea.Width = gridLengthCollapsed;
+                    control.rightPageArea.Width = gridLengthFull;
+                    control.topPage.Visibility = Visibility.Collapsed;
+                    control.topPageArea.Height = gridLengthCollapsed;
+                    control.bottomPageArea.Height = gridLengthFull;
                     break;
                 }
                 case PageViewMode.TwoPageViewHorizontal:
                 {
-                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
-                    var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Width);
-                    ((TwoPageControl)obj).leftPageArea.Width = gridLength;
-                    ((TwoPageControl)obj).rightPageArea.Width = gridLength;
-                    ((TwoPageControl)obj).topPage.Visibility = Visibility.Collapsed;
-                    ((TwoPageControl)obj).topPageArea.Height = new GridLength(0);
+                    control.leftPage.Visibility = Visibility.Visible;
+                    control.leftPageArea.Width = gridWidth;
+                    control.rightPageArea.Width = gridWidth;
+                    control.topPage.Visibility = Visibility.Collapsed;
+                    control.topPageArea.Height = gridLengthCollapsed;
+                    control.bottomPageArea.Height = gridLengthFull;
                     break;
                 }
                 case PageViewMode.TwoPageViewVertical:
                 {
-                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
-                    var gridLength = new GridLength(((TwoPageControl)obj).PageAreaSize.Height);
-                    ((TwoPageControl)obj).topPageArea.Height = gridLength;
-                    ((TwoPageControl)obj).bottomPageArea.Height = gridLength;
-                    ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
-                    ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
+                    control.leftPage.Visibility = Visibility.Collapsed;
+                    control.leftPageArea.Width = gridLengthCollapsed;
+                    control.rightPageArea.Width = gridLengthFull;
+                    control.topPage.Visibility = Visibility.Visible;          
+                    control.topPageArea.Height = gridHeight;
+                    control.bottomPageArea.Height = gridHeight;                    
                     break;
                 }
             }

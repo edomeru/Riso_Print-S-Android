@@ -126,7 +126,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printCommand = new RelayCommand(
                         () => PrintExecute(),
-                        () => true
+                        () => _isPrintPreview
                     );
                 }
                 return _printCommand;
@@ -141,7 +141,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _listPrintersCommand = new RelayCommand(
                         () => ListPrintersCommandExecute(),
-                        () => true
+                        () => _isPrintPreview
                     );
                 }
                 return _listPrintersCommand;
@@ -226,13 +226,10 @@ namespace SmartDeviceApp.ViewModels
 
         private void ListPrintersCommandExecute()
         {
-            if (_isPrintPreview)
-            {
-                new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
-                new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
+            new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
+            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
 
-                Messenger.Default.Send<PrintSettingsPaneMode>(PrintSettingsPaneMode.SelectPrinter);
-            }
+            Messenger.Default.Send<PrintSettingsPaneMode>(PrintSettingsPaneMode.SelectPrinter);
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)
@@ -240,11 +237,9 @@ namespace SmartDeviceApp.ViewModels
             switch (printSetting.Type)
             {
                 case PrintSettingType.boolean:
-
                     break;
                 case PrintSettingType.numeric:
                     break;
-
                 case PrintSettingType.list:
                     new ViewModelLocator().PrintSettingOptionsViewModel.PrintSetting = printSetting;
                     new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettingOptions;

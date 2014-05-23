@@ -420,7 +420,7 @@
                                      PageViewMode="{Binding PageViewMode}" 
                                      PageAreaSize="{Binding RightPageActualSize}"
                                      Loaded="OnPageAreaLoaded"
-                                     HorizontalAlignment="Center"/>
+                                     VerticalAlignment="Stretch"/>
             <Slider x:Name="pageNumberSlider" Grid.Row="1" 
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 

@@ -28,6 +28,7 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -47,6 +48,7 @@ namespace SmartDeviceApp.ViewModels
         private Grid _pageAreaGrid;
         private UIElement _controlReference;
         private double _pageAreaGridOriginalHeight;
+        private double _pageAreaGridMaxWidth;
         private bool _isPageAreaGridLoaded;
         public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
         private bool _isPageNumberSliderEnabled;
@@ -58,6 +60,7 @@ namespace SmartDeviceApp.ViewModels
         private uint _currentPageIndex;
         private uint _pageIndex;
         private PageNumberInfo _pageNumber;
+        private double _scalingFactor = 1;
 
         private string _documentTitleText;
         private BitmapImage _rightPageImage;
@@ -65,6 +68,7 @@ namespace SmartDeviceApp.ViewModels
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
+        private PageViewMode _previousPageViewMode;
 
         private ViewControlViewModel _viewControlViewModel;
 
@@ -117,26 +121,35 @@ namespace SmartDeviceApp.ViewModels
                 switch (PageViewMode)
                 {
                     case PageViewMode.SinglePageView:
-                        scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
+                        scalingFactor = Math.Min(_pageAreaGridOriginalHeight / RightPageActualSize.Height,
+                            _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = RightPageActualSize;
                         break;
 
                     case PageViewMode.TwoPageViewHorizontal:
-                        scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
+                        scalingFactor = Math.Min(_pageAreaGridOriginalHeight / RightPageActualSize.Height,
+                            _pageAreaGridMaxWidth / (LeftPageActualSize.Width + RightPageActualSize.Width));
                         targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);  
                         break;
 
                     case PageViewMode.TwoPageViewVertical:
-                        scalingFactor = _pageAreaGridOriginalHeight / (RightPageActualSize.Height + LeftPageActualSize.Height);
+                        scalingFactor = Math.Min(_pageAreaGridOriginalHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
+                            _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);  
                         break;
                 }
-
-                if (_gestureController != null) _gestureController.Dispose();
-                _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
-                       targetSize, scalingFactor,
-                       new PreviewGestureController.SwipeRightDelegate(SwipeRight),
-                       new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
+                // Note: If view and page areas are not resized or PageViewMode is not changed, 
+				// no need to reset gestureController
+                if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
+                {
+                    _scalingFactor = scalingFactor;
+                    if (_gestureController != null) _gestureController.Dispose();
+                    _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
+                           targetSize, scalingFactor,
+                           new PreviewGestureController.SwipeRightDelegate(SwipeRight),
+                           new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
+                }
+                _previousPageViewMode = PageViewMode;
             }
         }
 
@@ -180,6 +193,9 @@ namespace SmartDeviceApp.ViewModels
         {
             if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
                 _viewControlViewModel.ScreenMode != ScreenMode.Home) return;
+            var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, null, null)) - defaultMargin * 2;
+            InitializeGestures();
             switch (viewMode)
             {
                 case ViewMode.MainMenuPaneVisible:
@@ -269,6 +285,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _rightPageActualSize = value;
                     RaisePropertyChanged("RightPageActualSize");
+                    RaisePropertyChanged("PageViewMode");
                 }
             }
         }
