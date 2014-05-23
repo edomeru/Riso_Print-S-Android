@@ -1122,6 +1122,105 @@
             </objects>
             <point key="canvasLocation" x="1215" y="2188"/>
         </scene>
+        <!--PrinterSearchTableViewController-->
+        <scene sceneID="4Gj-4c-Dbw">
+            <objects>
+                <tableViewController storyboardIdentifier="PrinterSearchTableViewController" id="zSB-tU-rcH" userLabel="PrinterSearchTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LGS-lI-w02">
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" rowHeight="60" id="Xo0-bh-lbv" userLabel="SearchResultCell" customClass="SearchResultCell">
+                                <rect key="frame" x="0.0" y="22" width="320" height="60"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xo0-bh-lbv" id="a30-TG-2AD">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Phd-ZJ-nzJ">
+                                            <rect key="frame" x="20" y="13" width="238" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="Ipo-OE-nZQ" userLabel="Separator">
+                                            <rect key="frame" x="20" y="57" width="300" height="3"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
+                                        </view>
+                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="85w-gU-ceQ" userLabel="Check">
+                                            <rect key="frame" x="274" y="15" width="30" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="QDv-bm-Wep"/>
+                                                <constraint firstAttribute="width" constant="30" id="hem-Zn-DMe"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                            <state key="normal">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <state key="disabled" image="img_btn_search_printer_check"/>
+                                        </button>
+                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="go4-Rb-k9w" userLabel="Plus">
+                                            <rect key="frame" x="274" y="15" width="30" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="HNI-DJ-Jhx"/>
+                                                <constraint firstAttribute="width" constant="30" id="lj6-dw-7Lc"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                            <state key="normal" image="img_btn_search_printer_plus">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <state key="highlighted" image="img_btn_search_printer_plus"/>
+                                        </button>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhv-Nb-EGT">
+                                            <rect key="frame" x="20" y="31" width="238" height="15"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="Ipo-OE-nZQ" secondAttribute="trailing" id="4b5-OR-IK4"/>
+                                        <constraint firstItem="xhv-Nb-EGT" firstAttribute="leading" secondItem="a30-TG-2AD" secondAttribute="leading" constant="20" id="6uO-V9-7CZ"/>
+                                        <constraint firstItem="go4-Rb-k9w" firstAttribute="leading" secondItem="Phd-ZJ-nzJ" secondAttribute="trailing" constant="16" id="7rR-rG-gED"/>
+                                        <constraint firstItem="go4-Rb-k9w" firstAttribute="leading" secondItem="xhv-Nb-EGT" secondAttribute="trailing" constant="16" id="D0K-tg-DBL"/>
+                                        <constraint firstAttribute="centerY" secondItem="go4-Rb-k9w" secondAttribute="centerY" id="IZS-Q9-udk"/>
+                                        <constraint firstItem="Ipo-OE-nZQ" firstAttribute="leading" secondItem="Phd-ZJ-nzJ" secondAttribute="leading" id="Kkk-Pb-7a1"/>
+                                        <constraint firstItem="xhv-Nb-EGT" firstAttribute="top" secondItem="Phd-ZJ-nzJ" secondAttribute="bottom" id="M1y-Fp-bpu"/>
+                                        <constraint firstAttribute="trailing" secondItem="85w-gU-ceQ" secondAttribute="trailing" constant="16" id="Qri-bt-8iw"/>
+                                        <constraint firstAttribute="centerY" secondItem="Phd-ZJ-nzJ" secondAttribute="centerY" constant="8" id="ZoZ-sC-o2C"/>
+                                        <constraint firstAttribute="trailing" secondItem="go4-Rb-k9w" secondAttribute="trailing" constant="16" id="jVU-nd-wz6"/>
+                                        <constraint firstAttribute="bottom" secondItem="Ipo-OE-nZQ" secondAttribute="bottom" id="jxd-sD-Q0O"/>
+                                        <constraint firstItem="Ipo-OE-nZQ" firstAttribute="top" secondItem="Phd-ZJ-nzJ" secondAttribute="bottom" constant="26" id="keh-p8-PRq"/>
+                                        <constraint firstAttribute="centerY" secondItem="85w-gU-ceQ" secondAttribute="centerY" id="tJk-UA-s4O"/>
+                                        <constraint firstItem="Phd-ZJ-nzJ" firstAttribute="leading" secondItem="a30-TG-2AD" secondAttribute="leading" constant="20" id="tzI-ZV-RO7"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <outlet property="addIcon" destination="go4-Rb-k9w" id="X0F-el-EmL"/>
+                                    <outlet property="oldIcon" destination="85w-gU-ceQ" id="IlL-lx-mGv"/>
+                                    <outlet property="printerIP" destination="xhv-Nb-EGT" id="dDL-Gu-mPi"/>
+                                    <outlet property="printerName" destination="Phd-ZJ-nzJ" id="7d4-Vn-4E0"/>
+                                    <outlet property="separator" destination="Ipo-OE-nZQ" id="Br4-M4-0ok"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="zSB-tU-rcH" id="6zg-yJ-7Qj"/>
+                            <outlet property="delegate" destination="zSB-tU-rcH" id="IPJ-Ac-JLM"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Me6-bh-pDJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1804" y="2302"/>
+        </scene>
         <!--Help View Controller-->
         <scene sceneID="PdT-lF-sgl">
             <objects>
@@ -1338,102 +1437,21 @@
                                 <rect key="frame" x="0.0" y="48" width="270" height="736"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="lEH-mb-bO6">
+                                    <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fl9-6K-hwq">
                                         <rect key="frame" x="0.0" y="0.0" width="270" height="736"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
-                                        <prototypes>
-                                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" rowHeight="60" id="58t-nc-vdu" userLabel="SearchResultCell" customClass="SearchResultCell">
-                                                <rect key="frame" x="0.0" y="22" width="270" height="60"/>
-                                                <autoresizingMask key="autoresizingMask"/>
-                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="58t-nc-vdu" id="lYL-yn-uIb">
-                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="60"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <subviews>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EXa-4e-Ene">
-                                                            <rect key="frame" x="20" y="13" width="188" height="18"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
-                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                        <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="mVg-yV-2cB" userLabel="Separator">
-                                                            <rect key="frame" x="20" y="57" width="300" height="3"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
-                                                        </view>
-                                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z2N-M0-1dv" userLabel="Check">
-                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="30" id="Fu1-c2-5Vp"/>
-                                                                <constraint firstAttribute="height" constant="30" id="UZd-41-PTs"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                            <state key="normal">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
-                                                            <state key="disabled" image="img_btn_search_printer_check"/>
-                                                        </button>
-                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C3R-cH-uWc" userLabel="Plus">
-                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="30" id="wd5-jA-l2g"/>
-                                                                <constraint firstAttribute="width" constant="30" id="zeV-wH-lwa"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                            <state key="normal" image="img_btn_search_printer_plus">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
-                                                            <state key="highlighted" image="img_btn_search_printer_plus"/>
-                                                        </button>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-zg-wfa">
-                                                            <rect key="frame" x="20" y="31" width="188" height="15"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstAttribute="trailing" secondItem="C3R-cH-uWc" secondAttribute="trailing" constant="16" id="4zE-1d-TQ2"/>
-                                                        <constraint firstItem="Utx-zg-wfa" firstAttribute="leading" secondItem="lYL-yn-uIb" secondAttribute="leading" constant="20" id="7Qh-ja-DuS"/>
-                                                        <constraint firstAttribute="trailing" secondItem="Utx-zg-wfa" secondAttribute="trailing" constant="62" id="BKl-9U-JTB"/>
-                                                        <constraint firstItem="EXa-4e-Ene" firstAttribute="leading" secondItem="lYL-yn-uIb" secondAttribute="leading" constant="20" id="FVK-Jz-NRa"/>
-                                                        <constraint firstAttribute="centerY" secondItem="EXa-4e-Ene" secondAttribute="centerY" constant="8" id="TIJ-Qx-WUT"/>
-                                                        <constraint firstAttribute="bottom" secondItem="mVg-yV-2cB" secondAttribute="bottom" id="U5A-a0-3Ct"/>
-                                                        <constraint firstAttribute="trailing" secondItem="z2N-M0-1dv" secondAttribute="trailing" constant="16" id="XLL-NZ-h3b"/>
-                                                        <constraint firstAttribute="centerY" secondItem="z2N-M0-1dv" secondAttribute="centerY" id="bTa-n5-MMy"/>
-                                                        <constraint firstAttribute="trailing" secondItem="mVg-yV-2cB" secondAttribute="trailing" constant="-50" id="bu4-8I-XyW"/>
-                                                        <constraint firstAttribute="centerY" secondItem="C3R-cH-uWc" secondAttribute="centerY" id="dLx-6o-GEL"/>
-                                                        <constraint firstItem="Utx-zg-wfa" firstAttribute="top" secondItem="EXa-4e-Ene" secondAttribute="bottom" id="ugL-Nv-Tqu"/>
-                                                        <constraint firstAttribute="trailing" secondItem="EXa-4e-Ene" secondAttribute="trailing" constant="62" id="v2k-Wi-DGF"/>
-                                                        <constraint firstItem="EXa-4e-Ene" firstAttribute="leading" secondItem="mVg-yV-2cB" secondAttribute="leading" id="xK2-E0-zwb"/>
-                                                        <constraint firstItem="mVg-yV-2cB" firstAttribute="top" secondItem="EXa-4e-Ene" secondAttribute="bottom" constant="26" id="yqz-dt-OaI"/>
-                                                    </constraints>
-                                                </tableViewCellContentView>
-                                                <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
-                                                <connections>
-                                                    <outlet property="addIcon" destination="C3R-cH-uWc" id="N2z-qZ-5r8"/>
-                                                    <outlet property="oldIcon" destination="z2N-M0-1dv" id="tgY-n4-VZH"/>
-                                                    <outlet property="printerIP" destination="Utx-zg-wfa" id="0aT-Q2-rQj"/>
-                                                    <outlet property="printerName" destination="EXa-4e-Ene" id="agR-nz-LUA"/>
-                                                    <outlet property="separator" destination="mVg-yV-2cB" id="Ww4-AX-Poz"/>
-                                                </connections>
-                                            </tableViewCell>
-                                        </prototypes>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
-                                            <outlet property="dataSource" destination="vSr-S1-xXi" id="cd2-wp-PgU"/>
-                                            <outlet property="delegate" destination="vSr-S1-xXi" id="L00-0t-aYk"/>
+                                            <segue destination="zSB-tU-rcH" kind="embed" identifier="PrinterSearchIpad-PrinterSearchTable" id="4qT-Co-wxF"/>
                                         </connections>
-                                    </tableView>
+                                    </containerView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="lEH-mb-bO6" firstAttribute="top" secondItem="W5l-2l-HOe" secondAttribute="top" id="HWP-gO-gkd"/>
-                                    <constraint firstItem="lEH-mb-bO6" firstAttribute="leading" secondItem="W5l-2l-HOe" secondAttribute="leading" id="cdV-hW-PGH"/>
-                                    <constraint firstAttribute="bottom" secondItem="lEH-mb-bO6" secondAttribute="bottom" id="jTL-rR-LPP"/>
-                                    <constraint firstAttribute="trailing" secondItem="lEH-mb-bO6" secondAttribute="trailing" id="pSb-2q-9Fc"/>
+                                    <constraint firstItem="fl9-6K-hwq" firstAttribute="top" secondItem="W5l-2l-HOe" secondAttribute="top" id="3nd-0i-9vb"/>
+                                    <constraint firstAttribute="bottom" secondItem="fl9-6K-hwq" secondAttribute="bottom" id="XLL-T8-Kab"/>
+                                    <constraint firstAttribute="trailing" secondItem="fl9-6K-hwq" secondAttribute="trailing" id="d9o-LI-SnD"/>
+                                    <constraint firstItem="fl9-6K-hwq" firstAttribute="leading" secondItem="W5l-2l-HOe" secondAttribute="leading" id="nvJ-yz-gbt"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -1453,7 +1471,6 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="tableView" destination="lEH-mb-bO6" id="y3b-aW-NhV"/>
                         <segue destination="lDn-gr-Ojb" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Cfi-aZ-cpN"/>
                     </connections>
                 </viewController>
@@ -2890,107 +2907,25 @@
                                     <constraint firstAttribute="centerY" secondItem="Vhn-YP-3sQ" secondAttribute="centerY" id="oXi-AG-TAL"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hJg-Li-w9G" userLabel="Contents">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hJg-Li-w9G" userLabel="Contents">
                                 <rect key="frame" x="0.0" y="48" width="270" height="500"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="oQQ-DV-kI8">
+                                    <containerView clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7qQ-47-451">
                                         <rect key="frame" x="0.0" y="0.0" width="270" height="500"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
-                                        <prototypes>
-                                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchResultCell" rowHeight="60" id="TOE-xs-FJy" userLabel="SearchResultCell" customClass="SearchResultCell">
-                                                <rect key="frame" x="0.0" y="22" width="270" height="60"/>
-                                                <autoresizingMask key="autoresizingMask"/>
-                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TOE-xs-FJy" id="KTt-bZ-HL0">
-                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="60"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <subviews>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1LA-cn-0Qi">
-                                                            <rect key="frame" x="20" y="13" width="188" height="18"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
-                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                        <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="bXR-I6-5YP" userLabel="Separator">
-                                                            <rect key="frame" x="20" y="57" width="300" height="3"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
-                                                        </view>
-                                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bd1-3u-b69" userLabel="Check">
-                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="30" id="Rb7-Jo-boM"/>
-                                                                <constraint firstAttribute="height" constant="30" id="h9n-vN-zh3"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                            <state key="normal">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
-                                                            <state key="disabled" image="img_btn_search_printer_check"/>
-                                                        </button>
-                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MAC-Yd-a2k" userLabel="Plus">
-                                                            <rect key="frame" x="224" y="15" width="30" height="30"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="30" id="G7Q-nb-Tai"/>
-                                                                <constraint firstAttribute="height" constant="30" id="r9B-vw-OnW"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                            <state key="normal" image="img_btn_search_printer_plus">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
-                                                            <state key="highlighted" image="img_btn_search_printer_plus"/>
-                                                        </button>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2kH-UO-YXY">
-                                                            <rect key="frame" x="20" y="31" width="188" height="15"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstAttribute="trailing" secondItem="MAC-Yd-a2k" secondAttribute="trailing" constant="16" id="1xs-JW-veY"/>
-                                                        <constraint firstAttribute="trailing" secondItem="bd1-3u-b69" secondAttribute="trailing" constant="16" id="3m9-lQ-9xM"/>
-                                                        <constraint firstAttribute="trailing" secondItem="2kH-UO-YXY" secondAttribute="trailing" constant="62" id="4Yk-EZ-HQc"/>
-                                                        <constraint firstItem="2kH-UO-YXY" firstAttribute="leading" secondItem="KTt-bZ-HL0" secondAttribute="leading" constant="20" id="8Bn-cR-lay"/>
-                                                        <constraint firstAttribute="bottom" secondItem="bXR-I6-5YP" secondAttribute="bottom" id="A5O-ru-YIq"/>
-                                                        <constraint firstAttribute="centerY" secondItem="1LA-cn-0Qi" secondAttribute="centerY" constant="8" id="GVm-b3-Yfl"/>
-                                                        <constraint firstItem="1LA-cn-0Qi" firstAttribute="leading" secondItem="KTt-bZ-HL0" secondAttribute="leading" constant="20" id="MoW-iV-D0c"/>
-                                                        <constraint firstAttribute="trailing" secondItem="bXR-I6-5YP" secondAttribute="trailing" constant="-50" id="acj-1d-5j8"/>
-                                                        <constraint firstItem="bXR-I6-5YP" firstAttribute="leading" secondItem="1LA-cn-0Qi" secondAttribute="leading" id="daW-a1-cq1"/>
-                                                        <constraint firstAttribute="centerY" secondItem="MAC-Yd-a2k" secondAttribute="centerY" id="hKy-61-fbO"/>
-                                                        <constraint firstAttribute="trailing" secondItem="1LA-cn-0Qi" secondAttribute="trailing" constant="62" id="kX8-yV-zHn"/>
-                                                        <constraint firstAttribute="centerY" secondItem="bd1-3u-b69" secondAttribute="centerY" id="qFy-xh-Ckf"/>
-                                                        <constraint firstItem="2kH-UO-YXY" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" id="sPd-xl-g0U"/>
-                                                        <constraint firstItem="bXR-I6-5YP" firstAttribute="top" secondItem="1LA-cn-0Qi" secondAttribute="bottom" constant="26" id="xiO-qs-8u7"/>
-                                                    </constraints>
-                                                </tableViewCellContentView>
-                                                <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
-                                                <connections>
-                                                    <outlet property="addIcon" destination="MAC-Yd-a2k" id="sp2-mi-Iac"/>
-                                                    <outlet property="oldIcon" destination="bd1-3u-b69" id="Ypb-4L-gFZ"/>
-                                                    <outlet property="printerIP" destination="2kH-UO-YXY" id="wjr-pF-1MB"/>
-                                                    <outlet property="printerName" destination="1LA-cn-0Qi" id="4yg-1c-ZUS"/>
-                                                    <outlet property="separator" destination="bXR-I6-5YP" id="6gr-xR-HI3"/>
-                                                </connections>
-                                            </tableViewCell>
-                                        </prototypes>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         <connections>
-                                            <outlet property="dataSource" destination="RaD-uj-jjo" id="iiu-vo-lJm"/>
-                                            <outlet property="delegate" destination="RaD-uj-jjo" id="sb5-HF-Aza"/>
+                                            <segue destination="zSB-tU-rcH" kind="embed" identifier="PrinterSearchIphone-PrinterSearchTable" id="h8r-TR-IcV"/>
                                         </connections>
-                                    </tableView>
+                                    </containerView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="oQQ-DV-kI8" secondAttribute="bottom" id="6Qt-9w-6Xq"/>
-                                    <constraint firstItem="oQQ-DV-kI8" firstAttribute="leading" secondItem="hJg-Li-w9G" secondAttribute="leading" id="KRe-qe-A5g"/>
-                                    <constraint firstItem="oQQ-DV-kI8" firstAttribute="top" secondItem="hJg-Li-w9G" secondAttribute="top" id="TqH-i3-Cna"/>
-                                    <constraint firstAttribute="trailing" secondItem="oQQ-DV-kI8" secondAttribute="trailing" id="ZOW-sE-hll"/>
+                                    <constraint firstItem="7qQ-47-451" firstAttribute="leading" secondItem="hJg-Li-w9G" secondAttribute="leading" id="HzM-SX-BVF"/>
+                                    <constraint firstAttribute="trailing" secondItem="7qQ-47-451" secondAttribute="trailing" id="VXe-YH-Cnm"/>
+                                    <constraint firstAttribute="bottom" secondItem="7qQ-47-451" secondAttribute="bottom" id="flo-zF-u1z"/>
+                                    <constraint firstItem="7qQ-47-451" firstAttribute="top" secondItem="hJg-Li-w9G" secondAttribute="top" id="lw5-IX-MXn"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -3010,7 +2945,6 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="tableView" destination="oQQ-DV-kI8" id="9IY-1X-QoJ"/>
                         <segue destination="5BY-kL-11l" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="Lua-LL-PLr"/>
                     </connections>
                 </viewController>
@@ -4057,8 +3991,9 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="Ysc-8g-iB4"/>
-        <segue reference="ax2-Mn-NH0"/>
-        <segue reference="5pT-ga-236"/>
+        <segue reference="CWW-vD-UgO"/>
+        <segue reference="4qT-Co-wxF"/>
         <segue reference="SPc-R3-6UV"/>
+        <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>
