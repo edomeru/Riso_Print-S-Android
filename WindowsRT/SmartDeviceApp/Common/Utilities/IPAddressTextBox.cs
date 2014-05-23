@@ -1,12 +1,10 @@
-﻿using GalaSoft.MvvmLight.Messaging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace SmartDeviceApp.Common.Utilities
 {
@@ -18,7 +16,6 @@ namespace SmartDeviceApp.Common.Utilities
             set;
         }
 
-        private string _text ;
 
         protected override void OnKeyDown(Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
@@ -51,10 +48,6 @@ namespace SmartDeviceApp.Common.Utilities
 
             if (e.Key == VirtualKey.Shift)
                 IsShiftPressed = false;
-            if (e.Key == VirtualKey.Enter)
-            {
-                Messenger.Default.Send<string>("AddPrinter");
-            }
         }
     }
 }

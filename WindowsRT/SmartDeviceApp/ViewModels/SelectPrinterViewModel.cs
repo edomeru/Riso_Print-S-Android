@@ -39,6 +39,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _backToPrintSettings;
 
         private ObservableCollection<Printer> _printerList;
+        private int _selectedPrinterId;
 
         public SelectPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -53,10 +54,20 @@ namespace SmartDeviceApp.ViewModels
             get { return _printerList; }
             set
             {
-                if (_printerList != value)
+                _printerList = value;
+                RaisePropertyChanged("PrinterList");
+            }
+        }
+
+        public int SelectedPrinterId
+        {
+            get { return _selectedPrinterId; }
+            set
+            {
+                if (_selectedPrinterId != value)
                 {
-                    _printerList = value;
-                    RaisePropertyChanged("PrinterList");
+                    _selectedPrinterId = value;
+                    RaisePropertyChanged("SelectedPrinterId");
                 }
             }
         }
@@ -69,7 +80,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _selectPrinter = new RelayCommand<Printer>(
                         (prn) => SelectPrinterExecute(prn.Id),
-                        (prn) => true
+                        (prn) => prn.Id != _selectedPrinterId
                     );
                 }
                 return _selectPrinter;
@@ -93,6 +104,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SelectPrinterExecute(int id)
         {
+            SelectedPrinterId = id;
             if (SelectPrinterEvent != null)
             {
                 SelectPrinterEvent(id);

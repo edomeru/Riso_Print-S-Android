@@ -62,7 +62,6 @@ namespace SmartDeviceApp.ViewModels
         private PageNumberInfo _pageNumber;
         private bool _isReverseSwipe;
         private bool _isReverseSwipePrevious;
-        private bool _isHorizontalSwipeEnabled;
         private double _scalingFactor = 1;
 
         private string _documentTitleText;
@@ -142,27 +141,17 @@ namespace SmartDeviceApp.ViewModels
                         break;
                 }
                 
-                PreviewGestureController.SwipeRightDelegate swipeRight = null;
-                PreviewGestureController.SwipeLeftDelegate swipeLeft = null;
-                PreviewGestureController.SwipeTopDelegate swipeTop = null;
-                PreviewGestureController.SwipeBottomDelegate swipeBottom = null;
-                if (IsHorizontalSwipeEnabled)
-                {                
-                    if (!IsReverseSwipe)
-                    {
-                        swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRight);
-                        swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeft);
-                    }
-                    else
-                    {
-                        swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRightReverse);
-                        swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeftReverse);
-                    }
+                PreviewGestureController.SwipeRightDelegate swipeRight;
+                PreviewGestureController.SwipeLeftDelegate swipeLeft;
+                if (!IsReverseSwipe)
+                {
+                    swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRight);
+                    swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeft);
                 }
                 else
                 {
-                    swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
-                    swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                    swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRightReverse);
+                    swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeftReverse);
                 }
                 // Note: If view and page areas are not resized or PageViewMode is not changed, 
                 // no need to reset gestureController
@@ -172,15 +161,13 @@ namespace SmartDeviceApp.ViewModels
                     if (_gestureController != null) _gestureController.Dispose();
                     _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
                            targetSize, scalingFactor, swipeRight, swipeLeft);
-                    _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
-                        swipeTop, swipeBottom);
                 }
                 else
                 {
                     if (IsReverseSwipe != _isReverseSwipePrevious)
                     {
-                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
-                            swipeTop, swipeBottom);
+                        _gestureController.SwipeRightHandler = swipeRight;
+                        _gestureController.SwipeLeftHandler = swipeLeft;
                     }
                 }
                 _previousPageViewMode = PageViewMode;
@@ -203,12 +190,6 @@ namespace SmartDeviceApp.ViewModels
             set { _isReverseSwipe = value; }
         }
 
-        public bool IsHorizontalSwipeEnabled
-        {
-            get { return _isHorizontalSwipeEnabled; }
-            set { _isHorizontalSwipeEnabled = value; }
-        }
-
         private void SwipeRight()
         {
             GoToPreviousPage.Execute(null);
@@ -225,16 +206,6 @@ namespace SmartDeviceApp.ViewModels
         }
 
         private void SwipeLeftReverse()
-        {
-            GoToPreviousPage.Execute(null);
-        }
-
-        private void SwipeTop()
-        {
-            GoToNextPage.Execute(null);
-        }
-
-        private void SwipeBottom()
         {
             GoToPreviousPage.Execute(null);
         }

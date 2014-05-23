@@ -21,7 +21,7 @@ namespace SmartDeviceApp.Models
     public class PrintSettingOption
     {
         public string Text { get; set; }
-        public int Index { get; set; } // Note: Index here refers to index from original options (not with respect to some options removed due to constraints)
+        public int Index { get; set; }
         public bool IsEnabled { get; set; }
 
         public override bool Equals(System.Object obj)
@@ -83,7 +83,8 @@ namespace SmartDeviceApp.Models
         {
             get 
             {
-                _selectedOption = Options.Find(option => option.Index == (int)Value);
+                if ((int)Value < Options.Count) _selectedOption = Options[(int)Value];
+                else _selectedOption = null;
                 return _selectedOption;
             }
             set

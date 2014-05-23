@@ -9,7 +9,7 @@
             text="ids_lbl_colormode"
             icon="temp_img_printsettings_colormode"
             type="list"
-            default="0" >
+            default="1" >
             <option>ids_lbl_colormode_auto</option>
             <option>ids_lbl_colormode_fullcolor</option>
             <option>ids_lbl_colormode_black</option>
@@ -69,7 +69,7 @@
             text="ids_lbl_scaletofit"
             icon="temp_img_printsettings_null"
             type="boolean"
-            default="false" />
+            default="true" />
         <setting
             name="paperType"
             dbkey="pst_paper_type"

@@ -284,11 +284,13 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task GetDefaultPrinter()
         {
+            // TODo: Check if this function should use PrinterController (avoid conflicting roles)
             // Get default printer
-            Printer defaultPrinter = PrinterController.Instance.GetDefaultPrinter();
+            DefaultPrinter defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
+
             if (defaultPrinter != null)
             {
-                await SetSelectedPrinterAndPrintSettings(defaultPrinter.Id);
+                await SetSelectedPrinterAndPrintSettings((int)defaultPrinter.PrinterId);
             }
             else
             {
@@ -306,7 +308,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (printerId > -1)
             {
-                _selectedPrinter = PrinterController.Instance.GetPrinter(printerId);
+                _selectedPrinter = await DatabaseController.Instance.GetPrinter(printerId);
             }
             if (_selectedPrinter == null)
             {
@@ -344,15 +346,6 @@ namespace SmartDeviceApp.Controllers
                 else
                 {
                     _printPreviewViewModel.IsReverseSwipe = false;
-                }
-
-                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.TopToBottom)
-                {
-                    _printPreviewViewModel.IsHorizontalSwipeEnabled = false;
-                }
-                else
-                {
-                    _printPreviewViewModel.IsHorizontalSwipeEnabled = true;
                 }
 
                 Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);

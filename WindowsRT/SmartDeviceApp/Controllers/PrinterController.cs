@@ -20,6 +20,7 @@ namespace SmartDeviceApp.Controllers
     public class PrinterController : INotifyPropertyChanged
     {
         static readonly PrinterController _instance = new PrinterController();
+        private PrintSettingsController _printSettingsController;
 
         public delegate void PollingHandler(bool willPoll);
         private PollingHandler _pollingHandler;
@@ -219,16 +220,6 @@ namespace SmartDeviceApp.Controllers
                 //sortPrinterList(indexOfDefaultPrinter);
                 _printerListTemp = _printerList;
             }
-        }
-
-        public Printer GetDefaultPrinter()
-        {
-            return PrinterList.FirstOrDefault(prn => prn.IsDefault);
-        }
-
-        public Printer GetPrinter(int printerId)
-        {
-            return PrinterList.FirstOrDefault(prn => prn.Id == printerId);
         }
 
         //private void sortPrinterList(int index)
