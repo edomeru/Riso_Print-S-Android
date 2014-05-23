@@ -105,6 +105,13 @@
     tapGesture.delaysTouchesEnded = NO;
     [self.groupsView addGestureRecognizer:tapGesture];
     
+    UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(swipedNotLeftCollection:)];
+    panGesture.minimumNumberOfTouches = 1;
+    panGesture.delegate = self;
+    [panGesture requireGestureRecognizerToFail:tapGesture];
+    [self.groupsView addGestureRecognizer:panGesture];
+    
     self.groupWithDelete = nil;
     self.groupToDeleteIndex = -1;
     self.jobToDeleteIndex = -1;
@@ -440,6 +447,40 @@
 
 #pragma mark - Actions
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer*)gestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        if (self.groupWithDelete == nil)
+        {
+            // block the panning gesture when there is no delete button
+            // let the view scroll instead
+            return NO;
+        }
+        else
+        {
+            // cancel the delete button for the first swipe motion
+            return YES;
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        // allow both the UIScrollView's PanGesture and our PanGesture to react at the same time
+        // (allows simultaneous hiding of the delete button and scrolling)
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
 - (void)tappedCollection:(UIGestureRecognizer*)gestureRecognizer
 {
 #if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
@@ -452,6 +493,14 @@
     // check if a delete button is present in any group
     if (self.groupWithDelete != nil)
         [self removeDeleteButton];
+}
+
+- (void)swipedNotLeftCollection:(UIGestureRecognizer*)gestureRecognizer
+{
+    // method will only be called when gestureRecognizerShouldBegin returns YES,
+    // which will only happen when there is a delete button to be cancelled
+    
+    [self removeDeleteButton];
 }
 
 #pragma mark - Utilities
