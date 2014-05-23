@@ -430,7 +430,7 @@ public class PDFFileManager {
      * Opens the document
      * 
      * @param path
-     *            Path of the document to be opened
+     *            Opens the document. Sets the status of the class to initialized
      * 
      * @return status of open <br>
      *         PDF_OK = 0; <br>
@@ -462,6 +462,51 @@ public class PDFFileManager {
                 }
                 
                 mPageCount = mDocument.GetPageCount();
+                mIsInitialized = true;
+                
+                return PDF_OK;
+            case RADAEE_ENCRYPTED:
+            case RADAEE_UNKNOWN_ENCRYPTION:
+                return PDF_ENCRYPTED;
+            default:
+                return PDF_OPEN_FAILED;
+        }
+    }
+
+    
+    /**
+     * Checks whether the document can be opened
+     * 
+     * @param path
+     *            Path of the document to be opened
+     * 
+     * @return status of open <br>
+     *         PDF_OK = 0; <br>
+     *         PDF_ENCRYPTED = -1; <br>
+     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
+     *         PDF_DAMAGED = -3; <br>
+     *         PDF_INVALID_PATH = -10;
+     */
+    protected synchronized int testDocument(String path) {
+        if (path == null || path.length() == 0) {
+            return PDF_OPEN_FAILED;
+        }
+
+        Document document = new Document();
+        int status = document.Open(path, null);
+        
+        switch (status) {
+            case RADAEE_OK:
+                int permission = mDocument.GetPermission();
+                document.Close();
+                
+                // check if (permission != 0) means that license is not standard. if standard license, just display.
+                if (permission != 0) {
+                    if ((permission & 0x4) == 0) {
+                        return PDF_PRINT_RESTRICTED;
+                    }
+                }
+
                 return PDF_OK;
             case RADAEE_ENCRYPTED:
             case RADAEE_UNKNOWN_ENCRYPTION:
@@ -491,8 +536,7 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
-            int status = openDocument(mPath);
-            closeDocument();
+            int status = testDocument(mPath);
             
             if (status == PDF_OK) {
                 File file = new File(mPath);
@@ -512,7 +556,6 @@ public class PDFFileManager {
                         return PDF_OPEN_FAILED;
                     }
                 }
-                mIsInitialized = true;
                 
                 mPath = sandboxPath;
                 openDocument(sandboxPath);
