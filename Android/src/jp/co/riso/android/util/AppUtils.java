@@ -19,17 +19,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
@@ -408,5 +414,64 @@ public final class AppUtils {
         }
         
         return n;
+    }
+    
+    /**
+     * Checks if x and y is inside the view coordinates
+     * 
+     * @param view
+     *            View to check
+     * @param x
+     *            MotionEvent.getRawX();
+     * @param y
+     *            MotionEvent.getRawX();
+     * @return Whether x and y is inside the View.
+     */
+    public static boolean checkViewHitTest(View view, int x, int y) {
+        if (view == null) {
+            return false;
+        }
+        
+        Rect r = new Rect();
+        int[] coords = new int[2];
+        view.getHitRect(r);
+        view.getLocationOnScreen(coords);
+        r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
+        if (r.contains(x, y)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Gets Secure Print, Login ID and PIN Code from preferences
+     * and returns formatted string if Secure Print is ON
+     * 
+     * @return authentication String
+     */
+    public static String getAuthenticationString() {
+        StringBuffer strBuf = new StringBuffer();
+        final String pinCodeFormat = "%s=%d\n";
+        final String loginIdFormat = "%s=%s\n";
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        
+        if (isSecurePrint) {
+            String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+            String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+            
+            if (!pinCode.isEmpty() && !loginId.isEmpty()) {
+                try {
+                    int pin = Integer.parseInt(pinCode);
+                    strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
+                    strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pin));
+                } catch (NumberFormatException e) {
+                    Log.d(TAG, "PIN code is not numeric: " + pinCode);
+                }
+            }
+        }
+        return strBuf.toString();
     }
 }

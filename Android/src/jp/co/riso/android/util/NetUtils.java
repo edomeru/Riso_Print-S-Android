@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 public class NetUtils {
@@ -122,6 +125,23 @@ public class NetUtils {
             Log.w(TAG, "NullPointerException caused by ipAddress.contains()");
         }
         return false;
+    }
+    
+    /**
+     * Determines network connectivity
+     * 
+     * @param context
+     *
+     * @return true if is connected to network
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        if (context == null) {
+            return false;
+        }
+        
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
     }
     
     // ================================================================================

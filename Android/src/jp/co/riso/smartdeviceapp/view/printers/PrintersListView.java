@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.printers;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import android.content.Context;
@@ -25,13 +25,12 @@ import android.widget.ListView;
 
 public class PrintersListView extends ListView implements Callback {
     private static final int SWIPE_THRESHOLD = 50;
+    private static final int MSG_START_DELETE_MODE = 0x1;
     private boolean mDeleteMode = false;
     private View mDeleteView = null;
     private Point mDownPoint = null;
     private DisplayDeleteAnimation mDeleteAnimation = null;
-    private int mDeleteItem = -1;
     private Handler mHandler = null;
-    private static final int MSG_START_DELETE_MODE = 0x1;
     
     /**
      * Constructor
@@ -87,11 +86,15 @@ public class PrintersListView extends ListView implements Callback {
                 deleteButton.getLocationOnScreen(coords);
                 
                 Rect rect = new Rect(coords[0], coords[1], coords[0] + deleteButton.getWidth(), coords[1] + deleteButton.getHeight());
-                // intercept if touched item is not the delete button
+                // Delete button is pressed
                 if (rect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
                     if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
-                        endDeleteMode(mDeleteView);
-                        return super.onInterceptTouchEvent(ev);
+                        endDeleteMode();
+                        // Process Dialog box
+                        super.onInterceptTouchEvent(ev);
+                        // Reset delete mode to true
+                        mDeleteMode = true;
+                        return false;
                     }
                 }
             }
@@ -152,7 +155,6 @@ public class PrintersListView extends ListView implements Callback {
     public void onRestoreInstanceState(Parcelable state, int index) {
         super.onRestoreInstanceState(state);
         if (index != PrinterManager.EMPTY_ID) {
-            mDeleteItem = index;
             Message newMessage = Message.obtain(mHandler, MSG_START_DELETE_MODE);
             newMessage.arg1 = index;
             mHandler.sendMessage(newMessage);
@@ -163,7 +165,29 @@ public class PrintersListView extends ListView implements Callback {
      * @return delete view index
      */
     public int getDeleteItemPosition() {
-        return mDeleteItem;
+        if (!mDeleteMode) {
+            return PrinterManager.EMPTY_ID;
+        }
+        if (mDeleteView != null) {
+            return indexOfChild(mDeleteView);
+        } else {
+            return PrinterManager.EMPTY_ID;
+        }
+    }
+    
+    /**
+     * Reset delete view
+     * 
+     * @param animate
+     *            Animate delete button
+     */
+    public void resetDeleteView(boolean animate) {
+        if (mDeleteView != null) {
+            ((PrinterArrayAdapter) getAdapter()).setPrinterRow(mDeleteView);
+            mDeleteAnimation.endDeleteMode(mDeleteView, animate, R.id.btn_delete, R.id.img_disclosure);
+            mDeleteMode = false;
+            mDeleteView = null;
+        }
     }
     
     // ================================================================================
@@ -213,7 +237,6 @@ public class PrintersListView extends ListView implements Callback {
                 if (contains1 && contains2 && dragged) {
                     if (view != null) {
                         startDeleteMode(view);
-                        mDeleteItem = i;
                         return true;
                     }
                 }
@@ -266,13 +289,20 @@ public class PrintersListView extends ListView implements Callback {
     private void endDeleteMode(View view) {
         if (mDeleteMode) {
             ((PrinterArrayAdapter) getAdapter()).setPrinterRow(view);
+            PrintersContainerView printerItem = (PrintersContainerView) view.findViewById(R.id.btn_delete).getTag();
+            printerItem.setDelete(false);
             mDeleteAnimation.endDeleteMode(view, true, R.id.btn_delete, R.id.img_disclosure);
             mDeleteMode = false;
-            mDeleteItem = PrinterManager.EMPTY_ID;
         }
-        
     }
     
+    /**
+     * End delete mode
+     */
+    private void endDeleteMode() {
+        mDeleteMode = false;
+    }
+
     // ================================================================================
     // Interface - Callback
     // ================================================================================

@@ -12,7 +12,7 @@ import android.widget.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 
 /**
  * A generic, customizable Android ListView implementation that has 'Pull to Refresh' functionality.
@@ -325,15 +325,12 @@ public class PullToRefreshListView extends ListView{
 
                             image.clearAnimation();
                             image.startAnimation(flipAnimation);
-                            break;
                         }else if(state == State.RELEASE_TO_REFRESH && headerPadding < 0){
                             setState(State.PULL_TO_REFRESH);
 
                             image.clearAnimation();
                             image.startAnimation(reverseFlipAnimation);
-                            break;
                         }
-                        resetHeader();
                     }
                 }
 

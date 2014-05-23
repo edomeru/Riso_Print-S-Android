@@ -18,8 +18,7 @@
         android:textColor="@color/selector_printsettings_disclosure_text"
         android:ellipsize="middle"
         android:maxLines="1"
-        android:singleLine="true"
-        android:textSize="@dimen/printsettings_listvalue_text_size" />
+        android:singleLine="true" />
 
     <ImageView
         android:id="@+id/disclosureIndicator"

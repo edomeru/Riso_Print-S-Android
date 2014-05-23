@@ -17,7 +17,8 @@ import jp.co.riso.android.dialog.WaitingDialogFragment;
 import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.android.util.NetUtils;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
@@ -221,6 +222,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
+        if (!NetUtils.isNetworkAvailable(getActivity())) {
+            String strMsg = getString(R.string.ids_err_msg_network_error);
+            String btnMsg = getString(R.string.ids_lbl_ok);
+            InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+            return;
+        }
+        
         String btnMsg = getResources().getString(R.string.ids_lbl_cancel);
         mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
         mWaitingDialog.setTargetFragment(this, 0);
@@ -286,26 +295,33 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     /** {@inheritDoc} */
     @Override
     public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
-        switch (status) {
-            case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
-            case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
-            case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
-            case DirectPrintManager.PRINT_STATUS_ERROR:
-            case DirectPrintManager.PRINT_STATUS_SENT:
-                Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
-                newMessage.arg1 = status;
-                mPauseableHandler.sendMessage(newMessage);
-                break;
-            case DirectPrintManager.PRINT_STATUS_SENDING:
-                if (mWaitingDialog != null) {
-                    String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, progress);
-                    mWaitingDialog.setMessage(msg);
-                }
-                break;
-            case DirectPrintManager.PRINT_STATUS_STARTED:
-            case DirectPrintManager.PRINT_STATUS_CONNECTING:
-            case DirectPrintManager.PRINT_STATUS_CONNECTED:
-                break;
+        if (NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext())) {
+            switch (status) {
+                case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
+                case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
+                case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
+                case DirectPrintManager.PRINT_STATUS_ERROR:
+                case DirectPrintManager.PRINT_STATUS_SENT:
+                    Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
+                    newMessage.arg1 = status;
+                    mPauseableHandler.sendMessage(newMessage);
+                    break;
+                case DirectPrintManager.PRINT_STATUS_SENDING:
+                    if (mWaitingDialog != null) {
+                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, progress);
+                        mWaitingDialog.setMessage(msg);
+                    }
+                    break;
+                case DirectPrintManager.PRINT_STATUS_STARTED:
+                case DirectPrintManager.PRINT_STATUS_CONNECTING:
+                case DirectPrintManager.PRINT_STATUS_CONNECTED:
+                    break;
+            }
+        } else {
+            // cancel Direct Print but considered as failed job
+            onCancel();
+            Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
+            mPauseableHandler.sendMessage(newMessage);
         }
     }
     

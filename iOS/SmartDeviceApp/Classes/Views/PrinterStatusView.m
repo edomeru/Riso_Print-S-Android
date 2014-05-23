@@ -13,50 +13,28 @@
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        
+    if (self)
+    {
     }
     return self;
 }
 
-- (void)dealloc
+- (void)setStatus:(BOOL)isOnline;
 {
-    [self.statusHelper stopPrinterStatusPolling];
-}
-
-- (void) setStatus: (BOOL) isOnline
-{
-    if(self.onlineStatus == isOnline)
-    {
-        return; //do nothing if status is the same
-    }
-    
-    //TODO Refine Printer Status View
-    self.onlineStatus = isOnline;
     if(isOnline)
     {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
-        NSLog(@"Set to online");
+        NSLog(@"[INFO][PSView] set to online");
 #endif
         [self setHighlighted:YES];
     }
     else
     {
 #if DEBUG_LOG_PRINTER_STATUS_VIEW
-        NSLog(@"Set to offline");
+        NSLog(@"[INFO][PSView] set to offline");
 #endif
         [self setHighlighted:NO];
     }
-}
-
-- (void) statusDidChange: (BOOL) isOnline
-{
-#if DEBUG_LOG_PRINTER_STATUS_VIEW
-    NSString* onlineStatus = isOnline ? @"YES" : @"NO";
-    NSLog(@"%@ online status = %@", self.statusHelper.ipAddress, onlineStatus);
-#endif
-    [self setStatus:isOnline];
 }
 
 /*

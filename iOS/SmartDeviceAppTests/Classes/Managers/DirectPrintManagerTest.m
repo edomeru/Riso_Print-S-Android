@@ -7,263 +7,459 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "DirectPrintManager.h"
-#import "PDFFileManager.h"
-#import "PrinterManager.h"
+#import "PreviewSetting.h"
+#import "Printer.h"
 #import "PrintDocument.h"
-#import "PrinterDetails.h"
+#import "PDFFileManager.h"
+#import "PrintJobHistoryHelper.h"
 #import "CXAlertView.h"
-#import "Swizzler.h"
-#import "DirectPrintManagerMock.h"
+#include "common.h"
 
-static NSString* TEST_PRINTER_IP_SUCCESS = @"192.168.0.198";
-static NSString* TEST_PRINTER_IP_FAILED = @"192.168.0.1";
+#include "fff.h"
+DEFINE_FFF_GLOBALS;
 
-@interface DirectPrintManager (UnitTest)
+FAKE_VALUE_FUNC(int, directprint_job_lpr_print);
+FAKE_VALUE_FUNC(int, directprint_job_raw_print);
+FAKE_VOID_FUNC(directprint_job_cancel);
+FAKE_VALUE_FUNC(directprint_job *, directprint_job_new);
+FAKE_VOID_FUNC(directprint_job_free);
+FAKE_VALUE_FUNC(void *, directprint_job_get_caller_data);
+FAKE_VOID_FUNC(directprint_job_set_caller_data, directprint_job *, void *);
 
-// expose private variables
-- (CXAlertView*)alertView;
+extern void printProgressCallback(void *job, int status, float progress);
+void *caller_data_obj;
 
-@end
-
-@interface DirectPrintManagerTest : GHTestCase <DirectPrintManagerDelegate>
+int print_OK()
 {
-    DirectPrintManager* dpm;
-    BOOL documentDidFinishCallbackReceived;
-    BOOL documentDidPrintSuccessfully;
+    printProgressCallback(0, kJobStatusSent, 100.0f);
+    return 1;
 }
+
+int print_NG()
+{
+    printProgressCallback(0, kJobStatusErrorSending, 20.0f);
+    return 1;
+}
+
+int print_NA()
+{
+    printProgressCallback(0, kJobStatusSending, 20.0f);
+    return 1;
+}
+
+void set_caller_data(directprint_job *job, void *data)
+{
+    caller_data_obj = data;
+}
+
+void *get_caller_data()
+{
+    return caller_data_obj;
+}
+
+@interface DirectPrintManagerTest : GHAsyncTestCase <DirectPrintManagerDelegate>
+
+@property (atomic, assign) NSInteger alertCount;
 
 @end
 
 @implementation DirectPrintManagerTest
 
-#pragma mark - Setup/TearDown Methods
-
 - (BOOL)shouldRunOnMainThread
 {
-    return NO;
+    return YES;
 }
 
-// Run at start of all tests in the class
-- (void)setUpClass
-{
-    dpm = [[DirectPrintManager alloc] init];
-    GHAssertNotNil(dpm, @"check initialization of DirectPrintManager");
-    dpm.delegate = self;
-    
-    [self prepareForPrinting];
-}
-
-// Run at end of all tests in the class
-- (void)tearDownClass
-{
-    PDFFileManager* pdfManager = [PDFFileManager sharedManager];
-    pdfManager.printDocument.printer = nil;
-    
-    PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    while (pm.countSavedPrinters != 0)
-        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
-    
-    [self removeErrorDialogIfPresent];
-}
-
-// Run before each test method
 - (void)setUp
 {
+    [MagicalRecord setDefaultModelFromClass:[self class]];
+    [MagicalRecord setupCoreDataStackWithInMemoryStore];
+    self.alertCount = 0;
+    
+    RESET_FAKE(directprint_job_lpr_print);
+    RESET_FAKE(directprint_job_raw_print);
+    RESET_FAKE(directprint_job_cancel);
+    RESET_FAKE(directprint_job_new);
+    RESET_FAKE(directprint_job_free);
+    RESET_FAKE(directprint_job_get_caller_data);
+    RESET_FAKE(directprint_job_set_caller_data);
+    
+    FFF_RESET_HISTORY();
+    
+    directprint_job_new_fake.return_val = (directprint_job *)1;
 }
 
-// Run after each test method
 - (void)tearDown
 {
+    [MagicalRecord cleanUp];
+}
+
+#pragma mark - DirectPrintManagerDelegate
+
+- (void)documentDidFinishPrinting:(BOOL)successful
+{
+    if (successful)
+    {
+        [self notify:kGHUnitWaitStatusSuccess];
+    }
+    else
+    {
+        [self notify:kGHUnitWaitStatusFailure];
+    }
 }
 
 #pragma mark - Test Cases
 
-/* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
-/* use a naming scheme for defining the execution order of your test cases */
-
-- (void)test001_PrintDocumentViaLPR
+- (void)testLprPrintOK
 {
-    GHTestLog(@"# CHECK: DPM can print via LPR. #");
+    [self prepare];
     
-    //attach the correct printer
-    PDFFileManager* pdfm = [PDFFileManager sharedManager];
-    pdfm.printDocument.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:0];
+    // Mock Data
+    Printer *printer = [Printer MR_createEntity];
+    printer.ip_address = @"192.168.1.1";
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
+    PrintDocument *document = [[PrintDocument alloc] initWithURL:url name:@"TestPDF_3Pages_NoPass.pdf"];
+    document.printer = printer;
+    document.previewSetting = [[PreviewSetting alloc] init];
     
-    GHTestLog(@"-- printing the document");
-    documentDidFinishCallbackReceived = NO;
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    [swizzler swizzleInstanceMethod:[DirectPrintManager class] targetSelector:@selector(printDocumentViaLPR) swizzleClass:[DirectPrintManagerMock class] swizzleSelector:@selector(printDocumentViaLPR)];
-    [dpm printDocumentViaLPR];
-    [self waitForCompletion:10];
-    [swizzler deswizzle];
-    GHTestLog(@"-- printing finished");
-
-    [self removeErrorDialogIfPresent];
+    // Mock PDFFileManager
+    PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
+    id mockPDFFileManager = [OCMockObject partialMockForObject:pdfFileManager];
+    [[[mockPDFFileManager stub] andReturn:document] printDocument];
     
-    GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"Check if callbak is receieved"]);
-    GHAssertTrue(documentDidPrintSuccessfully,
-                 [NSString stringWithFormat:@"check if printed successfullly"]);
-}
-
-- (void)test002_PrintDocumentViaRAW
-{
-    GHTestLog(@"# CHECK: DPM can print via RAW. #");
+    // Mock PrintJobHistoryHelper
+    id mockPrintJobHistoryHelper = [OCMockObject mockForClass:[PrintJobHistoryHelper class]];
+    __block int added_result = -1;
+    [[[mockPrintJobHistoryHelper stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&added_result atIndex:3];
+    }] createPrintJobFromDocument:[OCMArg any] withResult:1];
     
-    //attach the correct printer
-    PDFFileManager* pdfm = [PDFFileManager sharedManager];
-    pdfm.printDocument.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:0];
-    
-    GHTestLog(@"-- printing the document");
-    documentDidFinishCallbackReceived = NO;
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    [swizzler swizzleInstanceMethod:[DirectPrintManager class] targetSelector:@selector(printDocumentViaRaw) swizzleClass:[DirectPrintManagerMock class] swizzleSelector:@selector(printDocumentViaRaw)];
-    [dpm printDocumentViaRaw];
-    [self waitForCompletion:10];
-    [swizzler deswizzle];
-    GHTestLog(@"-- printing finished");
-    
-    [self removeErrorDialogIfPresent];
-    
-    GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if callback is receieved"]);
-    GHAssertTrue(documentDidPrintSuccessfully,
-                 [NSString stringWithFormat:@"check if printed successfullly"]);
-}
-
-- (void)test003_PrintDocumentError
-{
-    GHTestLog(@"# CHECK: DPM can handle print error. #");
-    
-    //attach the incorrect printer
-    PDFFileManager* pdfm = [PDFFileManager sharedManager];
-    pdfm.printDocument.printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:1];
-    
-    GHTestLog(@"-- printing the document");
-    documentDidFinishCallbackReceived = NO;
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    [swizzler swizzleInstanceMethod:[DirectPrintManager class] targetSelector:@selector(printDocumentViaLPR) swizzleClass:[DirectPrintManagerMock class] swizzleSelector:@selector(printDocumentError)];
-    [dpm printDocumentViaLPR];
-    [swizzler deswizzle];
-    [self waitForCompletion:10];
-    GHTestLog(@"-- printing finished");
-    
-    [self removeErrorDialogIfPresent];
-    
-    GHAssertTrue(documentDidFinishCallbackReceived,
-                 [NSString stringWithFormat:@"check if callback is receieved"]);
-    GHAssertFalse(documentDidPrintSuccessfully,
-                 [NSString stringWithFormat:@"check if printing failed"]);
-}
-
-#pragma mark - DirectPrintManagerDelegate Methods
-
-- (void)documentDidFinishPrinting:(BOOL)successful
-{
-    documentDidFinishCallbackReceived = YES;
-    documentDidPrintSuccessfully = successful;
-}
-
-#pragma mark - Utilities
-
-- (void)prepareForPrinting
-{   
-    //-- PDF
-    
-    PDFFileManager* pdfManager = [PDFFileManager sharedManager];
-    GHAssertNotNil(pdfManager, @"check initialization of PrinterManager");
-    
-    NSURL* testPDFNoPassURL = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
-    NSArray* documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* documentsDir = [documentPaths objectAtIndex:0];
-    NSString* testFilePath = [documentsDir stringByAppendingString:
-                              [NSString stringWithFormat:@"/%@",[testPDFNoPassURL.path lastPathComponent]]];
-    NSURL* testURL = [NSURL URLWithString:[testFilePath stringByAddingPercentEscapesUsingEncoding:
-                                           NSUTF8StringEncoding]];
-    GHAssertNotNil(testURL, @"");
-    
-    NSError *error;
-    [[NSFileManager defaultManager] removeItemAtPath:testFilePath error:&error];
-    [[NSFileManager defaultManager] copyItemAtPath:[testPDFNoPassURL path] toPath:testFilePath error:&error];
-    
-    pdfManager.fileURL = testURL;
-    GHAssertTrue([pdfManager setupDocument] == kPDFErrorNone, @"");
-    
-    //-- Printer
-    
-    PrinterDetails* pd1 = [[PrinterDetails alloc] init];
-    GHAssertNotNil(pd1, @"check initialization of PrinterDetails");
-    pd1.name = @"RISO Printer 1";
-    pd1.ip = TEST_PRINTER_IP_SUCCESS;
-    pd1.port = [NSNumber numberWithInt:0];
-    pd1.enBooklet = YES;
-    pd1.enStaple = YES;
-    pd1.enFinisher23Holes = NO;
-    pd1.enFinisher24Holes = YES;
-    pd1.enTrayAutoStacking = YES;
-    pd1.enTrayFaceDown = YES;
-    pd1.enTrayStacking = YES;
-    pd1.enTrayTop = YES;
-    pd1.enLpr = YES;
-    pd1.enRaw = YES;
-    
-    PrinterDetails* pd2 = [[PrinterDetails alloc] init];
-    GHAssertNotNil(pd2, @"check initialization of PrinterDetails");
-    pd2.name = @"RISO Printer 1";
-    pd2.ip = TEST_PRINTER_IP_FAILED;
-    pd2.port = [NSNumber numberWithInt:0];
-    pd2.enBooklet = YES;
-    pd2.enStaple = YES;
-    pd2.enFinisher23Holes = NO;
-    pd2.enFinisher24Holes = YES;
-    pd2.enTrayAutoStacking = YES;
-    pd2.enTrayFaceDown = YES;
-    pd2.enTrayStacking = YES;
-    pd2.enTrayTop = YES;
-    pd2.enLpr = YES;
-    pd2.enRaw = YES;
-    
-    PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    GHAssertNotNil(pm, @"check initialization of PrinterManager");
-    while (pm.countSavedPrinters != 0)
-        GHAssertTrue([pm deletePrinterAtIndex:0], @"");
-    GHAssertTrue([pm registerPrinter:pd1], @"");
-    GHAssertTrue([pm registerPrinter:pd2], @"");
-}
-
-- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs
-{
-    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
-    
-    BOOL done = NO;
-    do
-    {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
-        if ([timeoutDate timeIntervalSinceNow] < 0.0)
-            break;
-    } while (!done);
-    
-    return done;
-}
-
-- (void)removeErrorDialogIfPresent
-{
-    for (UIWindow* window in [UIApplication sharedApplication].windows)
-    {
-        NSArray* subViews = window.subviews;
-        if ([subViews count] > 0)
+    // Mock CXAlertView
+    id mockCXAlertView = [OCMockObject mockForClass:[CXAlertView class]];
+    [[[mockCXAlertView stub] andReturn:mockCXAlertView] alloc];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY message:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY contentView:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    [[mockCXAlertView stub] addButtonWithTitle:OCMOCK_ANY type:CXAlertViewButtonTypeCancel handler:OCMOCK_ANY];
+    __block CXAlertViewHandler dismissHandler;
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&dismissHandler atIndex:2];
+    }] setDidDismissHandler:OCMOCK_ANY];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        self.alertCount++;
+        if (self.alertCount == 2)
         {
-            UIView* view = [subViews objectAtIndex:0];
-            if ([view isKindOfClass:[CXAlertView class]])
-            {
-                CXAlertView* alert = (CXAlertView*)view;
-                [alert dismiss];
-                [self waitForCompletion:2];
-                alert = nil;
-            }
+            CXAlertView *alertView = invocation.target;
+            [alertView dismiss];
         }
-    }
+    }] show];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        CXAlertView *alertView = invocation.target;
+        if (dismissHandler)
+        {
+            dismissHandler(alertView);
+        }
+    }] dismiss];
+    
+    // Mock DirectPrint
+    directprint_job_lpr_print_fake.custom_fake = print_OK;
+    directprint_job_set_caller_data_fake.custom_fake = set_caller_data;
+    directprint_job_get_caller_data_fake.custom_fake = get_caller_data;
+    
+    // SUT
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    [manager printDocumentViaLPR];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:20.0f];
+    GHAssertEquals(added_result, 1, @"PrintJobHistory result should be 1");
+    [mockPDFFileManager stopMocking];
+}
+
+- (void)testLprPrintNG
+{
+    [self prepare];
+    
+    // Mock Data
+    Printer *printer = [Printer MR_createEntity];
+    printer.ip_address = @"192.168.1.1";
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
+    PrintDocument *document = [[PrintDocument alloc] initWithURL:url name:@"TestPDF_3Pages_NoPass.pdf"];
+    document.printer = printer;
+    document.previewSetting = [[PreviewSetting alloc] init];
+    
+    // Mock PDFFileManager
+    PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
+    id mockPDFFileManager = [OCMockObject partialMockForObject:pdfFileManager];
+    [[[mockPDFFileManager stub] andReturn:document] printDocument];
+    
+    // Mock PrintJobHistoryHelper
+    id mockPrintJobHistoryHelper = [OCMockObject mockForClass:[PrintJobHistoryHelper class]];
+    __block int added_result = -1;
+    [[[mockPrintJobHistoryHelper stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&added_result atIndex:3];
+    }] createPrintJobFromDocument:[OCMArg any] withResult:0];
+    
+    // Mock CXAlertView
+    id mockCXAlertView = [OCMockObject mockForClass:[CXAlertView class]];
+    [[[mockCXAlertView stub] andReturn:mockCXAlertView] alloc];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY message:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY contentView:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    [[mockCXAlertView stub] addButtonWithTitle:OCMOCK_ANY type:CXAlertViewButtonTypeCancel handler:OCMOCK_ANY];
+    __block CXAlertViewHandler dismissHandler;
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&dismissHandler atIndex:2];
+    }] setDidDismissHandler:OCMOCK_ANY];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        self.alertCount++;
+        if (self.alertCount == 2)
+        {
+            CXAlertView *alertView = invocation.target;
+            [alertView dismiss];
+        }
+    }] show];
+    [[mockCXAlertView stub] dismiss];
+    
+    // Mock DirectPrint
+    directprint_job_lpr_print_fake.custom_fake = print_NG;
+    directprint_job_set_caller_data_fake.custom_fake = set_caller_data;
+    directprint_job_get_caller_data_fake.custom_fake = get_caller_data;
+    
+    // SUT
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    [manager printDocumentViaLPR];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusFailure timeout:20.0f];
+    GHAssertEquals(added_result, 0, @"PrintJobHistory result should be 0");
+    [mockPDFFileManager stopMocking];
+}
+
+- (void)testLprPrintCancel
+{
+    [self prepare];
+    
+    // Mock Data
+    Printer *printer = [Printer MR_createEntity];
+    printer.ip_address = @"192.168.1.1";
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
+    PrintDocument *document = [[PrintDocument alloc] initWithURL:url name:@"TestPDF_3Pages_NoPass.pdf"];
+    document.printer = printer;
+    document.previewSetting = [[PreviewSetting alloc] init];
+    
+    // Mock PDFFileManager
+    PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
+    id mockPDFFileManager = [OCMockObject partialMockForObject:pdfFileManager];
+    [[[mockPDFFileManager stub] andReturn:document] printDocument];
+    
+    // Mock CXAlertView
+    id mockCXAlertView = [OCMockObject mockForClass:[CXAlertView class]];
+    [[[mockCXAlertView stub] andReturn:mockCXAlertView] alloc];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY message:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY contentView:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    __block CXAlertButtonHandler buttonHandler;
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&buttonHandler atIndex:4];
+    }] addButtonWithTitle:OCMOCK_ANY type:CXAlertViewButtonTypeCancel handler:OCMOCK_ANY];
+    [[mockCXAlertView stub] setDidDismissHandler:OCMOCK_ANY];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        CXAlertView *alertView = invocation.target;
+        buttonHandler(alertView, nil);
+        [self notify:kGHUnitWaitStatusCancelled];
+    }] show];
+    [[mockCXAlertView stub] dismiss];
+    
+    // Mock DirectPrint
+    directprint_job_lpr_print_fake.custom_fake = print_NA;
+    directprint_job_set_caller_data_fake.custom_fake = set_caller_data;
+    directprint_job_get_caller_data_fake.custom_fake = get_caller_data;
+    
+    // SUT
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    [manager printDocumentViaLPR];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusCancelled timeout:20.0f];
+    [mockPDFFileManager stopMocking];
+}
+
+- (void)testRawPrintOK
+{
+    [self prepare];
+    
+    // Mock Data
+    Printer *printer = [Printer MR_createEntity];
+    printer.ip_address = @"192.168.1.1";
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
+    PrintDocument *document = [[PrintDocument alloc] initWithURL:url name:@"TestPDF_3Pages_NoPass.pdf"];
+    document.printer = printer;
+    document.previewSetting = [[PreviewSetting alloc] init];
+    
+    // Mock PDFFileManager
+    PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
+    id mockPDFFileManager = [OCMockObject partialMockForObject:pdfFileManager];
+    [[[mockPDFFileManager stub] andReturn:document] printDocument];
+    
+    // Mock PrintJobHistoryHelper
+    id mockPrintJobHistoryHelper = [OCMockObject mockForClass:[PrintJobHistoryHelper class]];
+    __block int added_result = -1;
+    [[[mockPrintJobHistoryHelper stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&added_result atIndex:3];
+    }] createPrintJobFromDocument:[OCMArg any] withResult:1];
+    
+    // Mock CXAlertView
+    id mockCXAlertView = [OCMockObject mockForClass:[CXAlertView class]];
+    [[[mockCXAlertView stub] andReturn:mockCXAlertView] alloc];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY message:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY contentView:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    [[mockCXAlertView stub] addButtonWithTitle:OCMOCK_ANY type:CXAlertViewButtonTypeCancel handler:OCMOCK_ANY];
+    __block CXAlertViewHandler dismissHandler;
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&dismissHandler atIndex:2];
+    }] setDidDismissHandler:OCMOCK_ANY];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        self.alertCount++;
+        if (self.alertCount == 2)
+        {
+            CXAlertView *alertView = invocation.target;
+            [alertView dismiss];
+        }
+    }] show];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        CXAlertView *alertView = invocation.target;
+        if (dismissHandler)
+        {
+            dismissHandler(alertView);
+        }
+    }] dismiss];
+    
+    // Mock DirectPrint
+    directprint_job_raw_print_fake.custom_fake = print_OK;
+    directprint_job_set_caller_data_fake.custom_fake = set_caller_data;
+    directprint_job_get_caller_data_fake.custom_fake = get_caller_data;
+    
+    // SUT
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    [manager printDocumentViaRaw];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:20.0f];
+    GHAssertEquals(added_result, 1, @"PrintJobHistory result should be 1");
+    [mockPDFFileManager stopMocking];
+}
+
+- (void)testRawPrintNG
+{
+    [self prepare];
+    
+    // Mock Data
+    Printer *printer = [Printer MR_createEntity];
+    printer.ip_address = @"192.168.1.1";
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
+    PrintDocument *document = [[PrintDocument alloc] initWithURL:url name:@"TestPDF_3Pages_NoPass.pdf"];
+    document.printer = printer;
+    document.previewSetting = [[PreviewSetting alloc] init];
+    
+    // Mock PDFFileManager
+    PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
+    id mockPDFFileManager = [OCMockObject partialMockForObject:pdfFileManager];
+    [[[mockPDFFileManager stub] andReturn:document] printDocument];
+    
+    // Mock PrintJobHistoryHelper
+    id mockPrintJobHistoryHelper = [OCMockObject mockForClass:[PrintJobHistoryHelper class]];
+    __block int added_result = -1;
+    [[[mockPrintJobHistoryHelper stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&added_result atIndex:3];
+    }] createPrintJobFromDocument:[OCMArg any] withResult:0];
+    
+    // Mock CXAlertView
+    id mockCXAlertView = [OCMockObject mockForClass:[CXAlertView class]];
+    [[[mockCXAlertView stub] andReturn:mockCXAlertView] alloc];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY message:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY contentView:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    [[mockCXAlertView stub] addButtonWithTitle:OCMOCK_ANY type:CXAlertViewButtonTypeCancel handler:OCMOCK_ANY];
+    __block CXAlertViewHandler dismissHandler;
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&dismissHandler atIndex:2];
+    }] setDidDismissHandler:OCMOCK_ANY];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        self.alertCount++;
+        if (self.alertCount == 2)
+        {
+            CXAlertView *alertView = invocation.target;
+            [alertView dismiss];
+        }
+    }] show];
+    [[mockCXAlertView stub] dismiss];
+    
+    // Mock DirectPrint
+    directprint_job_raw_print_fake.custom_fake = print_NG;
+    directprint_job_set_caller_data_fake.custom_fake = set_caller_data;
+    directprint_job_get_caller_data_fake.custom_fake = get_caller_data;
+    
+    // SUT
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    [manager printDocumentViaRaw];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusFailure timeout:20.0f];
+    GHAssertEquals(added_result, 0, @"PrintJobHistory result should be 0");
+    [mockPDFFileManager stopMocking];
+}
+
+- (void)testRawPrintCancel
+{
+    [self prepare];
+    
+    // Mock Data
+    Printer *printer = [Printer MR_createEntity];
+    printer.ip_address = @"192.168.1.1";
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
+    PrintDocument *document = [[PrintDocument alloc] initWithURL:url name:@"TestPDF_3Pages_NoPass.pdf"];
+    document.printer = printer;
+    document.previewSetting = [[PreviewSetting alloc] init];
+    
+    // Mock PDFFileManager
+    PDFFileManager *pdfFileManager = [PDFFileManager sharedManager];
+    id mockPDFFileManager = [OCMockObject partialMockForObject:pdfFileManager];
+    [[[mockPDFFileManager stub] andReturn:document] printDocument];
+    
+    // Mock CXAlertView
+    id mockCXAlertView = [OCMockObject mockForClass:[CXAlertView class]];
+    [[[mockCXAlertView stub] andReturn:mockCXAlertView] alloc];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY message:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    (void)[[[mockCXAlertView stub] andReturn:mockCXAlertView] initWithTitle:OCMOCK_ANY contentView:OCMOCK_ANY cancelButtonTitle:OCMOCK_ANY];
+    __block CXAlertButtonHandler buttonHandler;
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&buttonHandler atIndex:4];
+    }] addButtonWithTitle:OCMOCK_ANY type:CXAlertViewButtonTypeCancel handler:OCMOCK_ANY];
+    [[mockCXAlertView stub] setDidDismissHandler:OCMOCK_ANY];
+    [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
+        CXAlertView *alertView = invocation.target;
+        buttonHandler(alertView, nil);
+        [self notify:kGHUnitWaitStatusCancelled];
+    }] show];
+    [[mockCXAlertView stub] dismiss];
+    
+    // Mock DirectPrint
+    directprint_job_raw_print_fake.custom_fake = print_NA;
+    directprint_job_set_caller_data_fake.custom_fake = set_caller_data;
+    directprint_job_get_caller_data_fake.custom_fake = get_caller_data;
+    
+    // SUT
+    DirectPrintManager *manager = [[DirectPrintManager alloc] init];
+    manager.delegate = self;
+    [manager printDocumentViaRaw];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusCancelled timeout:20.0f];
+    [mockPDFFileManager stopMocking];
 }
 
 @end

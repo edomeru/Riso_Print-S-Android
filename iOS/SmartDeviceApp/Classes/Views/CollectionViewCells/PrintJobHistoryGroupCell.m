@@ -58,7 +58,7 @@
 - (void)clearHeader;
 - (void)tappedHeader;
 - (void)tappedDeleteAll;
-- (void)tappedDeleteJob:(UIButton*)button;
+- (IBAction)tappedDeleteJob:(DeleteButton*)button;
 
 @end
 
@@ -124,6 +124,8 @@
     [cell addGestureRecognizer:swipeLeft];
     
     [cell setBackgroundColors];
+    [cell setDeleteButtonLayout];
+    [cell markForDeletion:NO];
     
     // clear tracker for the delete button
     self.jobWithDelete = nil;
@@ -185,7 +187,7 @@
 - (void)putGroupName:(NSString*)name
 {
     if (name == nil || [name isEqualToString:@""])
-        self.groupName.text = NSLocalizedString(@"IDS_LBL_NO_NAME", @"No name");
+        self.groupName.text = NSLocalizedString(IDS_LBL_NO_NAME, @"No name");
     else
         self.groupName.text = name;
 }
@@ -244,41 +246,10 @@
     {
         self.jobWithDelete = jobIndexPath;
         
-        // check if this item already has a delete button
         PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:jobIndexPath];
-        if ([[jobCell.contentView subviews] count] == 5) //has an extra delete button
-        {
-#if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
-            NSLog(@"[INFO][PrintJobCell] already has delete button, ignoring swipe");
-#endif
-            return;
-        }
-        
-        // create the delete button
-        // initial position offscreen
-        CGRect startPos = CGRectMake(jobCell.frame.size.width,
-                                     5.0f,
-                                     self.deleteAllButton.frame.size.width-15.0f,
-                                     jobCell.frame.size.height-10.0f);
-        // final position on top of timestamp
-        CGRect endPos = CGRectMake(self.deleteAllButton.frame.origin.x+5.0f,
-                                   5.0f,
-                                   self.deleteAllButton.frame.size.width-15.0f,
-                                   jobCell.frame.size.height-10.0f);
-        DeleteButton* deleteButton = [DeleteButton createAtOffscreenPosition:startPos
-                                                        withOnscreenPosition:endPos];
-        deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
-        [deleteButton addTarget:self
-                         action:@selector(tappedDeleteJob:)
-               forControlEvents:UIControlEventTouchUpInside];
-        
-        // add to the view
-        [jobCell.contentView addSubview:deleteButton]; //will be added at the end of the subviews list
         [jobCell markForDeletion:YES];
-        [deleteButton setHighlighted:NO];
-        
-        // slide the button from offscreen to its place over the timestamp
-        [deleteButton animateOnscreen:nil];
+        [jobCell.deleteButton setHighlighted:NO];
+        jobCell.deleteButton.tag = (self.printJobsView.tag * TAG_FACTOR) + jobIndexPath.row; //<group>00<row>
     }
 }
 
@@ -288,16 +259,8 @@
     NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.jobWithDelete.row);
 #endif
 
-    // get the delete button
     PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
-    DeleteButton* deleteButton = (DeleteButton*)[[jobCell.contentView subviews] lastObject];
-    
-    // slide the button to offscreen
-    [deleteButton animateOffscreen:^(BOOL finished)
-    {
-        [jobCell markForDeletion:NO];
-        [deleteButton removeFromSuperview];
-    }];
+    [jobCell markForDeletion:NO];
     
     self.jobWithDelete = nil;
 }
@@ -331,7 +294,7 @@
     [self.delegate didTapDeleteGroupButton:self.deleteAllButton ofGroup:self.tag];
 }
 
-- (void)tappedDeleteJob:(DeleteButton*)button
+- (IBAction)tappedDeleteJob:(DeleteButton*)button
 {
     NSInteger buttonTag = [button tag];
     NSUInteger groupTag = buttonTag/TAG_FACTOR;

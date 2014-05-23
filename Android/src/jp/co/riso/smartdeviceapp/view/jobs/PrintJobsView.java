@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
@@ -162,7 +162,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /**
      * Reset the PrintJobsView
      */
-    private void reset() {
+    public void reset() {
         mGroupViewCtr = 0;
         mInitialFlag = true;
         removeAllViews();
@@ -257,7 +257,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             }
         }
         
-        pj.restoreState(isCollapsed, mPrinterToDelete);
+        pj.restoreState(isCollapsed, mPrinterToDelete, mPrintJobToDelete);
     }
     
     /**
@@ -378,7 +378,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      */
     private boolean checkSwipe(MotionEvent ev) {
         // if swipe to right end delete mode
-        if ((mDownPoint.x - ev.getRawX()) < 0) {
+        if ((ev.getRawX() - mDownPoint.x) > SWIPE_THRESHOLD) {
             endDelete(true);
             return false;
         }
@@ -451,12 +451,13 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        
+
         if (mInitialFlag) {
             Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
             createColumns(screenSize.x);
             mInitialFlag = false;
         }
+        
         if (mGroupViewCtr < mPrintGroupViews.size()) {
             addViewsToColumns();
         } else if (mColumns.size() > 1 && mGroupViewCtr > mPrintGroupViews.size()) {

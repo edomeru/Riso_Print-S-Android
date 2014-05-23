@@ -3,6 +3,7 @@
     style="@style/BorderedEditText"
     android:layout_width="@dimen/printsettings_input_width"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical" >
+    android:layout_gravity="center_vertical"
+    android:gravity="right" >
 
 </EditText>

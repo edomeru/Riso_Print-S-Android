@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
+#import <GHUnitIOS/GHUnit.h>
 #import "PrinterInfoViewController.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
@@ -24,7 +25,6 @@
 - (UILabel*)printerName;
 - (UILabel*)ipAddress;
 - (UISegmentedControl*)portSelection;
-- (UILabel*)printerStatus;
 - (UISwitch*)defaultPrinterSwitch;
 
 @end
@@ -102,7 +102,6 @@
     GHAssertNotNil([controllerValid printerName], @"");
     GHAssertNotNil([controllerValid ipAddress], @"");
     GHAssertNotNil([controllerValid portSelection], @"");
-    GHAssertNotNil([controllerValid printerStatus], @"");
     GHAssertNotNil([controllerValid defaultPrinterSwitch], @"");
 }
 

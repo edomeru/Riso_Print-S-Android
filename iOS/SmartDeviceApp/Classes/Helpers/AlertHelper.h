@@ -43,6 +43,11 @@ typedef enum
     // error when opening invalid file
     kAlertResultFileCannotBeOpened,
     
+    // printing
+    kAlertResultErrNoPrinterSelected,
+    kAlertResultPrintFailed,
+    kAlertResultPrintSuccessful,
+    
     // default error message
     kAlertResultErrDefault
     
@@ -74,6 +79,24 @@ typedef enum
         failed)
  */
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details;
+
+/**
+ Displays an AlertView informing the user of a result.
+ 
+ @param result
+        one of the defined kAlertResult values
+        (use kAlertResult* for error messages, kAlertInfo* for success messages)
+ @param title
+        one of the defined kAlertTitle values
+        (use kAlertTitle*)
+ @param details
+        array of extra information optionally needed when displaying
+        the alert (ex. specify the printer IP when adding the printer
+        failed)
+ @param handler
+        block to handle event when alert view is dismissed
+ */
++ (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(CXAlertViewHandler)handler;
 
 /**
  Displays an AlertView asking for user confirmation.

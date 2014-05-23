@@ -190,6 +190,7 @@ public class PrintSettings {
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }
         
+        strBuf.append(AppUtils.getAuthenticationString());
         return strBuf.toString();
     }
     

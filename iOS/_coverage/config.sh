@@ -3,7 +3,7 @@ PROJ_PATH=..
 DATA_PATH=_output
 
 # XCode related
-XCODE_PROJ=SmartDeviceApp
+XCODE_PROJ=RISOSmartPrint
 XCODE_CONFIG=Debug
 XCODE_SCHEME=SmartDeviceAppTests
 XCODE_TARGET=SmartDeviceAppTests

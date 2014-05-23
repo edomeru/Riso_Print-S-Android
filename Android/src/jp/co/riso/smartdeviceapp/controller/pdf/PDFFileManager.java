@@ -49,6 +49,9 @@ public class PDFFileManager {
     // For design consideration
     private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false;
     
+    private static final float CONST_RADAEE_DPI = 72.0f;
+    private static final float CONST_INCHES_TO_MM = 25.4f;
+    
     private Document mDocument;
     private String mPath;
     private String mFileName;
@@ -58,8 +61,6 @@ public class PDFFileManager {
     
     private volatile boolean mIsInitialized;
     private volatile int mPageCount;
-    private volatile float mPageWidth;
-    private volatile float mPageHeight;
     
     /**
      * Constructor
@@ -100,8 +101,6 @@ public class PDFFileManager {
     public void setPDF(String path) {
         mIsInitialized = false;
         mPageCount = 0;
-        mPageWidth = 0;
-        mPageHeight = 0;
         
         if (path == null) {
             mPath = null;
@@ -144,19 +143,73 @@ public class PDFFileManager {
     /**
      * Gets the page width
      * 
-     * @return page width
+     * @param pageNo
+     *            Page Index
+     * 
+     * @return page width in mm
      */
-    public float getPageWidth() {
-        return mPageWidth;
+    public float getPageWidth(int pageNo) {
+        if (!isInitialized()) {
+            return 0;
+        }
+        
+        if (pageNo < 0 || pageNo >= getPageCount()) {
+            return 0;
+        }
+        
+        if (CONST_KEEP_DOCUMENT_CLOSED) {
+            mDocument.Open(mPath, null);
+        }
+        
+        if (!mDocument.is_opened()) {
+            mDocument.Open(mPath, null);
+        }
+        
+        // Make sure document is opened
+        float width = mDocument.GetPageWidth(pageNo) / CONST_RADAEE_DPI; 
+        width *= CONST_INCHES_TO_MM; 
+        
+        if (CONST_KEEP_DOCUMENT_CLOSED) {
+            mDocument.Close();
+        }
+        
+        return width;
     }
     
     /**
      * Gets the page height
      * 
-     * @return page height
+     * @param pageNo
+     *            Page Index
+     * 
+     * @return page height in mm
      */
-    public float getPageHeight() {
-        return mPageHeight;
+    public float getPageHeight(int pageNo) {
+        if (!isInitialized()) {
+            return 0;
+        }
+        
+        if (pageNo < 0 || pageNo >= getPageCount()) {
+            return 0;
+        }
+        
+        if (CONST_KEEP_DOCUMENT_CLOSED) {
+            mDocument.Open(mPath, null);
+        }
+        
+        // Make sure document is opened
+        if (!mDocument.is_opened()) {
+            mDocument.Open(mPath, null);
+        }
+        
+        float height = mDocument.GetPageHeight(pageNo) / CONST_RADAEE_DPI;
+        height *= CONST_INCHES_TO_MM; 
+        
+        if (CONST_KEEP_DOCUMENT_CLOSED) {
+            mDocument.Close();
+        }
+        
+        return height;
     }
     
     /**
@@ -300,6 +353,11 @@ public class PDFFileManager {
             // mDocument.Close(); // This will clear the buffer
             // mDocument.Open(mSandboxPath, null);
         }
+
+        // Make sure document is opened
+        if (!mDocument.is_opened()) {
+            mDocument.Open(mPath, null);
+        }
         
         Page page = mDocument.GetPage(pageNo);
         
@@ -372,7 +430,7 @@ public class PDFFileManager {
      * Opens the document
      * 
      * @param path
-     *            Path of the document to be opened
+     *            Opens the document. Sets the status of the class to initialized
      * 
      * @return status of open <br>
      *         PDF_OK = 0; <br>
@@ -403,10 +461,52 @@ public class PDFFileManager {
                     }
                 }
                 
-                mIsInitialized = true;
                 mPageCount = mDocument.GetPageCount();
-                mPageWidth = mDocument.GetPageWidth(0);
-                mPageHeight = mDocument.GetPageHeight(0);
+                mIsInitialized = true;
+                
+                return PDF_OK;
+            case RADAEE_ENCRYPTED:
+            case RADAEE_UNKNOWN_ENCRYPTION:
+                return PDF_ENCRYPTED;
+            default:
+                return PDF_OPEN_FAILED;
+        }
+    }
+
+    
+    /**
+     * Checks whether the document can be opened
+     * 
+     * @param path
+     *            Path of the document to be opened
+     * 
+     * @return status of open <br>
+     *         PDF_OK = 0; <br>
+     *         PDF_ENCRYPTED = -1; <br>
+     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
+     *         PDF_DAMAGED = -3; <br>
+     *         PDF_INVALID_PATH = -10;
+     */
+    protected synchronized int testDocument(String path) {
+        if (path == null || path.length() == 0) {
+            return PDF_OPEN_FAILED;
+        }
+
+        Document document = new Document();
+        int status = document.Open(path, null);
+        
+        switch (status) {
+            case RADAEE_OK:
+                int permission = mDocument.GetPermission();
+                document.Close();
+                
+                // check if (permission != 0) means that license is not standard. if standard license, just display.
+                if (permission != 0) {
+                    if ((permission & 0x4) == 0) {
+                        return PDF_PRINT_RESTRICTED;
+                    }
+                }
+
                 return PDF_OK;
             case RADAEE_ENCRYPTED:
             case RADAEE_UNKNOWN_ENCRYPTION:
@@ -436,8 +536,7 @@ public class PDFFileManager {
          */
         @Override
         protected Integer doInBackground(Void... params) {
-            int status = openDocument(mPath);
-            closeDocument();
+            int status = testDocument(mPath);
             
             if (status == PDF_OK) {
                 File file = new File(mPath);

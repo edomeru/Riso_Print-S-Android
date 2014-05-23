@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.base;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView;
 import android.os.Build;
 import android.os.Bundle;

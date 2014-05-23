@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.base;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;
@@ -224,11 +224,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      *            icon is in selected state
      */
     public void setIconState(int id, boolean state) {
-        if (getView().findViewById(id) != null) {
+        if (getView() != null && getView().findViewById(id) != null) {
             getView().findViewById(id).setSelected(state);
             mIconState = state;
             mIconId = id;
-            
         }
     }
     

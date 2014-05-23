@@ -8,20 +8,20 @@
 
 package jp.co.riso.smartdeviceapp.view.printers;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -33,11 +33,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
@@ -46,7 +46,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrintersScreenTabletView extends ViewGroup implements OnLongClickListener, View.OnClickListener, OnCheckedChangeListener, Callback,
+public class PrintersScreenTabletView extends ViewGroup implements View.OnClickListener, OnCheckedChangeListener, Callback,
 OnItemSelectedListener {
     private static final int MSG_ADD_PRINTER = 0x01;
     private static final int MSG_SET_UPDATE_VIEWS = 0x02;
@@ -63,9 +63,10 @@ OnItemSelectedListener {
     private int mDeleteItem = -1;
     private int mWidth = 0;
     private int mHeight = 0;
-    private ViewHolder mSettingViewHolder;
     private int mSettingItem = PrinterManager.EMPTY_ID;
-    
+    private WeakReference<PrintersViewCallback> mCallbackRef = null;
+    private PauseableHandler mPauseableHandler = null;
+
     /**
      * Constructor
      * <p>
@@ -258,12 +259,9 @@ OnItemSelectedListener {
     
     
     /**
-     * @return default setting selected index
+     * @return Index of the selected default print settings
      */
     public int getDefaultSettingSelected() {
-        if (mSettingViewHolder != null) {
-            mSettingItem = indexOfChild((View) mSettingViewHolder.mOnlineIndcator.getTag());
-        }
         return mSettingItem;
     }
     
@@ -273,16 +271,66 @@ OnItemSelectedListener {
      * @param boolean
      *            is in selected state
      */
-    public void setDefaultSettingSelected (boolean state) {
-        if (mSettingViewHolder != null) {
-            mSettingViewHolder.mPrintSettings.setSelected(state);
-        } else if (mSettingItem != PrinterManager.EMPTY_ID) {
-            getChildAt(mSettingItem).findViewById(R.id.default_print_settings).setSelected(state);
+    public void setDefaultSettingSelected (int printerId, boolean state) {
+        if (printerId != PrinterManager.EMPTY_ID) {
+            for (int index = 0; index < mPrinterList.size(); index++) {
+                if (mPrinterList.get(index).getId() == printerId) {
+                    mSettingItem = index;
+                }
+            }
+        }
+        if (mSettingItem != PrinterManager.EMPTY_ID) {
+            mDefaultViewHolder = (ViewHolder) getChildAt(mSettingItem).getTag();
+            mDefaultViewHolder.mPrintSettings.setSelected(state);
         }
         if (!state) {
             mSettingItem = PrinterManager.EMPTY_ID;
-            mSettingViewHolder = null;
         }
+    }
+
+    /**
+     * Sets the PrintersViewCallback function
+     * 
+     * @param callback
+     *            Callback function
+     */
+    public void setPrintersViewCallback (PrintersViewCallback callback) {
+        mCallbackRef = new WeakReference<PrintersViewCallback>(callback);
+    }
+    
+    /**
+     * This function is called when deletion of the printer view is confirmed
+     */
+    public void confirmDeletePrinterView() {
+        if (mDeleteViewHolder == null) {
+            return;
+        }
+        Printer printer = (Printer) mDeleteViewHolder.mIpAddress.getTag();
+        if (mPrinterManager.removePrinter(printer)) {
+            mPrinterList.remove(printer);
+            removeView((View) mDeleteViewHolder.mOnlineIndcator.getTag());
+        }
+        mDeleteViewHolder = null;
+        mDeleteItem = PrinterManager.EMPTY_ID;
+    }
+    
+    /**
+     * This function is called when deletion of the printer view is confirmed
+     */
+    public void resetDeletePrinterView() {
+        if (mDeleteViewHolder != null) {
+            mDeleteViewHolder = null;
+            mDeleteItem = PrinterManager.EMPTY_ID;
+        }
+    }
+    
+    /**
+     * Set the pausable handler object
+     * 
+     * @param handler
+     */
+    public void setPausableHandler(PauseableHandler handler) {
+        mPauseableHandler = handler;
     }
     
     // ================================================================================
@@ -315,12 +363,7 @@ OnItemSelectedListener {
             printerItem.setDefault(false);
             viewHolder.mDefaultPrinter.setChecked(false);
         }
-        if (printerItem.getDelete()) {
-            printerItem.setDelete(false);
-            viewHolder.mDeleteButton.setVisibility(View.GONE);
-            mDeleteViewHolder = null;
-            mDeleteItem = -1;
-        }
+        resetDeletePrinterView();
     }
     
     /**
@@ -339,12 +382,8 @@ OnItemSelectedListener {
         }
         PrintersContainerView printerItem = ((PrintersContainerView) viewHolder.mPrinterName.getParent());
         
-        if (printerItem.getDelete()) {
-            printerItem.setDelete(false);
-            viewHolder.mDeleteButton.setVisibility(View.GONE);
-            mDeleteViewHolder = null;
-            mDeleteItem = -1;
-        }
+        resetDeletePrinterView();
+        
         if (printerItem.getDefault()) {
             return;
         }
@@ -355,26 +394,6 @@ OnItemSelectedListener {
         printerItem.setDefault(true);
         viewHolder.mDefaultPrinter.setChecked(true);
         mDefaultViewHolder = viewHolder;
-    }
-    
-    /**
-     * Set view holder to delete
-     * 
-     * @param viewHolder
-     *            view holder to set as delete
-     */
-    private void setPrinterViewToDelete(ViewHolder viewHolder) {
-        if (viewHolder == null) {
-            return;
-        }
-        PrintersContainerView printerItem = ((PrintersContainerView) viewHolder.mPrinterName.getParent());
-        
-        if (printerItem.getDelete()) {
-            return;
-        }
-        printerItem.setDelete(true);
-        viewHolder.mDeleteButton.setVisibility(View.VISIBLE);
-        mDeleteViewHolder = viewHolder;
     }
     
     /**
@@ -418,7 +437,7 @@ OnItemSelectedListener {
         
         ViewHolder viewHolder = new ViewHolder();
         viewHolder.mPrinterName = (TextView) pView.findViewById(R.id.txt_printerName);
-        viewHolder.mDeleteButton = (ImageView) pView.findViewById(R.id.btn_delete);
+        viewHolder.mDeleteButton = (Button) pView.findViewById(R.id.btn_delete);
         viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_onOff);
         viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
         viewHolder.mDefaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
@@ -435,7 +454,6 @@ OnItemSelectedListener {
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         viewHolder.mPort.setSelection(printer.getPortSetting());
         
-        ((View) viewHolder.mPrinterName.getParent()).setOnLongClickListener(this);
         viewHolder.mDeleteButton.setOnClickListener(this);
         viewHolder.mPrintSettings.setOnClickListener(this);
         viewHolder.mDefaultPrinter.setOnCheckedChangeListener(this);
@@ -459,18 +477,6 @@ OnItemSelectedListener {
     }
     
     // ================================================================================
-    // INTERFACE - onLongClick
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public boolean onLongClick(View v) {
-        mDeleteViewHolder = (ViewHolder) v.findViewById(R.id.txt_printerName).getTag();
-        setPrinterViewToDelete(mDeleteViewHolder);
-        return true;
-    }
-    
-    // ================================================================================
     // INTERFACE - onClick
     // ================================================================================
     
@@ -482,14 +488,10 @@ OnItemSelectedListener {
         
         switch (v.getId()) {
             case R.id.btn_delete:
-                viewHolder = (ViewHolder) v.getTag();
-                printer = (Printer) viewHolder.mIpAddress.getTag();
-                if (mPrinterManager.removePrinter(printer)) {
-                    mPrinterList.remove(printer);
-                    removeView((View) viewHolder.mOnlineIndcator.getTag());
-                    mDefaultViewHolder = null;
+                if (mCallbackRef != null && mCallbackRef.get() != null) {
+                    mCallbackRef.get().onPrinterDeleteClicked();
                 }
-                mDeleteItem = -1;
+                mDeleteViewHolder = (ViewHolder) v.getTag();
                 break;
             case R.id.default_printer_switch:
                 viewHolder = (ViewHolder) v.getTag();
@@ -505,29 +507,27 @@ OnItemSelectedListener {
                 break;
             case R.id.default_print_settings:
                 mSelectedPrinter = (Printer) v.getTag();
-                mSettingViewHolder = (ViewHolder) v.getTag(ID_TAG_DEFAULTSETTINGS);
-                setDefaultSettingSelected(true);
                 if (getContext() != null && getContext() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getContext();
                     
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = activity.getFragmentManager();
-                        
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {                        
                         // Always make new
                         PrintSettingsFragment fragment = null;
                         
                         if (fragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
+                            
                             fragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
+                            fragment.setPrinterId(mSelectedPrinter.getId());
+                            // use new print settings retrieved from the database
+                            fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
+                            
+                            if (mPauseableHandler != null) {
+                                Message msg = Message.obtain(mPauseableHandler, PrintersFragment.MSG_PRINTSETTINGS_BUTTON);
+                                msg.obj = fragment;
+                                msg.arg1 = mSelectedPrinter.getId();
+                                mPauseableHandler.sendMessage(msg);
+                            }
                         }
-                        
-                        fragment.setPrinterId(mSelectedPrinter.getId());
-                        // use new print settings retrieved from the database
-                        fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
-                        
-                        activity.openDrawer(Gravity.RIGHT, false);
                     } else {
                         activity.closeDrawers();
                     }
@@ -567,13 +567,11 @@ OnItemSelectedListener {
                 if (mDeleteItem != -1) {
                     View view = getChildAt(mDeleteItem);
                     if (view != null) {
-                        ViewHolder viewHolder = (ViewHolder) view.findViewById(R.id.txt_printerName).getTag();
-                        setPrinterViewToDelete(viewHolder);
+                        mDeleteViewHolder = (ViewHolder) view.findViewById(R.id.txt_printerName).getTag();
                     }
                 }
-                
                 if (mSettingItem != PrinterManager.EMPTY_ID) {
-                    setDefaultSettingSelected(true);
+                    setDefaultSettingSelected(PrinterManager.EMPTY_ID, true);
                 }
                 
                 return true;
@@ -601,6 +599,21 @@ OnItemSelectedListener {
         // Do nothing
     }
     
+    
+    // ================================================================================
+    // INTERFACE - PrintersViewCallback
+    // ================================================================================
+    
+    /**
+     * Printers Screen Interface
+     */
+    public interface PrintersViewCallback {
+        /**
+         * Dialog which is displayed to confirm printer delete
+         */
+        public void onPrinterDeleteClicked();
+    }
+    
     // ================================================================================
     // Internal Classes
     // ================================================================================
@@ -611,7 +624,7 @@ OnItemSelectedListener {
     public class ViewHolder {
         private ImageView mOnlineIndcator;
         private TextView mPrinterName;
-        private ImageView mDeleteButton;
+        private Button mDeleteButton;
         private TextView mIpAddress;
         private Switch mDefaultPrinter;
         private Spinner mPort;

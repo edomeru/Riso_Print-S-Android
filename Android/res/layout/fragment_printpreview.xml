@@ -40,15 +40,33 @@
                 android:text="@string/ids_lbl_open_in_android"
                 android:textAllCaps="true"
                 android:textColor="@color/theme_color_2"
-                android:textSize="@dimen/actionbar_title_text_size" />
+                android:textSize="@dimen/font_size_large" />
         </LinearLayout>
-        
-        <jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
-            android:id="@+id/printPreviewView"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/theme_light_2" >
-        </jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView>
+            android:orientation="vertical" >
+
+            <jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
+                android:id="@+id/printPreviewView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/theme_light_2" >
+            </jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView>
+
+            <include
+                android:id="@+id/previewControls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:layout_marginBottom="@dimen/preview_controls_margin_bottom"
+                android:layout_marginLeft="@dimen/preview_controls_margin_side"
+                android:layout_marginRight="@dimen/preview_controls_margin_side"
+                layout="@layout/preview_controls" />
+
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/pdfLoadIndicator"
@@ -56,16 +74,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
-
-        <include
-            android:id="@+id/previewControls"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/preview_controls_margin_bottom"
-            android:layout_marginLeft="@dimen/preview_controls_margin_side"
-            android:layout_marginRight="@dimen/preview_controls_margin_side"
-            layout="@layout/preview_controls" />
 
     </FrameLayout>
 

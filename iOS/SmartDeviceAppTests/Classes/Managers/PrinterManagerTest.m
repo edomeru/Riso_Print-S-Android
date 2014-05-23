@@ -7,52 +7,30 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
+#import "DatabaseManager.h"
+#import "PrintSetting.h"
 #import "Printer.h"
+#import "DefaultPrinter.h"
 #import "PrinterManager.h"
+#import "NotificationNames.h"
 #import "PrinterDetails.h"
-#import "Swizzler.h"
 #import "SNMPManager.h"
-#import "SNMPManagerMock.h"
 
-const NSUInteger NUM_VALID_PRINTERS     = 4;
-const NSUInteger NUM_INVALID_PRINTERS   = 2;
-const NSUInteger NUM_TOTAL_PRINTERS = NUM_VALID_PRINTERS + NUM_INVALID_PRINTERS;
-const NSUInteger MAX_PRINTERS = 10; //get from SmartDeviceApp-Settings.plist
+@interface PrinterManagerTest : GHAsyncTestCase<PrinterSearchDelegate>
 
-const NSUInteger DEFAULT_1 = 2; //valid printer
-const NSUInteger DEFAULT_2 = 4; //invalid printer
-
-const NSString*  PRINTER_NAME       = @"UT-Printer";
-const NSString*  VALID_PRINTER_IP   = @"192.168.0.19";
-const NSString*  INVALID_PRINTER_IP = @"10.127.0.";
-
-const float PM_SEARCH_TIMEOUT = 10;
-
-@interface PrinterManager (UnitTest)
-
-// expose private properties
-- (DefaultPrinter*)defaultPrinter;
-
-// expose private methods
-- (void)retrieveDefaultPrinter;
-
-@end
-
-@interface PrinterManagerTest : GHTestCase <PrinterSearchDelegate>
-{
-    PrinterManager* printerManager;
-    BOOL callbackSearchEndCalled;
-    BOOL callbackFoundNewCalled;
-    BOOL callbackFoundOldCalled;
-    BOOL callbackPrinterFound;
-}
+@property (nonatomic, strong) PrinterDetails *testPrinterDetails;
+@property (nonatomic, strong) PrintSetting *testPrintSetting;
+@property (nonatomic, strong) Printer *testPrinter;
+@property (nonatomic, strong) DefaultPrinter *testDefaultPrinter;
+@property (nonatomic, strong) NSMutableArray *testFoundPrinters;
+@property (nonatomic, assign) BOOL didFoundOldPrinter;
 
 @end
 
 @implementation PrinterManagerTest
 
 #pragma mark - Setup/TearDown Methods
-
 - (BOOL)shouldRunOnMainThread
 {
     return YES;
@@ -61,535 +39,633 @@ const float PM_SEARCH_TIMEOUT = 10;
 // Run at start of all tests in the class
 - (void)setUpClass
 {
-    GHAssertTrue(NUM_TOTAL_PRINTERS < MAX_PRINTERS, @"invalid test data");
-    GHAssertTrue(DEFAULT_1 < NUM_TOTAL_PRINTERS, @"invalid test data");
-    GHAssertTrue(DEFAULT_2 < NUM_TOTAL_PRINTERS, @"invalid test data");
+    [MagicalRecord setDefaultModelFromClass:[self class]];
+    [MagicalRecord setupCoreDataStackWithInMemoryStore];
     
-    printerManager = [PrinterManager sharedPrinterManager];
-    GHAssertNotNil(printerManager, @"check initialization of PrinterManager");
+    self.testPrinterDetails = [[PrinterDetails alloc] init];
+    self.testPrintSetting = [PrintSetting MR_createEntity];
+    self.testPrinter = [Printer MR_createEntity];
+    self.testDefaultPrinter = [DefaultPrinter MR_createEntity];
     
-    printerManager.searchDelegate = self;
+    self.testFoundPrinters = [[NSMutableArray alloc] init];
 }
 
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
-    while (printerManager.countSavedPrinters != 0)
-        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"printer should be deleted");
-    
-    printerManager = nil;
+    [MagicalRecord cleanUp];
 }
 
 // Run before each test method
 - (void)setUp
 {
+    // Default details
+    self.testPrinterDetails.name = @"Default Printer Name";
+    self.testPrinterDetails.ip = @"192.168.1.1";
+    self.testPrinterDetails.port = [NSNumber numberWithInt:0];
+    self.testPrinterDetails.enBooklet = YES;
+    self.testPrinterDetails.enFinisher23Holes = YES;
+    self.testPrinterDetails.enFinisher24Holes = NO;
+    self.testPrinterDetails.enLpr = YES;
+    self.testPrinterDetails.enRaw = NO;
+    self.testPrinterDetails.enStaple = YES;
+    self.testPrinterDetails.enTrayAutoStacking = YES;
+    self.testPrinterDetails.enTrayFaceDown = YES;
+    self.testPrinterDetails.enTrayStacking = YES;
+    self.testPrinterDetails.enTrayTop = YES;
+    
+    self.testPrintSetting.colorMode = [NSNumber numberWithInt:0];
+    self.testPrintSetting.orientation = [NSNumber numberWithInt:0];
+    self.testPrintSetting.copies = [NSNumber numberWithInt:1];
+    self.testPrintSetting.duplex = [NSNumber numberWithInt:0];
+    self.testPrintSetting.paperSize = [NSNumber numberWithInt:2];
+    self.testPrintSetting.scaleToFit = [NSNumber numberWithBool:YES];
+    self.testPrintSetting.paperType = [NSNumber numberWithInt:0];
+    self.testPrintSetting.inputTray = [NSNumber numberWithInt:0];
+    self.testPrintSetting.imposition = [NSNumber numberWithInt:0];
+    self.testPrintSetting.impositionOrder = [NSNumber numberWithInt:0];
+    self.testPrintSetting.sort = [NSNumber numberWithInt:0];
+    self.testPrintSetting.booklet = [NSNumber numberWithBool:NO];
+    self.testPrintSetting.bookletFinish = [NSNumber numberWithInt:0];
+    self.testPrintSetting.bookletLayout = [NSNumber numberWithInt:0];
+    self.testPrintSetting.finishingSide = [NSNumber numberWithInt:0];
+    self.testPrintSetting.staple = [NSNumber numberWithInt:0];
+    self.testPrintSetting.punch = [NSNumber numberWithInt:0];
+    self.testPrintSetting.outputTray = [NSNumber numberWithInt:0];
+    
+    self.testDefaultPrinter.printer = nil;
+    
+    self.didFoundOldPrinter = NO;
+    
+    [self prepare];
 }
 
 // Run after each test method
 - (void)tearDown
 {
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    while (sharedPrinterManager.countSavedPrinters != 0)
+    {
+        [sharedPrinterManager deletePrinterAtIndex:0];
+    }
+    
+    [sharedPrinterManager deleteDefaultPrinter];
+    
+    sharedPrinterManager.searchDelegate = nil;
+    
+    [self.testFoundPrinters removeAllObjects];
+}
+
+#pragma mark - PrinterSearchDelegate
+
+- (void)printerSearchEndedwithResult:(BOOL)printerFound
+{
+    if (printerFound == YES)
+    {
+        [self notify:kGHUnitWaitStatusSuccess];
+    }
+    else
+    {
+        [self notify:kGHUnitWaitStatusFailure];
+     }
+}
+
+- (void)printerSearchDidFoundNewPrinter:(PrinterDetails *)printerDetails
+{
+    [self.testFoundPrinters addObject:printerDetails];
+}
+
+- (void)printerSearchDidFoundOldPrinter:(NSString *)printerIP withName:(NSString *)printerName
+{
+    self.didFoundOldPrinter = YES;
 }
 
 #pragma mark - Test Cases
 
-/* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
-/* use a naming scheme for defining the execution order of your test cases */
-
-- (void)test001_Initialization
+- (void)testSharedManager
 {
-    GHTestLog(@"# CHECK: PM is properly initialized. #");
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     
-    GHAssertTrue(printerManager.countSavedPrinters == 0, @"printer count should be 0");
-    GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
-    GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
+    // Verification
+    GHAssertNotNil(sharedPrinterManager, @"[PrinterManager sharedPrinterManager] should not be nil");
 }
 
-- (void)test002_AddValidPrinters
+- (void)testRegisterPrinter_CannotCreateDefaultPrintSettings
 {
-    GHTestLog(@"# CHECK: PM can add Printers. #");
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] addObject:E_PRINTSETTING];
     
-    GHTestLog(@"-- adding valid printers");
-    int start = 0;
-    int limit = NUM_VALID_PRINTERS;
-    for (int i = start; i < limit; i++)
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Register printers should fail.");
+}
+
+- (void)testRegisterPrinter_CannotCreatePrinterObject
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:nil] addObject:E_PRINTER];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Register printers should fail.");
+}
+
+- (void)testRegisterPrinter_CannotSavePrinterObject
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Register printers should fail.");
+}
+
+- (void)testRegisterPrinter_OK
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    Printer *printer = [sharedPrinterManager getPrinterAtIndex:0];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Register printers should be successful.");
+    GHAssertEqualStrings(printer.name, self.testPrinter.name, @"Printer.name should match.");
+}
+
+- (void)testRegisterDefaultPrinter_CannotCreateDefaultPrinter
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturn:nil] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    Printer *printer = [sharedPrinterManager getPrinterAtIndex:0];
+    BOOL result = [sharedPrinterManager registerDefaultPrinter:printer];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Register default printer should fail.");
+}
+
+- (void)testRegisterDefaultPrinter_CannotSaveDefaultPrinter
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Register default printer should fail.");
+}
+
+- (void)testRegisterDefaultPrinter_OK
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    Printer *printer = [sharedPrinterManager getDefaultPrinter];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Register default printer should fail.");
+    GHAssertEquals(printer, self.testPrinter, @"Printer should match.");
+}
+
+- (void)testGetPrinterAtIndex_IndexOverflow
+{
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    Printer* printer = [sharedPrinterManager getPrinterAtIndex:1];
+    
+    // Verification
+    GHAssertNil(printer, @"Printer should be nil.");
+}
+
+- (void)testDeleteDefaultPrinter_CannotDeleteDefaultPrinter
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] deleteObject:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    BOOL result = [sharedPrinterManager deleteDefaultPrinter];
+    Printer *defaultPrinter = [sharedPrinterManager getDefaultPrinter];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Delete default printer should fail.");
+    GHAssertNil(defaultPrinter, @"Default printer should be nil.");
+}
+
+- (void)testDeleteDefaultPrinter_NoDefaultPrinter
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager deleteDefaultPrinter];
+    Printer *defaultPrinter = [sharedPrinterManager getDefaultPrinter];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Delete default printer should succeed.");
+    GHAssertNil(defaultPrinter, @"Default printer should be nil.");
+}
+
+- (void)testDeleteDefaultPrinter_OK
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    BOOL result = [sharedPrinterManager deleteDefaultPrinter];
+    Printer *defaultPrinter = [sharedPrinterManager getDefaultPrinter];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Delete default printer should succeed.");
+    GHAssertNil(defaultPrinter, @"Default printer should be nil.");
+}
+
+- (void)testDeletePrinterAtIndex_IndexOverflow
+{
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager deletePrinterAtIndex:1];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Delete printer should fail.");
+}
+
+- (void)testDeletePrinterAtIndex_DefaultPrinter_NG
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] deleteObject:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    BOOL result = [sharedPrinterManager deletePrinterAtIndex:0];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Delete printer should fail.");
+}
+
+- (void)testDeletePrinterAtIndex_DefaultPrinter_OK
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    BOOL result = [sharedPrinterManager deletePrinterAtIndex:0];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Delete printer should succeeed.");
+}
+
+- (void)testDeletePrinterAtIndex_NG
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] deleteObject:self.testPrinter];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    BOOL result = [sharedPrinterManager deletePrinterAtIndex:0];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Delete printer should fail.");
+}
+
+- (void)testDeletePrinterAtIndex_OK
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    BOOL result = [sharedPrinterManager deletePrinterAtIndex:0];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Delete printer should succeed.");
+}
+
+- (void)testHasDefaultPrinter_NO
+{
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager hasDefaultPrinter];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Result must be NO.");
+}
+
+- (void)testHasDefaultPrinter_YES
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    BOOL result = [sharedPrinterManager hasDefaultPrinter];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Result must be YES.");
+}
+
+- (void)testIsDefaultPrinter_NoDefault
+{
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager isDefaultPrinter:self.testPrinter];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Result must be NO.");
+}
+
+- (void)testIsDefaultPrinter_IsDefault
+{
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    [sharedPrinterManager registerDefaultPrinter:self.testPrinter];
+    BOOL result = [sharedPrinterManager isDefaultPrinter:self.testPrinter];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Result must be YES.");
+}
+
+- (void)testPrinterChanges_OK
+{
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager savePrinterChanges];
+    
+    // Verification
+    GHAssertEquals(result, YES, @"Result must be YES.");
+}
+
+- (void)testPrinterChanges_NG
+{
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] saveChanges];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    BOOL result = [sharedPrinterManager savePrinterChanges];
+    
+    // Verification
+    GHAssertEquals(result, NO, @"Result must be NO.");
+}
+
+- (void)testPrinterSearchForPrinter_NotFound
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:NO]}];
+    }] searchForPrinter:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager searchForPrinter:@"192.168.1.1"];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusFailure timeout:15.0f];
+    [mockSNMPManager stopMocking];
+}
+
+- (void)testPrinterSearchForPrinter_Found
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD object:mockSNMPManager userInfo:@{@"printerDetails": self.testPrinterDetails}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:YES]}];
+    }] searchForPrinter:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager searchForPrinter:@"192.168.1.1"];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:15.0f];
+    [mockSNMPManager stopMocking];
+}
+
+- (void)testPrinterSearchForPrinter_FoundAlreadyRegistered
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD object:mockSNMPManager userInfo:@{@"printerDetails": self.testPrinterDetails}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:YES]}];
+    }] searchForPrinter:OCMOCK_ANY];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager searchForPrinter:@"192.168.1.1"];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:15.0f];
+    GHAssertEquals(self.didFoundOldPrinter, YES, @"Found printer must be already registered.");
+    [mockSNMPManager stopMocking];
+}
+
+- (void)testPrinterSearchForAllPrinters_NotFound
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:NO]}];
+    }] searchForAvailablePrinters];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager searchForAllPrinters];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusFailure timeout:15.0f];
+    [mockSNMPManager stopMocking];
+}
+
+- (void)testPrinterSearchForAllPrinters_Found
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD object:mockSNMPManager userInfo:@{@"printerDetails": self.testPrinterDetails}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:YES]}];
+    }] searchForAvailablePrinters];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager searchForAllPrinters];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:15.0f];
+    [mockSNMPManager stopMocking];
+}
+
+- (void)testStopSearching
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[mockSNMPManager expect] cancelSearch];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager stopSearching];
+    
+    // Verification
+    GHAssertNoThrow([mockSNMPManager verify], @"");
+    [mockSNMPManager stopMocking];
+}
+
+- (void)testIsAtMaximumPrinters_YES
+{
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    NSString *ipFormat = @"192.168.1.%d";
+    for (int i = 0; i < 10; i++)
     {
-        PrinterDetails* pd = [[PrinterDetails alloc] init];
-        pd.name = [NSString stringWithFormat:@"%@%d", PRINTER_NAME, i+1];
-        pd.ip = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, i+1];
-        pd.port = [NSNumber numberWithInt:i%2];
-        pd.enBooklet = YES;
-        pd.enStaple = NO;
-        pd.enFinisher23Holes = YES;
-        pd.enFinisher24Holes = NO;
-        pd.enTrayAutoStacking = YES;
-        pd.enTrayFaceDown = NO;
-        pd.enTrayStacking = YES;
-        pd.enTrayTop = NO;
-        pd.enLpr = YES;
-        pd.enRaw = NO;
-        GHTestLog(@"-- registering \"%@\",\"%@\"..", pd.name, pd.ip);
-        GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
+        self.testPrinterDetails.ip = [NSString stringWithFormat:ipFormat, i+1];
+        [sharedPrinterManager registerPrinter:self.testPrinterDetails];
     }
     
-    GHAssertTrue([printerManager countSavedPrinters] == 0+NUM_VALID_PRINTERS, @"");
+    // Verification
+    BOOL result = [sharedPrinterManager isAtMaximumPrinters];
+    GHAssertEquals(result, YES, @"Result should be YES");
 }
 
-- (void)test003_AddInvalidPrinters
+- (void)testIsAtMaximumPrinters_NO
 {
-    GHTestLog(@"# CHECK: PM can add Printers. #");
-    
-    GHTestLog(@"-- adding invalid printers");
-    int start = 0;
-    int limit = NUM_INVALID_PRINTERS;
-    for (int i = start; i < limit; i++)
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    NSString *ipFormat = @"192.168.1.%d";
+    for (int i = 0; i < 9; i++)
     {
-        PrinterDetails* pd = [[PrinterDetails alloc] init];
-        //pd.name -- should be nil
-        pd.ip = [NSString stringWithFormat:@"%@%d", INVALID_PRINTER_IP, i+1];
-        pd.port = [NSNumber numberWithInt:i%2];
-        pd.enBooklet = YES;
-        pd.enStaple = YES;
-        pd.enFinisher23Holes = NO;
-        pd.enFinisher24Holes = YES;
-        pd.enTrayAutoStacking = YES;
-        pd.enTrayFaceDown = YES;
-        pd.enTrayStacking = YES;
-        pd.enTrayTop = YES;
-        pd.enLpr = YES;
-        pd.enRaw = YES;
-        GHTestLog(@"-- registering \"%@\",\"%@\"..", pd.name, pd.ip);
-        GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
+        self.testPrinterDetails.ip = [NSString stringWithFormat:ipFormat, i+1];
+        [sharedPrinterManager registerPrinter:self.testPrinterDetails];
     }
     
-    GHAssertTrue([printerManager countSavedPrinters] == NUM_VALID_PRINTERS+NUM_INVALID_PRINTERS, @"");
+    // Verification
+    BOOL result = [sharedPrinterManager isAtMaximumPrinters];
+    GHAssertEquals(result, NO, @"Result should be NO");
 }
 
-- (void)test004_GetValidPrinters
+- (void)testIsIPAlreadyRegistered_YES
 {
-    GHTestLog(@"# CHECK: PM can retrieve Printers. #");
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
     
-    GHTestLog(@"-- getting valid printers");
-    int start = 0;
-    int limit = NUM_VALID_PRINTERS;
-    for (int i = start; i < limit; i++)
-    {
-        GHTestLog(@"-- getting printer i=%lu", (unsigned long)i);
-        
-        Printer* testPrinter = [printerManager getPrinterAtIndex:i];
-        GHAssertNotNil(testPrinter, @"get printer should return a valid printer");
-        
-        NSString* expectedName = [NSString stringWithFormat:@"%@%d", PRINTER_NAME, i+1];
-        GHTestLog(@"--- name=[%@]", testPrinter.name);
-        GHAssertEqualStrings(testPrinter.name, expectedName, @"");
-        
-        NSString* expectedIP = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, i+1];
-        GHTestLog(@"--- ip=[%@]", testPrinter.ip_address);
-        GHAssertEqualStrings(testPrinter.ip_address, expectedIP, @"");
-        
-        NSNumber* expectedPort = [NSNumber numberWithInt:i%2];
-        GHAssertTrue([testPrinter.port intValue] == [expectedPort intValue], @"");
-        
-        GHAssertTrue([testPrinter.enabled_lpr boolValue], @"setting is different than expected");
-        GHAssertFalse([testPrinter.enabled_raw boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_booklet boolValue], @"setting is different than expected");
-        GHAssertFalse([testPrinter.enabled_staple boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_finisher_2_3_holes boolValue], @"setting is different than expected");
-        GHAssertFalse([testPrinter.enabled_finisher_2_4_holes boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_tray_auto_stacking boolValue], @"setting is different than expected");
-        GHAssertFalse([testPrinter.enabled_tray_face_down boolValue], @"setting is different than expected");
-        GHAssertTrue([testPrinter.enabled_tray_stacking boolValue], @"setting is different than expected");
-        GHAssertFalse([testPrinter.enabled_tray_top boolValue], @"setting is different than expected");
-        
-        GHAssertFalse([printerManager isDefaultPrinter:testPrinter], @"there should be no default printer");
-        
-        GHAssertNil(testPrinter.defaultprinter, @"DefaultPrinter should be nil");
-        GHAssertNotNil(testPrinter.printsetting, @"Printer should have a valid PrintSetting object");
-        GHAssertNotNil(testPrinter.printjob, @"PrintJob should not be nil");
-        GHAssertTrue([testPrinter.printjob count] == 0, @"there should be no print jobs");
-    }
+    // Verification
+    BOOL result = [sharedPrinterManager isIPAlreadyRegistered:self.testPrinterDetails.ip];
+    GHAssertEquals(result, YES, @"Result should be YES");
 }
-
-- (void)test005_GetInvalidPrinters
+                   
+- (void)testIsIPAlreadyRegistered_NO
 {
-    GHTestLog(@"# CHECK: PM can retrieve Printers. #");
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    [sharedPrinterManager registerPrinter:self.testPrinterDetails];
     
-    GHTestLog(@"-- getting invalid printers");
-    int start = NUM_VALID_PRINTERS;
-    int limit = NUM_TOTAL_PRINTERS;
-    for (int i = start; i < limit; i++)
-    {
-        GHTestLog(@"-- getting printer i=%lu", (unsigned long)i);
-        
-        Printer* testPrinter = [printerManager getPrinterAtIndex:i];
-        GHAssertNotNil(testPrinter, @"get printer should return a valid printer");
-        
-        GHTestLog(@"--- name=[%@]", testPrinter.name);
-        GHAssertNil(testPrinter.name, @"invalid printer should have a nil or @\"\" name");
-        
-        NSString* expectedIP = [NSString stringWithFormat:@"%@%d", INVALID_PRINTER_IP, (i-start)+1];
-        GHTestLog(@"--- ip=[%@]", testPrinter.ip_address);
-        GHAssertEqualStrings(testPrinter.ip_address, expectedIP, @"");
-        
-        NSNumber* expectedPort = [NSNumber numberWithInt:i%2];
-        GHAssertTrue([testPrinter.port intValue] == [expectedPort intValue], @"");
-        
-        GHAssertTrue([testPrinter.enabled_lpr boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_raw boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_booklet boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_staple boolValue], @"should have full capabilities");
-        GHAssertFalse([testPrinter.enabled_finisher_2_3_holes boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_finisher_2_4_holes boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_tray_auto_stacking boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_tray_face_down boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_tray_stacking boolValue], @"should have full capabilities");
-        GHAssertTrue([testPrinter.enabled_tray_top boolValue], @"should have full capabilities");
-        
-        GHAssertFalse([printerManager isDefaultPrinter:testPrinter], @"there should be no default printer");
-        
-        GHAssertNil(testPrinter.defaultprinter, @"DefaultPrinter should be nil");
-        GHAssertNotNil(testPrinter.printsetting, @"Printer should have a valid PrintSetting object");
-        GHAssertNotNil(testPrinter.printjob, @"PrintJob should not be nil");
-        GHAssertTrue([testPrinter.printjob count] == 0, @"there should be no print jobs");
-    }
-}
-
-- (void)test006_SetUnsetDefaultPrinter
-{
-    GHTestLog(@"# CHECK: PM knows which is the DefaultPrinter. #");
-    
-    GHTestLog(@"-- unsetting default without a default printer");
-    GHAssertTrue([printerManager deleteDefaultPrinter], @"");
-    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"");
-    
-    GHTestLog(@"-- setting printer[%lu] to be the default printer", (unsigned long)DEFAULT_1);
-    Printer* default1 = [printerManager getPrinterAtIndex:DEFAULT_1];
-    BOOL setDefault1 = [printerManager registerDefaultPrinter:default1];
-    GHAssertTrue(setDefault1, @"printer at index=%lu should be the default printer", (unsigned long)DEFAULT_1);
-    GHAssertTrue([printerManager hasDefaultPrinter], @"there should be a default printer");
-    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"printer count should remain the same");
-    GHAssertTrue([printerManager isDefaultPrinter:default1], @"default1 should be the default printer");
-    
-    GHTestLog(@"-- setting printer[%lu] to be the default printer", (unsigned long)DEFAULT_2);
-    Printer* default2 = [printerManager getPrinterAtIndex:DEFAULT_2];
-    BOOL setDefault2 = [printerManager registerDefaultPrinter:default2];
-    GHAssertTrue(setDefault2, @"printer at index=%lu should be the default printer", (unsigned long)DEFAULT_2);
-    GHAssertTrue([printerManager hasDefaultPrinter], @"there should be a default printer");
-    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"printer count should remain the same");
-    GHAssertTrue([printerManager isDefaultPrinter:default2], @"default2 should be the default printer");
-    GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
-    
-    GHTestLog(@"-- retrieve the default printer");
-    [printerManager retrieveDefaultPrinter];
-    GHAssertNotNil([printerManager defaultPrinter], @"");
-    
-    GHTestLog(@"-- unsetting printer[%lu] from being the default printer", (unsigned long)DEFAULT_2);
-    GHAssertTrue([printerManager deleteDefaultPrinter], @"default printer should be removed");
-    GHAssertFalse([printerManager hasDefaultPrinter], @"there shouldn't be a default printer");
-    GHAssertTrue(printerManager.countSavedPrinters == NUM_TOTAL_PRINTERS, @"printer count should remain the same");
-    GHAssertFalse([printerManager isDefaultPrinter:default1], @"default1 is not anymore the default printer");
-    GHAssertFalse([printerManager isDefaultPrinter:default2], @"default2 is not anymore the default printer");
-}
-
-- (void)test007_MaximumPrinters
-{
-    GHTestLog(@"# CHECK: PM can check for max printers. #");
-    
-    GHAssertFalse([printerManager isAtMaximumPrinters], @"count(%lu) < MAX_PRINTERS(%lu)",
-                  (unsigned long)printerManager.countSavedPrinters,
-                  (unsigned long)MAX_PRINTERS);
-    
-    // add until we reach maximum printers
-    for (NSUInteger i = NUM_TOTAL_PRINTERS; i < MAX_PRINTERS; i++)
-    {
-        PrinterDetails* pd = [[PrinterDetails alloc] init];
-        pd.name = [NSString stringWithFormat:@"%@%d", PRINTER_NAME, i+1];
-        pd.ip = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, i+1];
-        pd.port = [NSNumber numberWithInt:i%2];
-        pd.enBooklet = YES;
-        pd.enStaple = YES;
-        pd.enFinisher23Holes = NO;
-        pd.enFinisher24Holes = YES;
-        pd.enTrayAutoStacking = YES;
-        pd.enTrayFaceDown = YES;
-        pd.enTrayStacking = YES;
-        pd.enTrayTop = YES;
-        pd.enLpr = YES;
-        pd.enRaw = YES;
-        GHTestLog(@"-- registering \"%@\"..", pd.name);
-        GHAssertTrue([printerManager registerPrinter:pd], @"failed to add printer=\"%@\"", pd.name);
-    }
-    
-    GHAssertTrue([printerManager isAtMaximumPrinters], @"count(%lu) = MAX_PRINTERS(%lu)",
-                  (unsigned long)printerManager.countSavedPrinters,
-                  (unsigned long)MAX_PRINTERS);
-}
-
-- (void)test008_IsPrinterRegistered
-{
-    GHTestLog(@"# CHECK: PM can check IPs. #");
-    
-    NSString* oldIP = [NSString stringWithFormat:@"%@%d", VALID_PRINTER_IP, 4]; //192.168.1.4
-    GHAssertTrue([printerManager isIPAlreadyRegistered:oldIP], @"IP=%@ should already be registered", oldIP);
-    
-    NSString* newIP = @"127.0.0.1";
-    GHAssertFalse([printerManager isIPAlreadyRegistered:newIP], @"IP=%@ shouldn't be registered", newIP);
-}
-
-- (void)test009_DeleteDefaultPrinter
-{
-    GHTestLog(@"# CHECK: PM can delete default Printer. #");
-    NSUInteger countBeforeDelete = printerManager.countSavedPrinters;
-    
-    GHTestLog(@"-- setting printer[%lu] as the default", (unsigned long)DEFAULT_1);
-    Printer* defaultPrinter = [printerManager getPrinterAtIndex:DEFAULT_1];
-    GHAssertNotNil(defaultPrinter, @"");
-    GHAssertTrue([printerManager registerDefaultPrinter:defaultPrinter], @"");
-    
-    GHTestLog(@"-- deleting printer[%lu]", (unsigned long)DEFAULT_1);
-    GHAssertTrue([printerManager deletePrinterAtIndex:DEFAULT_1], @"default printer can be deleted");
-    GHAssertTrue(printerManager.countSavedPrinters == countBeforeDelete-1, @"");
-    GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no more default printer");
-}
-
-- (void)test010_DeleteNonDefaultPrinters
-{
-    GHTestLog(@"# CHECK: PM can delete Printers. #");
-    
-    // delete invalid index
-    GHAssertFalse([printerManager deletePrinterAtIndex:printerManager.countSavedPrinters+5], @"");
-    
-    BOOL deleted = NO;
-    while (printerManager.countSavedPrinters != 0)
-    {
-        GHTestLog(@"-- deleting next printer (remaining=%lu)", (unsigned long)printerManager.countSavedPrinters);
-        
-        Printer* printer = [printerManager getPrinterAtIndex:0];
-        deleted = [printerManager deletePrinterAtIndex:0];
-        if (!deleted)
-        {
-            GHFail(@"failed to delete printer=\"%@\"", printer.name);
-            break;
-        }
-    }
-    
-    GHAssertTrue(printerManager.countSavedPrinters == 0, @"printers count should be 0");
-    GHAssertNil([printerManager getPrinterAtIndex:0], @"get printer should return nil");
-    GHAssertFalse([printerManager hasDefaultPrinter], @"there should be no default printer");
-    
-    // delete invalid index
-    GHAssertFalse([printerManager deletePrinterAtIndex:1], @"");
-}
-
-- (void)test011_SearchForOnlinePrinter
-{
-    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    NSString* testIP = @"192.168.0.199";
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    
-    // clear existing printers
-    while (printerManager.countSavedPrinters != 0)
-        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
-    
-    GHTestLog(@"-- search for an online printer");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    callbackPrinterFound = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
-    [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
-    [swizzler deswizzle];
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertTrue(callbackFoundNewCalled, @"");
-    GHAssertFalse(callbackFoundOldCalled, @"");
-    GHAssertTrue(callbackPrinterFound, @"");
-    GHTestLog(@"-- printer found was added");
-    
-    GHTestLog(@"-- searching for the same printer");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    callbackPrinterFound = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
-    [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
-    [swizzler deswizzle];
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertFalse(callbackFoundNewCalled, @"");
-    GHAssertTrue(callbackFoundOldCalled, @"");
-    GHAssertTrue(callbackPrinterFound, @"");
-}
-
-- (void)test012_SearchForOfflinePrinter
-{
-    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    NSString* testIP = @"192.168.0.199";
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    
-    // clear existing printers
-    while (printerManager.countSavedPrinters != 0)
-        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
-    
-    GHTestLog(@"-- search for an offline printer");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    callbackPrinterFound = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForPrinterFail:)];
-    [printerManager searchForPrinter:testIP];
-    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
-    [swizzler deswizzle];
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertFalse(callbackFoundNewCalled, @"");
-    GHAssertFalse(callbackFoundOldCalled, @"");
-    GHAssertFalse(callbackPrinterFound, @"");
-}
-
-- (void)test013_SearchForAllPrintersSuccess
-{
-    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    
-    // clear existing printers
-    while (printerManager.countSavedPrinters != 0)
-        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
-    
-    GHTestLog(@"-- search for all printers");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    callbackPrinterFound = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForAvailablePrinters) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForAvailablePrintersSuccessful)];
-    [printerManager searchForAllPrinters];
-    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
-    [swizzler deswizzle];
-    
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertTrue(callbackFoundNewCalled, @"");
-    GHAssertFalse(callbackFoundOldCalled, @"");
-    GHAssertTrue(callbackPrinterFound, @"");
-    GHTestLog(@"-- printers found were added");
-    
-    GHTestLog(@"-- search for all printers again");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    callbackPrinterFound = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForAvailablePrinters) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForAvailablePrintersSuccessful)];
-    [printerManager searchForAllPrinters];
-    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
-    [swizzler deswizzle];
-    
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertFalse(callbackFoundNewCalled, @"");
-    GHAssertTrue(callbackFoundOldCalled, @"");
-    GHAssertTrue(callbackPrinterFound, @"");
-    GHTestLog(@"-- printers found were added");
-}
-
-- (void)test014_SearchForAllPrintersFail
-{
-    GHTestLog(@"# CHECK: PM can handle search callbacks. #");
-    Swizzler *swizzler = [[Swizzler alloc] init];
-    
-    // clear existing printers
-    while (printerManager.countSavedPrinters != 0)
-        GHAssertTrue([printerManager deletePrinterAtIndex:0], @"");
-    
-    GHTestLog(@"-- search for all printers");
-    callbackSearchEndCalled = NO;
-    callbackFoundNewCalled = NO;
-    callbackFoundOldCalled = NO;
-    callbackPrinterFound = NO;
-    [swizzler swizzleInstanceMethod:[SNMPManager class] targetSelector:@selector(searchForAvailablePrinters) swizzleClass:[SNMPManagerMock class] swizzleSelector:@selector(searchForAvailablePrintersFail)];
-    [printerManager searchForAllPrinters];
-    [self waitForCompletion:5 withMessage:nil]; //delay, gives time for the callbacks to process
-    [swizzler deswizzle];
-    
-    GHTestLog(@"-- check if callbacks were received");
-    GHAssertTrue(callbackSearchEndCalled, @"");
-    GHAssertFalse(callbackFoundNewCalled, @"");
-    GHAssertFalse(callbackFoundOldCalled, @"");
-    GHAssertFalse(callbackPrinterFound, @"");
-    GHTestLog(@"-- printers found were added");
-}
-
-- (void)test015_StopSearching
-{
-    GHTestLog(@"# CHECK: PM can stop searching. #");
-    
-    callbackSearchEndCalled = NO;
-    [printerManager searchForPrinter:@"192.168.0.1"];
-    [printerManager stopSearching];
-    NSString* msg = [NSString stringWithFormat:
-                     @"initiating search, then stopped, now waiting for %.2f seconds", PM_SEARCH_TIMEOUT];
-    [self waitForCompletion:PM_SEARCH_TIMEOUT+1 withMessage:msg];
-    
-    GHTestLog(@"-- check if callback was not received");
-    GHAssertFalse(callbackSearchEndCalled, @"");
-}
-
-- (void)test016_Singleton
-{
-    GHTestLog(@"# CHECK: PM is indeed a singleton. #");
-    
-    PrinterManager* pmNew = [PrinterManager sharedPrinterManager];
-    GHAssertEqualObjects(printerManager, pmNew, @"should return the same object");
-}
-
-#pragma mark - PrinterSearchDelegate Methods
-
-- (void)searchEndedwithResult:(BOOL)printerFound
-{
-    callbackSearchEndCalled = YES;
-    callbackPrinterFound = printerFound;
-}
-
-- (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails
-{
-    callbackFoundNewCalled = YES;
-    GHAssertTrue([printerManager registerPrinter:printerDetails], @"");
-}
-
-- (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
-{
-    callbackFoundOldCalled = YES;
-}
-
-#pragma mark - Utilities
-
-- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
-{
-    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
-    UIAlertView* alert;
-    
-    if (msg != nil)
-    {
-        alert = [[UIAlertView alloc] initWithTitle:@"Printer Search Test"
-                                           message:msg
-                                          delegate:self
-                                 cancelButtonTitle:@"HIDE"
-                                 otherButtonTitles:nil];
-        [alert show];
-    }
-    
-    BOOL done = NO;
-    do
-    {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
-        if ([timeoutDate timeIntervalSinceNow] < 0.0)
-            break;
-    } while (!done);
-    
-    if (msg != nil)
-        [alert dismissWithClickedButtonIndex:0 animated:YES];
-    
-    return done;
+    // Verification
+    BOOL result = [sharedPrinterManager isIPAlreadyRegistered:@"192.168.1.2"];
+    GHAssertEquals(result, NO, @"Result should be NO");
 }
 
 @end

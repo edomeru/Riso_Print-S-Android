@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
@@ -270,8 +270,8 @@ public class MainActivity extends BaseActivity implements Callback {
             } else {
                 mMainLayout.setTranslationX(moveFactor);
                 
-                // #3614 fix
-                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
+                // #3614 and #3734 fix
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     mMainLayout.requestLayout();
                 }
             }

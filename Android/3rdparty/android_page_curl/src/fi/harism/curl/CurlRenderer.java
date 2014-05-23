@@ -76,7 +76,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	private float mMaxPanY = 0.0f;
 
 	// Set to true to enable the border.
-	private static final boolean RENDER_DROP_SHADOW = true;
+	private static final boolean RENDER_DROP_SHADOW = false;
 
 	/*
 	 * Associated rectangle:

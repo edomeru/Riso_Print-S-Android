@@ -41,14 +41,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    //self.printDocument = [[PDFFileManager sharedManager] printDocument];
     self.key = [self.setting objectForKey:@"name"];
     
     [self fillOptions];
@@ -163,6 +156,25 @@
         else
         {
             if(self.previewSetting.imposition == kImposition2Pages)
+            {
+                return NO;
+            }
+        }
+    }
+    
+    if ([self.key isEqualToString:KEY_BOOKLET_LAYOUT] == YES)
+    {
+        if ([option isEqualToString:@"ids_lbl_booklet_layout_lr"] == YES ||
+            [option isEqualToString:@"ids_lbl_booklet_layout_rl"] == YES)
+        {
+            if (self.previewSetting.orientation == kOrientationLandscape)
+            {
+                return NO;
+            }
+        }
+        else
+        {
+            if (self.previewSetting.orientation == kOrientationPortrait)
             {
                 return NO;
             }

@@ -7,11 +7,12 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "PrinterStatusHelper.h"
+#import "SimplePing.h"
 
-@interface PrinterStatusHelperTest : GHTestCase <PrinterStatusHelperDelegate>
+@interface PrinterStatusHelperTest : GHAsyncTestCase <PrinterStatusHelperDelegate>
 {
-    BOOL statusDidChangeCallbackReceived;
 }
 
 @end
@@ -38,6 +39,7 @@
 // Run before each test method
 - (void)setUp
 {
+    [self prepare];
 }
 
 // Run after each test method
@@ -47,85 +49,131 @@
 
 #pragma mark - Test Cases
 
-/* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
-/* use a naming scheme for defining the execution order of your test cases */
-
-- (void)test001_Initialization
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline
 {
-    GHTestLog(@"# CHECK: PSHelper can be initialized. #");
-    NSString* printerIP = @"192.168.0.199";
-    
-    GHTestLog(@"-- creating the helper");
-    PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:printerIP];
-    GHAssertNotNil(psh, @"check initialization of PrinterStatusHelper");
-    GHAssertFalse([psh isPolling], @"should not be polling");
-    GHAssertEqualStrings(psh.ipAddress, printerIP, @"");
-}
-
-- (void)test002_StartStop
-{
-    GHTestLog(@"# CHECK: PSHelper can be started/stopped. #");
-    NSString* printerIP = @"192.168.0.199";
-    float POLL_TIMEOUT = 5;
-    NSString* msg;
-    
-    GHTestLog(@"-- creating the helper");
-    PrinterStatusHelper* psh = [[PrinterStatusHelper alloc] initWithPrinterIP:printerIP];
-    GHAssertNotNil(psh, @"check initialization of PrinterStatusHelper");
-    GHAssertFalse([psh isPolling], @"should not be polling");
-    psh.delegate = self;
-    
-    GHTestLog(@"-- starting status poller");
-    statusDidChangeCallbackReceived = NO;
-    [psh startPrinterStatusPolling];
-    
-    msg = [NSString stringWithFormat:
-           @"wait for %.2f seconds for printer status polling to start", POLL_TIMEOUT];
-    [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
-    GHAssertTrue([psh isPolling], @"should now be polling");
-    
-    GHTestLog(@"-- waiting for status change callback");
-    msg = [NSString stringWithFormat:
-           @"wait for %.2f seconds while waiting for the polling callback", POLL_TIMEOUT];
-    [self waitForCompletion:POLL_TIMEOUT withMessage:msg];
-    GHAssertTrue(statusDidChangeCallbackReceived, @"");
-    
-    GHTestLog(@"-- stopping status poller");
-    [psh stopPrinterStatusPolling];
-    GHAssertFalse([psh isPolling], @"should not be polling");
-}
-
-#pragma mark - PrinterStatusHelperDelegate Methods
-
-- (void)statusDidChange:(BOOL)isOnline
-{
-    statusDidChangeCallbackReceived = YES;
-}
-
-#pragma mark - Utilities
-
-- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
-{
-    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
-    
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Printer Status Helper Test"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"HIDE"
-                                          otherButtonTitles:nil];
-    [alert show];
-    
-    BOOL done = NO;
-    do
+    if (isOnline)
     {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
-        if ([timeoutDate timeIntervalSinceNow] < 0.0)
-            break;
-    } while (!done);
+        [self notify:kGHUnitWaitStatusSuccess];
+    }
+    else
+    {
+        [self notify:kGHUnitWaitStatusFailure];
+    }
+}
+
+- (void)testInitWithPrinterIp
+{
+    // SUT
+    NSString *ip = @"192.168.1.1";
+    PrinterStatusHelper *statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:ip];
     
-    [alert dismissWithClickedButtonIndex:0 animated:YES];
+    // Verification
+    GHAssertEqualStrings(statusHelper.ipAddress, ip, @"IP must match.");
+}
+
+- (void)testPolling_OK
+{
+    // Mock
+    NSData *data = [@"192.168.1.1" dataUsingEncoding:NSUTF8StringEncoding];
+    id mockSimplePing = [OCMockObject mockForClass:[SimplePing class]];
+    [[[mockSimplePing stub] andReturn:mockSimplePing] simplePingWithHostName:OCMOCK_ANY];
+    __block id<SimplePingDelegate> delegate;
+    [[[mockSimplePing stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&delegate atIndex:2];
+    }] setDelegate:OCMOCK_ANY];
+    [(SimplePing *)[[mockSimplePing expect] andDo:^(NSInvocation *invocation){
+        NSLog(@"Starting");
+        [delegate simplePing:invocation.target didStartWithAddress:data];
+        [delegate simplePing:invocation.target didSendPacket:data];
+        [delegate simplePing:invocation.target didReceivePingResponsePacket:data];
+    }] start];
+    [[mockSimplePing stub] sendPingWithData:nil];
+    [[mockSimplePing stub] stop];
+
+    // SUT
+    NSString *ip = @"192.168.1.1";
+    PrinterStatusHelper *statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:ip];
+    statusHelper.delegate = self;
+    [statusHelper startPrinterStatusPolling];
     
-    return done;
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:6];
+    [statusHelper stopPrinterStatusPolling];
+    GHAssertNoThrow([mockSimplePing verify], @"");
+    [mockSimplePing stopMocking];
+}
+
+- (void)testPolling_NG
+{
+    // Mock
+    NSData *data = [@"192.168.1.1" dataUsingEncoding:NSUTF8StringEncoding];
+    id mockSimplePing = [OCMockObject mockForClass:[SimplePing class]];
+    [[[mockSimplePing stub] andReturn:mockSimplePing] simplePingWithHostName:OCMOCK_ANY];
+    __block id<SimplePingDelegate> delegate;
+    [[[mockSimplePing stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&delegate atIndex:2];
+    }] setDelegate:OCMOCK_ANY];
+    [(SimplePing *)[[mockSimplePing expect] andDo:^(NSInvocation *invocation){
+        NSLog(@"Starting");
+        [delegate simplePing:invocation.target didStartWithAddress:data];
+        [delegate simplePing:invocation.target didFailWithError:nil];
+        [delegate simplePing:invocation.target didFailToSendPacket:nil error:nil];
+    }] start];
+    [[mockSimplePing stub] sendPingWithData:nil];
+    [[mockSimplePing stub] stop];
+
+    // SUT
+    NSString *ip = @"192.168.1.1";
+    PrinterStatusHelper *statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:ip];
+    statusHelper.delegate = self;
+    [statusHelper startPrinterStatusPolling];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusFailure timeout:6];
+    [statusHelper stopPrinterStatusPolling];
+    GHAssertNoThrow([mockSimplePing verify], @"");
+    [mockSimplePing stopMocking];
+}
+
+- (void)testPolling_BG
+{
+    // Mock
+    NSData *data = [@"192.168.1.1" dataUsingEncoding:NSUTF8StringEncoding];
+    id mockSimplePing = [OCMockObject mockForClass:[SimplePing class]];
+    [[[mockSimplePing stub] andReturn:mockSimplePing] simplePingWithHostName:OCMOCK_ANY];
+    __block id<SimplePingDelegate> delegate;
+    [[[mockSimplePing stub] andDo:^(NSInvocation *invocation){
+        [invocation getArgument:&delegate atIndex:2];
+    }] setDelegate:OCMOCK_ANY];
+    __block BOOL isFirst = YES;
+    [(SimplePing *)[[mockSimplePing stub] andDo:^(NSInvocation *invocation){
+        NSLog(@"Starting");
+        [delegate simplePing:invocation.target didStartWithAddress:data];
+        if (isFirst)
+        {
+            isFirst = NO;
+            [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil];
+            [NSThread sleepForTimeInterval:1];
+            [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:nil];
+        } else
+        {
+            [delegate simplePing:invocation.target didReceivePingResponsePacket:data];
+        }
+    }] start];
+    [[mockSimplePing stub] sendPingWithData:nil];
+    [[mockSimplePing stub] stop];
+
+    // SUT
+    NSString *ip = @"192.168.1.1";
+    PrinterStatusHelper *statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:ip];
+    statusHelper.delegate = self;
+    [statusHelper startPrinterStatusPolling];
+    
+    // Verification
+    [self waitForStatus:kGHUnitWaitStatusSuccess timeout:10];
+    [statusHelper stopPrinterStatusPolling];
+    GHAssertNoThrow([mockSimplePing verify], @"");
+    [mockSimplePing stopMocking];
 }
 
 @end

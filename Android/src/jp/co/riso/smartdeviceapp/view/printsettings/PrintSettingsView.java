@@ -14,7 +14,7 @@ import java.util.Set;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
@@ -36,7 +36,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -115,7 +114,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private PrintSettings mPrintSettings = null;
     private int mPrinterId = PrinterManager.EMPTY_ID;
     private List<Printer> mPrintersList = null;
-
+    
     private LinearLayout mMainView = null;
     private ScrollView mPrintSettingsScrollView = null;
     private LinearLayout mPrintSettingsLayout = null;
@@ -197,17 +196,22 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         View view = mMainView.findViewWithTag(PrintSettings.TAG_COPIES);
         if (view != null && view instanceof EditText) {
-            Rect r = new Rect();
-            int[] coords = new int[2];
-            view.getHitRect(r);
-            view.getLocationOnScreen(coords);
-            r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
-            if (!r.contains((int) ev.getRawX(), (int) ev.getRawY())) {
-                checkEditTextValue((EditText)view);      
-                AppUtils.hideSoftKeyboard((Activity) getContext());    
+            if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
+                checkEditTextValue((EditText)view);
+            } else {
+                return super.onInterceptTouchEvent(ev);
             }
         }
+        view = mMainView.findViewById(ID_PIN_CODE_EDIT_TEXT);
+        if (view != null && view instanceof EditText) {
+            if (AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
+                return super.onInterceptTouchEvent(ev);
+            }
+        }
+        
+        AppUtils.hideSoftKeyboard((Activity) getContext());
         return super.onInterceptTouchEvent(ev);
+        
     }
     
     /**
@@ -358,16 +362,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         if (tag.equals(PrintSettings.TAG_OUTPUT_TRAY)) {
-            boolean isBooklet = mPrintSettings.isBooklet();
             boolean isPunch = mPrintSettings.getPunch() != Punch.OFF;
             switch (OutputTray.values()[value]) {
                 case AUTO:
-                    return true;
-                case FACEDOWN:
-                    return !isPunch && !isBooklet;
                 case TOP:
                 case STACKING:
-                    return !isBooklet;
+                    return true;
+                case FACEDOWN:
+                    return !isPunch;
             }
         }
         
@@ -546,19 +548,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             } else {
                 if (stapleValue == Staple.ONE_UL.ordinal() || stapleValue == Staple.ONE_UR.ordinal()) {
                     updateValueWithConstraints(PrintSettings.TAG_STAPLE, Staple.ONE.ordinal());
-                }
-            }
-        }
-        
-        // Constraint #3 Finishing Side or Orientation 
-        if (tag.equals(PrintSettings.TAG_ORIENTATION) || tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
-            int finishValue = mPrintSettings.getFinishingSide().ordinal();
-            int finishDefault = getDefaultValueWithConstraints(PrintSettings.TAG_FINISHING_SIDE);
-            if (mPrintSettings.getValue(PrintSettings.TAG_PUNCH) == Punch.HOLES_4.ordinal()) {
-                if (finishValue != finishDefault) {
-                    if (finishDefault != FinishingSide.LEFT.ordinal() || finishValue != FinishingSide.RIGHT.ordinal()) {
-                        updateValueWithConstraints(PrintSettings.TAG_PUNCH, Punch.OFF.ordinal());
-                    }
                 }
             }
         }
@@ -742,7 +731,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private int getUpdatedStringId(String name, int id) {
         if (getPrinter() != null) {
             if (name.equals(PrintSettings.TAG_PUNCH)) {
-                if (id == R.string.ids_lbl_punch_4holes && !getPrinter().getConfig().isPunch4Available()) {
+                if (id == R.string.ids_lbl_punch_4holes && getPrinter().getConfig().isPunch3Available()) {
                     return R.string.ids_lbl_punch_3holes;
                 }
             }
@@ -929,7 +918,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mPrintControls.setOrientation(LinearLayout.VERTICAL);
         
         // Create Header
-        LinearLayout header = createTitle(getResources().getString(R.string.ids_lbl_print), false, -1, false, true);
+        LayoutInflater li = LayoutInflater.from(getContext());
+        LinearLayout header = (LinearLayout) li.inflate(R.layout.printsettings_print, null);
+        
+        int height = getResources().getDimensionPixelSize(R.dimen.home_menu_height);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
+        params.gravity = Gravity.CENTER;
+        header.setLayoutParams(params);
+        
         header.setId(ID_PRINT_HEADER);
         header.setOnClickListener(this);
         mPrintControls.addView(header);
@@ -939,7 +935,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         view.setActivated(true);
         
         int viewWidth = getResources().getDimensionPixelSize(R.dimen.printsettings_list_value_width);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(viewWidth, LayoutParams.MATCH_PARENT, 0.0f);
+        params = new LinearLayout.LayoutParams(viewWidth, LayoutParams.MATCH_PARENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
         view.setLayoutParams(params);
         
@@ -957,7 +953,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
 
         view = new View(getContext());
         view.setBackgroundResource(R.color.theme_light_1);
-        int height = getResources().getDimensionPixelSize(R.dimen.separator_size);
+        height = getResources().getDimensionPixelSize(R.dimen.separator_size);
         params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
         view.setLayoutParams(params);
         mMainView.addView(view, 1);
@@ -1147,10 +1143,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         editText.setId(ID_PIN_CODE_EDIT_TEXT);
         editText.setLayoutParams(params);
         
-        editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
         });
+        
+        editText.addTextChangedListener(new PinCodeTextWatcher());
         
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
@@ -1976,6 +1974,26 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
+    /**
+     * Checks the value of a TextView and sets it to 1 if text is empty or less than or equal to 0
+     * 
+     * @param v
+     *            TextView to be edited
+     */
+    private void checkEditTextValue(TextView v) {
+        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
+            String value = v.getText().toString();
+            if (value.isEmpty()) {
+                v.setText(Integer.toString(1));
+            } else {
+                int val = Integer.parseInt(value);
+                if (val <= 0) {
+                    v.setText(Integer.toString(1));
+                }
+            }
+        }
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -2096,24 +2114,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
     }
     
-    public void checkEditTextValue(TextView v) {
-        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
-            String value = v.getText().toString();
-            if (value.isEmpty()) {
-                v.setText(Integer.toString(1));
-            } else {
-                int val = Integer.parseInt(value);
-                if (val <= 0) {
-                    v.setText(Integer.toString(1));
-                }
-            }
-        }
-    }
-    
     // ================================================================================
     // INTERFACE - OnEditorActionListener
     // ================================================================================
-
+    
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -2157,6 +2161,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 int value = mMinValue;
                 try {
                     value = Integer.parseInt(s.toString());
+                    value = Math.max(mMinValue, value);
                 } catch (NumberFormatException nfe) {
                 }
                 
@@ -2167,6 +2172,31 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
                 
                 mEditing = false;
+            }
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
+    
+    private class PinCodeTextWatcher implements TextWatcher {
+        /** {@inheritDoc} */
+        @Override
+        public synchronized void afterTextChanged(Editable s) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+            
+            if (isSecurePrint) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, s.toString());
+                editor.apply();
             }
         }
         

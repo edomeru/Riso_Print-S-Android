@@ -7,21 +7,19 @@
 //
 
 #import "PrintSettingsViewController.h"
+#import "PrintSettingsPrinterViewController.h"
 #import "PrintSettingsTableViewController.h"
-#import "PDFFileManager.h"
-#import "PrinterManager.h"
-#import "PrintDocument.h"
-#import "Printer.h"
-#import "PreviewSetting.h"
+
 #import "PrintSettingsHelper.h"
 #import "UIView+Localization.h"
 
-#define SEGUE_TO_PRINTSETTINGS_TABLE @"PrintSettings-PrintSettingsTable"
+#define SEGUE_TO_PRINTSETTINGS_PRINTER_TABLE @"PrintSettings-PrintSettingsPrinter"
 
-@interface PrintSettingsViewController ()
+@interface PrintSettingsViewController () 
+
+@property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
 - (void)initialize;
-@property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
 @end
 
@@ -55,7 +53,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    
+    if(self.printerIndex != nil)
+    {
+        // launched from Printers
+        self.printSettingsScreenTitle.localizationId = @"IDS_LBL_DEFAULT_PRINT_SETTINGS";
+    }
     
     if ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) && (self.printerIndex == nil))
     {
@@ -64,26 +67,22 @@
     else
     {
         self.isFixedSize = YES;
-    }
-    
-    if(self.printerIndex != nil)
-    {
-       self.printSettingsScreenTitle.localizationId = @"IDS_LBL_DEFAULT_PRINT_SETTINGS";
+
     }
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS_TABLE] == YES)
+    if([segue.identifier isEqualToString:SEGUE_TO_PRINTSETTINGS_PRINTER_TABLE] == YES)
     {
-        PrintSettingsTableViewController *viewController = (PrintSettingsTableViewController *)[segue.destinationViewController topViewController];
+        PrintSettingsPrinterViewController *viewController = (PrintSettingsPrinterViewController *)[segue.destinationViewController topViewController];
         viewController.printerIndex = self.printerIndex;
     }
 }
+
 @end

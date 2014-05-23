@@ -122,7 +122,6 @@
             return;
         }
         
-        
         // Render pages
         [self.pageIndices enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSNumber *index = obj;

@@ -9,12 +9,8 @@
 #import "DeleteButton.h"
 #import "UIColor+Theme.h"
 
-const float ANIMATION_SPEED = 0.1f;
-
 @interface DeleteButton()
 
-@property (assign, nonatomic) CGRect offscreenPos;
-@property (assign, nonatomic) CGRect onscreenPos;
 @property (assign, nonatomic) BOOL stayHighlighted;
 
 @end
@@ -30,37 +26,6 @@ const float ANIMATION_SPEED = 0.1f;
     {
     }
     return self;
-}
-
-- (id)initAtOffscreenPos:(CGRect)offscreen withOnscreenPos:(CGRect)onscreen
-{
-    self = [super initWithFrame:offscreen];
-    if (self)
-    {
-        [self setTitle:[NSLocalizedString(IDS_LBL_DELETE, @"Delete") uppercaseString] forState:UIControlStateNormal];
-        [self setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
-        [self setTitleEdgeInsets:UIEdgeInsetsMake(10.0f,    //T
-                                                  15.0f,    //L
-                                                  10.0f,    //B
-                                                  15.0f)];  //R
-        self.titleLabel.font = [UIFont systemFontOfSize:13.0f];
-        [self setBackgroundColor:[UIColor whiteThemeColor]];
-        [self setUserInteractionEnabled:YES];
-        
-        self.highlightedColor = [UIColor purple1ThemeColor];
-        self.highlightedTextColor = [UIColor whiteThemeColor];
-        self.offscreenPos = offscreen;
-        self.onscreenPos = onscreen;
-        self.stayHighlighted = NO;
-        
-        self.delegate = nil;
-    }
-    return self;
-}
-
-+ (id)createAtOffscreenPosition:(CGRect)offscreen withOnscreenPosition:(CGRect)onscreen
-{
-    return [[self alloc] initAtOffscreenPos:offscreen withOnscreenPos:onscreen];
 }
 
 /*
@@ -99,26 +64,6 @@ const float ANIMATION_SPEED = 0.1f;
         self.backgroundColor = [UIColor whiteThemeColor];
         [self setTitleColor:[UIColor blackThemeColor] forState:UIControlStateNormal];
     }
-}
-
-#pragma mark - Animation
-
-- (void)animateOnscreen:(void (^)(BOOL))completion
-{
-    [UIView animateWithDuration:ANIMATION_SPEED animations:^{
-        
-        self.frame = self.onscreenPos;
-        
-    } completion:completion];
-}
-
-- (void)animateOffscreen:(void (^)(BOOL))completion
-{
-    [UIView animateWithDuration:ANIMATION_SPEED animations:^{
-        
-         self.frame = self.offscreenPos;
-        
-    } completion:completion];
 }
 
 @end

@@ -13,9 +13,11 @@
 #import "AlertHelper.h"
 #import "UIColor+Theme.h"
 
-#define SEARCHRESULTCELL    @"SearchResultCell"
-#define SORT_SEARCH_RESULTS 0
+#define SEGUE_IPHONE_TO_SEARCH_TABLE    @"PrinterSearchIphone-PrinterSearchTable"
+#define SEGUE_IPAD_TO_SEARCH_TABLE      @"PrinterSearchIpad-PrinterSearchTable"
+#define SEARCHRESULTCELL                @"SearchResultCell"
 
+#define SORT_SEARCH_RESULTS 0
 #if SORT_SEARCH_RESULTS
 #define OLD_PRINTERS    0
 #define NEW_PRINTERS    1
@@ -80,7 +82,13 @@
 @property (strong, nonatomic) UIRefreshControl* refreshControl;
 
 /** UITableView for the printer search results */
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) UITableView* searchResultsTable;
+
+/** Internal flag, YES if currently searching for printers. */
+@property (assign, nonatomic) BOOL isSearching;
+
+/** Internal flag, YES if controller is displayed on an iPad. */
+@property (assign, nonatomic) BOOL isIpad;
 
 #pragma mark - Internal Methods
 
@@ -88,22 +96,40 @@
  Called when screen loads.
  Sets-up this controller's properties and views.
  */
-- (void)setup;
+- (void)setupScreen;
 
 /**
- Called when screen loads and in reaction to pull-to-refresh.
+ Called to initiate printer search (on load and when using pull-to-refresh gesture)
  Searches for printers on the network and updates the display.
  */
-- (void)refresh;
+- (void)refreshScreen;
 
 /**
- Called when the user taps on the '+' button of a new printer.
+ Called to close the Printer Search screen. If a search is currently ongoing,
+ it is stopped.
+ */
+- (void)dismissScreen;
+
+/**
+ Called to show the searching indicator and configure other UI properties.
+ */
+- (void)startSearchingAnimation;
+
+/**
+ Called to hide the searching indicator and configure other UI properties.
+ */
+- (void)stopSearchingAnimation;
+
+/**
+ Called when the user taps on printer with a '+' button.
  This method attempts to add the printer to the list of saved
  printers.
  @param row
-        the selected printer to add
+        the NSIndexPath.row of the tapped row
  */
 - (void)addPrinter:(NSUInteger)row;
+
+#pragma mark - IBAction Methods
 
 /** 
  Unwinds back to the Printers screen.
@@ -147,8 +173,8 @@
 {
     [super viewDidLoad];
     
-    [self setup];
-    [self refresh];
+    [self setupScreen];
+    [self refreshScreen];
 }
 
 - (void)didReceiveMemoryWarning
@@ -156,9 +182,57 @@
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Setup
+#pragma mark - Segue
 
-- (void)setup
+- (void)prepareForSegue:(UIStoryboardSegue*)segue sender:(id)sender
+{
+    NSString* segueId = [segue identifier];
+    if ([segueId isEqualToString:SEGUE_IPHONE_TO_SEARCH_TABLE]
+        || [segueId isEqualToString:SEGUE_IPAD_TO_SEARCH_TABLE])
+    {
+        //embed
+        
+        UITableViewController* destController = (UITableViewController*)segue.destinationViewController;
+        
+        self.searchResultsTable = destController.tableView;
+        self.searchResultsTable.delegate = self;
+        self.searchResultsTable.dataSource = self;
+        
+        self.refreshControl = [[UIRefreshControl alloc] init];
+        [self.refreshControl addTarget:self
+                                action:@selector(refreshScreen)
+                      forControlEvents:UIControlEventValueChanged];
+        [destController.refreshControl setEnabled:YES];
+        destController.refreshControl = self.refreshControl;
+        
+        // fix for the tint color API bug in iOS7
+        [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
+    }
+    else
+    {
+        //back/slide
+        
+        if (self.isSearching)
+        {
+#if DEBUG_LOG_PRINTER_SEARCH_SCREEN
+            NSLog(@"[INFO][PrinterSearch] canceling search");
+#endif
+            self.isSearching = NO;
+            [self.printerManager stopSearching];
+            
+            return;
+        }
+    }
+}
+
+- (IBAction)onBack:(UIBarButtonItem *)sender
+{
+    [self dismissScreen];
+}
+
+#pragma mark - Screen Actions
+
+- (void)setupScreen
 {
     // setup properties
     self.printerManager = [PrinterManager sharedPrinterManager];
@@ -172,115 +246,17 @@
     self.listPrinterIP = [NSMutableArray array];
     self.listPrinterDetails = [NSMutableDictionary dictionary];
 #endif
-
+    
     self.hasAddedPrinters = NO;
-    
-    // setup pull-to-refresh
-    self.refreshControl = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self
-                            action:@selector(refresh)
-                  forControlEvents:UIControlEventValueChanged];
-    [self.refreshControl setBackgroundColor:[UIColor gray4ThemeColor]];
-    [self.refreshControl setTintColor:[UIColor whiteThemeColor]];
-    [self.tableView addSubview:self.refreshControl];
-    [self.refreshControl setHidden:YES];
-}
-
-#pragma mark - Segue
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // if the SNMP is still searching, the search is canceled
-    // the printer, if found, will not be added to the list of saved printers
-    if ([self.refreshControl isRefreshing])
-    {
-#if DEBUG_LOG_PRINTER_SEARCH_SCREEN
-        NSLog(@"[INFO][PrinterSearch] canceling search");
-#endif
-        [self.printerManager stopSearching];
-    }
-}
-
-#pragma mark - Header
-
-- (IBAction)onBack:(UIBarButtonItem *)sender
-{
-    [self unwindFromOverTo:[self.parentViewController class]];
-}
-
-- (void)addPrinter:(NSUInteger)row
-{
-    // check if adding printers is allowed
-    if ([self.printerManager isAtMaximumPrinters])
-    {
-        [AlertHelper displayResult:kAlertResultErrMaxPrinters
-                         withTitle:kAlertTitlePrintersSearch
-                       withDetails:nil];
-        return;
-    }
-    
-    // add the printer
-#if SORT_SEARCH_RESULTS
-    NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
-    PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
-#else
-    NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
-    PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
-#endif
-    if ([self.printerManager registerPrinter:printerDetails])
-    {
-        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
-                         withTitle:kAlertTitlePrintersSearch
-                       withDetails:nil];
-        self.hasAddedPrinters = YES;
-        
-        // change the '+' button to a checkmark
-#if SORT_SEARCH_RESULTS
-        [self.listOldPrinterNames addObject:printerDetails.name];
-        [self.listNewPrinterNames removeObjectAtIndex:row];
-        [self.listNewPrinterDetails removeObjectForKey:printerIP];
-        [self.listNewPrinterIP removeObjectAtIndex:row];
-        [self.tableView reloadData];
-#else
-        if (printerDetails.name == nil)
-            [self.listPrinterDetails setValue:@"" forKey:printerIP];
-        else
-            [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
-        [self.tableView reloadData];
-#endif
-        
-        // if this is an iPad, reload the center panel
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-        {
-            [self.printersViewController reloadData];
-        }
-    }
+    self.isSearching = NO;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        self.isIpad = YES;
     else
-    {
-        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
-                         withTitle:kAlertTitlePrintersSearch
-                       withDetails:nil];
-    }
+        self.isIpad = NO;
 }
 
-#pragma mark - Refresh
-
-- (void)refresh
+- (void)refreshScreen
 {
-    // check for network connection
-    if (![NetworkManager isConnectedToLocalWifi])
-    {
-        [AlertHelper displayResult:kAlertResultErrNoNetwork
-                         withTitle:kAlertTitlePrintersSearch
-                       withDetails:nil];
-        
-        if ([self.refreshControl isRefreshing])
-            [self.refreshControl endRefreshing];
-        [self.refreshControl setHidden:YES];
-        
-        return;
-    }
-
     // clear the lists
 #if SORT_SEARCH_RESULTS
     [self.listOldPrinterNames removeAllObjects];
@@ -291,31 +267,118 @@
     [self.listPrinterIP removeAllObjects];
     [self.listPrinterDetails removeAllObjects];
 #endif
+    [self.searchResultsTable reloadData];
+    
+    // check for network connection
+    if (![NetworkManager isConnectedToLocalWifi])
+    {
+        [AlertHelper displayResult:kAlertResultErrNoNetwork
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil];
+        
+        if ([self.refreshControl isRefreshing])
+            [self stopSearchingAnimation];
+        
+        return;
+    }
 
     // start the search
 #if DEBUG_LOG_PRINTER_SEARCH_SCREEN
     NSLog(@"[INFO][PrinterSearch] initiating search");
 #endif
     [self.printerManager searchForAllPrinters];
+    self.isSearching = YES;
+    
     // callbacks for the search will be handled in delegate methods
-    
     // if UI needs to do other things, do it here
-    
-    // show the searching indicator
-    // note: content offset code is for fixing the bug in iOS7 where the view does not appear on load
-    if (self.tableView.contentOffset.y == 0)
-        self.tableView.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
-    [self.refreshControl beginRefreshing];
-    [self.refreshControl setHidden:NO];
+    [self startSearchingAnimation];
+}
+
+- (void)dismissScreen
+{
+    if (self.isIpad)
+        [self close];
+    else
+        [self unwindFromOverTo:[self.parentViewController class]];
+}
+
+#pragma mark - Add
+
+- (void)addPrinter:(NSUInteger)row
+{
+    // check if adding printers is allowed
+    if ([self.printerManager isAtMaximumPrinters])
+    {
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    // cancel the cell highlight
+                    NSIndexPath* rowIndexPath = [NSIndexPath indexPathForRow:row inSection:0];
+                    [self.searchResultsTable reloadRowsAtIndexPaths:@[rowIndexPath]
+                                                   withRowAnimation:UITableViewRowAnimationNone];
+                }];
+    }
+    else
+    {
+        // add the printer
+#if SORT_SEARCH_RESULTS
+        NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
+        PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
+#else
+        NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
+        PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
+#endif
+        if ([self.printerManager registerPrinter:printerDetails])
+        {
+            self.hasAddedPrinters = YES;
+            [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                             withTitle:kAlertTitlePrintersSearch
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self dismissScreen];
+                    }];
+            
+            // change the '+' button to a checkmark
+#if SORT_SEARCH_RESULTS
+            [self.listOldPrinterNames addObject:printerDetails.name];
+            [self.listNewPrinterNames removeObjectAtIndex:row];
+            [self.listNewPrinterDetails removeObjectForKey:printerIP];
+            [self.listNewPrinterIP removeObjectAtIndex:row];
+            [self.tableView reloadData];
+#else
+            if (printerDetails.name == nil)
+                [self.listPrinterDetails setValue:@"" forKey:printerIP];
+            else
+                [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
+            [self.searchResultsTable reloadData];
+#endif
+            
+            // if this is an iPad, reload the center panel
+            if (self.isIpad)
+                [self.printersViewController reloadData];
+        }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+                             withTitle:kAlertTitlePrintersSearch
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        // cancel the cell highlight
+                        NSIndexPath* rowIndexPath = [NSIndexPath indexPathForRow:row inSection:0];
+                        [self.searchResultsTable reloadRowsAtIndexPaths:@[rowIndexPath]
+                                                       withRowAnimation:UITableViewRowAnimationNone];
+                    }];
+        }
+    }
 }
 
 #pragma mark - PrinterSearchDelegate
 
-- (void)searchEndedwithResult:(BOOL)printerFound
+- (void)printerSearchEndedwithResult:(BOOL)printerFound
 {
-    // hide the searching indicator
-    [self.refreshControl endRefreshing];
-    [self.refreshControl setHidden:YES];
+    self.isSearching = NO;
+    [self stopSearchingAnimation];
 }
 
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails
@@ -343,7 +406,7 @@
 #endif
     
     // reload the tableView
-    [self.tableView reloadData];
+    [self.searchResultsTable reloadData];
 }
 
 - (void)printerSearchDidFoundOldPrinter:(NSString*)printerIP withName:(NSString*)printerName
@@ -366,7 +429,7 @@
 #endif
     
     // reload the tableView
-    [self.tableView reloadData];
+    [self.searchResultsTable reloadData];
 }
 
 #pragma mark - TableView
@@ -474,6 +537,26 @@
 - (CGFloat)tableView:(UITableView*)tableView heightForRowAtIndexPath:(NSIndexPath*)indexPath
 {
     return 60.0f;
+}
+
+#pragma mark - Refresh Control
+
+- (void)startSearchingAnimation
+{
+    [self.refreshControl setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self.refreshControl setTintColor:[UIColor whiteColor]];
+    [self.refreshControl beginRefreshing];
+    [self.searchResultsTable setContentOffset:CGPointMake(0, self.refreshControl.frame.size.height)];
+    [self.searchResultsTable setBounces:NO];
+}
+
+- (void)stopSearchingAnimation
+{
+    [self.refreshControl endRefreshing];
+    [self.refreshControl setBackgroundColor:[UIColor gray2ThemeColor]];
+    [self.refreshControl setTintColor:[UIColor gray2ThemeColor]];
+    [self.searchResultsTable setContentOffset:CGPointMake(0, 0) animated:YES];
+    [self.searchResultsTable setBounces:YES];
 }
 
 @end

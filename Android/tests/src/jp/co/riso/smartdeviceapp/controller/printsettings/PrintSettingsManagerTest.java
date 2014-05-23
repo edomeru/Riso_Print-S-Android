@@ -78,7 +78,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         
         if(printersList.isEmpty()) {
             printer = new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS);
-            printerManager.savePrinterToDB(printer);
+            printerManager.savePrinterToDB(printer, false);
         } else {
             printer = printersList.get(0);
         }

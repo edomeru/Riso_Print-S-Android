@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.Fragment;
@@ -175,6 +175,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
      */
     private void switchToFragment(int state, boolean animate) {
         FragmentManager fm = getFragmentManager();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        
         FragmentTransaction ft = fm.beginTransaction();
         
         Fragment container = fm.findFragmentById(R.id.mainLayout);

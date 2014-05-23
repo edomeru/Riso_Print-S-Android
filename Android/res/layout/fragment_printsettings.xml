@@ -16,7 +16,7 @@
         android:paddingLeft="@dimen/home_title_padding"
         android:text="@string/ids_lbl_print_settings"
         android:textColor="@color/theme_light_1"
-        android:textSize="@dimen/actionbar_title_text_size" />
+        android:textSize="@dimen/font_size_large" />
 
     <jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView
         android:id="@+id/rootView"

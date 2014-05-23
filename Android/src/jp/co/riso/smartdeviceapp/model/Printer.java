@@ -215,7 +215,7 @@ public class Printer implements Parcelable {
         public Config() {
             mBookletAvailable = true;
             mStaplerAvailable = true;
-            mPunch3Available = true;
+            mPunch3Available = false;
             mPunch4Available = true;
             mTrayFaceDownAvailable = true;
             mTrayTopAvailable = true;
@@ -297,7 +297,7 @@ public class Printer implements Parcelable {
          * @return the mPunch3Available
          */
         public boolean isPunch3Available() {
-            return mPunch4Available;
+            return mPunch3Available;
         }
         
         /**

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jp.co.riso.smartdeviceapp"
+    package="jp.co.riso.smartprint"
     android:versionCode="1"
-    android:versionName="v0.01.20140516" >
+    android:versionName="v0.01.20140523" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -42,7 +42,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="jp.co.riso.smartdeviceapp.view.MainActivity" >
+            android:name="jp.co.riso.smartdeviceapp.view.MainActivity" 
+            android:configChanges="orientation|screenSize" >
         </activity>
     </application>
 

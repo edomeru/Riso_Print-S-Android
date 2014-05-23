@@ -13,7 +13,7 @@ import java.util.Locale;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
@@ -22,6 +22,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -57,7 +58,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private static final float CREASE_DARK_LENGTH = 8.0f;
     private static final float CREASE_WHITE_LENGTH = 4.0f;
     
-    private static final float PUNCH_DIAMETER_IN_MM = 12;
+    private static final float PUNCH_DIAMETER_IN_MM = 8;
     private static final float PUNCH_POS_SIDE_IN_MM = 8;
     
     private static final float STAPLE_LENGTH_IN_MM = 12;
@@ -87,6 +88,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private float mMarginRight = 0;
     private float mMarginTop = 0;
     private float mMarginBottom = 0;
+    
+    private boolean mShow3Punch = false;
     
     private PreviewControlsListener mListener = null;
     
@@ -363,6 +366,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     public void setMarginBottomInMm(float marginBottom) {
         mMarginBottom = marginBottom;
     }
+
+    /**
+     * Set the print preview to show 3 punch instead of 4 punch
+     * 
+     * @param show3Punch
+     *            Should show 3 holes
+     */
+    public void setShow3Punch(boolean show3Punch) {
+        mShow3Punch = show3Punch;
+    }
     
     /**
      * Set the Preview Controls Listener
@@ -438,7 +451,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @return page string
      */
     public String getPageString() {
-        int currentFace = getCurrentPage();
+        return getPageString(getCurrentPage());
+    }
+    
+    /**
+     * @param currentFace
+     *            Current index
+     * 
+     * @return page string
+     */
+    public String getPageString(int currentFace) {
         if (isTwoPageDisplayed()) {
             currentFace *= 2;
         }
@@ -451,20 +473,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
 
         return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
-        /*
-        final String FORMAT_TWO_PAGE_STATUS = "PAGE %d-%d / %d";
-
-        int currentPage = getCurrentPage();
-        int pageCount = mPdfPageProvider.getPageCount();
-        
-        if (mCurlView.getViewMode() == CurlView.SHOW_ONE_PAGE || getCurrentPage() == 0) {
-            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage + 1, pageCount);
-        } else if (getCurrentPage() == mPdfPageProvider.getPageCount()) {
-            return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentPage, pageCount);
-        } else {
-            return String.format(Locale.getDefault(), FORMAT_TWO_PAGE_STATUS, currentPage, currentPage + 1, pageCount);
-        }
-        */
     }
     
     /**
@@ -530,6 +538,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      */
     protected String getCacheKey(int index, int side) {
         StringBuffer buffer = new StringBuffer();
+        
         buffer.append(mPdfManager.getPath());
         buffer.append(index);
         buffer.append(side);
@@ -545,7 +554,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         buffer.append(mPrintSettings.getFinishingSide().ordinal());
         buffer.append(mPrintSettings.getStaple().ordinal());
-        buffer.append(mPrintSettings.getPunch().ordinal());
+        buffer.append(mPrintSettings.getPunch().getCount(mShow3Punch));
         
         buffer.append(mPrintSettings.isBooklet());
         buffer.append(mPrintSettings.getBookletFinish().ordinal());
@@ -583,10 +592,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @param dimension
      * @param bmpWidth
+     * @param bmpHeight
      * @return converted dimension
      */
-    protected int convertDimension(float dimension, int bmpWidth) {
-        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * bmpWidth);
+    protected int convertDimension(float dimension, int bmpWidth, int bmpHeight) {
+        float smallerDimension = Math.min(bmpWidth, bmpHeight);
+        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * smallerDimension);
     }
     
     // ================================================================================
@@ -827,6 +838,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setMargins(lrMargin, tbMargin, lrMargin, tbMargin + (pageControlSize / (float) h));
     }
     
+    /**
+     * @param zoomLevel
+     */
     private void setZoomLevel(float zoomLevel) {
         mZoomLevel  = zoomLevel;
         if (mZoomLevel <= BASE_ZOOM_LEVEL) {
@@ -844,6 +858,45 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.requestRender();
     }
     
+    /**
+     * @param zoomLevel
+     * @param animate
+     */
+    private void animateZoomTo(float zoomLevel) {
+        final float duration = 250;
+        final long currentTime = System.currentTimeMillis();
+        final float initialZoom = mZoomLevel;
+        final float targetZoom = zoomLevel;
+        final Activity targetActivity = (Activity) getContext();
+
+        Thread thread = new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                while (System.currentTimeMillis() - currentTime < duration) {
+                    float percentage = (System.currentTimeMillis() - currentTime) / duration;
+                    
+                    mCurlView.setZoomLevel(initialZoom + ((targetZoom - initialZoom) * percentage));
+                    mCurlView.requestRender();
+                    
+                    Thread.yield();
+                }
+                
+                if (targetActivity != null) {
+                    targetActivity.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            setZoomLevel(targetZoom);
+                        }
+                    });
+                };
+                //setZoomLevel(targetZoom);
+            }
+        });
+        thread.start();
+    }
+    
     // ================================================================================
     // INTERFACE - OnDoubleTapListener
     // ================================================================================
@@ -851,7 +904,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /** {@inheritDoc} */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        setZoomLevel(BASE_ZOOM_LEVEL);
+        animateZoomTo(BASE_ZOOM_LEVEL);
         return true;
     }
 
@@ -1083,7 +1136,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param canvas
          */
         private void drawStapleImages(Canvas canvas) {
-            int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth());
+            int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth(), canvas.getHeight());
             float scale = stapleLength / (float) mStapleBmp.getWidth();
             
             int count = mPrintSettings.getStaple().getCount();
@@ -1096,7 +1149,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             // CORNER
             if (count == 1) {
-                int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth());
+                int staplePos = convertDimension(STAPLE_POS_CORNER_IN_MM, canvas.getWidth(), canvas.getHeight());
                 
                 int x = staplePos;
                 int y = staplePos;
@@ -1110,11 +1163,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 
                 ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);                
             } else {
-                int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth());
+                int staplePos = convertDimension(STAPLE_POS_SIDE_IN_MM, canvas.getWidth(), canvas.getHeight());
 
                 if (mPrintSettings.isBooklet()) {
                     if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
-                        staplePos = convertDimension(0, canvas.getWidth());
+                        staplePos = convertDimension(0, canvas.getWidth(), canvas.getHeight());
                     }
                 }
                 
@@ -1152,11 +1205,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param canvas
          */
         private void drawPunchImages(Canvas canvas) {
-            int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth());
+            int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth(), canvas.getHeight());
             float scale = punchDiameter / (float) mPunchBmp.getWidth();
 
-            int count = mPrintSettings.getPunch().getCount();
-            int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth());
+            int count = mPrintSettings.getPunch().getCount(mShow3Punch);
+            int punchPos = convertDimension(PUNCH_POS_SIDE_IN_MM, canvas.getWidth(), canvas.getHeight());
             
             for (int i = 0; i < count; i++) {
                 int x = punchPos;
@@ -1217,11 +1270,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             int paperHeight = bmp.getHeight();
             
             // adjust paperWidth and paperHeight based on margins
-            paperWidth -= convertDimension(mMarginLeft, bmp.getWidth());
-            paperWidth -= convertDimension(mMarginRight, bmp.getWidth());
+            paperWidth -= convertDimension(mMarginLeft, bmp.getWidth(), bmp.getHeight());
+            paperWidth -= convertDimension(mMarginRight, bmp.getWidth(), bmp.getHeight());
             
-            paperHeight -= convertDimension(mMarginTop, bmp.getWidth());
-            paperHeight -= convertDimension(mMarginBottom, bmp.getWidth());
+            paperHeight -= convertDimension(mMarginTop, bmp.getWidth(), bmp.getHeight());
+            paperHeight -= convertDimension(mMarginBottom, bmp.getWidth(), bmp.getHeight());
             
             int pdfPageWidth = paperWidth / getColsPerSheet();
             int pdfPageHeight = paperHeight / getRowsPerSheet();
@@ -1229,8 +1282,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             int beginPos[] = getBeginPositions(paperWidth, paperHeight, pdfPageWidth, pdfPageHeight);
             
             // adjust beginX and beginY based on margins
-            beginPos[0] += convertDimension(mMarginLeft, bmp.getWidth());
-            beginPos[1] += convertDimension(mMarginTop, bmp.getWidth());
+            beginPos[0] += convertDimension(mMarginLeft, bmp.getWidth(), bmp.getHeight());
+            beginPos[1] += convertDimension(mMarginTop, bmp.getWidth(), bmp.getHeight());
             
             boolean leftToRight = true;
             boolean topToBottom = true;
@@ -1292,21 +1345,39 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 }
                 
                 float scale = 1.0f / getPagesPerSheet();
-                
-                Bitmap page = mPdfManager.getPageBitmap(i + beginIndex, scale, flipX, flipY);
+                int curIndex = i + beginIndex;
+                Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int dim[] = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(), mPdfManager.getPageHeight(), right - left, bottom - top);
+                    int x = left;
+                    int y = top;
+                    int dim[] = new int[] {
+                            convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth(), canvas.getHeight()),
+                            convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth(), canvas.getHeight())
+                    };
+                    
+                    int divide = Math.max(getColsPerSheet(), getRowsPerSheet());
+                    dim[0] /= divide;
+                    dim[1] /= divide;
+                    
                     if (mPrintSettings.isScaleToFit()) {
-                        dim[0] = right - left;
-                        dim[1] = bottom - top;
+                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), right - left, bottom - top);
+                        
+                        // For Fit-XY
+                        //dim[0] = right - left;
+                        //dim[1] = bottom - top;
+                        
+                        x = left + ((right - left) - dim[0]) / 2;
+                        y = top + ((bottom - top) - dim[1]) / 2;
                     }
                     
-                    int x = left + ((right - left) - dim[0]) / 2;
-                    int y = top + ((bottom - top) - dim[1]) / 2;
+                    canvas.save(Canvas.CLIP_SAVE_FLAG);
+                    canvas.clipRect(left, top, right + 1, bottom + 1);
                     
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                     ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
+                    
+                    canvas.restore();
                     
                     page.recycle();
                 }

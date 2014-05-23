@@ -21,6 +21,9 @@
 #define PROGRESS_HEIGHT 70.0f
 #define PROGRESS_FORMAT @"%.2f%%"
 
+static NSLock *lock = nil;
+static NSMutableArray *taskList = nil;
+
 void printProgressCallback(directprint_job *job, int status, float progress);
 
 @interface DirectPrintManager()
@@ -43,6 +46,47 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 @implementation DirectPrintManager
 
++ (void)initialize
+{
+    lock = [[NSLock alloc] init];
+    taskList = [[NSMutableArray alloc] init];
+}
+
++ (BOOL)idle
+{
+    BOOL result = YES;
+    [lock lock];
+    result = [taskList count] == 0;
+    [lock unlock];
+    
+    return result;
+}
+
++ (void)cancelAll
+{
+    while (![DirectPrintManager idle])
+    {
+        [lock lock];
+        DirectPrintManager *manager = [taskList firstObject];
+        [lock unlock];
+        [manager cancelJob];
+    }
+}
+
++ (void)addTask:(DirectPrintManager *)manager
+{
+    [lock lock];
+    [taskList addObject:manager];
+    [lock unlock];
+}
+
++ (void)removeTask:(DirectPrintManager *)manager
+{
+    [lock lock];
+    [taskList removeObject:manager];
+    [lock unlock];
+}
+
 - (id)init
 {
     self = [super init];
@@ -50,8 +94,6 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     {
         _job = nil;
         _isPrinting = NO;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
     }
     
     return self;
@@ -59,20 +101,25 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    if (self.isPrinting)
+    {
+        [self cancelJob];
+    }
 }
 
 - (void)printDocumentViaLPR
 {
-    [self preparePrintJob];
     self.isPrinting = YES;
+    [self preparePrintJob];
+    [DirectPrintManager addTask:self];
     directprint_job_lpr_print(self.job);
 }
 
 - (void)printDocumentViaRaw
 {
-    [self preparePrintJob];
     self.isPrinting = YES;
+    [self preparePrintJob];
+    [DirectPrintManager addTask:self];
     directprint_job_raw_print(self.job);
 }
 
@@ -89,12 +136,10 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];
+    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"") type:CXAlertViewButtonTypeCancel handler:^(CXAlertView * alertView, CXAlertButtonItem *button){
+        [self cancelJob];
+    }];
     self.alertView = alertView;
-    [alertView addButtonWithTitle:NSLocalizedString(IDS_LBL_CANCEL, @"")
-                             type:CXAlertViewButtonTypeDefault
-                          handler:^(CXAlertView *alertView, CXAlertButtonItem *button) {
-                              [self cancelJob];
-                          }];
     [alertView show];
 }
 
@@ -142,57 +187,41 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 {
     self.isPrinting = NO;
     
-    dispatch_sync(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [AlertHelper displayResult:kAlertResultPrintSuccessful withTitle:kAlertTitleDefault withDetails:nil withDismissHandler:^(CXAlertView *alertView){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
+                [self.delegate documentDidFinishPrinting:YES];
+            });
+        }];
         [self.alertView dismiss];
     });
     
-    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
-    
-    [self.delegate documentDidFinishPrinting:YES];
 }
 
 - (void)updateError
 {
     self.isPrinting = NO;
     
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.alertView dismiss];
-    });
-    
-    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
-    
-    [AlertHelper displayResult:kAlertResultErrDefault withTitle:kAlertTitleDefault withDetails:nil];
-    
     dispatch_async(dispatch_get_main_queue(), ^{
+        [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
+        [AlertHelper displayResult:kAlertResultPrintFailed withTitle:kAlertTitleDefault withDetails:nil];
+        [self.alertView dismiss];
         [self.delegate documentDidFinishPrinting:NO];
     });
 }
 
 - (void)cancelJob
 {
-    self.isPrinting = NO;
-    CFBridgingRelease(directprint_job_get_caller_data(self.job));
-    directprint_job_cancel(self.job);
-    directprint_job_free(self.job);
-    if ([NSThread isMainThread])
-    {
-        [self.alertView dismiss];
-    }
-    else
-    {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self.alertView dismiss];
-        });
-    }
-}
-
-#pragma mark - Notifications
-
-- (void)willResignActive
-{
     if (self.isPrinting)
     {
-        [self cancelJob];
+        self.isPrinting = NO;
+        [self.alertView dismiss];
+        self.alertView = nil;
+        CFBridgingRelease(directprint_job_get_caller_data(self.job));
+        [DirectPrintManager removeTask:self];
+        directprint_job_cancel(self.job);
+        directprint_job_free(self.job);
     }
 }
 
@@ -202,12 +231,18 @@ void printProgressCallback(directprint_job *job, int status, float progress)
 {
     void *callerData = directprint_job_get_caller_data(job);
     DirectPrintManager *manager = (__bridge DirectPrintManager *)callerData;
+    
+#if DEBUG_LOG_DIRECTPRINT_MANAGER
+    NSLog(@"[INFO][DirectPrintManager] Progress: %f", progress);
+#endif
+    
     [manager updateProgress:progress];
     if (status < 0)
     {
         // Error
         [manager updateError];
         CFBridgingRelease(callerData);
+        [DirectPrintManager removeTask:manager];
         directprint_job_free(job);
     }
     else if (status == kJobStatusSent)
@@ -215,6 +250,7 @@ void printProgressCallback(directprint_job *job, int status, float progress)
         // Success
         [manager updateSuccess];
         CFBridgingRelease(callerData);
+        [DirectPrintManager removeTask:manager];
         directprint_job_free(job);
     }
 }

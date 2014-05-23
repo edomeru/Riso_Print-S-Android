@@ -11,7 +11,6 @@
 
 @interface PrintSettingsPrinterListViewController ()
 @property (weak, nonatomic) IBOutlet UIView *printerListHeader;
-
 @end
 
 @implementation PrintSettingsPrinterListViewController

@@ -17,7 +17,7 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -107,9 +107,11 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            Printer object containing the Printer Information such as Print Settings
+     * @param isOnline
+     *            Printer online status
      * @return true if successful
      */
-    public boolean savePrinterToDB(Printer printer) {
+    public boolean savePrinterToDB(Printer printer, boolean isOnline) {
         if (printer == null || isExists(printer)) {
             return false;
         }
@@ -123,7 +125,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         
         if (mPrintersCallback != null && mPrintersCallback.get() != null) {
-            mPrintersCallback.get().onAddedNewPrinter(printer);
+            mPrintersCallback.get().onAddedNewPrinter(printer, isOnline);
         }
         
         mPrinterList.add(printer);
@@ -696,8 +698,10 @@ public class PrinterManager implements SNMPManagerCallback {
          * 
          * @param printer
          *            printer object
+         * @param isOnline
+         *            Printer online status            
          */
-        public void onAddedNewPrinter(Printer printer);
+        public void onAddedNewPrinter(Printer printer, boolean isOnline);
     }
     
     // ================================================================================

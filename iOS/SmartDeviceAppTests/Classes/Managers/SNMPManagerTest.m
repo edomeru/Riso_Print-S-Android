@@ -7,33 +7,75 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "SNMPManager.h"
 #import "NotificationNames.h"
 #import "PrinterDetails.h"
+#include "common.h"
 
-const float SNMPM_SEARCH_TIMEOUT = 10;
+#include "fff.h"
+DEFINE_FFF_GLOBALS;
 
-@interface SNMPManager (UnitTest)
+FAKE_VOID_FUNC(snmp_manual_search);
+FAKE_VALUE_FUNC(snmp_context *, snmp_context_new, snmp_discovery_ended_callback, snmp_printer_added_callback);
+FAKE_VOID_FUNC(snmp_context_free);
+FAKE_VOID_FUNC(snmp_manual_discovery);
+FAKE_VOID_FUNC(snmp_device_discovery);
+FAKE_VOID_FUNC(snmp_cancel);
 
-// expose private properties
-- (BOOL)useSNMPCommonLib;
-- (BOOL)useSNMPUnicastTimeout;
+FAKE_VALUE_FUNC(snmp_device *, snmp_device_new);
+FAKE_VOID_FUNC(snmp_device_free);
+FAKE_VALUE_FUNC(int, snmp_device_get_capability_status);
+FAKE_VALUE_FUNC(const char *, snmp_device_get_ip_address);
+FAKE_VALUE_FUNC(const char *, snmp_device_get_name);
 
-// expose private methods
-- (void)setUseSNMPCommonLib:(BOOL)setting;
-- (void)setUseSNMPUnicastTimeout:(BOOL)setting;
+snmp_discovery_ended_callback mockEndCallback;
+snmp_printer_added_callback mockAddedCallback;
 
-@end
+snmp_context *mock_snmp_context_new(snmp_discovery_ended_callback endCallback, snmp_printer_added_callback addedCallback)
+{
+    mockEndCallback = endCallback;
+    mockAddedCallback = addedCallback;
+    return snmp_context_new_fake.return_val;
+}
 
-@interface SNMPManagerTest : GHTestCase
+void mock_fail_snmp_manual_discovery()
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        mockEndCallback((snmp_context *)1, 0);
+    });
+}
+
+void mock_success_snmp_manual_discovery()
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        mockAddedCallback((snmp_context *)1, (snmp_device *)1);
+        mockEndCallback((snmp_context *)1, 1);
+    });
+}
+
+void mock_fail_snmp_device_discovery()
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        mockEndCallback((snmp_context *)1, 0);
+    });
+}
+
+void mock_success_snmp_device_discovery()
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        mockAddedCallback((snmp_context *)1, (snmp_device *)1);
+        mockEndCallback((snmp_context *)1, 1);
+    });
+}
+
+@interface SNMPManagerTest : GHAsyncTestCase
 {
     SNMPManager* snmpManager;
-    BOOL correctUseSNMPCommonLib;
-    BOOL correctUseSNMPUnicastTimeout;
-    BOOL notificationEndReceived;
-    BOOL notificationAddReceived;
-    BOOL printerFound;
 }
+
+@property (nonatomic, strong) PrinterDetails *testPrinterDetails;
+@property (nonatomic, strong) id mockObserver;
 
 @end
 
@@ -49,193 +91,264 @@ const float SNMPM_SEARCH_TIMEOUT = 10;
 // Run at start of all tests in the class
 - (void)setUpClass
 {
-    snmpManager = [SNMPManager sharedSNMPManager];
-    GHAssertNotNil(snmpManager, @"check initialization of SNMPManager");
-    correctUseSNMPCommonLib = [snmpManager useSNMPCommonLib];
-    correctUseSNMPUnicastTimeout = [snmpManager useSNMPUnicastTimeout];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(snmpManagerDidNotifyEnd:)
-                                                 name:NOTIF_SNMP_END
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(snmpManagerDidNotifyAdd:)
-                                                 name:NOTIF_SNMP_ADD
-                                               object:nil];
+    self.testPrinterDetails = [[PrinterDetails alloc] init];
+    self.testPrinterDetails.ip = @"192.168.1.1";
+    self.testPrinterDetails.name = @"RISO Printer 1";
 }
 
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    //revert override
-    [snmpManager setUseSNMPCommonLib:correctUseSNMPCommonLib];
-    [snmpManager setUseSNMPUnicastTimeout:correctUseSNMPUnicastTimeout];
 }
 
 // Run before each test method
 - (void)setUp
 {
+    RESET_FAKE(snmp_manual_search);
+    RESET_FAKE(snmp_context_new);
+    RESET_FAKE(snmp_context_free);
+    RESET_FAKE(snmp_manual_discovery);
+    RESET_FAKE(snmp_device_discovery);
+    RESET_FAKE(snmp_cancel);
+
+    RESET_FAKE(snmp_device_new);
+    RESET_FAKE(snmp_device_free);
+    RESET_FAKE(snmp_device_get_capability_status);
+    RESET_FAKE(snmp_device_get_ip_address);
+    RESET_FAKE(snmp_device_get_name);
+    
+    FFF_RESET_HISTORY();
+    
+    snmp_context_new_fake.custom_fake = mock_snmp_context_new;
+    snmp_context_new_fake.return_val = (snmp_context *)1;
 }
 
 // Run after each test method
 - (void)tearDown
 {
+    if (self.mockObserver != nil)
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver:self.self.mockObserver];
+        self.mockObserver = nil;
+    }
 }
 
 #pragma mark - Test Cases
 
-/* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
-/* use a naming scheme for defining the execution order of your test cases */
-
-- (void)test001_SearchForPrinter
+- (void)testSharedManager
 {
-    GHTestLog(@"# CHECK: SNMPM can initiate Manual Search. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds after initiating manual search", SNMPM_SEARCH_TIMEOUT];
+    // SUT
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    notificationEndReceived = NO;
-    notificationAddReceived = NO;
-    printerFound = NO;
-    [snmpManager searchForPrinter:@"192.168.0.197"];
-    [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
-    GHAssertTrue(notificationEndReceived, @"");
+    // Verification
+    GHAssertNotNil(sharedSNMPManager, @"sharedSNMPManager should not be nil");
 }
 
-- (void)test002_SearchForAvailablePrinters
+- (void)testSearchForPrinter_NotFound
 {
-    GHTestLog(@"# CHECK: SNMPM can initiate Device Discovery. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds after initiating device discovery", SNMPM_SEARCH_TIMEOUT];
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    notificationEndReceived = NO;
-    notificationAddReceived = NO;
-    printerFound = NO;
-    [snmpManager searchForAvailablePrinters];
-    [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
-    GHAssertTrue(notificationEndReceived, @"");
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:snmpManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == NO);
+    }]];
+    
+    snmp_manual_discovery_fake.custom_fake = mock_fail_snmp_manual_discovery;
+    
+    // SUT
+    [sharedSNMPManager searchForPrinter:@"192.168.1.1"];
+    
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
+    GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 0, @"snmp_device_get_ip_address must not be called.");
+    GHAssertEquals((int)snmp_device_get_name_fake.call_count, 0, @"snmp_device_get_name must not be called.");
+    GHAssertNoThrow([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
-- (void)test003_CancelSearch
+- (void)testSearchForPrinter_Found
 {
-    GHTestLog(@"# CHECK: SNMPM can cancel search. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds after stopping search", SNMPM_SEARCH_TIMEOUT];
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    notificationEndReceived = NO;
-    [snmpManager searchForPrinter:@"192.168.0.1"];
-    [self waitForCompletion:2 withMessage:msg];
-    [snmpManager cancelSearch];
-    [self waitForCompletion:SNMPM_SEARCH_TIMEOUT withMessage:msg];
-    GHAssertFalse(notificationEndReceived, @"");
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_ADD object:sharedSNMPManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_ADD object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        PrinterDetails *pd = [userInfo objectForKey:@"printerDetails"];
+        if ([pd.ip compare:self.testPrinterDetails.ip] != NSOrderedSame)
+        {
+            return NO;
+        }
+        if ([pd.name compare:self.testPrinterDetails.name] != NSOrderedSame)
+        {
+            return NO;
+        }
+        return YES;
+    }]];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:[SNMPManager sharedSNMPManager] userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == YES);
+    }]];
+    
+    snmp_manual_discovery_fake.custom_fake = mock_success_snmp_manual_discovery;
+    snmp_device_get_ip_address_fake.return_val = [self.testPrinterDetails.ip UTF8String];
+    snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
+    
+    // SUT
+    [sharedSNMPManager searchForPrinter:@"192.168.1.1"];
+    
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
+    GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 2, @"snmp_device_get_ip_address must be called.");
+    GHAssertEquals((int)snmp_device_get_name_fake.call_count, 1, @"snmp_device_get_name must be called.");
+    GHAssertNoThrow([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
-- (void)test004_Singleton
+- (void)testSearchForPrinter_Broadcast
 {
-    GHTestLog(@"# CHECK: SNPM is indeed a singleton. #");
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    SNMPManager* snmpmNew = [SNMPManager sharedSNMPManager];
-    GHAssertEqualObjects(snmpManager, snmpmNew, @"should return the same object");
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == YES);
+    }]];
+    
+    snmp_manual_discovery_fake.custom_fake = mock_success_snmp_manual_discovery;
+    snmp_device_get_ip_address_fake.return_val = "255.255.255.255";
+    snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
+    
+    // SUT
+    [sharedSNMPManager searchForPrinter:@"255.255.255.255"];
+    
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
+    GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 1, @"snmp_device_get_ip_address must be called.");
+    GHAssertEquals((int)snmp_device_get_name_fake.call_count, 0, @"snmp_device_get_name must not be called.");
+    GHAssertNoThrow([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
-- (void)test005_FakeSearchForPrinter
+- (void)testSearchForAvailablePrinters_NotFound
 {
-    GHTestLog(@"# CHECK: SNPM's Fake Manual Search. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds while making fake manual search", SNMPM_SEARCH_TIMEOUT];
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    //override setting
-    [snmpManager setUseSNMPCommonLib:NO]; //use the fake search
-    [snmpManager setUseSNMPUnicastTimeout:NO];
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == NO);
+    }]];
     
-    notificationEndReceived = NO;
-    notificationAddReceived = NO;
-    printerFound = NO;
-    [snmpManager searchForPrinter:@"192.168.0.1"];
-    [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
-    GHAssertTrue(notificationEndReceived, @"");
-    GHAssertTrue(notificationAddReceived, @"");
-    GHAssertTrue(printerFound, @"");
+    snmp_device_discovery_fake.custom_fake = mock_fail_snmp_device_discovery;
     
-    //override setting
-    [snmpManager setUseSNMPCommonLib:NO]; //use the fake search
-    [snmpManager setUseSNMPUnicastTimeout:YES];
+    // SUT
+    [sharedSNMPManager searchForAvailablePrinters];
     
-    notificationEndReceived = NO;
-    notificationAddReceived = NO;
-    printerFound = NO;
-    [snmpManager searchForPrinter:@"192.168.0.1"];
-    [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
-    GHAssertTrue(notificationEndReceived, @"");
-    GHAssertFalse(notificationAddReceived, @"");
-    GHAssertFalse(printerFound, @"");
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_device_discovery_fake.call_count, 1, @"snmp_device_discovery must be called.");
+    GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 0, @"snmp_device_get_ip_address must not be called.");
+    GHAssertEquals((int)snmp_device_get_name_fake.call_count, 0, @"snmp_device_get_name must not be called.");
+    GHAssertNoThrow([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
-- (void)test006_FakeSearchForAvailablePrinters
+- (void)testSearchForAvailablePrinters_Found
 {
-    GHTestLog(@"# CHECK: SNPM's Fake Device Discovery. #");
-    NSString* msg = [NSString stringWithFormat:
-                     @"wait for %.2f seconds while making fake device discovery", SNMPM_SEARCH_TIMEOUT];
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    //override setting
-    [snmpManager setUseSNMPCommonLib:NO]; //use the fake search
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_ADD object:sharedSNMPManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_ADD object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        PrinterDetails *pd = [userInfo objectForKey:@"printerDetails"];
+        if ([pd.ip compare:self.testPrinterDetails.ip] != NSOrderedSame)
+        {
+            return NO;
+        }
+        if ([pd.name compare:self.testPrinterDetails.name] != NSOrderedSame)
+        {
+            return NO;
+        }
+        return YES;
+    }]];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == YES);
+    }]];
     
-    notificationEndReceived = NO;
-    notificationAddReceived = NO;
-    printerFound = NO;
-    [snmpManager searchForAvailablePrinters];
-    [self waitForCompletion:SNMPM_SEARCH_TIMEOUT+1 withMessage:msg];
-    GHAssertTrue(notificationEndReceived, @"");
-    GHAssertTrue(notificationAddReceived, @"");
-    GHAssertTrue(printerFound, @"");
+    snmp_device_discovery_fake.custom_fake = mock_success_snmp_device_discovery;
+    snmp_device_get_ip_address_fake.return_val = [self.testPrinterDetails.ip UTF8String];
+    snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
+    
+    // SUT
+    [sharedSNMPManager searchForAvailablePrinters];
+    
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_device_discovery_fake.call_count, 1, @"snmp_device_discovery must be called.");
+    GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 2, @"snmp_device_get_ip_address must be called.");
+    GHAssertEquals((int)snmp_device_get_name_fake.call_count, 1, @"snmp_device_get_name must be called.");
+    GHAssertNoThrow([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
-#pragma mark - Notification Callbacks
-
-- (void)snmpManagerDidNotifyEnd:(NSNotification*)notif
+- (void)testCancelSearch_Searching
 {
-    notificationEndReceived = YES;
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    printerFound = [(NSNumber*)[notif object] boolValue];
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:[SNMPManager sharedSNMPManager] userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == YES);
+    }]];
+    
+    // SUT
+    [sharedSNMPManager searchForAvailablePrinters];
+    [sharedSNMPManager cancelSearch];
+    
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_cancel_fake.call_count, 1, @"snmp_cancel must be called.");
+    GHAssertThrows([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
-- (void)snmpManagerDidNotifyAdd:(NSNotification*)notif
+- (void)testCancelSearch_NotSearching
 {
-    notificationAddReceived = YES;
+    SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
     
-    PrinterDetails* pd = (PrinterDetails*)[notif object];
-    GHAssertNotNil(pd, @"");
-    GHAssertNotNil(pd.ip, @"");
-    GHAssertFalse(pd.enFinisher23Holes && pd.enFinisher24Holes, @"");
-    GHAssertTrue([pd.port intValue] == 0 || [pd.port intValue] == 1, @"");
-}
-
-#pragma mark - Utilities
-
-- (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
-{
-    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
+    // Mock
+    self.mockObserver = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:[SNMPManager sharedSNMPManager] userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+        NSNumber *result = [userInfo objectForKey:@"result"];
+        return ([result boolValue] == YES);
+    }]];
     
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"SNMP Manager Test"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"HIDE"
-                                          otherButtonTitles:nil];
-    [alert show];
+    // SUT
+    [sharedSNMPManager cancelSearch];
     
-    BOOL done = NO;
-    do
-    {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
-        if ([timeoutDate timeIntervalSinceNow] < 0.0)
-            break;
-    } while (!done);
-    
-    [alert dismissWithClickedButtonIndex:0 animated:YES];
-    
-    return done;
+    // Verification
+    [NSThread sleepForTimeInterval:1];
+    GHAssertEquals((int)snmp_cancel_fake.call_count, 0, @"snmp_cancel must not be called.");
+    GHAssertThrows([self.mockObserver verify], @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
 @end

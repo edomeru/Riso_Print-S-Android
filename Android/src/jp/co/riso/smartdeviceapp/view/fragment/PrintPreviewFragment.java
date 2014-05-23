@@ -8,15 +8,18 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.util.List;
+
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -33,7 +36,6 @@ import android.os.Message;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -141,6 +143,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
+        mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
         mPrintPreviewView.setListener(this);
@@ -233,6 +236,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      */
     public void setPrintId(int printerId) {
         mPrinterId = printerId;
+        if (mPrintPreviewView != null) {
+            mPrintPreviewView.setShow3Punch(isPrinterJapanese());
+            mPrintPreviewView.refreshView();
+        }
     }
     
     /**
@@ -248,6 +255,27 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             updateSeekBar();
             updatePageLabel();
         }
+    }
+    
+    /**
+     * Checks if the printer set is Japanese.
+     * 
+     * @return
+     */
+    public boolean isPrinterJapanese() {
+        if (mPrinterId == PrinterManager.EMPTY_ID) {
+            return false;
+        }
+        
+        List<Printer> mList = PrinterManager.getInstance(getActivity()).getSavedPrintersList();
+        
+        for (Printer printer : mList) {
+            if (printer.getId() == mPrinterId) {
+                return printer.getConfig().isPunch3Available();
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -465,31 +493,17 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public int getControlsHeight() {
-        if (mPageControls != null) {
-            MarginLayoutParams params = (MarginLayoutParams) mPageControls.getLayoutParams();
-            return mPageControls.getHeight() + params.bottomMargin;
-        }
         return 0;
     }
     
     /** {@inheritDoc} */
     @Override
     public void zoomLevelChanged(float zoomLevel) {
-        float percentage = (zoomLevel - 1.0f) * 4.0f;
-        
-        mPageControls.setAlpha(1.0f - percentage);
-        
-        //int height = mPageControls.getHeight();
-        //mPageControls.setTranslationY(height * percentage);
-        
-        //mPageControls.setScaleX(zoomLevel);
-        //mPageControls.setScaleY(zoomLevel);
     }
     
     /** {@inheritDoc} */
     @Override
     public void setControlsEnabled(boolean enable) {
-        mSeekBar.setEnabled(enable);
     }
     
     // ================================================================================
@@ -499,6 +513,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            mPageLabel.setText(mPrintPreviewView.getPageString(progress));
+        }
     }
     
     /** {@inheritDoc} */

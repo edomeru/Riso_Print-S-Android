@@ -121,8 +121,7 @@ static PrinterManager* sharedPrinterManager = nil;
     newPrinter.printsetting = defaultPrintSettings;
     
     // set the online status
-    // since the printer will only be added if online, initial setting is YES
-    newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
+    newPrinter.onlineStatus = [NSNumber numberWithBool:printerDetails.isPrinterFound];
     
     // save the Printer and PrintSetting objects to DB
     if ([DatabaseManager saveChanges])
@@ -230,8 +229,6 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
     if ([DatabaseManager deleteObject:printerToDelete])
     {
-        Printer *printer = [self.listSavedPrinters objectAtIndex:index];
-        printer = nil;
         [self.listSavedPrinters removeObjectAtIndex:index];
         self.countSavedPrinters--;
         return YES;
@@ -357,7 +354,8 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
     
     // get the printer details
-    PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[notif object];
+    NSDictionary *userInfo = [notif userInfo];
+    PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[userInfo objectForKey:@"printerDetails"];
     
     // check if this is a new printer
     __weak PrinterManager* weakSelf = self;
@@ -392,11 +390,12 @@ static PrinterManager* sharedPrinterManager = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     //get the search result
-    BOOL result = [(NSNumber*)[notif object] boolValue];
+    NSDictionary *userInfo = [notif userInfo];
+    BOOL result = [(NSNumber*)[userInfo objectForKey:@"result"] boolValue];
     
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.searchDelegate searchEndedwithResult:result];
+        [weakSelf.searchDelegate printerSearchEndedwithResult:result];
     });
 }
 
