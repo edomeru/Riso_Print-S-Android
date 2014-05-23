@@ -277,7 +277,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         
         String title = getResources().getString(R.string.ids_lbl_search_printers);
         String msg = null;
-        if (!mPrinterManager.savePrinterToDB(printer)) {
+        if (!mPrinterManager.savePrinterToDB(printer, true)) {
             ret = -1;
             msg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
         } else {

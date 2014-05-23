@@ -345,10 +345,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     /** {@inheritDoc} */
     @Override
-    public void onAddedNewPrinter(Printer printer) {
+    public void onAddedNewPrinter(Printer printer, boolean isOnline) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_NEW_PRINTER);
         newMessage.obj = printer;
-        newMessage.arg1 = 1;
+        newMessage.arg1 = isOnline ? 1 : 0;
         mHandler.sendMessage(newMessage);
     }
     
