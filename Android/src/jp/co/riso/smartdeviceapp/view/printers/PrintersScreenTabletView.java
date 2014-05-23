@@ -489,7 +489,7 @@ OnItemSelectedListener {
         switch (v.getId()) {
             case R.id.btn_delete:
                 if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    mCallbackRef.get().dialogConfirmDelete();
+                    mCallbackRef.get().onPrinterDeleteClicked();
                 }
                 mDeleteViewHolder = (ViewHolder) v.getTag();
                 break;
@@ -611,7 +611,7 @@ OnItemSelectedListener {
         /**
          * Dialog which is displayed to confirm printer delete
          */
-        public void dialogConfirmDelete();
+        public void onPrinterDeleteClicked();
     }
     
     // ================================================================================

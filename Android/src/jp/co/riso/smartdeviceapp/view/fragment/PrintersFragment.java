@@ -58,6 +58,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     
     private PauseableHandler mPauseableHandler = null;
+    private Printer mDeletePrinter = null;
     // ListView parameters
     private ListView mListView = null;
     private ArrayList<Printer> mPrinter = null;
@@ -242,6 +243,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     /**
      * Displays the Printer Info Screen
+     * 
+     * @param printer
+     *            Printer to be displayed in the PrinterInfo Screen
      */
     private void displayPrinterInfoFragment(Printer printer) {
         PrinterInfoFragment fragment = new PrinterInfoFragment();
@@ -251,6 +255,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     /**
      * Displays the Default Print Settings Screen
+     * 
+     * @param fragment
+     *            Default Print Settings Fragment
      */
     private void displayDefaultPrintSettings(PrintSettingsFragment fragment) {
         switchToFragment(fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
@@ -390,13 +397,14 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     /** {@inheritDoc} */
     @Override
-    public void dialogConfirmDelete() {
+    public void onPrinterDeleteClicked() {
         String title = getResources().getString(R.string.ids_lbl_printer);
         String errMsg = getResources().getString(R.string.ids_info_msg_delete_jobs);
         
         DialogFragment info = null;
         
-        info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), getResources().getString(R.string.ids_lbl_cancel));
+        info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), 
+                getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
@@ -411,6 +419,12 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /** {@inheritDoc} */
+    @Override
+    public void setDeletePrinter(Printer printer) {
+        mDeletePrinter = printer;
+    }
+    
     // ================================================================================
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
@@ -421,7 +435,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (isTablet()) {
             mPrinterTabletView.confirmDeletePrinterView();
         } else {
-            ((PrinterArrayAdapter) mPrinterAdapter).confirmDeletePrinterView();
+            if (mPrinterManager.removePrinter(mDeletePrinter)) {
+                mPrinterAdapter.remove(mDeletePrinter);
+                mPrinterAdapter.notifyDataSetChanged();
+            }
             ((PrintersListView) mListView).resetDeleteView();
         }
     }
@@ -432,6 +449,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (isTablet()) {
             mPrinterTabletView.resetDeletePrinterView();
         } else {
+            mDeletePrinter = null;
             ((PrinterArrayAdapter) mPrinterAdapter).resetDeletePrinterView();
             ((PrintersListView) mListView).resetDeleteView();
         }

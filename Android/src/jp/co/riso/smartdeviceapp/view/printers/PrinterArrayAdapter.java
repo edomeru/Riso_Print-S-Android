@@ -17,9 +17,6 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Handler.Callback;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,15 +25,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener, Callback {
-    private static final int MSG_REMOVE_PRINTER = 0x01;
-    
+public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {    
     private WeakReference<PrinterArrayAdapterInterface> mCallbackRef = null;
     private PrinterManager mPrinterManager = null;
     private ViewHolder mDeleteViewHolder = null;
     private ViewHolder mDefaultViewHolder = null;
     private int mLayoutId = 0;
-    private Handler mHandler = null;
 
     /**
      * Constructor
@@ -51,7 +45,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mDeleteViewHolder = null;
         mDefaultViewHolder = null;
-        mHandler = new Handler(this);
     }
     
     /** {@inheritDoc} */
@@ -139,21 +132,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     public void setPrintersArrayAdapterInterface (PrinterArrayAdapterInterface callback) {
         mCallbackRef = new WeakReference<PrinterArrayAdapterInterface>(callback);
     }
-    
-    /**
-     * This function is called when deletion of the printer view is confirmed
-     */
-    public void confirmDeletePrinterView() {
-        if (mDeleteViewHolder == null) {
-            return;
-        }
-        Printer printer = (Printer) mDeleteViewHolder.mDiscloseImage.getTag();        
-        Message newMessage = Message.obtain(mHandler, MSG_REMOVE_PRINTER);
-        newMessage.obj = printer;
-        mHandler.sendMessage(newMessage);
-        mDeleteViewHolder = null;     
-    }
-    
+      
     /**
      * This function is called to reset the delete view
      */
@@ -292,31 +271,14 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 break;
             case R.id.btn_delete:
                 if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    mCallbackRef.get().dialogConfirmDelete();
+                    PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
+                    
+                    mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
+                    mCallbackRef.get().onPrinterDeleteClicked();
+                    mCallbackRef.get().setDeletePrinter((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
                 }
-                PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
-                mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
                 break;
         }
-    }
-    
-    // ================================================================================
-    // INTERFACE - Callback
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case MSG_REMOVE_PRINTER:
-                Printer printer = (Printer) msg.obj;
-                if (mPrinterManager.removePrinter(printer)) {
-                    remove(printer);
-                    notifyDataSetChanged();
-                }
-                return true;
-        }
-        return false;
     }
     
     // ================================================================================
@@ -330,7 +292,15 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         /**
          * Dialog which is displayed to confirm printer delete
          */
-        public void dialogConfirmDelete();
+        public void onPrinterDeleteClicked();
+        
+        /**
+         * Set the printer to be deleted
+         * 
+         * @param printer
+         *            Printer to be deleted
+         */
+        public void setDeletePrinter(Printer printer);
         
         /**
          * Display the PrinterInfoFragment of the corresponding printer item clicked
