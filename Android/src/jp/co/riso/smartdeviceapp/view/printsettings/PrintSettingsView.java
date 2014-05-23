@@ -110,7 +110,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     private static final int ID_SECURE_PRINT_SWITCH = 0x11000010;
     private static final int ID_PIN_CODE_EDIT_TEXT = 0x1100001A;
-    private static final int ID_NUMERIC_EDIT_TEXT = 0x1100001B;
     
     private PrintSettings mPrintSettings = null;
     private int mPrinterId = PrinterManager.EMPTY_ID;
@@ -1717,8 +1716,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             params.width = width;
             
             EditText editText = (EditText) li.inflate(R.layout.printsettings_input_edittext, null);
-            editText.setId(ID_NUMERIC_EDIT_TEXT);
-            editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
             editText.setActivated(true);
             editText.setLayoutParams(params);
             editText.setTag(tag);

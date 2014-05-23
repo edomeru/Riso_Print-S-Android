@@ -42,7 +42,7 @@
 　　　         <item name="android:paddingTop">@dimen/printsettings_input_padding_tb</item>
 　　　         <item name="android:textColor">@color/theme_dark_1</item>
 　　　         <item name="android:textCursorDrawable">@null</item>
-　　　         <item name="android:imeOptions">flagNoExtractUi</item>
+ 　　　         <item name="android:imeOptions">flagNoExtractUi|actionDone</item>
     </style>
 
 </resources>
