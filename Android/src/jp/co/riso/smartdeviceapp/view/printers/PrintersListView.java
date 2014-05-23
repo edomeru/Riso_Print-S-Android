@@ -25,12 +25,12 @@ import android.widget.ListView;
 
 public class PrintersListView extends ListView implements Callback {
     private static final int SWIPE_THRESHOLD = 50;
+    private static final int MSG_START_DELETE_MODE = 0x1;
     private boolean mDeleteMode = false;
     private View mDeleteView = null;
     private Point mDownPoint = null;
     private DisplayDeleteAnimation mDeleteAnimation = null;
     private Handler mHandler = null;
-    private static final int MSG_START_DELETE_MODE = 0x1;
     
     /**
      * Constructor
@@ -86,11 +86,15 @@ public class PrintersListView extends ListView implements Callback {
                 deleteButton.getLocationOnScreen(coords);
                 
                 Rect rect = new Rect(coords[0], coords[1], coords[0] + deleteButton.getWidth(), coords[1] + deleteButton.getHeight());
-                // intercept if touched item is not the delete button
+                // Delete button is pressed
                 if (rect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
                     if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
                         endDeleteMode();
-                        return super.onInterceptTouchEvent(ev);
+                        // Process Dialog box
+                        super.onInterceptTouchEvent(ev);
+                        // Reset delete mode to true
+                        mDeleteMode = true;
+                        return false;
                     }
                 }
             }
@@ -161,6 +165,9 @@ public class PrintersListView extends ListView implements Callback {
      * @return delete view index
      */
     public int getDeleteItemPosition() {
+        if (!mDeleteMode) {
+            return PrinterManager.EMPTY_ID;
+        }
         if (mDeleteView != null) {
             return indexOfChild(mDeleteView);
         } else {
@@ -177,6 +184,7 @@ public class PrintersListView extends ListView implements Callback {
         if (mDeleteView != null) {
             ((PrinterArrayAdapter) getAdapter()).setPrinterRow(mDeleteView);
             mDeleteAnimation.endDeleteMode(mDeleteView, true, R.id.btn_delete, R.id.img_disclosure);
+            mDeleteMode = false;
             mDeleteView = null;
         }
     }
