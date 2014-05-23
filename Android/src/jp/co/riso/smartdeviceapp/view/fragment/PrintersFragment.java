@@ -25,6 +25,7 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter;
+import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.PrinterArrayAdapterInterface;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersListView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback;
@@ -41,7 +42,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PrintersFragment extends BaseFragment implements PrintersCallback, PauseableHandlerCallback, PrintersViewCallback, ConfirmDialogListener {
+public class PrintersFragment extends BaseFragment implements PrintersCallback, PauseableHandlerCallback, PrintersViewCallback, ConfirmDialogListener,
+        PrinterArrayAdapterInterface {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
@@ -241,7 +243,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     /**
      * Displays the Printer Info Screen
      */
-    private void displayPrinterInfoFragment(PrinterInfoFragment fragment) {
+    private void displayPrinterInfoFragment(Printer printer) {
+        PrinterInfoFragment fragment = new PrinterInfoFragment();
+        fragment.setPrinter(printer);
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_INFO);
     }
     
@@ -381,7 +385,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     // ================================================================================
-    // INTERFACE - PrintersViewCallback
+    // INTERFACE - PrintersViewCallback/PrinterArrayAdapterInterface 
     // ================================================================================
     
     /** {@inheritDoc} */
@@ -395,6 +399,16 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onPrinterListClicked(Printer printer) {
+        if (mPauseableHandler != null) {
+            Message msg = Message.obtain(mPauseableHandler, MSG_SUBMENU_BUTTON);
+            msg.obj = printer;
+            mPauseableHandler.sendMessage(msg);
+        }
     }
     
     // ================================================================================
@@ -444,8 +458,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     mPrinterTabletView.setPausableHandler(mPauseableHandler);
                 } else {
                     mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
-                    ((PrinterArrayAdapter) mPrinterAdapter).setPrintersViewCallback(this);
-                    ((PrinterArrayAdapter) mPrinterAdapter).setPausableHandler(mPauseableHandler);
+                    ((PrinterArrayAdapter) mPrinterAdapter).setPrintersArrayAdapterInterface(this);
                     mListView.setAdapter(mPrinterAdapter);
                     if (msg.obj != null) {
                         ((PrintersListView) mListView).onRestoreInstanceState((Parcelable) msg.obj, msg.arg1);
@@ -462,7 +475,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 return;
             case MSG_SUBMENU_BUTTON:
                 mPauseableHandler.pause();
-                displayPrinterInfoFragment((PrinterInfoFragment) msg.obj);
+                displayPrinterInfoFragment((Printer) msg.obj);
                 break;
             case MSG_PRINTSETTINGS_BUTTON:
                 mPauseableHandler.pause();
