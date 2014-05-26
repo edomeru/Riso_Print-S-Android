@@ -27,6 +27,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
     private Switch mDefaultPrinter = null;
+    private ImageView mDefaultView = null;
     private Spinner mPort = null;
     
     private PrinterManager mPrinterManager = null;
@@ -63,6 +65,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
+        mDefaultView = (ImageView) view.findViewById(R.id.img_default);
         mDefaultPrinter = (Switch) view.findViewById(R.id.default_printer_switch);
         mDefaultPrinter.setOnCheckedChangeListener(this);
         
@@ -110,7 +113,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mPrinterName.setText(printerName);
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
-            mDefaultPrinter.setChecked(true);
+            mDefaultPrinter.setVisibility(View.GONE);
+            mDefaultView.setVisibility(View.VISIBLE);
         }
         mPort.setSelection(mPrinter.getPortSetting());
     }
@@ -196,8 +200,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
             mPrinterManager.setDefaultPrinter(mPrinter);
-        } else {
-            mPrinterManager.clearDefaultPrinter();
+            mDefaultPrinter.setVisibility(View.GONE);
+            mDefaultView.setVisibility(View.VISIBLE);
         }
     }
     

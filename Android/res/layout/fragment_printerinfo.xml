@@ -128,6 +128,17 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="0"
             android:thumb="@drawable/widgettheme_switch_inner_holo_dark" />
+        
+        <ImageView
+            android:id="@+id/img_default"
+            android:layout_width="@dimen/printers_row_right_icon_size"
+            android:layout_height="@dimen/printers_row_right_icon_size"
+            android:layout_gravity="right|center_vertical"
+            android:contentDescription="@string/default_content_description"
+            android:paddingRight="@dimen/printers_row_right_padding"
+            android:src="@drawable/img_btn_add_printer_search_ok"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>
