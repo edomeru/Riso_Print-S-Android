@@ -19,6 +19,27 @@
 #include "common.h"
 #include "printsettings.h"
 
+#ifdef IS_IN_UT
+
+int FD_ISSET_MOCK(int socket, const fd_set * fd);
+#define DP_FD_ISSET FD_ISSET_MOCK
+
+int fseek_mock(FILE *, long, int);
+#define dp_fseek fseek_mock
+
+long ftell_mock(FILE *);
+#define dp_ftell ftell_mock
+
+size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
+#define dp_fread fread_mock
+
+#else
+#define DP_FD_ISSET FD_ISSET
+#define dp_fseek fseek
+#define dp_ftell ftell
+#define dp_fread fread
+#endif
+
 /**
  Constants
  */
@@ -184,6 +205,10 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
+    if (print_job->user_name == 0 || strlen(print_job->user_name) <= 0)
+    {
+        return 0;
+    }
     if (print_job->job_name == 0 || strlen(print_job->job_name) <= 0)
     {
         return 0;
@@ -218,7 +243,7 @@ int connect_to_port(const char *ip_address, const char *port)
     if (getaddrinfo(ip_address, port, &hints, &server_info) != 0)
     {
         // Unable to get address info
-        return 0;
+        return -1;
     }
     
     struct addrinfo *current_address;
@@ -256,7 +281,7 @@ int connect_to_port(const char *ip_address, const char *port)
             timeout.tv_usec = 0;
             select(sock_fd + 1, 0, &write_fds, 0, &timeout);
             
-            if (!FD_ISSET(sock_fd, &write_fds))
+            if (!DP_FD_ISSET(sock_fd, &write_fds))
             {
                 // Timout
                 close(sock_fd);
@@ -278,6 +303,12 @@ int connect_to_port(const char *ip_address, const char *port)
             flags &= ~O_NONBLOCK;
             fcntl(sock_fd, F_SETFL, flags);
             break;
+        }
+        else
+        {
+            close(sock_fd);
+            sock_fd = -1;
+            continue;
         }
     }
     freeaddrinfo(server_info);
@@ -473,6 +504,7 @@ void *do_lpr_print(void *parameter)
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
+            break;
         }
         
         notify_callback(print_job, kJobStatusSending);
@@ -487,9 +519,9 @@ void *do_lpr_print(void *parameter)
         }
 
         // Get file size
-        fseek(fd, 0L, SEEK_END);
-        long file_size = ftell(fd);
-        fseek(fd, 0L, SEEK_SET);
+        dp_fseek(fd, 0L, SEEK_END);
+        long file_size = dp_ftell(fd);
+        dp_fseek(fd, 0L, SEEK_SET);
         
         // DATA FILE INFO : Prepare
         size_t total_data_size = file_size + pjl_header_size + pjl_footer_size;
@@ -520,6 +552,7 @@ void *do_lpr_print(void *parameter)
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
+            break;
         }
         
         notify_callback(print_job, kJobStatusSending);
@@ -544,7 +577,7 @@ void *do_lpr_print(void *parameter)
         size_t read = 0;
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
         notify_callback(print_job, kJobStatusSending);
-        while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
+        while(0 < (read = dp_fread(buffer, 1, BUFFER_SIZE, fd)))
         {
             if (is_cancelled(print_job) == 1)
             {
@@ -648,23 +681,22 @@ void *do_raw_print(void *parameter)
         }
         
         // Get file size
-        fseek(fd, 0L, SEEK_END);
-        long file_size = ftell(fd);
-        fseek(fd, 0L, SEEK_SET);
+        dp_fseek(fd, 0L, SEEK_END);
+        long file_size = dp_ftell(fd);
+        dp_fseek(fd, 0L, SEEK_SET);
         
         // Calculate progress step
-        float data_step = (80.0f / ((float)file_size / BUFFER_SIZE));
+        float data_step = (99.0f / ((float)file_size / BUFFER_SIZE));
         
         // Send header
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
-        print_job->progress = 10.0f;
         notify_callback(print_job, kJobStatusSending);
         
         // Send file
         size_t read;
         size_t sent;
         int has_error = 0;
-        while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
+        while(0 < (read = dp_fread(buffer, 1, BUFFER_SIZE, fd)))
         {
             if (is_cancelled(print_job) == 1)
             {
@@ -674,6 +706,7 @@ void *do_raw_print(void *parameter)
             sent = send(sock_fd, buffer, read, 0);
             if (sent != read)
             {
+                printf("****Send Error\n");
                 notify_callback(print_job, kJobStatusErrorSending);
                 has_error = 1;
                 break;

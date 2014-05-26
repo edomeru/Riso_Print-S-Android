@@ -133,7 +133,6 @@
 		2D6C701C1925FB1000E33789 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
-		2D6C913918F535DA002A7F48 /* TestPage.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D6C913818F535DA002A7F48 /* TestPage.pdf */; };
 		2D6C913D18F53EA2002A7F48 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
 		2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */; };
 		2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB918E2EF7D00085F27 /* PreviewSetting.m */; };
@@ -514,7 +513,6 @@
 		2D6C90FB18F4FA57002A7F48 /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D6C913218F51099002A7F48 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		2D6C913518F51257002A7F48 /* directprint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = directprint.c; sourceTree = "<group>"; };
-		2D6C913818F535DA002A7F48 /* TestPage.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = TestPage.pdf; path = ../../../CommonLibrary/TestPage.pdf; sourceTree = "<group>"; };
 		2D6C913A18F53B0E002A7F48 /* snmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = snmp.c; sourceTree = "<group>"; };
 		2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetsnmp.a; path = "../CommonLibrary/3rdParty/net-snmp/lib/ios/libnetsnmp.a"; sourceTree = "<group>"; };
 		2DA1AEB618E2EF7D00085F27 /* DefaultPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPrinter.h; sourceTree = "<group>"; };
@@ -927,7 +925,6 @@
 		2D0AEC46185FDE8100810455 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2D6C913718F535BD002A7F48 /* Test */,
 				2828312F18C70699008B127C /* Database */,
 				2D1F23C3190104D900301D1E /* HTML */,
 				2D0AEC47185FDE8100810455 /* Images */,
@@ -1263,14 +1260,6 @@
 				2D6C913218F51099002A7F48 /* common.h */,
 			);
 			path = include;
-			sourceTree = "<group>";
-		};
-		2D6C913718F535BD002A7F48 /* Test */ = {
-			isa = PBXGroup;
-			children = (
-				2D6C913818F535DA002A7F48 /* TestPage.pdf */,
-			);
-			name = Test;
 			sourceTree = "<group>";
 		};
 		2DA1ADC918E2788900085F27 /* Classes */ = {
@@ -1758,7 +1747,6 @@
 			files = (
 				2D5FC7B718DA79EB00459B92 /* Localizable.strings in Resources */,
 				2D0AEC50185FDE8100810455 /* InfoPlist.strings in Resources */,
-				2D6C913918F535DA002A7F48 /* TestPage.pdf in Resources */,
 				2D1F23301900F86A00301D1E /* printsettings.xml in Resources */,
 				2D1F232C1900D69A00301D1E /* Main.storyboard in Resources */,
 				2D1F23CA190104D900301D1E /* help.html in Resources */,
