@@ -234,7 +234,7 @@ public class PrintJobManager {
         try {
             date = sdf.parse(strDate);
         } catch (ParseException e) {
-            Logger.logError(PrintJobManager.class, String.format("convertStringToDate cannot parse %s to string.", strDate));
+            Logger.logWarn(PrintJobManager.class, String.format("convertStringToDate cannot parse %s to string.", strDate));
             date = new Date(0);
         }
         return date;

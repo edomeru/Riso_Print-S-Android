@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
- * SmartDeviceApp.java
- * MemoryUtils
+ * MemoryUtils.java
+ * SmartDeviceApp
  * Created by: a-LINK Group
  */
 
@@ -14,6 +14,7 @@ import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
 
 public class MemoryUtils {
+    
     /**
      * @param activity
      * @return cache size

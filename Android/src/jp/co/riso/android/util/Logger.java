@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2014 RISO, Inc. All rights reserved.
  *
- * SmartDeviceApp.java
- * Logger
+ * Logger.java
+ * SmartDeviceApp
  * Created by: a-LINK Group
  */
 
