@@ -105,7 +105,7 @@
  
  @return YES if successful, NO otherwise.
  */
-- (BOOL) deleteDefaultPrinter;
+- (BOOL)deleteDefaultPrinter;
 
 /**
  Removes a Printer object from the DB. If this Printer object
@@ -137,14 +137,14 @@
  
  @return Printer object
  */
--(Printer*) getDefaultPrinter;
+- (Printer*)getDefaultPrinter;
 
 /**
  Call to save the changes done to printer objects to database.
  
  @return YES if successful; NO otherwise
  */
--(BOOL) savePrinterChanges;
+- (BOOL)savePrinterChanges;
 
 #pragma mark - Printers in Network (SNMP)
 

@@ -12,6 +12,7 @@
 #import "PrinterInfoViewController.h"
 #import "PrintSettingsViewController.h"
 #import "PrinterManager.h"
+#import "PrinterDetails.h"
 
 @interface PrintersViewController ()
 
@@ -45,6 +46,16 @@
     [super viewDidLoad];
     
     self.printerManager = [PrinterManager sharedPrinterManager];
+#if 0
+    while (self.printerManager.countSavedPrinters != 10)
+    {
+        PrinterDetails* pd = [[PrinterDetails alloc] init];
+        pd.name = @"";
+        pd.ip = [NSString stringWithFormat:@"192.168.0.%d", 10-self.printerManager.countSavedPrinters];
+        [self.printerManager registerPrinter:pd];
+    }
+#endif
+    
     self.toDeleteIndexPath = nil;
 }
 

@@ -449,26 +449,55 @@
 {
     if ([self.printerManager deletePrinterAtIndex:self.toDeleteIndexPath.row])
     {
-        //check if reference to default printer was also deleted
-        if (![self.printerManager hasDefaultPrinter])
+        NSInteger rowDeleted = self.toDeleteIndexPath.row;
+        
+        BOOL deletedDefault = (rowDeleted == self.defaultPrinterIndexPath.row);
+        BOOL hasNewDefault = [self.printerManager hasDefaultPrinter];
+        if (!hasNewDefault)
+        {
             self.defaultPrinterIndexPath = nil;
+        }
         
         //set the view of the cell to stop polling for printer status
-        PrinterStatusHelper *statusHelper = [self.statusHelpers objectAtIndex:self.toDeleteIndexPath.row];
+        PrinterStatusHelper *statusHelper = [self.statusHelpers objectAtIndex:rowDeleted];
         [statusHelper stopPrinterStatusPolling];
-        [self.statusHelpers removeObjectAtIndex:self.toDeleteIndexPath.row];
+        [self.statusHelpers removeObjectAtIndex:rowDeleted];
         
-        //set view to non default printer cell style
-        PrinterCell *cell = (PrinterCell *)[self.tableView cellForRowAtIndexPath:self.toDeleteIndexPath];
-        [cell setCellStyleForNormalCell];
-        
-        //remove cell from view
+        // update the collection
         [self.tableView deleteRowsAtIndexPaths:@[self.toDeleteIndexPath]
-                              withRowAnimation:UITableViewRowAnimationAutomatic];
+                              withRowAnimation:UITableViewRowAnimationFade];
+        [UIView animateWithDuration:0.5 animations:^{
+            if (deletedDefault && hasNewDefault)
+            {
+                // assign the new default printer
+                NSInteger rowNewDefault;
+                if (rowDeleted == [self.tableView numberOfRowsInSection:0])
+                {
+                    rowNewDefault = 0;
+                }
+                else
+                {
+                    rowNewDefault = rowDeleted;
+                }
+                self.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:rowNewDefault inSection:0];
+                
+                // reload the new default printer
+                [self.tableView reloadRowsAtIndexPaths:@[self.defaultPrinterIndexPath]
+                                      withRowAnimation:UITableViewRowAnimationFade];
+            }
+            else
+            {
+                // update the index path of the default printer
+                NSIndexPath* oldIndexPath = self.defaultPrinterIndexPath;
+                if (rowDeleted < oldIndexPath.row)
+                    self.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1 inSection:0];
+            }
+        }];
         
-        if(self.toDeleteIndexPath.row > 0 && self.toDeleteIndexPath.row == [self.tableView numberOfRowsInSection:0])
+        // update the separator for the new last row
+        if(rowDeleted == [self.tableView numberOfRowsInSection:0])
         {
-            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:self.toDeleteIndexPath.row - 1 inSection:0];
+            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:rowDeleted-1 inSection:0];
             [self.tableView reloadRowsAtIndexPaths:@[lastIndexPath] withRowAnimation:UITableViewRowAnimationNone];
         }
         
