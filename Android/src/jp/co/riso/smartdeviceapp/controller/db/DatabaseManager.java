@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.controller.db;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,7 +25,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
     
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
-    private static final boolean INITIALIZE_DATA = false; // set to true for testing
     
     private Context mContext;
     
@@ -58,7 +58,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         
         /* for testing only */
-        if (INITIALIZE_DATA) {
+        if (AppConstants.INITIAL_DB) {
             sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
             separated = sqlString.split(";");
             

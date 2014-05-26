@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp;
 
 public class AppConstants {
     public static final boolean DEBUG = false;
+    public static final boolean INITIAL_DB = false;
     
     public static final boolean APP_SHOW_SPLASH = true;
     public static final long APP_SPLASH_DURATION = 2000;

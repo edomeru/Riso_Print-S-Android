@@ -2,6 +2,7 @@ package jp.co.riso.android.util;
 
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.UiThreadTest;
 
 public class LoggerTest extends ActivityInstrumentationTestCase2<MainActivity> {
     
@@ -290,34 +291,46 @@ public class LoggerTest extends ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
     
+    @UiThreadTest
     public void testGetLogString() {
         Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
         Logger.logStartTime(getActivity(), LoggerTest.class, "PROCESS1");
         assertTrue(Logger.getLogString(getActivity()) != null);
-        
     }
-    
+
+    @UiThreadTest
     public void testGetLogString_NullContext() {
         Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
         Logger.logStartTime(getActivity(), LoggerTest.class, "PROCESS1");
         assertTrue(Logger.getLogString(null) == null);
     }
-    
+
+    @UiThreadTest
     public void testWriteToFile() {
         Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
         Logger.writeToFile(getActivity(), "Hello");
         assertTrue(Logger.getLogString(getActivity()) != null);
     }
-    
+
+    @UiThreadTest
     public void testWriteToFile_NullContext() {
         Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
         Logger.writeToFile(null, "Hello");
         assertTrue(Logger.getLogString(getActivity()) == null);
     }
-    
+
+    @UiThreadTest
     public void testWriteToFile_NullMessage() {
         Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
         Logger.writeToFile(getActivity(), null);
         assertTrue(Logger.getLogString(getActivity()) != null);
+    }
+    
+    public void testDeleteTask() {
+        Logger.runDeleteTask(getActivity());
+    }
+    
+    public void testDeleteTask_NullContext() {
+        Logger.runDeleteTask(null);
     }
 }

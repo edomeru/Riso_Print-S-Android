@@ -14,6 +14,7 @@ import java.util.IllegalFormatException;
 import java.util.Locale;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class Logger {
@@ -30,10 +31,14 @@ public class Logger {
     private static int sLogLevel = LOGLEVEL_NONE;
     private static boolean sPerfLogs = false;
     private static boolean sPerfLogsToFile = false;
-    private static String sStringFolder = "";
     
+    private static String sStringFolder = "";
     private static HashMap<String, Long> sTimeLog = new HashMap<String, Long>();
     private static HashMap<String, Float> sMemoryLog = new HashMap<String, Float>();
+    
+    {
+        initialize(LOGLEVEL_NONE, false, false);
+    }
     
     public static void initialize(int logLevel, boolean perfLogs, boolean perfLogsToFile) {
         sLogLevel = logLevel;
@@ -333,6 +338,86 @@ public class Logger {
         } catch(IllegalFormatException e) {
             Log.e(Logger.class.getSimpleName(), "IllegalFormatException, logging format directly");
             return format;
+        }
+    }
+
+    /**
+     * Runs a background task which deletes the application logs.
+     */
+    public static void runDeleteTask(Context context) {
+        if (context == null) {
+            return;
+        }
+        
+        Logger logger = new Logger();
+        DeleteTask task = (logger.new DeleteTask());
+        
+        task.execute(context);
+    }
+    
+    public class DeleteTask extends AsyncTask<Context, Void, Void> {
+        int count = 0;
+        double time = 0;
+        
+        //http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card
+        public boolean deleteDirectory(File path) {
+            if (path.exists()) {
+                File[] files = path.listFiles();
+                if (files == null) {
+                    return true;
+                }
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        deleteDirectory(files[i]);
+                    }
+                    files[i].delete();
+                    count++;
+                }
+            }
+            return true;
+        }
+        
+        /*
+         * Base on: http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card
+         * Deletes the sub folders inside the AppLogDirectory of parapara
+         */
+        public boolean deleteAppLogDirectory(File path) {
+            if (path.exists()) {
+                File[] files = path.listFiles();
+                if (files == null) {
+                    return true;
+                }
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        //deletes the whole sub-directory
+                        if (deleteDirectory(files[i])) {
+                            files[i].delete();
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            
+            time = System.currentTimeMillis();
+        }
+        
+        @Override
+        protected Void doInBackground(Context... params) {
+            deleteAppLogDirectory(params[0].getExternalFilesDir(CONST_LOGS_DIR));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            
+            Log.d(DeleteTask.class.getSimpleName(), "Duration: " + (System.currentTimeMillis() - time));
+            Log.d(DeleteTask.class.getSimpleName(), "Count: " + count);
         }
     }
 }
