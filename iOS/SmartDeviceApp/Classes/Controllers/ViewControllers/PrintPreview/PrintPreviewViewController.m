@@ -16,6 +16,7 @@
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
 #import "AlertHelper.h"
+#import "PrinterManager.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -213,6 +214,12 @@
     else if([[PDFFileManager sharedManager] fileAvailableForPreview])
     {
         [self setupPreview];
+        
+        // Printer check
+        if (self.printDocument.printer == nil)
+        {
+            self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
+        }
     }
 }
 
