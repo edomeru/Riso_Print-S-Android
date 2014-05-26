@@ -57,7 +57,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ScrollView mScrollView;
     private int mScrollPosition;
     private Handler mHandler;
-    private boolean mIsRotated;
     
     /**
      * Instantiate PrintJobsFragment
@@ -82,13 +81,10 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        if (!mIsRotated) {
-            mCollapsedPrinters.clear();
-            mPrintJobToDelete = null;
-            mPrinterToDelete = null;
-        }
-        mIsRotated = false;
-        
+        mCollapsedPrinters.clear();
+        mPrintJobToDelete = null;
+        mPrinterToDelete = null;
+        mScrollPosition = 0;
         // mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
         mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
@@ -111,27 +107,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     
     /** {@inheritDoc} */
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mScrollPosition = mScrollView.getScrollY();
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        
-        mIsRotated = true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         
+        mScrollPosition = mScrollView.getScrollY();
         if (mPrintJobsView != null) {
-            mPrintJobsView.reset();  
-            mPrintJobsView.requestLayout();            
+            mPrintJobsView.reset();
         }
     }
     
@@ -155,8 +136,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /** {@inheritDoc} */
     @Override
     public void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer) {
-        this.mPrintGroupToDelete = printJobsGroupView;
-        this.mPrinterToDelete = printer;
+        mPrintGroupToDelete = printJobsGroupView;
+        mPrinterToDelete = printer;
+        mPrintJobsView.setPrinterToDelete(printer);
     }
     
     /** {@inheritDoc} */
@@ -197,6 +179,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         } else {
             mCollapsedPrinters.remove(printer);
         }
+        mPrintJobsView.setCollapsedPrinters(printer, isCollapsed);
     }
     
     /** {@inheritDoc} */
@@ -204,6 +187,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     public void setDeletePrintJob(PrintJobsGroupView printJobsGroupView, PrintJob job) {
         mPrintGroupToDelete = printJobsGroupView;
         mPrintJobToDelete = job;
+        mPrintJobsView.setJobToDelete(job);
     }
     
     // ================================================================================
@@ -234,13 +218,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         if (mPrintGroupToDelete != null) {
             if (mPrinterToDelete != null) {
                 mPrintGroupToDelete.onDeleteJobGroup();
+                setPrinterToDelete(null, null);
             }
             else if (mPrintJobToDelete != null) {
                 mPrintGroupToDelete.onDeletePrintJob(mPrintJobToDelete);
+                setDeletePrintJob(null, null);
             }
-            mPrintGroupToDelete = null;
-            mPrintGroupToDelete = null;
-            mPrinterToDelete = null;
             mConfirmDialog = null;
         }
     }
@@ -251,12 +234,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         if (mPrintGroupToDelete != null) {
             if (mPrinterToDelete != null) {
                 mPrintGroupToDelete.onCancelDeleteGroup();
+                setPrinterToDelete(null, null);
             }
             else if (mPrintJobToDelete != null) {
                 mPrintJobsView.endDelete(true);
+                setDeletePrintJob(null, null);
             }
-            mPrintGroupToDelete = null;
-            mPrinterToDelete = null;
             mConfirmDialog = null;
         }
         
@@ -324,8 +307,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             mPrinters = new ArrayList<Printer>(mPrintersList);
             
             if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
-                mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this, mCollapsedPrinters, mPrintJobToDelete,
-                        mPrinterToDelete);
+                mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this);
             }
             // mPrintJobColumnView.setVisibility(View.INVISIBLE);
             
