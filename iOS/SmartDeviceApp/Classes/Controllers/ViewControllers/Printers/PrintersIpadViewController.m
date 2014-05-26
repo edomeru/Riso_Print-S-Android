@@ -303,11 +303,12 @@
         [self.statusHelpers removeObjectAtIndex:index];
         
         // update the collection
+        __weak PrintersIpadViewController* weakSelf = self;
         [self.collectionView performBatchUpdates:^
         {
             // remove cell from view
             NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForItem:index inSection:0];
-            [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
+            [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
             
         } completion:^(BOOL finished)
         {
@@ -315,7 +316,7 @@
             {
                 // assign the new default printer
                 NSInteger indexNewDefault;
-                if (index == [self.collectionView numberOfItemsInSection:0])
+                if (index == [weakSelf.collectionView numberOfItemsInSection:0])
                 {
                     indexNewDefault = 0;
                 }
@@ -323,17 +324,18 @@
                 {
                     indexNewDefault = index; //the next item will shift to this index
                 }
-                self.defaultPrinterIndexPath = [NSIndexPath indexPathForItem:indexNewDefault inSection:0];
+                weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForItem:indexNewDefault inSection:0];
                 
                 // reload the new default printer
-                [self.collectionView reloadItemsAtIndexPaths:@[self.defaultPrinterIndexPath]];
+                [weakSelf.collectionView reloadItemsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]];
             }
             else
             {
                 // update the index path of the default printer
-                NSIndexPath* oldIndexPath = self.defaultPrinterIndexPath;
+                NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
                 if (index < oldIndexPath.row)
-                    self.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1 inSection:0];
+                    weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1
+                                                                          inSection:0];
             }
         }];
         

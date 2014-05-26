@@ -466,12 +466,13 @@
         // update the collection
         [self.tableView deleteRowsAtIndexPaths:@[self.toDeleteIndexPath]
                               withRowAnimation:UITableViewRowAnimationFade];
+        __weak PrintersIphoneViewController* weakSelf = self;
         [UIView animateWithDuration:0.5 animations:^{
             if (deletedDefault && hasNewDefault)
             {
                 // assign the new default printer
                 NSInteger rowNewDefault;
-                if (rowDeleted == [self.tableView numberOfRowsInSection:0])
+                if (rowDeleted == [weakSelf.tableView numberOfRowsInSection:0])
                 {
                     rowNewDefault = 0;
                 }
@@ -479,18 +480,19 @@
                 {
                     rowNewDefault = rowDeleted;
                 }
-                self.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:rowNewDefault inSection:0];
+                weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:rowNewDefault inSection:0];
                 
                 // reload the new default printer
-                [self.tableView reloadRowsAtIndexPaths:@[self.defaultPrinterIndexPath]
-                                      withRowAnimation:UITableViewRowAnimationFade];
+                [weakSelf.tableView reloadRowsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]
+                                          withRowAnimation:UITableViewRowAnimationFade];
             }
             else
             {
                 // update the index path of the default printer
-                NSIndexPath* oldIndexPath = self.defaultPrinterIndexPath;
+                NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
                 if (rowDeleted < oldIndexPath.row)
-                    self.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1 inSection:0];
+                    weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1
+                                                                          inSection:0];
             }
         }];
         

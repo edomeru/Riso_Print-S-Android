@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
 @property (weak, nonatomic) IBOutlet UILabel *ipAddress;
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
+@property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
 
 @property (weak, nonatomic) Printer* printer;
@@ -64,16 +65,22 @@
         if(self.isDefaultPrinter == YES)
         {
             self.defaultPrinterSwitch.on = YES;
+            [self hideDefaultSwitch:YES];
+        }
+        else
+        {
+            self.defaultPrinterSwitch.on = NO;
+            [self hideDefaultSwitch:NO];
         }
     }
 }
 
--(void) viewDidAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 }
 
--(void) viewDidDisappear:(BOOL)animated
+- (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
 }
@@ -84,32 +91,26 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void) updateDefaultPrinter: (BOOL) isDefaultOn
+- (void)hideDefaultSwitch:(BOOL)hidden
 {
-    if(isDefaultOn == NO)
-    {
-        if([self.printerManager isDefaultPrinter:self.printer] == YES)
-        {
-            [self.printerManager deleteDefaultPrinter];
-        }
-    }
-    else
-    {
-        [self.printerManager registerDefaultPrinter:self.printer];
-    }
+    self.defaultPrinterSwitch.hidden = hidden;
+    self.defaultSetIcon.hidden = !hidden;
 }
 
 #pragma mark - IBActions
-- (IBAction)defautltPrinterSwitchAction:(id)sender
-{
-    if(self.isDefaultPrinter == self.defaultPrinterSwitch.on)
-    {
-        return;
-    }
-    
-    self.isDefaultPrinter = self.defaultPrinterSwitch.on;
 
-    [self updateDefaultPrinter:self.isDefaultPrinter];
+- (IBAction)defaultPrinterSwitchAction:(id)sender
+{
+    self.isDefaultPrinter = self.defaultPrinterSwitch.on;
+    if (self.isDefaultPrinter)
+    {
+        [self hideDefaultSwitch:YES];
+        [self.printerManager registerDefaultPrinter:self.printer];
+    }
+    else
+    {
+        [self hideDefaultSwitch:NO];
+    }
 }
 
 - (IBAction)onBack:(UIButton *)sender

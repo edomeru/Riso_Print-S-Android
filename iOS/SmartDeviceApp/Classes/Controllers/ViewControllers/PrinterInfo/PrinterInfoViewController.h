@@ -14,7 +14,7 @@
 @protocol PrinterInfoDelegate
 /** Method called by PrinterInfoViewController to be able to segue to print settings screen
    @note This method is used by the PrinterInfoViewController to call the parent view controller to do the segue to the Print Settings view controller. This is because the slide segue can only be executed correctly by the view controller in the root view controller which is the parent of the PrinterInfoViewController */
--(void) segueToPrintSettings;
+- (void)segueToPrintSettings;
 @end
 
 
