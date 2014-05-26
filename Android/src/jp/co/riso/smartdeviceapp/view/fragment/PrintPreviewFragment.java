@@ -12,7 +12,7 @@ import java.util.List;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
-import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.MemoryUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -119,7 +119,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         if (mBmpCache == null) {
             
-            int cacheSize = AppUtils.getCacheSizeBasedOnMemoryClass(getActivity());
+            int cacheSize = MemoryUtils.getCacheSizeBasedOnMemoryClass(getActivity());
             cacheSize = cacheSize >> AppConstants.APP_BMP_CACHE_PART; // 1/8
             mBmpCache = new LruCache<String, Bitmap>(cacheSize) {
                 @Override

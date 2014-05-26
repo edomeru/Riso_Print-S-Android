@@ -10,6 +10,8 @@ package jp.co.riso.smartdeviceapp;
 
 import java.util.HashMap;
 
+import jp.co.riso.android.util.Logger;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +31,11 @@ public class SmartDeviceApp extends Application {
                 AppConstants.APP_FONT_FILE);
         
         initializeSharedPrefs();
+        
+        Logger.initialize(Logger.LOGLEVEL_NONE, false, false);
+        if (AppConstants.DEBUG) {
+            Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
+        }
     }
 
     /**
