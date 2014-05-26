@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ *
+ * SmartDeviceApp.java
+ * Logger
+ * Created by: a-LINK Group
+ */
+
 package jp.co.riso.android.util;
 
 import java.io.BufferedReader;
