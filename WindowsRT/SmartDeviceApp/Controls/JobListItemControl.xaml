@@ -9,6 +9,7 @@
     d:DesignHeight="60"
     d:DesignWidth="400"
     Text="{Binding Name}"
+    KeyPressedColor="{StaticResource BRUSH_White}"
     ValueText="{Binding Date, Converter={StaticResource DateTimeToStringConverter}}"
     SubTextVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
