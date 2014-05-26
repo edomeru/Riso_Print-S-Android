@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
@@ -24,10 +25,8 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 public class PrintJobManager {
-    private static final String TAG = "PrintJobManager";
     private static final String C_WHERE_PJB_ID = KeyConstants.KEY_SQL_PRINTJOB_ID + "=?";
     private static final String C_WHERE_PRN_ID = KeyConstants.KEY_SQL_PRINTER_ID + "=?";
     private static final String C_ORDERBY_DATE = KeyConstants.KEY_SQL_PRINTER_ID + " ASC ,"
@@ -235,7 +234,7 @@ public class PrintJobManager {
         try {
             date = sdf.parse(strDate);
         } catch (ParseException e) {
-            Log.w(TAG, String.format("convertStringToDate cannot parse %s to string.", strDate));
+            Logger.logError(PrintJobManager.class, String.format("convertStringToDate cannot parse %s to string.", strDate));
             date = new Date(0);
         }
         return date;

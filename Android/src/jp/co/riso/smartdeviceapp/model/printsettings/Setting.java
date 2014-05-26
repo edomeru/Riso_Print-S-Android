@@ -15,7 +15,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Setting extends XmlNode {
-    public static final String TAG = "Setting";
     public static final String ATTR_DEFAULT = "default";
     
     public static final String ATTR_VAL_LIST = "list";

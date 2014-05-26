@@ -42,8 +42,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface, PreviewControlsListener, OnSeekBarChangeListener {
-    public static final String TAG = "PrintPreviewFragment";
-    
     public static final String KEY_CURRENT_PAGE = "current_page";
     public static final int ID_PRINT_BUTTON = 0x11000002;
     

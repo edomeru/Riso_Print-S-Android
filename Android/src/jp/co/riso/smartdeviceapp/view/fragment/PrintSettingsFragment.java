@@ -36,7 +36,6 @@ import android.view.View;
 import android.widget.TextView;
 
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.PrintSettingsViewInterface, PauseableHandlerCallback, DirectPrintCallback, WaitingDialogListener {
-    public static final String TAG = "PrintSettingsFragment";
     
     private static final String TAG_WAITING_DIALOG = "dialog_printing";
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
