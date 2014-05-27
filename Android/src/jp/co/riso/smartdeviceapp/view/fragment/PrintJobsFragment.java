@@ -14,7 +14,6 @@ import java.util.List;
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -23,6 +22,7 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
+import jp.co.riso.smartprint.R;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
@@ -44,8 +44,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     
     private PrintJobsView mPrintJobsView;
     private PrintJobsGroupView mPrintGroupToDelete;
-    // TODO: use of loading indicator
-    // private ProgressBar mPrintJobsLoadIndicator;
     private LinearLayout mPrintJobContainer;
     private LoadPrintJobsTask mLoadPrintJobsTask;
     private List<PrintJob> mPrintJobs;
@@ -58,6 +56,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private int mScrollPosition;
     private Handler mHandler;
     private boolean mIsRotated;
+    private TextView mEmptyJobsText;
     
     /**
      * Instantiate PrintJobsFragment
@@ -93,10 +92,10 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
         mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
-        
+        mEmptyJobsText = (TextView) view.findViewById(R.id.emptyJobsText);
+        mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
         mPrintJobContainer.setOnTouchListener(this);
         
-        // mPrintJobsLoadIndicator.setVisibility(View.VISIBLE);
         mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
         mLoadPrintJobsTask.execute();
     }
@@ -136,6 +135,19 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     }
     
     // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    /**
+     * Displays empty message and hides print jobs view
+     */
+    private void showEmptyText() {
+        mEmptyJobsText.setVisibility(View.VISIBLE);
+        mScrollView.setVisibility(View.GONE);
+        getView().setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+    }
+    
+    // ================================================================================
     // INTERFACE - View.onTouchListener
     // ================================================================================
 
@@ -169,6 +181,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void deleteJobFromList(PrintJob printJob) {
         mPrintJobs.remove(printJob);
+        if (mPrintJobs.isEmpty()) {
+            showEmptyText();
+        }
     }
     
     /** {@inheritDoc} */
@@ -316,20 +331,17 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             
-            // if (mPrintJobsList.isEmpty() || isCancelled()) {
-            // mPrintJobsLoadIndicator.setVisibility(View.GONE);
-            // } else {
-            
-            mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
-            mPrinters = new ArrayList<Printer>(mPrintersList);
-            
-            if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
-                mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this, mCollapsedPrinters, mPrintJobToDelete,
-                        mPrinterToDelete);
+            if (mPrintJobsList.isEmpty()) {
+                showEmptyText();
+            } else {
+                mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
+                mPrinters = new ArrayList<Printer>(mPrintersList);
+                
+                if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
+                    mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this, mCollapsedPrinters, mPrintJobToDelete,
+                            mPrinterToDelete);
+                }
             }
-            // mPrintJobColumnView.setVisibility(View.INVISIBLE);
-            
-            // }
         }
     }
     

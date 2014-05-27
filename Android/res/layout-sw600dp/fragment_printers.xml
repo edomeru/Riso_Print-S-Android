@@ -6,15 +6,30 @@
     
     <include layout="@layout/actionbar_main" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView
-            android:id="@+id/printerParentView"
+        <TextView
+            android:id="@+id/emptyPrintersText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/ids_lbl_printers_empty"
+            android:textColor="@color/theme_light_1"
+            android:textSize="@dimen/font_size_large"
+            android:visibility="gone" />
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView>
-    </ScrollView>
-    
+            android:layout_height="match_parent" >
+
+            <jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView
+                android:id="@+id/printerParentView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView>
+        </ScrollView>
+    </FrameLayout>
+
 </LinearLayout>

@@ -34,8 +34,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private static final int MIN_COLUMNS = 2;
     
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs;
-    private List<Printer> mPrinters;
+    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
+    private List<Printer> mPrinters = new ArrayList<Printer>();
     private List<Printer> mCollapsedPrinters;
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
     private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();
@@ -412,7 +412,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                     for (int j = 0; j < column.getChildCount(); j++) {
                         View view = ((PrintJobsGroupView) column.getChildAt(j)).getJobViewSwiped(mDownPoint, ev);
                         if (view != null) {
-                            beginDelete(mPrintGroupViews.get(i), view, true);
+                            beginDelete((PrintJobsGroupView) column.getChildAt(j), view, true);
                             return true;
                         }
                     }

@@ -7,12 +7,27 @@
 
     <include layout="@layout/actionbar_main" />
 
-    <jp.co.riso.smartdeviceapp.view.printers.PrintersListView
-        android:id="@+id/printer_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/theme_light_2"
-        android:divider="@null" >
-    </jp.co.riso.smartdeviceapp.view.printers.PrintersListView>
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/emptyPrintersText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/ids_lbl_printers_empty"
+            android:textColor="@color/theme_light_1"
+            android:textSize="@dimen/font_size_large"
+            android:visibility="gone" />
+
+        <jp.co.riso.smartdeviceapp.view.printers.PrintersListView
+            android:id="@+id/printer_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/theme_light_2"
+            android:divider="@null" >
+        </jp.co.riso.smartdeviceapp.view.printers.PrintersListView>
+    </FrameLayout>
 
 </jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>
