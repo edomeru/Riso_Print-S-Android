@@ -173,7 +173,7 @@
                         android:layout_marginRight="@dimen/printers_row_right_margin"
                         android:contentDescription="@string/default_content_description"
                         android:paddingRight="@dimen/printers_row_right_padding"
-                        android:src="@drawable/img_btn_add_printer_search_ok"
+                        android:src="@drawable/img_set_as_default_printer"
                         android:visibility="gone" />
 
                 </LinearLayout>

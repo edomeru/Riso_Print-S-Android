@@ -4,6 +4,11 @@ INSERT INTO Printer (prn_id, prn_name, prn_ip_address, prn_enabled_punch3, prn_e
 INSERT INTO Printer (prn_id, prn_ip_address) VALUES (4, "192.168.2.4"); 
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (5, "Printer with a very long name specified for testing the ellipsis", "192.168.2.5"); 
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (6, "RISO Printer IPv6", "udp6:[2001::4:225:5cff:fe34:7c27%en0]"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (7, "KONICA MINOLTA magicolor 5570", "192.168.1.24"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (8, "RISO IS1000C-J", "192.168.1.206"); 
+INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (9, "KONICA MINOLTA bizhub 42", "192.168.1.203"); 
+
+INSERT INTO DefaultPrinter (prn_id) VALUES (8);
 
 INSERT INTO PrintJob (pjb_id, prn_id, pjb_name, pjb_date, pjb_result) VALUES (1,1,"myfile1.pdf","2014-03-19 16:55:38",0);
 INSERT INTO PrintJob (pjb_id, prn_id, pjb_name, pjb_date, pjb_result) VALUES (2,1,"file1.pdf","2014-03-19 16:55:38",0);

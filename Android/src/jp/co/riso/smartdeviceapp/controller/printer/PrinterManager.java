@@ -53,8 +53,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param context
      *            Context of the SmartDeviceApp
      */
-    private PrinterManager(Context context) {        
-        init(new DatabaseManager(context));
+    private PrinterManager(Context context) {
+        this(context, new DatabaseManager(context));
     }
     
     /**
@@ -71,7 +71,10 @@ public class PrinterManager implements SNMPManagerCallback {
         if (databaseManager == null) {
             databaseManager = new DatabaseManager(context);
         }
-        init(databaseManager);
+        mDatabaseManager = databaseManager;
+        mPrinterList = new ArrayList<Printer>();
+        mSNMPManager = new SNMPManager();
+        mSNMPManager.setCallback(this);
     }
     
     /**
@@ -557,16 +560,6 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     // Private Methods
     // ================================================================================
-    
-    /**
-     * Initialize the Printer Manager
-     */
-    private void init(DatabaseManager manager) {
-        mDatabaseManager = manager;
-        mPrinterList = new ArrayList<Printer>();
-        mSNMPManager = new SNMPManager();
-        mSNMPManager.setCallback(this);
-    }
     
     /**
      * Save Printer Information
