@@ -10,16 +10,19 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.List;
 
-import jp.co.riso.smartprint.R;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartprint.R;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,7 +34,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener {
+public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener, PauseableHandlerCallback {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     public static final String KEY_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
@@ -47,7 +50,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
-    
+    private PauseableHandler mPauseableHandler = null;
+
     /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
@@ -58,6 +62,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPauseableHandler = new PauseableHandler(this);
     }
     
     /** {@inheritDoc} */
@@ -129,6 +134,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         setIconState(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, false);
     }
   
+    /** {@inheritDoc} */
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPauseableHandler.resume();
+    }
+    
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -139,20 +151,28 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void setPrinter(Printer printer) {
         mPrinter = printer;
     }
- 
+
     // ================================================================================
-    // INTERFACE - View.OnClickListener
+    // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
     /** {@inheritDoc} */
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    public boolean storeMessage(Message msg) {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void processMessage(Message msg) {
+        switch (msg.what) {
             case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
+                mPauseableHandler.pause();
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        View v = (View) msg.obj;
                         FragmentManager fm = getFragmentManager();
                         setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
@@ -176,6 +196,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                 }
                 break;
             case ID_MENU_BACK_BUTTON:
+                mPauseableHandler.pause();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 
@@ -183,6 +204,24 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     fm.popBackStack();
                     ft.commit();
                 }
+                break;
+        }        
+    }
+    
+    // ================================================================================
+    // INTERFACE - View.OnClickListener
+    // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
+                Message newMessage = Message.obtain(mPauseableHandler, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON);
+                newMessage.obj = v;
+                mPauseableHandler.sendMessage(newMessage);
+            case ID_MENU_BACK_BUTTON:
+                mPauseableHandler.sendEmptyMessage(ID_MENU_BACK_BUTTON);
                 break;
         }
     }
@@ -202,7 +241,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     }
     
     // ================================================================================
-    // INTERFACE - onCheckedChanged
+    // INTERFACE - OnItemSelectedListener
     // ================================================================================
     
     /** {@inheritDoc} */
