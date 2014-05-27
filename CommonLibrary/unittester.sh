@@ -5,9 +5,7 @@ fi
      
 lcov --gcov-tool gcov-4.2 --directory . --zerocounters
 
-#make clean
-#make check
-./tests_app
+make check
 
 lcov --gcov-tool gcov-4.2 --directory . --capture --rc lcov_branch_coverage=1 --output-file _coverage/raw.info
 lcov --gcov-tool gcov-4.2 --rc lcov_branch_coverage=1 --e _coverage/raw.info "*/src/*"  -o _coverage/src.info

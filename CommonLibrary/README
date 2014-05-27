@@ -1,0 +1,8 @@
+To compile:
+
+./configure
+make
+
+To run unit test with coverage:
+
+make check
