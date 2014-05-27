@@ -340,6 +340,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      *            show print settings button
      */
     public void showPrintSettingsButton(View v, boolean show) {
+        show = true;
         if (v.findViewById(ID_PRINT_BUTTON) != null) {
             if (show) {
                 v.findViewById(ID_PRINT_BUTTON).setVisibility(View.VISIBLE);
