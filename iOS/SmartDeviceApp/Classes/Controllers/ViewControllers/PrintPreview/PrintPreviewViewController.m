@@ -846,19 +846,12 @@
         [AlertHelper displayResult:kAlertResultErrNoPrinterSelected
                          withTitle:kAlertTitlePrintPreview
                        withDetails:nil];
-        
-        return;
     }
-    
-    // printer was registered after open-in
-    if (self.printDocument.printer == nil)
+    else
     {
-        Printer* selectedPrinter = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
-        self.printDocument.printer = selectedPrinter;
+        [self.printSettingsButton setEnabled:NO];
+        [self performSegueTo:[PrintSettingsViewController class]];
     }
-    
-    [self.printSettingsButton setEnabled:NO];
-    [self performSegueTo:[PrintSettingsViewController class]];
 }
 
 - (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event
