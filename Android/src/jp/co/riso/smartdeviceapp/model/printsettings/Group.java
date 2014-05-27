@@ -15,8 +15,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Group extends XmlNode {
-    public static final String TAG = "Group";
-
     private List<Setting> mSettings;
     
     /**

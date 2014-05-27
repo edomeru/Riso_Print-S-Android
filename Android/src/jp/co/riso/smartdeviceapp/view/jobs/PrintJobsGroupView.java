@@ -44,8 +44,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PrintJobsGroupView extends LinearLayout implements View.OnClickListener, OnTouchListener, Callback {
-    
-    private static final String TAG = "PrintJobsGroupView";
+
+    private static final String TAG = PrintJobsGroupView.class.getName();
     private static final String C_SPACE = " ";
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;

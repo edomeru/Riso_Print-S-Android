@@ -22,7 +22,6 @@ import java.util.Locale;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,14 +32,12 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 public final class AppUtils {
-    public static final String TAG = "AppUtils";
     
     public static final String CONST_ASSET_PATH = "file:///android_asset/";
     
@@ -209,9 +206,9 @@ public final class AppUtils {
             stream.close();
             assetOk = true;
         } catch (FileNotFoundException e) {
-            Log.w(TAG, "assetExists failed: " + e.toString());
+            Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         } catch (IOException e) {
-            Log.w(TAG, "assetExists failed: " + e.toString());
+            Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         }
         return assetOk;
     }
@@ -303,13 +300,13 @@ public final class AppUtils {
                 }
                 // Will catch the view with no such methods (listview...)
                 catch (NoSuchMethodException e) {
-                    Log.w(TAG, "NoSuchMethodException (setTypeface and getTypeface)");
+                    Logger.logWarn(AppUtils.class, "NoSuchMethodException (setTypeface and getTypeface)");
                 } catch (IllegalAccessException e) {
-                    Log.w(TAG, "IllegalAccessException, on invoke");
+                    Logger.logWarn(AppUtils.class, "IllegalAccessException, on invoke");
                 } catch (IllegalArgumentException e) {
-                    Log.w(TAG, "IllegalArgumentException on invoke");
+                    Logger.logWarn(AppUtils.class, "IllegalArgumentException on invoke");
                 } catch (InvocationTargetException e) {
-                    Log.w(TAG, "InvocationTargetException on invoke");
+                    Logger.logWarn(AppUtils.class, "InvocationTargetException on invoke");
                 }
             }
         }
@@ -337,31 +334,14 @@ public final class AppUtils {
             Field idField = c.getDeclaredField(variableName);
             id = idField.getInt(idField);
         } catch (NoSuchFieldException e) {
-            Log.w(TAG, "No id on class");
+            Logger.logWarn(AppUtils.class, "No id on class");
         } catch (IllegalAccessException e) {
-            Log.w(TAG, "IllegalAccessException on getInt");
+            Logger.logWarn(AppUtils.class, "IllegalAccessException on getInt");
         } catch (IllegalArgumentException e) {
-            Log.w(TAG, "IllegalArgumentException on getInt");
+            Logger.logWarn(AppUtils.class, "IllegalArgumentException on getInt");
         }
         
         return id;
-    }
-    
-    /**
-     * @param activity
-     * @return cache size
-     */
-    public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
-        if (activity == null) {
-            return 0;
-        }
-        
-        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
-        
-        // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.
-        final int memClass = manager.getMemoryClass();
-        
-        return 1024 * 1024 * memClass;
     }
     
     /**
@@ -405,7 +385,7 @@ public final class AppUtils {
      */
     public static int getNextIntegerMultiple(int n, int m) {
         if (m == 0) {
-            Log.w(TAG, "Cannot divide by 0");
+            Logger.logWarn(AppUtils.class, "Cannot divide by 0");
             return n;
         }
         
@@ -468,7 +448,7 @@ public final class AppUtils {
                     strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
                     strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pin));
                 } catch (NumberFormatException e) {
-                    Log.d(TAG, "PIN code is not numeric: " + pinCode);
+                    Logger.logWarn(AppUtils.class, "PIN code is not numeric: " + pinCode);
                 }
             }
         }

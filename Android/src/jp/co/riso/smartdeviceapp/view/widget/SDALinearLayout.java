@@ -13,7 +13,6 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 public class SDALinearLayout extends LinearLayout {
-    public static final String TAG = "SDALinearLayout";
 
     /**
      * Constructor

@@ -67,7 +67,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener, UpdateStatusCallback, OnEditorActionListener {
-    public static final String TAG = "PrintSettingsView";
     
     private static final String KEY_SELECTED_TITLES = "key_selected_titles";
     private static final String KEY_SCROLL_POSITION = "key_scroll_position";

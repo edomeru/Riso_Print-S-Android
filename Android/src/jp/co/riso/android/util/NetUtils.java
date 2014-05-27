@@ -22,10 +22,8 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 public class NetUtils {
-    private static final String TAG = "NetUtils";
     private static final Pattern IPV4_PATTERN;
     private static final Pattern IPV4_MULTICAST_PATTERN;
     private static final Pattern IPV6_STD_PATTERN;
@@ -118,11 +116,11 @@ public class NetUtils {
                 }
             }
         } catch (UnknownHostException e) {
-            Log.w(TAG, "UnknownHostException caused by InetAddress.getByName()");
+            Logger.logWarn(NetUtils.class, "UnknownHostException caused by InetAddress.getByName()");
         } catch (IOException e) {
-            Log.w(TAG, "IOException caused by inetIpAddress.isReachable()");
+            Logger.logWarn(NetUtils.class, "IOException caused by inetIpAddress.isReachable()");
         } catch (NullPointerException e) {
-            Log.w(TAG, "NullPointerException caused by ipAddress.contains()");
+            Logger.logWarn(NetUtils.class, "NullPointerException caused by ipAddress.contains()");
         }
         return false;
     }
@@ -289,9 +287,11 @@ public class NetUtils {
                 list.add(interfaces.get(i).getName());
             }
         } catch (SocketException e) {
-            Log.w(TAG, "SocketException");
+            Logger.logWarn(NetUtils.class, "SocketException");
+            
             list.add(localInterface);
         }
+        
         if (list.contains(localInterface)) {
             list.set(0, localInterface);
         }

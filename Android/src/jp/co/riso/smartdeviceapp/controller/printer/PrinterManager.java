@@ -27,7 +27,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -353,7 +352,6 @@ public class PrinterManager implements SNMPManagerCallback {
         mIsCancelled = false;
         mSNMPManager.initializeSNMPManager();
         mSNMPManager.deviceDiscovery();
-        Log.d("PrinterManager", "Auto");
     }
     
     /**
@@ -374,7 +372,6 @@ public class PrinterManager implements SNMPManagerCallback {
         mIsCancelled = false;
         mSNMPManager.initializeSNMPManager();
         mSNMPManager.manualDiscovery(ipAddress);
-        Log.d("PrinterManager", "Manual");
     }
     
     /**
@@ -390,7 +387,6 @@ public class PrinterManager implements SNMPManagerCallback {
             @Override
             public void run() {
                 mSNMPManager.cancel();
-                Log.d("PrinterManager", "Cancel");
             }
         }, 0);
     }
@@ -633,7 +629,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         mIsSearching = false;
         manager.finalizeSNMPManager();
-        Log.d("PrinterManager", "Finalize");
+        
         if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
             mPrinterSearchCallback.get().onSearchEnd();
         }
@@ -647,7 +643,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         Printer printer = new Printer(name, ipAddress);
         PrinterManager.setupPrinterConfig(printer, capabilities);
-        Log.d("PrinterManager", "onFoundDevice");
+        
         if (isSearching()) {
             if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
                 mPrinterSearchCallback.get().onPrinterAdd(printer);
