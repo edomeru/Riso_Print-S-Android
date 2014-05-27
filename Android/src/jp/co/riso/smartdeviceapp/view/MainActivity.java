@@ -8,6 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -20,8 +22,6 @@ import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Handler.Callback;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 
 import com.radaee.pdf.Global;
 
-public class MainActivity extends BaseActivity implements Callback {
+public class MainActivity extends BaseActivity implements PauseableHandlerCallback {
 
     public static final String KEY_RIGHT_OPEN = "right_drawer_open";
     public static final String KEY_LEFT_OPEN = "left_drawer_open";
@@ -40,9 +40,8 @@ public class MainActivity extends BaseActivity implements Callback {
     //public static final String KEY_TRANSLATION = "translate";
     
     private static final int MSG_OPEN_DRAWER = 0;
-    private static final int MSG_OPEN_DRAWER_INTERCEPT = 1;
-    private static final int MSG_CLOSE_DRAWER = 2;
-    private static final int MSG_CLEAR_ICON_STATES = 3;
+    private static final int MSG_CLOSE_DRAWER = 1;
+    private static final int MSG_CLEAR_ICON_STATES = 2;
     
     private SDADrawerLayout mDrawerLayout = null;
     private ViewGroup mMainLayout = null;
@@ -51,14 +50,14 @@ public class MainActivity extends BaseActivity implements Callback {
     private ActionBarDrawerToggle mDrawerToggle = null;
     private boolean mResizeView = false;
     
-    private Handler mHandler = null;
+    private PauseableHandler mHandler = null;
     
     /** {@inheritDoc} */
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
         Global.Init(this);
 
-        mHandler = new Handler(this);
+        mHandler = new PauseableHandler(this);
         
         setContentView(R.layout.activity_main);
         
@@ -137,10 +136,24 @@ public class MainActivity extends BaseActivity implements Callback {
         return super.onOptionsItemSelected(item);
     }
     
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        mHandler.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        mHandler.resume();
+    }
+    
     // ================================================================================
     // Public Functions
     // ================================================================================
-    
+
     /**
      * Open Drawer
      * 
@@ -148,9 +161,7 @@ public class MainActivity extends BaseActivity implements Callback {
      *            Drawer gravity
      */
     public void openDrawer(int gravity) {
-        Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER);
-        msg.arg1 = gravity;
-        mHandler.sendMessage(msg);
+        openDrawer(gravity, false);
     }
     
     /**
@@ -162,7 +173,7 @@ public class MainActivity extends BaseActivity implements Callback {
      *            Prevent layout from touches
      */
     public void openDrawer(int gravity, boolean preventIntercept) {
-        Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER_INTERCEPT);
+        Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER);
         msg.arg1 = gravity;
         msg.arg2 = preventIntercept ? 1 : 0;
         mHandler.sendMessage(msg);
@@ -188,37 +199,49 @@ public class MainActivity extends BaseActivity implements Callback {
     }
     
     // ================================================================================
-    // INTERFACE - Callback 
+    // INTERFACE - PauseableHandlerCallback 
     // ================================================================================
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean storeMessage(Message message) {
+        return (message.what == MSG_OPEN_DRAWER
+                || message.what == MSG_CLOSE_DRAWER
+                || message.what == MSG_CLEAR_ICON_STATES);
+    }
 
     /** {@inheritDoc} */
     @Override
-    public boolean handleMessage(Message msg) {
+    public void processMessage(Message msg) {
+        BaseFragment fragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout));
+        boolean gravityLeft = (msg.arg1 == Gravity.LEFT);
+        
         switch (msg.what){
             case MSG_OPEN_DRAWER:
-                closeDrawers();
-                openDrawer(msg.arg1, false);
-                if (msg.arg1 == Gravity.LEFT) {
-                    ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
+                mDrawerLayout.setPreventInterceptTouches(false);
+                mDrawerLayout.closeDrawers();
+                
+                if (fragment != null) {
+                    fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, gravityLeft);
                 }
-                return true;
-            case MSG_OPEN_DRAWER_INTERCEPT:
+                
+                mDrawerLayout.setPreventInterceptTouches((msg.arg2 == 1));
                 if (msg.arg1 == Gravity.RIGHT) {
                     mResizeView = (msg.arg2 == 1);
                 }
-                mDrawerLayout.setPreventInterceptTouches((msg.arg2 == 1));
+                
                 mDrawerLayout.openDrawer(msg.arg1);
-                return true;
+                break;
             case MSG_CLOSE_DRAWER:
                 mDrawerLayout.setPreventInterceptTouches(false);
                 mDrawerLayout.closeDrawers();
-                return true;
+                break;
             case MSG_CLEAR_ICON_STATES:
-                BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
-                fragment.clearIconStates();
-                return true;
+                if (fragment != null) {
+                    fragment.clearIconStates();
+                }
+                break;
         }
-        return false;
     }
     
     // ================================================================================
