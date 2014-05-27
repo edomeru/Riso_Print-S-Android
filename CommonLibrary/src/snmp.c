@@ -78,12 +78,6 @@ struct snmp_device_s
     snmp_device *next;
 };
 
-struct caps_queue_s
-{
-    snmp_device *top;
-    snmp_device *current;
-};
-
 static const char *MIB_REQUESTS[] = {
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.1", // Finisher 2/4 holes
     "1.3.6.1.2.1.43.15.1.1.2.1.5",
@@ -236,10 +230,11 @@ void *do_discovery(void *parameter)
     if (!ss)
     {
         snmp_sess_perror("ack", &session);
-        snmp_log(LOG_ERR, "Error opening snmp session.\n");
+        //snmp_log(LOG_ERR, "Error opening snmp session.\n");
         
         free(session.peername);
         free(session.community);
+        
         snmp_call_end_callback(context, -1);
         
         return 0;
@@ -261,7 +256,7 @@ void *do_discovery(void *parameter)
     if (!snmp_send(ss, pdu_request))
     {
         snmp_sess_perror("ack", ss);
-        snmp_log(LOG_ERR, "Error in sending request.\n");
+        //snmp_log(LOG_ERR, "Error in sending request.\n");
         
         snmp_close(ss);
         free(session.peername);

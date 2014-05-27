@@ -706,7 +706,6 @@ void *do_raw_print(void *parameter)
             sent = send(sock_fd, buffer, read, 0);
             if (sent != read)
             {
-                printf("****Send Error\n");
                 notify_callback(print_job, kJobStatusErrorSending);
                 has_error = 1;
                 break;
