@@ -467,32 +467,30 @@
         [self.tableView deleteRowsAtIndexPaths:@[self.toDeleteIndexPath]
                               withRowAnimation:UITableViewRowAnimationFade];
         __weak PrintersIphoneViewController* weakSelf = self;
-        [UIView animateWithDuration:0.5 animations:^{
-            if (deletedDefault && hasNewDefault)
+        [UIView animateWithDuration:0.5 animations:
+         ^{
+            if (deletedDefault)
             {
-                // assign the new default printer
-                NSInteger rowNewDefault;
-                if (rowDeleted == [weakSelf.tableView numberOfRowsInSection:0])
+                if (hasNewDefault)
                 {
-                    rowNewDefault = 0;
+                    // assign the first printer as the new default printer
+                    weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+                    
+                    // reload the new default printer
+                    [weakSelf.tableView reloadRowsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]
+                                              withRowAnimation:UITableViewRowAnimationFade];
                 }
-                else
-                {
-                    rowNewDefault = rowDeleted;
-                }
-                weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:rowNewDefault inSection:0];
-                
-                // reload the new default printer
-                [weakSelf.tableView reloadRowsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]
-                                          withRowAnimation:UITableViewRowAnimationFade];
+                //else, deleted printer is the last printer
             }
             else
             {
-                // update the index path of the default printer
-                NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
-                if (rowDeleted < oldIndexPath.row)
+                if (weakSelf.defaultPrinterIndexPath.row != 0
+                    && rowDeleted < weakSelf.defaultPrinterIndexPath.row)
+                {
+                    NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
                     weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1
                                                                           inSection:0];
+                }
             }
         }];
         

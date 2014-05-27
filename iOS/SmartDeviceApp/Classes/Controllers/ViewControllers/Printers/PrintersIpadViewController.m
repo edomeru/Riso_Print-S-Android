@@ -198,35 +198,25 @@
 
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
-    UISwitch *defaultSwitch = (UISwitch *) sender;
+    // switch can only be turned ON
+    // switch is automatically turned off when a new default printer is selected
     
-    if(defaultSwitch.on == YES)
-    {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
-        if([self setDefaultPrinter:indexPath])
-        {
-            if(self.defaultPrinterIndexPath != nil)
-            {
-                PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-                
-                [oldDefaultCell setAsDefaultPrinterCell:FALSE];
-            }
-            
-            PrinterCollectionViewCell *newDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            
-            [newDefaultCell setAsDefaultPrinterCell:YES];
-            self.defaultPrinterIndexPath = indexPath;
-        }
-    }
-    else
+    UISwitch *defaultSwitch = (UISwitch *) sender;
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
+    if([self setDefaultPrinter:indexPath])
     {
         if(self.defaultPrinterIndexPath != nil)
         {
-            PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+            PrinterCollectionViewCell *oldDefaultCell =
+            (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
             [oldDefaultCell setAsDefaultPrinterCell:FALSE];
-            [self.printerManager deleteDefaultPrinter];
-            self.defaultPrinterIndexPath = nil;
         }
+        
+        PrinterCollectionViewCell *newDefaultCell =
+        (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        [newDefaultCell setAsDefaultPrinterCell:YES];
+        
+        self.defaultPrinterIndexPath = indexPath;
     }
 }
 
@@ -312,30 +302,27 @@
             
         } completion:^(BOOL finished)
         {
-            if (deletedDefault && hasNewDefault)
+            if (deletedDefault)
             {
-                // assign the new default printer
-                NSInteger indexNewDefault;
-                if (index == [weakSelf.collectionView numberOfItemsInSection:0])
+                if (hasNewDefault)
                 {
-                    indexNewDefault = 0;
+                    // assign the first printer as the new default printer
+                    weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForItem:0 inSection:0];
+                    
+                    // reload the new default printer
+                    [weakSelf.collectionView reloadItemsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]];
                 }
-                else
-                {
-                    indexNewDefault = index; //the next item will shift to this index
-                }
-                weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForItem:indexNewDefault inSection:0];
-                
-                // reload the new default printer
-                [weakSelf.collectionView reloadItemsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]];
+                //else, deleted printer is the last printer
             }
             else
             {
-                // update the index path of the default printer
-                NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
-                if (index < oldIndexPath.row)
+                if (weakSelf.defaultPrinterIndexPath.item != 0
+                    && index < weakSelf.defaultPrinterIndexPath.item)
+                {
+                    NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
                     weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1
                                                                           inSection:0];
+                }
             }
         }];
         
