@@ -193,20 +193,10 @@
         //embed
         
         UITableViewController* destController = (UITableViewController*)segue.destinationViewController;
-        
+        self.refreshControl = destController.refreshControl;
         self.searchResultsTable = destController.tableView;
         self.searchResultsTable.delegate = self;
         self.searchResultsTable.dataSource = self;
-        
-        self.refreshControl = [[UIRefreshControl alloc] init];
-        [self.refreshControl addTarget:self
-                                action:@selector(refreshScreen)
-                      forControlEvents:UIControlEventValueChanged];
-        [destController.refreshControl setEnabled:YES];
-        destController.refreshControl = self.refreshControl;
-        
-        // fix for the tint color API bug in iOS7
-        [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
     }
     else
     {
@@ -253,6 +243,12 @@
         self.isIpad = YES;
     else
         self.isIpad = NO;
+    
+    [self.refreshControl addTarget:self
+                            action:@selector(refreshScreen)
+                  forControlEvents:UIControlEventValueChanged];
+    
+    [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
 }
 
 - (void)refreshScreen
