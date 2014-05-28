@@ -1768,13 +1768,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         ViewGroup target = (ViewGroup) v.getTag(ID_COLLAPSE_TARGET_GROUP);
         for (int i = 0; i < target.getChildCount(); i++) {
+            View child = target.getChildAt(i);
+            if (child.getVisibility() == View.GONE) {
+                continue;
+            }
+            
             int height = menuHeight;
             if (i != target.getChildCount() - 1) {
                 height += getResources().getDimensionPixelSize(R.dimen.separator_size);
             }
             totalHeight += height;
             
-            View child = target.getChildAt(i);
             TranslateAnimation animate = new TranslateAnimation(0, 0, -totalHeight, 0);
             animate.setDuration((int) (totalHeight * durationMultiplier));
             
@@ -1844,13 +1848,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         int currentHeight = 0;
         for (int i = 0; i < target.getChildCount(); i++) {
+            View child = target.getChildAt(i);
+            if (child.getVisibility() == View.GONE) {
+                continue;
+            }
+            
             int height = menuHeight;
             if (i != target.getChildCount() - 1) {
                 height += getResources().getDimensionPixelSize(R.dimen.separator_size);
             }
             currentHeight += height;
             
-            View child = target.getChildAt(i);
             TranslateAnimation animate = new TranslateAnimation(0, 0, 0, -currentHeight);
             animate.setDuration((int) (currentHeight * durationMultiplier));
             animate.setFillAfter(true);

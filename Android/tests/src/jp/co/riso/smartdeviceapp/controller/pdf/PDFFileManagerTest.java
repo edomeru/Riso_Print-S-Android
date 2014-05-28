@@ -23,6 +23,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     String mLargePdfPath;
     String mPdfInSandboxPath;
     String mEncryptedPdfPath;
+    String mPrintingDisallowed;
     int mStatus;
     PDFFileManager mPdfManager;
 
@@ -41,6 +42,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfPageCount = 36; // page count of mPdfPath file
         
         mEncryptedPdfPath = getAssetPath("40RC4_Nitro.pdf");
+        
+        mPrintingDisallowed = getAssetPath("PDF-0010pages.pdf");
         
         mPdfInSandboxPath = PDFFileManager.getSandboxPath();
         FileUtils.copy(new File(mPdfPath), new File(mPdfInSandboxPath));
@@ -383,6 +386,40 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     */
     
     //================================================================================
+    // Tests - test
+    //================================================================================
+    
+    public void testTestDocument_NullPdfPath() {
+        int status = mPdfManager.testDocument(null);
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
+    }
+    
+    public void testTestDocument_InvalidPdfPath() {
+        int status = mPdfManager.testDocument("not_a_valid_path");
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
+    }
+
+    public void testTestDocument_Valid() {
+        int status = mPdfManager.testDocument(mPdfPath);
+        assertEquals(status, PDFFileManager.PDF_OK);
+    }
+    
+    public void testTestDocument_EncrpyptedPath() {
+        int status = mPdfManager.testDocument(mEncryptedPdfPath);
+        assertEquals(status, PDFFileManager.PDF_ENCRYPTED);
+    }
+    
+    public void testTestDocument_PrintingDisallowed() {
+        int status = mPdfManager.testDocument(mPrintingDisallowed);
+        assertEquals(status, PDFFileManager.PDF_PRINT_RESTRICTED);
+    }
+    
+    public void testTestDocument_EmptyPdfPath() {
+        int status = mPdfManager.testDocument("");
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
+    }
+    
+    //================================================================================
     // Tests - open
     //================================================================================
     
@@ -408,6 +445,12 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mPdfManager.setPDF(mEncryptedPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_ENCRYPTED);
+    }
+    
+    public void testOpenDocument_PrintingDisallowed() {
+        mPdfManager.setPDF(mPrintingDisallowed);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_PRINT_RESTRICTED);
     }
     
     public void testOpenDocument_EmptyPdfPath() {

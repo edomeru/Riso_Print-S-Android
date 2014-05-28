@@ -48,6 +48,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
     public static final String FRAGMENT_TAG_PRINTSETTINGS = "fragment_printsettings";
     
+    private static final String TAG_MESSAGE_DIALOG = "dialog_message";
     private PDFFileManager mPdfManager = null;
     
     private int mPrinterId = PrinterManager.EMPTY_ID;
@@ -212,6 +213,18 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void clearIconStates() {
         super.clearIconStates();
         setIconState(ID_PRINT_BUTTON, false);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onResume() {
+        super.onResume();
+        PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        
+        if (!printerManager.isExists(mPrinterId)) {
+            setPrintId(printerManager.getDefaultPrinter());
+            setPrintSettings(new PrintSettings(mPrinterId));
+        }
     }
     
     // ================================================================================
@@ -417,6 +430,15 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         switch (v.getId()) {
             case ID_PRINT_BUTTON:
+                PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+                
+                if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
+                    String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+                    String btnMsg = getString(R.string.ids_lbl_ok);
+                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                    return;
+                }
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getActivity();
                     

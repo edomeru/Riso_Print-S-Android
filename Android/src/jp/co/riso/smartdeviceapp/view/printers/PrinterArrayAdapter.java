@@ -87,6 +87,8 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         
         if (mPrinterManager.getDefaultPrinter() == printer.getId()) {
             setPrinterRowToDefault(viewHolder);
+        } else if (!((PrintersContainerView) convertView).getDelete()) {
+            setPrinterRowToNormal(viewHolder);
         }
         
         if (printerName == null || printerName.isEmpty()) {

@@ -3,6 +3,7 @@
     android:id="@+id/SDALinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/drawer_margin"
     android:background="@color/theme_light_3"
     android:orientation="vertical" >
 

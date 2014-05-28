@@ -55,6 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical|right"
+                    android:layout_marginLeft="@dimen/printers_row_right_margin"
                     android:background="@drawable/selector_printers_deletebutton"
                     android:gravity="center"
                     android:paddingLeft="@dimen/printjob_delbtn_padding_side"
@@ -164,6 +165,18 @@
                         android:layout_weight="0"
                         android:saveEnabled="true"
                         android:thumb="@drawable/widgettheme_switch_inner_holo_dark" />
+
+                    <ImageView
+                        android:id="@+id/img_default"
+                        android:layout_width="@dimen/printers_row_right_icon_size"
+                        android:layout_height="@dimen/printers_row_right_icon_size"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="@dimen/printers_row_right_margin"
+                        android:contentDescription="@string/default_content_description"
+                        android:paddingRight="@dimen/printers_row_right_padding"
+                        android:src="@drawable/img_set_as_default_printer"
+                        android:visibility="gone" />
+
                 </LinearLayout>
 
                 <View

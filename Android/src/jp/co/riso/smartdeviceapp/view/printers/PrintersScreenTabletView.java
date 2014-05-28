@@ -280,8 +280,7 @@ OnItemSelectedListener {
             }
         }
         if (mSettingItem != PrinterManager.EMPTY_ID) {
-            mDefaultViewHolder = (ViewHolder) getChildAt(mSettingItem).getTag();
-            mDefaultViewHolder.mPrintSettings.setSelected(state);
+            getChildAt(mSettingItem).findViewById(R.id.default_print_settings).setSelected(state);
         }
         if (!state) {
             mSettingItem = PrinterManager.EMPTY_ID;
@@ -306,12 +305,19 @@ OnItemSelectedListener {
             return;
         }
         Printer printer = (Printer) mDeleteViewHolder.mIpAddress.getTag();
+        boolean relayout = printer.getId() == mPrinterManager.getDefaultPrinter() ? true : false;
+        
         if (mPrinterManager.removePrinter(printer)) {
             mPrinterList.remove(printer);
             removeView((View) mDeleteViewHolder.mOnlineIndcator.getTag());
         }
         mDeleteViewHolder = null;
         mDeleteItem = PrinterManager.EMPTY_ID;
+        
+        if (relayout) {
+            removeAllViews();
+            restoreState(mPrinterList, PrinterManager.EMPTY_ID, PrinterManager.EMPTY_ID);
+        }
     }
     
     /**
@@ -362,6 +368,8 @@ OnItemSelectedListener {
         if (printerItem.getDefault()) {
             printerItem.setDefault(false);
             viewHolder.mDefaultPrinter.setChecked(false);
+            viewHolder.mDefaultPrinter.setVisibility(View.VISIBLE);
+            viewHolder.mDefaultView.setVisibility(View.GONE);
         }
         resetDeletePrinterView();
     }
@@ -392,7 +400,8 @@ OnItemSelectedListener {
             mDefaultViewHolder = null;
         }
         printerItem.setDefault(true);
-        viewHolder.mDefaultPrinter.setChecked(true);
+        viewHolder.mDefaultPrinter.setVisibility(View.GONE);
+        viewHolder.mDefaultView.setVisibility(View.VISIBLE);
         mDefaultViewHolder = viewHolder;
     }
     
@@ -441,6 +450,7 @@ OnItemSelectedListener {
         viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_onOff);
         viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
         viewHolder.mDefaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
+        viewHolder.mDefaultView = (ImageView) pView.findViewById(R.id.img_default);
         viewHolder.mPrintSettings = (LinearLayout) pView.findViewById(R.id.default_print_settings);
         viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
         
@@ -549,7 +559,6 @@ OnItemSelectedListener {
             setPrinterViewToDefault(viewHolder);
             mPrinterManager.setDefaultPrinter(printer);
         } else {
-            mPrinterManager.clearDefaultPrinter();
             setPrinterViewToNormal(viewHolder);
         }
     }
@@ -627,6 +636,7 @@ OnItemSelectedListener {
         private Button mDeleteButton;
         private TextView mIpAddress;
         private Switch mDefaultPrinter;
+        private ImageView mDefaultView;
         private Spinner mPort;
         private LinearLayout mPrintSettings;
     }

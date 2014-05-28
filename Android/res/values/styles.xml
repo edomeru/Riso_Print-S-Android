@@ -5,6 +5,7 @@
         <item name="android:actionBarStyle">@style/SDAActionBar</item>
         <item name="android:windowBackground">@color/theme_light_2</item>
         <item name="android:textSize">@dimen/font_size_normal</item>
+        <item name="android:seekBarStyle">@style/SeekBarWidgetTheme</item>
     </style>
     
     <style name="SplashTheme" parent="android:Theme.NoTitleBar">
@@ -43,6 +44,12 @@
 　　　         <item name="android:textColor">@color/theme_dark_1</item>
 　　　         <item name="android:textCursorDrawable">@null</item>
  　　　         <item name="android:imeOptions">flagNoExtractUi|actionDone</item>
+    </style>
+    
+    <style name="SeekBarWidgetTheme" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/widgettheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/widgettheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/widgettheme_scrubber_control_selector_holo_light</item>
     </style>
 
 </resources>
