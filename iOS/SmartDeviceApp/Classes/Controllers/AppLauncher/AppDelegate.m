@@ -10,6 +10,7 @@
 #import "PDFFileManager.h"
 #import "RootViewController.h"
 #import "DirectPrintManager.h"
+#import "SNMPManager.h"
 
 #define PREVIEW_DEBUG_MODE 0
 #define PDF_END_PROCESSING_NOTIFICATION @"jp.alink-group.smartdeviceapp.endpdfprocessing"
@@ -76,7 +77,7 @@
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // Allow async task to finish first before deactivating
-        while (application.applicationState == UIApplicationStateBackground && ![DirectPrintManager idle] && application.backgroundTimeRemaining > 15.0f)
+        while ((application.applicationState == UIApplicationStateBackground || application.applicationState == UIApplicationStateInactive) && (![DirectPrintManager idle] || ![SNMPManager idle]) && application.backgroundTimeRemaining > 15.0f)
         {
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
         }

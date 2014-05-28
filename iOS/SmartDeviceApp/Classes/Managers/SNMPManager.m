@@ -18,6 +18,7 @@ static snmp_context* snmpContext;
 static void snmpDiscoveryEndedCallback(snmp_context* context, int result);
 static void snmpPrinterAddedCallback(snmp_context* context, snmp_device* device);
 
+static NSLock *lock = nil;
 static SNMPManager* sharedSNMPManager = nil;
 
 @interface SNMPManager ()
@@ -74,6 +75,18 @@ static SNMPManager* sharedSNMPManager = nil;
             sharedSNMPManager = [[self alloc] init];
     }
     return sharedSNMPManager;
+}
+
+#pragma mark - State
+
++ (BOOL)idle
+{
+    BOOL result = YES;
+    [lock lock];
+    result = (snmpContext == nil);
+    [lock unlock];
+    
+    return result;
 }
 
 #pragma mark - Printer Search (Manual Search)

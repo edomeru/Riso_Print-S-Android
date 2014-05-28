@@ -1122,10 +1122,10 @@
             </objects>
             <point key="canvasLocation" x="1215" y="2188"/>
         </scene>
-        <!--PrinterSearchTableViewController-->
+        <!--Printer Search Table View Controller-->
         <scene sceneID="4Gj-4c-Dbw">
             <objects>
-                <tableViewController storyboardIdentifier="PrinterSearchTableViewController" id="zSB-tU-rcH" userLabel="PrinterSearchTableViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="PrinterSearchTableViewController" id="zSB-tU-rcH" userLabel="Printer Search Table View Controller" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LGS-lI-w02">
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1216,6 +1216,11 @@
                             <outlet property="delegate" destination="zSB-tU-rcH" id="IPJ-Ac-JLM"/>
                         </connections>
                     </tableView>
+                    <refreshControl key="refreshControl" clipsSubviews="YES" contentMode="redraw" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="AZD-cC-tlK">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </refreshControl>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Me6-bh-pDJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

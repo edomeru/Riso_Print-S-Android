@@ -18,6 +18,15 @@
  */
 + (SNMPManager*)sharedSNMPManager;
 
+#pragma mark - State
+
+/**
+ Checks if the SNMP Common Library is currently performing 
+ any operation.
+ @return YES if there is an ongoing search, NO otherwise.
+ */
++ (BOOL)idle;
+
 #pragma mark - Printer Search
 
 /**
