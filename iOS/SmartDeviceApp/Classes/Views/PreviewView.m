@@ -251,6 +251,7 @@
     if (self.scale == 1.0f)
     {
         [self enableMaxDimensionRules];
+        self.sizeOffset = 0.0f;
     }
     
     self.sizeConstraint.constant = referenceSize * (self.scale - 1.0f) + self.sizeOffset;
@@ -324,7 +325,6 @@
     NSLayoutConstraint *sizeConstraint;
     if (self.orientation == kPreviewViewOrientationPortrait)
     {
-        //CGFloat difference =
         sizeConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
     }
     else
@@ -386,7 +386,8 @@
     {
         referenceSize = self.frame.size.width;
     }
-    CGFloat scale = self.scale * pincher.scale;
+    
+    CGFloat scale = MAX(0.5f, self.scale * pincher.scale); // Added to avoid scaling to very low factor
     self.sizeConstraint.constant = referenceSize * scale - referenceSize + self.sizeOffset;
     [self layoutIfNeeded];
     

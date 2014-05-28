@@ -15,11 +15,11 @@ import java.util.List;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -44,8 +44,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PrintJobsGroupView extends LinearLayout implements View.OnClickListener, OnTouchListener, Callback {
-    
-    private static final String TAG = "PrintJobsGroupView";
+
+    private static final String TAG = PrintJobsGroupView.class.getName();
     private static final String C_SPACE = " ";
     private static final int MSG_COLLAPSE = 0;
     private static final int MSG_EXPAND = 1;
@@ -188,7 +188,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         boolean isSuccess = pm.deleteWithJobId(job.getId());
         if (isSuccess) {
             mGroupListener.deleteJobFromList(job);
-            animateDeleteJob(mPrintGroupView.findViewWithTag(job));
+            animateDeleteJob(mJobsLayout.findViewWithTag(job));
         } else {
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
@@ -342,7 +342,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         printJobName.setText(pj.getName());
         printJobDate.setText(formatDate(pj.getDate()));
         printJobDeleteBtn.setOnClickListener(this);
-        printJobDeleteBtn.setTag(pj);
         
         switch (pj.getResult()) {
             case SUCCESSFUL:
@@ -354,9 +353,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 printJobSuccess.setVisibility(INVISIBLE);
                 break;
         }
-        
-        printJobName.setText(pj.getName());
-        printJobDate.setText(formatDate(pj.getDate()));
         
         mPrintJobViews.add(tempView);
         mJobsLayout.addView(tempView);
@@ -664,9 +660,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private void deletePrintJobView(int i) {
         mPrintJobs.remove(i);
         mJobsLayout.removeView(mPrintJobViews.remove(i));
-        
         if (mPrintJobViews.size() == 0) {
             deletePrintJobGroupView();
+        } else if (i == mPrintJobViews.size()) { 
+            // after deletion remove separator in last row
+            int lastRow = i - 1;
+            mPrintJobViews.get(lastRow).findViewById(R.id.printJobSeparator).setVisibility(GONE);
         }
     }
     
@@ -769,6 +768,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
         /**
          * Set print job to be deleted
+         * 
          * @param printJobsGroupView
          *            PrintJobsGroupView containing the PrintJob to be deleted
          * @param job
@@ -779,6 +779,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         /**
          * Set print job group to be deleted
          * 
+         * @param printJobsGroupView
+         *            PrintJobsGroupView of the job group to be deleted 
          * @param printer
          *            print job group to be deleted
          */

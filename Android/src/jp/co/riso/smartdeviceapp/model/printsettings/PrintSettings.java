@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -42,11 +43,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import android.util.Log;
-
 public class PrintSettings {
-    public static final String TAG = "PrintSettings";
-    
     public static final String TAG_COLOR_MODE = "colorMode";
     public static final String TAG_ORIENTATION = "orientation";
     public static final String TAG_COPIES = "copies";
@@ -140,11 +137,11 @@ public class PrintSettings {
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
         } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
+            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
         } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
+            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
         } catch (IOException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
+            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
         }
         
         parsePrintSettings(printSettingsContent);

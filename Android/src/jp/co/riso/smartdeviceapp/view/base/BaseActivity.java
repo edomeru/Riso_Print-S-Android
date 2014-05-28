@@ -13,7 +13,6 @@ import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.TypedValue;
 
 public abstract class BaseActivity extends Activity {
 
@@ -57,11 +56,8 @@ public abstract class BaseActivity extends Activity {
      */
     public int getActionBarHeight() {
         // Calculate ActionBar height
-        TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            return TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-        }
-        return -1;
+        int actionBarHeight = getResources().getDimensionPixelSize(R.dimen.actionbar_height);
+        return actionBarHeight;
     }
     
     /**
@@ -72,8 +68,8 @@ public abstract class BaseActivity extends Activity {
     public int getDrawerWidth() {
         Point screenSize = AppUtils.getScreenDimensions(this);
         float drawerWidthPercentage = getResources().getFraction(R.dimen.drawer_width_percentage, 1, 1);
-        float minDrawerWidth = getResources().getDimension(R.dimen.drawer_width_min);
-        float maxDrawerWidth = getResources().getDimension(R.dimen.drawer_width_max);
+        int minDrawerWidth = getResources().getDimensionPixelSize(R.dimen.drawer_width_min);
+        int maxDrawerWidth = getResources().getDimensionPixelSize(R.dimen.drawer_width_max);
         
         float drawerWidth = Math.min(screenSize.x, screenSize.y) * drawerWidthPercentage;
         drawerWidth = Math.max(drawerWidth, minDrawerWidth);

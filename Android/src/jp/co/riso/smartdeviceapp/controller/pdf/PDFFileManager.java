@@ -28,7 +28,6 @@ import com.radaee.pdf.Matrix;
 import com.radaee.pdf.Page;
 
 public class PDFFileManager {
-    public static final String TAG = "PDFFileManager";
     
     public static final String KEY_NEW_PDF_DATA = "new_pdf_data";
     public static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
@@ -497,7 +496,7 @@ public class PDFFileManager {
         
         switch (status) {
             case RADAEE_OK:
-                int permission = mDocument.GetPermission();
+                int permission = document.GetPermission();
                 document.Close();
                 
                 // check if (permission != 0) means that license is not standard. if standard license, just display.

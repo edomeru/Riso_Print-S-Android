@@ -128,7 +128,7 @@ const char *paper_type[] =
 {
     "ANY",
     "PLAIN",
-    "IJPAPER"
+    "IJPAPER",
     "MATTCOATED",
     "HIGH-QUALITY",
     "CARD-IJ",
@@ -248,7 +248,7 @@ const char *pjl_commands[kPjlCommandCount] =
     "RKOUTPUTMODE",
     "ORIENTATION",
     "COPIES",
-    "QUANTITY",
+    "QTY",
     "DUPLEX",
     "BINDING",
     "PAPER",
@@ -262,7 +262,7 @@ const char *pjl_commands[kPjlCommandCount] =
     "RKNUPPAGEORDER",
     "RKCOLLATE",
     "RKFOLDMODE",
-    "RKFINISHINGSIDE",
+    "RKFINISHSIDE",
     "RKSTAPLEMODE",
     "RKPUNCHMODE",
     "OUTBIN",
@@ -303,7 +303,7 @@ void parse(char *settings, setting_value values[])
     while (next != 0)
     {
         int line_length = next - current_line + 1;
-        char *line = calloc(line_length, sizeof(char));
+        char *line = (char *)calloc(line_length, sizeof(char));
         strncpy(line, current_line, line_length - 1);
         
         char name[64];
@@ -462,6 +462,7 @@ void add_pjl(char *pjl, setting_value values[], int command)
                 return;
             }
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][value.int_value]);
+            strcat(pjl, pjl_line);
             break;
         }
         case kPjlCommandInputTray:

@@ -33,23 +33,27 @@ typedef enum {
 }
 
 
--(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell
+- (void)setAsDefaultPrinterCell:(BOOL)isDefaultPrinterCell
 {
     self.isDefaultPrinterCell = isDefaultPrinterCell;
     if(isDefaultPrinterCell == YES)
     {
         self.defaultSwitch.on = YES;
+        self.defaultSwitch.hidden = YES;
+        self.defaultSetIcon.hidden = NO;
         [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
     }
     else
     {
         self.defaultSwitch.on = NO;
+        self.defaultSwitch.hidden = NO;
+        self.defaultSetIcon.hidden = YES;
         [self setCellHeaderFormat:kPrinterCollectionCellTypeNormal];
 
     }
 }
 
--(void) setCellHeaderFormat:(kPrinterCollectionCellType) cellFormat
+- (void)setCellHeaderFormat:(kPrinterCollectionCellType)cellFormat
 {
     switch(cellFormat)
     {
@@ -76,7 +80,7 @@ typedef enum {
     }
 }
 
--(void) setCellToBeDeletedState:(BOOL) isCellForDelete
+- (void)setCellToBeDeletedState:(BOOL)isCellForDelete
 {
     if(isCellForDelete == YES)
     {
@@ -97,7 +101,7 @@ typedef enum {
     }
 }
 
-- (void) setDefaultSettingsRowToSelected:(BOOL) isSelected;
+- (void)setDefaultSettingsRowToSelected:(BOOL)isSelected;
 {
     if(isSelected)
     {

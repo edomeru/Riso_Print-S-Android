@@ -12,6 +12,7 @@
 #import "PrinterInfoViewController.h"
 #import "PrintSettingsViewController.h"
 #import "PrinterManager.h"
+#import "PrinterDetails.h"
 
 @interface PrintersViewController ()
 
@@ -44,7 +45,7 @@
 {
     [super viewDidLoad];
     
-    self.printerManager = [PrinterManager sharedPrinterManager];
+    self.printerManager = [PrinterManager sharedPrinterManager];   
     self.toDeleteIndexPath = nil;
 }
 

@@ -27,7 +27,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -53,11 +52,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param context
      *            Context of the SmartDeviceApp
      */
-    private PrinterManager(Context context) {        
-        mDatabaseManager = new DatabaseManager(context);
-        mPrinterList = new ArrayList<Printer>();
-        mSNMPManager = new SNMPManager();
-        mSNMPManager.setCallback(this);
+    private PrinterManager(Context context) {
+        this(context, new DatabaseManager(context));
     }
     
     /**
@@ -71,10 +67,10 @@ public class PrinterManager implements SNMPManagerCallback {
      *            DatabaseManager instance
      */
     protected PrinterManager(Context context, DatabaseManager databaseManager) {
-        mDatabaseManager = databaseManager;
-        if (mDatabaseManager == null) {
-            mDatabaseManager = new DatabaseManager(context);
+        if (databaseManager == null) {
+            databaseManager = new DatabaseManager(context);
         }
+        mDatabaseManager = databaseManager;
         mPrinterList = new ArrayList<Printer>();
         mSNMPManager = new SNMPManager();
         mSNMPManager.setCallback(this);
@@ -122,6 +118,10 @@ public class PrinterManager implements SNMPManagerCallback {
         
         if (!setPrinterId(printer)) {
             return false;
+        }
+        
+        if (getDefaultPrinter() == EMPTY_ID) {
+            setDefaultPrinter(printer);
         }
         
         if (mPrintersCallback != null && mPrintersCallback.get() != null) {
@@ -176,6 +176,31 @@ public class PrinterManager implements SNMPManagerCallback {
             for (int i = 0; i < mPrinterList.size(); i++) {
                 Printer printerItem = mPrinterList.get(i);
                 if (printerItem.getIpAddress().equals(ipAddress)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Check Printer Existence
+     * <p>
+     * Determines if the Printer exists in the Saved Printer List
+     * 
+     * @param printerId
+     *            Printer ID.
+     * @return true if exists
+     */
+    public boolean isExists(int printerId) {
+        if (printerId == EMPTY_ID) {
+            return false;
+        }
+        
+        if (mPrinterList != null) {
+            for (int i = 0; i < mPrinterList.size(); i++) {
+                Printer printerItem = mPrinterList.get(i);
+                if (printerItem.getId() == printerId) {
                     return true;
                 }
             }
@@ -304,7 +329,12 @@ public class PrinterManager implements SNMPManagerCallback {
             mPrinterList.remove(printer);
             // Set default printer to invalid
             if (printer.getId() == mDefaultPrintId) {
-                mDefaultPrintId = EMPTY_ID;
+                if (mPrinterList.size() != 0) {
+                    Printer newDefaultPrinter = mPrinterList.get(0);
+                    setDefaultPrinter(newDefaultPrinter);
+                } else {
+                    mDefaultPrintId = EMPTY_ID;
+                }
             }
         }
         mDatabaseManager.close();
@@ -353,7 +383,6 @@ public class PrinterManager implements SNMPManagerCallback {
         mIsCancelled = false;
         mSNMPManager.initializeSNMPManager();
         mSNMPManager.deviceDiscovery();
-        Log.d("PrinterManager", "Auto");
     }
     
     /**
@@ -374,7 +403,6 @@ public class PrinterManager implements SNMPManagerCallback {
         mIsCancelled = false;
         mSNMPManager.initializeSNMPManager();
         mSNMPManager.manualDiscovery(ipAddress);
-        Log.d("PrinterManager", "Manual");
     }
     
     /**
@@ -390,7 +418,6 @@ public class PrinterManager implements SNMPManagerCallback {
             @Override
             public void run() {
                 mSNMPManager.cancel();
-                Log.d("PrinterManager", "Cancel");
             }
         }, 0);
     }
@@ -633,7 +660,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         mIsSearching = false;
         manager.finalizeSNMPManager();
-        Log.d("PrinterManager", "Finalize");
+        
         if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
             mPrinterSearchCallback.get().onSearchEnd();
         }
@@ -647,7 +674,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         Printer printer = new Printer(name, ipAddress);
         PrinterManager.setupPrinterConfig(printer, capabilities);
-        Log.d("PrinterManager", "onFoundDevice");
+        
         if (isSearching()) {
             if (mPrinterSearchCallback != null && mPrinterSearchCallback.get() != null) {
                 mPrinterSearchCallback.get().onPrinterAdd(printer);

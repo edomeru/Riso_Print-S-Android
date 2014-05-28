@@ -523,22 +523,6 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     //================================================================================
-    // Test getCacheSizeBasedOnMemoryClass
-    //================================================================================
-
-    public void testGetCacheSizeBasedOnMemoryClass_Valid() {
-        int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(getActivity());
-        
-        assertTrue(memoryClass > 0);
-    }
-
-    public void testGetCacheSizeBasedOnMemoryClass_Invalid() {
-        int memoryClass = AppUtils.getCacheSizeBasedOnMemoryClass(null);
-        
-        assertTrue(memoryClass == 0);
-    }
-    
-    //================================================================================
     // Tests - getFitToAspectRatioSize
     //================================================================================
 

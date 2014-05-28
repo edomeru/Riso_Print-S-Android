@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp.view;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -26,10 +27,8 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AndroidRuntimeException;
-import android.util.Log;
 
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback {
-    public static final String TAG = "SplashActivity";
     
     // Messages
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
@@ -151,7 +150,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
         if (launchIntent == null) {
-            Log.e(TAG, "Cannot create Intent");
+            Logger.logError(SplashActivity.class, "Cannot create Intent");
             throw new NullPointerException("Cannot create Intent");
         }
         
@@ -186,10 +185,10 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         try {
             startActivity(launchIntent);
         } catch (ActivityNotFoundException e) {
-            Log.e(TAG, "Fatal Error: Intent MainActivity Not Found is not defined");
+            Logger.logError(SplashActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
             throw e;
         } catch (AndroidRuntimeException e) {
-            Log.e(TAG, "Fatal Error: Android runtime");
+            Logger.logError(SplashActivity.class, "Fatal Error: Android runtime");
             throw e;
         }
         

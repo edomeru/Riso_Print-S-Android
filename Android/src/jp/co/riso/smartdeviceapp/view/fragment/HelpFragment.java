@@ -17,8 +17,6 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 public class HelpFragment extends BaseWebFragment {
-    public static final String TAG = "HelpFragment";
-    
     /** {@inheritDoc} */
     @Override
     public int getViewLayout() {

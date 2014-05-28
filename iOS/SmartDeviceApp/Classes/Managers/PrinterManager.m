@@ -93,7 +93,9 @@ static PrinterManager* sharedPrinterManager = nil;
     // create a PrintSetting object
     PrintSetting* defaultPrintSettings = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
     if (defaultPrintSettings == nil)
+    {
         return NO;
+    }
     [PrintSettingsHelper copyDefaultPrintSettings:&defaultPrintSettings];
     
     // create a Printer object
@@ -131,6 +133,11 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
         [self.listSavedPrinters addObject:newPrinter];
         self.countSavedPrinters++;
+        if (self.countSavedPrinters == 1)
+        {
+            // if this is the only printer, also set it as the default printer
+            [self registerDefaultPrinter:newPrinter];
+        }
         return YES;
     }
     else
@@ -213,14 +220,40 @@ static PrinterManager* sharedPrinterManager = nil;
     Printer* printerToDelete = [self.listSavedPrinters objectAtIndex:index];
     
     // check if this printer is the default printer
-    if ([self.defaultPrinter.printer isEqual:printerToDelete])
+    if ([self isDefaultPrinter:printerToDelete])
     {
-        // delete the default printer first
-#if DEBUG_LOG_PRINTER_MANAGER
-        NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
-#endif
-        if (![self deleteDefaultPrinter])
-            return NO;
+        // check if this is NOT the last printer
+        if (self.countSavedPrinters > 1)
+        {
+            NSUInteger indexOfNext;
+            if (index == 0)
+            {
+                // mark the next printer as the default
+                indexOfNext = 1;
+            }
+            else
+            {
+                // mark the first printer as the default
+                indexOfNext = 0;
+            }
+            
+            if (![self registerDefaultPrinter:[self.listSavedPrinters objectAtIndex:indexOfNext]])
+                return NO;
+        }
+        else
+        {
+            // last printer
+            // just delete the default printer object
+            self.defaultPrinter.printer = nil;
+            if ([DatabaseManager deleteObject:self.defaultPrinter])
+            {
+                self.defaultPrinter = nil;
+            }
+            else
+            {
+                return NO;
+            }
+        }
     }
     
     // delete the printer
@@ -234,25 +267,9 @@ static PrinterManager* sharedPrinterManager = nil;
         return YES;
     }
     else
-        return NO;
-}
-
-- (BOOL)deleteDefaultPrinter
-{
-    if(self.defaultPrinter == nil)
-    {
-        return YES;
-    }
-    self.defaultPrinter.printer = nil;
-    if ([DatabaseManager deleteObject:self.defaultPrinter] == YES)
-    {
-        self.defaultPrinter = nil;
-    }
-    else
     {
         return NO;
     }
-    return YES;
 }
 
 - (BOOL)hasDefaultPrinter
@@ -272,12 +289,12 @@ static PrinterManager* sharedPrinterManager = nil;
         return NO;
 }
 
--(Printer*) getDefaultPrinter
+- (Printer*)getDefaultPrinter
 {
     return self.defaultPrinter.printer;
 }
 
--(BOOL) savePrinterChanges
+- (BOOL)savePrinterChanges
 {
     return [DatabaseManager saveChanges];
 }

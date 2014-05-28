@@ -34,9 +34,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private static final int MIN_COLUMNS = 2;
     
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs;
-    private List<Printer> mPrinters;
-    private List<Printer> mCollapsedPrinters;
+    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();;
+    private List<Printer> mPrinters = new ArrayList<Printer>();;
+    private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
     private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();
     private PrintJobsGroupView mPrintGroupWithDelete;
@@ -103,15 +103,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * @param printerToDelete
      *            Printer to delete
      */
-    public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener delListener, PrintJobsViewListener listener,
-            List<Printer> collapsedPrinters, PrintJob printJobToDelete, Printer printerToDelete) {
+    public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener delListener, PrintJobsViewListener listener) {
         this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
         this.mPrinters = new ArrayList<Printer>(printers);
         this.mGroupListener = delListener;
         this.mListenerRef = new WeakReference<PrintJobsViewListener>(listener);
-        this.mCollapsedPrinters = collapsedPrinters;
-        this.mPrintJobToDelete = printJobToDelete;
-        this.mPrinterToDelete = printerToDelete;
         
         reset();
     }
@@ -152,23 +148,60 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     /**
-     * Initialize PrintJobsView
-     */
-    private void init() {
-        mDeleteAnimation = new DisplayDeleteAnimation();
-        mRunnable = new AddViewRunnable();
-    }
-    
-    /**
      * Reset the PrintJobsView
      */
     public void reset() {
+        mDeleteMode = false;
         mGroupViewCtr = 0;
         mInitialFlag = true;
         removeAllViews();
         mColumns.clear();
         mPrintGroupViews.clear();
         groupPrintJobs();
+    }
+    
+    /**
+     * Set print job to be deleted
+     * 
+     * @param job
+     *            PrintJob to be deleted
+     */
+    public void setJobToDelete(PrintJob job) {
+        mPrintJobToDelete = job;
+    }
+    
+    /**
+     * Set print job group to be deleted
+     * 
+     * @param printer
+     *            printer of the job group to be deleted
+     */
+    public void setPrinterToDelete(Printer printer) {
+        mPrinterToDelete = printer;
+    }
+    
+    /**
+     * Set collapse state of the print job group
+     * 
+     * @param printer
+     *            printer object
+     * @param isCollapsed
+     *            Collapse state
+     */
+    public void setCollapsedPrinters(Printer printer, boolean isCollapsed) {
+        if (isCollapsed) {
+            mCollapsedPrinters.add(printer);
+        } else {
+            mCollapsedPrinters.remove(printer);
+        }
+    }
+    
+    /**
+     * Initialize PrintJobsView
+     */
+    private void init() {
+        mDeleteAnimation = new DisplayDeleteAnimation();
+        mRunnable = new AddViewRunnable();
     }
     
     /**
@@ -412,7 +445,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                     for (int j = 0; j < column.getChildCount(); j++) {
                         View view = ((PrintJobsGroupView) column.getChildAt(j)).getJobViewSwiped(mDownPoint, ev);
                         if (view != null) {
-                            beginDelete(mPrintGroupViews.get(i), view, true);
+                            beginDelete((PrintJobsGroupView) column.getChildAt(j), view, true);
                             return true;
                         }
                     }
@@ -531,6 +564,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /** {@inheritDoc} */
     @Override
     public void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView) {
+        mPrinters.remove((Printer) printJobsGroupView.findViewById(R.id.printJobGroupDelete).getTag());
         mPrintGroupViews.remove(printJobsGroupView);
     }
     
@@ -567,6 +601,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /** {@inheritDoc} */
     @Override
     public void onDeleteJob(){
+        mPrintJobs.remove((PrintJob) mDeleteView.getTag());
         endDelete(false);
     }
     

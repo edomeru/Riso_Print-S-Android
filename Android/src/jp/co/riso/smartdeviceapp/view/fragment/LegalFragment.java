@@ -15,18 +15,17 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 
 public class LegalFragment extends BaseWebFragment {
-    public static final String TAG = "LegalFragment";
-    
     public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s';";
     public static final String VERSION_HTML_ID = "localize_version";
     
@@ -55,18 +54,20 @@ public class LegalFragment extends BaseWebFragment {
             public void onPageFinished(WebView view, String url) {
 
                 try {
-                    PackageManager packageManager = getActivity().getPackageManager();
-                    String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
-                    
-                    String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID, versionName); 
-                    
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        view.evaluateJavascript(javascript, null);
-                    } else {
-                        view.loadUrl(javascript);
+                    if (getActivity() != null && getActivity() instanceof MainActivity) {
+                        PackageManager packageManager = getActivity().getPackageManager();
+                        String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
+                        
+                        String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID, versionName);
+                        
+                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            view.evaluateJavascript(javascript, null);
+                        } else {
+                            view.loadUrl(javascript);
+                        }
                     }
                 } catch (NameNotFoundException e) {
-                    Log.w(TAG, "No version name found");
+                    Logger.logWarn(LegalFragment.class, "No version name found");
                 }
             }
         });

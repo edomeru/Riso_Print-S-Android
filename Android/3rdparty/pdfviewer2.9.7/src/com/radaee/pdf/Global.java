@@ -529,8 +529,10 @@ public class Global {
 		// "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
 		// boolean succeeded = activeProfessional( act, "radaee",
 		// "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
-		boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn",
-				"LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
+		//boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn",
+		//		"LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
+		boolean succeeded = activeProfessional(act, "RISO KAGAKU CORPORATION",
+				"zhang@riso.co.jp", "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP");
 
 		// active library, or WaterMark will displayed on each page.
 		// these active function is binding to version string "201401".

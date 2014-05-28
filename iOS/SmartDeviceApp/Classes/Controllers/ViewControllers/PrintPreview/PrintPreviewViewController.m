@@ -16,6 +16,7 @@
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
 #import "AlertHelper.h"
+#import "PrinterManager.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -238,6 +239,7 @@
             self.pageLabelTopConstraint.constant = 10;
         }
     }
+    [self.view layoutIfNeeded];
 }
 
 - (void)dealloc
@@ -441,11 +443,11 @@
         if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
            (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
         {
-            aspectRatio/=2; //twice the height for 2 papers, 1 on top of the other
+            orientation = kPreviewViewOrientationPortrait;
         }
         else
         {
-            aspectRatio*= 2; //twice the width for 2 papers side by side
+            orientation = kPreviewViewOrientationLandscape;
         }
     }
     
@@ -840,8 +842,17 @@
 
 - (IBAction)printSettingsAction:(id)sender
 {
-    [self.printSettingsButton setEnabled:NO];
-    [self performSegueTo:[PrintSettingsViewController class]];
+    if ([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0)
+    {
+        [AlertHelper displayResult:kAlertResultErrNoPrinterSelected
+                         withTitle:kAlertTitlePrintPreview
+                       withDetails:nil];
+    }
+    else
+    {
+        [self.printSettingsButton setEnabled:NO];
+        [self performSegueTo:[PrintSettingsViewController class]];
+    }
 }
 
 - (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event

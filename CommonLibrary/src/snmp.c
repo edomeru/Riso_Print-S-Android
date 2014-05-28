@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <net-snmp/net-snmp-config.h>
-#include <net-snmp/net-snmp-includes.h>
+#include "net-snmp/net-snmp-config.h"
+#include "net-snmp/net-snmp-includes.h"
 #include <arpa/inet.h>
 #include "common.h"
 
@@ -76,12 +76,6 @@ struct snmp_device_s
     char device_info[MIB_INFO_COUNT][MIB_STRING_LENGTH];
     
     snmp_device *next;
-};
-
-struct caps_queue_s
-{
-    snmp_device *top;
-    snmp_device *current;
 };
 
 static const char *MIB_REQUESTS[] = {
@@ -236,10 +230,11 @@ void *do_discovery(void *parameter)
     if (!ss)
     {
         snmp_sess_perror("ack", &session);
-        snmp_log(LOG_ERR, "Error opening snmp session.\n");
+        //snmp_log(LOG_ERR, "Error opening snmp session.\n");
         
         free(session.peername);
         free(session.community);
+        
         snmp_call_end_callback(context, -1);
         
         return 0;
@@ -261,7 +256,7 @@ void *do_discovery(void *parameter)
     if (!snmp_send(ss, pdu_request))
     {
         snmp_sess_perror("ack", ss);
-        snmp_log(LOG_ERR, "Error in sending request.\n");
+        //snmp_log(LOG_ERR, "Error in sending request.\n");
         
         snmp_close(ss);
         free(session.peername);
@@ -451,7 +446,6 @@ void snmp_context_free(snmp_context *context)
     }
     
     free(context);
-    context = 0;
 }
 
 void snmp_cancel(snmp_context *context)
