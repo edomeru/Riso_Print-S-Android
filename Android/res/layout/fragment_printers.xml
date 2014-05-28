@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/ids_lbl_printers_empty"
-            android:textColor="@color/theme_light_1"
+            android:textColor="@color/theme_dark_1"
             android:textSize="@dimen/font_size_large"
             android:visibility="gone" />
 
