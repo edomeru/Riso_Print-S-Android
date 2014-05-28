@@ -238,6 +238,7 @@
             self.pageLabelTopConstraint.constant = 10;
         }
     }
+    [self.view layoutSubviews];
 }
 
 - (void)dealloc
