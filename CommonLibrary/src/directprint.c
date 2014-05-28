@@ -151,7 +151,6 @@ void directprint_job_free(directprint_job *print_job)
     free(print_job->print_settings);
     free(print_job->ip_address);
     free(print_job);
-    print_job = 0;
 }
 
 void *directprint_job_get_caller_data(directprint_job *print_job)

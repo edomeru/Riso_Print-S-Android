@@ -446,7 +446,6 @@ void snmp_context_free(snmp_context *context)
     }
     
     free(context);
-    context = 0;
 }
 
 void snmp_cancel(snmp_context *context)

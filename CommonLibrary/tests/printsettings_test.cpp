@@ -66,7 +66,7 @@ TEST(PrintSettingsTest, Default)
     // setup input
     int values[] = 
     {
-        1, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0, 0 ,0
+        0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0, 0 ,0
     };
     setup_settings(input, values);
 
