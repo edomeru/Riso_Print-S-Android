@@ -43,6 +43,7 @@
             
         case kAlertTitlePrintPreview:
             alertTitle = NSLocalizedString(IDS_LBL_PRINT_PREVIEW, @"");
+            break;
         
         case kAlertTitleDefault:
         default:

@@ -111,8 +111,6 @@
         [sharedPrinterManager deletePrinterAtIndex:0];
     }
     
-    [sharedPrinterManager deleteDefaultPrinter];
-    
     sharedPrinterManager.searchDelegate = nil;
     
     [self.testFoundPrinters removeAllObjects];
@@ -277,7 +275,7 @@
     GHAssertNil(printer, @"Printer should be nil.");
 }
 
-- (void)testDeleteDefaultPrinter_CannotDeleteDefaultPrinter
+/*- (void)testDeleteDefaultPrinter_CannotDeleteDefaultPrinter
 {
     // Mock
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
@@ -330,7 +328,7 @@
     // Verification
     GHAssertEquals(result, YES, @"Delete default printer should succeed.");
     GHAssertNil(defaultPrinter, @"Default printer should be nil.");
-}
+}*/
 
 - (void)testDeletePrinterAtIndex_IndexOverflow
 {

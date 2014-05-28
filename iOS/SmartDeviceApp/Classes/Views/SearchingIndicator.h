@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-const float HEIGHT_WHILE_REFRESHING = 60.0f;
+#define HEIGHT_WHILE_REFRESHING 60.0f
 
 @interface SearchingIndicator : UIRefreshControl
 
