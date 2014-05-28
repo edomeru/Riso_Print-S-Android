@@ -10,6 +10,7 @@ using SmartDeviceApp.Models;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -32,7 +33,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(jobsViewModel);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_DeleteAllJobsCommand()
         {
             JobController.RemoveGroupedJobsEventHandler eventHandler = new JobController.RemoveGroupedJobsEventHandler(Test_RemoveGroupedJobsEventHandler);

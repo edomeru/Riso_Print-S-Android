@@ -10,6 +10,7 @@ using SmartDeviceApp.Models;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Controllers;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -192,7 +193,7 @@ namespace SmartDeviceAppTests.ViewModels
             Test_Command.Execute(null);
         }
         
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_GoToHomePage()
         {
             // Note: Cannot change value of DocumentController.Instance.IsFileLoaded

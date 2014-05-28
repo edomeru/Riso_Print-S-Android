@@ -152,7 +152,6 @@
     <Compile Include="Converters\IntToBooleanConverterTest.cs" />
     <Compile Include="Converters\DateTimeToStringConverterTest.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverterTest.cs" />
-    <Compile Include="Converters\BooleanToImageSourceConverterTest.cs" />
     <Compile Include="Converters\WidthHeightConverterTest.cs">
       <SubType>Code</SubType>
     </Compile>
