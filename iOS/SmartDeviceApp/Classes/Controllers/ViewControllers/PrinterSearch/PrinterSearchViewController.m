@@ -12,6 +12,7 @@
 #import "NetworkManager.h"
 #import "AlertHelper.h"
 #import "UIColor+Theme.h"
+#import "SearchingIndicator.h"
 
 #define SEGUE_IPHONE_TO_SEARCH_TABLE    @"PrinterSearchIphone-PrinterSearchTable"
 #define SEGUE_IPAD_TO_SEARCH_TABLE      @"PrinterSearchIpad-PrinterSearchTable"
@@ -79,10 +80,10 @@
 #pragma mark - UI Properties
 
 /** Implements the pull-to-refresh gesture. */
-@property (strong, nonatomic) UIRefreshControl* refreshControl;
+@property (weak, nonatomic) SearchingIndicator* refreshControl;
 
 /** UITableView for the printer search results */
-@property (strong, nonatomic) UITableView* searchResultsTable;
+@property (weak, nonatomic) UITableView* searchResultsTable;
 
 /** Internal flag, YES if currently searching for printers. */
 @property (assign, nonatomic) BOOL isSearching;
@@ -193,7 +194,7 @@
         //embed
         
         UITableViewController* destController = (UITableViewController*)segue.destinationViewController;
-        self.refreshControl = destController.refreshControl;
+        self.refreshControl = (SearchingIndicator*)destController.refreshControl;
         self.searchResultsTable = destController.tableView;
         self.searchResultsTable.delegate = self;
         self.searchResultsTable.dataSource = self;
@@ -248,6 +249,7 @@
                             action:@selector(refreshScreen)
                   forControlEvents:UIControlEventValueChanged];
     
+    // fix for initial tint color of the searching indicator in iOS7
     [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
 }
 
@@ -265,6 +267,8 @@
 #endif
     [self.searchResultsTable reloadData];
     
+    [self startSearchingAnimation];
+    
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
     {
@@ -273,7 +277,9 @@
                        withDetails:nil];
         
         if ([self.refreshControl isRefreshing])
+        {
             [self stopSearchingAnimation];
+        }
         
         return;
     }
@@ -284,10 +290,6 @@
 #endif
     [self.printerManager searchForAllPrinters];
     self.isSearching = YES;
-    
-    // callbacks for the search will be handled in delegate methods
-    // if UI needs to do other things, do it here
-    [self startSearchingAnimation];
 }
 
 - (void)dismissScreen
@@ -539,19 +541,23 @@
 
 - (void)startSearchingAnimation
 {
-    [self.refreshControl setBackgroundColor:[UIColor gray4ThemeColor]];
-    [self.refreshControl setTintColor:[UIColor whiteColor]];
     [self.refreshControl beginRefreshing];
+    
+    // fix for the table view not moving to its proper place after the refresh indicator appears
     [self.searchResultsTable setContentOffset:CGPointMake(0, self.refreshControl.frame.size.height)];
+    
+    // prevent repeated pull-to-refresh
     [self.searchResultsTable setBounces:NO];
 }
 
 - (void)stopSearchingAnimation
 {
     [self.refreshControl endRefreshing];
-    [self.refreshControl setBackgroundColor:[UIColor gray2ThemeColor]];
-    [self.refreshControl setTintColor:[UIColor gray2ThemeColor]];
+    
+    // fix for the table view not moving to its proper place after the refresh indicator disappears
     [self.searchResultsTable setContentOffset:CGPointMake(0, 0) animated:YES];
+    
+    // allow pull-to-refresh
     [self.searchResultsTable setBounces:YES];
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2800D043193567BD002FA1D4 /* SearchingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2800D042193567BD002FA1D4 /* SearchingIndicator.m */; };
 		2801621118EAB0AA00DFFE5E /* PrintJobHistoryLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */; };
 		28052CE51911C651007982DF /* DatabaseManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55118F61C1700DBD2BD /* DatabaseManagerTest.m */; };
 		28052CE61911C651007982DF /* NetworkManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55218F61C1700DBD2BD /* NetworkManagerTest.m */; };
@@ -300,6 +301,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2800D041193567BD002FA1D4 /* SearchingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchingIndicator.h; sourceTree = "<group>"; };
+		2800D042193567BD002FA1D4 /* SearchingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchingIndicator.m; sourceTree = "<group>"; };
 		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryLayout.h; sourceTree = "<group>"; };
 		2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayout.m; sourceTree = "<group>"; };
 		28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
@@ -1330,6 +1333,8 @@
 				2D157C0018ED765F0034F953 /* PreviewView.m */,
 				2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */,
 				2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */,
+				2800D041193567BD002FA1D4 /* SearchingIndicator.h */,
+				2800D042193567BD002FA1D4 /* SearchingIndicator.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1803,6 +1808,7 @@
 				2D1F23AB1900FF5800301D1E /* CXAlertButtonItem.m in Sources */,
 				2D232D9318E56E45008D06C8 /* PrintSettingsOptionsHeaderCell.m in Sources */,
 				2D1F23241900D57300301D1E /* SettingsViewController.m in Sources */,
+				2800D043193567BD002FA1D4 /* SearchingIndicator.m in Sources */,
 				2D1F231D1900D3C700301D1E /* SimplePing.m in Sources */,
 				2DA1AF3718E2EF9C00085F27 /* SNMPManager.m in Sources */,
 				2D1F23B71900FF6E00301D1E /* DirectPrintManager.m in Sources */,
