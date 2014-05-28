@@ -21,6 +21,7 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartprint.R;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -143,6 +144,16 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public void onResume() {
         super.onResume();
         mPauseableHandler.resume();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        if (mPauseableHandler != null) {
+            mPauseableHandler.resume();
+        }
     }
     
     // ================================================================================
