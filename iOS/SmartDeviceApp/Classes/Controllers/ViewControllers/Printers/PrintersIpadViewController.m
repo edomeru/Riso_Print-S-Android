@@ -198,26 +198,29 @@
 
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
-    // switch can only be turned ON
-    // switch is automatically turned off when a new default printer is selected
-    
     UISwitch *defaultSwitch = (UISwitch *) sender;
-    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
-    if([self setDefaultPrinter:indexPath])
+    if (defaultSwitch.on)
     {
-        if(self.defaultPrinterIndexPath != nil)
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
+        if([self setDefaultPrinter:indexPath])
         {
-            PrinterCollectionViewCell *oldDefaultCell =
-            (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-            [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            if(self.defaultPrinterIndexPath != nil)
+            {
+                PrinterCollectionViewCell *oldDefaultCell =
+                    (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+                [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            }
+            
+            PrinterCollectionViewCell *newDefaultCell =
+                (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [newDefaultCell setAsDefaultPrinterCell:YES];
+            
+            self.defaultPrinterIndexPath = indexPath;
         }
-        
-        PrinterCollectionViewCell *newDefaultCell =
-        (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        [newDefaultCell setAsDefaultPrinterCell:YES];
-        
-        self.defaultPrinterIndexPath = indexPath;
     }
+    //else do nothing
+    
+    //switch is automatically turned off when a new default printer is selected
 }
 
 - (IBAction)pressDefaultSettingsRowAction:(id)sender

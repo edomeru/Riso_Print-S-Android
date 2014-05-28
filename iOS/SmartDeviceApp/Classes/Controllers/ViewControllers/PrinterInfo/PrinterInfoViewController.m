@@ -101,13 +101,15 @@
 
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
-    // switch can only be turned ON
-    // switch is automatically turned off when a new default printer is selected
-    
     self.isDefaultPrinter = self.defaultPrinterSwitch.on;
-
-    [self hideDefaultSwitch:YES];
-    [self.printerManager registerDefaultPrinter:self.printer];
+    if (self.isDefaultPrinter)
+    {
+        [self hideDefaultSwitch:YES];
+        [self.printerManager registerDefaultPrinter:self.printer];
+    }
+    //else do nothing
+    
+    //switch is automatically turned off when a new default printer is selected
 }
 
 - (IBAction)onBack:(UIButton *)sender
