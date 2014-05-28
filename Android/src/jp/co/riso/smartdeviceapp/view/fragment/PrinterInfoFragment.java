@@ -220,6 +220,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                 Message newMessage = Message.obtain(mPauseableHandler, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON);
                 newMessage.obj = v;
                 mPauseableHandler.sendMessage(newMessage);
+                break;
             case ID_MENU_BACK_BUTTON:
                 mPauseableHandler.sendEmptyMessage(ID_MENU_BACK_BUTTON);
                 break;
