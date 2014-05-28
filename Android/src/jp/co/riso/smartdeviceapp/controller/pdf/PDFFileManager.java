@@ -496,7 +496,7 @@ public class PDFFileManager {
         
         switch (status) {
             case RADAEE_OK:
-                int permission = mDocument.GetPermission();
+                int permission = document.GetPermission();
                 document.Close();
                 
                 // check if (permission != 0) means that license is not standard. if standard license, just display.
