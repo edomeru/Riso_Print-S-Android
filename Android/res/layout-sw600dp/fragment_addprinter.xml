@@ -3,23 +3,24 @@
     android:id="@+id/SDALinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/drawer_margin"
+    android:background="@color/theme_light_3"
     android:orientation="vertical" >
 
     <include layout="@layout/actionbar_sub" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/theme_light_3"
+        android:layout_height="@dimen/printers_row_height"
+        android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+        android:layout_marginRight="@dimen/printers_row_right_margin"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/ipAddressLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginLeft="@dimen/printers_sub_separator_padding"
-            android:layout_marginTop="@dimen/printers_row_top_padding"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="left"
             android:text="@string/ids_lbl_ip_address"
@@ -30,9 +31,7 @@
             style="@style/BorderedEditText"
             android:layout_width="@dimen/addprinter_edit_box_width"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|top"
-            android:layout_marginRight="@dimen/printers_row_right_margin"
-            android:layout_marginTop="@dimen/printers_row_top_padding"
+            android:layout_gravity="center_vertical|right"
             android:layout_weight="0"
             android:background="@color/theme_light_1"
             android:gravity="left"
