@@ -169,13 +169,16 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
      * 
      * @param gravity
      *            Drawer gravity
-     * @param preventIntercept
+     * @param resizeView
      *            Prevent layout from touches
      */
-    public void openDrawer(int gravity, boolean preventIntercept) {
+    public void openDrawer(int gravity, boolean resizeView) {
         Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER);
         msg.arg1 = gravity;
-        msg.arg2 = preventIntercept ? 1 : 0;
+        msg.arg2 = 0;
+        if (gravity == Gravity.RIGHT) {
+            msg.arg2 = resizeView ? 1 : 0;
+        }
         mHandler.sendMessage(msg);
     }
     
@@ -218,22 +221,17 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         switch (msg.what){
             case MSG_OPEN_DRAWER:
-                mDrawerLayout.setPreventInterceptTouches(false);
                 mDrawerLayout.closeDrawers();
                 
                 if (fragment != null) {
                     fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, gravityLeft);
                 }
-                
-                mDrawerLayout.setPreventInterceptTouches((msg.arg2 == 1));
-                if (msg.arg1 == Gravity.RIGHT) {
-                    mResizeView = (msg.arg2 == 1);
-                }
+
+                mResizeView = (msg.arg2 == 1);
                 
                 mDrawerLayout.openDrawer(msg.arg1);
                 break;
             case MSG_CLOSE_DRAWER:
-                mDrawerLayout.setPreventInterceptTouches(false);
                 mDrawerLayout.closeDrawers();
                 break;
             case MSG_CLEAR_ICON_STATES:
