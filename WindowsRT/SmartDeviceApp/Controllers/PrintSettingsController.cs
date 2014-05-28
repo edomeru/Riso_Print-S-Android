@@ -237,6 +237,9 @@ namespace SmartDeviceApp.Controllers
             {
                 _activeScreen = screenName;
 
+                // Show/hide other controls
+                _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
+
                 // Refresh Printer
                 Printer printer = null;
                 if (_printerMap.TryGetValue(screenName, out printer))
@@ -258,9 +261,6 @@ namespace SmartDeviceApp.Controllers
                     string pinCode = (string.IsNullOrEmpty(printSettings.PinCode)) ? string.Empty : printSettings.PinCode;
                     _printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
                 }
-
-                // Show/hide other controls
-                _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
 
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
             }
