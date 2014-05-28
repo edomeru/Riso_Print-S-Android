@@ -19,6 +19,7 @@ import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -148,6 +149,17 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         super.onResume();
         
         mHandler.resume();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+        if (!mDrawerLayout.isDrawerOpen(Gravity.RIGHT) && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            fragment.clearIconStates();
+        }
     }
     
     // ================================================================================
@@ -306,17 +318,25 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             
             super.onDrawerStateChanged(newState);
             
-            if (newState == DrawerLayout.STATE_IDLE) {
-                if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-                } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
-                } else {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            final int layoutState = newState;
+            
+            // https://code.google.com/p/android/issues/detail?id=60671
+            mDrawerLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (layoutState == DrawerLayout.STATE_IDLE) {
+                        if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
+                        } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
+                        } else {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                        }
+                    }
                 }
-            }
+            });
             
         }
         
