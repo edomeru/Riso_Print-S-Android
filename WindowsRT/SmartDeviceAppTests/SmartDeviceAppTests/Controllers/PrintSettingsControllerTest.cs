@@ -59,27 +59,27 @@ namespace SmartDeviceAppTests.Controllers
         public async Task Test_Initialize_NullScreenName()
         {
             _screenName = null;
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, new Printer());
-            Assert.IsNotNull(printSettings);
-            Assert.AreEqual(-1, printSettings.Id);
+            await PrintSettingsController.Instance.Initialize(_screenName, new Printer());
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsNull(printSettings);
         }
 
         [TestMethod]
         public async Task Test_Initialize_EmptyScreenName()
         {
             _screenName = string.Empty;
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, new Printer());
-            Assert.IsNotNull(printSettings);
-            Assert.AreEqual(-1, printSettings.Id);
+            await PrintSettingsController.Instance.Initialize(_screenName, new Printer());
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsNull(printSettings);
         }
 
         [TestMethod]
         public async Task Test_Initialize_NullPrinter()
         {
             _screenName = "screen";
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, null);
-            Assert.IsNotNull(printSettings);
-            Assert.AreEqual(-1, printSettings.Id);
+            await PrintSettingsController.Instance.Initialize(_screenName, null);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsNull(printSettings);
         }
 
         [TestMethod]
@@ -91,7 +91,8 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.IsNotNull(printSettings);
             Assert.AreEqual(2, printSettings.Id);
             Assert.AreEqual(2, printSettings.PrinterId);
@@ -130,7 +131,8 @@ namespace SmartDeviceAppTests.Controllers
             Printer prevPrinter = await _dbConnection.GetAsync<Printer>(2);
             await PrintSettingsController.Instance.Initialize(_screenName, prevPrinter);
             Printer newPrinter = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings newPrintSettings = await PrintSettingsController.Instance.Initialize(_screenName, newPrinter);
+            await PrintSettingsController.Instance.Initialize(_screenName, newPrinter);
+            PrintSettings newPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.IsNotNull(newPrintSettings);
             Assert.AreEqual(1, newPrintSettings.Id);
             Assert.AreEqual(1, newPrintSettings.PrinterId);
@@ -167,7 +169,8 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(5);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.IsNotNull(printSettings);
             Assert.AreEqual(5, printSettings.Id);
             Assert.AreEqual(5, printSettings.PrinterId);
@@ -204,16 +207,17 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(10);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.IsNotNull(printSettings);
             Assert.AreEqual(-1, printSettings.Id);
             Assert.AreEqual(-1, printSettings.PrinterId);
-            Assert.AreEqual(1, printSettings.ColorMode);
+            Assert.AreEqual(0, printSettings.ColorMode);
             Assert.AreEqual(0, printSettings.Orientation);
             Assert.AreEqual(1, printSettings.Copies);
             Assert.AreEqual(0, printSettings.Duplex);
             Assert.AreEqual(2, printSettings.PaperSize);
-            Assert.IsTrue(printSettings.ScaleToFit);
+            Assert.IsFalse(printSettings.ScaleToFit);
             Assert.AreEqual(0, printSettings.PaperType);
             Assert.AreEqual(0, printSettings.InputTray);
             Assert.AreEqual(0, printSettings.Imposition);
@@ -255,7 +259,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
 
@@ -271,11 +275,11 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSettingsController.Instance.Uninitialize("random");
 
-           Cleanup(); // Workaround for Cover Unit Tests using dotCover
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -386,7 +390,7 @@ namespace SmartDeviceAppTests.Controllers
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
             // Note: no public properties or return value to assert
@@ -423,7 +427,7 @@ namespace SmartDeviceAppTests.Controllers
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
             // Note: no public properties or return value to assert
@@ -491,7 +495,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(6);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(MockUpdatePreviewEventHandler);
 
             PrintSetting printSetting = new PrintSetting()
@@ -518,7 +522,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -543,7 +547,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -568,7 +572,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -593,7 +597,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -618,7 +622,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -643,7 +647,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -668,7 +672,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -693,7 +697,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -718,7 +722,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -743,7 +747,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -768,7 +772,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -793,7 +797,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(3);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -819,7 +823,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(3);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -844,7 +848,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(4);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -869,7 +873,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(5);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -894,7 +898,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(6);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -919,7 +923,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(7);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -944,7 +948,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(7);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -969,7 +973,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -994,7 +998,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1019,7 +1023,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1044,7 +1048,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1069,7 +1073,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1094,7 +1098,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1119,7 +1123,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1144,7 +1148,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1169,7 +1173,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(3);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1194,7 +1198,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(4);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1219,7 +1223,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(4);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1244,7 +1248,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(5);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1269,7 +1273,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(5);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1294,7 +1298,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(6);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1319,7 +1323,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(6);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1344,7 +1348,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(7);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1369,7 +1373,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(8);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1394,7 +1398,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(8);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1419,7 +1423,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1444,7 +1448,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1469,7 +1473,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1494,7 +1498,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(3);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1519,7 +1523,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(4);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1544,7 +1548,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(5);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1569,7 +1573,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(6);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {
@@ -1594,7 +1598,7 @@ namespace SmartDeviceAppTests.Controllers
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            PrintSettings printSettings = await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
             PrintSetting printSetting = new PrintSetting()
             {

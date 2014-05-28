@@ -24,23 +24,15 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
-        public void Test_PrinterList()
+        public async Task Test_PrinterList()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             PrinterController.Instance.PrinterList.Add(new Printer() { IpAddress = "192.168.0.1" });
             var printerList = new ObservableCollection<Printer>();
             Printer printer = PrinterController.Instance.PrinterList.LastOrDefault();
             printerList.Add(printer);
             selectPrinterViewModel.PrinterList = printerList;
             Assert.AreEqual(printerList, selectPrinterViewModel.PrinterList);
-        }
-
-        [TestMethod]
-        public void Test_SelectedPrinterId()
-        {
-            var selectedPrinterId = 1;
-            selectPrinterViewModel.SelectedPrinterId = selectedPrinterId;
-            Assert.AreEqual(selectedPrinterId, selectPrinterViewModel.SelectedPrinterId);
         }
 
         private void Test_SelectedPrinterChangedEventHandler(int id)

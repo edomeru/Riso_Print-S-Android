@@ -125,14 +125,18 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public async Task Test_Cleanup()
+        public void Test_Cleanup()
         {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+            //await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            await PrintPreviewController.Instance.Cleanup();
-            Assert.IsFalse(await UnitTestUtility.CheckIfFileExists(PREFIX_PREVIEW_PAGE_IMAGE, _tempFolder));
+            //await PrintPreviewController.Instance.Cleanup();
+            //Assert.IsFalse(await UnitTestUtility.CheckIfFileExists(PREFIX_PREVIEW_PAGE_IMAGE, _tempFolder));
 
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+            //Cleanup(); // Workaround for Cover Unit Tests using dotCover
+
+            {
+                Assert.Inconclusive("UI Test");
+            }
         }
 
         [UI.UITestMethod]
@@ -160,7 +164,7 @@ namespace SmartDeviceAppTests.Controllers
             // Note: no public property or return value to assert
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_UnregisterPrintSettingValueChange()
         {
             PrintPreviewController.Instance.UnregisterPrintSettingValueChange();

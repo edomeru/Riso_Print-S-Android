@@ -19,11 +19,11 @@ namespace SmartDeviceAppTests.Converters
         {
             // Test null
             var result = printerNameToTextConverter.Convert(null, null, null, null);
-            Assert.AreEqual("No name", result);
+            Assert.AreEqual("No Name", result);
 
             // Test empty string
             result = printerNameToTextConverter.Convert(String.Empty, null, null, null);
-            Assert.AreEqual("No name", result);
+            Assert.AreEqual("No Name", result);
 
             var value = "PRINTER_NAME";
             result = printerNameToTextConverter.Convert(value, null, null, null);
