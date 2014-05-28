@@ -15,18 +15,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 
 public class LegalFragment extends BaseWebFragment {
-    public static final String TAG = "LegalFragment";
-    
     public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s';";
     public static final String VERSION_HTML_ID = "localize_version";
     
@@ -66,7 +64,7 @@ public class LegalFragment extends BaseWebFragment {
                         view.loadUrl(javascript);
                     }
                 } catch (NameNotFoundException e) {
-                    Log.w(TAG, "No version name found");
+                    Logger.logWarn(LegalFragment.class, "No version name found");
                 }
             }
         });

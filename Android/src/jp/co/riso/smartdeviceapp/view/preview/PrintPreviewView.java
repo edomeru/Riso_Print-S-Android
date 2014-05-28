@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
@@ -37,7 +38,6 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -50,7 +50,6 @@ import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
 
 public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener, OnGestureListener, OnDoubleTapListener {
-    public static final String TAG = "PrintPreviewView";
     
     private static final float DEFAULT_MARGIN_IN_MM = 0;
     
@@ -1070,11 +1069,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             try {
                 Thread.sleep(SLEEP_DELAY);
             } catch (InterruptedException e) {
-                Log.w(TAG, "Thread exception received");
+                Logger.logWarn(PrintPreviewView.class, "Thread exception received");
             }
             
             if (mHandlerRef.get() == null || mCurlPageRef.get() == null) {
-                Log.w(TAG, "Cancelled process");
+                Logger.logWarn(PrintPreviewView.class, "Cancelled process");
                 return null;
             }
             mRenderBmps = getRenderBitmaps();
@@ -1090,7 +1089,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 mCurlPageRef.get().setTexture(Bitmap.createBitmap(mRenderBmps[1]), CurlPage.SIDE_BACK);
                 mCurlView.requestRender();
             } else {
-                Log.w(TAG, "Will recycle");
+                Logger.logWarn(PrintPreviewView.class, "Will recycle");
             }
         }
         
@@ -1312,7 +1311,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             for (int i = 0; i < getPagesPerSheet(); i++) {
                 if (mHandlerRef.get() == null || mCurlPageRef.get() == null) {
-                    Log.w(TAG, "Cancelled process");
+                    Logger.logWarn(PrintPreviewView.class, "Cancelled process");
                     return;
                 }
                 

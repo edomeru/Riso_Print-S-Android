@@ -10,11 +10,7 @@ package jp.co.riso.smartdeviceapp.common;
 
 import java.lang.ref.WeakReference;
 
-import android.util.Log;
-
 public class SNMPManager {
-    private static final String TAG = "SNMPManager";
-    
     public long mContext = 0;
     private WeakReference<SNMPManagerCallback> mCallbackRef = null;
     
@@ -54,7 +50,6 @@ public class SNMPManager {
      *            Result of device discovery
      */
     private void onEndDiscovery(int result) {
-        Log.d(TAG, "onEndDiscovery");
         if (mCallbackRef != null && mCallbackRef.get() != null) {
             mCallbackRef.get().onEndDiscovery(this, result);
         }
@@ -73,7 +68,6 @@ public class SNMPManager {
      *            Device capabilities
      */
     private void onFoundDevice(String ipAddress, String name, boolean[] capabilities) {
-        Log.d(TAG, "onFoundDevice");
         if (mCallbackRef != null && mCallbackRef.get() != null) {
             mCallbackRef.get().onFoundDevice(this, ipAddress, name, capabilities);
         }

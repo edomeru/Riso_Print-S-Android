@@ -11,10 +11,8 @@ package jp.co.riso.smartdeviceapp.common;
 import java.lang.ref.WeakReference;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class DirectPrintManager {
-    private static final String TAG = "DirectPrintManager";
     private long mJob = 0;
     private WeakReference<DirectPrintCallback> mCallbackRef = null;
     
@@ -89,7 +87,6 @@ public class DirectPrintManager {
      * @param progress
      */
     private void onNotifyProgress(int status, float progress) {
-        Log.d(TAG, "onNotifyProgress " + status);
         switch (status) {
             case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
             case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:

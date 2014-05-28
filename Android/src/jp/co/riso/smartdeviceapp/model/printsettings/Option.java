@@ -11,8 +11,6 @@ package jp.co.riso.smartdeviceapp.model.printsettings;
 import org.w3c.dom.Node;
 
 public class Option extends XmlNode {
-    public static final String TAG = "Option";
-    
     private String mTextContent;
     
     /**

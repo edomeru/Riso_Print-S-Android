@@ -441,11 +441,11 @@
         if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
            (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
         {
-            aspectRatio/=2; //twice the height for 2 papers, 1 on top of the other
+            orientation = kPreviewViewOrientationPortrait;
         }
         else
         {
-            aspectRatio*= 2; //twice the width for 2 papers side by side
+            orientation = kPreviewViewOrientationLandscape;
         }
     }
     

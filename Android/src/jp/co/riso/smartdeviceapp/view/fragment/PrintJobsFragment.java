@@ -39,7 +39,7 @@ import android.widget.TextView;
 
 public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener, Callback {
     
-    private static final String TAG = "PrintJobsFragment";
+    private static final String TAG = PrintJobsFragment.class.getName();
     private static final int MSG_SCROLL = 0;
     
     private PrintJobsView mPrintJobsView;
