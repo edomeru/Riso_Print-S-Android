@@ -573,6 +573,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String btnMsg = getString(R.string.ids_lbl_ok);
                     InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
                     DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                    mPauseableHandler.resume();
                     return;
                 }
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
