@@ -156,6 +156,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         
+        mDrawerToggle.onConfigurationChanged(newConfig);
+        
         BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
         if (!mDrawerLayout.isDrawerOpen(Gravity.RIGHT) && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             fragment.clearIconStates();
