@@ -16,6 +16,7 @@
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
 #import "AlertHelper.h"
+#import "PrinterManager.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -840,8 +841,17 @@
 
 - (IBAction)printSettingsAction:(id)sender
 {
-    [self.printSettingsButton setEnabled:NO];
-    [self performSegueTo:[PrintSettingsViewController class]];
+    if ([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0)
+    {
+        [AlertHelper displayResult:kAlertResultErrNoPrinterSelected
+                         withTitle:kAlertTitlePrintPreview
+                       withDetails:nil];
+    }
+    else
+    {
+        [self.printSettingsButton setEnabled:NO];
+        [self performSegueTo:[PrintSettingsViewController class]];
+    }
 }
 
 - (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event

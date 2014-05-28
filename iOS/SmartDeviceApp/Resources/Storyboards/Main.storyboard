@@ -864,13 +864,23 @@
                                                                 <action selector="defaultPrinterSwitchAction:" destination="ZEw-b3-LhF" eventType="valueChanged" id="C2g-gX-t2i"/>
                                                             </connections>
                                                         </switch>
+                                                        <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_set_as_default_printer" translatesAutoresizingMaskIntoConstraints="NO" id="ezf-52-fiQ">
+                                                            <rect key="frame" x="275" y="0.0" width="40" height="40"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="40" id="evT-fJ-ABy"/>
+                                                                <constraint firstAttribute="height" constant="40" id="ftW-ud-li1"/>
+                                                            </constraints>
+                                                        </imageView>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="centerY" secondItem="PUd-7S-JJi" secondAttribute="centerY" id="0TN-Bh-y6V"/>
+                                                        <constraint firstAttribute="trailing" secondItem="ezf-52-fiQ" secondAttribute="trailing" constant="5" id="9no-ON-pXC"/>
                                                         <constraint firstAttribute="trailing" secondItem="Xs2-X2-H9b" secondAttribute="trailing" constant="10" id="NsK-2T-22T"/>
                                                         <constraint firstAttribute="height" constant="40" id="RwX-Ao-dtc"/>
                                                         <constraint firstItem="Xs2-X2-H9b" firstAttribute="leading" secondItem="PUd-7S-JJi" secondAttribute="trailing" constant="10" id="Un1-ql-ucr"/>
                                                         <constraint firstItem="PUd-7S-JJi" firstAttribute="leading" secondItem="dXr-Bg-3bc" secondAttribute="leading" constant="20" id="d1l-ik-FQ1"/>
+                                                        <constraint firstAttribute="centerY" secondItem="ezf-52-fiQ" secondAttribute="centerY" id="g0z-nA-9Ca"/>
                                                         <constraint firstAttribute="centerY" secondItem="Xs2-X2-H9b" secondAttribute="centerY" id="uFA-5D-m41"/>
                                                     </constraints>
                                                 </view>
@@ -951,6 +961,7 @@
                                         <size key="customSize" width="320" height="270"/>
                                         <connections>
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
+                                            <outlet property="defaultSetIcon" destination="ezf-52-fiQ" id="eQo-Hy-wpp"/>
                                             <outlet property="defaultSettingsButton" destination="hEi-x2-OHw" id="H69-Iy-BLY"/>
                                             <outlet property="defaultSettingsRow" destination="SjP-Aq-fJU" id="6Sp-dP-miI"/>
                                             <outlet property="defaultSettingsRowLabel" destination="eY3-b2-Jeq" id="L6r-Ia-gVE"/>
@@ -2552,14 +2563,24 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="onTintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
-                                                    <action selector="defautltPrinterSwitchAction:" destination="qXF-RA-AFJ" eventType="valueChanged" id="xBb-OJ-k13"/>
+                                                    <action selector="defaultPrinterSwitchAction:" destination="qXF-RA-AFJ" eventType="valueChanged" id="sIr-ve-ueq"/>
                                                 </connections>
                                             </switch>
+                                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_set_as_default_printer" translatesAutoresizingMaskIntoConstraints="NO" id="DoY-TP-6hF">
+                                                <rect key="frame" x="275" y="3" width="40" height="40"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="40" id="dsN-Rh-SJo"/>
+                                                    <constraint firstAttribute="height" constant="40" id="vnU-2J-uKD"/>
+                                                </constraints>
+                                            </imageView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="HNe-cn-JGw"/>
+                                            <constraint firstAttribute="centerY" secondItem="DoY-TP-6hF" secondAttribute="centerY" id="Iql-1B-HWy"/>
                                             <constraint firstItem="kRb-dB-sEY" firstAttribute="leading" secondItem="3po-Ej-HzX" secondAttribute="leading" constant="20" id="J26-F4-AUs"/>
                                             <constraint firstAttribute="trailing" secondItem="V7Y-Ut-ufD" secondAttribute="trailing" constant="10" id="Jgg-3u-aIk"/>
+                                            <constraint firstAttribute="trailing" secondItem="DoY-TP-6hF" secondAttribute="trailing" constant="5" id="ZIl-6q-VBV"/>
                                             <constraint firstAttribute="centerY" secondItem="V7Y-Ut-ufD" secondAttribute="centerY" id="w2O-oc-8AE"/>
                                             <constraint firstAttribute="centerY" secondItem="kRb-dB-sEY" secondAttribute="centerY" id="zqv-f9-TWf"/>
                                         </constraints>
@@ -2599,6 +2620,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="defaultPrinterSwitch" destination="V7Y-Ut-ufD" id="PGa-hq-szW"/>
+                        <outlet property="defaultSetIcon" destination="DoY-TP-6hF" id="Tgu-dN-Gwi"/>
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
                         <outlet property="portSelection" destination="kUh-T9-Pqa" id="3R4-3Z-0jS"/>
                         <outlet property="printSettingsButton" destination="K5Y-yN-Wg9" id="jhy-7C-BMD"/>
@@ -3989,6 +4011,7 @@
         <image name="img_btn_search_printer_pressed" width="64" height="64"/>
         <image name="img_btn_submenu" width="64" height="64"/>
         <image name="img_home_icon" width="160" height="20"/>
+        <image name="img_set_as_default_printer" width="64" height="64"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

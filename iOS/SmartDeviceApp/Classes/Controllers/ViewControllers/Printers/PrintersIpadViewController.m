@@ -159,7 +159,7 @@
     Printer *printer = [self.printerManager getPrinterAtIndex:index];
     
     printer.onlineStatus = [NSNumber numberWithBool:isOnline];
-    PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow: index inSection:0]];
+    PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
     if(cell != nil) //cell returned will be nil if cell for row is not visible
     {
         [cell.statusView setStatus:isOnline];
@@ -199,35 +199,28 @@
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
     UISwitch *defaultSwitch = (UISwitch *) sender;
-    
-    if(defaultSwitch.on == YES)
+    if (defaultSwitch.on)
     {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:defaultSwitch.tag inSection:0];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
         if([self setDefaultPrinter:indexPath])
         {
             if(self.defaultPrinterIndexPath != nil)
             {
-                PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-                
+                PrinterCollectionViewCell *oldDefaultCell =
+                    (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
                 [oldDefaultCell setAsDefaultPrinterCell:FALSE];
             }
             
-            PrinterCollectionViewCell *newDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            
+            PrinterCollectionViewCell *newDefaultCell =
+                (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
             [newDefaultCell setAsDefaultPrinterCell:YES];
+            
             self.defaultPrinterIndexPath = indexPath;
         }
     }
-    else
-    {
-        if(self.defaultPrinterIndexPath != nil)
-        {
-            PrinterCollectionViewCell *oldDefaultCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-            [oldDefaultCell setAsDefaultPrinterCell:FALSE];
-            [self.printerManager deleteDefaultPrinter];
-            self.defaultPrinterIndexPath = nil;
-        }
-    }
+    //else do nothing
+    
+    //switch is automatically turned off when a new default printer is selected
 }
 
 - (IBAction)pressDefaultSettingsRowAction:(id)sender
@@ -250,7 +243,7 @@
     }
     else
     {
-        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue] inSection:0]];
+        PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:[self.selectedPrinterIndex integerValue] inSection:0]];
         if(indexPath == nil || indexPath.row != [self.selectedPrinterIndex integerValue] ||
            CGRectContainsPoint(selectedCell.defaultSettingsRow.frame, [press locationInView:selectedCell.contentView]) == NO)
         {
@@ -290,35 +283,62 @@
 {
     if ([self.printerManager deletePrinterAtIndex:index])
     {
-        //check if reference to default printer was also deleted
-        if (![self.printerManager hasDefaultPrinter])
+        BOOL deletedDefault = (index == self.defaultPrinterIndexPath.item);
+        BOOL hasNewDefault = [self.printerManager hasDefaultPrinter];
+        if (!hasNewDefault)
+        {
             self.defaultPrinterIndexPath = nil;
-        NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForRow:index inSection:0];
-        //set the view of the cell to stop polling for printer status
-        PrinterCollectionViewCell *cell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPathToDelete];
-        //[cell.statusView.statusHelper stopPrinterStatusPolling];
-        //cell.statusView.statusHelper.delegate = nil;
+        }
         
-        PrinterStatusHelper *printerStatus = [self.statusHelpers objectAtIndex:index];
-        [printerStatus stopPrinterStatusPolling];
+        //set the view of the cell to stop polling for printer status
+        PrinterStatusHelper *statusHelper = [self.statusHelpers objectAtIndex:index];
+        [statusHelper stopPrinterStatusPolling];
         [self.statusHelpers removeObjectAtIndex:index];
         
-        //set view to non default printer cell style
-        [cell setAsDefaultPrinterCell:NO];
+        // update the collection
+        __weak PrintersIpadViewController* weakSelf = self;
+        [self.collectionView performBatchUpdates:^
+        {
+            // remove cell from view
+            NSIndexPath *indexPathToDelete = [NSIndexPath indexPathForItem:index inSection:0];
+            [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
+            
+        } completion:^(BOOL finished)
+        {
+            if (deletedDefault)
+            {
+                if (hasNewDefault)
+                {
+                    // assign the first printer as the new default printer
+                    weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForItem:0 inSection:0];
+                    
+                    // reload the new default printer
+                    [weakSelf.collectionView reloadItemsAtIndexPaths:@[weakSelf.defaultPrinterIndexPath]];
+                }
+                //else, deleted printer is the last printer
+            }
+            else
+            {
+                if (weakSelf.defaultPrinterIndexPath.item != 0
+                    && index < weakSelf.defaultPrinterIndexPath.item)
+                {
+                    NSIndexPath* oldIndexPath = weakSelf.defaultPrinterIndexPath;
+                    weakSelf.defaultPrinterIndexPath = [NSIndexPath indexPathForRow:oldIndexPath.row-1
+                                                                          inSection:0];
+                }
+            }
+        }];
         
-        //remove cell from view
-        [self.collectionView deleteItemsAtIndexPaths:@[indexPathToDelete]];
-        
-        //reload data of items after the deleted item to update the control tags of the next items
+        // reload data of items after the deleted item to update the control tags of the next items
         NSMutableArray *indexPathsToReload = [[NSMutableArray alloc] init];
         NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:0];
         for(NSInteger i = index; i < numberOfItems; i++)
         {
-            NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            NSIndexPath * indexPath = [NSIndexPath indexPathForItem:i inSection:0];
             [indexPathsToReload addObject:indexPath];
         }
-        
         [self refreshControlTagsOfCellsAtIndexPaths:indexPathsToReload];
+        
         self.toDeleteIndexPath = nil;
     }
     else
@@ -373,8 +393,8 @@
     [super reloadData];
     if(self.selectedPrinterIndex != nil)
     {
-        NSIndexPath* selectedIndexPath = [NSIndexPath indexPathForRow:[self.selectedPrinterIndex integerValue]
-                                                            inSection:0];
+        NSIndexPath* selectedIndexPath = [NSIndexPath indexPathForItem:[self.selectedPrinterIndex integerValue]
+                                                             inSection:0];
         PrinterCollectionViewCell *selectedCell = (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectedIndexPath];
         [selectedCell setDefaultSettingsRowToSelected:NO];
         self.selectedPrinterIndex = nil;
