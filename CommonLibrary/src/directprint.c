@@ -815,7 +815,7 @@ FILE *job_dump_create_file(directprint_job *print_job)
     time_t raw_time;
     time(&raw_time);
     struct tm *time_info = localtime(&raw_time);
-    char *dump_file_name = (char *)calloc(1, strlen(dump_dir) + strlen(print_job->job_name) + strlen(DUMP_EXT) + 16);
+    char *dump_file_name = (char *)calloc(1, strlen(dump_dir) + strlen(print_job->job_name) + strlen(DUMP_EXT) + 18);
     sprintf(dump_file_name, "%s/%04d%02d%02d-%02d%02d%02d_%s%s", dump_dir, time_info->tm_year + 1900, time_info->tm_mon + 1, time_info->tm_mday, time_info->tm_hour, time_info->tm_min, time_info->tm_sec, print_job->job_name, DUMP_EXT);
     
     FILE *file = fopen(dump_file_name, "wb");
