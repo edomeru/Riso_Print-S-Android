@@ -90,7 +90,7 @@ namespace SNMP
                     string printerMibOid = printerMibDict[SNMPConstants.KEY_OID];
                     if (printerMibOid != null)
                     {
-                        if (printerMibOid != null && printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERMIB))
+                        if (printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERMIB))
                         { 
                             string host = sender.ToString();
                     
@@ -124,9 +124,6 @@ namespace SNMP
                     }
 
                  }
-            }
-            else
-            {
             }
 
             return;
