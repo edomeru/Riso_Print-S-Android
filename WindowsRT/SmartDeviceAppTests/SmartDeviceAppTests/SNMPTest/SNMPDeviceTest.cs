@@ -16,50 +16,50 @@ namespace SmartDeviceAppTests.SNMPTest
         [TestMethod]
         public void Test_SNMPDevice_GetSetSysId()
         {
-            device.setSysId(testString);
-            Assert.AreEqual(testString, device.getSysId());
+            device.SysId = testString;
+            Assert.AreEqual(testString, device.SysId);
         }
 
         [TestMethod]
         public void Test_SNMPDevice_GetSetLocation()
         {
-            device.setLocation(testString);
-            Assert.AreEqual(testString, device.getLocation());
+            device.Location =testString;
+            Assert.AreEqual(testString, device.Location);
         }
 
         [TestMethod]
         public void Test_SNMPDevice_GetSetMacAddress()
         {
-            device.setMacAddress(testString);
-            Assert.AreEqual(testString, device.getMacAddress());
+            device.MacAddress = testString;
+            Assert.AreEqual(testString, device.MacAddress);
         }
 
         [TestMethod]
         public void Test_SNMPDevice_GetSetCommunityName()
         {
-            device.setCommunityName(testString);
-            Assert.AreEqual(testString, device.getCommunityName());
+            device.CommunityName = testString;
+            Assert.AreEqual(testString, device.CommunityName);
         }
 
         [TestMethod]
         public void Test_SNMPDevice_GetSetDescription()
         {
-            device.setDescription(testString);
-            Assert.AreEqual(testString, device.getDescription());
+            device.Description = testString;
+            Assert.AreEqual(testString, device.Description);
         }
 
         [TestMethod]
         public void Test_SNMPDevice_GetSetSysName()
         {
-            device.setSysName(testString);
-            Assert.AreEqual(testString, device.getSysName());
+            device.SysName = testString;
+            Assert.AreEqual(testString, device.SysName);
         }
 
         [TestMethod]
         public void Test_SNMPDevice_SetIpAddress()
         {
-            device.setIpAddress("192.168.0.1");
-            Assert.AreEqual("192.168.0.1", device.getIpAddress());
+            device.IpAddress = "192.168.0.1";
+            Assert.AreEqual("192.168.0.1", device.IpAddress);
         }
     }
 }

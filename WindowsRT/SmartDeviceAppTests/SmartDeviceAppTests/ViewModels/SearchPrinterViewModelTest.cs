@@ -32,9 +32,8 @@ namespace SmartDeviceAppTests.ViewModels
             ObservableCollection<PrinterSearchItem> tempList = new ObservableCollection<PrinterSearchItem>();
 
             viewModel.PrinterSearchList = tempList;
-            ObservableCollection<PrinterSearchItem> tempList2 = viewModel.PrinterSearchList;
 
-            Assert.AreEqual(tempList, tempList2);
+            Assert.AreEqual(tempList, viewModel.PrinterSearchList);
         }
 
         [TestMethod]
