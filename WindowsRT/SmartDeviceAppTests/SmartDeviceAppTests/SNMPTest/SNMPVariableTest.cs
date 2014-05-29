@@ -24,7 +24,7 @@ namespace SmartDeviceAppTests.SNMPTest
             input[0] = 0x80;
             input[1] = 0x82;
 
-            for (int i = 2; i < 130; i++) 
+            for (int i = 2; i < input.Length; i++) 
             {
                 input[i] = (byte)i;
             }
@@ -41,7 +41,7 @@ namespace SmartDeviceAppTests.SNMPTest
             input[0] = 0x80;
             input[1] = 0x82;
 
-            for (int i = 2; i < 130; i++)
+            for (int i = 2; i < input.Length; i++)
             {
                 input[i] = (byte)i;
             }
