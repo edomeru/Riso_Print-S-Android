@@ -359,15 +359,14 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * Displays empty message, hides printers view and stops updates of online status
      */
     private void showEmptyText() {
-            mPauseableHandler.removeCallbacks(mUpdateOnlineStatus);
-            mEmptyPrintersText.setVisibility(View.VISIBLE);
-            
-            if (isTablet()) {
-                mPrinterTabletView.setVisibility(View.GONE);
-            } else {
-                mEmptyPrintersText.setVisibility(View.VISIBLE);
-                mListView.setVisibility(View.GONE);
-            }
+        mPauseableHandler.removeCallbacks(mUpdateOnlineStatus);
+        mEmptyPrintersText.setVisibility(View.VISIBLE);
+        
+        if (isTablet()) {
+            mPrinterTabletView.setVisibility(View.GONE);
+        } else {
+            mListView.setVisibility(View.GONE);
+        }
     }
     
     /**
@@ -380,7 +379,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (isTablet()) {
             mPrinterTabletView.setVisibility(View.VISIBLE);
         } else {
-            mEmptyPrintersText.setVisibility(View.VISIBLE);
             mListView.setVisibility(View.VISIBLE);
         }
     }
