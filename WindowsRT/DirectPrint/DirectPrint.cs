@@ -201,10 +201,12 @@ namespace DirectPrint
 
 
             // CONTROL FILE : Prepare
+            string username = "WinRTユーザ";//"SDA WinRT User";
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
-                                        HOST_NAME, "SDA WinRT User", print_job.job_name, dname, dname, print_job.job_name);
+                                        HOST_NAME, username, print_job.job_name, dname, dname, print_job.job_name);
+            byte[] controlfilebytes = System.Text.Encoding.UTF8.GetBytes(controlfile);
             //string controlfile = String.Format("H{0}\nP{1}\nf{2}\nU{3}\nN{4}\n",
             //                HOST_NAME, "User", dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////
@@ -219,7 +221,7 @@ namespace DirectPrint
             ///
             pos = 0;
             buffer[pos++] = 0x2;
-            string controlfile_length_str = String.Format("{0}", controlfile.Length);
+            string controlfile_length_str = controlfilebytes.Length.ToString();//controlfile.Length.ToString();
             for (i = 0; i < controlfile_length_str.Length; i++)
             {
                 buffer[pos++] = (byte)controlfile_length_str[i];
@@ -249,9 +251,9 @@ namespace DirectPrint
             /////////////////////////////////////////////////////////
             /// ADD CONTENT OF CONTROLFILE
             pos = 0;
-            for (i = 0; i < controlfile.Length; i++)
+            for (i = 0; i < controlfilebytes.Length; i++)
             {
-                buffer[pos++] = (byte)controlfile[i];
+                buffer[pos++] = controlfilebytes[i];
             }
             buffer[pos++] = 0;
 
