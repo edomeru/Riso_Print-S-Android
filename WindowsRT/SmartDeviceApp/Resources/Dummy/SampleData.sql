@@ -1,8 +1,8 @@
 INSERT INTO Printer VALUES(1, 1, '192.168.0.1', 'Printer1 Full Default', 0, 1, 1, 1, 1, 0, 1, 1, 1, 1);
 INSERT INTO Printer VALUES(2, 2, '192.168.0.2', 'Printer2 Booklet Hide', 0, 1, 1, 0, 1, 0, 1, 1, 1, 1);
 INSERT INTO Printer VALUES(3, 3, '192.168.0.3', 'Printer3 Stapler Hide', 0, 1, 1, 1, 0, 0, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(4, 4, '192.168.0.4', 'Printer4 Punch3 Show Punch4 Hide', 0, 1, 1, 1, 1, 1, 0, 1, 1, 1);
-INSERT INTO Printer VALUES(5, 5, '192.168.0.5', 'Printer5 Punch3,4 Hide', 0, 1, 1, 1, 1, 0, 0, 1, 1, 1);
+INSERT INTO Printer VALUES(4, 4, '192.168.0.4', 'Printer4 Punch3 Show', 0, 1, 1, 1, 1, 1, 0, 1, 1, 1);
+INSERT INTO Printer VALUES(5, 5, '192.168.0.5', 'Printer5 Punch Hide', 0, 1, 1, 1, 1, 0, 0, 1, 1, 1);
 INSERT INTO Printer VALUES(6, 6, '192.168.0.6', 'Printer6 TrayFaceDown Hide', 0, 1, 1, 1, 1, 0, 1, 0, 1, 1);
 INSERT INTO Printer VALUES(7, 7, '192.168.0.7', 'Printer7 TrayTop Hide', 0, 1, 1, 1, 1, 0, 1, 1, 0, 1);
 INSERT INTO Printer VALUES(8, 8, '192.168.0.8', 'Printer8 TrayStack Hide', 0, 1, 1, 1, 1, 0, 1, 1, 1, 0);

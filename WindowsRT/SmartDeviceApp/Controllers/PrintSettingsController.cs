@@ -378,22 +378,22 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
+            // prn_enabled_booklet
             if (!printer.EnabledBooklet)
             {
-                //printSettings.Booklet = false;
-
-                PrintSetting bookletPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET);
-                if (bookletPrintSetting != null)
-                {
-                    RemovePrintSetting(bookletPrintSetting);
-                }
-                PrintSetting bookletLayoutPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
-                if (bookletLayoutPrintSetting != null)
-                {
-                    RemovePrintSetting(bookletLayoutPrintSetting);
-                }
+                // Disable only Booklet-Finishing not entire Booklet
+                //PrintSetting bookletPrintSetting =
+                //    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET);
+                //if (bookletPrintSetting != null)
+                //{
+                //    RemovePrintSetting(bookletPrintSetting);
+                //}
+                //PrintSetting bookletLayoutPrintSetting =
+                //    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
+                //if (bookletLayoutPrintSetting != null)
+                //{
+                //    RemovePrintSetting(bookletLayoutPrintSetting);
+                //}
                 PrintSetting bookletFinishPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
                 if (bookletFinishPrintSetting != null)
@@ -401,14 +401,10 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSetting(bookletFinishPrintSetting);
                 }
             }
+
+            // prn_enabled_stapler
             if (!printer.EnabledStapler)
             {
-                //printSettings.Staple = (int)Staple.Off;
-                //if (printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple)
-                //{
-                //    printSettings.BookletFinishing = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_BOOKLET_FINISH, ListValueType.Int);
-                //}
-
                 PrintSetting staplePrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
                 if (staplePrintSetting != null)
@@ -422,7 +418,9 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
                 }
             }
-            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch 3
+
+            // prn_enabled_punch3 and prn_enabled_punch4
+            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch3
             {
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
@@ -436,16 +434,17 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch3 or punch4
+            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch
             {
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
                 if (punchPrintSetting != null)
                 {
-                    RemovePrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
+                    RemovePrintSetting(punchPrintSetting);
                 }
             }
-            // else if (!printer.EnabledPunchThree && printer.EnabledPunchFour) // This is the default case
+
+            // prn_enabled_tray_facedown
             if (!printer.EnabledTrayFacedown)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -455,6 +454,8 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
                 }
             }
+
+            // prn_enabled_tray_top
             if (!printer.EnabledTrayTop)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -464,6 +465,8 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
                 }
             }
+
+            // prn_enabled_tray_stack
             if (!printer.EnabledTrayStack)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -1068,7 +1071,7 @@ namespace SmartDeviceApp.Controllers
                     }
                     if (updateValues)
                     {
-                        int newBookletLayout = (isPortrait) ? (int)bookletFinishPrintSetting.Default : (int)BookletLayout.TopToBottom;
+                        int newBookletLayout = (isPortrait) ? (int)bookletLayoutPrintSetting.Default : (int)BookletLayout.TopToBottom;
                         bookletLayoutPrintSetting.Value = newBookletLayout;
                         printSettings.BookletLayout = newBookletLayout;
                     }
