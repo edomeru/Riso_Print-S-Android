@@ -52,12 +52,6 @@ namespace SmartDeviceApp.Views
 
         public PrintersPage()
         {
-            Messenger.Default.Register<MessageAlert>(
-             this,
-             msg => ShowDialog(msg));
-
-
-
             this.InitializeComponent();
 
             _gestureController = new PrintersGestureController();
@@ -118,12 +112,6 @@ namespace SmartDeviceApp.Views
 
         #endregion
 
-       
-        private async void ShowDialog(MessageAlert msg)
-        {
-            MessageDialog md = new MessageDialog(msg.Content, msg.Caption);
-            await md.ShowAsync();
-        }
 
         private void printerInfoView_Loaded(object sender, RoutedEventArgs e)
         {

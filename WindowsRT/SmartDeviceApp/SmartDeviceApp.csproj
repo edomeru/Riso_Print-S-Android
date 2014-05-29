@@ -112,6 +112,7 @@
     <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\MessageType.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
     <Compile Include="Common\Enum\TextBoxBehavior.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
@@ -142,7 +143,7 @@
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
-    <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
+    <Compile Include="Behaviors\IPAddressTextBoxBehavior.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
     <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
@@ -150,9 +151,6 @@
     </Compile>
     <Compile Include="Controls\MessageProgressBarControl.xaml.cs">
       <DependentUpon>MessageProgressBarControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PortItemControl.xaml.cs">
-      <DependentUpon>PortItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\KeyImageControl.xaml.cs">
       <DependentUpon>KeyImageControl.xaml</DependentUpon>
@@ -187,7 +185,6 @@
       <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
-    <Compile Include="Converters\IntToBooleanConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemToSeparatorVisibility.cs" />
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
@@ -283,6 +280,7 @@
     <Compile Include="Views\HelpPage.xaml.cs">
       <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IPAdressTextBoxBehavior.cs" />
     <Compile Include="Views\JobsPage.xaml.cs">
       <DependentUpon>JobsPage.xaml</DependentUpon>
     </Compile>
@@ -474,10 +472,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PortItemControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\KeyImageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -540,11 +534,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Resources\Styles\ControlStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
-    <Page Include="Resources\Styles\IpAddressStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

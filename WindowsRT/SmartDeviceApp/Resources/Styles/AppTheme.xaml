@@ -87,7 +87,6 @@
     <conv:SidePaneLineGeometryStartPointConverter x:Key="SidePaneLineGeometryStartPointConverter"/>
     <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <conv:WidthConverter x:Key="WidthConverter"/>
-    <conv:IntToBooleanConverter x:Key="IntToBooleanConverter"/>
     <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
     <conv:BooleanToColor x:Key="BooleanToColor"/>
     <!-- APP CONVERTERS END -->

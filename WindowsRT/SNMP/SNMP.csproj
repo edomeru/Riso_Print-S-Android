@@ -108,16 +108,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SNMPConstants.cs" />
     <Compile Include="SNMPDevice.cs" />
     <Compile Include="SNMPDiscovery.cs" />
     <Compile Include="SNMPMessage.cs" />
     <Compile Include="SNMPVariable.cs" />
-    <Compile Include="UDPHelper.cs" />
     <Compile Include="UDPSocket.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -137,10 +133,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

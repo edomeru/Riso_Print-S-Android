@@ -92,7 +92,6 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
-            Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
         }
 
         private void ScreenModeChanged(Common.Enum.ScreenMode screenMode)
@@ -217,7 +216,7 @@ namespace SmartDeviceApp.ViewModels
             }
             else
             {
-                Printer printer = PrinterList.First(x => x.IpAddress == _printerToBeDeleted);
+                Printer printer = PrinterList.FirstOrDefault(x => x.IpAddress == _printerToBeDeleted);
                 printer.WillBeDeleted = false;
             }
             

@@ -14,12 +14,12 @@ namespace SNMP
         public Action<SNMPDevice> snmpControllerDeviceTimeOut { get; set; }
 
 
-        private string ipAddress;
-        private string sysId;
-        private string location;
-        private string description;
-        private string macAddress;
-        private string sysName;
+        private string _ipAddress;
+        private string _sysId;
+        private string _location;
+        private string _description;
+        private string _macAddress;
+        private string _sysName;
     
         UDPSocket udpSocket;
     
@@ -27,41 +27,39 @@ namespace SNMP
 
         List<string> tempCapabilyLevels;
     
-        private string communityName;
+        private string _communityName;
     
         Timer receiveTimeoutTimer;
 
         List<string> MIBList;
         int nextMIBIndex;
         string[] requestMIBs;
-        bool DETECTALL = true;
 
         bool callbackCalled = false;
     
 	
-        private List<string> capabilitiesList;
+        private List<string> _capabilitiesList;
         private List<string> capabilityLevelsList;
 
         public SNMPDevice(string host)
         {
             {
-                ipAddress = host;
-                capabilitiesList = new List<string>();
+                _ipAddress = host;
+                _capabilitiesList = new List<string>();
                 capabilityLevelsList = new List<string>();
                 tempCapabilities = new List<string>();
                 tempCapabilyLevels = new List<string>();
         
-                communityName = null;
-                communityName = "public"; //temp communityName
+                _communityName = null;
+                _communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME; //temp communityName
         
-                sysId = null;
-                description = null;
-                location = null;
-                macAddress = null;
-                sysName = null;
+                _sysId = null;
+                _description = null;
+                _location = null;
+                _macAddress = null;
+                _sysName = null;
 
 
-                DETECTALL = true;
                 MIBList = new List<string>()
                 {
                     SNMPConstants.MIB_GETNEXTOID_BOOKLET,
@@ -107,21 +105,21 @@ namespace SNMP
         public void beginRetrieveCapabilities()
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Begin Capability Retrieval for ip: ");
-            System.Diagnostics.Debug.WriteLine(ipAddress);
+            System.Diagnostics.Debug.WriteLine(_ipAddress);
             tempCapabilities.Clear();
             tempCapabilyLevels.Clear();
     
 
-            if (this.sysName == null)
+            if (this._sysName == null)
                 MIBList.Add(SNMPConstants.MIB_GETNEXTOID_NAME);
 
-            if (this.macAddress == null)
+            if (this._macAddress == null)
                 MIBList.Add(SNMPConstants.MIB_GETNEXTOID_MACADDRESS);
 
-            if (this.location == null)
+            if (this._location == null)
                 MIBList.Add(SNMPConstants.MIB_GETNEXTOID_LOC);
 
-            if (this.description == null)
+            if (this._description == null)
                 MIBList.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
 
             sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT);
@@ -129,17 +127,17 @@ namespace SNMP
 
         void endRetrieveCapabilitiesSuccess()
         {
-            capabilitiesList.Clear();
+            _capabilitiesList.Clear();
             capabilityLevelsList.Clear();
             for (int i = 0; i < tempCapabilities.Count(); i++)
             {
-                capabilitiesList.Add(tempCapabilities[i]);
+                _capabilitiesList.Add(tempCapabilities[i]);
                 capabilityLevelsList.Add(tempCapabilyLevels[i]);
             }
         
             //callback to SNMPController
             System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
-            System.Diagnostics.Debug.WriteLine(ipAddress);
+            System.Diagnostics.Debug.WriteLine(_ipAddress);
            
             if (snmpControllerCallBackGetCapability != null)
             {
@@ -151,7 +149,7 @@ namespace SNMP
         void endRetrieveCapabilitiesFailed()
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice failed for ip: ");
-            System.Diagnostics.Debug.WriteLine(ipAddress);
+            System.Diagnostics.Debug.WriteLine(_ipAddress);
 
             if (snmpControllerDeviceCallBack != null)
             {
@@ -174,11 +172,11 @@ namespace SNMP
             if (nextMIBIndex < MIBList.Count)
             {
                 string[] dataMIB = new string[] { MIBList.ElementAt(nextMIBIndex) };
-                SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, dataMIB);
+                SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, dataMIB);
 
                 byte[] data = message.generateDataForTransmission();
 
-                udpSocket.sendData(data, ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
             }
             
         }
@@ -187,7 +185,7 @@ namespace SNMP
         private void receiveData(HostName sender, byte[] responsedata)
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
-            System.Diagnostics.Debug.WriteLine(ipAddress);
+            System.Diagnostics.Debug.WriteLine(_ipAddress);
             SNMPMessage response = new SNMPMessage(responsedata);
     
             if (response != null)
@@ -202,16 +200,16 @@ namespace SNMP
                     string val = dictionary[SNMPConstants.KEY_VAL];
 
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_NAME))
-                        this.sysName = val;
+                        this._sysName = val;
 
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
-                        this.description = val;
+                        this._description = val;
 
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_LOC))
-                        this.location = val;
+                        this._location = val;
 
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_MACADDRESS))
-                        this.macAddress = val;
+                        this._macAddress = val;
 
                     for (int i = 0; i < requestMIBs.Length; i++)
                     {
@@ -274,78 +272,51 @@ namespace SNMP
             }
         }
 
-        public void setIpAddress(string s){
-            ipAddress = s;
-        }
-        
-        public void setSysId(string s)
+        public string IpAddress
         {
-            sysId = s;
+            get { return _ipAddress; }
+            set { _ipAddress = value;  }
         }
 
-        public void setLocation(string s)
+        public string SysId
         {
-            location = s;
+            get { return _sysId; }
+            set { _sysId = value;  }
         }
 
-        public void setDescription(string s)
+        public string Location
         {
-            description = s;
+            get { return _location; }
+            set { _location = value; }
         }
 
-        public void setMacAddress(string s)
+        public string Description
         {
-            macAddress = s;
+            get { return _description; }
+            set { _description = value; }
         }
 
-        public void setSysName(string s)
+        public string MacAddress
         {
-            sysName = s;
+            get { return _macAddress; }
+            set { _macAddress = value; }
         }
 
-        public void setCommunityName(string s)
+        public string SysName
         {
-            communityName = s;
+            get { return _sysName; }
+            set { _sysName = value; }
         }
 
-        public string getIpAddress()
+        public string CommunityName
         {
-            return ipAddress;
+            get { return _communityName; }
+            set { _communityName = value; }
         }
 
-        public string getSysId()
+        public List<string> CapabilitiesList
         {
-            return sysId;
-        }
-
-        public string getLocation()
-        {
-            return location;
-        }
-
-        public string getDescription()
-        {
-            return description;
-        }
-
-        public string getMacAddress()
-        {
-            return macAddress;
-        }
-
-        public string getSysName()
-        {
-            return sysName;
-        }
-
-        public string getCommunityName()
-        {
-            return communityName;
-        }
-
-        public List<string> getCapabilities()
-        {
-            return capabilitiesList;
+            get { return _capabilitiesList; }
         }
     }
 }

@@ -64,8 +64,8 @@ namespace SmartDeviceApp.Controllers
         private void handleGetDevice(SNMPDevice device)
         {
             System.Diagnostics.Debug.WriteLine("Name(in SNMPController): ");
-            System.Diagnostics.Debug.WriteLine(device.getSysName());
-            printerControllerAddPrinterCallback(device.getIpAddress(), device.getSysName(), true, device.getCapabilities());
+            System.Diagnostics.Debug.WriteLine(device.SysName);
+            printerControllerAddPrinterCallback(device.IpAddress, device.SysName, true, device.CapabilitiesList);
         }
 
         
@@ -87,8 +87,8 @@ namespace SmartDeviceApp.Controllers
             //update from SNMPDevice to Printer 
             PrinterSearchItem printer = new PrinterSearchItem();
 
-            printer.Ip_address = device.getIpAddress();
-            printer.Name = device.getSysName();
+            printer.Ip_address = device.IpAddress;
+            printer.Name = device.SysName;
             //call callback function to PrinterController
             printerControllerDiscoverCallback(printer);
         }
@@ -97,15 +97,15 @@ namespace SmartDeviceApp.Controllers
         {
             if (Discovery.SnmpDevices.Count > 0)
             {
-                SNMPDevice device = Discovery.SnmpDevices.First(x => x.getIpAddress() == ip);
+                SNMPDevice device = Discovery.SnmpDevices.FirstOrDefault(x => x.IpAddress == ip);
 
                 Printer printer = new Printer();
                 printer.IpAddress = ip;
-                printer.Name = device.getSysName();
+                printer.Name = device.SysName;
                 printer.IsOnline = true;
-                if (device.getCapabilities().Count > 0)
+                if (device.CapabilitiesList.Count > 0)
                 {
-                    List<string> capabilitesList = device.getCapabilities();
+                    List<string> capabilitesList = device.CapabilitiesList;
                     printer.EnabledBooklet = (capabilitesList.ElementAt(0) == "true") ? true : false;
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") ? true : false;
                     printer.EnabledPunchThree = true; // TODO: Update value here
@@ -141,7 +141,7 @@ namespace SmartDeviceApp.Controllers
          * */
         private void handleAddTimeout(SNMPDevice device)
         {
-            printerControllerAddTimeout(device.getIpAddress(), device.getSysName(), device.getCapabilities());
+            printerControllerAddTimeout(device.IpAddress, device.SysName, device.CapabilitiesList);
         }
 
         private void handleTimeout(string ip)

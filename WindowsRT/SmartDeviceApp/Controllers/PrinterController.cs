@@ -54,9 +54,9 @@ namespace SmartDeviceApp.Controllers
 
         ThreadPoolTimer periodicTimer;
 
-        private ObservableCollection<Printer> _printerList;
-        private ObservableCollection<Printer> _printerListTemp;
-        private ObservableCollection<PrinterSearchItem> _printerSearchList;
+        private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
+        private ObservableCollection<Printer> _printerListTemp = new ObservableCollection<Printer>();
+        private ObservableCollection<PrinterSearchItem> _printerSearchList = new ObservableCollection<PrinterSearchItem>();
 
         private PrintersViewModel _printersViewModel;
         private SearchPrinterViewModel _searchPrinterViewModel;
@@ -301,7 +301,7 @@ namespace SmartDeviceApp.Controllers
                 try{
                     if (isPolling)
                     { 
-                        Printer printer = _printerList.First(x => x.IpAddress == ip);
+                        Printer printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
                         int index = _printerList.IndexOf(printer);
 
                         //update status
@@ -356,7 +356,7 @@ namespace SmartDeviceApp.Controllers
             //check if already in _printerList
             Printer printer = null;
             try {
-                printer = _printerList.First(x => x.IpAddress == ip);
+                printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
                 }
             catch {
                 //check if online
@@ -414,7 +414,7 @@ namespace SmartDeviceApp.Controllers
 
         private async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
         {
-            if (_manualAddIP != "")
+            if (!string.IsNullOrEmpty(_manualAddIP))
             {
                 _manualAddIP = "";
             
@@ -423,7 +423,7 @@ namespace SmartDeviceApp.Controllers
             {
                 try
                 { 
-                    Printer inList = PrinterList.First(x => x.IpAddress == ip);
+                    Printer inList = PrinterList.FirstOrDefault(x => x.IpAddress == ip);
                     if (inList != null)
                     {
                         return;
@@ -433,8 +433,6 @@ namespace SmartDeviceApp.Controllers
                 {
                    
                 }
-                
-                 
             }
                 //add to printerList
                 Printer printer = new Printer() { IpAddress = ip, Name = name };
@@ -462,24 +460,16 @@ namespace SmartDeviceApp.Controllers
                     printer.EnabledTrayStack = true;
                 }
 
-                try
+
+                int i = await DatabaseController.Instance.InsertPrinter(printer);
+                if (i == 0)
                 {
-                    int i = await DatabaseController.Instance.InsertPrinter(printer);
-                    if (i == 0)
-                    {
-                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                    }
-                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
-                    await DatabaseController.Instance.UpdatePrinter(printer);
-                    printer.IsOnline = true;
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 }
-                catch (Exception e)
-                {
-                    var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                    DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                    return;
-                }
-                
+                printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                await DatabaseController.Instance.UpdatePrinter(printer);
+                printer.IsOnline = true;
+                                
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
@@ -493,7 +483,7 @@ namespace SmartDeviceApp.Controllers
 
                 //if added from printer search
                 if (PrinterSearchList.Count > 0) { 
-                    PrinterSearchItem searchItem = PrinterSearchList.First(x => x.Ip_address == ip);
+                    PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
                     if (searchItem == null)
                     {
                         //error in adding;
@@ -530,6 +520,7 @@ namespace SmartDeviceApp.Controllers
             if (i == 0)
             {
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                return;
             }
             printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
             await DatabaseController.Instance.UpdatePrinter(printer);
@@ -554,7 +545,7 @@ namespace SmartDeviceApp.Controllers
             //if added from printer search
             if (PrinterSearchList.Count > 0)
             {
-                PrinterSearchItem searchItem = PrinterSearchList.First(x => x.Ip_address == ip);
+                PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
                 if (searchItem == null)
                 {
                     //error in adding;
@@ -640,6 +631,14 @@ namespace SmartDeviceApp.Controllers
         {
             _searchPrinterViewModel.SetStateRefreshState();
             _printerSearchList.Clear();
+
+            //for testing
+            //PrinterSearchItem p1 = new PrinterSearchItem() {Name = "Test1", Ip_address = "192.12.12.12", IsInPrinterList = true };
+            //PrinterSearchItem p2 = new PrinterSearchItem() { Name = "Test2", Ip_address = "192.12.12.11", IsInPrinterList = true };
+            
+            //PrinterSearchList.Add(p1);
+            //PrinterSearchList.Add(p2);
+
             SNMPController.Instance.printerControllerTimeout = new Action<string>(handleSearchTimeout);
             SNMPController.Instance.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(handleDeviceDiscovered);
             SNMPController.Instance.startDiscover();
@@ -656,7 +655,7 @@ namespace SmartDeviceApp.Controllers
                     _printerSearchList.Add(printer);
                     try
                     {
-                        printerInList = _printerList.First(x => x.IpAddress == printer.Ip_address);
+                        printerInList = _printerList.FirstOrDefault(x => x.IpAddress == printer.Ip_address);
                     }
                     catch
                     {
@@ -704,7 +703,11 @@ namespace SmartDeviceApp.Controllers
                 {
                     int i = await DatabaseController.Instance.InsertPrinter(printer);
                     if (i == 0)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                         return false;
+                    }
+                        
                     printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
                     await DatabaseController.Instance.UpdatePrinter(printer);
 
@@ -726,7 +729,7 @@ namespace SmartDeviceApp.Controllers
 
                 if (PrinterSearchList.Count > 0) {
                     
-                    PrinterSearchItem searchItem = PrinterSearchList.First(x => x.Ip_address == ip);
+                    PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
                    
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                     Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -756,12 +759,13 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<bool> deletePrinter(string ipAddress)
         {
-            Printer printer =  _printerList.First(x => x.IpAddress == ipAddress);
+            Printer printer =  _printerList.FirstOrDefault(x => x.IpAddress == ipAddress);
 
             int result = await DatabaseController.Instance.DeletePrinter(printer);
 
             if (result == 0)
             {
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_DELETE_FAILED", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
                 return false;
             }
             int index = _printerList.IndexOf(printer);

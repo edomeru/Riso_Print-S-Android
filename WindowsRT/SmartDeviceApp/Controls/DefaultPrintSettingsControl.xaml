@@ -25,9 +25,6 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
         </Style>
-        <ControlTemplate x:Key="TEMPLATE_Button" TargetType="Button">
-            
-        </ControlTemplate>
     </UserControl.Resources>
     <Grid x:Name="defaultPrintSettingsControlGrid" Style="{StaticResource STYLE_ListItemGrid}" PointerPressed="defaultPrintSettingsControlGrid_PointerPressed" PointerReleased="defaultPrintSettingsControlGrid_PointerReleased">
         <Interactivity:Interaction.Behaviors>
@@ -45,12 +42,12 @@
                 <VisualState x:Name="Pressed">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="defaultPrintSettingsControlGrid">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PressedColor, ElementName=defaultPrintSettingsControl}"/>    
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PressedColor, ElementName=defaultPrintSettingsControl}"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ColorAnimation Duration="0" To="White" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="key" d:IsOptimized="True"/>
                     </Storyboard>
                 </VisualState>
-                
+
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
@@ -77,7 +74,7 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-            
+
             <Image x:Name="rightButton" 
 	                       Source="{Binding RightImage, ElementName=defaultPrintSettingsControl}"
                            Visibility="{Binding RightButtonVisibility, ElementName=defaultPrintSettingsControl}" 

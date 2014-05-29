@@ -101,12 +101,12 @@ namespace SNMP
                                 snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
                             }
                     
-                            snmpDevice.setIpAddress(host);
-                            snmpDevice.setLocation(locDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setDescription(descDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setMacAddress(macAddressDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setSysName(sysNameDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setCommunityName(this.communityName);
+                            snmpDevice.IpAddress = host;
+                            snmpDevice.Location = locDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.Description = descDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.MacAddress = macAddressDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.SysName = sysNameDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.CommunityName = this.communityName;
                     
                             snmpDevices.Add(snmpDevice);
 

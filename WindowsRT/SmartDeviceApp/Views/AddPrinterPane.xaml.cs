@@ -14,6 +14,10 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
 using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Behaviors;
+using Microsoft.Xaml.Interactivity;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Views
 {
@@ -23,15 +27,13 @@ namespace SmartDeviceApp.Views
         {
             this.InitializeComponent();
 
-            //Messenger.Default.Register<string>(this, (tapped) => HideKeyboard(tapped));
         }
 
-        //private void HideKeyboard(string tapped)
-        //{
-        //    if (tapped == "HideKeyboard")
-        //    { 
-        //        this.IPTextBlock.Focus(FocusState.Programmatic);
-        //    }
-        //}
+        private void ipTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            IBehavior behavior = null;
+            behavior = new IPAddressTextBoxBehavior();
+            behavior.Attach((TextBox)sender);
+        }
     }
 }

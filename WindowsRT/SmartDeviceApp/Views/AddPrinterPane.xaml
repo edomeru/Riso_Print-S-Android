@@ -30,7 +30,7 @@
                 <Setter Property="StrokeThickness" Value="2"/>
             </Style.Setters>
         </Style>
-        <Style x:Key="IPAddressTextBoxStyle1" TargetType="utilities:IPAddressTextBox">
+        <Style x:Key="IPAddressTextBoxStyle1" TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
             <Setter Property="Foreground" Value="{ThemeResource TextBoxForegroundThemeBrush}"/>
@@ -46,7 +46,7 @@
             <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="utilities:IPAddressTextBox">
+                    <ControlTemplate TargetType="TextBox">
                         <Grid>
                             <Grid.Resources>
                                 <Style x:Name="DeleteButtonStyle" TargetType="Button">
@@ -176,7 +176,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <controls:SidePaneTitleControl x:Name="AddSidePane"
-                                       Title="Add Printer" 
+                                       Title="{Binding Source=IDS_LBL_ADD_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                        ButtonVisibility="{Binding DataContext.IsButtonVisible, ElementName=AddPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
                                        ProgressRingVisibility="{Binding DataContext.IsProgressRingVisible, ElementName=AddPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
                                        ButtonImage="ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png"
@@ -191,38 +191,9 @@
             </Grid.RowDefinitions>
             <TextBlock x:Name="IPTextBlock" x:Uid="IDS_LBL_IP_ADDRESS" Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                Margin="26,13,273,15" FontSize="20" Foreground="Black" VerticalAlignment="Center"/>
-            <utilities:IPAddressTextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
-                               PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" FontSize="20" TextAlignment="Center" Style="{StaticResource IPAddressTextBoxStyle1}"/>
-            <!--<Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>-->
+            <TextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
+                               PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" FontSize="20" TextAlignment="Center" Style="{StaticResource IPAddressTextBoxStyle1}"
+                     Loaded="ipTextBox_Loaded"/>
         </Grid>
-        <!--<Grid Margin="0,75,0,564" Height="75">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="8*"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    
-                    -->
-        <!--TODO: Use string from resource-->
-        <!--
-                    
-					<TextBlock Text="Username" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
-					<TextBox x:Name="usernameTextBox" Margin="165,10,10,15" Text="{Binding Username, Mode=TwoWay}"/>
-                    <Line Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource STYLE_List_Separator}"/>
-                </Grid>
-				<Grid Margin="0,150,0,489" Height="75">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="8*"/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-                    
-                    -->
-        <!--TODO: Use string from resource-->
-        <!--
-                    
-					<TextBlock Text="Password" Margin="26,17,273,1.896" FontSize="20" Foreground="Black"/>
-					<PasswordBox x:Name="passwordTextBox" Margin="165,10,10,15" Password="{Binding Password, Mode=TwoWay}"/>
-				</Grid>-->
-        <!--</Grid>-->
-        <!--</Grid>-->
     </Grid>
 </UserControl>

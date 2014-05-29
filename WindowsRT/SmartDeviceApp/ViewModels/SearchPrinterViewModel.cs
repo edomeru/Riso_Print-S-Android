@@ -42,8 +42,7 @@ namespace SmartDeviceApp.ViewModels
 
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
-            
-            
+
         }
 
         private void SetViewMode(VisibleRightPane viewMode)

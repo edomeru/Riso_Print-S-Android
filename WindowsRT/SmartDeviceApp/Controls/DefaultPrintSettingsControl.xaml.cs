@@ -71,6 +71,9 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("VisualState", typeof(string), typeof(DefaultPrintSettingsControl),
             new PropertyMetadata("Normal", SetVisualState));
 
+        public static readonly DependencyProperty IsPressedProperty =
+            DependencyProperty.Register("IsPressed", typeof(bool), typeof(DefaultPrintSettingsControl), null);
+
         public ICommand Command
         {
             get { 
@@ -130,6 +133,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(VisualStateProperty, value); }
         }
 
+        public bool IsPressed
+        {
+            get { return (bool)GetValue(IsPressedProperty); }
+            set { SetValue(IsPressedProperty, value); }
+        }
+
 
         private static void SetVisualState(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
@@ -153,12 +162,15 @@ namespace SmartDeviceApp.Controls
         private void defaultPrintSettingsControlGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             ((Grid)sender).CapturePointer(e.Pointer);
+            this.VisualState = "Pressed";
+            IsPressed = true;
         }
 
         private void defaultPrintSettingsControlGrid_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             ((Grid)sender).ReleasePointerCapture(e.Pointer);
-            this.VisualState = "Pressed";
+            IsPressed = false;
+
             Command.Execute(CommandParameter);
         }
     }

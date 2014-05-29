@@ -45,6 +45,15 @@ namespace SmartDeviceApp.ViewModels
             IsProgressRingVisible = false;
             IsButtonVisible = true;
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
+        }
+
+        private async Task HandleStringMessage(MessageType strMsg)
+        {
+            if (strMsg == MessageType.AddPrinter)
+            {
+                await AddPrinterExecute();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
