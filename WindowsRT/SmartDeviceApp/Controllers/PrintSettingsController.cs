@@ -420,7 +420,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             // prn_enabled_punch3 and prn_enabled_punch4
-            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch 3
+            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch3
             {
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
@@ -434,13 +434,13 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch3 or punch4
+            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch
             {
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
                 if (punchPrintSetting != null)
                 {
-                    RemovePrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
+                    RemovePrintSetting(punchPrintSetting);
                 }
             }
 
