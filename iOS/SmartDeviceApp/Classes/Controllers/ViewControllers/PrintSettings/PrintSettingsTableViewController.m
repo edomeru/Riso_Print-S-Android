@@ -448,6 +448,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 #pragma mark - Setting:TextField
 
+- (void)endEditing
+{
+    [self.tableView endEditing:YES];
+}
+
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     NSString *key = [self.textFieldBindings objectForKey:[NSNumber numberWithInteger:textField.tag]];
