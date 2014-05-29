@@ -214,6 +214,12 @@
     else if([[PDFFileManager sharedManager] fileAvailableForPreview])
     {
         [self setupPreview];
+        
+        // Printer check
+        if (self.printDocument.printer == nil)
+        {
+            self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
+        }
     }
 }
 
